@@ -24,6 +24,7 @@ out/
 **/android/
 **/ios/
 apps/mobile/.expo/
+apps/mobile/expo-env.d.ts
 apps/mobile/.cursor/
 apps/mobile/.expo-shared/
 apps/mobile/web-build/

@@ -5,9 +5,15 @@
   },
   "scripts": {
     "dev": "turbo run dev --parallel",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:mobile": "turbo run start --filter=mobile",
+    "start": "turbo run start --parallel",
+    "start:web": "turbo run start --filter=web",
+    "start:mobile": "turbo run start --filter=mobile",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
     "format": "prettier . --write",
     "format:check": "prettier . --check"
   },
