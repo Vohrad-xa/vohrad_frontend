@@ -1,0 +1,64 @@
+# ---- Node / pnpm ----
+node_modules/
+.pnpm-debug.log*
+npm-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+!pnpm-lock.yaml
+.turbo/
+
+# ---- packages & apps ----
+dist/
+build/
+**/dist/
+**/build/
+
+# ---- Next.js (apps/web) ----
+.next/
+out/
+.vercel/
+
+# ---- React Native  ----
+.kotlin/
+**/android/
+**/ios/
+apps/mobile/.expo/
+apps/mobile/.cursor/
+apps/mobile/.expo-shared/
+apps/mobile/web-build/
+apps/mobile/.gradle/
+apps/mobile/.idea/
+apps/mobile/*.iml
+**/android/local.properties
+
+# sensitive files
+*.keystore
+AGENTS.md
+CLAUDE.md   
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+*.pem
+*.cer
+*.cert
+*.key
+.env
+.env.*
+!.env.example
+
+# ---- Caches ----
+.cache/
+.claude/
+*.tmp
+*.temp
+*.local
+
+# ---- Editors ----
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+Icon?

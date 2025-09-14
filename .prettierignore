@@ -1,0 +1,11 @@
+node_modules
+.turbo
+.next
+dist
+build
+out
+apps/mobile/.expo
+apps/mobile/ios
+apps/mobile/android
+apps/mobile/web-build
+
