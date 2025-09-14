@@ -5,7 +5,7 @@
   },
   "scripts": {
     "dev": "turbo run dev --parallel",
-    "dev:web": "turbo run dev --filter=web",
+    "dev:dashboard": "turbo run dev --filter=web",
     "dev:mobile": "turbo run start --filter=mobile",
     "start": "turbo run start --parallel",
     "start:web": "turbo run start --filter=web",
