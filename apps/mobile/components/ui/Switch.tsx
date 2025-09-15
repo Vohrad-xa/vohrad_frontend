@@ -12,13 +12,5 @@ export default function Switch({ value, onValueChange, ...props }: CustomSwitchP
   const switchValue = value !== undefined ? value : internalValue;
   const handleChange = onValueChange || setInternalValue;
 
-  return (
-    <RNSwitch
-      value={switchValue}
-      onValueChange={handleChange}
-      trackColor={{ false: '#767577', true: '#f5cd07ff' }}
-      thumbColor={switchValue ? '#ffffff' : '#f4f3f4'}
-      {...props}
-    />
-  );
+  return <RNSwitch value={switchValue} onValueChange={handleChange} {...props} />;
 }

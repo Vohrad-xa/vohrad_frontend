@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 
 import { NavigationThemes, Tokens, type ColorScheme } from '@/constants/colors';
@@ -22,6 +22,27 @@ export function useTheme() {
 export function AppThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useRNColorScheme() ?? 'light';
   const [scheme, setScheme] = useState<ColorScheme>(systemScheme);
+
+  // Basic persistence using web localStorage if available; no native dependency.
+  const STORAGE_KEY = 'app.theme.scheme';
+
+  useEffect(() => {
+    try {
+      const ls = (globalThis as any)?.localStorage as Storage | undefined;
+      const saved = ls?.getItem(STORAGE_KEY) as ColorScheme | null | undefined;
+      if (saved === 'light' || saved === 'dark') {
+        setScheme(saved);
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    try {
+      const ls = (globalThis as any)?.localStorage as Storage | undefined;
+      ls?.setItem(STORAGE_KEY, scheme);
+    } catch {}
+  }, [scheme]);
 
   const toggle = useCallback(() => {
     setScheme((prev) => (prev === 'light' ? 'dark' : 'light'));

@@ -15,7 +15,12 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Tokens[scheme].tint,
+        tabBarInactiveTintColor: Tokens[scheme].tabIconDefault,
+        tabBarStyle: { backgroundColor: Tokens[scheme].surface, borderTopColor: Tokens[scheme].border },
         headerShown: true,
+        headerStyle: { backgroundColor: Tokens[scheme].surface },
+        headerTintColor: Tokens[scheme].text,
+        headerTitleStyle: { color: Tokens[scheme].text },
         tabBarButton: HapticTab,
         headerRight: () => (
           <View style={{ marginRight: 12 }}>
