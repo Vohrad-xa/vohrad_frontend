@@ -6,7 +6,7 @@ import { View } from 'react-native';
 import Switch from '@/components/ui/Switch';
 import { Tokens } from '@/constants/colors';
 import { useTheme } from '@/providers/theme-provider';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import Icon, { AppIcons } from '@/utils/icons';
 
 export default function TabLayout() {
   const { scheme, toggle } = useTheme();
@@ -33,14 +33,14 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: ({ color }) => <Icon size={28} name={AppIcons.navigation.home} color={color} />,
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
           title: 'More',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="ellipsis.circle.fill" color={color} />,
+          tabBarIcon: ({ color }) => <Icon size={28} name={AppIcons.navigation.menu} color={color} />,
         }}
       />
     </Tabs>

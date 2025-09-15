@@ -3,7 +3,7 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
+import Icon from '@/utils/icons';
 import { Tokens } from '@/constants/colors';
 import { useTheme } from '@/providers/theme-provider';
 
@@ -14,13 +14,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
   return (
     <ThemedView>
       <TouchableOpacity style={styles.heading} onPress={() => setIsOpen((value) => !value)} activeOpacity={0.8}>
-        <IconSymbol
-          name="chevron.right"
-          size={18}
-          weight="medium"
-          color={Tokens[scheme].icon}
-          style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
-        />
+        <Icon name="chevron-forward" size={18} color={Tokens[scheme].icon} style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }} />
 
         <ThemedText type="defaultSemiBold">{title}</ThemedText>
       </TouchableOpacity>
