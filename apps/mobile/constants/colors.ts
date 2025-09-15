@@ -104,6 +104,13 @@ export function getColor(scheme: ColorScheme, token: TokenName) {
 }
 
 // Optional: React Navigation compatible themes
+const NavigationFonts = {
+  regular: { fontFamily: 'System', fontWeight: '400' as const },
+  medium: { fontFamily: 'System', fontWeight: '500' as const },
+  bold: { fontFamily: 'System', fontWeight: '700' as const },
+  heavy: { fontFamily: 'System', fontWeight: '800' as const },
+} as const;
+
 export const NavigationThemes = {
   light: {
     dark: false,
@@ -115,6 +122,7 @@ export const NavigationThemes = {
       border: Tokens.light.border,
       notification: Tokens.light.primary,
     },
+    fonts: NavigationFonts,
   },
   dark: {
     dark: true,
@@ -126,5 +134,6 @@ export const NavigationThemes = {
       border: Tokens.dark.border,
       notification: Tokens.dark.primary,
     },
+    fonts: NavigationFonts,
   },
 } as const;
