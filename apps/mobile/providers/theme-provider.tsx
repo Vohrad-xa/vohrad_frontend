@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 
 import { NavigationThemes, Tokens, type ColorScheme } from '@/constants/colors';
+import * as storage from '@/utils/storage';
 import { useColorScheme as useRNColorScheme } from '@/hooks/use-color-scheme';
 
 type ThemeContextValue = {
@@ -22,26 +23,31 @@ export function useTheme() {
 export function AppThemeProvider({ children }: { children: React.ReactNode }) {
   const systemScheme = useRNColorScheme() ?? 'light';
   const [scheme, setScheme] = useState<ColorScheme>(systemScheme);
+  const [hydrated, setHydrated] = useState(false);
 
-  // Basic persistence using web localStorage if available; no native dependency.
   const STORAGE_KEY = 'app.theme.scheme';
 
+  // Load saved scheme (web or native) once
   useEffect(() => {
-    try {
-      const ls = (globalThis as any)?.localStorage as Storage | undefined;
-      const saved = ls?.getItem(STORAGE_KEY) as ColorScheme | null | undefined;
-      if (saved === 'light' || saved === 'dark') {
-        setScheme(saved);
+    let mounted = true;
+    (async () => {
+      try {
+        const saved = (await storage.getItem(STORAGE_KEY)) as ColorScheme | null;
+        if (mounted && (saved === 'light' || saved === 'dark')) {
+          setScheme(saved);
+        }
+      } finally {
+        if (mounted) setHydrated(true);
       }
-    } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    })();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
+  // Persist on change
   useEffect(() => {
-    try {
-      const ls = (globalThis as any)?.localStorage as Storage | undefined;
-      ls?.setItem(STORAGE_KEY, scheme);
-    } catch {}
+    storage.setItem(STORAGE_KEY, scheme).catch(() => {});
   }, [scheme]);
 
   const toggle = useCallback(() => {
@@ -52,6 +58,11 @@ export function AppThemeProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo(() => ({ scheme, setScheme, toggle, tokens }), [scheme, toggle, tokens]);
 
   const navTheme = NavigationThemes[scheme];
+
+  if (!hydrated) {
+    // Avoid theme flicker on initial load
+    return null;
+  }
 
   return (
     <NavigationThemeProvider value={navTheme}>
