@@ -2,19 +2,26 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
+import { View } from 'react-native';
+import Switch from '@/components/ui/Switch';
+import { Tokens } from '@/constants/colors';
+import { useTheme } from '@/providers/theme-provider';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { scheme, toggle } = useTheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+        tabBarActiveTintColor: Tokens[scheme].tint,
+        headerShown: true,
         tabBarButton: HapticTab,
+        headerRight: () => (
+          <View style={{ marginRight: 12 }}>
+            <Switch value={scheme === 'dark'} onValueChange={(_v) => toggle()} />
+          </View>
+        ),
       }}
     >
       <Tabs.Screen
