@@ -9,6 +9,8 @@ import { Tokens, NavigationThemes, Palette } from '@/constants/colors';
 import { useTheme } from '@/providers/theme-provider';
 import { Icon, AppIcons } from '@/utils/icons';
 
+const HEADER_ACCESSORY_WIDTH = 56;
+
 export default function TabLayout() {
   const { scheme, toggle } = useTheme();
 
@@ -38,14 +40,30 @@ export default function TabLayout() {
         tabBarActiveTintColor: Tokens[scheme].tabIconSelected,
         tabBarInactiveTintColor: Tokens[scheme].tabIconDefault,
 
+        headerTitleAlign: 'center',
+
         headerLeft: () => (
-          <View style={{ marginLeft: 16 }}>
+          <View
+            style={{
+              width: HEADER_ACCESSORY_WIDTH,
+              marginLeft: 10,
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+            }}
+          >
             <Icon name={AppIcons.navigation.menu} color={scheme === 'light' ? Palette.white : Tokens[scheme].icon} />
           </View>
         ),
 
         headerRight: () => (
-          <View style={{ marginRight: 12 }}>
+          <View
+            style={{
+              width: HEADER_ACCESSORY_WIDTH,
+              marginRight: 10,
+              justifyContent: 'center',
+              alignItems: 'flex-end',
+            }}
+          >
             <Switch value={scheme === 'dark'} onValueChange={(_v) => toggle()} />
           </View>
         ),
