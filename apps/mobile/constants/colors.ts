@@ -27,12 +27,13 @@ export const Palette = {
   },
   white: '#FFFFFF',
   black: '#000000',
+  creme: '#f7f7f5ff',
 } as const;
 
 export const Tokens = {
   light: {
     // Surfaces & text
-    background: Palette.white,
+    background: Palette.creme,
     surface: Palette.gray[50],
     text: '#11181C',
     muted: '#6C6C70',
@@ -48,9 +49,9 @@ export const Tokens = {
     accentOrange: Palette.brand.orange,
 
     // UI
-    icon: '#6C6C70',
+    icon: Palette.black,
     tint: Palette.brand.blue,
-    tabIconDefault: '#6C6C70',
+    tabIconDefault: Palette.black,
     tabIconSelected: Palette.brand.blue,
     card: Palette.white,
     input: Palette.white,
@@ -64,7 +65,7 @@ export const Tokens = {
   },
   dark: {
     // Surfaces & text
-    background: Palette.gray[900],
+    background: Palette.black,
     surface: Palette.gray[800],
     text: '#ECEDEE',
     muted: '#A1A1AA',
@@ -80,7 +81,7 @@ export const Tokens = {
     accentOrange: Palette.brand.orange,
 
     // UI
-    icon: '#A1A1AA',
+    icon: Palette.white,
     tint: Palette.brand.blueDark,
     tabIconDefault: '#A1A1AA',
     tabIconSelected: Palette.brand.blueDark,
@@ -117,7 +118,7 @@ export const NavigationThemes = {
     colors: {
       primary: Tokens.light.tint,
       background: Tokens.light.background,
-      card: Tokens.light.card,
+      card: Palette.white,
       text: Tokens.light.text,
       border: Tokens.light.border,
       notification: Tokens.light.primary,

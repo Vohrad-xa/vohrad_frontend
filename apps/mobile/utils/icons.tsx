@@ -7,16 +7,14 @@ import { DesignSystem } from '@/constants/typography';
 
 export type IconName =
   // Navigation & UI
-  | 'home'
   | 'home-outline'
-  | 'menu'
-  | 'close'
-  | 'chevron-forward'
+  | 'reorder-two-outline'
+  | 'close-outline'
   | 'chevron-forward-outline'
-  | 'chevron-back'
-  | 'chevron-up'
-  | 'chevron-down'
-  | 'search'
+  | 'chevron-back-outline'
+  | 'chevron-up-outline'
+  | 'chevron-down-outline'
+  | 'search-outline'
   | 'settings-outline'
   | 'help-circle-outline'
   | 'information-circle-outline'
@@ -25,68 +23,65 @@ export type IconName =
   // Inventory & Management
   | 'cube-outline'
   | 'layers-outline'
-  | 'swap-horizontal'
-  | 'build'
+  | 'swap-horizontal-outline'
+  | 'build-outline'
   | 'construct-outline'
   | 'hardware-chip-outline'
-  | 'log-in'
-  | 'log-out'
+  | 'log-in-outline'
+  | 'log-out-outline'
   | 'bar-chart-outline'
   | 'stats-chart-outline'
 
   // Actions
-  | 'camera'
-  | 'qr-code'
+  | 'camera-outline'
+  | 'qr-code-outline'
   | 'barcode-outline'
-  | 'barcode-viewfinder'
-  | 'keypad'
-  | 'pencil'
-  | 'add'
+  | 'keypad-outline'
+  | 'pencil-outline'
+  | 'add-outline'
   | 'add-circle-outline'
-  | 'checkmark'
-  | 'trash'
-  | 'edit'
+  | 'checkmark-outline'
+  | 'trash-outline'
 
   // Content & Files
-  | 'document-text'
-  | 'folder'
-  | 'image'
-  | 'download'
-  | 'upload'
-  | 'save'
-  | 'print'
+  | 'document-text-outline'
+  | 'folder-outline'
+  | 'image-outline'
+  | 'download-outline'
+  | 'cloud-upload-outline'
+  | 'save-outline'
+  | 'print-outline'
 
   // People & Social
-  | 'person-circle'
+  | 'person-circle-outline'
   | 'person-outline'
-  | 'people'
-  | 'mail'
-  | 'call'
+  | 'people-outline'
+  | 'mail-outline'
+  | 'call-outline'
 
   // Business
-  | 'car'
-  | 'business'
-  | 'storefront'
-  | 'card'
-  | 'cash'
+  | 'car-outline'
+  | 'business-outline'
+  | 'storefront-outline'
+  | 'location-outline'
+  | 'card-outline'
+  | 'cash-outline'
 
   // Status & Alerts
-  | 'checkmark-circle'
   | 'checkmark-circle-outline'
   | 'close-circle-outline'
   | 'alert-circle-outline'
-  | 'warning'
-  | 'alert-circle'
-  | 'time'
-  | 'calendar'
+  | 'warning-outline'
+  | 'time-outline'
+  | 'calendar-outline'
 
   // System
-  | 'wifi'
-  | 'battery-full'
-  | 'notifications'
-  | 'refresh'
-  | 'sync'
-  | 'remove';
+  | 'wifi-outline'
+  | 'battery-full-outline'
+  | 'notifications-outline'
+  | 'refresh-outline'
+  | 'sync-outline'
+  | 'remove-outline';
 
 type IconSizeKey = keyof typeof DesignSystem.iconSize; // xs|sm|md|lg|xl|xxl
 
@@ -98,7 +93,7 @@ interface IconProps {
   style?: StyleProp<TextStyle>;
 }
 
-export const Icon: React.FC<IconProps> = ({ name, size = 'md', color, colorToken, style }) => {
+export const Icon: React.FC<IconProps> = ({ name, size = 28, color, colorToken, style }) => {
   const { scheme } = useTheme();
   const resolvedSize = typeof size === 'number' ? size : (DesignSystem.iconSize[size] ?? DesignSystem.iconSize.md);
   const resolvedColor = color ?? (colorToken ? Tokens[scheme][colorToken] : Tokens[scheme].icon);
@@ -118,45 +113,48 @@ export const IconPresets = {
 export const AppIcons = {
   navigation: {
     home: 'home-outline' as IconName,
-    menu: 'menu' as IconName,
-    back: 'chevron-back' as IconName,
-    forward: 'chevron-forward' as IconName,
-    close: 'close' as IconName,
+    menu: 'reorder-two-outline' as IconName,
+    settings: 'settings-outline' as IconName,
+    scan: 'barcode-outline' as IconName,
+    profile: 'person-outline' as IconName,
+    back: 'chevron-back-outline' as IconName,
+    forward: 'chevron-forward-outline' as IconName,
+    close: 'close-outline' as IconName,
   },
 
   inventory: {
     items: 'cube-outline' as IconName,
     categories: 'layers-outline' as IconName,
-    locations: 'storefront' as IconName,
-    search: 'search' as IconName,
+    locations: 'storefront-outline' as IconName,
+    search: 'search-outline' as IconName,
   },
 
   actions: {
-    scan: 'qr-code' as IconName,
-    camera: 'camera' as IconName,
-    input: 'keypad' as IconName,
-    edit: 'pencil' as IconName,
-    save: 'checkmark' as IconName,
-    delete: 'trash' as IconName,
+    scan: 'qr-code-outline' as IconName,
+    camera: 'camera-outline' as IconName,
+    input: 'keypad-outline' as IconName,
+    edit: 'pencil-outline' as IconName,
+    save: 'checkmark-outline' as IconName,
+    delete: 'trash-outline' as IconName,
   },
 
   content: {
-    document: 'document-text' as IconName,
-    folder: 'folder' as IconName,
-    image: 'image' as IconName,
-    download: 'download' as IconName,
+    document: 'document-text-outline' as IconName,
+    folder: 'folder-outline' as IconName,
+    image: 'image-outline' as IconName,
+    download: 'download-outline' as IconName,
   },
 
   status: {
-    success: 'checkmark-circle' as IconName,
-    warning: 'warning' as IconName,
-    error: 'alert-circle' as IconName,
+    success: 'checkmark-circle-outline' as IconName,
+    warning: 'warning-outline' as IconName,
+    error: 'alert-circle-outline' as IconName,
     info: 'information-circle-outline' as IconName,
   },
 
   business: {
-    supplier: 'car' as IconName,
-    suppliers: 'business' as IconName,
+    supplier: 'car-outline' as IconName,
+    suppliers: 'business-outline' as IconName,
     profile: 'person-outline' as IconName,
     equipment: 'hardware-chip-outline' as IconName,
     maintenance: 'construct-outline' as IconName,
