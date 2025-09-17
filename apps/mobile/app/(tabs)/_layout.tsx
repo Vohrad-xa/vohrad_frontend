@@ -2,51 +2,34 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
-import { View } from 'react-native';
 import Switch from '@/components/ui/Switch';
-import { Tokens } from '@/constants/colors';
 import { useTheme } from '@/providers/theme-provider';
+import { ThemedView } from '@/components/ui/themed-view';
 import { Icon, AppIcons } from '@/utils/icons';
 
-const HEADER_ACCESSORY_WIDTH = 56;
-
 export default function TabLayout() {
-  const { scheme, toggle } = useTheme();
+  const { scheme, toggle, theme, ds } = useTheme();
 
   return (
     <Tabs
       screenOptions={{
-        headerTitleStyle: { color: Tokens[scheme].text },
+        headerTitleStyle: { color: theme.text },
         tabBarButton: HapticTab,
-        tabBarActiveTintColor: Tokens[scheme].tabIconSelected,
-        tabBarInactiveTintColor: Tokens[scheme].tabIconDefault,
+        tabBarActiveTintColor: theme.tabIconSelected,
+        tabBarInactiveTintColor: theme.tabIconDefault,
 
         headerTitleAlign: 'center',
 
         headerLeft: () => (
-          <View
-            style={{
-              width: HEADER_ACCESSORY_WIDTH,
-              marginLeft: 10,
-              justifyContent: 'center',
-              alignItems: 'flex-start',
-            }}
-          >
+          <ThemedView variant="headerAccessory">
             <Icon name={AppIcons.navigation.menu} />
-          </View>
+          </ThemedView>
         ),
 
         headerRight: () => (
-          <View
-            style={{
-              width: HEADER_ACCESSORY_WIDTH,
-              marginRight: 10,
-              justifyContent: 'center',
-              alignItems: 'flex-end',
-            }}
-          >
+          <ThemedView variant="headerAccessory">
             <Switch value={scheme === 'dark'} onValueChange={(_v) => toggle()} />
-          </View>
+          </ThemedView>
         ),
       }}
     >
