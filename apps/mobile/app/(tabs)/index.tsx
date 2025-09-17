@@ -1,12 +1,12 @@
-import { StyleSheet, View, Text, Platform, ScrollView } from 'react-native';
-import { GlassCard } from '@/components/ui/glass-card';
+import { StyleSheet, View, Platform, ScrollView } from 'react-native';
 import { InfoCard } from '@/components/ui/info-card';
-import { DesignSystem } from '@/constants/typography';
-import { useTypography } from '@/hooks/use-typography';
+import { ThemedText } from '@/components/ui/themed-text';
+import { ThemedView } from '@/components/ui/themed-view';
+import { useTheme } from '@/providers/theme-provider';
 import { Icon, AppIcons } from '@/utils/icons';
 
 export default function HomeScreen() {
-  const typography = useTypography();
+  const { ds } = useTheme();
 
   const menuCards = [
     { title: 'Maintenance', icon: AppIcons.business.maintenance, count: 12 },
@@ -20,22 +20,70 @@ export default function HomeScreen() {
     { title: 'Labels', icon: AppIcons.business.equipment, count: 89 },
   ];
 
+  const styles = StyleSheet.create({
+    container: {
+      padding: ds.layout.screenPadding,
+    },
+    cardContainer: {
+      gap: ds.spacing.md,
+      marginTop: ds.spacing.md,
+    },
+    menuGrid: Platform.select({
+      web: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: ds.spacing.md,
+      } as any,
+      default: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: ds.spacing.md,
+      },
+    }),
+    smallCard: Platform.select({
+      web: {
+        height: ds.components.card.borderRadius * 17.5,
+      },
+      default: {
+        height: ds.components.button.height * 2.3,
+        flexBasis: '48%',
+        maxWidth: '48%',
+      },
+    }),
+    topSection: {
+      alignSelf: 'flex-start',
+      gap: ds.spacing.xs,
+    },
+    cardTitle: {
+      fontWeight: ds.fontWeight.medium,
+    },
+    cardCount: {
+      alignSelf: 'flex-start',
+      fontWeight: ds.fontWeight.bold,
+    },
+  });
+
   return (
-    <ScrollView bounces={true} bouncesZoom={false}>
+    <ScrollView bounces bouncesZoom={false}>
       <View style={styles.container}>
         <InfoCard />
+
         <View style={styles.cardContainer}>
           <View style={styles.menuGrid}>
             {menuCards.map((card, i) => (
-              <GlassCard key={i} style={styles.smallCard}>
-                <View style={styles.cardContent}>
+              <ThemedView key={i} variant="card" style={styles.smallCard}>
+                <ThemedView variant="cardContent">
                   <View style={styles.topSection}>
                     <Icon name={card.icon} size="lg" />
-                    <Text style={[typography.style('secondary'), styles.cardTitle]}>{card.title}</Text>
+                    <ThemedText variant="secondary" style={styles.cardTitle}>
+                      {card.title}
+                    </ThemedText>
                   </View>
-                  <Text style={[typography.style('headline'), styles.cardCount]}>{card.count}</Text>
-                </View>
-              </GlassCard>
+                  <ThemedText variant="headline" style={styles.cardCount}>
+                    {card.count}
+                  </ThemedText>
+                </ThemedView>
+              </ThemedView>
             ))}
           </View>
         </View>
@@ -43,52 +91,3 @@ export default function HomeScreen() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: DesignSystem.layout.screenPadding,
-  },
-  cardContainer: {
-    gap: DesignSystem.spacing.md,
-    marginTop: DesignSystem.spacing.md,
-  },
-  menuGrid: Platform.select({
-    web: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(3, 1fr)',
-      gap: DesignSystem.spacing.md,
-    } as any,
-    default: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: DesignSystem.spacing.md,
-    },
-  }),
-  smallCard: Platform.select({
-    web: {
-      height: 140,
-    },
-    default: {
-      height: 100,
-      flexBasis: '48%',
-      maxWidth: '48%',
-    },
-  }),
-  cardContent: {
-    flex: 1,
-    padding: DesignSystem.spacing.sm,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  topSection: {
-    alignSelf: 'flex-start',
-    gap: DesignSystem.spacing.xs,
-  },
-  cardTitle: {
-    fontWeight: DesignSystem.fontWeight.medium,
-  },
-  cardCount: {
-    alignSelf: 'flex-start',
-    fontWeight: DesignSystem.fontWeight.bold,
-  },
-});
