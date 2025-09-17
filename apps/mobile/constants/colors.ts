@@ -24,6 +24,8 @@ export const Palette = {
     green: '#34C759',
     yellow: '#FFD60A',
     orange: '#FF9500',
+    red: '#ef4444',
+    redDark: '#dc2626',
   },
   white: '#FFFFFF',
   black: '#000000',
@@ -47,6 +49,8 @@ export const Tokens = {
     accentGreen: Palette.brand.green,
     accentYellow: Palette.brand.yellow,
     accentOrange: Palette.brand.orange,
+    destructive: Palette.brand.red,
+    destructiveForeground: Palette.white,
 
     // UI
     icon: Palette.black,
@@ -79,6 +83,8 @@ export const Tokens = {
     accentGreen: Palette.brand.green,
     accentYellow: Palette.brand.yellow,
     accentOrange: Palette.brand.orange,
+    destructive: Palette.brand.redDark,
+    destructiveForeground: Palette.white,
 
     // UI
     icon: Palette.white,
@@ -99,10 +105,6 @@ export const Tokens = {
 
 export type ColorScheme = keyof typeof Tokens; // 'light' | 'dark'
 export type TokenName = keyof typeof Tokens.light;
-
-export function getColor(scheme: ColorScheme, token: TokenName) {
-  return Tokens[scheme][token];
-}
 
 // Optional: React Navigation compatible themes
 const NavigationFonts = {
