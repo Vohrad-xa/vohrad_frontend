@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, StyleProp, ViewStyle, Platform, View } from 'react-native';
+import { Platform, View, type StyleProp, type ViewStyle } from 'react-native';
 import { GlassSurface } from '@/components/ui/glass-surface';
 import { useTheme } from '@/providers/theme-provider';
 
@@ -10,7 +10,7 @@ export interface GlassCardProps {
 }
 
 export function GlassCard({ children, style, contentStyle }: GlassCardProps) {
-  const { scheme } = useTheme();
+  const { scheme, ds } = useTheme();
   if (Platform.OS === 'ios') {
     try {
       const mod = require('expo-glass-effect');
@@ -18,8 +18,11 @@ export function GlassCard({ children, style, contentStyle }: GlassCardProps) {
       const GlassContainer = (mod?.GlassContainer ?? mod) as React.ComponentType<any> | undefined;
       if (GlassView && GlassContainer) {
         return (
-          <GlassContainer spacing={10} style={style}>
-            <GlassView glassEffectStyle="clear" style={[styles.card, { flex: 1 }, contentStyle]}>
+          <GlassContainer spacing={ds.spacing.xs} style={style}>
+            <GlassView
+              glassEffectStyle="clear"
+              style={[{ borderRadius: ds.components.card.borderRadius, flex: 1 }, contentStyle]}
+            >
               {children}
             </GlassView>
           </GlassContainer>
@@ -31,7 +34,7 @@ export function GlassCard({ children, style, contentStyle }: GlassCardProps) {
   return (
     <View style={style}>
       <GlassSurface
-        style={[styles.card, { flex: 1 }, contentStyle]}
+        style={[{ borderRadius: ds.components.card.borderRadius, flex: 1 }, contentStyle]}
         tint={scheme === 'light' ? 'dark' : 'light'}
         intensity={25}
       >
@@ -40,12 +43,5 @@ export function GlassCard({ children, style, contentStyle }: GlassCardProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 10,
-    backgroundColor: 'rgba(215, 212, 210, 0.26)',
-  },
-});
 
 export default GlassCard;
