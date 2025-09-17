@@ -1,12 +1,10 @@
-import { View, Text } from 'react-native';
-import { useTypography } from '@/hooks/use-typography';
+import { View } from 'react-native';
+import { ThemedText } from '@/components/ui/themed-text';
 
 export default function ScanPage() {
-  const typography = useTypography();
-
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={typography.style('headline')}>Scan</Text>
+      <ThemedText variant="headline">Scan</ThemedText>
     </View>
   );
 }
