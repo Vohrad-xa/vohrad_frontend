@@ -1,9 +1,8 @@
 import React from 'react';
 import { OpaqueColorValue, StyleProp, TextStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Tokens, type TokenName } from '@/constants/colors';
+import { type TokenName } from '@/constants/colors';
 import { useTheme } from '@/providers/theme-provider';
-import { DesignSystem } from '@/constants/typography';
 
 export type IconName =
   // Navigation & UI
@@ -83,7 +82,7 @@ export type IconName =
   | 'sync-outline'
   | 'remove-outline';
 
-type IconSizeKey = keyof typeof DesignSystem.iconSize; // xs|sm|md|lg|xl|xxl
+type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 interface IconProps {
   name: IconName;
@@ -94,9 +93,9 @@ interface IconProps {
 }
 
 export const Icon: React.FC<IconProps> = ({ name, size = 28, color, colorToken, style }) => {
-  const { scheme } = useTheme();
-  const resolvedSize = typeof size === 'number' ? size : (DesignSystem.iconSize[size] ?? DesignSystem.iconSize.md);
-  const resolvedColor = color ?? (colorToken ? Tokens[scheme][colorToken] : Tokens[scheme].icon);
+  const { scheme, theme, ds } = useTheme();
+  const resolvedSize = typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
+  const resolvedColor = color ?? (colorToken ? theme[colorToken] : theme.icon);
 
   return (
     <Ionicons name={name as keyof typeof Ionicons.glyphMap} size={resolvedSize} color={resolvedColor} style={style} />
