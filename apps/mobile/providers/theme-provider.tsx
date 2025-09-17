@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useS
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 
 import { NavigationThemes, Tokens, type ColorScheme } from '@/constants/colors';
+import { DesignSystem } from '@/constants/typography';
 import * as storage from '@/utils/storage';
 import { useColorScheme as useRNColorScheme } from '@/hooks/use-color-scheme';
 
@@ -10,6 +11,8 @@ type ThemeContextValue = {
   setScheme: (scheme: ColorScheme) => void;
   toggle: () => void;
   tokens: typeof Tokens.light | typeof Tokens.dark;
+  theme: typeof Tokens.light | typeof Tokens.dark;
+  ds: typeof DesignSystem;
 };
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -55,7 +58,18 @@ export function AppThemeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const tokens = useMemo(() => Tokens[scheme], [scheme]);
-  const value = useMemo(() => ({ scheme, setScheme, toggle, tokens }), [scheme, toggle, tokens]);
+  const theme = useMemo(() => Tokens[scheme], [scheme]);
+  const value = useMemo(
+    () => ({
+      scheme,
+      setScheme,
+      toggle,
+      tokens,
+      theme,
+      ds: DesignSystem,
+    }),
+    [scheme, toggle, tokens, theme],
+  );
 
   const navTheme = NavigationThemes[scheme];
 

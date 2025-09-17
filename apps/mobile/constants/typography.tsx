@@ -293,18 +293,6 @@ export const DesignSystem = {
   },
 } as const;
 
-export const IOSTextStyles = {
-  pageTitleUnscrolled: DesignSystem.typography.pageTitle,
-  pageTitleScrolled: DesignSystem.typography.pageTitleScrolled,
-  defaultText: DesignSystem.typography.body,
-  secondaryText: DesignSystem.typography.secondary,
-  tertiaryText: DesignSystem.typography.tertiary,
-  captionText: DesignSystem.typography.caption,
-  actionBarText: DesignSystem.typography.actionBar,
-  buttonText: DesignSystem.typography.interactive,
-  inputText: DesignSystem.typography.interactive,
-};
-
 // Type exports
 export type BorderRadius = keyof typeof DesignSystem.borderRadius;
 export type Spacing = keyof typeof DesignSystem.spacing;
