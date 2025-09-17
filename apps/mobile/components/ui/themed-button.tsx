@@ -4,7 +4,7 @@ import { useTheme } from '@/providers/theme-provider';
 import { ThemedText } from './themed-text';
 import { Icon, type IconName } from '@/utils/icons';
 
-interface ThemedButtonProps extends TouchableOpacityProps {
+export interface ThemedButtonProps extends TouchableOpacityProps {
   title?: string;
   variant?: 'primary' | 'secondary' | 'destructive' | 'ghost';
   size?: 'sm' | 'md' | 'lg';

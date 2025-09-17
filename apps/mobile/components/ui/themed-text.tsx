@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text, type TextProps } from 'react-native';
 import { useTheme } from '@/providers/theme-provider';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 import { type Typography } from '@/constants/typography';
 import { type TokenName } from '@/constants/colors';
 
@@ -19,7 +18,6 @@ const getTextStyle = (
   variant: TextVariant,
   theme: any,
   ds: any,
-  colorScheme: 'light' | 'dark',
   colorToken?: TokenName,
   opacity?: number,
 ) => {
@@ -79,9 +77,8 @@ const getTextStyle = (
 
 export function ThemedText({ variant = 'body', color, colorToken, opacity, style, ...props }: ThemedTextProps) {
   const { theme, ds } = useTheme();
-  const colorScheme = useColorScheme() ?? 'light';
 
-  const textStyle = getTextStyle(variant, theme, ds, colorScheme, colorToken, opacity);
+  const textStyle = getTextStyle(variant, theme, ds, colorToken, opacity);
 
   return (
     <Text

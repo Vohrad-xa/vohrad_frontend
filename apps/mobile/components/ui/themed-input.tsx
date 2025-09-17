@@ -4,7 +4,7 @@ import { useTheme } from '@/providers/theme-provider';
 import { ThemedText } from './themed-text';
 import { Icon, type IconName } from '@/utils/icons';
 
-interface ThemedInputProps extends TextInputProps {
+export interface ThemedInputProps extends TextInputProps {
   label?: string;
   error?: string;
   icon?: IconName;
