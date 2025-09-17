@@ -1,51 +1,43 @@
-import { StyleSheet, View, Text, Platform, ScrollView, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, Platform, ScrollView } from 'react-native';
 import { GlassCard } from '@/components/ui/glass-card';
 import { InfoCard } from '@/components/ui/info-card';
 import { DesignSystem } from '@/constants/typography';
 import { useTypography } from '@/hooks/use-typography';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useWindowDimensions } from 'react-native';
-import { getDefaultHeaderHeight } from '@react-navigation/elements';
 import { Icon, AppIcons } from '@/utils/icons';
-
-const testImage = require('../../assets/images/icon.png');
 
 export default function HomeScreen() {
   const typography = useTypography();
-  const insets = useSafeAreaInsets();
-  const { width, height } = useWindowDimensions();
-  const headerHeight = getDefaultHeaderHeight({ width, height }, false, insets.top);
 
   const menuCards = [
-    { title: 'Maintenance', icon: AppIcons.business.maintenance },
-    { title: 'Items', icon: AppIcons.inventory.items },
-    { title: 'Suppliers', icon: AppIcons.business.suppliers },
-    { title: 'Locations', icon: AppIcons.inventory.locations },
-    { title: 'Documents', icon: AppIcons.content.document },
-    { title: 'Check In/Out', icon: 'log-in-outline' as const },
-    { title: 'Reports', icon: AppIcons.business.reports },
-    { title: 'Settings', icon: AppIcons.navigation.settings },
-    { title: 'Labels', icon: AppIcons.business.equipment },
-    { title: 'Events', icon: AppIcons.business.suppliers },
-    { title: 'Profile', icon: AppIcons.navigation.profile },
+    { title: 'Maintenance', icon: AppIcons.business.maintenance, count: 12 },
+    { title: 'Items', icon: AppIcons.inventory.items, count: 245 },
+    { title: 'Suppliers', icon: AppIcons.business.suppliers, count: 18 },
+    { title: 'Locations', icon: AppIcons.inventory.locations, count: 8 },
+    { title: 'Documents', icon: AppIcons.content.document, count: 156 },
+    { title: 'Check In/Out', icon: 'log-in-outline' as const, count: 3 },
+    { title: 'Reports', icon: AppIcons.business.reports, count: 24 },
+    { title: 'Settings', icon: AppIcons.navigation.settings, count: 0 },
+    { title: 'Labels', icon: AppIcons.business.equipment, count: 89 },
   ];
 
   return (
-    <ScrollView
-      contentContainerStyle={[styles.scrollContent, { paddingTop: headerHeight + DesignSystem.spacing.md }]}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.cardContainer}>
+    <ScrollView bounces={true} bouncesZoom={false}>
+      <View style={styles.container}>
         <InfoCard />
-        <View style={styles.menuGrid}>
-          {menuCards.map((card, i) => (
-            <GlassCard key={i} style={styles.smallCard}>
-              <View style={styles.cardContent}>
-                <Icon name={card.icon} size="lg" />
-                <Text style={[typography.style('tertiary'), styles.cardTitle]}>{card.title}</Text>
-              </View>
-            </GlassCard>
-          ))}
+        <View style={styles.cardContainer}>
+          <View style={styles.menuGrid}>
+            {menuCards.map((card, i) => (
+              <GlassCard key={i} style={styles.smallCard}>
+                <View style={styles.cardContent}>
+                  <View style={styles.topSection}>
+                    <Icon name={card.icon} size="lg" />
+                    <Text style={[typography.style('secondary'), styles.cardTitle]}>{card.title}</Text>
+                  </View>
+                  <Text style={[typography.style('headline'), styles.cardCount]}>{card.count}</Text>
+                </View>
+              </GlassCard>
+            ))}
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -53,12 +45,12 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  scrollContent: {
-    paddingHorizontal: DesignSystem.layout.screenPadding,
-    paddingBottom: DesignSystem.spacing.xl,
+  container: {
+    padding: DesignSystem.layout.screenPadding,
   },
   cardContainer: {
     gap: DesignSystem.spacing.md,
+    marginTop: DesignSystem.spacing.md,
   },
   menuGrid: Platform.select({
     web: {
@@ -77,19 +69,26 @@ const styles = StyleSheet.create({
       height: 140,
     },
     default: {
-      flex: 1,
-      height: 80,
-      flexBasis: '30%',
+      height: 100,
+      flexBasis: '48%',
+      maxWidth: '48%',
     },
   }),
   cardContent: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: DesignSystem.spacing.sm,
+    padding: DesignSystem.spacing.sm,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  topSection: {
+    alignSelf: 'flex-start',
+    gap: DesignSystem.spacing.xs,
   },
   cardTitle: {
-    textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: DesignSystem.fontWeight.medium,
+  },
+  cardCount: {
+    alignSelf: 'flex-start',
+    fontWeight: DesignSystem.fontWeight.bold,
   },
 });

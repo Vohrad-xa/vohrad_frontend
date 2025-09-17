@@ -4,8 +4,7 @@ import React from 'react';
 import { HapticTab } from '@/components/haptic-tab';
 import { View } from 'react-native';
 import Switch from '@/components/ui/Switch';
-import { GlassSurface } from '@/components/ui/glass-surface';
-import { Tokens, NavigationThemes, Palette } from '@/constants/colors';
+import { Tokens } from '@/constants/colors';
 import { useTheme } from '@/providers/theme-provider';
 import { Icon, AppIcons } from '@/utils/icons';
 
@@ -17,25 +16,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerTransparent: true,
-        headerBackground: () => (
-          <View style={{ flex: 1 }}>
-            {scheme === 'light' ? (
-              <View style={{ flex: 1, backgroundColor: Palette.black }} />
-            ) : (
-              <GlassSurface style={{ flex: 1 }} />
-            )}
-            <View style={{ height: 0.5, backgroundColor: NavigationThemes[scheme].colors.border }} />
-          </View>
-        ),
-        tabBarStyle: {
-          borderTopWidth: 0.5,
-          borderTopColor: NavigationThemes[scheme].colors.border,
-          position: 'absolute',
-          backgroundColor: scheme === 'light' ? NavigationThemes[scheme].colors.card : 'transparent',
-        },
-        tabBarBackground: () => (scheme === 'light' ? null : <GlassSurface style={{ flex: 1 }} />),
-        headerTitleStyle: { color: Palette.white },
+        headerTitleStyle: { color: Tokens[scheme].text },
         tabBarButton: HapticTab,
         tabBarActiveTintColor: Tokens[scheme].tabIconSelected,
         tabBarInactiveTintColor: Tokens[scheme].tabIconDefault,
@@ -51,7 +32,7 @@ export default function TabLayout() {
               alignItems: 'flex-start',
             }}
           >
-            <Icon name={AppIcons.navigation.menu} color={scheme === 'light' ? Palette.white : Tokens[scheme].icon} />
+            <Icon name={AppIcons.navigation.menu} />
           </View>
         ),
 
@@ -72,7 +53,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Dashboard',
           tabBarIcon: ({ color }) => <Icon name={AppIcons.navigation.home} color={color} />,
         }}
       />

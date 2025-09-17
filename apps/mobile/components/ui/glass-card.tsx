@@ -43,10 +43,8 @@ export function GlassCard({ children, style, contentStyle }: GlassCardProps) {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(33, 32, 31, 0.26)',
+    borderRadius: 10,
+    backgroundColor: 'rgba(215, 212, 210, 0.26)',
   },
 });
 
