@@ -1,13 +1,15 @@
 import React from 'react';
-import { OpaqueColorValue, StyleProp, TextStyle } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { type TokenName } from '@/constants/colors';
-import { useTheme } from '@/providers/theme-provider';
+import type {OpaqueColorValue, StyleProp, TextStyle} from 'react-native';
+import {Ionicons} from '@expo/vector-icons';
+import {type TokenName} from '@/constants/colors';
+import {useTheme} from '@/providers/theme-provider';
 
 export type IconName =
   // Navigation & UI
   | 'home-outline'
   | 'reorder-two-outline'
+  | 'reorder-two'
+  | 'reorder-three-outline'
   | 'close-outline'
   | 'chevron-forward-outline'
   | 'chevron-back-outline'
@@ -18,13 +20,12 @@ export type IconName =
   | 'help-circle-outline'
   | 'information-circle-outline'
   | 'exit-outline'
+  | 'options-outline'
 
   // Inventory & Management
   | 'cube-outline'
   | 'layers-outline'
-  | 'swap-horizontal-outline'
   | 'build-outline'
-  | 'construct-outline'
   | 'hardware-chip-outline'
   | 'log-in-outline'
   | 'log-out-outline'
@@ -33,14 +34,23 @@ export type IconName =
 
   // Actions
   | 'camera-outline'
-  | 'qr-code-outline'
-  | 'barcode-outline'
+  | 'scan-outline'
   | 'keypad-outline'
   | 'pencil-outline'
   | 'add-outline'
   | 'add-circle-outline'
+  | 'add-circle'
   | 'checkmark-outline'
   | 'trash-outline'
+  | 'create-outline'
+  | 'duplicate-outline'
+  | 'share-outline'
+  | 'download-outline'
+  | 'cloud-download-outline'
+  | 'sync-outline'
+  | 'refresh-outline'
+  | 'return-down-forward-outline'
+  | 'flash-outline'
 
   // Content & Files
   | 'document-text-outline'
@@ -59,10 +69,8 @@ export type IconName =
   | 'call-outline'
 
   // Business
-  | 'car-outline'
-  | 'business-outline'
-  | 'storefront-outline'
-  | 'location-outline'
+  | 'cart-outline'
+  | 'locate-outline'
   | 'card-outline'
   | 'cash-outline'
 
@@ -80,7 +88,9 @@ export type IconName =
   | 'notifications-outline'
   | 'refresh-outline'
   | 'sync-outline'
-  | 'remove-outline';
+  | 'remove-outline'
+  | 'sunny-outline'
+  | 'moon-outline';
 
 type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -92,8 +102,18 @@ interface IconProps {
   style?: StyleProp<TextStyle>;
 }
 
-export const Icon: React.FC<IconProps> = ({ name, size = 28, color, colorToken, style }) => {
-  const { scheme, theme, ds } = useTheme();
+export const IconFontFamily = 'Ionicons' as const;
+
+export function getIconGlyph(name: IconName): string | undefined {
+  const glyph = Ionicons.glyphMap[name as keyof typeof Ionicons.glyphMap];
+  if (glyph == null) {
+    return undefined;
+  }
+  return typeof glyph === 'number' ? String.fromCodePoint(glyph) : glyph;
+}
+
+export const Icon: React.FC<IconProps> = ({name, size = 28, color, colorToken, style}) => {
+  const {theme, ds} = useTheme();
   const resolvedSize = typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
   const resolvedColor = color ?? (colorToken ? theme[colorToken] : theme.icon);
 
@@ -103,19 +123,21 @@ export const Icon: React.FC<IconProps> = ({ name, size = 28, color, colorToken, 
 };
 
 export const IconPresets = {
-  small: { size: 'sm' as IconSizeKey },
-  medium: { size: 'md' as IconSizeKey },
-  large: { size: 'lg' as IconSizeKey },
-  xlarge: { size: 'xxl' as IconSizeKey },
+  small: {size: 'sm' as IconSizeKey},
+  medium: {size: 'md' as IconSizeKey},
+  large: {size: 'lg' as IconSizeKey},
+  xlarge: {size: 'xxl' as IconSizeKey},
 } as const;
 
 export const AppIcons = {
   navigation: {
     home: 'home-outline' as IconName,
-    menu: 'reorder-two-outline' as IconName,
+    menu: 'reorder-two' as IconName,
     settings: 'settings-outline' as IconName,
     scan: 'barcode-outline' as IconName,
     profile: 'person-outline' as IconName,
+    events: 'notifications-outline' as IconName,
+    filter: 'options-outline' as IconName,
     back: 'chevron-back-outline' as IconName,
     forward: 'chevron-forward-outline' as IconName,
     close: 'close-outline' as IconName,
@@ -124,24 +146,32 @@ export const AppIcons = {
   inventory: {
     items: 'cube-outline' as IconName,
     categories: 'layers-outline' as IconName,
-    locations: 'storefront-outline' as IconName,
+    locations: 'locate-outline' as IconName,
     search: 'search-outline' as IconName,
   },
 
   actions: {
-    scan: 'qr-code-outline' as IconName,
+    scan: 'scan-outline' as IconName,
     camera: 'camera-outline' as IconName,
     input: 'keypad-outline' as IconName,
-    edit: 'pencil-outline' as IconName,
+    edit: 'create-outline' as IconName,
+    add: 'add-outline' as IconName,
     save: 'checkmark-outline' as IconName,
     delete: 'trash-outline' as IconName,
+    duplicate: 'duplicate-outline' as IconName,
+    share: 'share-outline' as IconName,
+    sync: 'sync-outline' as IconName,
+    refresh: 'refresh-outline' as IconName,
+    move: 'return-down-forward-outline' as IconName,
   },
 
   content: {
     document: 'document-text-outline' as IconName,
     folder: 'folder-outline' as IconName,
     image: 'image-outline' as IconName,
-    download: 'download-outline' as IconName,
+    download: 'cloud-download-outline' as IconName,
+    export: 'share-outline' as IconName,
+    print: 'print-outline' as IconName,
   },
 
   status: {
@@ -152,12 +182,17 @@ export const AppIcons = {
   },
 
   business: {
-    supplier: 'car-outline' as IconName,
-    suppliers: 'business-outline' as IconName,
+    suppliers: 'cart-outline' as IconName,
     profile: 'person-outline' as IconName,
+    events: 'notifications-outline' as IconName,
     equipment: 'hardware-chip-outline' as IconName,
-    maintenance: 'construct-outline' as IconName,
+    maintenance: 'flash-outline' as IconName,
     reports: 'bar-chart-outline' as IconName,
+  },
+
+  theme: {
+    light: 'sunny-outline' as IconName,
+    dark: 'moon-outline' as IconName,
   },
 } as const;
 

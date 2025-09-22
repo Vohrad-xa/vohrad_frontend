@@ -1,12 +1,11 @@
-import { Link } from 'expo-router';
-import { StyleSheet } from 'react-native';
+import {StyleSheet} from 'react-native';
+import {Link} from 'expo-router';
 
-import { ThemedText } from '@/components/ui/themed-text';
-import { ThemedView } from '@/components/ui/themed-view';
-import { useTheme } from '@/providers/theme-provider';
+import {ThemedText, ThemedView} from '@/components/ui';
+import {useTheme} from '@/providers';
 
 export default function ModalScreen() {
-  const { ds } = useTheme();
+  const {ds} = useTheme();
 
   const styles = StyleSheet.create({
     container: {

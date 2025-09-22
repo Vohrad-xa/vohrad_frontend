@@ -1,10 +1,3 @@
-/**
- * Centralized color system for the mobile app.
- * - Palette: raw colors and scales
- * - Tokens: semantic colors per theme (light/dark)
- * - Helpers: types and utilities for consuming tokens
- */
-
 export const Palette = {
   gray: {
     50: '#F2F2F7',
@@ -26,10 +19,24 @@ export const Palette = {
     orange: '#FF9500',
     red: '#ef4444',
     redDark: '#dc2626',
+    purple: '#6a24c4ff',
+    teal: '#14B8A6',
+    indigo: '#4F46E5',
+    pink: '#EC4899',
   },
   white: '#FFFFFF',
   black: '#000000',
-  creme: '#f7f7f5ff',
+  darkBackground: '#262624',
+  creme: '#FAF9F5',
+  sidebar: '#1F1E1D',
+  lightSidebar: '#F5F4ED',
+  quickActionIcon: '#C6613F',
+  quickActionIconDark: '#C2C0B6',
+  cardDarkGlass: 'rgba(255, 255, 255, 0.1)',
+  cardLightGlass: 'rgba(255, 255, 255, 0.95)',
+  cardBorderLight: 'rgba(209, 205, 205, 0.23)',
+  glassTintLight: 'rgba(255, 255, 255, 1)',
+  glassTintDark: 'rgba(186, 185, 185, 0.06)',
 } as const;
 
 export const Tokens = {
@@ -39,7 +46,7 @@ export const Tokens = {
     surface: Palette.gray[50],
     text: '#11181C',
     muted: '#6C6C70',
-    border: Palette.gray[200],
+    border: Palette.cardBorderLight,
 
     // Brand & accents
     primary: Palette.brand.blue,
@@ -49,6 +56,9 @@ export const Tokens = {
     accentGreen: Palette.brand.green,
     accentYellow: Palette.brand.yellow,
     accentOrange: Palette.brand.orange,
+    accentTeal: Palette.brand.teal,
+    accentIndigo: Palette.brand.indigo,
+    accentPink: Palette.brand.pink,
     destructive: Palette.brand.red,
     destructiveForeground: Palette.white,
 
@@ -57,19 +67,25 @@ export const Tokens = {
     tint: Palette.brand.blue,
     tabIconDefault: Palette.black,
     tabIconSelected: Palette.brand.blue,
-    card: Palette.white,
+    card: Palette.cardLightGlass,
     input: Palette.white,
     ring: Palette.brand.blue,
-
-    // Icon semantic variants
+    purple: Palette.brand.purple,
+    iosLightGray: Palette.gray[50],
+    iosPlaceholder: Palette.gray[400],
+    overlay: Palette.gray[200],
     iconInfo: Palette.brand.blue,
     iconPositive: Palette.brand.green,
     iconCaution: Palette.brand.yellow,
     iconWarning: Palette.brand.orange,
+    sidebarBackground: Palette.lightSidebar,
+    quickActionIconBackground: Palette.quickActionIcon,
+    glassTint: Palette.glassTintLight,
   },
+
   dark: {
     // Surfaces & text
-    background: Palette.black,
+    background: Palette.darkBackground,
     surface: Palette.gray[800],
     text: '#ECEDEE',
     muted: '#A1A1AA',
@@ -83,6 +99,9 @@ export const Tokens = {
     accentGreen: Palette.brand.green,
     accentYellow: Palette.brand.yellow,
     accentOrange: Palette.brand.orange,
+    accentTeal: Palette.brand.teal,
+    accentIndigo: Palette.brand.indigo,
+    accentPink: Palette.brand.pink,
     destructive: Palette.brand.redDark,
     destructiveForeground: Palette.white,
 
@@ -91,15 +110,20 @@ export const Tokens = {
     tint: Palette.brand.blueDark,
     tabIconDefault: '#A1A1AA',
     tabIconSelected: Palette.brand.blueDark,
-    card: '#111214',
+    card: Palette.cardDarkGlass,
     input: '#111214',
     ring: Palette.brand.blueDark,
-
-    // Icon semantic variants
+    purple: Palette.brand.purple,
+    iosLightGray: Palette.gray[700],
+    iosPlaceholder: Palette.gray[500],
+    overlay: Palette.gray[600],
     iconInfo: Palette.brand.blueDark,
     iconPositive: Palette.brand.green,
     iconCaution: Palette.brand.yellow,
     iconWarning: Palette.brand.orange,
+    sidebarBackground: Palette.sidebar,
+    quickActionIconBackground: Palette.quickActionIconDark,
+    glassTint: Palette.glassTintDark,
   },
 } as const;
 
@@ -108,10 +132,10 @@ export type TokenName = keyof typeof Tokens.light;
 
 // Optional: React Navigation compatible themes
 const NavigationFonts = {
-  regular: { fontFamily: 'System', fontWeight: '400' as const },
-  medium: { fontFamily: 'System', fontWeight: '500' as const },
-  bold: { fontFamily: 'System', fontWeight: '700' as const },
-  heavy: { fontFamily: 'System', fontWeight: '800' as const },
+  regular: {fontFamily: 'System', fontWeight: '400' as const},
+  medium: {fontFamily: 'System', fontWeight: '500' as const},
+  bold: {fontFamily: 'System', fontWeight: '700' as const},
+  heavy: {fontFamily: 'System', fontWeight: '800' as const},
 } as const;
 
 export const NavigationThemes = {

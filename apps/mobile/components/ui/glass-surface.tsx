@@ -1,34 +1,31 @@
 import React from 'react';
-import { View, StyleProp, ViewStyle } from 'react-native';
-import { useTheme } from '@/providers/theme-provider';
+import type {StyleProp, ViewStyle} from 'react-native';
+import {View} from 'react-native';
+import {BlurView} from 'expo-blur';
+import {useTheme} from '@/providers';
 
 export interface GlassSurfaceProps {
   children?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   intensity?: number;
   tint?: 'default' | 'light' | 'dark';
+  bordered?: boolean;
 }
 
-export function GlassSurface({ children, style, intensity, tint }: GlassSurfaceProps) {
-  const { scheme } = useTheme?.() ?? ({ scheme: 'light' } as any);
-  try {
-    const mod = require('expo-blur');
-    const BlurView = (mod?.BlurView ?? mod) as React.ComponentType<any> | undefined;
-    if (BlurView) {
-      return (
-        <BlurView
-          intensity={intensity ?? (scheme === 'dark' ? 40 : 80)}
-          tint={tint ?? (scheme === 'dark' ? 'dark' : 'default')}
-          style={style}
-        >
-          {children}
-        </BlurView>
-      );
-    }
-  } catch {}
+export function GlassSurface({children, style, intensity, tint}: GlassSurfaceProps) {
+  const {scheme} = useTheme();
 
-  // Fallback: transparent passthrough.
-  return <View style={style}>{children}</View>;
+  return (
+    <View style={[style, {overflow: 'hidden'}]}>
+      <BlurView
+        intensity={intensity ?? 20}
+        tint={tint ?? (scheme === 'dark' ? 'dark' : 'light')}
+        experimentalBlurMethod="dimezisBlurView"
+        style={{flex: 1}}>
+        <View style={{flex: 1}}>{children}</View>
+      </BlurView>
+    </View>
+  );
 }
 
 export default GlassSurface;

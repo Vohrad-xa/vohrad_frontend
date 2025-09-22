@@ -1,79 +1,77 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { GlassCard } from '@/components/ui/glass-card';
-import { ThemedText } from '@/components/ui/themed-text';
-import { useTheme } from '@/providers/theme-provider';
+import {View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
+import {useTheme} from '@/providers';
+import {Icon, type IconName, AppIcons} from '@/utils';
+import {ThemedText} from './themed-text';
 
-interface StatItemProps {
-  value: string;
-  label: string;
-}
-
-function StatItem({ value, label }: StatItemProps) {
-  const { ds } = useTheme();
-
-  const statStyles = StyleSheet.create({
-    statItem: {
-      alignItems: 'center',
-      flex: 1,
-    },
-    statValue: {
-      fontWeight: ds.fontWeight.semibold,
-    },
-    statLabel: {
-      marginTop: ds.spacing.xs,
-      opacity: 0.7,
-    },
-  });
-
-  return (
-    <View style={statStyles.statItem}>
-      <ThemedText variant="title2" style={statStyles.statValue}>
-        {value}
-      </ThemedText>
-      <ThemedText variant="caption1" style={statStyles.statLabel}>
-        {label}
-      </ThemedText>
-    </View>
-  );
+interface QuickAction {
+  name: string;
+  icon: IconName;
 }
 
 export function InfoCard() {
-  const { ds } = useTheme();
+  const {ds, theme} = useTheme();
+
+  const quickActions: QuickAction[] = [
+    {name: 'Add', icon: AppIcons.actions.add},
+    {name: 'Move', icon: AppIcons.actions.move},
+    {name: 'Scan', icon: AppIcons.actions.scan},
+    {name: 'Maintain', icon: AppIcons.business.maintenance},
+    {name: 'Print', icon: AppIcons.content.print},
+    {name: 'Categories', icon: AppIcons.inventory.categories},
+    {name: 'Suppliers', icon: AppIcons.business.suppliers},
+    {name: 'Events', icon: AppIcons.business.events},
+    {name: 'Documents', icon: AppIcons.content.document},
+    {name: 'Locations', icon: AppIcons.inventory.locations},
+    {name: 'Items', icon: AppIcons.inventory.items},
+  ];
+
+  const renderAction = ({item}: {item: QuickAction}) => (
+    <TouchableOpacity style={styles.actionButton}>
+      <View style={styles.iconContainer}>
+        <Icon name={item.icon} size={ds.iconSize.xxl} color="#000000" />
+      </View>
+      <ThemedText style={styles.actionLabel}>{item.name}</ThemedText>
+    </TouchableOpacity>
+  );
 
   const styles = StyleSheet.create({
     card: {
-      height: 100,
+      marginHorizontal: -ds.layout.screenPadding,
     },
-    cardContentOverride: {
-      alignItems: 'stretch',
-      padding: ds.spacing.lg,
-    },
-    content: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+    actionButton: {
       alignItems: 'center',
+      justifyContent: 'center',
+      width: 70,
+      paddingVertical: ds.spacing.sm,
+      // marginRight: ds.spacing.sm,
+      gap: ds.spacing.xs,
     },
-    statItem: {
+    iconContainer: {
+      width: 48,
+      height: 48,
+      borderRadius: ds.borderRadius.full,
+      backgroundColor: theme.quickActionIconBackground,
       alignItems: 'center',
-      flex: 1,
+      justifyContent: 'center',
     },
-    statValue: {
-      fontWeight: ds.fontWeight.semibold,
-    },
-    statLabel: {
-      marginTop: ds.spacing.xs,
-      opacity: 0.7,
+    actionLabel: {
+      ...ds.typography.caption1,
+      textAlign: 'center',
+      color: theme.muted,
+      fontWeight: '600',
     },
   });
 
   return (
-    <GlassCard style={styles.card} contentStyle={styles.cardContentOverride}>
-      <View style={styles.content}>
-        <StatItem value="2,847" label="Items" />
-        <StatItem value="95%" label="Active" />
-        <StatItem value="12" label="Locations" />
-      </View>
-    </GlassCard>
+    <View style={styles.card}>
+      <FlatList
+        data={quickActions}
+        renderItem={renderAction}
+        keyExtractor={(item) => item.name}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      />
+    </View>
   );
 }

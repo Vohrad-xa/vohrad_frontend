@@ -1,14 +1,15 @@
-import { PropsWithChildren, useState } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import {useState} from 'react';
+import type {PropsWithChildren} from 'react';
+import {StyleSheet, TouchableOpacity} from 'react-native';
 
-import { ThemedText } from '@/components/ui/themed-text';
-import { ThemedView } from '@/components/ui/themed-view';
-import Icon from '@/utils/icons';
-import { useTheme } from '@/providers/theme-provider';
+import {useTheme} from '@/providers';
+import {Icon} from '@/utils';
+import {ThemedText} from './themed-text';
+import {ThemedView} from './themed-view';
 
-export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {
+export function Collapsible({children, title}: PropsWithChildren & {title: string}) {
   const [isOpen, setIsOpen] = useState(false);
-  const { ds } = useTheme();
+  const {ds} = useTheme();
 
   const styles = StyleSheet.create({
     heading: {
@@ -29,7 +30,7 @@ export function Collapsible({ children, title }: PropsWithChildren & { title: st
           name="chevron-forward-outline"
           size="sm"
           colorToken="icon"
-          style={{ transform: [{ rotate: isOpen ? '90deg' : '0deg' }] }}
+          style={{transform: [{rotate: isOpen ? '90deg' : '0deg'}]}}
         />
 
         <ThemedText variant="headline">{title}</ThemedText>

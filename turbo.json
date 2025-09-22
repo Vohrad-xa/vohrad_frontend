@@ -1,14 +1,14 @@
 {
   "tasks": {
-    "start": { "cache": false, "persistent": true },
-    "dev": { "cache": false, "persistent": true },
+    "start": {"cache": false, "persistent": true},
+    "dev": {"cache": false, "persistent": true},
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "dist/**", "build/**"]
     },
-    "lint": { "outputs": [] },
-    "test": { "outputs": [] },
-    "format": { "outputs": [] },
-    "typecheck": { "outputs": [] }
+    "lint": {"outputs": []},
+    "test": {"outputs": []},
+    "format": {"outputs": []},
+    "typecheck": {"outputs": []}
   }
 }

@@ -1,19 +1,26 @@
 import React from 'react';
-import { View, type ViewProps, type ViewStyle } from 'react-native';
-import { useTheme } from '@/providers/theme-provider';
-import { GlassCard } from '@/components/ui/glass-card';
+import {View, type ViewProps, type ViewStyle} from 'react-native';
+import {useTheme} from '@/providers';
+import {GlassCard} from './glass-card';
 
 export interface ThemedViewProps extends ViewProps {
   variant?: 'default' | 'card' | 'cardContent' | 'modal' | 'header' | 'headerAccessory' | 'listItem';
   shadow?: 'none' | 'sm' | 'md' | 'lg';
+  contentStyle?: ViewStyle;
 }
 
-export const ThemedView: React.FC<ThemedViewProps> = ({ variant = 'default', shadow = 'none', style, ...props }) => {
-  const { theme, ds } = useTheme();
+export const ThemedView: React.FC<ThemedViewProps> = ({
+  variant = 'default',
+  shadow = 'none',
+  style,
+  contentStyle,
+  ...props
+}) => {
+  const {theme, ds} = useTheme();
 
   // Special handling for card variant - delegate to GlassCard
   if (variant === 'card') {
-    return <GlassCard style={style} {...props} />;
+    return <GlassCard style={style} contentStyle={contentStyle} {...props} />;
   }
 
   // Regular variants for non-card components
@@ -22,7 +29,7 @@ export const ThemedView: React.FC<ThemedViewProps> = ({ variant = 'default', sha
       case 'cardContent':
         return {
           flex: 1,
-          padding: ds.spacing.sm,
+          padding: ds.spacing.md,
           flexDirection: 'column',
           justifyContent: 'space-between',
         };

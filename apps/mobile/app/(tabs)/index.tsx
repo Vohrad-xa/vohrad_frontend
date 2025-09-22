@@ -1,24 +1,46 @@
-import { StyleSheet, View, Platform, ScrollView } from 'react-native';
-import { InfoCard } from '@/components/ui/info-card';
-import { ThemedText } from '@/components/ui/themed-text';
-import { ThemedView } from '@/components/ui/themed-view';
-import { useTheme } from '@/providers/theme-provider';
-import { Icon, AppIcons } from '@/utils/icons';
+import {StyleSheet, View, Dimensions} from 'react-native';
+import {InfoCard, RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
+import {usePlatformStyles} from '@/hooks';
+import {useTheme} from '@/providers';
+import type {MenuCard} from '@/types/ui';
+import {Icon, AppIcons} from '@/utils';
 
 export default function HomeScreen() {
-  const { ds } = useTheme();
+  const {ds, theme} = useTheme();
+  const screenWidth = Dimensions.get('window').width;
+  const cardWidth = (screenWidth - ds.layout.screenPadding * 2 - ds.spacing.md) / 2;
 
-  const menuCards = [
-    { title: 'Maintenance', icon: AppIcons.business.maintenance, count: 12 },
-    { title: 'Items', icon: AppIcons.inventory.items, count: 245 },
-    { title: 'Suppliers', icon: AppIcons.business.suppliers, count: 18 },
-    { title: 'Locations', icon: AppIcons.inventory.locations, count: 8 },
-    { title: 'Documents', icon: AppIcons.content.document, count: 156 },
-    { title: 'Check In/Out', icon: 'log-in-outline' as const, count: 3 },
-    { title: 'Reports', icon: AppIcons.business.reports, count: 24 },
-    { title: 'Settings', icon: AppIcons.navigation.settings, count: 0 },
-    { title: 'Labels', icon: AppIcons.business.equipment, count: 89 },
+  const menuCards: MenuCard[] = [
+    {title: 'Items', icon: AppIcons.inventory.items, count: 245, colorToken: 'accentBlue'},
+    {title: 'Locations', icon: AppIcons.inventory.locations, count: 8, colorToken: 'accentYellow'},
+    {title: 'Maintenance', icon: AppIcons.business.maintenance, count: 12, colorToken: 'accentOrange'},
+    {title: 'Suppliers', icon: AppIcons.business.suppliers, count: 18, colorToken: 'accentGreen'},
+    {title: 'Check In/Out', icon: AppIcons.actions.move, count: 3, colorToken: 'destructive'},
+    {title: 'Documents', icon: AppIcons.content.document, count: 156, colorToken: 'accentIndigo'},
   ];
+
+  const menuGridStyles = usePlatformStyles({
+    web: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: ds.spacing.md,
+    },
+    mobile: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: ds.spacing.md,
+    },
+  });
+
+  const cardStyles = usePlatformStyles({
+    web: {
+      height: ds.components.button.height * 2.3,
+    },
+    mobile: {
+      height: ds.components.button.height * 2.3,
+      width: cardWidth,
+    },
+  });
 
   const styles = StyleSheet.create({
     container: {
@@ -26,30 +48,13 @@ export default function HomeScreen() {
     },
     cardContainer: {
       gap: ds.spacing.md,
-      marginTop: ds.spacing.md,
     },
-    menuGrid: Platform.select({
-      web: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: ds.spacing.md,
-      } as any,
-      default: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: ds.spacing.md,
-      },
-    }),
-    smallCard: Platform.select({
-      web: {
-        height: ds.components.card.borderRadius * 17.5,
-      },
-      default: {
-        height: ds.components.button.height * 2.3,
-        flexBasis: '48%',
-        maxWidth: '48%',
-      },
-    }),
+    cardContent: {
+      flex: 1,
+      padding: ds.spacing.md,
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+    },
     topSection: {
       alignSelf: 'flex-start',
       gap: ds.spacing.xs,
@@ -61,33 +66,45 @@ export default function HomeScreen() {
       alignSelf: 'flex-start',
       fontWeight: ds.fontWeight.bold,
     },
+    title: {
+      marginTop: ds.spacing.lg,
+      marginBottom: ds.spacing.md,
+    },
   });
 
   return (
-    <ScrollView bounces bouncesZoom={false}>
+    <RefreshableScrollView
+      bounces
+      showsVerticalScrollIndicator={false}
+      contentInsetAdjustmentBehavior="automatic"
+      style={{backgroundColor: theme.background}}>
       <View style={styles.container}>
+        <ThemedText variant="headline" style={[styles.title, {marginTop: 0}]}>
+          Quick Actions
+        </ThemedText>
         <InfoCard />
 
+        <ThemedText variant="headline" style={styles.title}>
+          Overview
+        </ThemedText>
         <View style={styles.cardContainer}>
-          <View style={styles.menuGrid}>
+          <View style={menuGridStyles}>
             {menuCards.map((card, i) => (
-              <ThemedView key={i} variant="card" style={styles.smallCard}>
-                <ThemedView variant="cardContent">
-                  <View style={styles.topSection}>
-                    <Icon name={card.icon} size="lg" />
-                    <ThemedText variant="secondary" style={styles.cardTitle}>
-                      {card.title}
-                    </ThemedText>
-                  </View>
-                  <ThemedText variant="headline" style={styles.cardCount}>
-                    {card.count}
+              <ThemedView key={i} variant="card" style={cardStyles} contentStyle={styles.cardContent}>
+                <View style={styles.topSection}>
+                  <Icon name={card.icon} size="lg" colorToken={card.colorToken} />
+                  <ThemedText variant="secondary" style={styles.cardTitle}>
+                    {card.title}
                   </ThemedText>
-                </ThemedView>
+                </View>
+                <ThemedText variant="headline" style={styles.cardCount}>
+                  {card.count}
+                </ThemedText>
               </ThemedView>
             ))}
           </View>
         </View>
       </View>
-    </ScrollView>
+    </RefreshableScrollView>
   );
 }

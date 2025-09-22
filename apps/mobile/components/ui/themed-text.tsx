@@ -1,8 +1,8 @@
 import React from 'react';
-import { Text, type TextProps } from 'react-native';
-import { useTheme } from '@/providers/theme-provider';
-import { type Typography } from '@/constants/typography';
-import { type TokenName } from '@/constants/colors';
+import {Text, type TextProps} from 'react-native';
+import type {Tokens, TokenName} from '@/constants/colors';
+import type {DesignSystem, Typography} from '@/constants/typography';
+import {useTheme} from '@/providers/theme-provider';
 
 // Text variants based on typography system
 export type TextVariant = Typography;
@@ -16,8 +16,8 @@ export type ThemedTextProps = TextProps & {
 
 const getTextStyle = (
   variant: TextVariant,
-  theme: any,
-  ds: any,
+  theme: typeof Tokens.light | typeof Tokens.dark,
+  ds: typeof DesignSystem,
   colorToken?: TokenName,
   opacity?: number,
 ) => {
@@ -75,8 +75,8 @@ const getTextStyle = (
   };
 };
 
-export function ThemedText({ variant = 'body', color, colorToken, opacity, style, ...props }: ThemedTextProps) {
-  const { theme, ds } = useTheme();
+export function ThemedText({variant = 'body', color, colorToken, opacity, style, ...props}: ThemedTextProps) {
+  const {theme, ds} = useTheme();
 
   const textStyle = getTextStyle(variant, theme, ds, colorToken, opacity);
 
@@ -84,7 +84,7 @@ export function ThemedText({ variant = 'body', color, colorToken, opacity, style
     <Text
       style={[
         textStyle,
-        color && { color }, // Override color if provided
+        color && {color}, // Override color if provided
         style,
       ]}
       {...props}

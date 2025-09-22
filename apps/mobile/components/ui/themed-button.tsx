@@ -1,8 +1,8 @@
 import React from 'react';
-import { TouchableOpacity, type TouchableOpacityProps, type ViewStyle } from 'react-native';
-import { useTheme } from '@/providers/theme-provider';
-import { ThemedText } from './themed-text';
-import { Icon, type IconName } from '@/utils/icons';
+import {TouchableOpacity, type TouchableOpacityProps, type ViewStyle} from 'react-native';
+import {useTheme} from '@/providers/theme-provider';
+import {Icon, type IconName} from '@/utils';
+import {ThemedText} from './themed-text';
 
 export interface ThemedButtonProps extends TouchableOpacityProps {
   title?: string;
@@ -26,7 +26,7 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
   children,
   ...props
 }) => {
-  const { theme, ds } = useTheme();
+  const {theme, ds} = useTheme();
 
   const getButtonStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
@@ -108,18 +108,18 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
   };
 
   return (
-    <TouchableOpacity style={[getButtonStyle(), style]} disabled={disabled || loading} activeOpacity={0.7} {...props}>
+    <TouchableOpacity style={[getButtonStyle(), style]} disabled={disabled ?? loading} activeOpacity={0.7} {...props}>
       {icon && iconPosition === 'left' && (
-        <Icon name={icon} size={ds.iconSize.md} color={getTextColor()} style={{ marginRight: ds.spacing.xs }} />
+        <Icon name={icon} size={ds.iconSize.md} color={getTextColor()} style={{marginRight: ds.spacing.xs}} />
       )}
-      {(title || children) && (
-        <ThemedText variant="interactive" style={{ color: getTextColor() }}>
+      {(title ?? children) && (
+        <ThemedText variant="interactive" style={{color: getTextColor()}}>
           {loading ? 'Loading...' : title}
         </ThemedText>
       )}
       {children && !title && children}
       {icon && iconPosition === 'right' && (
-        <Icon name={icon} size={ds.iconSize.md} color={getTextColor()} style={{ marginLeft: ds.spacing.xs }} />
+        <Icon name={icon} size={ds.iconSize.md} color={getTextColor()} style={{marginLeft: ds.spacing.xs}} />
       )}
     </TouchableOpacity>
   );

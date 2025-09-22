@@ -1,8 +1,8 @@
-import React, { forwardRef } from 'react';
-import { View, TextInput, type TextInputProps, type TextStyle } from 'react-native';
-import { useTheme } from '@/providers/theme-provider';
-import { ThemedText } from './themed-text';
-import { Icon, type IconName } from '@/utils/icons';
+import React, {forwardRef} from 'react';
+import {View, TextInput, type TextInputProps, type TextStyle} from 'react-native';
+import {useTheme} from '@/providers/theme-provider';
+import {Icon, type IconName} from '@/utils';
+import {ThemedText} from './themed-text';
 
 export interface ThemedInputProps extends TextInputProps {
   label?: string;
@@ -12,8 +12,8 @@ export interface ThemedInputProps extends TextInputProps {
 }
 
 export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
-  ({ label, error, icon, iconPosition = 'left', style, ...props }, ref) => {
-    const { theme, ds } = useTheme();
+  ({label, error, icon, iconPosition = 'left', style, ...props}, ref) => {
+    const {theme, ds} = useTheme();
 
     const inputStyle: TextStyle = {
       borderRadius: ds.components.input.borderRadius,
@@ -32,11 +32,11 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
     return (
       <View>
         {label && (
-          <ThemedText variant="caption" style={{ marginBottom: ds.spacing.xs }}>
+          <ThemedText variant="caption" style={{marginBottom: ds.spacing.xs}}>
             {label}
           </ThemedText>
         )}
-        <View style={{ position: 'relative' }}>
+        <View style={{position: 'relative'}}>
           <TextInput ref={ref} style={[inputStyle, style]} placeholderTextColor={theme.muted} {...props} />
           {icon && (
             <View
@@ -44,19 +44,18 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
                 position: 'absolute',
                 top: '50%',
                 [iconPosition === 'left' ? 'left' : 'right']: ds.spacing.md,
-                transform: [{ translateY: -ds.iconSize.sm / 2 }],
+                transform: [{translateY: -ds.iconSize.sm / 2}],
                 minWidth: ds.components.tapTarget.minSize,
                 minHeight: ds.components.tapTarget.minSize,
                 justifyContent: 'center',
                 alignItems: iconPosition === 'left' ? 'flex-start' : 'flex-end',
-              }}
-            >
+              }}>
               <Icon name={icon} size={ds.iconSize.md} color={theme.muted} />
             </View>
           )}
         </View>
         {error && (
-          <ThemedText variant="caption" colorToken="destructive" style={{ marginTop: ds.spacing.xs }}>
+          <ThemedText variant="caption" colorToken="destructive" style={{marginTop: ds.spacing.xs}}>
             {error}
           </ThemedText>
         )}

@@ -32,6 +32,7 @@ apps/mobile/.gradle/
 apps/mobile/.idea/
 apps/mobile/*.iml
 **/android/local.properties
+/docs
 
 # sensitive files
 *.keystore
@@ -52,6 +53,7 @@ CLAUDE.md
 # ---- Caches ----
 .cache/
 .claude/
+GEMINI.md
 *.tmp
 *.temp
 *.local

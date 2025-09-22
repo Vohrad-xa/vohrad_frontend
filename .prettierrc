@@ -7,13 +7,13 @@
   "printWidth": 120,
   "arrowParens": "always",
   "endOfLine": "lf",
-  "bracketSpacing": true,
-  "bracketSameLine": false,
+  "bracketSpacing": false,
+  "bracketSameLine": true,
   "overrides": [
-    { "files": "*.md", "options": { "proseWrap": "always" } },
+    {"files": "*.md", "options": {"proseWrap": "always"}},
     {
       "files": ["*.json", "*.yml", "*.yaml"],
-      "options": { "singleQuote": false, "trailingComma": "none" }
+      "options": {"singleQuote": false, "trailingComma": "none"}
     }
   ]
 }

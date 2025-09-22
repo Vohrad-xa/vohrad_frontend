@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "turbo run dev --parallel",
     "dev:dashboard": "turbo run dev --filter=web",
-    "dev:mobile": "turbo run start --filter=mobile",
+    "dev:mobile": "turbo run dev --filter=mobile",
     "start": "turbo run start --parallel",
     "start:web": "turbo run start --filter=web",
     "start:mobile": "turbo run start --filter=mobile",
@@ -17,7 +17,7 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check"
   },
-  "packageManager": "pnpm@10.16.1",
+  "packageManager": "pnpm@10.17.0",
   "pnpm": {
     "overrides": {
       "glob": "^10.4.5",

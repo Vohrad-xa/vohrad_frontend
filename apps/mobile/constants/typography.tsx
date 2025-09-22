@@ -1,6 +1,6 @@
-import { Dimensions } from 'react-native';
+import {Dimensions} from 'react-native';
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
 export const DesignSystem = {
   // Border radius system
@@ -12,6 +12,7 @@ export const DesignSystem = {
     lg: 8,
     xl: 10,
     xxl: 14,
+    xxxl: 24,
     full: 9999,
   },
 
@@ -171,21 +172,21 @@ export const DesignSystem = {
   shadows: {
     sm: {
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 1 },
+      shadowOffset: {width: 0, height: 1},
       shadowOpacity: 0.05,
       shadowRadius: 2,
       elevation: 2,
     },
     md: {
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
+      shadowOffset: {width: 0, height: 2},
       shadowOpacity: 0.1,
       shadowRadius: 4,
       elevation: 4,
     },
     lg: {
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
+      shadowOffset: {width: 0, height: 4},
       shadowOpacity: 0.15,
       shadowRadius: 8,
       elevation: 8,
@@ -219,7 +220,7 @@ export const DesignSystem = {
     },
 
     card: {
-      borderRadius: 8,
+      borderRadius: 20,
       padding: 16,
     },
 
@@ -287,6 +288,14 @@ export const DesignSystem = {
     slow: 500,
   },
 
+  opacity: {
+    disabled: 0.3,
+    pressed: 0.5,
+    muted: 0.6,
+    overlay: 0.8,
+    full: 1.0,
+  },
+
   screen: {
     width: screenWidth,
     height: screenHeight,
@@ -298,3 +307,4 @@ export type BorderRadius = keyof typeof DesignSystem.borderRadius;
 export type Spacing = keyof typeof DesignSystem.spacing;
 export type Typography = keyof typeof DesignSystem.typography;
 export type FontWeight = keyof typeof DesignSystem.fontWeight;
+export type Opacity = keyof typeof DesignSystem.opacity;
