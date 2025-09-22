@@ -33,7 +33,15 @@ function InnerApp() {
             headerShown: true,
           }}
         />
-        <Stack.Screen name="modal" options={{presentation: 'modal', title: 'Modal'}} />
+        <Stack.Screen
+          name="modals/settings"
+          options={{
+            presentation: 'modal',
+            title: 'Settings',
+            headerLeft: () => null,
+            headerRight: () => null,
+          }}
+        />
         <Stack.Screen name="(stack)" options={{headerShown: false}} />
       </Stack>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />

@@ -14,6 +14,7 @@ import type {Tokens} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {useSidebar, useTheme} from '@/providers';
 import type {MenuItem as MenuItemType} from '@/types/ui';
+import {router} from 'expo-router';
 import {AppIcons} from '@/utils';
 import {MenuItem} from './MenuItem';
 import {ProfileSection} from './ProfileSection';
@@ -100,9 +101,8 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
         <View style={styles.absoluteBottom}>
           <ProfileSection
             onPressSettings={() => {
-              onClose();
               Keyboard.dismiss();
-              // navigate to settings screen here
+              router.push('/modals/settings');
             }}
           />
         </View>
