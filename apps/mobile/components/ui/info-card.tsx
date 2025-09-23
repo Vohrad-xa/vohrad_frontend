@@ -29,7 +29,7 @@ export function InfoCard() {
   const renderAction = ({item}: {item: QuickAction}) => (
     <TouchableOpacity style={styles.actionButton}>
       <View style={styles.iconContainer}>
-        <Icon name={item.icon} size={ds.iconSize.xxl} color="#000000" />
+        <Icon name={item.icon} size={ds.iconSize.xxl} colorToken="quickActionIcon" />
       </View>
       <ThemedText style={styles.actionLabel}>{item.name}</ThemedText>
     </TouchableOpacity>
@@ -42,8 +42,8 @@ export function InfoCard() {
     actionButton: {
       alignItems: 'center',
       justifyContent: 'center',
-      width: 70,
-      paddingVertical: ds.spacing.sm,
+      width: 79,
+      paddingVertical: ds.spacing.md,
       // marginRight: ds.spacing.sm,
       gap: ds.spacing.xs,
     },
@@ -56,7 +56,7 @@ export function InfoCard() {
       justifyContent: 'center',
     },
     actionLabel: {
-      ...ds.typography.caption1,
+      ...ds.typography.footnote,
       textAlign: 'center',
       color: theme.muted,
       fontWeight: '600',

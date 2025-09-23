@@ -4,5 +4,7 @@ export {Collapsible} from './collapsible';
 export {RefreshableScrollView} from './refreshable-scroll-view';
 export {default as Switch} from './Switch';
 export {InfoCard} from './info-card';
-export {MenuButton} from './menu-button';
+export {HeaderButton} from './header-button';
+export {SearchBar} from './search-bar';
+export {Input} from './input';
 export * from './themed-components';

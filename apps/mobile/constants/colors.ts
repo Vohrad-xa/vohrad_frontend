@@ -80,6 +80,7 @@ export const Tokens = {
     iconWarning: Palette.brand.orange,
     sidebarBackground: Palette.lightSidebar,
     quickActionIconBackground: Palette.quickActionIcon,
+    quickActionIcon: Palette.creme,
     glassTint: Palette.glassTintLight,
   },
 
@@ -106,7 +107,7 @@ export const Tokens = {
     destructiveForeground: Palette.white,
 
     // UI
-    icon: Palette.white,
+    icon: Palette.creme,
     tint: Palette.brand.blueDark,
     tabIconDefault: '#A1A1AA',
     tabIconSelected: Palette.brand.blueDark,
@@ -123,6 +124,7 @@ export const Tokens = {
     iconWarning: Palette.brand.orange,
     sidebarBackground: Palette.sidebar,
     quickActionIconBackground: Palette.quickActionIconDark,
+    quickActionIcon: Palette.black,
     glassTint: Palette.glassTintDark,
   },
 } as const;

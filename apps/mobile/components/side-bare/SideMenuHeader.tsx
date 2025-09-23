@@ -36,7 +36,6 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
             <Icon
               name={AppIcons.navigation.close}
               size={ds.iconSize.lg}
-              color={scheme === 'dark' ? Palette.creme : Palette.black}
             />
           </TouchableOpacity>
         </View>

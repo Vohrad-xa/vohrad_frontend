@@ -47,7 +47,7 @@ export default function TabLayout() {
           screenOptions={{
             headerShown: false,
             tabBarActiveTintColor: theme.tabIconSelected,
-            tabBarInactiveTintColor: theme.tabIconDefault,
+            tabBarInactiveTintColor: theme.icon,
             tabBarStyle: {
               backgroundColor: theme.card,
               borderTopColor: theme.border,
@@ -63,7 +63,7 @@ export default function TabLayout() {
                   <Ionicons
                     name={tab.icon as ComponentProps<typeof Ionicons>['name']}
                     size={size ?? 24}
-                    color={color ?? theme.tabIconDefault}
+                    color={color ?? theme.icon}
                   />
                 ),
               }}
@@ -89,7 +89,7 @@ export default function TabLayout() {
         default: false,
       })}
       backgroundColor={theme.card}
-      iconColor={theme.tabIconDefault}
+      iconColor={theme.icon}
       tintColor={theme.tabIconSelected}
       indicatorColor={theme.border}>
       {TAB_ITEMS.map((tab) => (
