@@ -4,7 +4,6 @@ import {
   Platform,
   View,
   FlatList,
-  StatusBar,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
   type ListRenderItem,
@@ -23,7 +22,7 @@ import {
   AnimatedHeader,
   calculateAnimatedHeaderHeight,
 } from '@/components/ui';
-import type {Tokens, ColorScheme} from '@/constants/colors';
+import type {Tokens} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {
   isDividerItem,
