@@ -1,4 +1,3 @@
-import React from 'react';
 import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {Stack} from 'expo-router';
@@ -52,18 +51,16 @@ function InnerApp() {
 
 export default function RootLayout() {
   return (
-    <React.StrictMode>
-      <GestureHandlerRootView style={{flex: 1}}>
-        <ActionSheetProvider>
-          <AppThemeProvider>
-            <HeaderVisibilityProvider>
-              <SidebarProvider>
-                <InnerApp />
-              </SidebarProvider>
-            </HeaderVisibilityProvider>
-          </AppThemeProvider>
-        </ActionSheetProvider>
-      </GestureHandlerRootView>
-    </React.StrictMode>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <ActionSheetProvider>
+        <AppThemeProvider>
+          <HeaderVisibilityProvider>
+            <SidebarProvider>
+              <InnerApp />
+            </SidebarProvider>
+          </HeaderVisibilityProvider>
+        </AppThemeProvider>
+      </ActionSheetProvider>
+    </GestureHandlerRootView>
   );
 }
