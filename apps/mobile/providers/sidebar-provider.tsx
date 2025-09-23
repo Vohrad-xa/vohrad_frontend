@@ -3,6 +3,7 @@ import {Keyboard} from 'react-native';
 import {Gesture, type PanGesture, type TapGesture} from 'react-native-gesture-handler';
 import {useSharedValue, withSpring, runOnJS, withTiming} from 'react-native-reanimated';
 import type {SharedValue} from 'react-native-reanimated';
+import {useSegments, router} from 'expo-router';
 
 interface SidebarContextValue {
   sideMenuOpen: boolean;
@@ -29,6 +30,8 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
   const slideAnim = useSharedValue(0);
   const isDragging = useSharedValue(false);
   const startX = useSharedValue(0);
+  const segments = useSegments();
+  const isModalOpen = segments.some((segment) => segment === '(modals)');
 
   const toggleSideMenu = () => {
     const isOpening = !sideMenuOpen;
@@ -42,16 +45,24 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
     Keyboard.dismiss();
   };
 
+  const closeModalIfOpen = () => {
+    if (isModalOpen) {
+      setTimeout(() => router.back(), 150);
+    }
+  };
+
   // This is the main gesture for the container view.
   // It handles both opening the menu from the edge and closing it from the main content area.
   const mainGesture = Gesture.Pan()
     .activeOffsetX([-10, 10])
     .failOffsetY([-50, 50])
     .simultaneousWithExternalGesture()
+    .enabled(true)
     .onBegin((event) => {
       'worklet';
       if (sideMenuOpen || event.x < 50) {
         isDragging.value = true;
+        runOnJS(closeModalIfOpen)();
       }
     })
     .onUpdate((event) => {
@@ -106,6 +117,7 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
   // This gesture is specifically for panning on the SideMenu component itself.
   const menuCloseGesture = Gesture.Pan()
     .activeOffsetX([-10, 10])
+    .enabled(true)
     .onStart(() => {
       'worklet';
       startX.value = slideAnim.value;
@@ -127,10 +139,13 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
     });
 
   // This gesture is for tapping the backdrop to close the menu.
-  const tapGesture = Gesture.Tap().onEnd(() => {
-    'worklet';
-    runOnJS(closeSideMenu)();
-  });
+  const tapGesture = Gesture.Tap()
+    .enabled(true)
+    .onEnd(() => {
+      'worklet';
+      runOnJS(closeModalIfOpen)();
+      runOnJS(closeSideMenu)();
+    });
 
   const value = {
     sideMenuOpen,

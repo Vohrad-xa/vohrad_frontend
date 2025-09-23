@@ -28,11 +28,7 @@ function InnerApp() {
           headerTitleStyle: {color: theme.text},
           headerTitleAlign: 'center',
           headerLeft: () => (
-            <HeaderButton
-              icon={AppIcons.navigation.menu}
-              accessibilityLabel="Open menu"
-              onPress={toggleSideMenu}
-            />
+            <HeaderButton icon={AppIcons.navigation.menu} accessibilityLabel="Open menu" onPress={toggleSideMenu} />
           ),
           headerRight: () => <Switch value={scheme === 'dark'} onValueChange={toggle} />,
         }}>
@@ -47,18 +43,10 @@ function InnerApp() {
           options={{
             presentation: 'modal',
             title: 'Settings',
-            headerLeft: () => (
-              <HeaderButton
-                icon={AppIcons.status.info}
-                accessibilityLabel="Help"
-              />
-            ),
+            gestureEnabled: true,
+            headerLeft: () => <HeaderButton icon={AppIcons.status.info} accessibilityLabel="Help" />,
             headerRight: () => (
-              <HeaderButton
-                icon={AppIcons.navigation.close}
-                accessibilityLabel="Close"
-                onPress={() => router.back()}
-              />
+              <HeaderButton icon={AppIcons.navigation.close} accessibilityLabel="Close" onPress={() => router.back()} />
             ),
           }}
         />
