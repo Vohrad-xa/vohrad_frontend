@@ -7,6 +7,7 @@ import {
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
+import {router} from 'expo-router';
 import {Gesture, GestureDetector, ScrollView} from 'react-native-gesture-handler';
 import Animated, {useAnimatedStyle, useSharedValue, withTiming, interpolateColor} from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -14,7 +15,6 @@ import type {Tokens} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {useSidebar, useTheme} from '@/providers';
 import type {MenuItem as MenuItemType} from '@/types/ui';
-import {router} from 'expo-router';
 import {AppIcons} from '@/utils';
 import {MenuItem} from './MenuItem';
 import {ProfileSection} from './ProfileSection';
@@ -56,6 +56,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
 
   const styles = createStyles(theme, ds, headerHeight, footerHeight);
   const headerBorderOpacity = useSharedValue(0);
+  const footerBorderOpacity = useSharedValue(0);
 
   const sideMenuStyle = useAnimatedStyle(() => ({
     transform: [{translateX: slideAnim.value - 320}],
@@ -66,9 +67,22 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
     borderBottomColor: interpolateColor(headerBorderOpacity.value, [0, 1], ['transparent', theme.border]),
   }));
 
+  const footerStyle = useAnimatedStyle(() => ({
+    borderTopWidth: 1,
+    borderTopColor: interpolateColor(footerBorderOpacity.value, [0, 1], ['transparent', theme.border]),
+  }));
+
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const scrollY = event.nativeEvent.contentOffset.y;
+    const {contentOffset, contentSize, layoutMeasurement} = event.nativeEvent;
+    const scrollY = contentOffset.y;
+    const maxScroll = contentSize.height - layoutMeasurement.height;
+    const distanceFromBottom = maxScroll - scrollY;
+
     headerBorderOpacity.value = withTiming(scrollY > 10 ? 1 : 0, {
+      duration: 200,
+    });
+
+    footerBorderOpacity.value = withTiming(distanceFromBottom > 10 ? 1 : 0, {
       duration: 200,
     });
   };
@@ -98,14 +112,14 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
         <View style={styles.absoluteTop}>
           <SideMenuHeader headerStyle={headerStyle} onClose={onClose} />
         </View>
-        <View style={styles.absoluteBottom}>
+        <Animated.View style={[styles.absoluteBottom, footerStyle]}>
           <ProfileSection
             onPressSettings={() => {
               Keyboard.dismiss();
               router.push('/(modals)/settings');
             }}
           />
-        </View>
+        </Animated.View>
       </Animated.View>
     </GestureDetector>
   );
