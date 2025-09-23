@@ -1,4 +1,4 @@
-import {StyleSheet, View, Dimensions} from 'react-native';
+import {StyleSheet, View, Dimensions, ScrollView, Platform} from 'react-native';
 import {InfoCard, RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
@@ -72,12 +72,14 @@ export default function HomeScreen() {
     },
   });
 
+  const ScrollComponent = Platform.OS === 'web' ? ScrollView : RefreshableScrollView;
+
   return (
-    <RefreshableScrollView
-      bounces
+    <ScrollComponent
+      bounces={Platform.OS !== 'web'}
       showsVerticalScrollIndicator={false}
-      contentInsetAdjustmentBehavior="automatic"
-      style={{backgroundColor: theme.background}}>
+      contentInsetAdjustmentBehavior={Platform.OS !== 'web' ? "automatic" : undefined}
+      style={{backgroundColor: theme.background, flex: 1}}>
       <View style={styles.container}>
         <ThemedText variant="headline" style={[styles.title, {marginTop: 0}]}>
           Quick Actions
@@ -105,6 +107,6 @@ export default function HomeScreen() {
           </View>
         </View>
       </View>
-    </RefreshableScrollView>
+    </ScrollComponent>
   );
 }

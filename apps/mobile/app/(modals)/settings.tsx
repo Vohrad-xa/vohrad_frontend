@@ -1,35 +1,39 @@
-import {useMemo} from 'react';
+import {useMemo, useCallback} from 'react';
 import {
   StyleSheet,
   Platform,
   View,
-  TouchableOpacity,
-  ScrollView,
+  FlatList,
   StatusBar,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
+  type ListRenderItem,
 } from 'react-native';
-import {BlurView} from 'expo-blur';
 import {useRouter} from 'expo-router';
 import {StatusBar as ExpoStatusBar} from 'expo-status-bar';
-import Animated, {useAnimatedStyle, useSharedValue, withTiming, interpolateColor} from 'react-native-reanimated';
-import {ThemedText, ThemedView, Divider, Switch, HeaderButton} from '@/components/ui';
+import {useSharedValue} from 'react-native-reanimated';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {
+  ThemedView,
+  ThemedText,
+  Divider,
+  HeaderButton,
+  ListItem,
+  Switch,
+  AnimatedHeader,
+  calculateAnimatedHeaderHeight,
+} from '@/components/ui';
 import type {Tokens, ColorScheme} from '@/constants/colors';
-import {Palette} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
+import {
+  isDividerItem,
+  type ListItem as SettingsListItem,
+  type SettingsItem,
+  type ToggleSettingsItem,
+} from '@/features/settings/types';
+import {useSettingsItems} from '@/features/settings/use-settings-items';
 import {useTheme} from '@/providers';
-import type {MenuItemProps} from '@/types/ui';
 import {Icon, AppIcons} from '@/utils';
-
-interface SettingsItem extends Omit<MenuItemProps, 'onPress'> {
-  id: string;
-  onPress?: () => void;
-  showDividerAfter?: boolean;
-}
-
-interface ToggleSettingsItem extends SettingsItem {
-  hasToggle: true;
-}
 
 const destructiveItems: SettingsItem[] = [
   {
@@ -43,130 +47,71 @@ const destructiveItems: SettingsItem[] = [
   },
 ];
 
-export default function SettingsModal() {
-  const {ds, theme, scheme} = useTheme();
-  const navigation = useRouter();
-  const styles = createStyles(ds, theme, scheme);
-  const headerBorderOpacity = useSharedValue(0);
+// Type guard to check for toggle items
+const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem => 'hasToggle' in item;
 
-  // Type-safe settings items with computed values
-  const computedSettingsItems: Array<SettingsItem | ToggleSettingsItem> = useMemo(
-    () => [
-      {
-        id: 'profile',
-        icon: AppIcons.business.profile,
-        label: 'Profile',
-        showDividerAfter: true,
-        onPress: () => {
-          // TODO: Navigate to profile screen
-        },
-      },
-      {
-        id: 'appearance',
-        icon: AppIcons.theme.dark,
-        label: 'Appearance',
-        hasToggle: true,
-      },
-      {
-        id: 'preferences',
-        icon: AppIcons.navigation.settings,
-        label: 'Preferences',
-        onPress: () => {
-          // TODO: Navigate to preferences screen
-        },
-      },
-      {
-        id: 'language',
-        icon: AppIcons.content.language,
-        label: 'App Language',
-        onPress: () => {
-          // TODO: Navigate to language selection screen
-        },
-      },
-      {
-        id: 'support',
-        icon: AppIcons.status.help,
-        label: 'Report an Issue',
-        showDividerAfter: true,
-        onPress: () => {
-          // TODO: Navigate to support screen
-        },
-      },
-      {
-        id: 'organization',
-        icon: AppIcons.business.organization,
-        label: 'Organization',
-        onPress: () => {
-          // TODO: Navigate to organization screen
-        },
-      },
-      {
-        id: 'plan',
-        icon: AppIcons.business.plan,
-        label: 'Plan',
-        showDividerAfter: true,
-        onPress: () => {
-          // TODO: Navigate to plan screen
-        },
-      },
-      {
-        id: 'privacy',
-        icon: AppIcons.content.privacy,
-        label: 'Privacy Policy',
-        onPress: () => {
-          // TODO: Navigate to privacy policy screen
-        },
-      },
-      {
-        id: 'terms',
-        icon: AppIcons.content.document,
-        label: 'Terms of Use',
-        onPress: () => {
-          // TODO: Navigate to terms of use screen
-        },
-      },
-      {
-        id: 'about',
-        icon: AppIcons.status.info,
-        label: 'About',
-        onPress: () => {
-          // TODO: Navigate to about screen
-        },
-      },
-    ],
-    [],
+export default function SettingsModal() {
+  const {ds, theme, preference} = useTheme();
+  const navigation = useRouter();
+  const insets = useSafeAreaInsets();
+  const styles = createStyles(ds, theme);
+  const scrollValue = useSharedValue(0);
+
+  const computedSettingsItems = useSettingsItems();
+
+  const headerHeight = calculateAnimatedHeaderHeight(ds, insets);
+
+  const dynamicStyles = useMemo(
+    () => ({
+      scrollContent: {paddingTop: headerHeight},
+    }),
+    [headerHeight],
   );
 
-  const renderSettingsItem = ({item}: {item: SettingsItem | ToggleSettingsItem}) => {
-    const isToggleItem = (item: SettingsItem | ToggleSettingsItem): item is ToggleSettingsItem =>
-      'hasToggle' in item && item.hasToggle === true;
+  const allSettingsItems = useMemo(() => {
+    const itemsWithDividers: SettingsListItem[] = [];
 
-    const content = (
-      <>
-        <View style={styles.iconContainer}>
-          <Icon name={item.icon} size={ds.iconSize.md} color={item.isDestructive ? theme.iconDanger : undefined} />
-        </View>
-        <ThemedText style={[styles.labelText, item.isDestructive && dynamicStyles.destructiveText]}>
-          {item.label}
-        </ThemedText>
-        {isToggleItem(item) ? (
-          <View style={styles.switchContainer}>
-            <Switch />
-          </View>
-        ) : (
-          !item.isDestructive && <Icon name={AppIcons.navigation.forward} size={ds.iconSize.md} color={theme.muted} />
-        )}
-      </>
-    );
+    computedSettingsItems.forEach((item) => {
+      itemsWithDividers.push(item);
+      if (item.showDividerAfter) {
+        itemsWithDividers.push({id: `divider-${item.id}`, isDivider: true});
+      }
+    });
 
-    return item.onPress ? (
-      <TouchableOpacity style={styles.settingsItem} onPress={item.onPress}>
-        {content}
-      </TouchableOpacity>
-    ) : (
-      <View style={styles.settingsItem}>{content}</View>
-    );
-  };
+    itemsWithDividers.push({id: 'main-divider', isDivider: true});
+
+    destructiveItems.forEach((item) => {
+      itemsWithDividers.push(item);
+    });
+
+    return itemsWithDividers;
+  }, [computedSettingsItems]);
+
+  const renderItem: ListRenderItem<SettingsListItem> = useCallback(
+    ({item}) => {
+      if (isDividerItem(item)) {
+        return <Divider style={styles.divider} />;
+      }
+
+      return (
+        <ListItem label={item.label} icon={item.icon} onPress={item.onPress} isDestructive={item.isDestructive}>
+          {isToggleItem(item) ? (
+            <View style={styles.switchContainer}>
+              {item.id === 'appearance' && (
+                <ThemedText style={styles.themeStatusText}>
+                  {preference === 'system' ? 'System' : preference === 'light' ? 'Light' : 'Dark'}
+                </ThemedText>
+              )}
+              <Switch />
+            </View>
+          ) : (
+            !item.isDestructive && <Icon name={AppIcons.navigation.forward} size={ds.iconSize.md} color={theme.muted} />
+          )}
+        </ListItem>
+      );
+    },
+    [ds, theme, styles, preference],
+  );
 
   const handleClose = () => {
     if (navigation.canGoBack()) {
@@ -176,96 +121,35 @@ export default function SettingsModal() {
     }
   };
 
-  const renderHeaderContent = () => (
-    <View style={styles.headerContent}>
-      <ThemedText style={styles.headerTitle}>Settings</ThemedText>
-      <View style={styles.closeButtonContainer}>
-        <HeaderButton icon={AppIcons.navigation.close} accessibilityLabel="Close" onPress={handleClose} />
-      </View>
-    </View>
-  );
-
-  const topPadding = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 0) + ds.spacing.lg : ds.spacing.lg;
-
-  const headerHeight =
-    Platform.OS === 'android'
-      ? (StatusBar.currentHeight ?? 0) + ds.spacing.lg + ds.spacing.md * 2 + ds.iconSize.lg
-      : ds.spacing.lg + ds.spacing.md * 2 + ds.iconSize.lg;
-
-  // Memoize dynamic styles to prevent object recreation
-  const dynamicStyles = useMemo(
-    () => ({
-      headerWithPadding: {paddingTop: topPadding},
-      destructiveText: {color: theme.iconDanger},
-      scrollContent: {paddingTop: headerHeight},
-    }),
-    [topPadding, theme.iconDanger, headerHeight],
-  );
-
-  const headerStyle = useAnimatedStyle(() => ({
-    borderBottomWidth: 0.2,
-    borderBottomColor: interpolateColor(headerBorderOpacity.value, [0, 0.3], ['transparent', Palette.creme]),
-  }));
-
-  const blurStyle = useAnimatedStyle(() => ({
-    opacity: headerBorderOpacity.value,
-  }));
-
-  const fallbackStyle = useAnimatedStyle(() => ({
-    opacity: 1 - headerBorderOpacity.value,
-  }));
-
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const {contentOffset} = event.nativeEvent;
-    const scrollY = contentOffset.y;
-
-    headerBorderOpacity.value = withTiming(scrollY > 10 ? 1 : 0, {
-      duration: 200,
-    });
+    scrollValue.value = event.nativeEvent.contentOffset.y;
   };
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView
+      <FlatList
+        data={allSettingsItems}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
         style={styles.scrollContainer}
         contentContainerStyle={[styles.scrollContentContainer, dynamicStyles.scrollContent]}
         showsVerticalScrollIndicator
         onScroll={handleScroll}
-        scrollEventThrottle={16}>
-        {computedSettingsItems.map((item) => (
-          <View key={item.id}>
-            {renderSettingsItem({item})}
-            {item.showDividerAfter && <Divider style={styles.divider} />}
-          </View>
-        ))}
+        scrollEventThrottle={16}
+      />
 
-        <Divider style={styles.divider} />
+      <AnimatedHeader
+        title="Settings"
+        scrollValue={scrollValue}
+        rightAction={<HeaderButton icon={AppIcons.navigation.close} accessibilityLabel="Close" onPress={handleClose} />}
+      />
 
-        {destructiveItems.map((item) => (
-          <View key={item.id}>{renderSettingsItem({item})}</View>
-        ))}
-      </ScrollView>
-
-      <View style={styles.absoluteTop}>
-        <Animated.View style={[styles.headerBlur, blurStyle, headerStyle]}>
-          <BlurView
-            intensity={40}
-            tint={scheme === 'dark' ? 'dark' : 'light'}
-            style={[styles.headerBase, dynamicStyles.headerWithPadding]}>
-            {renderHeaderContent()}
-          </BlurView>
-        </Animated.View>
-        <Animated.View
-          style={[styles.headerBase, styles.headerFallback, fallbackStyle, dynamicStyles.headerWithPadding]}>
-          {renderHeaderContent()}
-        </Animated.View>
-      </View>
       <ExpoStatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </ThemedView>
   );
 }
 
-const createStyles = (ds: typeof DesignSystem, theme: typeof Tokens.light | typeof Tokens.dark, _scheme: ColorScheme) =>
+const createStyles = (ds: typeof DesignSystem, theme: typeof Tokens.light | typeof Tokens.dark) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -276,61 +160,17 @@ const createStyles = (ds: typeof DesignSystem, theme: typeof Tokens.light | type
     scrollContentContainer: {
       paddingHorizontal: ds.spacing.xl,
     },
-    settingsItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: ds.spacing.md,
-    },
-    iconContainer: {
-      marginRight: ds.spacing.lg,
-      width: ds.iconSize.md,
-      alignItems: 'center',
-    },
-    labelText: {
-      flex: 1,
-      ...ds.typography.body,
-      fontWeight: ds.fontWeight.medium,
-    },
     divider: {
       marginVertical: ds.spacing.sm,
     },
     switchContainer: {
-      width: ds.iconSize.md,
-      alignItems: 'center',
-    },
-    absoluteTop: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 1,
-    },
-    headerBlur: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-    },
-    headerBase: {
-      paddingLeft: ds.spacing.xl,
-      paddingRight: ds.spacing.xl,
-      paddingVertical: ds.spacing.md,
-    },
-    headerFallback: {
-      backgroundColor: theme.background,
-    },
-    headerContent: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
-      position: 'relative',
+      gap: ds.spacing.sm,
     },
-    headerTitle: {
-      ...ds.typography.headline,
-      fontWeight: ds.fontWeight.bold,
-    },
-    closeButtonContainer: {
-      position: 'absolute',
-      right: -(ds.spacing.xs + ds.spacing.xxs),
+    themeStatusText: {
+      ...ds.typography.caption,
+      color: theme.muted,
+      fontWeight: ds.fontWeight.medium,
     },
   });
