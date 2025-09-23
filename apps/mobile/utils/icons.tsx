@@ -94,7 +94,8 @@ export type IconName =
   | 'sync-outline'
   | 'remove-outline'
   | 'sunny-outline'
-  | 'moon-outline';
+  | 'moon-outline'
+  | 'sparkles-outline';
 
 type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -201,6 +202,7 @@ export const AppIcons = {
   },
 
   theme: {
+    appearance: 'sparkles-outline' as IconName,
     light: 'sunny-outline' as IconName,
     dark: 'moon-outline' as IconName,
   },

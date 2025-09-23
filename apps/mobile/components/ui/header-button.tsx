@@ -1,7 +1,7 @@
 import {Platform, TouchableOpacity, type StyleProp, type ViewStyle} from 'react-native';
+import type {TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers';
 import {Icon, type IconName} from '@/utils';
-import type {TokenName} from '@/constants/colors';
 
 interface HeaderButtonProps {
   icon: IconName;

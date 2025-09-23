@@ -1,7 +1,7 @@
 import {View, StyleSheet} from 'react-native';
-import {useTheme} from '@/providers';
-import type {DesignSystem} from '@/constants/typography';
 import type {Tokens} from '@/constants/colors';
+import type {DesignSystem} from '@/constants/typography';
+import {useTheme} from '@/providers';
 
 interface DividerProps {
   style?: object;

@@ -18,6 +18,7 @@ export const DesignSystem = {
 
   // Spacing scale
   spacing: {
+    xxs: 2,
     xs: 4,
     sm: 8,
     md: 12,

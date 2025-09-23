@@ -5,7 +5,5 @@ export {RefreshableScrollView} from './refreshable-scroll-view';
 export {default as Switch} from './Switch';
 export {InfoCard} from './info-card';
 export {HeaderButton} from './header-button';
-export {SearchBar} from './search-bar';
-export {Input} from './input';
 export {Divider} from './divider';
 export * from './themed-components';

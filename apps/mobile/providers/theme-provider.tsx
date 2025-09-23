@@ -1,14 +1,15 @@
 import React, {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Animated, Easing, StyleSheet} from 'react-native';
 import {ThemeProvider as NavigationThemeProvider} from '@react-navigation/native';
-import {NavigationThemes, Tokens, type ColorScheme} from '@/constants/colors';
+import {NavigationThemes, Tokens, type ColorScheme, type ThemePreference} from '@/constants/colors';
 import {DesignSystem} from '@/constants/typography';
 import {useColorScheme as useRNColorScheme} from '@/hooks/use-color-scheme';
 import * as storage from '@/utils/storage';
 
 type ThemeContextValue = {
   scheme: ColorScheme;
-  setScheme: (scheme: ColorScheme) => void;
+  preference: ThemePreference;
+  setScheme: (preference: ThemePreference) => void;
   toggle: () => void;
   tokens: typeof Tokens.light | typeof Tokens.dark;
   theme: typeof Tokens.light | typeof Tokens.dark;
@@ -27,11 +28,12 @@ export function useTheme() {
 
 export function AppThemeProvider({children}: {children: React.ReactNode}) {
   const systemScheme = useRNColorScheme() ?? 'light';
-  const [scheme, setScheme] = useState<ColorScheme>(systemScheme);
+  const [preference, setPreference] = useState<ThemePreference>('system');
   const [hydrated, setHydrated] = useState(false);
   const overlayOpacity = useRef(new Animated.Value(0)).current;
   const [overlayColor, setOverlayColor] = useState<string | null>(null);
   const isAnimating = useRef(false);
+  const scheme: ColorScheme = preference === 'system' ? systemScheme : preference;
 
   const STORAGE_KEY = 'app.theme.scheme';
 
@@ -39,9 +41,9 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
     let mounted = true;
     (async () => {
       try {
-        const saved = (await storage.getItem(STORAGE_KEY)) as ColorScheme | null;
-        if (mounted && (saved === 'light' || saved === 'dark')) {
-          setScheme(saved);
+        const saved = (await storage.getItem(STORAGE_KEY)) as ThemePreference | null;
+        if (mounted && (saved === 'light' || saved === 'dark' || saved === 'system')) {
+          setPreference(saved);
         }
       } finally {
         if (mounted) {
@@ -55,15 +57,19 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
   }, []);
 
   useEffect(() => {
-    storage.setItem(STORAGE_KEY, scheme).catch(() => {});
-  }, [scheme]);
+    if (hydrated) {
+      storage.setItem(STORAGE_KEY, preference).catch((error) => {
+        console.warn('Failed to save theme preference:', error);
+      });
+    }
+  }, [preference, hydrated]);
 
   const toggle = useCallback(() => {
     if (isAnimating.current) {
       return;
     }
 
-    const nextScheme: ColorScheme = scheme === 'light' ? 'dark' : 'light';
+    const nextPreference: ThemePreference = scheme === 'light' ? 'dark' : 'light';
     const currentBackground = Tokens[scheme].background;
 
     isAnimating.current = true;
@@ -71,7 +77,7 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
     overlayOpacity.setValue(1);
     setOverlayColor(currentBackground);
 
-    setScheme(nextScheme);
+    setPreference(nextPreference);
 
     Animated.timing(overlayOpacity, {
       toValue: 0,
@@ -89,13 +95,14 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
   const value = useMemo(
     () => ({
       scheme,
-      setScheme,
+      preference,
+      setScheme: setPreference,
       toggle,
       tokens,
       theme,
       ds: DesignSystem,
     }),
-    [scheme, toggle, tokens, theme],
+    [scheme, preference, toggle, tokens, theme],
   );
 
   const navTheme = NavigationThemes[scheme];

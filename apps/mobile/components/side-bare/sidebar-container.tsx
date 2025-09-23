@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Dimensions, Platform} from 'react-native';
+import {useSegments} from 'expo-router';
 import {GestureDetector} from 'react-native-gesture-handler';
 import Animated, {useAnimatedStyle} from 'react-native-reanimated';
 import {SideMenu} from '@/components/side-bare';
@@ -15,10 +16,20 @@ export function SidebarContainer({children}: SidebarContainerProps) {
   const {sideMenuOpen, slideAnim, closeSideMenu, mainGesture} = useSidebar();
   const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
   const headerHeight = Platform.OS === 'android' ? 80 : 100;
+  const segments = useSegments();
+  const isModalOpen = segments.some((segment) => segment === '(modals)');
 
-  const mainContentStyle = useAnimatedStyle(() => ({
-    transform: [{translateX: slideAnim.value}, {scale: 1 - (slideAnim.value / 320) * 0}],
-  }));
+  const mainContentStyle = useAnimatedStyle(() => {
+    // For web not translating main content when modal is open
+    if (Platform.OS === 'web' && isModalOpen) {
+      return {
+        transform: [{translateX: 0}, {scale: 1}],
+      };
+    }
+    return {
+      transform: [{translateX: slideAnim.value}, {scale: 1 - (slideAnim.value / 320) * 0}],
+    };
+  });
 
   return (
     <View style={{flex: 1, backgroundColor: theme.background, overflow: 'hidden'}}>

@@ -1,9 +1,10 @@
-import React, {createContext, useContext, useState} from 'react';
-import {Keyboard} from 'react-native';
-import {Gesture, type PanGesture, type TapGesture} from 'react-native-gesture-handler';
-import {useSharedValue, withSpring, runOnJS, withTiming} from 'react-native-reanimated';
-import type {SharedValue} from 'react-native-reanimated';
+import React, {createContext, useContext, useState, useEffect, useCallback} from 'react';
+import {Keyboard, Platform} from 'react-native';
 import {useSegments, router} from 'expo-router';
+import {Gesture, type PanGesture, type TapGesture} from 'react-native-gesture-handler';
+import {useSharedValue, withSpring, withTiming} from 'react-native-reanimated';
+import {scheduleOnRN} from 'react-native-worklets';
+import type {SharedValue} from 'react-native-reanimated';
 
 interface SidebarContextValue {
   sideMenuOpen: boolean;
@@ -39,11 +40,18 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
     slideAnim.value = withSpring(isOpening ? 320 : 0, {damping: 20, stiffness: 200, mass: 0.8});
   };
 
-  const closeSideMenu = () => {
+  const closeSideMenu = useCallback(() => {
     setSideMenuOpen(false);
     slideAnim.value = withSpring(0, {damping: 20, stiffness: 200, mass: 0.8});
     Keyboard.dismiss();
-  };
+  }, [slideAnim]);
+
+  // Auto-close sidebar when modal opens on web
+  useEffect(() => {
+    if (Platform.OS === 'web' && isModalOpen && sideMenuOpen) {
+      closeSideMenu();
+    }
+  }, [isModalOpen, sideMenuOpen, closeSideMenu]);
 
   const closeModalIfOpen = () => {
     if (isModalOpen) {
@@ -62,7 +70,7 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
       'worklet';
       if (sideMenuOpen || event.x < 50) {
         isDragging.value = true;
-        runOnJS(closeModalIfOpen)();
+        scheduleOnRN(closeModalIfOpen);
       }
     })
     .onUpdate((event) => {
@@ -106,7 +114,7 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
       }
 
       slideAnim.value = withSpring(targetValue, {damping: 18, stiffness: 180, mass: 0.7, velocity: event.velocityX});
-      runOnJS(setSideMenuOpen)(shouldOpen);
+      scheduleOnRN(setSideMenuOpen, shouldOpen);
       isDragging.value = false;
     })
     .onFinalize(() => {
@@ -132,7 +140,7 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
     .onEnd(() => {
       'worklet';
       if (slideAnim.value < 220) {
-        runOnJS(closeSideMenu)();
+        scheduleOnRN(closeSideMenu);
       } else {
         slideAnim.value = withTiming(320, {duration: 150});
       }
@@ -143,8 +151,8 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
     .enabled(true)
     .onEnd(() => {
       'worklet';
-      runOnJS(closeModalIfOpen)();
-      runOnJS(closeSideMenu)();
+      scheduleOnRN(closeModalIfOpen);
+      scheduleOnRN(closeSideMenu);
     });
 
   const value = {

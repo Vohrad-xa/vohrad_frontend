@@ -134,6 +134,7 @@ export const Tokens = {
 } as const;
 
 export type ColorScheme = keyof typeof Tokens; // 'light' | 'dark'
+export type ThemePreference = ColorScheme | 'system'; // 'light' | 'dark' | 'system'
 export type TokenName = keyof typeof Tokens.light;
 
 // Optional: React Navigation compatible themes

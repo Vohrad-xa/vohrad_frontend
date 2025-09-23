@@ -4,9 +4,9 @@ import {Stack, router} from 'expo-router';
 import {StatusBar} from 'expo-status-bar';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {SidebarContainer} from '@/components/side-bare/sidebar-container';
-import {HeaderButton, Switch} from '@/components/ui';
-import {HeaderVisibilityProvider, SidebarProvider, AppThemeProvider, useTheme} from '@/providers';
-import {useSidebar} from '@/providers';
+import {HeaderButton} from '@/components/ui';
+import {HeaderVisibilityProvider, SidebarProvider, AppThemeProvider, useTheme, useSidebar} from '@/providers';
+
 import {AppIcons} from '@/utils';
 
 export const unstable_settings = {
@@ -14,7 +14,7 @@ export const unstable_settings = {
 };
 
 function InnerApp() {
-  const {scheme, theme, toggle} = useTheme();
+  const {scheme, theme} = useTheme();
   const {toggleSideMenu} = useSidebar();
 
   return (
@@ -30,7 +30,6 @@ function InnerApp() {
           headerLeft: () => (
             <HeaderButton icon={AppIcons.navigation.menu} accessibilityLabel="Open menu" onPress={toggleSideMenu} />
           ),
-          headerRight: () => <Switch value={scheme === 'dark'} onValueChange={toggle} />,
         }}>
         <Stack.Screen
           name="(tabs)"
@@ -41,7 +40,8 @@ function InnerApp() {
         <Stack.Screen
           name="(modals)/settings"
           options={{
-            presentation: 'modal',
+            presentation: 'pageSheet',
+            headerShown: false,
             title: 'Settings',
             gestureEnabled: true,
             headerLeft: () => <HeaderButton icon={AppIcons.status.info} accessibilityLabel="Help" />,
