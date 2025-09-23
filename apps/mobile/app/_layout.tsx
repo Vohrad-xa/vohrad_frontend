@@ -34,7 +34,7 @@ function InnerApp() {
           }}
         />
         <Stack.Screen
-          name="modals/settings"
+          name="(modals)/settings"
           options={{
             presentation: 'modal',
             title: 'Settings',
