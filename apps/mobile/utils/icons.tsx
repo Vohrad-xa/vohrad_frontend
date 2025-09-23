@@ -21,6 +21,10 @@ export type IconName =
   | 'information-circle-outline'
   | 'exit-outline'
   | 'options-outline'
+  | 'planet-outline'
+  | 'card-outline'
+  | 'business-outline'
+  | 'lock-closed-outline'
 
   // Inventory & Management
   | 'cube-outline'
@@ -163,6 +167,7 @@ export const AppIcons = {
     sync: 'sync-outline' as IconName,
     refresh: 'refresh-outline' as IconName,
     move: 'return-down-forward-outline' as IconName,
+    logout: 'exit-outline' as IconName,
   },
 
   content: {
@@ -172,6 +177,8 @@ export const AppIcons = {
     download: 'cloud-download-outline' as IconName,
     export: 'share-outline' as IconName,
     print: 'print-outline' as IconName,
+    language: 'planet-outline' as IconName,
+    privacy: 'lock-closed-outline' as IconName,
   },
 
   status: {
@@ -179,11 +186,14 @@ export const AppIcons = {
     warning: 'warning-outline' as IconName,
     error: 'alert-circle-outline' as IconName,
     info: 'information-circle-outline' as IconName,
+    help: 'help-circle-outline' as IconName,
   },
 
   business: {
     suppliers: 'cart-outline' as IconName,
     profile: 'person-outline' as IconName,
+    plan: 'card-outline' as IconName,
+    organization: 'business-outline' as IconName,
     events: 'notifications-outline' as IconName,
     equipment: 'hardware-chip-outline' as IconName,
     maintenance: 'flash-outline' as IconName,

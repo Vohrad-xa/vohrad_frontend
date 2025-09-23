@@ -39,7 +39,7 @@ const createStyles = (theme: typeof Tokens.light | typeof Tokens.dark, ds: typeo
   StyleSheet.create({
     profileBlurView: {
       paddingTop: ds.spacing.xl,
-      paddingHorizontal: ds.spacing.xl + ds.spacing.xs,
+      paddingHorizontal: ds.spacing.xl,
     },
     profileContainer: {
       flexDirection: 'row',
@@ -53,9 +53,9 @@ const createStyles = (theme: typeof Tokens.light | typeof Tokens.dark, ds: typeo
       flex: 1,
     },
     avatar: {
-      width: ds.iconSize.xl,
-      height: ds.iconSize.xl,
-      borderRadius: ds.iconSize.xl / 2,
+      width: ds.iconSize.xxl,
+      height: ds.iconSize.xxl,
+      borderRadius: ds.iconSize.xxl / 2,
       backgroundColor: theme.primary,
       justifyContent: 'center',
       alignItems: 'center',

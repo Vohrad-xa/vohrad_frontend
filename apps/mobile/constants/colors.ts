@@ -47,6 +47,7 @@ export const Tokens = {
     text: '#11181C',
     muted: '#6C6C70',
     border: Palette.cardBorderLight,
+    divider: Palette.gray[300],
 
     // Brand & accents
     primary: Palette.brand.blue,
@@ -78,6 +79,7 @@ export const Tokens = {
     iconPositive: Palette.brand.green,
     iconCaution: Palette.brand.yellow,
     iconWarning: Palette.brand.orange,
+    iconDanger: Palette.brand.red,
     sidebarBackground: Palette.lightSidebar,
     quickActionIconBackground: Palette.quickActionIcon,
     quickActionIcon: Palette.creme,
@@ -91,6 +93,7 @@ export const Tokens = {
     text: '#ECEDEE',
     muted: '#A1A1AA',
     border: '#262626',
+    divider: Palette.gray[600],
 
     // Brand & accents
     primary: Palette.brand.blueDark,
@@ -122,6 +125,7 @@ export const Tokens = {
     iconPositive: Palette.brand.green,
     iconCaution: Palette.brand.yellow,
     iconWarning: Palette.brand.orange,
+    iconDanger: Palette.brand.red,
     sidebarBackground: Palette.sidebar,
     quickActionIconBackground: Palette.quickActionIconDark,
     quickActionIcon: Palette.black,
