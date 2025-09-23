@@ -22,18 +22,8 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
 
   const topPadding =
     Platform.OS === 'android'
-      ? (StatusBar.currentHeight ?? 0) + ds.spacing.xl
-      : Math.max(insets.top, ds.spacing.xl) + ds.spacing.md;
-
-  const headerContentStyle = usePlatformStyles({
-    web: styles.headerContentWeb,
-    mobile: styles.headerContentMobile,
-  });
-
-  const searchBarStyle = usePlatformStyles({
-    web: styles.searchBar,
-    mobile: styles.searchBarMobile,
-  });
+      ? (StatusBar.currentHeight ?? 0) + ds.spacing.lg
+      : Math.max(insets.top, ds.spacing.xl) + ds.spacing.xs;
 
   return (
     <Animated.View style={headerStyle}>
@@ -41,17 +31,15 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
         intensity={40}
         tint={scheme === 'dark' ? 'dark' : 'light'}
         style={[styles.headerBlurView, {paddingTop: topPadding}]}>
-        <View style={headerContentStyle}>
-          <SearchBar style={searchBarStyle} placeholder="Search" />
-          {Platform.OS === 'web' && (
-            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <Icon
-                name={AppIcons.navigation.close}
-                size={ds.iconSize.lg}
-                color={scheme === 'dark' ? '#f8f7f7ff' : theme.text}
-              />
-            </TouchableOpacity>
-          )}
+        <View style={styles.headerContent}>
+          <SearchBar style={styles.searchBar} placeholder="Search" />
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <Icon
+              name={AppIcons.navigation.close}
+              size={ds.iconSize.lg}
+              color={scheme === 'dark' ? Palette.creme : Palette.black}
+            />
+          </TouchableOpacity>
         </View>
       </BlurView>
     </Animated.View>
@@ -61,30 +49,27 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
 const createStyles = (theme: typeof Tokens.light | typeof Tokens.dark, ds: typeof DesignSystem, scheme: ColorScheme) =>
   StyleSheet.create({
     headerBlurView: {
-      paddingHorizontal: ds.spacing.xl,
+      paddingLeft: ds.spacing.xl,
+      paddingRight: ds.spacing.xl,
       paddingVertical: ds.spacing.md,
     },
-    headerContentWeb: {
+    headerContent: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: ds.spacing.md,
-    },
-    headerContentMobile: {
+      justifyContent: 'space-between',
       width: '100%',
     },
     searchBar: {
       flex: 1,
     },
-    searchBarMobile: {
-      width: '100%',
-    },
     closeButton: {
-      width: 35,
-      height: 35,
+      width: 33,
+      height: 33,
+      marginLeft: ds.spacing.sm,
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: ds.borderRadius.full,
-      backgroundColor: scheme === 'dark' ? Palette.quickActionIcon : theme.surface,
+      backgroundColor: scheme === 'dark' ? Palette.quickActionIcon : Palette.white,
       ...ds.shadows.sm,
     },
   });

@@ -64,6 +64,7 @@ SearchBar.displayName = 'SearchBar';
 
 const styles = StyleSheet.create({
   wrapper: {
+    flex: 1,
     position: 'relative',
     justifyContent: 'center',
   },

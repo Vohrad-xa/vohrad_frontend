@@ -134,7 +134,7 @@ const createStyles = (
     },
     scrollContentContainer: {
       paddingHorizontal: ds.spacing.xl,
-      paddingTop: headerHeight + ds.spacing.md,
+      paddingTop: headerHeight,
       paddingBottom: footerHeight + ds.spacing.md,
     },
     absoluteTop: {
