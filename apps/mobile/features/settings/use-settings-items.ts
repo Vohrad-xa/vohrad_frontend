@@ -1,4 +1,5 @@
 import {useMemo} from 'react';
+import {router} from 'expo-router';
 import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
 import type {SettingsItem, ToggleSettingsItem} from './types';
@@ -14,7 +15,7 @@ export function useSettingsItems() {
         label: 'Profile',
         showDividerAfter: true,
         onPress: () => {
-          // TODO: Navigate to profile screen
+          router.push('/settings/profile');
         },
       },
       {
@@ -28,7 +29,7 @@ export function useSettingsItems() {
         icon: AppIcons.navigation.settings,
         label: 'Preferences',
         onPress: () => {
-          // TODO: Navigate to preferences screen
+          router.push('/settings/preferences');
         },
       },
       {
@@ -36,7 +37,7 @@ export function useSettingsItems() {
         icon: AppIcons.content.language,
         label: 'App Language',
         onPress: () => {
-          // TODO: Navigate to language selection screen
+          router.push('/settings/language');
         },
       },
       {
@@ -45,7 +46,7 @@ export function useSettingsItems() {
         label: 'Report an Issue',
         showDividerAfter: true,
         onPress: () => {
-          // TODO: Navigate to support screen
+          router.push('/settings/support');
         },
       },
       {
@@ -53,7 +54,7 @@ export function useSettingsItems() {
         icon: AppIcons.business.organization,
         label: 'Organization',
         onPress: () => {
-          // TODO: Navigate to organization screen
+          router.push('/settings/organization');
         },
       },
       {
@@ -62,7 +63,7 @@ export function useSettingsItems() {
         label: 'Plan',
         showDividerAfter: true,
         onPress: () => {
-          // TODO: Navigate to plan screen
+          router.push('/settings/plan');
         },
       },
       {
@@ -70,7 +71,7 @@ export function useSettingsItems() {
         icon: AppIcons.content.privacy,
         label: 'Privacy Policy',
         onPress: () => {
-          // TODO: Navigate to privacy policy screen
+          router.push('/settings/privacy');
         },
       },
       {
@@ -78,7 +79,7 @@ export function useSettingsItems() {
         icon: AppIcons.content.document,
         label: 'Terms of Use',
         onPress: () => {
-          // TODO: Navigate to terms of use screen
+          router.push('/settings/terms');
         },
       },
       {
@@ -86,7 +87,7 @@ export function useSettingsItems() {
         icon: AppIcons.status.info,
         label: 'About',
         onPress: () => {
-          // TODO: Navigate to about screen
+          router.push('/settings/about');
         },
       },
     ],

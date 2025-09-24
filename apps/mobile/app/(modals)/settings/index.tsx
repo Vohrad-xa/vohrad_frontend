@@ -1,7 +1,7 @@
 import {useMemo, useCallback} from 'react';
 import {StyleSheet, Platform, FlatList, type ListRenderItem} from 'react-native';
 import {StatusBar as ExpoStatusBar} from 'expo-status-bar';
-import {ThemedView, ThemedText, Divider, ListItem, Switch, WebHeader} from '@/components/ui';
+import {ThemedView, ThemedText, Divider, ListItem, Switch} from '@/components/ui';
 import type {Tokens} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {
@@ -87,8 +87,6 @@ export default function SettingsModal() {
 
   return (
     <ThemedView style={styles.container}>
-      <WebHeader title="Settings" />
-
       <FlatList
         data={allSettingsItems}
         renderItem={renderItem}

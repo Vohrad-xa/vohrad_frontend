@@ -1,6 +1,6 @@
 import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
-import {Stack, router} from 'expo-router';
+import {Stack} from 'expo-router';
 import {StatusBar} from 'expo-status-bar';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {HeaderButton} from '@/components/ui';
@@ -41,13 +41,7 @@ function InnerApp() {
           name="(modals)/settings"
           options={{
             presentation: 'modal',
-            headerShown: true,
-            title: 'Settings',
-            gestureEnabled: true,
-            headerLeft: () => null,
-            headerRight: () => (
-              <HeaderButton icon={AppIcons.navigation.close} accessibilityLabel="Close" onPress={() => router.back()} />
-            ),
+            headerShown: false,
           }}
         />
         <Stack.Screen name="(stack)" options={{headerShown: false}} />
