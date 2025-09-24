@@ -2,7 +2,6 @@ import {useMemo, useCallback} from 'react';
 import {
   StyleSheet,
   Platform,
-  View,
   FlatList,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
@@ -95,14 +94,20 @@ export default function SettingsModal() {
       return (
         <ListItem label={item.label} icon={item.icon} onPress={item.onPress} isDestructive={item.isDestructive}>
           {isToggleItem(item) ? (
-            <View style={styles.switchContainer}>
+            <>
               {item.id === 'appearance' && (
                 <ThemedText style={styles.themeStatusText}>
                   {preference === 'system' ? 'System' : preference === 'light' ? 'Light' : 'Dark'}
                 </ThemedText>
               )}
-              <Switch />
-            </View>
+              <Switch
+                style={{
+                  alignSelf: 'auto',
+                  minWidth: ds.iconSize.md,
+                  minHeight: ds.iconSize.md,
+                }}
+              />
+            </>
           ) : (
             !item.isDestructive && <Icon name={AppIcons.navigation.forward} size={ds.iconSize.md} color={theme.muted} />
           )}
@@ -162,14 +167,10 @@ const createStyles = (ds: typeof DesignSystem, theme: typeof Tokens.light | type
     divider: {
       marginVertical: ds.spacing.sm,
     },
-    switchContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: ds.spacing.sm,
-    },
     themeStatusText: {
-      ...ds.typography.caption,
+      ...ds.typography.secondary,
       color: theme.muted,
       fontWeight: ds.fontWeight.medium,
+      marginRight: ds.spacing.sm,
     },
   });

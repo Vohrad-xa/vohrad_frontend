@@ -40,7 +40,7 @@ function InnerApp() {
         <Stack.Screen
           name="(modals)/settings"
           options={{
-            presentation: 'pageSheet',
+            presentation: 'modal',
             headerShown: false,
             title: 'Settings',
             gestureEnabled: true,

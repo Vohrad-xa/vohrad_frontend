@@ -24,7 +24,8 @@ export function usePullToRefresh(options: PullToRefreshOptions = {}): PullToRefr
   const [refreshing, setRefreshing] = useState(false);
 
   const resolvedTintColor = tintColor ?? theme.tint;
-  const resolvedProgressBackgroundColor = progressBackgroundColor ?? theme.card;
+  const resolvedProgressBackgroundColor =
+    progressBackgroundColor ?? (Platform.OS === 'android' ? theme.surface : theme.card);
 
   const handleRefresh = useCallback(async () => {
     if (refreshing) {

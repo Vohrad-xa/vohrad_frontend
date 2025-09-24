@@ -60,7 +60,7 @@ export default function Switch({style}: CustomSwitchProps) {
     outputRange: ['0deg', '360deg'],
   });
 
-  const baseSize = Platform.select({ios: 36, default: ds.components.tapTarget.minSize});
+  const baseSize = ds.components.tapTarget.minSize;
 
   return (
     <TouchableOpacity
