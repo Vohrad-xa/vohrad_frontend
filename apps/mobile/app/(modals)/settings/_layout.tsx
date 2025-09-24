@@ -12,9 +12,7 @@ export default function SettingsLayout() {
     headerLeft: () => (
       <HeaderButton icon={AppIcons.navigation.back} accessibilityLabel="Back" onPress={() => router.back()} />
     ),
-    headerRight: () => (
-      <HeaderButton icon={AppIcons.navigation.close} accessibilityLabel="Close" onPress={() => router.dismiss()} />
-    ),
+    headerRight: () => null,
   });
 
   return (

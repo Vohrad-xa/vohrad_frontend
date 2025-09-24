@@ -58,8 +58,8 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
       case 'primary':
         return {
           ...baseStyle,
-          backgroundColor: scheme === 'dark' ? theme.input : (theme as any).quickActionIconBackground,
-          borderColor: scheme === 'dark' ? theme.input : (theme as any).quickActionIconBackground,
+          backgroundColor: scheme === 'dark' ? theme.input : theme.quickActionIconBackground,
+          borderColor: scheme === 'dark' ? theme.input : theme.quickActionIconBackground,
           borderWidth: 1,
         };
       case 'secondary':
@@ -112,9 +112,7 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
       {icon && iconPosition === 'left' && (
         <Icon name={icon} size={ds.iconSize.md} color={getTextColor()} style={{marginRight: ds.spacing.xs}} />
       )}
-      {(title ?? children) && (
-        <ThemedText variant="interactive">{loading ? 'Loading...' : title}</ThemedText>
-      )}
+      {(title ?? children) && <ThemedText variant="interactive">{loading ? 'Loading...' : title}</ThemedText>}
       {children && !title && children}
       {icon && iconPosition === 'right' && (
         <Icon name={icon} size={ds.iconSize.md} color={getTextColor()} style={{marginLeft: ds.spacing.xs}} />

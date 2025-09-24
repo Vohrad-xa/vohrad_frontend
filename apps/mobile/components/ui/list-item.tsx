@@ -1,10 +1,10 @@
 import React from 'react';
 import {View, TouchableOpacity, StyleSheet, type StyleProp, type ViewStyle} from 'react-native';
-import type {Tokens} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
 import {Icon, type IconName} from '@/utils';
 import {ThemedText} from './themed-text';
+type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 export interface ListItemProps {
   label: string;
@@ -42,7 +42,7 @@ const ListItem = React.memo(({label, icon, onPress, isDestructive, children, sty
 
 ListItem.displayName = 'ListItem';
 
-const createStyles = (ds: typeof DesignSystem, _theme: typeof Tokens.light | typeof Tokens.dark) =>
+const createStyles = (ds: typeof DesignSystem, _theme: ThemeType) =>
   StyleSheet.create({
     listItem: {
       flexDirection: 'row',

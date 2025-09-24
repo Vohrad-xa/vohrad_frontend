@@ -3,11 +3,12 @@ import {BlurView} from 'expo-blur';
 import Animated from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {SearchBar} from '@/components/ui';
-import type {Tokens, ColorScheme} from '@/constants/colors';
+import type {ColorScheme} from '@/constants/colors';
 import {Palette} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons} from '@/utils';
+type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 interface SideMenuHeaderProps {
   headerStyle: object;
@@ -41,7 +42,7 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
   );
 }
 
-const createStyles = (theme: typeof Tokens.light | typeof Tokens.dark, ds: typeof DesignSystem, scheme: ColorScheme) =>
+const createStyles = (theme: ThemeType, ds: typeof DesignSystem, scheme: ColorScheme) =>
   StyleSheet.create({
     headerBlurView: {
       paddingLeft: ds.spacing.xl,

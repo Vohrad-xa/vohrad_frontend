@@ -1,8 +1,9 @@
 import React from 'react';
 import {Text, type TextProps} from 'react-native';
-import type {Tokens, TokenName} from '@/constants/colors';
+import type {TokenName} from '@/constants/colors';
 import type {DesignSystem, Typography} from '@/constants/typography';
 import {useTheme} from '@/providers/theme-provider';
+type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 // Text variants based on typography system
 export type TextVariant = Typography;
@@ -16,7 +17,7 @@ export type ThemedTextProps = TextProps & {
 
 const getTextStyle = (
   variant: TextVariant,
-  theme: typeof Tokens.light | typeof Tokens.dark,
+  theme: ThemeType,
   ds: typeof DesignSystem,
   colorToken?: TokenName,
   opacity?: number,

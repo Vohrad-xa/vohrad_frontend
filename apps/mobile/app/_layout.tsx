@@ -1,11 +1,11 @@
 import {useEffect} from 'react';
-import * as SplashScreen from 'expo-splash-screen';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
+import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
-import {MainLayout} from '@/layouts/main-layout';
+import LoginScreen from '@/features/auth/login-screen';
 import {AuthLayout} from '@/layouts/auth-layout';
-import LoginScreen from './login';
+import {MainLayout} from '@/layouts/main-layout';
+import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 

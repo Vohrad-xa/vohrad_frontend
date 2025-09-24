@@ -1,7 +1,7 @@
 import {Platform} from 'react-native';
 import {Stack} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
-import {SidebarContainer} from '@/features/side_bar/sidebar-container';
+import {SidebarContainer} from '@/features/side-bar/sidebar-container';
 import {HeaderVisibilityProvider, SidebarProvider, useTheme, useSidebar} from '@/providers';
 import {AppIcons} from '@/utils';
 

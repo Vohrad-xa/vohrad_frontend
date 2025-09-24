@@ -1,11 +1,11 @@
 import React from 'react';
 import {View, StyleSheet, Platform} from 'react-native';
-import type {Tokens} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
 import {HeaderButton} from './header-button';
 import {ThemedText} from './themed-components';
+type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 export interface WebHeaderProps {
   title?: string;
@@ -65,7 +65,7 @@ export const WebHeader = ({title, rightAction}: WebHeaderProps) => {
   );
 };
 
-const createStyles = (ds: typeof DesignSystem, theme: typeof Tokens.light | typeof Tokens.dark) =>
+const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
   StyleSheet.create({
     webHeader: {
       backgroundColor: theme.card,

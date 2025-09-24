@@ -1,9 +1,9 @@
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
-import type {Tokens} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
 import type {MenuItemProps} from '@/types/ui';
 import {Icon} from '@/utils';
+type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 export function MenuItem({icon, label, onPress, isDestructive}: MenuItemProps) {
   const {theme, ds} = useTheme();
@@ -17,7 +17,7 @@ export function MenuItem({icon, label, onPress, isDestructive}: MenuItemProps) {
   );
 }
 
-const createStyles = (theme: typeof Tokens.light | typeof Tokens.dark, ds: typeof DesignSystem) =>
+const createStyles = (theme: ThemeType, ds: typeof DesignSystem) =>
   StyleSheet.create({
     menuItem: {
       flexDirection: 'row',

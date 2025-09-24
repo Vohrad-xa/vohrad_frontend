@@ -1,9 +1,10 @@
 import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import {BlurView} from 'expo-blur';
-import type {Tokens, ColorScheme} from '@/constants/colors';
+import type {ColorScheme} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils';
+type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 interface ProfileSectionProps {
   onPressSettings: () => void;
@@ -35,7 +36,7 @@ export function ProfileSection({onPressSettings}: ProfileSectionProps) {
   );
 }
 
-const createStyles = (theme: typeof Tokens.light | typeof Tokens.dark, ds: typeof DesignSystem, _scheme: ColorScheme) =>
+const createStyles = (theme: ThemeType, ds: typeof DesignSystem, _scheme: ColorScheme) =>
   StyleSheet.create({
     profileBlurView: {
       paddingTop: ds.spacing.xl,

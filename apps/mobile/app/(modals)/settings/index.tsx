@@ -2,7 +2,6 @@ import {useMemo, useCallback} from 'react';
 import {StyleSheet, Platform, FlatList, type ListRenderItem} from 'react-native';
 import {StatusBar as ExpoStatusBar} from 'expo-status-bar';
 import {ThemedView, ThemedText, Divider, ListItem, Switch} from '@/components/ui';
-import type {Tokens} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {
   isDividerItem,
@@ -13,6 +12,7 @@ import {
 import {useSettingsItems} from '@/features/settings/use-settings-items';
 import {useTheme, useAuth} from '@/providers';
 import {Icon, AppIcons} from '@/utils';
+type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 export default function SettingsModal() {
   const {ds, theme, preference} = useTheme();
@@ -20,23 +20,23 @@ export default function SettingsModal() {
   const styles = createStyles(ds, theme);
   const computedSettingsItems = useSettingsItems();
 
-  const destructiveItems: SettingsItem[] = [
-    {
-      id: 'logout',
-      icon: AppIcons.actions.logout,
-      label: 'Logout',
-      isDestructive: true,
-      onPress: () => {
-        logout();
-      },
-    },
-  ];
-
   // Type guard to check for toggle items
   const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem => 'hasToggle' in item;
 
   const allSettingsItems = useMemo(() => {
     const itemsWithDividers: SettingsListItem[] = [];
+
+    const destructiveItems: SettingsItem[] = [
+      {
+        id: 'logout',
+        icon: AppIcons.actions.logout,
+        label: 'Logout',
+        isDestructive: true,
+        onPress: () => {
+          logout();
+        },
+      },
+    ];
 
     computedSettingsItems.forEach((item) => {
       itemsWithDividers.push(item);
@@ -52,7 +52,7 @@ export default function SettingsModal() {
     });
 
     return itemsWithDividers;
-  }, [computedSettingsItems]);
+  }, [computedSettingsItems, logout]);
 
   const renderItem: ListRenderItem<SettingsListItem> = useCallback(
     ({item}) => {
@@ -103,7 +103,7 @@ export default function SettingsModal() {
   );
 }
 
-const createStyles = (ds: typeof DesignSystem, theme: typeof Tokens.light | typeof Tokens.dark) =>
+const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
   StyleSheet.create({
     container: {
       flex: 1,

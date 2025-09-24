@@ -11,14 +11,13 @@ import {router} from 'expo-router';
 import {Gesture, GestureDetector, ScrollView} from 'react-native-gesture-handler';
 import Animated, {useAnimatedStyle, useSharedValue, withTiming, interpolateColor} from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import type {Tokens} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {useSidebar, useTheme} from '@/providers';
 import type {MenuItem as MenuItemType} from '@/types/ui';
 import {AppIcons} from '@/utils';
-import {MenuItem} from './MenuItem';
-import {ProfileSection} from './ProfileSection';
-import {SideMenuHeader} from './SideMenuHeader';
+import {MenuItem} from './menu-item';
+import {ProfileSection} from './profile-section';
+import {SideMenuHeader} from './side-menu-header';
 import type {SharedValue} from 'react-native-reanimated';
 
 interface SideMenuProps {
@@ -128,12 +127,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
   );
 }
 
-const createStyles = (
-  theme: typeof Tokens.light | typeof Tokens.dark,
-  ds: typeof DesignSystem,
-  headerHeight: number,
-  footerHeight: number,
-) =>
+const createStyles = (theme: ThemeType, ds: typeof DesignSystem, headerHeight: number, footerHeight: number) =>
   StyleSheet.create({
     container: {
       position: 'absolute',
@@ -168,3 +162,4 @@ const createStyles = (
       right: 0,
     },
   });
+type ThemeType = ReturnType<typeof useTheme>['theme'];

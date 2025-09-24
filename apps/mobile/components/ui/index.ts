@@ -2,7 +2,7 @@ export {GlassSurface} from './glass-surface';
 export {GlassCard} from './glass-card';
 export {Collapsible} from './collapsible';
 export {RefreshableScrollView} from './refreshable-scroll-view';
-export {default as Switch} from './Switch';
+export {default as Switch} from './switch';
 export {InfoCard} from './info-card';
 export {HeaderButton} from './header-button';
 export {Divider} from './divider';

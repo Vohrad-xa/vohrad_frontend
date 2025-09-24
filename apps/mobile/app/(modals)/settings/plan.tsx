@@ -1,9 +1,9 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import {ThemedView, ThemedText} from '@/components/ui';
-import type {Tokens} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
+type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 export default function PlanScreen() {
   const {ds, theme} = useTheme();
@@ -16,7 +16,7 @@ export default function PlanScreen() {
   );
 }
 
-const createStyles = (ds: typeof DesignSystem, theme: typeof Tokens.light | typeof Tokens.dark) =>
+const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
   StyleSheet.create({
     container: {
       flex: 1,
