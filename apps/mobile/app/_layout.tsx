@@ -41,10 +41,10 @@ function InnerApp() {
           name="(modals)/settings"
           options={{
             presentation: 'modal',
-            headerShown: false,
+            headerShown: true,
             title: 'Settings',
             gestureEnabled: true,
-            headerLeft: () => <HeaderButton icon={AppIcons.status.info} accessibilityLabel="Help" />,
+            headerLeft: () => null,
             headerRight: () => (
               <HeaderButton icon={AppIcons.navigation.close} accessibilityLabel="Close" onPress={() => router.back()} />
             ),

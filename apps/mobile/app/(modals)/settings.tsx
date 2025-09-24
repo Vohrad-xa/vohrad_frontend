@@ -1,26 +1,7 @@
 import {useMemo, useCallback} from 'react';
-import {
-  StyleSheet,
-  Platform,
-  FlatList,
-  type NativeSyntheticEvent,
-  type NativeScrollEvent,
-  type ListRenderItem,
-} from 'react-native';
-import {useRouter} from 'expo-router';
+import {StyleSheet, Platform, FlatList, type ListRenderItem} from 'react-native';
 import {StatusBar as ExpoStatusBar} from 'expo-status-bar';
-import {useSharedValue} from 'react-native-reanimated';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {
-  ThemedView,
-  ThemedText,
-  Divider,
-  HeaderButton,
-  ListItem,
-  Switch,
-  AnimatedHeader,
-  calculateAnimatedHeaderHeight,
-} from '@/components/ui';
+import {ThemedView, ThemedText, Divider, ListItem, Switch, WebHeader} from '@/components/ui';
 import type {Tokens} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {
@@ -50,21 +31,8 @@ const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem => 'ha
 
 export default function SettingsModal() {
   const {ds, theme, preference} = useTheme();
-  const navigation = useRouter();
-  const insets = useSafeAreaInsets();
   const styles = createStyles(ds, theme);
-  const scrollValue = useSharedValue(0);
-
   const computedSettingsItems = useSettingsItems();
-
-  const headerHeight = calculateAnimatedHeaderHeight(ds, insets);
-
-  const dynamicStyles = useMemo(
-    () => ({
-      scrollContent: {paddingTop: headerHeight},
-    }),
-    [headerHeight],
-  );
 
   const allSettingsItems = useMemo(() => {
     const itemsWithDividers: SettingsListItem[] = [];
@@ -117,35 +85,18 @@ export default function SettingsModal() {
     [ds, theme, styles, preference],
   );
 
-  const handleClose = () => {
-    if (navigation.canGoBack()) {
-      navigation.back();
-    } else {
-      navigation.replace('/');
-    }
-  };
-
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    scrollValue.value = event.nativeEvent.contentOffset.y;
-  };
-
   return (
     <ThemedView style={styles.container}>
+      <WebHeader title="Settings" />
+
       <FlatList
         data={allSettingsItems}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         style={styles.scrollContainer}
-        contentContainerStyle={[styles.scrollContentContainer, dynamicStyles.scrollContent]}
+        contentContainerStyle={styles.scrollContentContainer}
+        contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-      />
-
-      <AnimatedHeader
-        title="Settings"
-        scrollValue={scrollValue}
-        rightAction={<HeaderButton icon={AppIcons.navigation.close} accessibilityLabel="Close" onPress={handleClose} />}
       />
 
       <ExpoStatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />

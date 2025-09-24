@@ -78,7 +78,7 @@ export default function HomeScreen() {
     <ScrollComponent
       bounces={Platform.OS !== 'web'}
       showsVerticalScrollIndicator={false}
-      contentInsetAdjustmentBehavior={Platform.OS !== 'web' ? "automatic" : undefined}
+      contentInsetAdjustmentBehavior={Platform.OS !== 'web' ? 'automatic' : undefined}
       style={{backgroundColor: theme.background, flex: 1}}>
       <View style={styles.container}>
         <ThemedText variant="headline" style={[styles.title, {marginTop: 0}]}>

@@ -7,5 +7,5 @@ export {InfoCard} from './info-card';
 export {HeaderButton} from './header-button';
 export {Divider} from './divider';
 export * from './themed-components';
-export { default as ListItem } from './list-item';
-export * from './animated-header';
+export {default as ListItem} from './list-item';
+export {WebHeader} from './web-header';
