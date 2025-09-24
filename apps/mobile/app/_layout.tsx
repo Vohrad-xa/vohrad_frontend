@@ -1,66 +1,48 @@
-import {Platform} from 'react-native';
+import {useEffect} from 'react';
+import * as SplashScreen from 'expo-splash-screen';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
-import {Stack} from 'expo-router';
-import {StatusBar} from 'expo-status-bar';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {HeaderButton} from '@/components/ui';
-import {SidebarContainer} from '@/features/side_bar/sidebar-container';
-import {HeaderVisibilityProvider, SidebarProvider, AppThemeProvider, useTheme, useSidebar} from '@/providers';
+import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
+import {MainLayout} from '@/layouts/main-layout';
+import {AuthLayout} from '@/layouts/auth-layout';
+import LoginScreen from './login';
 
-import {AppIcons} from '@/utils';
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
 
-function InnerApp() {
-  const {scheme, theme} = useTheme();
-  const {toggleSideMenu} = useSidebar();
+function AppContent() {
+  const {isAuthenticated} = useAuth();
 
-  return (
-    <SidebarContainer>
-      <Stack
-        screenOptions={{
-          contentStyle: {backgroundColor: theme.background},
-          headerShown: true,
-          headerTransparent: Platform.OS === 'ios',
-          headerStyle: Platform.OS === 'android' ? {backgroundColor: theme.background} : undefined,
-          headerTitleStyle: {color: theme.text},
-          headerTitleAlign: 'center',
-          headerLeft: () => (
-            <HeaderButton icon={AppIcons.navigation.menu} accessibilityLabel="Open menu" onPress={toggleSideMenu} />
-          ),
-        }}>
-        <Stack.Screen
-          name="(tabs)"
-          options={{
-            headerShown: true,
-          }}
-        />
-        <Stack.Screen
-          name="(modals)/settings"
-          options={{
-            presentation: 'modal',
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen name="(stack)" options={{headerShown: false}} />
-      </Stack>
-      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-    </SidebarContainer>
-  );
+  if (!isAuthenticated) {
+    return (
+      <AuthLayout>
+        <LoginScreen />
+      </AuthLayout>
+    );
+  }
+
+  return <MainLayout />;
+}
+
+function InnerApp() {
+  return <AppContent />;
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    SplashScreen.hideAsync().catch(() => {});
+  }, []);
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <ActionSheetProvider>
         <AppThemeProvider>
-          <HeaderVisibilityProvider>
-            <SidebarProvider>
-              <InnerApp />
-            </SidebarProvider>
-          </HeaderVisibilityProvider>
+          <AuthProvider>
+            <InnerApp />
+          </AuthProvider>
         </AppThemeProvider>
       </ActionSheetProvider>
     </GestureHandlerRootView>

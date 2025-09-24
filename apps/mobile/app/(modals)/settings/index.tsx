@@ -11,28 +11,29 @@ import {
   type ToggleSettingsItem,
 } from '@/features/settings/types';
 import {useSettingsItems} from '@/features/settings/use-settings-items';
-import {useTheme} from '@/providers';
+import {useTheme, useAuth} from '@/providers';
 import {Icon, AppIcons} from '@/utils';
-
-const destructiveItems: SettingsItem[] = [
-  {
-    id: 'logout',
-    icon: AppIcons.actions.logout,
-    label: 'Logout',
-    isDestructive: true,
-    onPress: () => {
-      // TODO: Implement logout functionality
-    },
-  },
-];
-
-// Type guard to check for toggle items
-const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem => 'hasToggle' in item;
 
 export default function SettingsModal() {
   const {ds, theme, preference} = useTheme();
+  const {logout} = useAuth();
   const styles = createStyles(ds, theme);
   const computedSettingsItems = useSettingsItems();
+
+  const destructiveItems: SettingsItem[] = [
+    {
+      id: 'logout',
+      icon: AppIcons.actions.logout,
+      label: 'Logout',
+      isDestructive: true,
+      onPress: () => {
+        logout();
+      },
+    },
+  ];
+
+  // Type guard to check for toggle items
+  const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem => 'hasToggle' in item;
 
   const allSettingsItems = useMemo(() => {
     const itemsWithDividers: SettingsListItem[] = [];

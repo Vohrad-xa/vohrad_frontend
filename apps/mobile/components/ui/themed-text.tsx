@@ -21,34 +21,32 @@ const getTextStyle = (
   colorToken?: TokenName,
   opacity?: number,
 ) => {
+  const brandFontMap: Partial<Record<TextVariant, keyof typeof ds.fonts>> = {
+    callout: 'brand',
+    headline: 'brand',
+    interactive: 'brandMedium',
+  };
+
+  const variantFontKey = brandFontMap[variant];
   const baseStyle = {
-    fontFamily: 'System',
+    fontFamily: variantFontKey ? ds.fonts[variantFontKey] : ds.fonts.system,
   };
 
   const typographyStyle = ds.typography[variant];
-
-  if (!typographyStyle) {
-    const fallbackStyle = ds.typography.body;
-    return {
-      ...baseStyle,
-      fontSize: fallbackStyle.fontSize,
-      lineHeight: fallbackStyle.lineHeight,
-      fontWeight: fallbackStyle.fontWeight,
-      letterSpacing: fallbackStyle.letterSpacing,
-      color: theme.text,
-    };
-  }
+  const fallbackStyle = ds.typography.body;
+  const resolvedTypography = typographyStyle ?? fallbackStyle;
+  const variantForColor = typographyStyle ? variant : 'body';
 
   // Determine color based on variant or token
   let textColor: string;
 
   if (colorToken) {
     textColor = theme[colorToken];
-  } else if (variant === 'secondary') {
+  } else if (variantForColor === 'secondary') {
     textColor = theme.muted;
-  } else if (variant === 'tertiary' || variant === 'caption') {
+  } else if (variantForColor === 'tertiary' || variantForColor === 'caption') {
     textColor = theme.muted;
-  } else if (variant === 'actionBar') {
+  } else if (variantForColor === 'actionBar') {
     textColor = theme.muted;
   } else {
     textColor = theme.text;
@@ -65,12 +63,16 @@ const getTextStyle = (
     }
   }
 
+  const typographyWithFamily = resolvedTypography as typeof resolvedTypography & {fontFamily?: string};
+  const fontFamily = typographyWithFamily.fontFamily ?? baseStyle.fontFamily;
+
   return {
     ...baseStyle,
-    fontSize: typographyStyle.fontSize,
-    lineHeight: typographyStyle.lineHeight,
-    fontWeight: typographyStyle.fontWeight,
-    letterSpacing: typographyStyle.letterSpacing,
+    fontFamily,
+    fontSize: resolvedTypography.fontSize,
+    lineHeight: resolvedTypography.lineHeight,
+    fontWeight: resolvedTypography.fontWeight,
+    letterSpacing: resolvedTypography.letterSpacing,
     color: textColor,
   };
 };
@@ -80,14 +82,5 @@ export function ThemedText({variant = 'body', color, colorToken, opacity, style,
 
   const textStyle = getTextStyle(variant, theme, ds, colorToken, opacity);
 
-  return (
-    <Text
-      style={[
-        textStyle,
-        color && {color}, // Override color if provided
-        style,
-      ]}
-      {...props}
-    />
-  );
+  return <Text style={[textStyle, color && {color}, style]} {...props} />;
 }

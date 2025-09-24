@@ -28,6 +28,12 @@ export const DesignSystem = {
     xxxl: 48,
   },
 
+  fonts: {
+    system: 'System',
+    brand: 'System',
+    brandMedium: 'System',
+  },
+
   typography: {
     pageTitle: {
       fontSize: 34,
@@ -122,8 +128,8 @@ export const DesignSystem = {
 
     callout: {
       fontSize: 16,
-      lineHeight: 21,
-      fontWeight: '400' as const,
+      lineHeight: 20,
+      fontWeight: '600' as const,
       letterSpacing: -0.32,
     },
 
@@ -307,5 +313,6 @@ export const DesignSystem = {
 export type BorderRadius = keyof typeof DesignSystem.borderRadius;
 export type Spacing = keyof typeof DesignSystem.spacing;
 export type Typography = keyof typeof DesignSystem.typography;
+export type FontFamily = keyof typeof DesignSystem.fonts;
 export type FontWeight = keyof typeof DesignSystem.fontWeight;
 export type Opacity = keyof typeof DesignSystem.opacity;

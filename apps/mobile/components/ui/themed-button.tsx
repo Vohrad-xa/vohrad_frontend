@@ -26,7 +26,7 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
   children,
   ...props
 }) => {
-  const {theme, ds} = useTheme();
+  const {theme, ds, scheme} = useTheme();
 
   const getButtonStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
@@ -58,8 +58,8 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
       case 'primary':
         return {
           ...baseStyle,
-          backgroundColor: theme.primary,
-          borderColor: theme.primary,
+          backgroundColor: scheme === 'dark' ? theme.input : (theme as any).quickActionIconBackground,
+          borderColor: scheme === 'dark' ? theme.input : (theme as any).quickActionIconBackground,
           borderWidth: 1,
         };
       case 'secondary':
@@ -113,9 +113,7 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
         <Icon name={icon} size={ds.iconSize.md} color={getTextColor()} style={{marginRight: ds.spacing.xs}} />
       )}
       {(title ?? children) && (
-        <ThemedText variant="interactive" style={{color: getTextColor()}}>
-          {loading ? 'Loading...' : title}
-        </ThemedText>
+        <ThemedText variant="interactive">{loading ? 'Loading...' : title}</ThemedText>
       )}
       {children && !title && children}
       {icon && iconPosition === 'right' && (
