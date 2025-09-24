@@ -3,9 +3,9 @@ import {View, Dimensions, Platform} from 'react-native';
 import {useSegments} from 'expo-router';
 import {GestureDetector} from 'react-native-gesture-handler';
 import Animated, {useAnimatedStyle} from 'react-native-reanimated';
-import {SideMenu} from '@/components/side-bare';
-import {SidebarBackdrop} from '@/components/side-bare/sidebar-backdrop';
 import {useSidebar, useTheme} from '@/providers';
+import {SideMenu} from './side-menu';
+import {SidebarBackdrop} from './sidebar-backdrop';
 
 interface SidebarContainerProps {
   children: React.ReactNode;

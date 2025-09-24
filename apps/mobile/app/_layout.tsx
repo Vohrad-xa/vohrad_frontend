@@ -3,8 +3,8 @@ import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {Stack, router} from 'expo-router';
 import {StatusBar} from 'expo-status-bar';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {SidebarContainer} from '@/components/side-bare/sidebar-container';
 import {HeaderButton} from '@/components/ui';
+import {SidebarContainer} from '@/features/side_bar/sidebar-container';
 import {HeaderVisibilityProvider, SidebarProvider, AppThemeProvider, useTheme, useSidebar} from '@/providers';
 
 import {AppIcons} from '@/utils';
