@@ -1,34 +1,40 @@
 import {useEffect} from 'react';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
+import {Slot, useRootNavigationState, useRouter, useSegments} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import LoginScreen from '@/features/auth/login-screen';
-import {AuthLayout} from '@/layouts/auth-layout';
-import {MainLayout} from '@/layouts/main-layout';
 import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  initialRouteName: '(auth)',
 };
 
-function AppContent() {
+function RootNavigation() {
   const {isAuthenticated} = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+  const navigationState = useRootNavigationState();
+  const rootSegment = segments[0];
 
-  if (!isAuthenticated) {
-    return (
-      <AuthLayout>
-        <LoginScreen />
-      </AuthLayout>
-    );
-  }
+  useEffect(() => {
+    if (!navigationState?.key) {
+      return;
+    }
 
-  return <MainLayout />;
-}
+    const inAuthGroup = rootSegment === '(auth)';
+    if (!isAuthenticated && !inAuthGroup) {
+      router.replace('/login');
+      return;
+    }
 
-function InnerApp() {
-  return <AppContent />;
+    if (isAuthenticated && inAuthGroup) {
+      router.replace('/');
+    }
+  }, [isAuthenticated, navigationState?.key, router, rootSegment]);
+
+  return <Slot />;
 }
 
 export default function RootLayout() {
@@ -41,7 +47,7 @@ export default function RootLayout() {
       <ActionSheetProvider>
         <AppThemeProvider>
           <AuthProvider>
-            <InnerApp />
+            <RootNavigation />
           </AuthProvider>
         </AppThemeProvider>
       </ActionSheetProvider>

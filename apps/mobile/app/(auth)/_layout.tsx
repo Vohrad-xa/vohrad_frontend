@@ -1,4 +1,5 @@
 import React from 'react';
+import {Stack} from 'expo-router';
 import {StatusBar} from 'expo-status-bar';
 import {useTheme} from '@/providers';
 
@@ -6,7 +7,7 @@ interface AuthLayoutProps {
   children: React.ReactNode;
 }
 
-export function AuthLayout({children}: AuthLayoutProps) {
+function AuthLayout({children}: AuthLayoutProps) {
   const {scheme} = useTheme();
 
   return (
@@ -14,5 +15,13 @@ export function AuthLayout({children}: AuthLayoutProps) {
       {children}
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
     </>
+  );
+}
+
+export default function AuthGroupLayout() {
+  return (
+    <AuthLayout>
+      <Stack screenOptions={{headerShown: false}} />
+    </AuthLayout>
   );
 }

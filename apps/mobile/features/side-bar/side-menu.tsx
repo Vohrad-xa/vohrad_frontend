@@ -115,7 +115,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
           <ProfileSection
             onPressSettings={() => {
               Keyboard.dismiss();
-              router.push('/(modals)/settings');
+              router.push('/settings');
               if (Platform.OS === 'android') {
                 setTimeout(() => onClose(), 180);
               }

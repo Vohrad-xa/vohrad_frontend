@@ -2,16 +2,17 @@ import {Platform} from 'react-native';
 import {Stack} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {SidebarContainer} from '@/features/side-bar/sidebar-container';
-import {HeaderVisibilityProvider, SidebarProvider, useTheme, useSidebar} from '@/providers';
+import {HeaderVisibilityProvider, SidebarProvider, useSidebar, useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
 
-function InnerMainLayout() {
+function AppStack() {
   const {theme} = useTheme();
   const {toggleSideMenu} = useSidebar();
 
   return (
     <SidebarContainer>
       <Stack
+        initialRouteName="(tabs)"
         screenOptions={{
           contentStyle: {backgroundColor: theme.background},
           headerShown: true,
@@ -23,30 +24,24 @@ function InnerMainLayout() {
             <HeaderButton icon={AppIcons.navigation.menu} accessibilityLabel="Open menu" onPress={toggleSideMenu} />
           ),
         }}>
+        <Stack.Screen name="(tabs)" options={{headerShown: true}} />
         <Stack.Screen
-          name="(tabs)"
-          options={{
-            headerShown: true,
-          }}
-        />
-        <Stack.Screen
-          name="(modals)/settings"
+          name="(modals)"
           options={{
             presentation: 'modal',
             headerShown: false,
           }}
         />
-        <Stack.Screen name="(stack)" options={{headerShown: false}} />
       </Stack>
     </SidebarContainer>
   );
 }
 
-export function MainLayout() {
+export default function AppLayout() {
   return (
     <HeaderVisibilityProvider>
       <SidebarProvider>
-        <InnerMainLayout />
+        <AppStack />
       </SidebarProvider>
     </HeaderVisibilityProvider>
   );
