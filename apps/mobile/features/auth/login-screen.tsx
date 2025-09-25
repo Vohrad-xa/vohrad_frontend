@@ -5,6 +5,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {ThemedButton, ThemedText, ThemedView} from '@/components/ui';
 import {type ColorScheme, Palette} from '@/constants/colors';
 import {type DesignSystem} from '@/constants/typography';
+import {usePlatformStyles} from '@/hooks';
 import {useAuth, useTheme} from '@/providers';
 
 export default function LoginScreen() {
@@ -22,6 +23,17 @@ export default function LoginScreen() {
   };
 
   const microsoftLogo = require('../../assets/icons/microsoft.png');
+  const darkModeImage = require('../../assets/images/dark_mode_image.png');
+
+  const buttonStyles = usePlatformStyles({
+    web: {
+      width: '50%',
+      alignSelf: 'center',
+    },
+    mobile: {
+      width: '100%',
+    },
+  });
 
   const styles = createStyles(ds, theme, scheme);
 
@@ -35,8 +47,9 @@ export default function LoginScreen() {
             showsVerticalScrollIndicator={false}
             contentInsetAdjustmentBehavior="automatic">
             <View style={[styles.centered, styles.spacingXl]}>
+              <Image source={darkModeImage} style={styles.heroImage} />
               <ThemedText variant="title2" style={styles.centered}>
-                Login
+                Sign in
               </ThemedText>
             </View>
 
@@ -45,16 +58,16 @@ export default function LoginScreen() {
                 variant="secondary"
                 fullWidth
                 onPress={handleMicrosoftLogin}
-                style={[styles.thickButton, styles.microsoftButton]}>
+                style={[styles.microsoftButton, buttonStyles]}>
                 <Image source={microsoftLogo} style={styles.microsoftIcon} />
                 <ThemedText variant="callout" style={styles.microsoftButtonText}>
                   Continue with Microsoft
                 </ThemedText>
               </ThemedButton>
 
-              <View style={styles.divider}>
+              <View style={[styles.divider, buttonStyles]}>
                 <View style={styles.dividerLine} />
-                <ThemedText variant="caption1" colorToken="muted">
+                <ThemedText variant="subheadline" colorToken="muted">
                   OR
                 </ThemedText>
                 <View style={styles.dividerLine} />
@@ -64,19 +77,15 @@ export default function LoginScreen() {
                 variant="primary"
                 fullWidth
                 onPress={handlePersonalEmailLogin}
-                style={[styles.thickButton, styles.continueButton]}>
+                style={[styles.continueButton, buttonStyles]}>
                 <ThemedText variant="callout">Use personal email</ThemedText>
               </ThemedButton>
 
               <View style={styles.footer}>
-                <ThemedText variant="subheadline" colorToken="muted" style={styles.footerDisclaimer}>
+                <ThemedText variant="caption" colorToken="muted">
                   By continuing, you acknowledge Vohrad’s
                 </ThemedText>
-                <ThemedText
-                  variant="subheadline"
-                  colorToken="muted"
-                  style={[styles.footerDisclaimer, styles.link]}
-                  accessibilityRole="link">
+                <ThemedText variant="caption" colorToken="muted" style={styles.link} accessibilityRole="link">
                   Privacy Policy
                 </ThemedText>
               </View>
@@ -95,9 +104,10 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
       flex: 1,
     },
     scrollContent: {
-      flexGrow: 1,
+      flex: 1,
       justifyContent: 'center',
       padding: ds.layout.screenPadding,
+      width: '100%',
     },
     centered: {
       alignItems: 'center',
@@ -113,20 +123,17 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
       alignItems: 'center',
       gap: ds.spacing.xs,
     },
-    thickButton: {
-      paddingVertical: ds.components.button.paddingVertical + 2,
-      minHeight: ds.components.button.height + 6,
-    },
     microsoftButton: {
       backgroundColor: scheme === 'dark' ? Palette.creme : Palette.darkBackground,
       borderColor: scheme === 'dark' ? Palette.creme : Palette.darkBackground,
-      borderWidth: 2,
+      borderRadius: ds.borderRadius.xxxl,
     },
     microsoftButtonText: {
       color: scheme === 'dark' ? Palette.black : Palette.creme,
     },
     continueButton: {
       borderWidth: 2,
+      borderRadius: ds.borderRadius.xxxl,
     },
     divider: {
       flexDirection: 'row',
@@ -138,9 +145,6 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
       height: ds.components.separator.height,
       backgroundColor: theme.divider,
     },
-    footerDisclaimer: {
-      textAlign: 'center',
-    },
     link: {
       textDecorationLine: 'underline',
     },
@@ -148,5 +152,9 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
       width: ds.iconSize.md,
       height: ds.iconSize.md,
       marginRight: ds.spacing.sm,
+    },
+    heroImage: {
+      width: 200,
+      height: 200,
     },
   });

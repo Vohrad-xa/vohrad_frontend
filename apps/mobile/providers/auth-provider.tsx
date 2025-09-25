@@ -17,7 +17,8 @@ export function useAuth() {
 }
 
 export function AuthProvider({children}: {children: React.ReactNode}) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // TEMP: Always authenticated during development to prevent redirects on hot reload
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   const login = () => {
     setIsAuthenticated(true);

@@ -92,7 +92,7 @@ export const Tokens = {
     surface: Palette.gray[800],
     text: '#ECEDEE',
     muted: '#A1A1AA',
-    border: '#262626',
+    border: Palette.creme,
     divider: Palette.gray[600],
 
     // Brand & accents
