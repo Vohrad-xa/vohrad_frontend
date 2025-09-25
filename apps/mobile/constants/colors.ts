@@ -33,9 +33,9 @@ export const Palette = {
   quickActionIcon: '#C6613F',
   quickActionIconDark: '#C2C0B6',
   cardDarkGlass: 'rgba(255, 255, 255, 0.1)',
-  cardLightGlass: 'rgba(255, 255, 255, 0.95)',
-  cardBorderLight: 'rgba(209, 205, 205, 0.23)',
-  glassTintLight: 'rgba(255, 255, 255, 1)',
+  cardLightGlass: 'rgba(97, 94, 94, 0.16)',
+  cardBorderLight: 'rgba(209, 205, 205, 0.3)',
+  glassTintLight: 'rgba(255, 255, 255, 0.79)',
   glassTintDark: 'rgba(186, 185, 185, 0.06)',
 } as const;
 

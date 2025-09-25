@@ -137,8 +137,8 @@ const createStyles = (theme: ThemeType, ds: typeof DesignSystem, headerHeight: n
       width: 320,
       zIndex: 1000,
       backgroundColor: theme.sidebarBackground,
-      borderRightWidth: 1,
-      borderRightColor: theme.border,
+      borderRightWidth: 0.5,
+      borderRightColor: theme.divider,
     },
     scrollContainer: {
       flex: 1,
@@ -152,14 +152,14 @@ const createStyles = (theme: ThemeType, ds: typeof DesignSystem, headerHeight: n
       position: 'absolute',
       top: 0,
       left: 0,
-      right: 0,
+      right: 0.5,
       zIndex: 1,
     },
     absoluteBottom: {
       position: 'absolute',
       bottom: 0,
       left: 0,
-      right: 0,
+      right: 0.5,
     },
   });
 type ThemeType = ReturnType<typeof useTheme>['theme'];

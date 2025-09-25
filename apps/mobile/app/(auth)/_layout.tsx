@@ -30,7 +30,7 @@ export default function AuthGroupLayout() {
           name="(modals)/personal-email"
           options={{
             presentation: 'modal',
-            headerTransparent: true,
+            headerTransparent: false,
             headerShown: true,
             headerTitle: 'Login',
             headerRight: () => <HeaderButton icon="close-outline" onPress={() => router.dismiss()} />,
