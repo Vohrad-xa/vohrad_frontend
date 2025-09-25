@@ -1,21 +1,24 @@
 import React from 'react';
-import {StyleSheet, View, Image, ScrollView, KeyboardAvoidingView, Platform} from 'react-native';
+import {Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View} from 'react-native';
+import {useRouter} from 'expo-router';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {ThemedView, ThemedText, ThemedButton} from '@/components/ui';
-import {Palette, type ColorScheme} from '@/constants/colors';
-import type {DesignSystem} from '@/constants/typography';
-import {useTheme, useAuth} from '@/providers';
+import {ThemedButton, ThemedText, ThemedView} from '@/components/ui';
+import {type ColorScheme, Palette} from '@/constants/colors';
+import {type DesignSystem} from '@/constants/typography';
+import {useAuth, useTheme} from '@/providers';
 
 export default function LoginScreen() {
-  const {ds, theme, scheme} = useTheme();
   const {login} = useAuth();
+  const {ds, theme, scheme} = useTheme();
+  const router = useRouter();
 
-  const handleLogin = async () => {
+  const handleMicrosoftLogin = () => {
+    // Temporary dev shortcut until Microsoft auth is wired
     login();
   };
 
-  const handleMicrosoftLogin = async () => {
-    login();
+  const handlePersonalEmailLogin = () => {
+    router.push('/(auth)/(modals)/personal-email');
   };
 
   const microsoftLogo = require('../../assets/icons/microsoft.png');
@@ -60,7 +63,7 @@ export default function LoginScreen() {
               <ThemedButton
                 variant="primary"
                 fullWidth
-                onPress={handleLogin}
+                onPress={handlePersonalEmailLogin}
                 style={[styles.thickButton, styles.continueButton]}>
                 <ThemedText variant="callout">Use personal email</ThemedText>
               </ThemedButton>
