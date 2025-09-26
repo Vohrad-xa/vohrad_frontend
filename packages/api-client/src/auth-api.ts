@@ -11,8 +11,10 @@ export class AuthApi {
       credentials.tenant_id ?? getApiConfig().tenant,
     );
 
-    const tokens: AuthTokens = response.data;
-    // Parse user info from JWT access token
+    const tokens: AuthTokens = {
+      ...response.data,
+      issued_at: Date.now(),
+    };
     const user: User = this.parseUserFromJWT(tokens.access_token, credentials.email);
 
     return {tokens, user};
@@ -20,8 +22,10 @@ export class AuthApi {
 
   async loginAdmin(credentials: AdminLoginRequest): Promise<{tokens: AuthTokens; user: User}> {
     const response = await httpClient.post<TokenResponse>(API_ENDPOINTS.AUTH.LOGIN_ADMIN, credentials);
-    const tokens: AuthTokens = response.data;
-    // Parse admin user info from JWT access token
+    const tokens: AuthTokens = {
+      ...response.data,
+      issued_at: Date.now(),
+    };
     const user: User = this.parseUserFromJWT(tokens.access_token, credentials.email);
 
     return {tokens, user};
@@ -30,7 +34,10 @@ export class AuthApi {
   async refreshToken(refreshToken: string): Promise<AuthTokens> {
     const response = await httpClient.post<TokenResponse>(API_ENDPOINTS.AUTH.REFRESH, {refresh_token: refreshToken});
 
-    return response.data;
+    return {
+      ...response.data,
+      issued_at: Date.now(),
+    };
   }
 
   async logout(): Promise<void> {

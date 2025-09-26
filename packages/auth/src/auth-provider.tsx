@@ -16,11 +16,7 @@ export function useAuth() {
 export function AuthProvider({children}: {children: React.ReactNode}) {
   const {isAuthenticated, user, isLoading, error, clearError} = useAuthStore();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      authService.setupTokenRefresh();
-    }
-  }, [isAuthenticated]);
+  // Auto-refresh is now handled automatically by AuthService
 
   const loginUser = async (email: string, password: string) => {
     await authService.loginUser(email, password);
