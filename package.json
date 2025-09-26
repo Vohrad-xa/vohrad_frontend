@@ -1,7 +1,9 @@
 {
   "devDependencies": {
     "prettier": "^3.6.2",
-    "turbo": "^2.5.8"
+    "tsup": "^8.3.0",
+    "turbo": "^2.5.8",
+    "typescript": "~5.9.2"
   },
   "scripts": {
     "dev": "turbo run dev --parallel",
@@ -11,6 +13,7 @@
     "start:web": "turbo run start --filter=web",
     "start:mobile": "turbo run start --filter=mobile",
     "build": "turbo run build",
+    "build:packages": "turbo run build --filter=@vohrad/*",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "typecheck": "turbo run typecheck",
@@ -22,6 +25,9 @@
     "overrides": {
       "glob": "^10.4.5",
       "rimraf": "^6.0.1"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
