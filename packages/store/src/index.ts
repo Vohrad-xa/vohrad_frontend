@@ -64,6 +64,28 @@ const storage = {
   },
 };
 
+// Debug storage selection on startup (dev only)
+if (typeof __DEV__ !== 'undefined' ? __DEV__ : true) {
+  const storageType = isReactNative && AsyncStorage ? 'AsyncStorage' : (typeof (globalThis as any).localStorage !== 'undefined' ? 'localStorage' : 'memory');
+  // eslint-disable-next-line no-console
+  console.log(`[auth-persist] using ${storageType}`);
+  if (isReactNative && AsyncStorage) {
+    (async () => {
+      try {
+        const k = 'vohrad:debug-storage';
+        await AsyncStorage.setItem(k, 'ok');
+        const v = await AsyncStorage.getItem(k);
+        await AsyncStorage.removeItem(k);
+        // eslint-disable-next-line no-console
+        console.log(`[auth-persist] AsyncStorage round-trip: ${v === 'ok' ? 'success' : 'failed'}`);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('[auth-persist] AsyncStorage test failed:', e);
+      }
+    })();
+  }
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
