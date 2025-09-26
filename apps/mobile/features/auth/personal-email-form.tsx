@@ -14,7 +14,7 @@ type PersonalEmailFormProps = {
 export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const {login} = useAuth();
+  const {loginUser, isLoading, error, clearError} = useAuth();
   const {ds, theme, scheme} = useTheme();
   const emailInputRef = useRef<TextInput>(null);
 
@@ -26,10 +26,26 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
     return () => clearTimeout(timer);
   }, []);
 
-  const handleLogin = () => {
-    login();
-    onSuccess();
+  useEffect(() => {
+    // Clear error when component mounts
+    clearError();
+  }, [clearError]);
+
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      return;
+    }
+
+    try {
+      await loginUser(email.trim(), password);
+      onSuccess();
+    } catch (error) {
+      // Error is already handled by the auth service and stored in the auth state
+      console.error('Login failed:', error);
+    }
   };
+
+  const isFormValid = email.trim().length > 0 && password.length > 0;
 
   const handleForgotPassword = () => {
     if (onForgotPassword) {
@@ -66,9 +82,13 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                 autoComplete="email"
                 textContentType="emailAddress"
                 value={email}
-                onChangeText={setEmail}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  clearError();
+                }}
                 style={styles.input}
                 accessibilityLabel="Email input"
+                editable={!isLoading}
               />
               <ThemedInput
                 placeholder="Password"
@@ -76,14 +96,26 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                 autoComplete="password"
                 textContentType="password"
                 value={password}
-                onChangeText={setPassword}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  clearError();
+                }}
                 style={styles.input}
                 accessibilityLabel="Password input"
+                editable={!isLoading}
               />
             </View>
 
+            {error && (
+              <View style={styles.section}>
+                <ThemedText variant="subheadline" style={styles.errorText}>
+                  {error}
+                </ThemedText>
+              </View>
+            )}
+
             <View style={styles.section}>
-              <TouchableOpacity onPress={handleForgotPassword}>
+              <TouchableOpacity onPress={handleForgotPassword} disabled={isLoading}>
                 <ThemedText variant="subheadline" colorToken="muted" style={styles.forgotPasswordText}>
                   Forgot password?
                 </ThemedText>
@@ -94,10 +126,11 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
               <ThemedButton
                 variant="primary"
                 onPress={handleLogin}
-                style={styles.loginButton}
+                disabled={!isFormValid || isLoading}
+                style={[styles.loginButton, (!isFormValid || isLoading) && styles.loginButtonDisabled]}
                 accessibilityLabel="Login button">
                 <ThemedText variant="callout" style={styles.loginButtonText}>
-                  Sign In
+                  {isLoading ? 'Signing In...' : 'Sign In'}
                 </ThemedText>
               </ThemedButton>
             </View>
@@ -154,6 +187,13 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
       ...(scheme === 'dark' && {
         color: Palette.black,
       }),
+    },
+    loginButtonDisabled: {
+      opacity: 0.5,
+    },
+    errorText: {
+      color: '#ef4444', // Red color for error text
+      textAlign: 'center',
     },
   });
 

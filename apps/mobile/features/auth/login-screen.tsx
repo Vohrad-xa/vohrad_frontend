@@ -6,16 +6,15 @@ import {ThemedButton, ThemedText, ThemedView} from '@/components/ui';
 import {type ColorScheme, Palette} from '@/constants/colors';
 import {type DesignSystem} from '@/constants/typography';
 import {usePlatformStyles} from '@/hooks';
-import {useAuth, useTheme} from '@/providers';
+import {useTheme} from '@/providers';
 
 export default function LoginScreen() {
-  const {login} = useAuth();
   const {ds, theme, scheme} = useTheme();
   const router = useRouter();
 
   const handleMicrosoftLogin = () => {
-    // Temporary dev shortcut until Microsoft auth is wired
-    login();
+    // Until Microsoft SSO is integrated, route to email login
+    router.push('/(auth)/(modals)/personal-email');
   };
 
   const handlePersonalEmailLogin = () => {

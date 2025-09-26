@@ -1,6 +1,7 @@
 import {useEffect} from 'react';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
-import {Slot, useRootNavigationState, useRouter, useSegments} from 'expo-router';
+import {useAuthStore} from '@vohrad/store';
+import {Slot, useRootNavigationState, useRouter, useSegments, usePathname} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
@@ -15,8 +16,10 @@ function RootNavigation() {
   const {isAuthenticated} = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const pathname = usePathname();
   const navigationState = useRootNavigationState();
   const rootSegment = segments[0];
+  const {setIntendedRoute, intendedRoute} = useAuthStore();
 
   useEffect(() => {
     if (!navigationState?.key) {
@@ -25,14 +28,18 @@ function RootNavigation() {
 
     const inAuthGroup = rootSegment === '(auth)';
     if (!isAuthenticated && !inAuthGroup) {
+      if (pathname !== '/login') {
+        setIntendedRoute(pathname);
+      }
       router.replace('/login');
       return;
     }
 
     if (isAuthenticated && inAuthGroup) {
+      setIntendedRoute(null);
       router.replace('/');
     }
-  }, [isAuthenticated, navigationState?.key, router, rootSegment]);
+  }, [isAuthenticated, navigationState?.key, router, rootSegment, pathname, setIntendedRoute, intendedRoute]);
 
   return <Slot />;
 }
