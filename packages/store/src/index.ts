@@ -2,33 +2,13 @@ import {create} from 'zustand';
 import {persist, createJSONStorage} from 'zustand/middleware';
 import type {User, AuthTokens, AuthState} from '@vohrad/types';
 
-// Platform-specific storage detection
-let AsyncStorage: any = null;
-let isReactNative = false;
+const memory = new Map<string, string>();
 
-try {
-  if (typeof navigator !== 'undefined' && (navigator as any).product === 'ReactNative') {
-    AsyncStorage = require('@react-native-async-storage/async-storage').default;
-    isReactNative = true;
-  }
-} catch (_e) {
-  AsyncStorage = null;
-  isReactNative = false;
-}
-
-// Cross-platform storage adapter
+// Default backend: in-memory (apps inject platform storage at runtime)
 const storage = {
   getItem: async (name: string): Promise<string | null> => {
     try {
-      if (isReactNative && AsyncStorage) {
-        return await AsyncStorage.getItem(name);
-      } else if (
-        typeof globalThis !== 'undefined' &&
-        typeof (globalThis as any).localStorage !== 'undefined'
-      ) {
-        return (globalThis as any).localStorage.getItem(name);
-      }
-      return null;
+      return memory.get(name) ?? null;
     } catch (error) {
       console.warn('Storage getItem failed:', error);
       return null;
@@ -36,53 +16,37 @@ const storage = {
   },
   setItem: async (name: string, value: string): Promise<void> => {
     try {
-      if (isReactNative && AsyncStorage) {
-        await AsyncStorage.setItem(name, value);
-      } else if (
-        typeof globalThis !== 'undefined' &&
-        typeof (globalThis as any).localStorage !== 'undefined'
-      ) {
-        (globalThis as any).localStorage.setItem(name, value);
-      }
+      memory.set(name, value);
     } catch (error) {
       console.warn('Storage setItem failed:', error);
     }
   },
   removeItem: async (name: string): Promise<void> => {
     try {
-      if (isReactNative && AsyncStorage) {
-        await AsyncStorage.removeItem(name);
-      } else if (
-        typeof globalThis !== 'undefined' &&
-        typeof (globalThis as any).localStorage !== 'undefined'
-      ) {
-        (globalThis as any).localStorage.removeItem(name);
-      }
+      memory.delete(name);
     } catch (error) {
       console.warn('Storage removeItem failed:', error);
     }
   },
 };
 
-// Debug storage selection on startup (dev only)
-if (typeof __DEV__ !== 'undefined' ? __DEV__ : true) {
-  const storageType = isReactNative && AsyncStorage ? 'AsyncStorage' : (typeof (globalThis as any).localStorage !== 'undefined' ? 'localStorage' : 'memory');
-  // eslint-disable-next-line no-console
-  console.log(`[auth-persist] using ${storageType}`);
-  if (isReactNative && AsyncStorage) {
-    (async () => {
-      try {
-        const k = 'vohrad:debug-storage';
-        await AsyncStorage.setItem(k, 'ok');
-        const v = await AsyncStorage.getItem(k);
-        await AsyncStorage.removeItem(k);
-        // eslint-disable-next-line no-console
-        console.log(`[auth-persist] AsyncStorage round-trip: ${v === 'ok' ? 'success' : 'failed'}`);
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.warn('[auth-persist] AsyncStorage test failed:', e);
-      }
-    })();
+// Allow runtime override of persist backend from the app
+type AsyncKV = {
+  getItem(key: string): Promise<string | null>;
+  setItem(key: string, value: string): Promise<void>;
+  removeItem(key: string): Promise<void>;
+};
+
+let persistBackend: AsyncKV = storage as AsyncKV;
+
+export function setAuthPersistStorage(backend: AsyncKV) {
+  if (
+    backend &&
+    typeof backend.getItem === 'function' &&
+    typeof backend.setItem === 'function' &&
+    typeof backend.removeItem === 'function'
+  ) {
+    persistBackend = backend;
   }
 }
 
@@ -121,7 +85,12 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'vohrad-auth',
-      storage: createJSONStorage(() => storage),
+      // Use a wrapper so the backend can be swapped at runtime via setAuthPersistStorage
+      storage: createJSONStorage(() => ({
+        getItem: (key: string) => persistBackend.getItem(key),
+        setItem: (key: string, value: string) => persistBackend.setItem(key, value),
+        removeItem: (key: string) => persistBackend.removeItem(key),
+      })),
       partialize: (state) => ({
         user: state.user,
         tokens: state.tokens,
