@@ -1,0 +1,39 @@
+{
+  "name": "@vohrad/auth",
+  "version": "0.0.0",
+  "private": true,
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "react-native": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "build:js": "tsup",
+    "build:dts": "tsup",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@vohrad/store": "workspace:*",
+    "@vohrad/api-client": "workspace:*",
+    "@vohrad/types": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "~5.9.2"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  }
+}
