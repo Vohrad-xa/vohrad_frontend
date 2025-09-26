@@ -1,14 +1,17 @@
 import {useAuthStore} from '@vohrad/store';
-import type {UserLoginRequest, AdminLoginRequest} from '@vohrad/types';
+import type {UserLoginRequest, AdminLoginRequest, AuthTokens} from '@vohrad/types';
 import {ApiError} from '@vohrad/types';
 import {authApi} from '@vohrad/api-client';
 import {httpClient} from '@vohrad/api-client';
 
 export class AuthService {
   private static instance: AuthService;
+  private refreshTimer: ReturnType<typeof setTimeout> | null = null;
+  private isRefreshing = false;
 
   private constructor() {
     this.syncTokenFromStore();
+    this.setupAutoRefresh();
     useAuthStore.subscribe((state) => {
       if (state.tokens?.access_token) {
         httpClient.setAccessToken(state.tokens.access_token);
@@ -44,6 +47,7 @@ export class AuthService {
 
       httpClient.setAccessToken(tokens.access_token);
       login(user, tokens);
+      this.scheduleTokenRefresh(tokens);
     } catch (error) {
       const errorMessage = error instanceof ApiError ? error.message : 'Login failed. Please check your credentials.';
       setError(errorMessage);
@@ -65,6 +69,7 @@ export class AuthService {
 
       httpClient.setAccessToken(tokens.access_token);
       login(user, tokens);
+      this.scheduleTokenRefresh(tokens);
     } catch (error) {
       const errorMessage =
         error instanceof ApiError ? error.message : 'Admin login failed. Please check your credentials.';
@@ -89,6 +94,7 @@ export class AuthService {
       }
 
       httpClient.setAccessToken(null);
+      this.clearRefreshTimer();
       logout();
     } catch (error) {
       setError('Logout failed');
@@ -107,6 +113,7 @@ export class AuthService {
 
       await authApi.logoutAllDevices();
       httpClient.setAccessToken(null);
+      this.clearRefreshTimer();
       logout();
     } catch (error) {
       const errorMessage = error instanceof ApiError ? error.message : 'Failed to logout from all devices';
@@ -121,15 +128,22 @@ export class AuthService {
     const {tokens, setTokens, logout, setError} = useAuthStore.getState();
     if (!tokens?.refresh_token) throw new Error('No refresh token available');
 
+    if (this.isRefreshing) return;
+    this.isRefreshing = true;
+
     try {
       const newTokens = await authApi.refreshToken(tokens.refresh_token);
       httpClient.setAccessToken(newTokens.access_token);
       setTokens(newTokens);
+      this.scheduleTokenRefresh(newTokens);
     } catch (error) {
       setError('Session expired. Please login again.');
       httpClient.setAccessToken(null);
+      this.clearRefreshTimer();
       logout();
       throw error;
+    } finally {
+      this.isRefreshing = false;
     }
   }
 
@@ -143,17 +157,39 @@ export class AuthService {
     return user;
   }
 
-  setupTokenRefresh() {
+  private setupAutoRefresh(): void {
     const {tokens} = useAuthStore.getState();
-    if (!tokens || !tokens.expires_in) return;
-    const expiresAt = Date.now() + (tokens.expires_in - 300) * 1000;
-    const refreshIn = Math.max(0, expiresAt - Date.now());
-    if (refreshIn < 60000) return;
-    setTimeout(() => {
-      this.refreshToken().catch((error) => {
-        console.error('Auto token refresh failed:', error);
-      });
-    }, refreshIn);
+    if (tokens?.access_token && tokens.expires_in) {
+      this.scheduleTokenRefresh(tokens);
+    }
+  }
+
+  private scheduleTokenRefresh(tokens: AuthTokens): void {
+    this.clearRefreshTimer();
+
+    if (!tokens.expires_in || !tokens.issued_at) return;
+
+    // Calculate refresh time: 25 minutes (5 minute buffer before 30 min expiration)
+    const refreshBuffer = 5 * 60 * 1000;
+    const tokenLifetime = tokens.expires_in * 1000;
+    const elapsedTime = Date.now() - tokens.issued_at;
+    const timeUntilRefresh = Math.max(0, tokenLifetime - refreshBuffer - elapsedTime);
+
+    // Only schedule if we have at least 1 minute before refresh
+    if (timeUntilRefresh > 60000) {
+      this.refreshTimer = setTimeout(() => {
+        this.refreshToken().catch((error) => {
+          console.error('Auto token refresh failed:', error);
+        });
+      }, timeUntilRefresh);
+    }
+  }
+
+  private clearRefreshTimer(): void {
+    if (this.refreshTimer) {
+      clearTimeout(this.refreshTimer);
+      this.refreshTimer = null;
+    }
   }
 }
 

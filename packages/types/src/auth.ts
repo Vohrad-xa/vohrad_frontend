@@ -7,7 +7,9 @@ export interface User {
 }
 export type UserCredentials = UserLoginRequest;
 export type AdminCredentials = AdminLoginRequest;
-export type AuthTokens = TokenResponse;
+export interface AuthTokens extends TokenResponse {
+  issued_at?: number;
+}
 export interface AsyncState<TData = unknown, TError = string | null> {
   data: TData;
   isLoading: boolean;
