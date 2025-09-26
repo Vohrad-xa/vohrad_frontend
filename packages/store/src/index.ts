@@ -2,21 +2,64 @@ import {create} from 'zustand';
 import {persist, createJSONStorage} from 'zustand/middleware';
 import type {User, AuthTokens, AuthState} from '@vohrad/types';
 
+// Platform-specific storage detection
+let AsyncStorage: any = null;
+let isReactNative = false;
+
+try {
+  if (typeof navigator !== 'undefined' && (navigator as any).product === 'ReactNative') {
+    AsyncStorage = require('@react-native-async-storage/async-storage').default;
+    isReactNative = true;
+  }
+} catch (_e) {
+  AsyncStorage = null;
+  isReactNative = false;
+}
+
+// Cross-platform storage adapter
 const storage = {
-  getItem: (name: string): string | null => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(name);
+  getItem: async (name: string): Promise<string | null> => {
+    try {
+      if (isReactNative && AsyncStorage) {
+        return await AsyncStorage.getItem(name);
+      } else if (
+        typeof globalThis !== 'undefined' &&
+        typeof (globalThis as any).localStorage !== 'undefined'
+      ) {
+        return (globalThis as any).localStorage.getItem(name);
+      }
+      return null;
+    } catch (error) {
+      console.warn('Storage getItem failed:', error);
+      return null;
     }
-    return null;
   },
-  setItem: (name: string, value: string): void => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(name, value);
+  setItem: async (name: string, value: string): Promise<void> => {
+    try {
+      if (isReactNative && AsyncStorage) {
+        await AsyncStorage.setItem(name, value);
+      } else if (
+        typeof globalThis !== 'undefined' &&
+        typeof (globalThis as any).localStorage !== 'undefined'
+      ) {
+        (globalThis as any).localStorage.setItem(name, value);
+      }
+    } catch (error) {
+      console.warn('Storage setItem failed:', error);
     }
   },
-  removeItem: (name: string): void => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(name);
+  removeItem: async (name: string): Promise<void> => {
+    try {
+      if (isReactNative && AsyncStorage) {
+        await AsyncStorage.removeItem(name);
+      } else if (
+        typeof globalThis !== 'undefined' &&
+        typeof (globalThis as any).localStorage !== 'undefined'
+      ) {
+        (globalThis as any).localStorage.removeItem(name);
+      }
+    } catch (error) {
+      console.warn('Storage removeItem failed:', error);
     }
   },
 };
