@@ -86,6 +86,7 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                   setEmail(text);
                   clearError();
                 }}
+                returnKeyType="next"
                 style={styles.input}
                 accessibilityLabel="Email input"
                 editable={!isLoading}
@@ -100,6 +101,8 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                   setPassword(text);
                   clearError();
                 }}
+                returnKeyType="go"
+                onSubmitEditing={handleLogin}
                 style={styles.input}
                 accessibilityLabel="Password input"
                 editable={!isLoading}
