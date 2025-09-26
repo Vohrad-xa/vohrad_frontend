@@ -1,10 +1,11 @@
 import {useEffect} from 'react';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
-import {useAuthStore} from '@vohrad/store';
+import {useAuthStore, setAuthPersistStorage} from '@vohrad/store';
 import {Slot, useRootNavigationState, useRouter, useSegments, usePathname} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
+import * as AppStorage from '@/utils/storage';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -45,6 +46,17 @@ function RootNavigation() {
 }
 
 export default function RootLayout() {
+  // Ensure persisted auth uses app storage (AsyncStorage on native, localStorage on web)
+  useEffect(() => {
+    setAuthPersistStorage({
+      getItem: (k) => AppStorage.getItem(k),
+      setItem: (k, v) => AppStorage.setItem(k, v),
+      removeItem: (k) => AppStorage.removeItem(k),
+    });
+    // rehydrate from the injected storage
+    useAuthStore.persist?.rehydrate?.();
+  }, []);
+
   useEffect(() => {
     SplashScreen.hideAsync().catch(() => {});
   }, []);
