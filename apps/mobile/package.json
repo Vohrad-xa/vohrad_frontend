@@ -12,7 +12,8 @@
     "lint": "eslint . --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json}\"",
-    "build": "eas build",
+    "build": "echo Skipping mobile build in monorepo root. Use \"pnpm --filter mobile run eas:build\" for EAS builds.",
+    "eas:build": "eas build",
     "test": "echo \"No test script configured for mobile\""
   },
   "dependencies": {
@@ -26,6 +27,9 @@
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
     "@vohrad/store": "workspace:*",
+    "@vohrad/api-client": "workspace:*",
+    "@vohrad/types": "workspace:*",
+    "@vohrad/auth": "workspace:*",
     "expo": "~54.0.8",
     "expo-blur": "~15.0.7",
     "expo-constants": "~18.0.9",
