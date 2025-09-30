@@ -6,6 +6,9 @@ export const API_ENDPOINTS = {
     LOGOUT: '/auth/logout',
     LOGOUT_ALL: '/auth/logout-all',
   },
+  USERS: {
+    ME: '/users/me',
+  },
 } as const;
 export type ApiEndpoint =
   (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS][keyof (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS]];

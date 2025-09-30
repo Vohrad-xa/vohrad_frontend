@@ -36,7 +36,7 @@ export interface AuthContextValue {
   user: User | null;
   isLoading: boolean;
   error: string | null;
-  loginUser: (email: string, password: string) => Promise<void>;
+  loginUser: (email: string, password: string, subdomain: string) => Promise<void>;
   loginAdmin: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;

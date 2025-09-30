@@ -1,4 +1,3 @@
-// Runtime API config (env + overrides)
 export type ApiClientConfig = {
   baseUrl?: string;
   protocol?: 'http' | 'https';
@@ -23,27 +22,11 @@ const readEnv = (keys: string[]): string | undefined => {
   return undefined;
 };
 
-// Dynamic tenant detection for true subdomain architecture
-const detectCurrentTenant = (): string | undefined => {
-  // Web environment: extract from hostname
-  if (typeof window !== 'undefined' && window.location?.hostname) {
-    const hostname = window.location.hostname;
-    const parts = hostname.split('.');
-    // For subdomains like tenant1.localhost or tenant1.myapp.com
-    if (parts.length >= 3 && !hostname.includes('192.168.')) {
-      return parts[0];
-    }
-  }
-  // Fallback to environment variable (mobile and IP development)
-  return readEnv(['EXPO_PUBLIC_TENANT', 'NEXT_PUBLIC_TENANT']);
-};
-
-// Prefer explicit base URL, otherwise build with dynamic tenant detection
 const defaultConfig: ApiClientConfig = {
   baseUrl: readEnv(['EXPO_PUBLIC_API_BASE_URL', 'NEXT_PUBLIC_API_BASE_URL']),
   protocol: readEnv(['EXPO_PUBLIC_API_PROTOCOL', 'NEXT_PUBLIC_API_PROTOCOL']) as any,
   baseDomain: readEnv(['EXPO_PUBLIC_API_BASE_DOMAIN', 'NEXT_PUBLIC_API_BASE_DOMAIN']),
-  tenant: detectCurrentTenant(),
+  tenant: undefined,
   version: readEnv(['EXPO_PUBLIC_API_VERSION', 'NEXT_PUBLIC_API_VERSION']),
 };
 
@@ -66,22 +49,15 @@ export function resolveBaseUrl(): string {
   if (cfg.baseUrl) return cfg.baseUrl.replace(/\/$/, '');
   const proto = cfg.protocol;
   const domain = cfg.baseDomain;
+
   if (!proto || !domain) {
     throw new Error(
       'API base not configured. Set EXPO_PUBLIC_API_BASE_URL or (EXPO_PUBLIC_API_PROTOCOL + EXPO_PUBLIC_API_BASE_DOMAIN).',
     );
   }
 
-  // Check if domain is an IP address (contains only digits, dots, colons)
-  const isIpAddress = /^[\d\.:]+$/.test(domain.split(':')[0]);
-  const tenant = cfg.tenant;
-
-  if (tenant && !isIpAddress && !domain.includes(tenant)) {
-    // Production with domain: tenant.myapp.com
-    return `${proto}://${tenant}.${domain}`;
-  }
-
-  // IP addresses or development fallback: just use domain as-is
+  // DEVELOPMENT: Don't add subdomain to URL, send via X-Tenant-Subdomain header instead
+  // PRODUCTION: Add subdomain to domain (tenant.yourdomain.com)
   return `${proto}://${domain}`;
 }
 

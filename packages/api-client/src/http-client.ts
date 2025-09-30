@@ -9,8 +9,9 @@ export class HttpClient {
     this.accessToken = token;
   }
 
-  async makeRequest<T>(endpoint: string, options: RequestInit = {}, tenant?: string): Promise<ApiResponse<T>> {
+  async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     const url = resolveApiUrl(endpoint);
+    const apiConfig = getApiConfig();
 
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -21,20 +22,10 @@ export class HttpClient {
       headers.Authorization = `Bearer ${this.accessToken}`;
     }
 
-    // Development fallback: add header for IP addresses
-    const tenantId = tenant || getApiConfig().tenant;
-
-    // Only use header fallback in development environments
-    if (process.env.NODE_ENV === 'development' || process.env.EXPO_PUBLIC_API_PROTOCOL === 'http') {
-      const url_obj = new URL(url);
-      const isIpAddress = /^[\d\.:]+$/.test(url_obj.hostname);
-
-      if (tenantId && isIpAddress) {
-        // IP address: use header as fallback for development only
-        headers['X-Tenant-Subdomain'] = tenantId;
-      }
+    // DEVELOPMENT ONLY: Send tenant via header for IP-based development
+    if (apiConfig.tenant) {
+      headers['X-Tenant-Subdomain'] = apiConfig.tenant;
     }
-    // Production: tenant is handled via true subdomain in URL
 
     const config: RequestInit = {
       ...options,
@@ -60,34 +51,26 @@ export class HttpClient {
   }
 
   // Convenience methods for common HTTP verbs
-  async get<T>(endpoint: string, tenant?: string): Promise<ApiResponse<T>> {
-    return this.makeRequest<T>(endpoint, {method: 'GET'}, tenant);
+  async get<T>(endpoint: string): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, {method: 'GET'});
   }
 
-  async post<T>(endpoint: string, body?: unknown, tenant?: string): Promise<ApiResponse<T>> {
-    return this.makeRequest<T>(
-      endpoint,
-      {
-        method: 'POST',
-        body: body ? JSON.stringify(body) : undefined,
-      },
-      tenant,
-    );
+  async post<T>(endpoint: string, body?: unknown): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, {
+      method: 'POST',
+      body: body ? JSON.stringify(body) : undefined,
+    });
   }
 
-  async put<T>(endpoint: string, body?: unknown, tenant?: string): Promise<ApiResponse<T>> {
-    return this.makeRequest<T>(
-      endpoint,
-      {
-        method: 'PUT',
-        body: body ? JSON.stringify(body) : undefined,
-      },
-      tenant,
-    );
+  async put<T>(endpoint: string, body?: unknown): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, {
+      method: 'PUT',
+      body: body ? JSON.stringify(body) : undefined,
+    });
   }
 
-  async delete<T>(endpoint: string, tenant?: string): Promise<ApiResponse<T>> {
-    return this.makeRequest<T>(endpoint, {method: 'DELETE'}, tenant);
+  async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, {method: 'DELETE'});
   }
 }
 

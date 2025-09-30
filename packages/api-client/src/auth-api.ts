@@ -5,28 +5,30 @@ import {API_ENDPOINTS} from './endpoints';
 
 export class AuthApi {
   async loginUser(credentials: UserLoginRequest): Promise<{tokens: AuthTokens; user: User}> {
-    const response = await httpClient.post<TokenResponse>(
-      API_ENDPOINTS.AUTH.LOGIN_USER,
-      credentials,
-      credentials.tenant_id ?? getApiConfig().tenant,
-    );
-
-    const tokens: AuthTokens = {
-      ...response.data,
-      issued_at: Date.now(),
-    };
-    const user: User = this.parseUserFromJWT(tokens.access_token, credentials.email);
-
-    return {tokens, user};
+    return this.login(API_ENDPOINTS.AUTH.LOGIN_USER, credentials);
   }
 
   async loginAdmin(credentials: AdminLoginRequest): Promise<{tokens: AuthTokens; user: User}> {
-    const response = await httpClient.post<TokenResponse>(API_ENDPOINTS.AUTH.LOGIN_ADMIN, credentials);
+    return this.login(API_ENDPOINTS.AUTH.LOGIN_ADMIN, credentials);
+  }
+
+  private async login(
+    endpoint: string,
+    credentials: UserLoginRequest | AdminLoginRequest
+  ): Promise<{tokens: AuthTokens; user: User}> {
+    const response = await httpClient.post<TokenResponse>(endpoint, credentials);
+
     const tokens: AuthTokens = {
       ...response.data,
       issued_at: Date.now(),
     };
-    const user: User = this.parseUserFromJWT(tokens.access_token, credentials.email);
+
+    // Set access token for subsequent requests
+    httpClient.setAccessToken(tokens.access_token);
+
+    // Get user profile from /users/me endpoint
+    const userResponse = await httpClient.get<User>(API_ENDPOINTS.USERS.ME);
+    const user: User = userResponse.data;
 
     return {tokens, user};
   }
@@ -41,35 +43,11 @@ export class AuthApi {
   }
 
   async logout(): Promise<void> {
-    await httpClient.post<null>(API_ENDPOINTS.AUTH.LOGOUT, {}, getApiConfig().tenant);
+    await httpClient.post<null>(API_ENDPOINTS.AUTH.LOGOUT, {});
   }
 
   async logoutAllDevices(): Promise<void> {
-    await httpClient.post<{revoked_tokens: number; user_id: string}>(
-      API_ENDPOINTS.AUTH.LOGOUT_ALL,
-      {},
-      getApiConfig().tenant,
-    );
-  }
-
-  private parseUserFromJWT(accessToken: string, email: string): User {
-    try {
-      const payload = JSON.parse(atob(accessToken.split('.')[1]));
-
-      return {
-        id: payload.sub || 'unknown',
-        email: payload.email || email,
-        role: payload.user_type === 'admin' ? 'admin' : 'user',
-        tenant_id: payload.tenant_id || undefined,
-      };
-    } catch (error) {
-      console.warn('Failed to parse JWT token:', error);
-      return {
-        id: 'unknown',
-        email,
-        role: 'user',
-      };
-    }
+    await httpClient.post<{revoked_tokens: number; user_id: string}>(API_ENDPOINTS.AUTH.LOGOUT_ALL, {});
   }
 }
 

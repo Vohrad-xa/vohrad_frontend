@@ -2,7 +2,7 @@ import {useAuthStore} from '@vohrad/store';
 import type {UserLoginRequest, AdminLoginRequest, AuthTokens} from '@vohrad/types';
 import {ApiError} from '@vohrad/types';
 import {authApi} from '@vohrad/api-client';
-import {httpClient} from '@vohrad/api-client';
+import {httpClient, setApiTenant} from '@vohrad/api-client';
 
 export class AuthService {
   private static instance: AuthService;
@@ -35,12 +35,15 @@ export class AuthService {
     return AuthService.instance;
   }
 
-  async loginUser(email: string, password: string): Promise<void> {
+  async loginUser(email: string, password: string, subdomain: string): Promise<void> {
     const {setLoading, setError, login} = useAuthStore.getState();
 
     try {
       setLoading(true);
       setError(null);
+
+      // Set tenant subdomain before making API call
+      setApiTenant(subdomain);
 
       const credentials: UserLoginRequest = {email, password};
       const {tokens, user} = await authApi.loginUser(credentials);

@@ -18,8 +18,8 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
 
   // Auto-refresh is now handled automatically by AuthService
 
-  const loginUser = async (email: string, password: string) => {
-    await authService.loginUser(email, password);
+  const loginUser = async (email: string, password: string, subdomain: string) => {
+    await authService.loginUser(email, password, subdomain);
   };
 
   const loginAdmin = async (email: string, password: string) => {
