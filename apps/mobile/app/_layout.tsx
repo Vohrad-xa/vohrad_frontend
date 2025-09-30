@@ -1,10 +1,11 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {useAuthStore, setAuthPersistStorage} from '@vohrad/store';
 import {Slot, useRootNavigationState, useRouter, useSegments, usePathname} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
+import {LoadingOverlay} from '@/components/ui';
 import * as AppStorage from '@/utils/storage';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -21,6 +22,7 @@ function RootNavigation() {
   const navigationState = useRootNavigationState();
   const rootSegment = segments[0];
   const {setIntendedRoute, intendedRoute} = useAuthStore();
+  const [showOverlay, setShowOverlay] = useState(true);
 
   useEffect(() => {
     if (!navigationState?.key) {
@@ -42,7 +44,22 @@ function RootNavigation() {
     }
   }, [isAuthenticated, navigationState?.key, router, rootSegment, pathname, setIntendedRoute, intendedRoute]);
 
-  return <Slot />;
+  useEffect(() => {
+    if (navigationState?.key) {
+      const timer = setTimeout(() => {
+        setShowOverlay(false);
+        SplashScreen.hideAsync().catch(() => {});
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [navigationState?.key]);
+
+  return (
+    <>
+      <Slot />
+      {showOverlay && <LoadingOverlay />}
+    </>
+  );
 }
 
 export default function RootLayout() {
@@ -53,13 +70,9 @@ export default function RootLayout() {
       setItem: (k, v) => AppStorage.setItem(k, v),
       removeItem: (k) => AppStorage.removeItem(k),
     });
-    // rehydrate from the injected storage
     useAuthStore.persist?.rehydrate?.();
   }, []);
 
-  useEffect(() => {
-    SplashScreen.hideAsync().catch(() => {});
-  }, []);
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>

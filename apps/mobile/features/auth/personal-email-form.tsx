@@ -5,6 +5,7 @@ import {ThemedButton, ThemedInput, ThemedText, ThemedView} from '@/components/ui
 import {type ColorScheme, Palette} from '@/constants/colors';
 import {type DesignSystem} from '@/constants/typography';
 import {useAuth, useTheme} from '@/providers';
+import * as AppStorage from '@/utils/storage';
 
 type PersonalEmailFormProps = {
   onSuccess: () => void;
@@ -12,40 +13,48 @@ type PersonalEmailFormProps = {
 };
 
 export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFormProps) {
+  const [subdomain, setSubdomain] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const {loginUser, isLoading, error, clearError} = useAuth();
   const {ds, theme, scheme} = useTheme();
+  const subdomainInputRef = useRef<TextInput>(null);
   const emailInputRef = useRef<TextInput>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      emailInputRef.current?.focus();
-    }, 100);
+    AppStorage.getTenantSubdomain().then((savedSubdomain) => {
+      const timer = setTimeout(() => {
+        if (savedSubdomain) {
+          setSubdomain(savedSubdomain);
+          emailInputRef.current?.focus();
+        } else {
+          subdomainInputRef.current?.focus();
+        }
+      }, 100);
 
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    });
   }, []);
 
   useEffect(() => {
-    // Clear error when component mounts
     clearError();
   }, [clearError]);
 
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
+    if (!subdomain.trim() || !email.trim() || !password.trim()) {
       return;
     }
 
     try {
-      await loginUser(email.trim(), password);
+      await loginUser(email.trim(), password, subdomain.trim());
+      await AppStorage.setTenantSubdomain(subdomain.trim());
       onSuccess();
     } catch (error) {
-      // Error is already handled by the auth service and stored in the auth state
       console.error('Login failed:', error);
     }
   };
 
-  const isFormValid = email.trim().length > 0 && password.length > 0;
+  const isFormValid = subdomain.trim().length > 0 && email.trim().length > 0 && password.length > 0;
 
   const handleForgotPassword = () => {
     if (onForgotPassword) {
@@ -74,6 +83,22 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
             </View>
 
             <View style={styles.inputSection}>
+              <ThemedInput
+                ref={subdomainInputRef}
+                placeholder="Subdomain (e.g., mycompany)"
+                autoCapitalize="none"
+                autoComplete="off"
+                autoCorrect={false}
+                value={subdomain}
+                onChangeText={(text) => {
+                  setSubdomain(text);
+                  clearError();
+                }}
+                returnKeyType="next"
+                style={styles.input}
+                accessibilityLabel="Subdomain input"
+                editable={!isLoading}
+              />
               <ThemedInput
                 ref={emailInputRef}
                 placeholder="Email"
@@ -195,7 +220,7 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
       opacity: 0.5,
     },
     errorText: {
-      color: '#ef4444', // Red color for error text
+      color: '#ef4444',
       textAlign: 'center',
     },
   });

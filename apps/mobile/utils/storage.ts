@@ -120,3 +120,17 @@ export async function removeItem(key: string): Promise<void> {
   }
   memory.delete(k);
 }
+
+const TENANT_KEY = 'tenant_subdomain';
+
+export async function setTenantSubdomain(subdomain: string): Promise<void> {
+  await setItem(TENANT_KEY, subdomain);
+}
+
+export async function getTenantSubdomain(): Promise<string | null> {
+  return await getItem(TENANT_KEY);
+}
+
+export async function clearTenantSubdomain(): Promise<void> {
+  await removeItem(TENANT_KEY);
+}
