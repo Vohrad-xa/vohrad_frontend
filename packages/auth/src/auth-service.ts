@@ -12,6 +12,9 @@ export class AuthService {
   private constructor() {
     this.syncTokenFromStore();
     this.setupAutoRefresh();
+
+    httpClient.setTokenRefreshHandler(() => this.refreshToken());
+
     useAuthStore.subscribe((state) => {
       if (state.tokens?.access_token) {
         httpClient.setAccessToken(state.tokens.access_token);

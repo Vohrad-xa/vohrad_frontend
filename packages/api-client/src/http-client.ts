@@ -4,12 +4,17 @@ import {resolveApiUrl, getApiConfig} from './config';
 
 export class HttpClient {
   private accessToken: string | null = null;
+  private onTokenRefresh: (() => Promise<void>) | null = null;
 
   setAccessToken(token: string | null) {
     this.accessToken = token;
   }
 
-  async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  setTokenRefreshHandler(handler: () => Promise<void>) {
+    this.onTokenRefresh = handler;
+  }
+
+  async makeRequest<T>(endpoint: string, options: RequestInit = {}, isRetry = false): Promise<ApiResponse<T>> {
     const url = resolveApiUrl(endpoint);
     const apiConfig = getApiConfig();
 
@@ -34,6 +39,24 @@ export class HttpClient {
 
     try {
       const response = await fetch(url, config);
+
+      // Intercept 401 responses and attempt token refresh
+      if (response.status === 401 && !isRetry && this.onTokenRefresh) {
+        const isAuthEndpoint = endpoint.includes('/auth/login') || endpoint.includes('/auth/refresh');
+
+        if (!isAuthEndpoint) {
+          try {
+            await this.onTokenRefresh();
+
+            // Retry original request with new token
+            return this.makeRequest(endpoint, options, true);
+          } catch (refreshError) {
+            // Refresh failed, let original 401 error propagate
+            // The refresh handler should already handle logout
+          }
+        }
+      }
+
       const data = await response.json();
 
       if (!response.ok) {
