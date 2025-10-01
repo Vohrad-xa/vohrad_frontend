@@ -73,39 +73,32 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
       return;
     }
 
-    Alert.alert(
-      'Use Face ID?',
-      'Secure your account with Face ID or Touch ID for instant sign-in.',
-      [
-        {
-          text: 'Not now',
-          style: 'cancel',
-          onPress: () => {
-            biometricService.recordDecline().catch(() => {});
-          },
+    Alert.alert('Use Face ID?', 'Secure your account with Face ID or Touch ID for instant sign-in.', [
+      {
+        text: 'Not now',
+        style: 'cancel',
+        onPress: () => {
+          biometricService.recordDecline().catch(() => {});
         },
-        {
-          text: 'Enable',
-          onPress: () => {
-            void (async () => {
-              const result = await biometricService.enableWithAuthentication();
-              if (!result.success && !result.cancelled) {
-                const message =
-                  result.error === 'LOCKED'
-                    ? 'Face ID is temporarily locked. Unlock your device with the passcode, then try again.'
-                    : result.error === 'NOT_ENROLLED'
+      },
+      {
+        text: 'Enable',
+        onPress: () => {
+          void (async () => {
+            const result = await biometricService.enableWithAuthentication();
+            if (!result.success && !result.cancelled) {
+              const message =
+                result.error === 'LOCKED'
+                  ? 'Face ID is temporarily locked. Unlock your device with the passcode, then try again.'
+                  : result.error === 'NOT_ENROLLED'
                     ? 'Face ID or Touch ID is not set up on this device. Enable it in Settings to proceed.'
                     : 'Face ID could not be enabled. Check your device settings and try again.';
-                Alert.alert(
-                  'Unable to Enable Face ID',
-                  message,
-                );
-              }
-            })();
-          },
+              Alert.alert('Unable to Enable Face ID', message);
+            }
+          })();
         },
-      ],
-    );
+      },
+    ]);
   };
 
   return (

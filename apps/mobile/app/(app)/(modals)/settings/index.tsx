@@ -1,8 +1,11 @@
 import {useMemo, useCallback} from 'react';
-import {StyleSheet, Platform, FlatList, type ListRenderItem} from 'react-native';
+import type {ReactNode} from 'react';
+import {StyleSheet, Platform, FlatList} from 'react-native';
+import type {ListRenderItem} from 'react-native';
 import {StatusBar as ExpoStatusBar} from 'expo-status-bar';
 import {ThemedView, ThemedText, Divider, ListItem, Switch} from '@/components/ui';
 import type {DesignSystem} from '@/constants/typography';
+import {BiometricToggle} from '@/features/settings/biometric-toggle';
 import {
   isDividerItem,
   type ListItem as SettingsListItem,
@@ -60,15 +63,15 @@ export default function SettingsModal() {
         return <Divider style={styles.divider} />;
       }
 
-      return (
-        <ListItem label={item.label} icon={item.icon} onPress={item.onPress} isDestructive={item.isDestructive}>
-          {isToggleItem(item) ? (
+      let accessory: ReactNode = null;
+
+      if (isToggleItem(item)) {
+        if (item.id === 'appearance') {
+          accessory = (
             <>
-              {item.id === 'appearance' && (
-                <ThemedText style={styles.themeStatusText}>
-                  {preference === 'system' ? 'System' : preference === 'light' ? 'Light' : 'Dark'}
-                </ThemedText>
-              )}
+              <ThemedText style={styles.themeStatusText}>
+                {preference === 'system' ? 'System' : preference === 'light' ? 'Light' : 'Dark'}
+              </ThemedText>
               <Switch
                 style={{
                   alignSelf: 'auto',
@@ -77,9 +80,17 @@ export default function SettingsModal() {
                 }}
               />
             </>
-          ) : (
-            !item.isDestructive && <Icon name={AppIcons.navigation.forward} size={ds.iconSize.md} color={theme.muted} />
-          )}
+          );
+        } else if (item.id === 'biometric-unlock') {
+          accessory = <BiometricToggle />;
+        }
+      } else if (!item.isDestructive) {
+        accessory = <Icon name={AppIcons.navigation.forward} size={ds.iconSize.md} color={theme.muted} />;
+      }
+
+      return (
+        <ListItem label={item.label} icon={item.icon} onPress={item.onPress} isDestructive={item.isDestructive}>
+          {accessory}
         </ListItem>
       );
     },
