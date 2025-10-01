@@ -23,6 +23,13 @@ export class HttpClient {
       ...((options.headers as Record<string, string>) || {}),
     };
 
+    const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
+
+    if (isBrowser && !headers['X-Client-Platform']) {
+      // Tell the API when we are running from the web build so it can switch to cookie auth.
+      headers['X-Client-Platform'] = 'web';
+    }
+
     if (this.accessToken) {
       headers.Authorization = `Bearer ${this.accessToken}`;
     }
@@ -36,6 +43,11 @@ export class HttpClient {
       ...options,
       headers,
     };
+
+    if (isBrowser) {
+      // Allow browser fetch to include HttpOnly refresh cookies.
+      config.credentials = 'include';
+    }
 
     try {
       const response = await fetch(url, config);
