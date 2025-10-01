@@ -19,18 +19,18 @@ export default function Switch({style}: CustomSwitchProps) {
       Animated.timing(scaleAnim, {
         toValue: 0.8,
         duration: 100,
-        useNativeDriver: true,
+        useNativeDriver: Platform.OS !== 'web',
       }),
       Animated.parallel([
         Animated.timing(rotationAnim, {
           toValue: 1,
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         }),
         Animated.timing(scaleAnim, {
           toValue: 1,
           duration: 200,
-          useNativeDriver: true,
+          useNativeDriver: Platform.OS !== 'web',
         }),
       ]),
     ]).start(() => {
