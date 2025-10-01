@@ -9,7 +9,7 @@ export interface UserLoginRequest extends BaseCredentials {
 export type AdminLoginRequest = BaseCredentials;
 
 export interface RefreshTokenRequest {
-  refresh_token: string;
+  refresh_token?: string;
 }
 
 export interface TokenResponse {
