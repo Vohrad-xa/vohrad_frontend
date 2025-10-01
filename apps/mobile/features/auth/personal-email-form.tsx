@@ -1,9 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
 import type {TextInput} from 'react-native';
-import {KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {ThemedButton, ThemedInput, ThemedText, ThemedView} from '@/components/ui';
 import {type ColorScheme, Palette} from '@/constants/colors';
 import {type DesignSystem} from '@/constants/typography';
+import * as biometricService from '@/modules/security/biometric-service';
 import {useAuth, useTheme} from '@/providers';
 import * as AppStorage from '@/utils/storage';
 
@@ -48,6 +49,7 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
     try {
       await loginUser(email.trim(), password, subdomain.trim());
       await AppStorage.setTenantSubdomain(subdomain.trim());
+      await promptBiometricEnable();
       onSuccess();
     } catch (error) {
       console.error('Login failed:', error);
@@ -63,6 +65,48 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
   };
 
   const styles = createStyles(ds, theme, scheme);
+
+  // Offer biometric opt-in immediately after a successful login.
+  const promptBiometricEnable = async () => {
+    const shouldPrompt = await biometricService.shouldPromptEnable();
+    if (!shouldPrompt) {
+      return;
+    }
+
+    Alert.alert(
+      'Use Face ID?',
+      'Secure your account with Face ID or Touch ID for instant sign-in.',
+      [
+        {
+          text: 'Not now',
+          style: 'cancel',
+          onPress: () => {
+            biometricService.recordDecline().catch(() => {});
+          },
+        },
+        {
+          text: 'Enable',
+          onPress: () => {
+            void (async () => {
+              const result = await biometricService.enableWithAuthentication();
+              if (!result.success && !result.cancelled) {
+                const message =
+                  result.error === 'LOCKED'
+                    ? 'Face ID is temporarily locked. Unlock your device with the passcode, then try again.'
+                    : result.error === 'NOT_ENROLLED'
+                    ? 'Face ID or Touch ID is not set up on this device. Enable it in Settings to proceed.'
+                    : 'Face ID could not be enabled. Check your device settings and try again.';
+                Alert.alert(
+                  'Unable to Enable Face ID',
+                  message,
+                );
+              }
+            })();
+          },
+        },
+      ],
+    );
+  };
 
   return (
     <ThemedView style={styles.container}>
