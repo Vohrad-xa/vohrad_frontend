@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Platform} from 'react-native';
+import {Alert, Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {authService} from '@vohrad/auth';
 import {useAuthStore, setAuthPersistStorage} from '@vohrad/store';
@@ -7,6 +7,11 @@ import {Slot, useRootNavigationState, useRouter, useSegments, usePathname, type 
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {LoadingOverlay} from '@/components/ui';
+import {
+  authenticateWithBiometrics,
+  disableBiometrics,
+  shouldRequireAuthenticationOnLaunch,
+} from '@/modules/security/biometric-service';
 import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
 import {secureStorage} from '@/utils/secure-storage';
 import * as AppStorage from '@/utils/storage';
@@ -28,6 +33,7 @@ export const unstable_settings = {
   initialRouteName: '(auth)',
 };
 
+// Handles auth-aware routing and splash overlay transitions.
 function RootNavigation() {
   const {isAuthenticated} = useAuth();
   const segments = useSegments();
@@ -77,6 +83,7 @@ function RootNavigation() {
   );
 }
 
+// Bootstraps secure auth persistence and wires global providers.
 export default function RootLayout() {
   useEffect(() => {
     let cancelled = false;
@@ -95,6 +102,7 @@ export default function RootLayout() {
 
         const hydrationState = {locked: true};
 
+        // Swap zustand persistence backend to secure storage with a hydration lock.
         setAuthPersistStorage({
           getItem: (key) => secureStorage.getItem(key),
           setItem: async (key, value) => {
@@ -111,11 +119,55 @@ export default function RootLayout() {
           },
         });
 
+        // Peek at persisted snapshot to decide if biometric gate is needed.
+        const storedSnapshotRaw = await secureStorage.getItem(legacyKey);
+        let shouldHydrate = true;
+        let persistedHasRefreshToken = false;
+
+        if (storedSnapshotRaw) {
+          try {
+            const snapshot = JSON.parse(storedSnapshotRaw) as {
+              state?: {tokens?: {refresh_token?: string}};
+            };
+            persistedHasRefreshToken = Boolean(snapshot?.state?.tokens?.refresh_token);
+          } catch (error) {
+            console.error('[app/_layout] Failed to parse persisted auth snapshot:', error);
+          }
+        }
+
+        if (persistedHasRefreshToken) {
+          // Require biometric auth before hydrating sensitive tokens.
+          const requireBiometric = await shouldRequireAuthenticationOnLaunch();
+          if (requireBiometric) {
+            const authResult = await authenticateWithBiometrics('Unlock your account');
+            if (!authResult.success) {
+              await disableBiometrics();
+              await secureStorage.removeItem(legacyKey);
+              shouldHydrate = false;
+              if (!authResult.cancelled) {
+                Alert.alert('Authentication failed', 'Please sign in again to continue.');
+              }
+            }
+          }
+        }
+
+        hydrationState.locked = false;
+
+        if (!shouldHydrate) {
+          // Biometric failed: reset auth store and skip hydrate.
+          useAuthStore.setState({
+            user: null,
+            tokens: null,
+            isAuthenticated: false,
+            intendedRoute: null,
+            error: null,
+          });
+          return;
+        }
+
         await useAuthStore.persist?.rehydrate?.();
 
         if (cancelled) return;
-
-        hydrationState.locked = false;
 
         const {tokens, isAuthenticated} = useAuthStore.getState();
 
