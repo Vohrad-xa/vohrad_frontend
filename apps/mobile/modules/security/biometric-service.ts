@@ -10,7 +10,7 @@ type BiometricSettings = {
   lastPromptAt?: number;
 };
 
-type BiometricAvailability = {
+export type BiometricAvailability = {
   available: boolean;
   reason?: 'UNSUPPORTED' | 'NO_HARDWARE' | 'NOT_ENROLLED';
 };
@@ -71,6 +71,10 @@ async function checkAvailability(): Promise<BiometricAvailability> {
   }
 }
 
+export async function getBiometricAvailability(): Promise<BiometricAvailability> {
+  return checkAvailability();
+}
+
 // Check whether biometric unlock is currently enabled.
 export async function isBiometricEnabled(): Promise<boolean> {
   const settings = await readSettings();
@@ -103,7 +107,9 @@ export async function recordDecline(): Promise<void> {
 }
 
 // Attempt to enable biometrics, prompting the system sheet.
-export async function enableWithAuthentication(promptMessage = 'Enable biometric authentication'): Promise<BiometricAuthResult> {
+export async function enableWithAuthentication(
+  promptMessage = 'Enable biometric authentication',
+): Promise<BiometricAuthResult> {
   const availability = await checkAvailability();
   if (!availability.available) {
     await disableBiometrics();
@@ -131,7 +137,7 @@ export async function enableWithAuthentication(promptMessage = 'Enable biometric
   const cancelled = errorCode === 'user_cancel' || errorCode === 'system_cancel' || errorCode === 'app_cancel';
   const biometryLocked = errorCode === 'lockout';
   const notEnrolled = errorCode === 'not_enrolled';
-  const error = biometryLocked ? 'LOCKED' : notEnrolled ? 'NOT_ENROLLED' : errorCode ?? 'unknown';
+  const error = biometryLocked ? 'LOCKED' : notEnrolled ? 'NOT_ENROLLED' : (errorCode ?? 'unknown');
   if (notEnrolled) {
     await disableBiometrics();
   }
@@ -148,7 +154,9 @@ export async function disableBiometrics(): Promise<void> {
 }
 
 // Prompt for biometric unlock during app launch.
-export async function authenticateWithBiometrics(promptMessage = 'Authenticate to continue'): Promise<BiometricAuthResult> {
+export async function authenticateWithBiometrics(
+  promptMessage = 'Authenticate to continue',
+): Promise<BiometricAuthResult> {
   const availability = await checkAvailability();
   if (!availability.available) {
     await disableBiometrics();
