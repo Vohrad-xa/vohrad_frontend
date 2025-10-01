@@ -51,7 +51,6 @@ export class AuthService {
       const credentials: UserLoginRequest = {email, password};
       const {tokens, user} = await authApi.loginUser(credentials);
 
-      httpClient.setAccessToken(tokens.access_token);
       login(user, tokens);
       this.scheduleTokenRefresh(tokens);
     } catch (error) {
