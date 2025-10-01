@@ -1,10 +1,14 @@
+import {Platform} from 'react-native';
+
 // Cross-platform key-value storage helper.
-// - Web: uses localStorage
+// - Web: uses localStorage (unless bypassed for sensitive keys)
 // - Native: tries @react-native-async-storage/async-storage if installed
 // - Fallback: in-memory Map (non-persistent)
 
 const memory = new Map<string, string>();
 const NS = '@vohrad:'; // namespace prefix for all keys
+
+const SENSITIVE_KEYS = new Set(['vohrad-auth']);
 
 function ns(key: string) {
   return `${NS}${key}`;
@@ -20,6 +24,21 @@ function hasLocalStorage(): boolean {
   } catch {
     return false;
   }
+}
+
+function isSensitiveKey(key: string): boolean {
+  if (SENSITIVE_KEYS.has(key)) {
+    return true;
+  }
+  if (key.startsWith(NS)) {
+    const raw = key.slice(NS.length);
+    return SENSITIVE_KEYS.has(raw);
+  }
+  return false;
+}
+
+function shouldBypassWebStorage(key: string): boolean {
+  return Platform.OS === 'web' && isSensitiveKey(key);
 }
 
 interface AsyncStorageModule {
@@ -55,16 +74,12 @@ export async function getItem(key: string): Promise<string | null> {
       const ls = (globalThis as GlobalWithStorage).localStorage!;
       const val = ls.getItem(k);
       if (val != null) {
+        if (shouldBypassWebStorage(key)) {
+          try {
+            ls.removeItem(k);
+          } catch {}
+        }
         return val;
-      }
-      // Migration: try legacy key (unscoped)
-      const legacy = ls.getItem(key);
-      if (legacy != null) {
-        try {
-          ls.setItem(k, legacy);
-          ls.removeItem(key);
-        } catch {}
-        return legacy;
       }
     } catch {}
   }
@@ -75,15 +90,6 @@ export async function getItem(key: string): Promise<string | null> {
     if (val != null) {
       return val;
     }
-    // Migration: try legacy key
-    const legacy = await as.getItem(key);
-    if (legacy != null) {
-      try {
-        await as.setItem(k, legacy);
-        await as.removeItem(key);
-      } catch {}
-      return legacy;
-    }
   }
   // 3) In-memory fallback
   return memory.get(k) ?? memory.get(key) ?? null;
@@ -91,10 +97,16 @@ export async function getItem(key: string): Promise<string | null> {
 
 export async function setItem(key: string, value: string): Promise<void> {
   const k = ns(key);
+  const bypassWebStorage = shouldBypassWebStorage(key);
   if (hasLocalStorage()) {
     try {
-      (globalThis as GlobalWithStorage).localStorage!.setItem(k, value);
-      return;
+      const ls = (globalThis as GlobalWithStorage).localStorage!;
+      if (bypassWebStorage) {
+        ls.removeItem(k);
+      } else {
+        ls.setItem(k, value);
+        return;
+      }
     } catch {}
   }
   const as = await tryLoadAsyncStorage();
