@@ -50,9 +50,36 @@ export function setAuthPersistStorage(backend: AsyncKV) {
   }
 }
 
+function sanitizeUser(user: User | null): User | null {
+  if (!user) {
+    return null;
+  }
+
+  const {id, email, role, tenant_id} = user;
+  const sanitized: User = {id, email, role, tenant_id};
+  return sanitized;
+}
+
+function redactTokens(tokens: AuthTokens | null): AuthTokens | null {
+  if (!tokens) {
+    return null;
+  }
+
+  const {refresh_token, refresh_expires_in, expires_in, issued_at, token_type} = tokens;
+
+  return {
+    access_token: '',
+    refresh_token,
+    refresh_expires_in,
+    expires_in,
+    issued_at,
+    token_type,
+  } as AuthTokens;
+}
+
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
       tokens: null,
       isAuthenticated: false,
@@ -92,8 +119,8 @@ export const useAuthStore = create<AuthState>()(
         removeItem: (key: string) => persistBackend.removeItem(key),
       })),
       partialize: (state) => ({
-        user: state.user,
-        tokens: state.tokens,
+        user: sanitizeUser(state.user),
+        tokens: redactTokens(state.tokens),
         isAuthenticated: state.isAuthenticated,
       }),
     },
