@@ -1,15 +1,12 @@
 import React from 'react';
 import {StatusBar} from 'react-native';
-import {useRouter} from 'expo-router';
 import {PersonalEmailForm} from '@/features/auth/personal-email-form';
 import {useTheme} from '@/providers';
 
 export default function PersonalEmailModal() {
   const {scheme} = useTheme();
-  const router = useRouter();
 
   const handleSuccess = () => {
-    router.back();
   };
 
   return (
