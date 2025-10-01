@@ -25,6 +25,12 @@ export function useSettingsItems() {
         hasToggle: true,
       },
       {
+        id: 'biometric-unlock',
+        icon: AppIcons.content.privacy,
+        label: 'Biometric Unlock',
+        hasToggle: true,
+      },
+      {
         id: 'preferences',
         icon: AppIcons.navigation.settings,
         label: 'Preferences',
