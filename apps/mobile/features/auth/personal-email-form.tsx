@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import type {TextInput} from 'react-native';
 import {Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {ThemedButton, ThemedInput, ThemedText, ThemedView} from '@/components/ui';
@@ -7,6 +7,7 @@ import {type DesignSystem} from '@/constants/typography';
 import * as biometricService from '@/modules/security/biometric-service';
 import {useAuth, useTheme} from '@/providers';
 import * as AppStorage from '@/utils/storage';
+import {validateEmail} from '@/utils/validation';
 
 type PersonalEmailFormProps = {
   onSuccess: () => void;
@@ -14,14 +15,23 @@ type PersonalEmailFormProps = {
 };
 
 export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFormProps) {
+  // Form state
   const [subdomain, setSubdomain] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
+  const [showEmailValidation, setShowEmailValidation] = useState(false);
+
+  // Hooks
   const {loginUser, isLoading, error, clearError} = useAuth();
   const {ds, theme, scheme} = useTheme();
+
+  // Refs
   const subdomainInputRef = useRef<TextInput>(null);
   const emailInputRef = useRef<TextInput>(null);
+  const emailValidationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Auto-focus appropriate field based on saved subdomain
   useEffect(() => {
     AppStorage.getTenantSubdomain().then((savedSubdomain) => {
       const timer = setTimeout(() => {
@@ -37,18 +47,72 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
     });
   }, []);
 
+  // Clear errors when component mounts
   useEffect(() => {
     clearError();
+    setFormError(null);
   }, [clearError]);
 
+  // Debounce email validation to avoid showing errors while user is typing
+  useEffect(() => {
+    if (emailValidationTimerRef.current) {
+      clearTimeout(emailValidationTimerRef.current);
+    }
+
+    setShowEmailValidation(false);
+
+    if (email.length > 0) {
+      emailValidationTimerRef.current = setTimeout(() => {
+        setShowEmailValidation(true);
+      }, 800);
+    }
+
+    return () => {
+      if (emailValidationTimerRef.current) {
+        clearTimeout(emailValidationTimerRef.current);
+      }
+    };
+  }, [email]);
+
+  // Memoized email validation
+  const emailValidation = useMemo(() => validateEmail(email), [email]);
+
+  // Apply typo suggestion (e.g., gmial.com → gmail.com)
+  const handleApplySuggestion = () => {
+    if (emailValidation.suggestion) {
+      setEmail(emailValidation.suggestion);
+      clearError();
+      setFormError(null);
+    }
+  };
+
+  // Show email requirements in native alert
+  const handleEmailErrorPress = () => {
+    Alert.alert('Email Requirements', '• Must contain @ symbol\n• Must have valid domain (e.g., example.com).', [
+      {text: 'OK'},
+    ]);
+  };
+
+  // Handle login submission
   const handleLogin = async () => {
-    if (!subdomain.trim() || !email.trim() || !password.trim()) {
+    const trimmedSubdomain = subdomain.trim();
+    const trimmedEmail = email.trim();
+    const hasPassword = password.length > 0;
+
+    if (!trimmedSubdomain || !trimmedEmail || !hasPassword) {
+      setFormError('All fields are required.');
+      return;
+    }
+
+    if (!emailValidation.isValid) {
+      setFormError(emailValidation.error ?? 'Enter a valid email');
       return;
     }
 
     try {
-      await loginUser(email.trim(), password, subdomain.trim());
-      await AppStorage.setTenantSubdomain(subdomain.trim());
+      setFormError(null);
+      await loginUser(trimmedEmail, password, trimmedSubdomain);
+      await AppStorage.setTenantSubdomain(trimmedSubdomain);
       await promptBiometricEnable();
       onSuccess();
     } catch (error) {
@@ -56,17 +120,17 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
     }
   };
 
-  const isFormValid = subdomain.trim().length > 0 && email.trim().length > 0 && password.length > 0;
+  // Form validation state
+  const isFormValid = subdomain.trim().length > 0 && emailValidation.isValid && password.length > 0;
 
   const handleForgotPassword = () => {
-    if (onForgotPassword) {
-      onForgotPassword();
-    }
+    onForgotPassword?.();
   };
 
+  // Create styles using current theme and design system
   const styles = createStyles(ds, theme, scheme);
 
-  // Offer biometric opt-in immediately after a successful login.
+  // Offer biometric opt-in immediately after a successful login
   const promptBiometricEnable = async () => {
     const shouldPrompt = await biometricService.shouldPromptEnable();
     if (!shouldPrompt) {
@@ -119,7 +183,7 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
               </ThemedText>
             </View>
 
-            <View style={styles.inputSection}>
+            <View style={styles.section}>
               <ThemedInput
                 ref={subdomainInputRef}
                 placeholder="Subdomain (e.g., mycompany)"
@@ -130,6 +194,7 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                 onChangeText={(text) => {
                   setSubdomain(text);
                   clearError();
+                  setFormError(null);
                 }}
                 returnKeyType="next"
                 style={styles.input}
@@ -147,12 +212,30 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                 onChangeText={(text) => {
                   setEmail(text);
                   clearError();
+                  setFormError(null);
                 }}
                 returnKeyType="next"
                 style={styles.input}
                 accessibilityLabel="Email input"
                 editable={!isLoading}
+                error={showEmailValidation ? (emailValidation.error ?? undefined) : undefined}
+                success={showEmailValidation && emailValidation.isValid && email.length > 0}
+                onErrorPress={handleEmailErrorPress}
               />
+              {emailValidation.suggestion && (
+                <TouchableOpacity
+                  onPress={handleApplySuggestion}
+                  style={styles.suggestion}
+                  accessibilityLabel="Apply email suggestion">
+                  <ThemedText variant="caption" colorToken="muted">
+                    Did you mean{' '}
+                    <ThemedText variant="caption" style={styles.suggestionEmail}>
+                      {emailValidation.suggestion}
+                    </ThemedText>
+                    ?
+                  </ThemedText>
+                </TouchableOpacity>
+              )}
               <ThemedInput
                 placeholder="Password"
                 secureTextEntry
@@ -162,6 +245,7 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                 onChangeText={(text) => {
                   setPassword(text);
                   clearError();
+                  setFormError(null);
                 }}
                 returnKeyType="go"
                 onSubmitEditing={handleLogin}
@@ -173,7 +257,7 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
 
             {error && (
               <View style={styles.section}>
-                <ThemedText variant="subheadline" style={styles.errorText}>
+                <ThemedText variant="subheadline" colorToken="destructive" style={{textAlign: 'center'}}>
                   {error}
                 </ThemedText>
               </View>
@@ -181,7 +265,7 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
 
             <View style={styles.section}>
               <TouchableOpacity onPress={handleForgotPassword} disabled={isLoading}>
-                <ThemedText variant="subheadline" colorToken="muted" style={styles.forgotPasswordText}>
+                <ThemedText variant="subheadline" colorToken="muted" style={{textDecorationLine: 'underline'}}>
                   Forgot password?
                 </ThemedText>
               </TouchableOpacity>
@@ -216,7 +300,7 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
       flexGrow: 1,
       justifyContent: 'center',
       padding: ds.layout.screenPadding,
-      paddingBottom: ds.spacing.xxxl + ds.spacing.xxxl,
+      paddingBottom: ds.spacing.xxxl * 2,
     },
     content: {
       gap: ds.spacing.xl,
@@ -226,17 +310,19 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
       alignItems: 'center',
       width: '100%',
     },
-    inputSection: {
-      gap: ds.spacing.md,
-      width: '100%',
-    },
     input: {
       borderRadius: ds.borderRadius.xxxl,
       borderWidth: 0.5,
       borderColor: theme.divider,
     },
-    forgotPasswordText: {
-      textDecorationLine: 'underline',
+    suggestion: {
+      marginTop: ds.spacing.xs,
+      paddingHorizontal: ds.spacing.xs,
+      alignSelf: 'flex-start',
+    },
+    suggestionEmail: {
+      color: theme.accentBlue,
+      fontWeight: '500',
     },
     loginButton: {
       paddingHorizontal: ds.spacing.xxl,
@@ -254,11 +340,7 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
       }),
     },
     loginButtonDisabled: {
-      opacity: 0.5,
-    },
-    errorText: {
-      color: '#ef4444',
-      textAlign: 'center',
+      opacity: ds.opacity.pressed,
     },
   });
 
