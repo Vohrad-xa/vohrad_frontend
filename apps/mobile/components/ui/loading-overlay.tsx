@@ -5,7 +5,7 @@ export function LoadingOverlay() {
   const {theme} = useTheme();
 
   return (
-    <View style={StyleSheet.absoluteFillObject} pointerEvents="box-none">
+    <View style={[StyleSheet.absoluteFillObject, {pointerEvents: 'box-none'}]}>
       <View style={[styles.overlay, {backgroundColor: theme.background}]}>
         <ActivityIndicator size="large" color={theme.tint} />
       </View>
