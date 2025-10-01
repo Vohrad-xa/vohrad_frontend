@@ -104,6 +104,7 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
     try {
       clearError();
       await loginUser(email.trim(), password, subdomain.trim());
+      setPassword('');
       await AppStorage.setTenantSubdomain(subdomain.trim());
       await promptBiometricEnable();
       onSuccess();
