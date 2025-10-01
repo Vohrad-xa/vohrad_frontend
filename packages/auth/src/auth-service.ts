@@ -7,7 +7,8 @@ import {httpClient, setApiTenant} from '@vohrad/api-client';
 export class AuthService {
   private static instance: AuthService;
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
-  private isRefreshing = false;
+  // Single-flight refresh: ensures only one token refresh runs at a time
+  private refreshPromise: Promise<void> | null = null;
 
   private constructor() {
     this.syncTokenFromStore();
@@ -130,26 +131,36 @@ export class AuthService {
   }
 
   async refreshToken(): Promise<void> {
-    const {tokens, setTokens, logout, setError} = useAuthStore.getState();
-    if (!tokens?.refresh_token) throw new Error('No refresh token available');
-
-    if (this.isRefreshing) return;
-    this.isRefreshing = true;
-
-    try {
-      const newTokens = await authApi.refreshToken(tokens.refresh_token);
-      httpClient.setAccessToken(newTokens.access_token);
-      setTokens(newTokens);
-      this.scheduleTokenRefresh(newTokens);
-    } catch (error) {
-      setError('Session expired. Please login again.');
-      httpClient.setAccessToken(null);
-      this.clearRefreshTimer();
-      logout();
-      throw error;
-    } finally {
-      this.isRefreshing = false;
+    // Return existing promise if refresh already in progress
+    if (this.refreshPromise) {
+      return this.refreshPromise;
     }
+
+    const {tokens, setTokens, logout, setError} = useAuthStore.getState();
+    if (!tokens?.refresh_token) {
+      throw new Error('No refresh token available');
+    }
+
+    // Cache promise to ensure all concurrent callers wait for same refresh
+    this.refreshPromise = (async () => {
+      try {
+        const newTokens = await authApi.refreshToken(tokens.refresh_token);
+        httpClient.setAccessToken(newTokens.access_token);
+        setTokens(newTokens);
+        this.scheduleTokenRefresh(newTokens);
+      } catch (error) {
+        setError('Session expired. Please login again.');
+        httpClient.setAccessToken(null);
+        this.clearRefreshTimer();
+        logout();
+        throw error;
+      } finally {
+        // Clear promise to allow future refreshes
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
   }
 
   isAuthenticated(): boolean {
