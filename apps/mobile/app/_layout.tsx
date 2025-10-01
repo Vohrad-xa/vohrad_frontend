@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {Platform, LogBox} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {useAuthStore, setAuthPersistStorage} from '@vohrad/store';
-import {Slot, useRootNavigationState, useRouter, useSegments, usePathname} from 'expo-router';
+import {Slot, useRootNavigationState, useRouter, useSegments, usePathname, type Href} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
@@ -51,8 +51,9 @@ function RootNavigation() {
     }
 
     if (isAuthenticated && inAuthGroup) {
+      const destination = intendedRoute || '/';
       setIntendedRoute(null);
-      router.replace('/');
+      router.replace(destination as Href);
     }
   }, [isAuthenticated, navigationState?.key, router, rootSegment, pathname, setIntendedRoute, intendedRoute]);
 
