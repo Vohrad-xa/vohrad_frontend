@@ -14,7 +14,7 @@ export class AuthApi {
 
   private async login(
     endpoint: string,
-    credentials: UserLoginRequest | AdminLoginRequest
+    credentials: UserLoginRequest | AdminLoginRequest,
   ): Promise<{tokens: AuthTokens; user: User}> {
     const response = await httpClient.post<TokenResponse>(endpoint, credentials);
 

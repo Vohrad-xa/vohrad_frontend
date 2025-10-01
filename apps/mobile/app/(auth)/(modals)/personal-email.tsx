@@ -6,8 +6,7 @@ import {useTheme} from '@/providers';
 export default function PersonalEmailModal() {
   const {scheme} = useTheme();
 
-  const handleSuccess = () => {
-  };
+  const handleSuccess = () => {};
 
   return (
     <>
