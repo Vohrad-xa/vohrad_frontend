@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {Platform, LogBox} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {useAuthStore, setAuthPersistStorage} from '@vohrad/store';
 import {Slot, useRootNavigationState, useRouter, useSegments, usePathname} from 'expo-router';
@@ -7,6 +8,17 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
 import {LoadingOverlay} from '@/components/ui';
 import * as AppStorage from '@/utils/storage';
+
+// TODO: Remove when expo-router updates to new pointerEvents API
+if (Platform.OS === 'web') {
+  const originalWarn = console.warn;
+  console.warn = (...args) => {
+    if (typeof args[0] === 'string' && args[0].includes('props.pointerEvents is deprecated')) {
+      return;
+    }
+    originalWarn.apply(console, args);
+  };
+}
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -72,7 +84,6 @@ export default function RootLayout() {
     });
     useAuthStore.persist?.rehydrate?.();
   }, []);
-
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
