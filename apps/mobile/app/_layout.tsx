@@ -1,12 +1,14 @@
 import {useEffect, useState} from 'react';
-import {Platform, LogBox} from 'react-native';
+import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
+import {authService} from '@vohrad/auth';
 import {useAuthStore, setAuthPersistStorage} from '@vohrad/store';
 import {Slot, useRootNavigationState, useRouter, useSegments, usePathname, type Href} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
 import {LoadingOverlay} from '@/components/ui';
+import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
+import {secureStorage} from '@/utils/secure-storage';
 import * as AppStorage from '@/utils/storage';
 
 // TODO: Remove when expo-router updates to new pointerEvents API
@@ -51,7 +53,7 @@ function RootNavigation() {
     }
 
     if (isAuthenticated && inAuthGroup) {
-      const destination = intendedRoute || '/';
+      const destination = intendedRoute ?? '/';
       setIntendedRoute(null);
       router.replace(destination as Href);
     }
@@ -76,14 +78,64 @@ function RootNavigation() {
 }
 
 export default function RootLayout() {
-  // Ensure persisted auth uses app storage (AsyncStorage on native, localStorage on web)
   useEffect(() => {
-    setAuthPersistStorage({
-      getItem: (k) => AppStorage.getItem(k),
-      setItem: (k, v) => AppStorage.setItem(k, v),
-      removeItem: (k) => AppStorage.removeItem(k),
-    });
-    useAuthStore.persist?.rehydrate?.();
+    let cancelled = false;
+
+    const bootstrapAuthPersistence = async () => {
+      try {
+        const legacyKey = 'vohrad-auth';
+        const legacyPayload = await AppStorage.getItem(legacyKey);
+
+        if (legacyPayload) {
+          await secureStorage.setItem(legacyKey, legacyPayload);
+          await AppStorage.removeItem(legacyKey);
+        }
+
+        if (cancelled) return;
+
+        const hydrationState = {locked: true};
+
+        setAuthPersistStorage({
+          getItem: (key) => secureStorage.getItem(key),
+          setItem: async (key, value) => {
+            if (hydrationState.locked) {
+              return;
+            }
+            await secureStorage.setItem(key, value);
+          },
+          removeItem: async (key) => {
+            if (hydrationState.locked) {
+              return;
+            }
+            await secureStorage.removeItem(key);
+          },
+        });
+
+        await useAuthStore.persist?.rehydrate?.();
+
+        if (cancelled) return;
+
+        hydrationState.locked = false;
+
+        const {tokens, isAuthenticated} = useAuthStore.getState();
+
+        if (isAuthenticated && tokens?.refresh_token && !tokens.access_token) {
+          try {
+            await authService.refreshToken();
+          } catch (error) {
+            console.error('[app/_layout] Failed to refresh access token on boot:', error);
+          }
+        }
+      } catch (error) {
+        console.error('[app/_layout] Failed to bootstrap secure auth persistence:', error);
+      }
+    };
+
+    bootstrapAuthPersistence();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
