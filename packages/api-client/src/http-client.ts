@@ -60,7 +60,9 @@ export class HttpClient {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new ApiError(data.message || `HTTP ${response.status}`, response.status, data);
+        // Backend error responses have nested structure: { error: { message: "..." } }
+        const errorMessage = data.error?.message || data.error || data.message || `HTTP ${response.status}`;
+        throw new ApiError(errorMessage, response.status);
       }
 
       return data;
