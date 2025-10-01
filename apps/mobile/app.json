@@ -12,7 +12,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "vohrad.mobile",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSFaceIDUsageDescription": "Face ID lets you unlock the app quickly and securely."
       }
     },
     "android": {
