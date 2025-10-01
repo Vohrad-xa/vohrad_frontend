@@ -5,9 +5,25 @@ const typescriptPlugin = require('@typescript-eslint/eslint-plugin');
 const typescriptParser = require('@typescript-eslint/parser');
 
 module.exports = defineConfig([
-  expoConfig,
   {
-    ignores: ['node_modules/**', 'dist/**', 'web-build/**', 'ios/**', 'android/**', '.expo/**', '**/*.js', '**/*.jsx'],
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'web-build/**',
+      'ios/**',
+      'android/**',
+      '.expo/**',
+      '_expo/**',
+      '**/*.js',
+      '**/*.jsx',
+    ],
+  },
+  ...expoConfig.map((config) => ({
+    ...config,
+    files: ['**/*.{ts,tsx}'],
+  })),
+  {
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parser: typescriptParser,
       parserOptions: {
@@ -20,14 +36,13 @@ module.exports = defineConfig([
       '@typescript-eslint': typescriptPlugin,
     },
     rules: {
-      // Code Quality & Consistency
       curly: ['error', 'all'],
       eqeqeq: ['error', 'smart'],
       'no-var': 'error',
       'prefer-const': 'error',
       'prefer-arrow-callback': 'error',
       'object-shorthand': ['error', 'always'],
-      'no-duplicate-imports': 'off', // Disabled in favor of import/no-duplicates
+      'no-duplicate-imports': 'off',
 
       'no-console': ['warn', {allow: ['warn', 'error']}],
 
