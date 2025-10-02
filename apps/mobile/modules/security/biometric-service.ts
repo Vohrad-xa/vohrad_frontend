@@ -10,15 +10,18 @@ type BiometricSettings = {
   lastPromptAt?: number;
 };
 
+export type BiometricUnavailableReason = 'UNSUPPORTED' | 'NO_HARDWARE' | 'NOT_ENROLLED';
+export type BiometricAuthError = BiometricUnavailableReason | 'LOCKED' | 'unknown';
+
 export type BiometricAvailability = {
   available: boolean;
-  reason?: 'UNSUPPORTED' | 'NO_HARDWARE' | 'NOT_ENROLLED';
+  reason?: BiometricUnavailableReason;
 };
 
 export type BiometricAuthResult = {
   success: boolean;
   cancelled?: boolean;
-  error?: string;
+  error?: BiometricAuthError;
 };
 
 const DEFAULT_SETTINGS: BiometricSettings = {
@@ -26,7 +29,13 @@ const DEFAULT_SETTINGS: BiometricSettings = {
   declined: false,
 };
 
-const PROMPT_COOLDOWN_MS = 60 * 1000;
+const PROMPT_COOLDOWN_MS = 60 * 1000; // Avoid nagging the user too frequently
+const CANCELLED_ERROR_CODES = new Set(['user_cancel', 'system_cancel', 'app_cancel', 'user_fallback']);
+const AUTH_PROMPT_BASE_OPTIONS = {
+  cancelLabel: 'Cancel',
+  fallbackLabel: 'Use Passcode',
+  disableDeviceFallback: false,
+} as const;
 
 // Retrieve persisted biometric settings from secure storage.
 async function readSettings(): Promise<BiometricSettings> {
@@ -46,6 +55,42 @@ async function readSettings(): Promise<BiometricSettings> {
 // Persist biometric settings snapshot to secure storage.
 async function writeSettings(next: BiometricSettings): Promise<void> {
   await secureStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
+}
+
+function mapAuthError(errorCode?: string | null): BiometricAuthError {
+  switch (errorCode) {
+    case 'lockout':
+    case 'lockout_permanent':
+      return 'LOCKED';
+    case 'not_enrolled':
+    case 'biometry_not_enrolled':
+      return 'NOT_ENROLLED';
+    case 'not_available':
+    case 'hardware_not_available':
+      return 'NO_HARDWARE';
+    case 'not_supported':
+    case 'platform_not_supported':
+      return 'UNSUPPORTED';
+    case undefined:
+    case null:
+      return 'unknown';
+    default:
+      return 'unknown';
+  }
+}
+
+function wasCancelled(errorCode?: string | null): boolean {
+  if (!errorCode) {
+    return false;
+  }
+  return CANCELLED_ERROR_CODES.has(errorCode);
+}
+
+async function performAuthentication(promptMessage: string) {
+  return LocalAuthentication.authenticateAsync({
+    ...AUTH_PROMPT_BASE_OPTIONS,
+    promptMessage,
+  });
 }
 
 // Detect whether biometric hardware is available and enrolled.
@@ -89,14 +134,16 @@ export async function shouldPromptEnable(): Promise<boolean> {
   }
 
   const settings = await readSettings();
-  if (settings.enabled) {
+  if (settings.enabled || settings.declined) {
     return false;
   }
 
-  if (settings.lastPromptAt && Date.now() - settings.lastPromptAt < PROMPT_COOLDOWN_MS) {
+  const now = Date.now();
+  if (settings.lastPromptAt && now - settings.lastPromptAt < PROMPT_COOLDOWN_MS) {
     return false;
   }
 
+  await writeSettings({...settings, lastPromptAt: now});
   return true;
 }
 
@@ -113,19 +160,15 @@ export async function enableWithAuthentication(
   const availability = await checkAvailability();
   if (!availability.available) {
     await disableBiometrics();
-    return {success: false, error: availability.reason};
+    return {success: false, error: availability.reason ?? 'UNSUPPORTED'};
   }
 
   if (Platform.OS === 'web') {
+    await disableBiometrics();
     return {success: false, error: 'UNSUPPORTED'};
   }
 
-  const result = await LocalAuthentication.authenticateAsync({
-    promptMessage,
-    cancelLabel: 'Cancel',
-    fallbackLabel: 'Use Passcode',
-    disableDeviceFallback: false,
-  });
+  const result = await performAuthentication(promptMessage);
 
   if (result.success) {
     const settings = await readSettings();
@@ -134,11 +177,10 @@ export async function enableWithAuthentication(
   }
 
   const errorCode = result.error as string | undefined;
-  const cancelled = errorCode === 'user_cancel' || errorCode === 'system_cancel' || errorCode === 'app_cancel';
-  const biometryLocked = errorCode === 'lockout';
-  const notEnrolled = errorCode === 'not_enrolled';
-  const error = biometryLocked ? 'LOCKED' : notEnrolled ? 'NOT_ENROLLED' : (errorCode ?? 'unknown');
-  if (notEnrolled) {
+  const cancelled = wasCancelled(errorCode);
+  const error = mapAuthError(errorCode);
+
+  if (error === 'NOT_ENROLLED') {
     await disableBiometrics();
   }
   return {success: false, cancelled, error};
@@ -160,26 +202,25 @@ export async function authenticateWithBiometrics(
   const availability = await checkAvailability();
   if (!availability.available) {
     await disableBiometrics();
-    return {success: false, error: availability.reason};
+    return {success: false, error: availability.reason ?? 'UNSUPPORTED'};
   }
 
   if (Platform.OS === 'web') {
+    await disableBiometrics();
     return {success: false, error: 'UNSUPPORTED'};
   }
 
-  const result = await LocalAuthentication.authenticateAsync({
-    promptMessage,
-    cancelLabel: 'Cancel',
-    fallbackLabel: 'Use Passcode',
-    disableDeviceFallback: false,
-  });
+  const result = await performAuthentication(promptMessage);
 
   if (result.success) {
     return {success: true};
   }
 
-  const cancelled = result.error === 'user_cancel' || result.error === 'system_cancel' || result.error === 'app_cancel';
-  return {success: false, cancelled, error: result.error};
+  const errorCode = result.error as string | undefined;
+  const cancelled = wasCancelled(errorCode);
+  const error = mapAuthError(errorCode);
+
+  return {success: false, cancelled, error};
 }
 
 // Determine if launch-time biometric gating is required.
