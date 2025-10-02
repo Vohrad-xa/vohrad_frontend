@@ -111,14 +111,14 @@ export default function RootLayout() {
 
         // Swap zustand persistence backend to secure storage with a hydration lock.
         setAuthPersistStorage({
-          getItem: (key) => secureStorage.getItem(key),
-          setItem: async (key, value) => {
+          getItem: (key: string) => secureStorage.getItem(key),
+          setItem: async (key: string, value: string) => {
             if (hydrationState.locked) {
               return;
             }
             await secureStorage.setItem(key, value);
           },
-          removeItem: async (key) => {
+          removeItem: async (key: string) => {
             if (hydrationState.locked) {
               return;
             }

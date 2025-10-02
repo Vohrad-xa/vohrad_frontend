@@ -3,8 +3,13 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": ["./*"],
+      "@vohrad/api-client": ["../../packages/api-client/src"],
+      "@vohrad/auth": ["../../packages/auth/src"],
+      "@vohrad/store": ["../../packages/store/src"],
+      "@vohrad/types": ["../../packages/types/src"]
+    },
+    "baseUrl": "."
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }
