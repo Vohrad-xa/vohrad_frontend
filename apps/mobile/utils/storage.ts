@@ -8,6 +8,7 @@ import {Platform} from 'react-native';
 const memory = new Map<string, string>();
 const NS = '@vohrad:'; // namespace prefix for all keys
 
+// Keys whose payloads must never be persisted in browser storage.
 const SENSITIVE_KEYS = new Set(['vohrad-auth']);
 
 function ns(key: string) {
@@ -37,6 +38,7 @@ function isSensitiveKey(key: string): boolean {
   return false;
 }
 
+// On Expo web, treat sensitive keys as ephemeral so tokens never land in localStorage.
 function shouldBypassWebStorage(key: string): boolean {
   return Platform.OS === 'web' && isSensitiveKey(key);
 }
@@ -74,11 +76,6 @@ export async function getItem(key: string): Promise<string | null> {
       const ls = (globalThis as GlobalWithStorage).localStorage!;
       const val = ls.getItem(k);
       if (val != null) {
-        if (shouldBypassWebStorage(key)) {
-          try {
-            ls.removeItem(k);
-          } catch {}
-        }
         return val;
       }
     } catch {}
