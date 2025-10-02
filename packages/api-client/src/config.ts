@@ -1,14 +1,22 @@
+type Protocol = 'http' | 'https';
+
 export type ApiClientConfig = {
   baseUrl?: string;
-  protocol?: 'http' | 'https';
+  protocol?: Protocol;
   baseDomain?: string;
   tenant?: string;
   version?: string;
 };
 
+type GlobalWithEnv = {
+  process?: {
+    env?: Record<string, string | undefined>;
+  };
+};
+
 const envFromGlobal = (() => {
   try {
-    return (globalThis as any)?.process?.env as Record<string, string | undefined> | undefined;
+    return (globalThis as GlobalWithEnv).process?.env;
   } catch {
     return undefined;
   }
@@ -22,9 +30,16 @@ const readEnv = (keys: string[]): string | undefined => {
   return undefined;
 };
 
+const resolveProtocol = (value?: string): Protocol | undefined => {
+  if (value === 'http' || value === 'https') {
+    return value;
+  }
+  return undefined;
+};
+
 const defaultConfig: ApiClientConfig = {
   baseUrl: readEnv(['EXPO_PUBLIC_API_BASE_URL', 'NEXT_PUBLIC_API_BASE_URL']),
-  protocol: readEnv(['EXPO_PUBLIC_API_PROTOCOL', 'NEXT_PUBLIC_API_PROTOCOL']) as any,
+  protocol: resolveProtocol(readEnv(['EXPO_PUBLIC_API_PROTOCOL', 'NEXT_PUBLIC_API_PROTOCOL'])),
   baseDomain: readEnv(['EXPO_PUBLIC_API_BASE_DOMAIN', 'NEXT_PUBLIC_API_BASE_DOMAIN']),
   tenant: undefined,
   version: readEnv(['EXPO_PUBLIC_API_VERSION', 'NEXT_PUBLIC_API_VERSION']),

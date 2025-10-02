@@ -1,6 +1,5 @@
 import type {AuthTokens, User, UserLoginRequest, AdminLoginRequest, TokenResponse} from '@vohrad/types';
 import {httpClient} from './http-client';
-import {getApiConfig} from './config';
 import {API_ENDPOINTS} from './endpoints';
 
 export class AuthApi {
@@ -33,13 +32,21 @@ export class AuthApi {
     return {tokens, user};
   }
 
-  async refreshToken(refreshToken: string): Promise<AuthTokens> {
-    const response = await httpClient.post<TokenResponse>(API_ENDPOINTS.AUTH.REFRESH, {refresh_token: refreshToken});
+  async refreshToken(refreshToken?: string): Promise<AuthTokens> {
+    // On web we rely on cookies, so the payload is only sent for native clients.
+    const payload = refreshToken ? {refresh_token: refreshToken} : undefined;
+    const response = await httpClient.post<TokenResponse>(API_ENDPOINTS.AUTH.REFRESH, payload);
 
     return {
       ...response.data,
       issued_at: Date.now(),
     };
+  }
+
+  async getCurrentUser(): Promise<User> {
+    // Browser bootstrap uses this after refreshing via cookie.
+    const userResponse = await httpClient.get<User>(API_ENDPOINTS.USERS.ME);
+    return userResponse.data;
   }
 
   async logout(): Promise<void> {

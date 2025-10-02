@@ -23,7 +23,7 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
       return theme.border;
     };
 
-    const showValidationIcon = error || success;
+    const showValidationIcon = error ?? success;
 
     const inputStyle: TextStyle = {
       borderRadius: ds.components.input.borderRadius,
@@ -64,18 +64,30 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
               <Icon name={icon} size={ds.iconSize.md} color={theme.muted} />
             </View>
           )}
-          {showValidationIcon && error && onErrorPress && (
-            <TouchableOpacity
-              onPress={onErrorPress}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                right: ds.spacing.md,
-                transform: [{translateY: -ds.iconSize.sm / 2}],
-              }}>
-              <Icon name="warning-outline" size={ds.iconSize.md} color={theme.destructive} />
-            </TouchableOpacity>
-          )}
+          {showValidationIcon &&
+            error &&
+            (onErrorPress ? (
+              <TouchableOpacity
+                onPress={onErrorPress}
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  right: ds.spacing.md,
+                  transform: [{translateY: -ds.iconSize.sm / 2}],
+                }}>
+                <Icon name="warning-outline" size={ds.iconSize.md} color={theme.destructive} />
+              </TouchableOpacity>
+            ) : (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  right: ds.spacing.md,
+                  transform: [{translateY: -ds.iconSize.sm / 2}],
+                }}>
+                <Icon name="warning-outline" size={ds.iconSize.md} color={theme.destructive} />
+              </View>
+            ))}
           {showValidationIcon && success && (
             <View
               style={{

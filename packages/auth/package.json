@@ -22,7 +22,8 @@
     "build": "tsup",
     "build:js": "tsup",
     "build:dts": "tsup",
-    "dev": "tsup --watch"
+    "dev": "tsup --watch",
+    "lint": "eslint --config ../../eslint.packages.config.js \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@vohrad/store": "workspace:*",
@@ -31,7 +32,8 @@
   },
   "devDependencies": {
     "tsup": "^8.3.0",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "@types/react": "^19.1.13"
   },
   "peerDependencies": {
     "react": ">=18.0.0"

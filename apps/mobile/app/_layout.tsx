@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Alert, Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
+import {setApiTenant} from '@vohrad/api-client';
 import {authService} from '@vohrad/auth';
 import {useAuthStore, setAuthPersistStorage} from '@vohrad/store';
 import {Slot, useRootNavigationState, useRouter, useSegments, usePathname, type Href} from 'expo-router';
@@ -91,6 +92,12 @@ export default function RootLayout() {
     const bootstrapAuthPersistence = async () => {
       try {
         const legacyKey = 'vohrad-auth';
+        // Restore tenant affinity before any web requests fire.
+        const savedTenantSubdomain = await AppStorage.getTenantSubdomain();
+        if (savedTenantSubdomain) {
+          setApiTenant(savedTenantSubdomain);
+        }
+
         const legacyPayload = await AppStorage.getItem(legacyKey);
 
         if (legacyPayload) {
@@ -104,14 +111,14 @@ export default function RootLayout() {
 
         // Swap zustand persistence backend to secure storage with a hydration lock.
         setAuthPersistStorage({
-          getItem: (key) => secureStorage.getItem(key),
-          setItem: async (key, value) => {
+          getItem: (key: string) => secureStorage.getItem(key),
+          setItem: async (key: string, value: string) => {
             if (hydrationState.locked) {
               return;
             }
             await secureStorage.setItem(key, value);
           },
-          removeItem: async (key) => {
+          removeItem: async (key: string) => {
             if (hydrationState.locked) {
               return;
             }
@@ -168,6 +175,18 @@ export default function RootLayout() {
         await useAuthStore.persist?.rehydrate?.();
 
         if (cancelled) return;
+
+        if (Platform.OS === 'web') {
+          const {isAuthenticated} = useAuthStore.getState();
+          if (!isAuthenticated) {
+            try {
+              // Attempt to rehydrate session using HttpOnly refresh cookie.
+              await authService.restoreSessionFromCookie();
+            } catch (error) {
+              console.error('[app/_layout] Failed to restore web session from cookie:', error);
+            }
+          }
+        }
 
         const {tokens, isAuthenticated} = useAuthStore.getState();
 

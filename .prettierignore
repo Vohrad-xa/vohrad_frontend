@@ -9,4 +9,5 @@ apps/mobile/ios
 apps/mobile/android
 apps/mobile/web-build
 apps/mobile/.local
+pnpm-lock.yaml
 

@@ -22,7 +22,8 @@
     "build": "tsup",
     "build:js": "tsup",
     "build:dts": "tsup",
-    "dev": "tsup --watch"
+    "dev": "tsup --watch",
+    "lint": "eslint --config ../../eslint.packages.config.js \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@vohrad/types": "workspace:*"

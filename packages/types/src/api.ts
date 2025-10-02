@@ -9,7 +9,7 @@ export interface UserLoginRequest extends BaseCredentials {
 export type AdminLoginRequest = BaseCredentials;
 
 export interface RefreshTokenRequest {
-  refresh_token: string;
+  refresh_token?: string;
 }
 
 export interface TokenResponse {
@@ -47,7 +47,6 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status: number,
-    public response?: any,
   ) {
     super(message);
     this.name = 'ApiError';

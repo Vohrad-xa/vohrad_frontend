@@ -137,14 +137,16 @@ export class AuthService {
     }
 
     const {tokens, setTokens, logout, setError} = useAuthStore.getState();
-    if (!tokens?.refresh_token) {
+    // Native apps persist the refresh token; the web build relies on cookies.
+    const refreshSource = tokens?.refresh_token;
+    if (!refreshSource && typeof window === 'undefined') {
       throw new Error('No refresh token available');
     }
 
     // Cache promise to ensure all concurrent callers wait for same refresh
     this.refreshPromise = (async () => {
       try {
-        const newTokens = await authApi.refreshToken(tokens.refresh_token);
+        const newTokens = await authApi.refreshToken(refreshSource);
         httpClient.setAccessToken(newTokens.access_token);
         setTokens(newTokens);
         this.scheduleTokenRefresh(newTokens);
@@ -161,6 +163,28 @@ export class AuthService {
     })();
 
     return this.refreshPromise;
+  }
+
+  async restoreSessionFromCookie(): Promise<boolean> {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+
+    const {login} = useAuthStore.getState();
+
+    try {
+      // Trigger cookie-based refresh and then hydrate user + timers.
+      const tokens = await authApi.refreshToken();
+      httpClient.setAccessToken(tokens.access_token);
+      const user = await authApi.getCurrentUser();
+      login(user, tokens);
+      this.scheduleTokenRefresh(tokens);
+      return true;
+    } catch (_error) {
+      httpClient.setAccessToken(null);
+      // Cookie missing or invalid: leave the store in a signed-out state.
+      return false;
+    }
   }
 
   isAuthenticated(): boolean {

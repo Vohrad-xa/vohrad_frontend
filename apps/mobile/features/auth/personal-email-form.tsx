@@ -19,7 +19,6 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
   const [subdomain, setSubdomain] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [formError, setFormError] = useState<string | null>(null);
   const [showEmailValidation, setShowEmailValidation] = useState(false);
 
   // Hooks
@@ -31,7 +30,6 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
   const emailInputRef = useRef<TextInput>(null);
   const emailValidationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Auto-focus appropriate field based on saved subdomain
   useEffect(() => {
     AppStorage.getTenantSubdomain().then((savedSubdomain) => {
       const timer = setTimeout(() => {
@@ -50,10 +48,9 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
   // Clear errors when component mounts
   useEffect(() => {
     clearError();
-    setFormError(null);
   }, [clearError]);
 
-  // Debounce email validation to avoid showing errors while user is typing
+  // Debounce email validation
   useEffect(() => {
     if (emailValidationTimerRef.current) {
       clearTimeout(emailValidationTimerRef.current);
@@ -74,19 +71,25 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
     };
   }, [email]);
 
-  // Memoized email validation
   const emailValidation = useMemo(() => validateEmail(email), [email]);
 
-  // Apply typo suggestion (e.g., gmial.com → gmail.com)
+  // Determine input states based on backend error or frontend validation
+  const hasBackendError = !!error;
+
+  const showSubdomainSuccess = subdomain.trim().length > 0;
+  const showEmailError = !hasBackendError && showEmailValidation && !emailValidation.isValid;
+  const showEmailSuccess = !hasBackendError && showEmailValidation && emailValidation.isValid && email.length > 0;
+  const showPasswordSuccess = !hasBackendError && password.length > 0;
+
+  // Apply typo suggestion
   const handleApplySuggestion = () => {
     if (emailValidation.suggestion) {
       setEmail(emailValidation.suggestion);
       clearError();
-      setFormError(null);
     }
   };
 
-  // Show email requirements in native alert
+  // Email requirements alert
   const handleEmailErrorPress = () => {
     Alert.alert('Email Requirements', '• Must contain @ symbol\n• Must have valid domain (e.g., example.com).', [
       {text: 'OK'},
@@ -95,28 +98,18 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
 
   // Handle login submission
   const handleLogin = async () => {
-    const trimmedSubdomain = subdomain.trim();
-    const trimmedEmail = email.trim();
-    const hasPassword = password.length > 0;
-
-    if (!trimmedSubdomain || !trimmedEmail || !hasPassword) {
-      setFormError('All fields are required.');
-      return;
-    }
-
-    if (!emailValidation.isValid) {
-      setFormError(emailValidation.error ?? 'Enter a valid email');
-      return;
-    }
+    if (!subdomain.trim() || !email.trim() || !password) return;
+    if (!emailValidation.isValid) return;
 
     try {
-      setFormError(null);
-      await loginUser(trimmedEmail, password, trimmedSubdomain);
-      await AppStorage.setTenantSubdomain(trimmedSubdomain);
+      clearError();
+      await loginUser(email.trim(), password, subdomain.trim());
+      setPassword('');
+      await AppStorage.setTenantSubdomain(subdomain.trim());
       await promptBiometricEnable();
       onSuccess();
-    } catch (error) {
-      console.error('Login failed:', error);
+    } catch {
+      // Backend error
     }
   };
 
@@ -127,7 +120,6 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
     onForgotPassword?.();
   };
 
-  // Create styles using current theme and design system
   const styles = createStyles(ds, theme, scheme);
 
   // Offer biometric opt-in immediately after a successful login
@@ -194,12 +186,12 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                 onChangeText={(text) => {
                   setSubdomain(text);
                   clearError();
-                  setFormError(null);
                 }}
                 returnKeyType="next"
                 style={styles.input}
                 accessibilityLabel="Subdomain input"
                 editable={!isLoading}
+                success={showSubdomainSuccess}
               />
               <ThemedInput
                 ref={emailInputRef}
@@ -212,14 +204,13 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                 onChangeText={(text) => {
                   setEmail(text);
                   clearError();
-                  setFormError(null);
                 }}
                 returnKeyType="next"
                 style={styles.input}
                 accessibilityLabel="Email input"
                 editable={!isLoading}
-                error={showEmailValidation ? (emailValidation.error ?? undefined) : undefined}
-                success={showEmailValidation && emailValidation.isValid && email.length > 0}
+                error={hasBackendError ? 'Invalid' : showEmailError ? (emailValidation.error ?? undefined) : undefined}
+                success={showEmailSuccess}
                 onErrorPress={handleEmailErrorPress}
               />
               {emailValidation.suggestion && (
@@ -245,13 +236,14 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                 onChangeText={(text) => {
                   setPassword(text);
                   clearError();
-                  setFormError(null);
                 }}
                 returnKeyType="go"
                 onSubmitEditing={handleLogin}
                 style={styles.input}
                 accessibilityLabel="Password input"
                 editable={!isLoading}
+                error={hasBackendError ? 'Invalid' : undefined}
+                success={showPasswordSuccess}
               />
             </View>
 
