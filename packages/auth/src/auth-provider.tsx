@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect} from 'react';
+import React, {createContext, useContext} from 'react';
 import {authService} from './auth-service';
 import {useAuthStore} from '@vohrad/store';
 import type {AuthContextValue} from '@vohrad/types';

@@ -180,7 +180,7 @@ export class AuthService {
       login(user, tokens);
       this.scheduleTokenRefresh(tokens);
       return true;
-    } catch (error) {
+    } catch (_error) {
       httpClient.setAccessToken(null);
       // Cookie missing or invalid: leave the store in a signed-out state.
       return false;
