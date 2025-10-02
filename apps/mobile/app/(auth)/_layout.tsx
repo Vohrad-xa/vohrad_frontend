@@ -1,4 +1,5 @@
 import React from 'react';
+import {Platform} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
 import {StatusBar} from 'expo-status-bar';
 import {HeaderButton} from '@/components/ui';
@@ -21,6 +22,7 @@ function AuthLayout({children}: AuthLayoutProps) {
 
 export default function AuthGroupLayout() {
   const router = useRouter();
+  const {theme} = useTheme();
 
   return (
     <AuthLayout>
@@ -30,9 +32,13 @@ export default function AuthGroupLayout() {
           name="(modals)/personal-email"
           options={{
             presentation: 'modal',
-            headerTransparent: true,
             headerShown: true,
             headerTitle: 'Login',
+            headerTransparent: Platform.OS === 'ios',
+            contentStyle: {backgroundColor: theme.background},
+            headerStyle: Platform.OS === 'android' ? {backgroundColor: theme.background} : undefined,
+            headerTitleStyle: {color: theme.text},
+            headerTintColor: theme.text,
             headerRight: () => <HeaderButton icon="close-outline" onPress={() => router.dismiss()} />,
           }}
         />

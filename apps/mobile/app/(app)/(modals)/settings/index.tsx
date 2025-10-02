@@ -3,6 +3,7 @@ import type {ReactNode} from 'react';
 import {StyleSheet, Platform, FlatList} from 'react-native';
 import type {ListRenderItem} from 'react-native';
 import {StatusBar as ExpoStatusBar} from 'expo-status-bar';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedView, ThemedText, Divider, ListItem, Switch} from '@/components/ui';
 import type {DesignSystem} from '@/constants/typography';
 import {BiometricToggle} from '@/features/settings/biometric-toggle';
@@ -22,6 +23,7 @@ export default function SettingsModal() {
   const {logout} = useAuth();
   const styles = createStyles(ds, theme);
   const computedSettingsItems = useSettingsItems();
+  const insets = useSafeAreaInsets();
 
   // Type guard to check for toggle items
   const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem => 'hasToggle' in item;
@@ -72,13 +74,7 @@ export default function SettingsModal() {
               <ThemedText style={styles.themeStatusText}>
                 {preference === 'system' ? 'System' : preference === 'light' ? 'Light' : 'Dark'}
               </ThemedText>
-              <Switch
-                style={{
-                  alignSelf: 'auto',
-                  minWidth: ds.iconSize.md,
-                  minHeight: ds.iconSize.md,
-                }}
-              />
+              <Switch style={styles.appearanceSwitch} />
             </>
           );
         } else if (item.id === 'biometric-unlock') {
@@ -104,7 +100,13 @@ export default function SettingsModal() {
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         style={styles.scrollContainer}
-        contentContainerStyle={styles.scrollContentContainer}
+        contentContainerStyle={[
+          styles.scrollContentContainer,
+          {
+            paddingTop: Platform.OS === 'android' ? insets.top : ds.spacing.md,
+            paddingBottom: insets.bottom + ds.spacing.xl,
+          },
+        ]}
         contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator
       />
@@ -133,5 +135,10 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
       color: theme.muted,
       fontWeight: ds.fontWeight.medium,
       marginRight: ds.spacing.sm,
+    },
+    appearanceSwitch: {
+      alignSelf: 'auto',
+      minWidth: ds.iconSize.md,
+      minHeight: ds.iconSize.md,
     },
   });

@@ -33,7 +33,7 @@ function resolveAvailabilityMessage(availability: BiometricAvailability): string
       return 'Device has no biometric hardware.';
     case 'UNSUPPORTED':
     default:
-      return 'Biometric unlock not available here.';
+      return 'Unavailable.';
   }
 }
 
@@ -204,7 +204,7 @@ function createStyles(ds: typeof DesignSystem, theme: ThemeType) {
       ...ds.typography.secondary,
       color: theme.muted,
       marginRight: ds.spacing.sm,
-      maxWidth: ds.spacing.xxxl * 3,
+      flexShrink: 1,
     },
   });
 }
