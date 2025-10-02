@@ -50,7 +50,7 @@ export class HttpClient {
     }
 
     try {
-      const response = await fetch(url, config);
+      const response = await this.fetchWithRetry(url, config);
 
       // Intercept 401 responses and attempt token refresh
       if (response.status === 401 && !isRetry && this.onTokenRefresh) {
@@ -62,7 +62,7 @@ export class HttpClient {
 
             // Retry original request with new token
             return this.makeRequest(endpoint, options, true);
-          } catch (refreshError) {
+          } catch (_refreshError) {
             // Refresh failed, let original 401 error propagate
             // The refresh handler should already handle logout
           }
@@ -108,6 +108,32 @@ export class HttpClient {
 
   async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
     return this.makeRequest<T>(endpoint, {method: 'DELETE'});
+  }
+
+  // Exponential-backoff retry for transient fetch failures (network layer only).
+  private async fetchWithRetry(url: string, config: RequestInit, maxRetries = 3): Promise<Response> {
+    let lastError: unknown;
+
+    for (let attempt = 0; attempt < maxRetries; attempt += 1) {
+      try {
+        return await fetch(url, config);
+      } catch (error) {
+        lastError = error;
+
+        if (error instanceof ApiError) {
+          throw error;
+        }
+
+        const isLastAttempt = attempt === maxRetries - 1;
+        if (!isLastAttempt) {
+          const delayMs = 1000 * 2 ** attempt;
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+          continue;
+        }
+      }
+    }
+
+    throw lastError instanceof Error ? lastError : new Error('Network request failed');
   }
 }
 
