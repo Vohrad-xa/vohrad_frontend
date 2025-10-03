@@ -119,7 +119,7 @@ export function getIconGlyph(name: IconName): string | undefined {
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 28,
+  size = 20,
   color,
   colorToken,
   style,

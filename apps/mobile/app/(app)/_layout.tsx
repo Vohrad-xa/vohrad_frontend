@@ -43,6 +43,7 @@ function AppStack() {
           options={{
             presentation: 'modal',
             headerShown: false,
+            statusBarStyle: 'light',
           }}
         />
       </Stack>

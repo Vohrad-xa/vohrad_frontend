@@ -65,7 +65,8 @@ function redactTokens(tokens: AuthTokens | null): AuthTokens | null {
     return null;
   }
 
-  const {refresh_token, refresh_expires_in, expires_in, issued_at, token_type} = tokens;
+  const {refresh_token, refresh_expires_in, expires_in, issued_at, token_type} =
+    tokens;
 
   return {
     access_token: '',
@@ -115,7 +116,8 @@ export const useAuthStore = create<AuthState>()(
       // Use a wrapper so the backend can be swapped at runtime via setAuthPersistStorage
       storage: createJSONStorage(() => ({
         getItem: (key: string) => persistBackend.getItem(key),
-        setItem: (key: string, value: string) => persistBackend.setItem(key, value),
+        setItem: (key: string, value: string) =>
+          persistBackend.setItem(key, value),
         removeItem: (key: string) => persistBackend.removeItem(key),
       })),
       partialize: (state) => ({

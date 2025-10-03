@@ -80,6 +80,11 @@ export const Tokens = {
     secondary: Palette.terracotta,
     glassTint: Palette.glassTintLight,
     quickActionIcon: Palette.Lbackground,
+
+    // Toggle
+    toggleTrackOff: Palette.Greige,
+    toggleTrackOn: Palette.terracotta,
+    toggleThumb: Palette.white,
   },
 
   dark: {
@@ -123,6 +128,9 @@ export const Tokens = {
     secondary: Palette.Greige,
     glassTint: Palette.glassTintDark,
     quickActionIcon: Palette.Dbackground,
+    toggleTrackOff: Palette.gray[400],
+    toggleTrackOn: Palette.terracotta,
+    toggleThumb: Palette.white,
   },
 } as const;
 

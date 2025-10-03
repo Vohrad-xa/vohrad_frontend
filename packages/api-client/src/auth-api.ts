@@ -1,13 +1,23 @@
-import type {AuthTokens, User, UserLoginRequest, AdminLoginRequest, TokenResponse} from '@vohrad/types';
+import type {
+  AuthTokens,
+  User,
+  UserLoginRequest,
+  AdminLoginRequest,
+  TokenResponse,
+} from '@vohrad/types';
 import {httpClient} from './http-client';
 import {API_ENDPOINTS} from './endpoints';
 
 export class AuthApi {
-  async loginUser(credentials: UserLoginRequest): Promise<{tokens: AuthTokens; user: User}> {
+  async loginUser(
+    credentials: UserLoginRequest,
+  ): Promise<{tokens: AuthTokens; user: User}> {
     return this.login(API_ENDPOINTS.AUTH.LOGIN_USER, credentials);
   }
 
-  async loginAdmin(credentials: AdminLoginRequest): Promise<{tokens: AuthTokens; user: User}> {
+  async loginAdmin(
+    credentials: AdminLoginRequest,
+  ): Promise<{tokens: AuthTokens; user: User}> {
     return this.login(API_ENDPOINTS.AUTH.LOGIN_ADMIN, credentials);
   }
 
@@ -15,7 +25,10 @@ export class AuthApi {
     endpoint: string,
     credentials: UserLoginRequest | AdminLoginRequest,
   ): Promise<{tokens: AuthTokens; user: User}> {
-    const response = await httpClient.post<TokenResponse>(endpoint, credentials);
+    const response = await httpClient.post<TokenResponse>(
+      endpoint,
+      credentials,
+    );
 
     const tokens: AuthTokens = {
       ...response.data,
@@ -35,7 +48,10 @@ export class AuthApi {
   async refreshToken(refreshToken?: string): Promise<AuthTokens> {
     // On web we rely on cookies, so the payload is only sent for native clients.
     const payload = refreshToken ? {refresh_token: refreshToken} : undefined;
-    const response = await httpClient.post<TokenResponse>(API_ENDPOINTS.AUTH.REFRESH, payload);
+    const response = await httpClient.post<TokenResponse>(
+      API_ENDPOINTS.AUTH.REFRESH,
+      payload,
+    );
 
     return {
       ...response.data,
@@ -54,7 +70,10 @@ export class AuthApi {
   }
 
   async logoutAllDevices(): Promise<void> {
-    await httpClient.post<{revoked_tokens: number; user_id: string}>(API_ENDPOINTS.AUTH.LOGOUT_ALL, {});
+    await httpClient.post<{revoked_tokens: number; user_id: string}>(
+      API_ENDPOINTS.AUTH.LOGOUT_ALL,
+      {},
+    );
   }
 }
 

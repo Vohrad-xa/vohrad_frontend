@@ -14,7 +14,11 @@ export class HttpClient {
     this.onTokenRefresh = handler;
   }
 
-  async makeRequest<T>(endpoint: string, options: RequestInit = {}, isRetry = false): Promise<ApiResponse<T>> {
+  async makeRequest<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    isRetry = false,
+  ): Promise<ApiResponse<T>> {
     const url = resolveApiUrl(endpoint);
     const apiConfig = getApiConfig();
 
@@ -23,7 +27,8 @@ export class HttpClient {
       ...((options.headers as Record<string, string>) || {}),
     };
 
-    const isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined';
+    const isBrowser =
+      typeof window !== 'undefined' && typeof document !== 'undefined';
 
     if (isBrowser && !headers['X-Client-Platform']) {
       // Tell the API when we are running from the web build so it can switch to cookie auth.
@@ -54,7 +59,9 @@ export class HttpClient {
 
       // Intercept 401 responses and attempt token refresh
       if (response.status === 401 && !isRetry && this.onTokenRefresh) {
-        const isAuthEndpoint = endpoint.includes('/auth/login') || endpoint.includes('/auth/refresh');
+        const isAuthEndpoint =
+          endpoint.includes('/auth/login') ||
+          endpoint.includes('/auth/refresh');
 
         if (!isAuthEndpoint) {
           try {
@@ -73,7 +80,11 @@ export class HttpClient {
 
       if (!response.ok) {
         // Backend error responses have nested structure: { error: { message: "..." } }
-        const errorMessage = data.error?.message || data.error || data.message || `HTTP ${response.status}`;
+        const errorMessage =
+          data.error?.message ||
+          data.error ||
+          data.message ||
+          `HTTP ${response.status}`;
         throw new ApiError(errorMessage, response.status);
       }
 
@@ -83,7 +94,10 @@ export class HttpClient {
         throw error;
       }
 
-      throw new ApiError(error instanceof Error ? error.message : 'Network error occurred', 0);
+      throw new ApiError(
+        error instanceof Error ? error.message : 'Network error occurred',
+        0,
+      );
     }
   }
 
@@ -111,7 +125,11 @@ export class HttpClient {
   }
 
   // Exponential-backoff retry for transient fetch failures (network layer only).
-  private async fetchWithRetry(url: string, config: RequestInit, maxRetries = 3): Promise<Response> {
+  private async fetchWithRetry(
+    url: string,
+    config: RequestInit,
+    maxRetries = 3,
+  ): Promise<Response> {
     let lastError: unknown;
 
     for (let attempt = 0; attempt < maxRetries; attempt += 1) {
@@ -133,7 +151,9 @@ export class HttpClient {
       }
     }
 
-    throw lastError instanceof Error ? lastError : new Error('Network request failed');
+    throw lastError instanceof Error
+      ? lastError
+      : new Error('Network request failed');
   }
 }
 

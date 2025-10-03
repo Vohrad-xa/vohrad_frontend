@@ -1,5 +1,9 @@
 import {useAuthStore} from '@vohrad/store';
-import type {UserLoginRequest, AdminLoginRequest, AuthTokens} from '@vohrad/types';
+import type {
+  UserLoginRequest,
+  AdminLoginRequest,
+  AuthTokens,
+} from '@vohrad/types';
 import {ApiError} from '@vohrad/types';
 import {authApi} from '@vohrad/api-client';
 import {httpClient, setApiTenant} from '@vohrad/api-client';
@@ -39,7 +43,11 @@ export class AuthService {
     return AuthService.instance;
   }
 
-  async loginUser(email: string, password: string, subdomain: string): Promise<void> {
+  async loginUser(
+    email: string,
+    password: string,
+    subdomain: string,
+  ): Promise<void> {
     const {setLoading, setError, login} = useAuthStore.getState();
 
     try {
@@ -55,7 +63,10 @@ export class AuthService {
       login(user, tokens);
       this.scheduleTokenRefresh(tokens);
     } catch (error) {
-      const errorMessage = error instanceof ApiError ? error.message : 'Login failed. Please check your credentials.';
+      const errorMessage =
+        error instanceof ApiError
+          ? error.message
+          : 'Login failed. Please check your credentials.';
       setError(errorMessage);
       throw error;
     } finally {
@@ -78,7 +89,9 @@ export class AuthService {
       this.scheduleTokenRefresh(tokens);
     } catch (error) {
       const errorMessage =
-        error instanceof ApiError ? error.message : 'Admin login failed. Please check your credentials.';
+        error instanceof ApiError
+          ? error.message
+          : 'Admin login failed. Please check your credentials.';
       setError(errorMessage);
       throw error;
     } finally {
@@ -122,7 +135,10 @@ export class AuthService {
       this.clearRefreshTimer();
       logout();
     } catch (error) {
-      const errorMessage = error instanceof ApiError ? error.message : 'Failed to logout from all devices';
+      const errorMessage =
+        error instanceof ApiError
+          ? error.message
+          : 'Failed to logout from all devices';
       setError(errorMessage);
       throw error;
     } finally {
@@ -213,7 +229,10 @@ export class AuthService {
     const refreshBuffer = 5 * 60 * 1000;
     const tokenLifetime = tokens.expires_in * 1000;
     const elapsedTime = Date.now() - tokens.issued_at;
-    const timeUntilRefresh = Math.max(0, tokenLifetime - refreshBuffer - elapsedTime);
+    const timeUntilRefresh = Math.max(
+      0,
+      tokenLifetime - refreshBuffer - elapsedTime,
+    );
 
     // Only schedule if we have at least 1 minute before refresh
     if (timeUntilRefresh > 60000) {

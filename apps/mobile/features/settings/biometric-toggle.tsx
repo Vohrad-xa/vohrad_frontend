@@ -1,12 +1,6 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {
-  Alert,
-  Platform,
-  StyleSheet,
-  Switch as RNSwitch,
-  View,
-} from 'react-native';
-import {ThemedText} from '@/components/ui';
+import {Alert, StyleSheet, View} from 'react-native';
+import {ThemedText, Toggle} from '@/components/ui';
 import type {DesignSystem} from '@/constants/typography';
 import {
   getBiometricAvailability,
@@ -36,9 +30,9 @@ function resolveAvailabilityMessage(
 
   switch (availability.reason) {
     case 'NOT_ENROLLED':
-      return 'Set up Face ID or Touch ID first.';
+      return 'Inactive';
     case 'NO_HARDWARE':
-      return 'Device has no biometric hardware.';
+      return 'Unavailable.';
     case 'UNSUPPORTED':
     default:
       return 'Unavailable.';
@@ -201,24 +195,10 @@ export function BiometricToggle() {
           {availabilityMessage}
         </ThemedText>
       )}
-      <RNSwitch
+      <Toggle
         value={isEnabled}
         onValueChange={handleToggle}
         disabled={loading || !isAvailable}
-        trackColor={{false: theme.divider, true: theme.accent}}
-        thumbColor={
-          Platform.OS === 'android'
-            ? isEnabled
-              ? theme.accent
-              : theme.input
-            : undefined
-        }
-        ios_backgroundColor={theme.divider}
-        accessibilityRole="switch"
-        accessibilityState={{
-          disabled: loading || !isAvailable,
-          checked: isEnabled,
-        }}
         accessibilityLabel="Biometric unlock"
         testID="settings-biometric-toggle"
       />

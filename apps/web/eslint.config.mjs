@@ -22,7 +22,15 @@ const eslintConfig = [
     },
   },
   {
-    ignores: ['node_modules/**', '.next/**', 'out/**', 'build/**', 'next-env.d.ts', '**/*.js', '**/*.jsx'],
+    ignores: [
+      'node_modules/**',
+      '.next/**',
+      'out/**',
+      'build/**',
+      'next-env.d.ts',
+      '**/*.js',
+      '**/*.jsx',
+    ],
     rules: {
       curly: ['error', 'all'],
       eqeqeq: ['error', 'smart'],
@@ -36,14 +44,24 @@ const eslintConfig = [
       'no-duplicate-imports': 'error',
 
       'react/jsx-boolean-value': ['warn', 'never'],
-      'react/jsx-curly-brace-presence': ['error', {props: 'never', children: 'never'}],
+      'react/jsx-curly-brace-presence': [
+        'error',
+        {props: 'never', children: 'never'},
+      ],
       'react/self-closing-comp': ['error', {component: true, html: true}],
       'react-hooks/exhaustive-deps': 'warn',
 
-      '@typescript-eslint/consistent-type-imports': ['error', {prefer: 'type-imports', disallowTypeAnnotations: false}],
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        {prefer: 'type-imports', disallowTypeAnnotations: false},
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
-        {argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_'},
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
       ],
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',

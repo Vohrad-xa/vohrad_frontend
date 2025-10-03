@@ -32,7 +32,6 @@ const ListItem = React.memo(
           <View style={styles.iconContainer}>
             <Icon
               name={icon}
-              size={ds.iconSize.md}
               color={isDestructive ? theme.iconDanger : undefined}
             />
           </View>

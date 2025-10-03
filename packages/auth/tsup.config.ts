@@ -10,6 +10,13 @@ export default defineConfig((options) => ({
   platform: 'neutral',
   treeshake: true,
   minify: false,
-  external: ['react', 'react-native', 'expo', '@vohrad/store', '@vohrad/api-client', '@vohrad/types'],
+  external: [
+    'react',
+    'react-native',
+    'expo',
+    '@vohrad/store',
+    '@vohrad/api-client',
+    '@vohrad/types',
+  ],
   outExtension: ({format}) => ({js: format === 'cjs' ? '.cjs' : '.mjs'}),
 }));

@@ -41,7 +41,7 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
         <View style={styles.headerContent}>
           <SearchBar style={styles.searchBar} placeholder="Search" />
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Icon name={AppIcons.navigation.close} size={ds.iconSize.lg} />
+            <Icon name={AppIcons.navigation.close} />
           </TouchableOpacity>
         </View>
       </BlurView>

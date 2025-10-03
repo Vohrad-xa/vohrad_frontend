@@ -39,8 +39,13 @@ const resolveProtocol = (value?: string): Protocol | undefined => {
 
 const defaultConfig: ApiClientConfig = {
   baseUrl: readEnv(['EXPO_PUBLIC_API_BASE_URL', 'NEXT_PUBLIC_API_BASE_URL']),
-  protocol: resolveProtocol(readEnv(['EXPO_PUBLIC_API_PROTOCOL', 'NEXT_PUBLIC_API_PROTOCOL'])),
-  baseDomain: readEnv(['EXPO_PUBLIC_API_BASE_DOMAIN', 'NEXT_PUBLIC_API_BASE_DOMAIN']),
+  protocol: resolveProtocol(
+    readEnv(['EXPO_PUBLIC_API_PROTOCOL', 'NEXT_PUBLIC_API_PROTOCOL']),
+  ),
+  baseDomain: readEnv([
+    'EXPO_PUBLIC_API_BASE_DOMAIN',
+    'NEXT_PUBLIC_API_BASE_DOMAIN',
+  ]),
   tenant: undefined,
   version: readEnv(['EXPO_PUBLIC_API_VERSION', 'NEXT_PUBLIC_API_VERSION']),
 };

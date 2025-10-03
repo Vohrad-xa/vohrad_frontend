@@ -93,11 +93,7 @@ export default function SettingsModal() {
         }
       } else if (!item.isDestructive) {
         accessory = (
-          <Icon
-            name={AppIcons.navigation.forward}
-            size={ds.iconSize.md}
-            color={theme.muted}
-          />
+          <Icon name={AppIcons.navigation.forward} color={theme.muted} />
         );
       }
 
