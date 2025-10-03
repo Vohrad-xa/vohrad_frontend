@@ -8,5 +8,4 @@ export {HeaderButton} from './header-button';
 export {Divider} from './divider';
 export * from './themed-components';
 export {default as ListItem} from './list-item';
-export {WebHeader} from './web-header';
 export {LoadingOverlay} from './loading-overlay';

@@ -2,23 +2,19 @@ import {Dimensions} from 'react-native';
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
-const borderRadius = {
-  none: 0,
-  xs: 2,
-  sm: 4,
-  md: 6,
-  lg: 8,
-  xl: 10,
-  xxl: 14,
-  xxxl: 24,
-  full: 9999,
-} as const;
-
 export const DesignSystem = {
-  // Border radius system
-  borderRadius,
+  borderRadius: {
+    none: 0,
+    xs: 2,
+    sm: 4,
+    md: 6,
+    lg: 8,
+    xl: 10,
+    xxl: 14,
+    xxxl: 24,
+    full: 9999,
+  },
 
-  // Spacing scale
   spacing: {
     xxs: 2,
     xs: 4,
@@ -37,12 +33,12 @@ export const DesignSystem = {
   },
 
   typography: {
-    pageTitle: {
-      fontSize: 34,
-      lineHeight: 41,
-      fontWeight: '700' as const,
-      letterSpacing: 0.4,
-    },
+    // pageTitle: {
+    //   fontSize: 34,
+    //   lineHeight: 41,
+    //   fontWeight: '700' as const,
+    //   letterSpacing: 0.4,
+    // },
 
     pageTitleScrolled: {
       fontSize: 17,
@@ -213,7 +209,7 @@ export const DesignSystem = {
     },
 
     input: {
-      borderRadius: borderRadius.xl,
+      borderRadius: 10,
       padding: 12,
       height: 44,
       borderWidth: 1,
@@ -221,7 +217,7 @@ export const DesignSystem = {
     },
 
     button: {
-      borderRadius: borderRadius.xl,
+      borderRadius: 10,
       paddingVertical: 12,
       paddingHorizontal: 16,
       height: 44,
@@ -229,18 +225,18 @@ export const DesignSystem = {
     },
 
     card: {
-      borderRadius: borderRadius.xxxl,
+      borderRadius: 20,
       padding: 16,
     },
 
     modal: {
-      borderRadius: borderRadius.xl,
+      borderRadius: 10,
       padding: 24,
     },
 
     listItem: {
       minHeight: 44,
-      paddingVertical: 11,
+      paddingVertical: 10,
       paddingHorizontal: 16,
     },
 
@@ -261,12 +257,12 @@ export const DesignSystem = {
 
     searchBar: {
       height: 36,
-      borderRadius: borderRadius.xl,
+      borderRadius: 10,
       paddingHorizontal: 12,
     },
 
     tabBar: {
-      height: 49,
+      height: 50,
       paddingBottom: 0,
     },
   },

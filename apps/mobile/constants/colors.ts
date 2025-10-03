@@ -12,8 +12,7 @@ export const Palette = {
     900: '#0B0B0B',
   },
   brand: {
-    blue: '#007AFF',
-    blueDark: '#0A84FF',
+    blue: '#0A84FF',
     green: '#34C759',
     yellow: '#FFD60A',
     orange: '#FF9500',
@@ -35,7 +34,6 @@ export const Palette = {
   Greige: '#C2C0B6',
   cardDarkGlass: 'rgba(255, 255, 255, 0.1)',
   cardLightGlass: 'rgba(97, 94, 94, 0.16)',
-  cardBorderLight: 'rgba(209, 205, 205, 0.3)',
   glassTintLight: 'rgba(255, 255, 255, 0.79)',
   glassTintDark: 'rgba(186, 185, 185, 0.06)',
 } as const;
@@ -44,11 +42,12 @@ export const Tokens = {
   light: {
     // Surfaces & text
     background: Palette.Lbackground,
-    surface: Palette.gray[50],
     text: '#11181C',
-    muted: Palette.gray[500],
-    border: Palette.cardBorderLight,
+    surface: Palette.gray[50],
+    border: Palette.gray[200],
     divider: Palette.gray[300],
+    muted: Palette.gray[600],
+    navigationBar: Palette.white,
 
     // Brand & accents
     primary: Palette.terracotta,
@@ -89,13 +88,14 @@ export const Tokens = {
     surface: Palette.gray[800],
     text: '#ECEDEE',
     muted: Palette.gray[500],
-    border: Palette.Lbackground,
+    border: Palette.gray[700],
     divider: Palette.gray[600],
+    navigationBar: Palette.Onyx,
 
     // Brand & accents
     primary: Palette.Greige,
     primaryForeground: Palette.gray[900],
-    accentBlue: Palette.brand.blueDark,
+    accentBlue: Palette.brand.blue,
     accentGreen: Palette.brand.green,
     accentYellow: Palette.brand.yellow,
     accentOrange: Palette.brand.orange,
@@ -106,15 +106,15 @@ export const Tokens = {
 
     // UI
     icon: Palette.mushroom,
-    tint: Palette.brand.blueDark,
-    tabIconSelected: Palette.brand.blueDark,
+    tint: Palette.brand.blue,
+    tabIconSelected: Palette.brand.blue,
     card: Palette.cardDarkGlass,
     input: Palette.Obsidian,
     purple: Palette.brand.purple,
     iosLightGray: Palette.gray[700],
     iosPlaceholder: Palette.gray[500],
     overlay: Palette.gray[600],
-    iconInfo: Palette.brand.blueDark,
+    iconInfo: Palette.brand.blue,
     iconPositive: Palette.brand.green,
     iconCaution: Palette.brand.yellow,
     iconWarning: Palette.brand.orange,

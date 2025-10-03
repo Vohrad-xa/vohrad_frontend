@@ -40,8 +40,6 @@ export function InfoCard() {
     web: {
       marginLeft: -ds.layout.screenPadding,
       marginRight: -ds.layout.screenPadding,
-      paddingLeft: ds.layout.screenPadding,
-      paddingRight: ds.layout.screenPadding,
     },
     mobile: {
       marginHorizontal: -ds.layout.screenPadding,
@@ -52,8 +50,8 @@ export function InfoCard() {
   const contentStyles = usePlatformStyles({
     web: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(79px, 1fr))',
-      gap: ds.spacing.xs,
+      gridTemplateColumns: 'repeat(auto-fit, minmax(78.5px, 1fr))',
+      gap: ds.spacing.md,
       overflow: 'auto',
     },
     mobile: {
@@ -103,7 +101,7 @@ const createStyles = (
       justifyContent: 'center',
       paddingVertical: ds.spacing.md,
       gap: ds.spacing.xs,
-      minWidth: 79,
+      minWidth: 78.5,
     },
     iconContainer: {
       width: 48,
@@ -117,6 +115,6 @@ const createStyles = (
       ...ds.typography.footnote,
       textAlign: 'center',
       color: theme.muted,
-      fontWeight: '600',
+      fontWeight: ds.fontWeight.semibold,
     },
   });

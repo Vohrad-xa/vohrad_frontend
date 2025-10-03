@@ -21,7 +21,7 @@ export default function SettingsLayout() {
         contentStyle: {backgroundColor: theme.background},
         headerShown: true,
         headerTransparent: Platform.OS === 'ios',
-        headerStyle: Platform.OS === 'android' ? {backgroundColor: theme.background} : undefined,
+        headerStyle: Platform.OS === 'android' ? {backgroundColor: theme.navigationBar} : undefined,
         headerTitleStyle: {color: theme.text},
         headerTitleAlign: 'center',
       }}>

@@ -48,10 +48,6 @@ export default function TabLayout() {
             headerShown: false,
             tabBarActiveTintColor: theme.tabIconSelected,
             tabBarInactiveTintColor: theme.icon,
-            tabBarStyle: {
-              backgroundColor: theme.card,
-              borderTopColor: theme.border,
-            },
           }}>
           {TAB_ITEMS.map((tab) => (
             <Tabs.Screen
@@ -84,14 +80,11 @@ export default function TabLayout() {
         ios: 'onScrollDown',
         default: undefined,
       })}
-      disableIndicator={Platform.select({
-        android: true,
-        default: false,
-      })}
-      backgroundColor={theme.card}
+      disableIndicator={false}
+      backgroundColor={theme.navigationBar}
       iconColor={theme.icon}
       tintColor={theme.tabIconSelected}
-      indicatorColor={theme.border}>
+      indicatorColor={theme.card}>
       {TAB_ITEMS.map((tab) => (
         <NativeTabs.Trigger key={tab.name} name={tab.name}>
           <Label>{tab.label}</Label>

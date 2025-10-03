@@ -17,14 +17,14 @@ function AppStack() {
           contentStyle: {backgroundColor: theme.background},
           headerShown: true,
           headerTransparent: Platform.OS === 'ios',
-          headerStyle: Platform.OS === 'android' ? {backgroundColor: theme.background} : undefined,
+          headerStyle: Platform.OS === 'android' ? {backgroundColor: theme.navigationBar} : undefined,
           headerTitleStyle: {color: theme.text},
           headerTitleAlign: 'center',
           headerLeft: () => (
             <HeaderButton icon={AppIcons.navigation.menu} accessibilityLabel="Open menu" onPress={toggleSideMenu} />
           ),
         }}>
-        <Stack.Screen name="(tabs)" options={{headerShown: true}} />
+        {/* <Stack.Screen name="(tabs)" /> */}
         <Stack.Screen
           name="(modals)"
           options={{
