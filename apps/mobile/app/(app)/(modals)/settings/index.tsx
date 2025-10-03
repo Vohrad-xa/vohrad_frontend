@@ -103,7 +103,7 @@ export default function SettingsModal() {
         contentContainerStyle={[
           styles.scrollContentContainer,
           {
-            paddingTop: Platform.OS === 'android' ? insets.top : ds.spacing.md,
+            paddingTop: ds.spacing.lg,
             paddingBottom: insets.bottom + ds.spacing.xl,
           },
         ]}
@@ -139,6 +139,6 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
     appearanceSwitch: {
       alignSelf: 'auto',
       minWidth: ds.iconSize.md,
-      minHeight: ds.iconSize.md,
+      minHeight: ds.iconSize.xs,
     },
   });

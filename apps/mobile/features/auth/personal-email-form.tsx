@@ -303,7 +303,6 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
       width: '100%',
     },
     input: {
-      borderRadius: ds.borderRadius.xxxl,
       borderWidth: 0.5,
       borderColor: theme.divider,
     },
@@ -318,10 +317,9 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
     },
     loginButton: {
       paddingHorizontal: ds.spacing.xxl,
-      borderRadius: ds.borderRadius.xxxl,
       alignSelf: 'center',
       ...(scheme === 'dark' && {
-        backgroundColor: Palette.creme,
+        backgroundColor: Palette.Lbackground,
         borderColor: theme.border,
         borderWidth: 1,
       }),

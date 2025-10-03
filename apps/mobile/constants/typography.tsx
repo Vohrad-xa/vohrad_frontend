@@ -2,19 +2,21 @@ import {Dimensions} from 'react-native';
 
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
+const borderRadius = {
+  none: 0,
+  xs: 2,
+  sm: 4,
+  md: 6,
+  lg: 8,
+  xl: 10,
+  xxl: 14,
+  xxxl: 24,
+  full: 9999,
+} as const;
+
 export const DesignSystem = {
   // Border radius system
-  borderRadius: {
-    none: 0,
-    xs: 2,
-    sm: 4,
-    md: 6,
-    lg: 8,
-    xl: 10,
-    xxl: 14,
-    xxxl: 24,
-    full: 9999,
-  },
+  borderRadius,
 
   // Spacing scale
   spacing: {
@@ -211,7 +213,7 @@ export const DesignSystem = {
     },
 
     input: {
-      borderRadius: 8,
+      borderRadius: borderRadius.xl,
       padding: 12,
       height: 44,
       borderWidth: 1,
@@ -219,7 +221,7 @@ export const DesignSystem = {
     },
 
     button: {
-      borderRadius: 8,
+      borderRadius: borderRadius.xl,
       paddingVertical: 12,
       paddingHorizontal: 16,
       height: 44,
@@ -227,12 +229,12 @@ export const DesignSystem = {
     },
 
     card: {
-      borderRadius: 20,
+      borderRadius: borderRadius.xxxl,
       padding: 16,
     },
 
     modal: {
-      borderRadius: 12,
+      borderRadius: borderRadius.xl,
       padding: 24,
     },
 
@@ -259,7 +261,7 @@ export const DesignSystem = {
 
     searchBar: {
       height: 36,
-      borderRadius: 10,
+      borderRadius: borderRadius.xl,
       paddingHorizontal: 12,
     },
 

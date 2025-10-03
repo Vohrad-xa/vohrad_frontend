@@ -123,16 +123,14 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorSc
       gap: ds.spacing.xs,
     },
     microsoftButton: {
-      backgroundColor: scheme === 'dark' ? Palette.creme : Palette.darkBackground,
-      borderColor: scheme === 'dark' ? Palette.creme : Palette.darkBackground,
-      borderRadius: ds.borderRadius.xxxl,
+      backgroundColor: scheme === 'dark' ? Palette.Lbackground : Palette.Dbackground,
+      borderColor: scheme === 'dark' ? Palette.Lbackground : Palette.Dbackground,
     },
     microsoftButtonText: {
-      color: scheme === 'dark' ? Palette.black : Palette.creme,
+      color: scheme === 'dark' ? Palette.black : Palette.Lbackground,
     },
     continueButton: {
       borderWidth: 2,
-      borderRadius: ds.borderRadius.xxxl,
     },
     divider: {
       flexDirection: 'row',

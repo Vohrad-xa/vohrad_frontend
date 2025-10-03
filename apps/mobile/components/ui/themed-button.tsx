@@ -58,8 +58,8 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
       case 'primary':
         return {
           ...baseStyle,
-          backgroundColor: scheme === 'dark' ? theme.input : theme.quickActionIconBackground,
-          borderColor: scheme === 'dark' ? theme.input : theme.quickActionIconBackground,
+          backgroundColor: scheme === 'dark' ? theme.input : theme.secondary,
+          borderColor: scheme === 'dark' ? theme.input : theme.secondary,
           borderWidth: 1,
         };
       case 'secondary':

@@ -65,7 +65,7 @@ const createStyles = (theme: ThemeType, ds: typeof DesignSystem, scheme: ColorSc
       justifyContent: 'center',
       alignItems: 'center',
       borderRadius: ds.borderRadius.full,
-      backgroundColor: scheme === 'dark' ? Palette.quickActionIcon : Palette.white,
+      backgroundColor: theme.background,
       ...ds.shadows.sm,
     },
   });

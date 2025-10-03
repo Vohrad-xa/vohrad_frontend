@@ -1,8 +1,9 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
-import {ThemedView, ThemedText} from '@/components/ui';
+import {ScrollView, StyleSheet} from 'react-native';
 import type {DesignSystem} from '@/constants/typography';
+import {ThemedView} from '@/components/ui';
 import {useTheme} from '@/providers';
+import {ProfileContent} from '@/features/settings/profile';
 type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 export default function ProfileScreen() {
@@ -11,7 +12,13 @@ export default function ProfileScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.text}>Profile</ThemedText>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        bounces
+        contentInsetAdjustmentBehavior="automatic">
+        <ProfileContent />
+      </ScrollView>
     </ThemedView>
   );
 }
@@ -20,12 +27,9 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: ds.spacing.xl,
+      backgroundColor: theme.background,
     },
-    text: {
-      ...ds.typography.title1,
-      color: theme.text,
+    content: {
+      gap: ds.spacing.xxl,
     },
   });

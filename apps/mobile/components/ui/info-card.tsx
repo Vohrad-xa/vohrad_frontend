@@ -109,7 +109,7 @@ const createStyles = (
       width: 48,
       height: 48,
       borderRadius: ds.borderRadius.full,
-      backgroundColor: theme.quickActionIconBackground,
+      backgroundColor: theme.secondary,
       alignItems: 'center',
       justifyContent: 'center',
     },
