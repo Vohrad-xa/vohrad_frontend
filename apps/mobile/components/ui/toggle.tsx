@@ -1,0 +1,142 @@
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Switch as RNSwitch,
+} from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  interpolateColor,
+  runOnJS,
+} from 'react-native-reanimated';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
+import {useEffect, useMemo} from 'react';
+import {useTheme} from '@/providers';
+import type {DesignSystem} from '@/constants/typography';
+
+interface ToggleProps {
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+  disabled?: boolean;
+  testID?: string;
+  accessibilityLabel?: string;
+}
+
+export function Toggle({
+  value,
+  onValueChange,
+  disabled = false,
+  testID,
+  accessibilityLabel,
+}: ToggleProps) {
+  const {theme, ds} = useTheme();
+  const animatedValue = useSharedValue(value ? 1 : 0);
+  const startValue = useSharedValue(0);
+  const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
+
+  useEffect(() => {
+    animatedValue.value = withSpring(value ? 1 : 0, {
+      damping: 35,
+      stiffness: 250,
+    });
+  }, [value, animatedValue]);
+
+  const panGesture = Gesture.Pan()
+    .enabled(!disabled)
+    .onStart(() => {
+      startValue.value = animatedValue.value;
+    })
+    .onUpdate((event) => {
+      const newValue = startValue.value + event.translationX / 18;
+      animatedValue.value = Math.max(0, Math.min(1, newValue));
+    })
+    .onEnd(() => {
+      const shouldBeOn = animatedValue.value > 0.5;
+      animatedValue.value = withSpring(shouldBeOn ? 1 : 0, {
+        damping: 20,
+        stiffness: 250,
+      });
+      if (shouldBeOn !== value) {
+        runOnJS(onValueChange)(shouldBeOn);
+      }
+    });
+
+  const thumbAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{translateX: animatedValue.value * 18}],
+  }));
+
+  const trackAnimatedStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      animatedValue.value,
+      [0, 1],
+      [theme.toggleTrackOff, theme.toggleTrackOn],
+    ),
+  }));
+
+  if (Platform.OS === 'ios') {
+    return (
+      <RNSwitch
+        value={value}
+        onValueChange={onValueChange}
+        disabled={disabled}
+        trackColor={{false: theme.toggleTrackOff, true: theme.toggleTrackOn}}
+        ios_backgroundColor={theme.toggleTrackOff}
+        style={styles.iosSwitch}
+        accessibilityRole="switch"
+        accessibilityState={{disabled, checked: value}}
+        accessibilityLabel={accessibilityLabel}
+        testID={testID}
+      />
+    );
+  }
+
+  const tapGesture = Gesture.Tap()
+    .enabled(!disabled)
+    .onEnd(() => {
+      runOnJS(onValueChange)(!value);
+    });
+
+  const composedGesture = Gesture.Race(panGesture, tapGesture);
+
+  return (
+    <GestureDetector gesture={composedGesture}>
+      <Animated.View
+        accessibilityRole="switch"
+        accessibilityState={{disabled, checked: value}}
+        accessibilityLabel={accessibilityLabel}
+        testID={testID}
+      >
+        <Animated.View style={[styles.track, trackAnimatedStyle]}>
+          <Animated.View style={[styles.thumb, thumbAnimatedStyle]} />
+        </Animated.View>
+      </Animated.View>
+    </GestureDetector>
+  );
+}
+
+function createStyles(
+  ds: typeof DesignSystem,
+  theme: ReturnType<typeof useTheme>['theme'],
+) {
+  return StyleSheet.create({
+    iosSwitch: {
+      transform: [{scaleX: 0.8}, {scaleY: 0.8}],
+    },
+    track: {
+      width: 42,
+      height: 24,
+      borderRadius: ds.borderRadius.xxl,
+      padding: ds.spacing.xxs,
+      justifyContent: 'center',
+    },
+    thumb: {
+      width: 20,
+      height: 20,
+      borderRadius: ds.borderRadius.full,
+      backgroundColor: theme.toggleThumb,
+      ...ds.shadows.sm,
+    },
+  });
+}
