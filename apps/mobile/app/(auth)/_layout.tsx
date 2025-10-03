@@ -36,10 +36,18 @@ export default function AuthGroupLayout() {
             headerTitle: 'Login',
             headerTransparent: Platform.OS === 'ios',
             contentStyle: {backgroundColor: theme.background},
-            headerStyle: Platform.OS === 'android' ? {backgroundColor: theme.background} : undefined,
+            headerStyle:
+              Platform.OS === 'android'
+                ? {backgroundColor: theme.background}
+                : undefined,
             headerTitleStyle: {color: theme.text},
             headerTintColor: theme.text,
-            headerRight: () => <HeaderButton icon="close-outline" onPress={() => router.dismiss()} />,
+            headerRight: () => (
+              <HeaderButton
+                icon="close-outline"
+                onPress={() => router.dismiss()}
+              />
+            ),
           }}
         />
       </Stack>

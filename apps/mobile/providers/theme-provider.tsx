@@ -1,7 +1,20 @@
-import React, {createContext, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {Animated, Easing, StyleSheet} from 'react-native';
 import {ThemeProvider as NavigationThemeProvider} from '@react-navigation/native';
-import {NavigationThemes, Tokens, type ColorScheme, type ThemePreference} from '@/constants/colors';
+import {
+  NavigationThemes,
+  Tokens,
+  type ColorScheme,
+  type ThemePreference,
+} from '@/constants/colors';
 import {DesignSystem} from '@/constants/typography';
 import {useColorScheme as useRNColorScheme} from '@/hooks/use-color-scheme';
 import * as storage from '@/utils/storage';
@@ -33,7 +46,8 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
   const overlayOpacity = useRef(new Animated.Value(0)).current;
   const [overlayColor, setOverlayColor] = useState<string | null>(null);
   const isAnimating = useRef(false);
-  const scheme: ColorScheme = preference === 'system' ? systemScheme : preference;
+  const scheme: ColorScheme =
+    preference === 'system' ? systemScheme : preference;
 
   const STORAGE_KEY = 'app.theme.scheme';
 
@@ -41,8 +55,13 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
     let mounted = true;
     (async () => {
       try {
-        const saved = (await storage.getItem(STORAGE_KEY)) as ThemePreference | null;
-        if (mounted && (saved === 'light' || saved === 'dark' || saved === 'system')) {
+        const saved = (await storage.getItem(
+          STORAGE_KEY,
+        )) as ThemePreference | null;
+        if (
+          mounted &&
+          (saved === 'light' || saved === 'dark' || saved === 'system')
+        ) {
           setPreference(saved);
         }
       } finally {
@@ -69,7 +88,8 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
       return;
     }
 
-    const nextPreference: ThemePreference = scheme === 'light' ? 'dark' : 'light';
+    const nextPreference: ThemePreference =
+      scheme === 'light' ? 'dark' : 'light';
     const currentBackground = Tokens[scheme].background;
 
     isAnimating.current = true;
@@ -120,7 +140,11 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
             <Animated.View
               style={[
                 StyleSheet.absoluteFillObject,
-                {backgroundColor: overlayColor, opacity: overlayOpacity, pointerEvents: 'none'},
+                {
+                  backgroundColor: overlayColor,
+                  opacity: overlayOpacity,
+                  pointerEvents: 'none',
+                },
               ]}
             />
           ) : null}

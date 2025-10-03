@@ -21,7 +21,9 @@ interface GlobalWithStorage {
 
 function hasLocalStorage(): boolean {
   try {
-    return typeof (globalThis as GlobalWithStorage).localStorage !== 'undefined';
+    return (
+      typeof (globalThis as GlobalWithStorage).localStorage !== 'undefined'
+    );
   } catch {
     return false;
   }
@@ -59,7 +61,8 @@ interface AsyncStorageInterface {
 async function tryLoadAsyncStorage(): Promise<AsyncStorageInterface | null> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mod = require('@react-native-async-storage/async-storage') as AsyncStorageModule;
+    const mod =
+      require('@react-native-async-storage/async-storage') as AsyncStorageModule;
     const AsyncStorage = mod?.default ?? mod;
     if (AsyncStorage && typeof AsyncStorage.getItem === 'function') {
       return AsyncStorage as AsyncStorageInterface;

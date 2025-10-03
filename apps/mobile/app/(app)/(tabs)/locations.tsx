@@ -10,7 +10,8 @@ export default function LocationsPage() {
       bounces
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior="automatic"
-      style={{backgroundColor: theme.background}}>
+      style={{backgroundColor: theme.background}}
+    >
       <ThemedView style={STANDARD_TAB_CONTAINER}>
         <ThemedText variant="largeTitle">Locations</ThemedText>
         <ThemedText variant="body" style={STANDARD_CONTENT_SPACING}>

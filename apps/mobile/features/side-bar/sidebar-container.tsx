@@ -27,13 +27,22 @@ export function SidebarContainer({children}: SidebarContainerProps) {
       };
     }
     return {
-      transform: [{translateX: slideAnim.value}, {scale: 1 - (slideAnim.value / 320) * 0}],
+      transform: [
+        {translateX: slideAnim.value},
+        {scale: 1 - (slideAnim.value / 320) * 0},
+      ],
     };
   });
 
   return (
-    <View style={{flex: 1, backgroundColor: theme.background, overflow: 'hidden'}}>
-      <Animated.View style={[{flex: 1, backgroundColor: theme.background}, mainContentStyle]}>{children}</Animated.View>
+    <View
+      style={{flex: 1, backgroundColor: theme.background, overflow: 'hidden'}}
+    >
+      <Animated.View
+        style={[{flex: 1, backgroundColor: theme.background}, mainContentStyle]}
+      >
+        {children}
+      </Animated.View>
 
       {/* This detector handles gestures on the main content area (or edge) */}
       <GestureDetector gesture={mainGesture}>

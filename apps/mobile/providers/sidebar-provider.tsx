@@ -1,7 +1,17 @@
-import React, {createContext, useContext, useState, useEffect, useCallback} from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import {Keyboard, Platform} from 'react-native';
 import {useSegments, router} from 'expo-router';
-import {Gesture, type PanGesture, type TapGesture} from 'react-native-gesture-handler';
+import {
+  Gesture,
+  type PanGesture,
+  type TapGesture,
+} from 'react-native-gesture-handler';
 import {useSharedValue, withSpring, withTiming} from 'react-native-reanimated';
 import {scheduleOnRN} from 'react-native-worklets';
 import type {SharedValue} from 'react-native-reanimated';
@@ -16,7 +26,9 @@ interface SidebarContextValue {
   tapGesture: TapGesture;
 }
 
-const SidebarContext = createContext<SidebarContextValue | undefined>(undefined);
+const SidebarContext = createContext<SidebarContextValue | undefined>(
+  undefined,
+);
 
 export function useSidebar() {
   const context = useContext(SidebarContext);
@@ -37,7 +49,11 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
   const toggleSideMenu = () => {
     const isOpening = !sideMenuOpen;
     setSideMenuOpen(isOpening);
-    slideAnim.value = withSpring(isOpening ? 320 : 0, {damping: 20, stiffness: 200, mass: 0.8});
+    slideAnim.value = withSpring(isOpening ? 320 : 0, {
+      damping: 20,
+      stiffness: 200,
+      mass: 0.8,
+    });
   };
 
   const closeSideMenu = useCallback(() => {
@@ -96,7 +112,10 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
       let shouldOpen = false;
 
       if (sideMenuOpen) {
-        if (slideAnim.value > threshold && event.velocityX > -velocityThreshold) {
+        if (
+          slideAnim.value > threshold &&
+          event.velocityX > -velocityThreshold
+        ) {
           targetValue = 320;
           shouldOpen = true;
         } else {
@@ -104,7 +123,10 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
           shouldOpen = false;
         }
       } else {
-        if (slideAnim.value > threshold || event.velocityX > velocityThreshold) {
+        if (
+          slideAnim.value > threshold ||
+          event.velocityX > velocityThreshold
+        ) {
           targetValue = 320;
           shouldOpen = true;
         } else {
@@ -113,7 +135,12 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
         }
       }
 
-      slideAnim.value = withSpring(targetValue, {damping: 18, stiffness: 180, mass: 0.7, velocity: event.velocityX});
+      slideAnim.value = withSpring(targetValue, {
+        damping: 18,
+        stiffness: 180,
+        mass: 0.7,
+        velocity: event.velocityX,
+      });
       scheduleOnRN(setSideMenuOpen, shouldOpen);
       isDragging.value = false;
     })
@@ -165,5 +192,7 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
     tapGesture,
   };
 
-  return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;
+  return (
+    <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>
+  );
 }

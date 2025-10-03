@@ -17,4 +17,5 @@ export interface DividerItem {
 
 export type ListItem = SettingsItem | ToggleSettingsItem | DividerItem;
 
-export const isDividerItem = (item: ListItem): item is DividerItem => 'isDivider' in item;
+export const isDividerItem = (item: ListItem): item is DividerItem =>
+  'isDivider' in item;

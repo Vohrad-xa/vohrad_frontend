@@ -4,7 +4,13 @@ import {StyleSheet, Platform, FlatList} from 'react-native';
 import type {ListRenderItem} from 'react-native';
 import {StatusBar as ExpoStatusBar} from 'expo-status-bar';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ThemedView, ThemedText, Divider, ListItem, Switch} from '@/components/ui';
+import {
+  ThemedView,
+  ThemedText,
+  Divider,
+  ListItem,
+  Switch,
+} from '@/components/ui';
 import type {DesignSystem} from '@/constants/typography';
 import {BiometricToggle} from '@/features/settings/biometric-toggle';
 import {
@@ -26,7 +32,8 @@ export default function SettingsModal() {
   const insets = useSafeAreaInsets();
 
   // Type guard to check for toggle items
-  const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem => 'hasToggle' in item;
+  const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem =>
+    'hasToggle' in item;
 
   const allSettingsItems = useMemo(() => {
     const itemsWithDividers: SettingsListItem[] = [];
@@ -72,7 +79,11 @@ export default function SettingsModal() {
           accessory = (
             <>
               <ThemedText style={styles.themeStatusText}>
-                {preference === 'system' ? 'System' : preference === 'light' ? 'Light' : 'Dark'}
+                {preference === 'system'
+                  ? 'System'
+                  : preference === 'light'
+                    ? 'Light'
+                    : 'Dark'}
               </ThemedText>
               <Switch style={styles.appearanceSwitch} />
             </>
@@ -81,11 +92,22 @@ export default function SettingsModal() {
           accessory = <BiometricToggle />;
         }
       } else if (!item.isDestructive) {
-        accessory = <Icon name={AppIcons.navigation.forward} size={ds.iconSize.md} color={theme.muted} />;
+        accessory = (
+          <Icon
+            name={AppIcons.navigation.forward}
+            size={ds.iconSize.md}
+            color={theme.muted}
+          />
+        );
       }
 
       return (
-        <ListItem label={item.label} icon={item.icon} onPress={item.onPress} isDestructive={item.isDestructive}>
+        <ListItem
+          label={item.label}
+          icon={item.icon}
+          onPress={item.onPress}
+          isDestructive={item.isDestructive}
+        >
           {accessory}
         </ListItem>
       );

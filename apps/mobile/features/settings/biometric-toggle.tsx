@@ -1,5 +1,11 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {Alert, Platform, StyleSheet, Switch as RNSwitch, View} from 'react-native';
+import {
+  Alert,
+  Platform,
+  StyleSheet,
+  Switch as RNSwitch,
+  View,
+} from 'react-native';
 import {ThemedText} from '@/components/ui';
 import type {DesignSystem} from '@/constants/typography';
 import {
@@ -21,7 +27,9 @@ type BiometricStatus = {
 
 const ENABLE_PROMPT_MESSAGE = 'Enable biometric unlock';
 
-function resolveAvailabilityMessage(availability: BiometricAvailability): string | null {
+function resolveAvailabilityMessage(
+  availability: BiometricAvailability,
+): string | null {
   if (availability.available) {
     return null;
   }
@@ -37,7 +45,10 @@ function resolveAvailabilityMessage(availability: BiometricAvailability): string
   }
 }
 
-function resolveEnableErrorMessage(errorCode?: string): {title: string; message: string} {
+function resolveEnableErrorMessage(errorCode?: string): {
+  title: string;
+  message: string;
+} {
   switch (errorCode) {
     case 'LOCKED':
       return {
@@ -82,7 +93,10 @@ export function BiometricToggle() {
   }, []);
 
   const fetchStatus = useCallback(async (): Promise<BiometricStatus> => {
-    const [availability, enabled] = await Promise.all([getBiometricAvailability(), isBiometricEnabled()]);
+    const [availability, enabled] = await Promise.all([
+      getBiometricAvailability(),
+      isBiometricEnabled(),
+    ]);
     if (!availability.available) {
       return {availability, enabled: false};
     }
@@ -139,7 +153,10 @@ export function BiometricToggle() {
               Alert.alert(title, message);
             }
             await refreshStatus().catch((error) => {
-              console.error('[BiometricToggle] Failed to refresh status after enable failure:', error);
+              console.error(
+                '[BiometricToggle] Failed to refresh status after enable failure:',
+                error,
+              );
             });
             return;
           }
@@ -148,7 +165,10 @@ export function BiometricToggle() {
             await disableBiometrics();
             await recordDecline();
           } catch (error) {
-            console.error('[BiometricToggle] Failed to disable biometrics:', error);
+            console.error(
+              '[BiometricToggle] Failed to disable biometrics:',
+              error,
+            );
           }
         }
 
@@ -164,10 +184,15 @@ export function BiometricToggle() {
     [loading, refreshStatus],
   );
 
-  const availability = status?.availability ?? {available: false, reason: undefined};
+  const availability = status?.availability ?? {
+    available: false,
+    reason: undefined,
+  };
   const isAvailable = availability.available;
   const isEnabled = status?.enabled ?? false;
-  const availabilityMessage = loading ? null : resolveAvailabilityMessage(availability);
+  const availabilityMessage = loading
+    ? null
+    : resolveAvailabilityMessage(availability);
 
   return (
     <View style={styles.container}>
@@ -181,10 +206,19 @@ export function BiometricToggle() {
         onValueChange={handleToggle}
         disabled={loading || !isAvailable}
         trackColor={{false: theme.divider, true: theme.accent}}
-        thumbColor={Platform.OS === 'android' ? (isEnabled ? theme.accent : theme.input) : undefined}
+        thumbColor={
+          Platform.OS === 'android'
+            ? isEnabled
+              ? theme.accent
+              : theme.input
+            : undefined
+        }
         ios_backgroundColor={theme.divider}
         accessibilityRole="switch"
-        accessibilityState={{disabled: loading || !isAvailable, checked: isEnabled}}
+        accessibilityState={{
+          disabled: loading || !isAvailable,
+          checked: isEnabled,
+        }}
         accessibilityLabel="Biometric unlock"
         testID="settings-biometric-toggle"
       />

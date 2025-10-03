@@ -1,5 +1,11 @@
 import React, {forwardRef} from 'react';
-import {View, StyleSheet, type TextInput, type StyleProp, type ViewStyle} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  type TextInput,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import type {TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, type IconName} from '@/utils';
@@ -50,8 +56,13 @@ export const SearchBar = forwardRef<TextInput, SearchBarProps>(
           <View
             style={[
               styles.iconSlot,
-              {left: ds.spacing.md, transform: [{translateY: -ds.iconSize.sm / 2}], pointerEvents: 'none'},
-            ]}>
+              {
+                left: ds.spacing.md,
+                transform: [{translateY: -ds.iconSize.sm / 2}],
+                pointerEvents: 'none',
+              },
+            ]}
+          >
             <Icon name={iconName} size={ds.iconSize.sm} color={iconColor} />
           </View>
         ) : null}

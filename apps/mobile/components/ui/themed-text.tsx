@@ -64,7 +64,10 @@ const getTextStyle = (
     }
   }
 
-  const typographyWithFamily = resolvedTypography as typeof resolvedTypography & {fontFamily?: string};
+  const typographyWithFamily =
+    resolvedTypography as typeof resolvedTypography & {
+      fontFamily?: string;
+    };
   const fontFamily = typographyWithFamily.fontFamily ?? baseStyle.fontFamily;
 
   return {
@@ -78,7 +81,14 @@ const getTextStyle = (
   };
 };
 
-export function ThemedText({variant = 'body', color, colorToken, opacity, style, ...props}: ThemedTextProps) {
+export function ThemedText({
+  variant = 'body',
+  color,
+  colorToken,
+  opacity,
+  style,
+  ...props
+}: ThemedTextProps) {
   const {theme, ds} = useTheme();
 
   const textStyle = getTextStyle(variant, theme, ds, colorToken, opacity);

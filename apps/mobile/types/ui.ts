@@ -31,7 +31,10 @@ export interface StandardTabContainerStyle extends ViewStyle {
   padding: 16;
 }
 
-export type TabBackgroundStyle = PlatformStyles<{backgroundColor: string}, {backgroundColor: string}>;
+export type TabBackgroundStyle = PlatformStyles<
+  {backgroundColor: string},
+  {backgroundColor: string}
+>;
 
 export const STANDARD_TAB_CONTAINER: StandardTabContainerStyle = {
   flex: 1,

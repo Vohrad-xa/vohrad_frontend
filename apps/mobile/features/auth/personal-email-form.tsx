@@ -1,7 +1,20 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import type {TextInput} from 'react-native';
-import {Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {ThemedButton, ThemedInput, ThemedText, ThemedView} from '@/components/ui';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {
+  ThemedButton,
+  ThemedInput,
+  ThemedText,
+  ThemedView,
+} from '@/components/ui';
 import {type ColorScheme, Palette} from '@/constants/colors';
 import {type DesignSystem} from '@/constants/typography';
 import * as biometricService from '@/modules/security/biometric-service';
@@ -14,7 +27,10 @@ type PersonalEmailFormProps = {
   onForgotPassword?: () => void;
 };
 
-export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFormProps) {
+export function PersonalEmailForm({
+  onSuccess,
+  onForgotPassword,
+}: PersonalEmailFormProps) {
   // Form state
   const [subdomain, setSubdomain] = useState('');
   const [email, setEmail] = useState('');
@@ -28,7 +44,9 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
   // Refs
   const subdomainInputRef = useRef<TextInput>(null);
   const emailInputRef = useRef<TextInput>(null);
-  const emailValidationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const emailValidationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   useEffect(() => {
     AppStorage.getTenantSubdomain().then((savedSubdomain) => {
@@ -77,8 +95,13 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
   const hasBackendError = !!error;
 
   const showSubdomainSuccess = subdomain.trim().length > 0;
-  const showEmailError = !hasBackendError && showEmailValidation && !emailValidation.isValid;
-  const showEmailSuccess = !hasBackendError && showEmailValidation && emailValidation.isValid && email.length > 0;
+  const showEmailError =
+    !hasBackendError && showEmailValidation && !emailValidation.isValid;
+  const showEmailSuccess =
+    !hasBackendError &&
+    showEmailValidation &&
+    emailValidation.isValid &&
+    email.length > 0;
   const showPasswordSuccess = !hasBackendError && password.length > 0;
 
   // Apply typo suggestion
@@ -91,9 +114,11 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
 
   // Email requirements alert
   const handleEmailErrorPress = () => {
-    Alert.alert('Email Requirements', '• Must contain @ symbol\n• Must have valid domain (e.g., example.com).', [
-      {text: 'OK'},
-    ]);
+    Alert.alert(
+      'Email Requirements',
+      '• Must contain @ symbol\n• Must have valid domain (e.g., example.com).',
+      [{text: 'OK'}],
+    );
   };
 
   // Handle login submission
@@ -114,7 +139,10 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
   };
 
   // Form validation state
-  const isFormValid = subdomain.trim().length > 0 && emailValidation.isValid && password.length > 0;
+  const isFormValid =
+    subdomain.trim().length > 0 &&
+    emailValidation.isValid &&
+    password.length > 0;
 
   const handleForgotPassword = () => {
     onForgotPassword?.();
@@ -129,44 +157,52 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
       return;
     }
 
-    Alert.alert('Use Face ID?', 'Secure your account with Face ID or Touch ID for instant sign-in.', [
-      {
-        text: 'Not now',
-        style: 'cancel',
-        onPress: () => {
-          biometricService.recordDecline().catch(() => {});
+    Alert.alert(
+      'Use Face ID?',
+      'Secure your account with Face ID or Touch ID for instant sign-in.',
+      [
+        {
+          text: 'Not now',
+          style: 'cancel',
+          onPress: () => {
+            biometricService.recordDecline().catch(() => {});
+          },
         },
-      },
-      {
-        text: 'Enable',
-        onPress: () => {
-          void (async () => {
-            const result = await biometricService.enableWithAuthentication();
-            if (!result.success && !result.cancelled) {
-              const message =
-                result.error === 'LOCKED'
-                  ? 'Face ID is temporarily locked. Unlock your device with the passcode, then try again.'
-                  : result.error === 'NOT_ENROLLED'
-                    ? 'Face ID or Touch ID is not set up on this device. Enable it in Settings to proceed.'
-                    : 'Face ID could not be enabled. Check your device settings and try again.';
-              Alert.alert('Unable to Enable Face ID', message);
-            }
-          })();
+        {
+          text: 'Enable',
+          onPress: () => {
+            void (async () => {
+              const result = await biometricService.enableWithAuthentication();
+              if (!result.success && !result.cancelled) {
+                const message =
+                  result.error === 'LOCKED'
+                    ? 'Face ID is temporarily locked. Unlock your device with the passcode, then try again.'
+                    : result.error === 'NOT_ENROLLED'
+                      ? 'Face ID or Touch ID is not set up on this device. Enable it in Settings to proceed.'
+                      : 'Face ID could not be enabled. Check your device settings and try again.';
+                Alert.alert('Unable to Enable Face ID', message);
+              }
+            })();
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
 
   return (
     <ThemedView style={styles.container}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+      >
         <ScrollView
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
           bounces
           keyboardDismissMode="interactive"
-          contentInsetAdjustmentBehavior="automatic">
+          contentInsetAdjustmentBehavior="automatic"
+        >
           <View style={styles.content}>
             <View style={styles.section}>
               <ThemedText variant="title2">Welcome Back</ThemedText>
@@ -209,7 +245,13 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                 style={styles.input}
                 accessibilityLabel="Email input"
                 editable={!isLoading}
-                error={hasBackendError ? 'Invalid' : showEmailError ? (emailValidation.error ?? undefined) : undefined}
+                error={
+                  hasBackendError
+                    ? 'Invalid'
+                    : showEmailError
+                      ? (emailValidation.error ?? undefined)
+                      : undefined
+                }
                 success={showEmailSuccess}
                 onErrorPress={handleEmailErrorPress}
               />
@@ -217,10 +259,14 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                 <TouchableOpacity
                   onPress={handleApplySuggestion}
                   style={styles.suggestion}
-                  accessibilityLabel="Apply email suggestion">
+                  accessibilityLabel="Apply email suggestion"
+                >
                   <ThemedText variant="caption" colorToken="muted">
                     Did you mean{' '}
-                    <ThemedText variant="caption" style={styles.suggestionEmail}>
+                    <ThemedText
+                      variant="caption"
+                      style={styles.suggestionEmail}
+                    >
                       {emailValidation.suggestion}
                     </ThemedText>
                     ?
@@ -249,15 +295,26 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
 
             {error && (
               <View style={styles.section}>
-                <ThemedText variant="subheadline" colorToken="destructive" style={{textAlign: 'center'}}>
+                <ThemedText
+                  variant="subheadline"
+                  colorToken="destructive"
+                  style={{textAlign: 'center'}}
+                >
                   {error}
                 </ThemedText>
               </View>
             )}
 
             <View style={styles.section}>
-              <TouchableOpacity onPress={handleForgotPassword} disabled={isLoading}>
-                <ThemedText variant="subheadline" colorToken="muted" style={{textDecorationLine: 'underline'}}>
+              <TouchableOpacity
+                onPress={handleForgotPassword}
+                disabled={isLoading}
+              >
+                <ThemedText
+                  variant="subheadline"
+                  colorToken="muted"
+                  style={{textDecorationLine: 'underline'}}
+                >
                   Forgot password?
                 </ThemedText>
               </TouchableOpacity>
@@ -268,8 +325,12 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
                 variant="primary"
                 onPress={handleLogin}
                 disabled={!isFormValid || isLoading}
-                style={[styles.loginButton, (!isFormValid || isLoading) && styles.loginButtonDisabled]}
-                accessibilityLabel="Login button">
+                style={[
+                  styles.loginButton,
+                  (!isFormValid || isLoading) && styles.loginButtonDisabled,
+                ]}
+                accessibilityLabel="Login button"
+              >
                 <ThemedText variant="callout" style={styles.loginButtonText}>
                   {isLoading ? 'Signing In...' : 'Sign In'}
                 </ThemedText>
@@ -283,7 +344,11 @@ export function PersonalEmailForm({onSuccess, onForgotPassword}: PersonalEmailFo
 }
 
 type ThemeType = ReturnType<typeof useTheme>['theme'];
-const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: ColorScheme) =>
+const createStyles = (
+  ds: typeof DesignSystem,
+  theme: ThemeType,
+  scheme: ColorScheme,
+) =>
   StyleSheet.create({
     container: {
       flex: 1,

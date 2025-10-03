@@ -1,5 +1,11 @@
 import React, {forwardRef} from 'react';
-import {View, TextInput, TouchableOpacity, type TextInputProps, type TextStyle} from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  type TextInputProps,
+  type TextStyle,
+} from 'react-native';
 import {useTheme} from '@/providers/theme-provider';
 import {Icon, type IconName} from '@/utils';
 import {ThemedText} from './themed-text';
@@ -14,7 +20,19 @@ export interface ThemedInputProps extends TextInputProps {
 }
 
 export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
-  ({label, error, success, onErrorPress, icon, iconPosition = 'left', style, ...props}, ref) => {
+  (
+    {
+      label,
+      error,
+      success,
+      onErrorPress,
+      icon,
+      iconPosition = 'left',
+      style,
+      ...props
+    },
+    ref,
+  ) => {
     const {theme, ds} = useTheme();
 
     const getBorderColor = () => {
@@ -35,9 +53,14 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
       fontSize: ds.components.input.fontSize,
       color: theme.text,
       minHeight: ds.components.input.height,
-      paddingLeft: icon && iconPosition === 'left' ? ds.spacing.xxxl : ds.components.input.padding,
+      paddingLeft:
+        icon && iconPosition === 'left'
+          ? ds.spacing.xxxl
+          : ds.components.input.padding,
       paddingRight:
-        showValidationIcon || (icon && iconPosition === 'right') ? ds.spacing.xxxl : ds.components.input.padding,
+        showValidationIcon || (icon && iconPosition === 'right')
+          ? ds.spacing.xxxl
+          : ds.components.input.padding,
     };
 
     return (
@@ -48,7 +71,12 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
           </ThemedText>
         )}
         <View style={{position: 'relative'}}>
-          <TextInput ref={ref} style={[inputStyle, style]} placeholderTextColor={theme.muted} {...props} />
+          <TextInput
+            ref={ref}
+            style={[inputStyle, style]}
+            placeholderTextColor={theme.muted}
+            {...props}
+          />
           {icon && !showValidationIcon && (
             <View
               style={{
@@ -60,7 +88,8 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
                 minHeight: ds.components.tapTarget.minSize,
                 justifyContent: 'center',
                 alignItems: iconPosition === 'left' ? 'flex-start' : 'flex-end',
-              }}>
+              }}
+            >
               <Icon name={icon} size={ds.iconSize.md} color={theme.muted} />
             </View>
           )}
@@ -74,8 +103,13 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
                   top: '50%',
                   right: ds.spacing.md,
                   transform: [{translateY: -ds.iconSize.sm / 2}],
-                }}>
-                <Icon name="warning-outline" size={ds.iconSize.md} color={theme.destructive} />
+                }}
+              >
+                <Icon
+                  name="warning-outline"
+                  size={ds.iconSize.md}
+                  color={theme.destructive}
+                />
               </TouchableOpacity>
             ) : (
               <View
@@ -84,8 +118,13 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
                   top: '50%',
                   right: ds.spacing.md,
                   transform: [{translateY: -ds.iconSize.sm / 2}],
-                }}>
-                <Icon name="warning-outline" size={ds.iconSize.md} color={theme.destructive} />
+                }}
+              >
+                <Icon
+                  name="warning-outline"
+                  size={ds.iconSize.md}
+                  color={theme.destructive}
+                />
               </View>
             ))}
           {showValidationIcon && success && (
@@ -95,8 +134,13 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
                 top: '50%',
                 right: ds.spacing.md,
                 transform: [{translateY: -ds.iconSize.sm / 2}],
-              }}>
-              <Icon name="checkmark-outline" size={ds.iconSize.md} color={theme.accentGreen} />
+              }}
+            >
+              <Icon
+                name="checkmark-outline"
+                size={ds.iconSize.md}
+                color={theme.accentGreen}
+              />
             </View>
           )}
         </View>

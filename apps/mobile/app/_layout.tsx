@@ -4,7 +4,14 @@ import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {setApiTenant} from '@vohrad/api-client';
 import {authService} from '@vohrad/auth';
 import {useAuthStore, setAuthPersistStorage} from '@vohrad/store';
-import {Slot, useRootNavigationState, useRouter, useSegments, usePathname, type Href} from 'expo-router';
+import {
+  Slot,
+  useRootNavigationState,
+  useRouter,
+  useSegments,
+  usePathname,
+  type Href,
+} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {LoadingOverlay} from '@/components/ui';
@@ -21,7 +28,10 @@ import * as AppStorage from '@/utils/storage';
 if (Platform.OS === 'web') {
   const originalWarn = console.warn;
   console.warn = (...args) => {
-    if (typeof args[0] === 'string' && args[0].includes('props.pointerEvents is deprecated')) {
+    if (
+      typeof args[0] === 'string' &&
+      args[0].includes('props.pointerEvents is deprecated')
+    ) {
       return;
     }
     originalWarn.apply(console, args);
@@ -64,7 +74,15 @@ function RootNavigation() {
       setIntendedRoute(null);
       router.replace(destination as Href);
     }
-  }, [isAuthenticated, navigationState?.key, router, rootSegment, pathname, setIntendedRoute, intendedRoute]);
+  }, [
+    isAuthenticated,
+    navigationState?.key,
+    router,
+    rootSegment,
+    pathname,
+    setIntendedRoute,
+    intendedRoute,
+  ]);
 
   useEffect(() => {
     if (navigationState?.key) {
@@ -136,9 +154,14 @@ export default function RootLayout() {
             const snapshot = JSON.parse(storedSnapshotRaw) as {
               state?: {tokens?: {refresh_token?: string}};
             };
-            persistedHasRefreshToken = Boolean(snapshot?.state?.tokens?.refresh_token);
+            persistedHasRefreshToken = Boolean(
+              snapshot?.state?.tokens?.refresh_token,
+            );
           } catch (error) {
-            console.error('[app/_layout] Failed to parse persisted auth snapshot:', error);
+            console.error(
+              '[app/_layout] Failed to parse persisted auth snapshot:',
+              error,
+            );
           }
         }
 
@@ -146,13 +169,18 @@ export default function RootLayout() {
           // Require biometric auth before hydrating sensitive tokens.
           const requireBiometric = await shouldRequireAuthenticationOnLaunch();
           if (requireBiometric) {
-            const authResult = await authenticateWithBiometrics('Unlock your account');
+            const authResult = await authenticateWithBiometrics(
+              'Unlock your account',
+            );
             if (!authResult.success) {
               await disableBiometrics();
               await secureStorage.removeItem(legacyKey);
               shouldHydrate = false;
               if (!authResult.cancelled) {
-                Alert.alert('Authentication failed', 'Please sign in again to continue.');
+                Alert.alert(
+                  'Authentication failed',
+                  'Please sign in again to continue.',
+                );
               }
             }
           }
@@ -183,7 +211,10 @@ export default function RootLayout() {
               // Attempt to rehydrate session using HttpOnly refresh cookie.
               await authService.restoreSessionFromCookie();
             } catch (error) {
-              console.error('[app/_layout] Failed to restore web session from cookie:', error);
+              console.error(
+                '[app/_layout] Failed to restore web session from cookie:',
+                error,
+              );
             }
           }
         }
@@ -194,11 +225,17 @@ export default function RootLayout() {
           try {
             await authService.refreshToken();
           } catch (error) {
-            console.error('[app/_layout] Failed to refresh access token on boot:', error);
+            console.error(
+              '[app/_layout] Failed to refresh access token on boot:',
+              error,
+            );
           }
         }
       } catch (error) {
-        console.error('[app/_layout] Failed to bootstrap secure auth persistence:', error);
+        console.error(
+          '[app/_layout] Failed to bootstrap secure auth persistence:',
+          error,
+        );
       }
     };
 

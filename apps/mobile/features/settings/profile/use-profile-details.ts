@@ -11,7 +11,13 @@ const EMPTY_PROFILE: ProfileDetails = {
 };
 
 const getAddressSegments = (user: ExtendedUser) => {
-  const segments = [user.address, user.city, user.province, user.postal_code, user.country];
+  const segments = [
+    user.address,
+    user.city,
+    user.province,
+    user.postal_code,
+    user.country,
+  ];
 
   return segments
     .map((segment) => (typeof segment === 'string' ? segment.trim() : ''))

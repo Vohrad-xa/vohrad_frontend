@@ -12,7 +12,12 @@ export interface GlassSurfaceProps {
   bordered?: boolean;
 }
 
-export function GlassSurface({children, style, intensity, tint}: GlassSurfaceProps) {
+export function GlassSurface({
+  children,
+  style,
+  intensity,
+  tint,
+}: GlassSurfaceProps) {
   const {scheme} = useTheme();
 
   return (
@@ -21,7 +26,8 @@ export function GlassSurface({children, style, intensity, tint}: GlassSurfacePro
         intensity={intensity ?? 20}
         tint={tint ?? (scheme === 'dark' ? 'dark' : 'light')}
         experimentalBlurMethod="dimezisBlurView"
-        style={{flex: 1}}>
+        style={{flex: 1}}
+      >
         <View style={{flex: 1}}>{children}</View>
       </BlurView>
     </View>

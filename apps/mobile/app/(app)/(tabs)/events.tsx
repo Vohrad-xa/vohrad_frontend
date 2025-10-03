@@ -10,7 +10,8 @@ export default function EventsPage() {
       bounces
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior="automatic"
-      style={{backgroundColor: theme.background}}>
+      style={{backgroundColor: theme.background}}
+    >
       <ThemedView style={STANDARD_TAB_CONTAINER}>
         <ThemedText variant="largeTitle">Events</ThemedText>
         <ThemedText variant="body" style={STANDARD_CONTENT_SPACING}>

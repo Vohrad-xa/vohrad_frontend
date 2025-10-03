@@ -7,7 +7,10 @@ import {Icon} from '@/utils';
 import {ThemedText} from './themed-text';
 import {ThemedView} from './themed-view';
 
-export function Collapsible({children, title}: PropsWithChildren & {title: string}) {
+export function Collapsible({
+  children,
+  title,
+}: PropsWithChildren & {title: string}) {
   const [isOpen, setIsOpen] = useState(false);
   const {ds} = useTheme();
 
@@ -25,7 +28,11 @@ export function Collapsible({children, title}: PropsWithChildren & {title: strin
 
   return (
     <ThemedView>
-      <TouchableOpacity style={styles.heading} onPress={() => setIsOpen((value) => !value)} activeOpacity={0.8}>
+      <TouchableOpacity
+        style={styles.heading}
+        onPress={() => setIsOpen((value) => !value)}
+        activeOpacity={0.8}
+      >
         <Icon
           name="chevron-forward-outline"
           size="sm"

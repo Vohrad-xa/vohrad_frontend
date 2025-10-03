@@ -7,98 +7,99 @@ import type {SettingsItem, ToggleSettingsItem} from './types';
 export function useSettingsItems() {
   const {scheme} = useTheme();
 
-  const computedSettingsItems: Array<SettingsItem | ToggleSettingsItem> = useMemo(
-    () => [
-      {
-        id: 'profile',
-        icon: AppIcons.business.profile,
-        label: 'Profile',
-        showDividerAfter: true,
-        onPress: () => {
-          router.push('/settings/profile');
+  const computedSettingsItems: Array<SettingsItem | ToggleSettingsItem> =
+    useMemo(
+      () => [
+        {
+          id: 'profile',
+          icon: AppIcons.business.profile,
+          label: 'Profile',
+          showDividerAfter: true,
+          onPress: () => {
+            router.push('/settings/profile');
+          },
         },
-      },
-      {
-        id: 'appearance',
-        icon: scheme === 'dark' ? AppIcons.theme.light : AppIcons.theme.dark,
-        label: 'Appearance',
-        hasToggle: true,
-      },
-      {
-        id: 'biometric-unlock',
-        icon: AppIcons.content.privacy,
-        label: 'Biometric Unlock',
-        hasToggle: true,
-      },
-      {
-        id: 'preferences',
-        icon: AppIcons.navigation.settings,
-        label: 'Preferences',
-        onPress: () => {
-          router.push('/settings/preferences');
+        {
+          id: 'appearance',
+          icon: scheme === 'dark' ? AppIcons.theme.light : AppIcons.theme.dark,
+          label: 'Appearance',
+          hasToggle: true,
         },
-      },
-      {
-        id: 'language',
-        icon: AppIcons.content.language,
-        label: 'App Language',
-        onPress: () => {
-          router.push('/settings/language');
+        {
+          id: 'biometric-unlock',
+          icon: AppIcons.content.privacy,
+          label: 'Biometric Unlock',
+          hasToggle: true,
         },
-      },
-      {
-        id: 'support',
-        icon: AppIcons.status.help,
-        label: 'Report an Issue',
-        showDividerAfter: true,
-        onPress: () => {
-          router.push('/settings/support');
+        {
+          id: 'preferences',
+          icon: AppIcons.navigation.settings,
+          label: 'Preferences',
+          onPress: () => {
+            router.push('/settings/preferences');
+          },
         },
-      },
-      {
-        id: 'organization',
-        icon: AppIcons.business.organization,
-        label: 'Organization',
-        onPress: () => {
-          router.push('/settings/organization');
+        {
+          id: 'language',
+          icon: AppIcons.content.language,
+          label: 'App Language',
+          onPress: () => {
+            router.push('/settings/language');
+          },
         },
-      },
-      {
-        id: 'plan',
-        icon: AppIcons.business.plan,
-        label: 'Plan',
-        showDividerAfter: true,
-        onPress: () => {
-          router.push('/settings/plan');
+        {
+          id: 'support',
+          icon: AppIcons.status.help,
+          label: 'Report an Issue',
+          showDividerAfter: true,
+          onPress: () => {
+            router.push('/settings/support');
+          },
         },
-      },
-      {
-        id: 'privacy',
-        icon: AppIcons.content.privacy,
-        label: 'Privacy Policy',
-        onPress: () => {
-          router.push('/settings/privacy');
+        {
+          id: 'organization',
+          icon: AppIcons.business.organization,
+          label: 'Organization',
+          onPress: () => {
+            router.push('/settings/organization');
+          },
         },
-      },
-      {
-        id: 'terms',
-        icon: AppIcons.content.document,
-        label: 'Terms of Use',
-        onPress: () => {
-          router.push('/settings/terms');
+        {
+          id: 'plan',
+          icon: AppIcons.business.plan,
+          label: 'Plan',
+          showDividerAfter: true,
+          onPress: () => {
+            router.push('/settings/plan');
+          },
         },
-      },
-      {
-        id: 'about',
-        icon: AppIcons.status.info,
-        label: 'About',
-        onPress: () => {
-          router.push('/settings/about');
+        {
+          id: 'privacy',
+          icon: AppIcons.content.privacy,
+          label: 'Privacy Policy',
+          onPress: () => {
+            router.push('/settings/privacy');
+          },
         },
-      },
-    ],
-    [scheme],
-  );
+        {
+          id: 'terms',
+          icon: AppIcons.content.document,
+          label: 'Terms of Use',
+          onPress: () => {
+            router.push('/settings/terms');
+          },
+        },
+        {
+          id: 'about',
+          icon: AppIcons.status.info,
+          label: 'About',
+          onPress: () => {
+            router.push('/settings/about');
+          },
+        },
+      ],
+      [scheme],
+    );
 
   return computedSettingsItems;
 }

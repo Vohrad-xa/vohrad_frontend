@@ -1,6 +1,10 @@
 import {StyleSheet} from 'react-native';
 import {GestureDetector} from 'react-native-gesture-handler';
-import Animated, {useAnimatedStyle, interpolate, Extrapolate} from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  interpolate,
+  Extrapolate,
+} from 'react-native-reanimated';
 import {useTheme} from '@/providers';
 import {useSidebar} from '@/providers/sidebar-provider';
 import type {SharedValue} from 'react-native-reanimated';
@@ -15,7 +19,12 @@ export function SidebarBackdrop({slideAnim}: SidebarBackdropProps) {
 
   const backdropAnimatedStyle = useAnimatedStyle(() => ({
     backgroundColor: theme.background,
-    opacity: interpolate(slideAnim.value, [0, 320], [0, 0.85], Extrapolate.CLAMP),
+    opacity: interpolate(
+      slideAnim.value,
+      [0, 320],
+      [0, 0.85],
+      Extrapolate.CLAMP,
+    ),
     display: slideAnim.value > 0 ? 'flex' : 'none',
   }));
 
@@ -23,7 +32,11 @@ export function SidebarBackdrop({slideAnim}: SidebarBackdropProps) {
     <GestureDetector gesture={tapGesture}>
       <Animated.View
         style={[
-          {...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 999},
+          {
+            ...StyleSheet.absoluteFillObject,
+            backgroundColor: 'rgba(0,0,0,0.85)',
+            zIndex: 999,
+          },
           backdropAnimatedStyle,
         ]}
       />

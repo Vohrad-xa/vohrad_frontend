@@ -4,11 +4,11 @@
   "singleQuote": true,
   "jsxSingleQuote": false,
   "trailingComma": "all",
-  "printWidth": 120,
+  "printWidth": 80,
   "arrowParens": "always",
   "endOfLine": "lf",
   "bracketSpacing": false,
-  "bracketSameLine": true,
+  "bracketSameLine": false,
   "overrides": [
     {"files": "*.md", "options": {"proseWrap": "always"}},
     {

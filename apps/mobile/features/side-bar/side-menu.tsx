@@ -8,8 +8,17 @@ import {
   type NativeScrollEvent,
 } from 'react-native';
 import {router} from 'expo-router';
-import {Gesture, GestureDetector, ScrollView} from 'react-native-gesture-handler';
-import Animated, {useAnimatedStyle, useSharedValue, withTiming, interpolateColor} from 'react-native-reanimated';
+import {
+  Gesture,
+  GestureDetector,
+  ScrollView,
+} from 'react-native-gesture-handler';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  interpolateColor,
+} from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import type {DesignSystem} from '@/constants/typography';
 import {useSidebar, useTheme} from '@/providers';
@@ -47,11 +56,19 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
   // Calculate heights needed for padding
   const headerHeight =
     Platform.OS === 'android'
-      ? (StatusBar.currentHeight ?? 0) + ds.spacing.xl + ds.spacing.md * 2 + ds.components.searchBar.height
-      : Math.max(insets.top, ds.spacing.xl) + ds.spacing.md * 2 + ds.components.searchBar.height;
+      ? (StatusBar.currentHeight ?? 0) +
+        ds.spacing.xl +
+        ds.spacing.md * 2 +
+        ds.components.searchBar.height
+      : Math.max(insets.top, ds.spacing.xl) +
+        ds.spacing.md * 2 +
+        ds.components.searchBar.height;
 
   const footerHeight =
-    ds.spacing.xl + ds.spacing.xs + ds.iconSize.xl + (Platform.OS === 'android' ? ds.spacing.xxxl : ds.spacing.lg);
+    ds.spacing.xl +
+    ds.spacing.xs +
+    ds.iconSize.xl +
+    (Platform.OS === 'android' ? ds.spacing.xxxl : ds.spacing.lg);
 
   const styles = createStyles(theme, ds, headerHeight, footerHeight);
   const headerBorderOpacity = useSharedValue(0);
@@ -63,12 +80,20 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
 
   const headerStyle = useAnimatedStyle(() => ({
     borderBottomWidth: 1,
-    borderBottomColor: interpolateColor(headerBorderOpacity.value, [0, 1], ['transparent', theme.border]),
+    borderBottomColor: interpolateColor(
+      headerBorderOpacity.value,
+      [0, 1],
+      ['transparent', theme.border],
+    ),
   }));
 
   const footerStyle = useAnimatedStyle(() => ({
     borderTopWidth: 1,
-    borderTopColor: interpolateColor(footerBorderOpacity.value, [0, 1], ['transparent', theme.border]),
+    borderTopColor: interpolateColor(
+      footerBorderOpacity.value,
+      [0, 1],
+      ['transparent', theme.border],
+    ),
   }));
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -95,7 +120,8 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
           showsVerticalScrollIndicator
           bounces
           onScroll={handleScroll}
-          scrollEventThrottle={16}>
+          scrollEventThrottle={16}
+        >
           {menuItems.map((item, index) => (
             <MenuItem
               key={index}
@@ -127,7 +153,12 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
   );
 }
 
-const createStyles = (theme: ThemeType, ds: typeof DesignSystem, headerHeight: number, footerHeight: number) =>
+const createStyles = (
+  theme: ThemeType,
+  ds: typeof DesignSystem,
+  headerHeight: number,
+  footerHeight: number,
+) =>
   StyleSheet.create({
     container: {
       position: 'absolute',

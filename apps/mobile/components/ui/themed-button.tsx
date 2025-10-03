@@ -1,5 +1,9 @@
 import React from 'react';
-import {TouchableOpacity, type TouchableOpacityProps, type ViewStyle} from 'react-native';
+import {
+  TouchableOpacity,
+  type TouchableOpacityProps,
+  type ViewStyle,
+} from 'react-native';
 import {useTheme} from '@/providers/theme-provider';
 import {Icon, type IconName} from '@/utils';
 import {ThemedText} from './themed-text';
@@ -108,14 +112,33 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
   };
 
   return (
-    <TouchableOpacity style={[getButtonStyle(), style]} disabled={disabled ?? loading} activeOpacity={0.7} {...props}>
+    <TouchableOpacity
+      style={[getButtonStyle(), style]}
+      disabled={disabled ?? loading}
+      activeOpacity={0.7}
+      {...props}
+    >
       {icon && iconPosition === 'left' && (
-        <Icon name={icon} size={ds.iconSize.md} color={getTextColor()} style={{marginRight: ds.spacing.xs}} />
+        <Icon
+          name={icon}
+          size={ds.iconSize.md}
+          color={getTextColor()}
+          style={{marginRight: ds.spacing.xs}}
+        />
       )}
-      {(title ?? children) && <ThemedText variant="interactive">{loading ? 'Loading...' : title}</ThemedText>}
+      {(title ?? children) && (
+        <ThemedText variant="interactive">
+          {loading ? 'Loading...' : title}
+        </ThemedText>
+      )}
       {children && !title && children}
       {icon && iconPosition === 'right' && (
-        <Icon name={icon} size={ds.iconSize.md} color={getTextColor()} style={{marginLeft: ds.spacing.xs}} />
+        <Icon
+          name={icon}
+          size={ds.iconSize.md}
+          color={getTextColor()}
+          style={{marginLeft: ds.spacing.xs}}
+        />
       )}
     </TouchableOpacity>
   );

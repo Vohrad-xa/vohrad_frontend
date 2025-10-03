@@ -1,5 +1,11 @@
 import React from 'react';
-import {View, TouchableOpacity, StyleSheet, type StyleProp, type ViewStyle} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
 import {Icon, type IconName} from '@/utils';
@@ -15,30 +21,40 @@ export interface ListItemProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const ListItem = React.memo(({label, icon, onPress, isDestructive, children, style}: ListItemProps) => {
-  const {ds, theme} = useTheme();
-  const styles = createStyles(ds, theme);
+const ListItem = React.memo(
+  ({label, icon, onPress, isDestructive, children, style}: ListItemProps) => {
+    const {ds, theme} = useTheme();
+    const styles = createStyles(ds, theme);
 
-  const content = (
-    <>
-      {icon && (
-        <View style={styles.iconContainer}>
-          <Icon name={icon} size={ds.iconSize.md} color={isDestructive ? theme.iconDanger : undefined} />
-        </View>
-      )}
-      <ThemedText style={[styles.labelText, isDestructive && {color: theme.iconDanger}]}>{label}</ThemedText>
-      {children}
-    </>
-  );
+    const content = (
+      <>
+        {icon && (
+          <View style={styles.iconContainer}>
+            <Icon
+              name={icon}
+              size={ds.iconSize.md}
+              color={isDestructive ? theme.iconDanger : undefined}
+            />
+          </View>
+        )}
+        <ThemedText
+          style={[styles.labelText, isDestructive && {color: theme.iconDanger}]}
+        >
+          {label}
+        </ThemedText>
+        {children}
+      </>
+    );
 
-  return onPress ? (
-    <TouchableOpacity style={[styles.listItem, style]} onPress={onPress}>
-      {content}
-    </TouchableOpacity>
-  ) : (
-    <View style={[styles.listItem, style]}>{content}</View>
-  );
-});
+    return onPress ? (
+      <TouchableOpacity style={[styles.listItem, style]} onPress={onPress}>
+        {content}
+      </TouchableOpacity>
+    ) : (
+      <View style={[styles.listItem, style]}>{content}</View>
+    );
+  },
+);
 
 ListItem.displayName = 'ListItem';
 

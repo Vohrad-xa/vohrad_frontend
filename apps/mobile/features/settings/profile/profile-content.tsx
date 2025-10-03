@@ -19,8 +19,10 @@ export function ProfileContent() {
   const styles = createStyles(ds, theme, scheme);
   const profile = useProfileDetails();
 
-  const buttonBackground = scheme === 'dark' ? Palette.Lbackground : Palette.black;
-  const buttonTextColor = scheme === 'dark' ? Palette.black : Palette.Lbackground;
+  const buttonBackground =
+    scheme === 'dark' ? Palette.Lbackground : Palette.black;
+  const buttonTextColor =
+    scheme === 'dark' ? Palette.black : Palette.Lbackground;
 
   const rows: RowConfig[] = [
     {key: 'firstName', label: 'First Name', value: profile.firstName},
@@ -52,7 +54,11 @@ export function ProfileContent() {
                     variant="body"
                     numberOfLines={1}
                     ellipsizeMode="tail"
-                    style={[styles.rowValue, !row.value && styles.placeholderValue]}>
+                    style={[
+                      styles.rowValue,
+                      !row.value && styles.placeholderValue,
+                    ]}
+                  >
                     {value}
                   </ThemedText>
                 </View>
@@ -66,8 +72,12 @@ export function ProfileContent() {
       <TouchableOpacity
         activeOpacity={0.7}
         style={[styles.updateButton, {backgroundColor: buttonBackground}]}
-        onPress={() => {}}>
-        <ThemedText variant="interactive" style={[styles.updateButtonText, {color: buttonTextColor}]}>
+        onPress={() => {}}
+      >
+        <ThemedText
+          variant="interactive"
+          style={[styles.updateButtonText, {color: buttonTextColor}]}
+        >
           Update Email
         </ThemedText>
       </TouchableOpacity>
@@ -77,11 +87,20 @@ export function ProfileContent() {
 
 const CARD_BACKGROUND = '#30302E';
 
-const createStyles = (ds: typeof DesignSystem, theme: ThemeType, scheme: 'light' | 'dark') => {
+const createStyles = (
+  ds: typeof DesignSystem,
+  theme: ThemeType,
+  scheme: 'light' | 'dark',
+) => {
   const primaryText = scheme === 'dark' ? theme.text : Palette.Lbackground;
-  const secondaryText = scheme === 'dark' ? theme.muted : 'rgba(255, 255, 255, 0.66)';
-  const placeholderText = scheme === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.4)';
-  const separatorColor = scheme === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.16)';
+  const secondaryText =
+    scheme === 'dark' ? theme.muted : 'rgba(255, 255, 255, 0.66)';
+  const placeholderText =
+    scheme === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.4)';
+  const separatorColor =
+    scheme === 'dark'
+      ? 'rgba(255, 255, 255, 0.12)'
+      : 'rgba(255, 255, 255, 0.16)';
 
   return StyleSheet.create({
     container: {

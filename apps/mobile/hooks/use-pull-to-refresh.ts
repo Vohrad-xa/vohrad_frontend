@@ -16,16 +16,26 @@ interface PullToRefreshResult {
   refreshControl?: React.ReactElement<RefreshControlProps>;
 }
 
-const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
+const wait = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-export function usePullToRefresh(options: PullToRefreshOptions = {}): PullToRefreshResult {
+export function usePullToRefresh(
+  options: PullToRefreshOptions = {},
+): PullToRefreshResult {
   const {theme} = useTheme();
-  const {onRefresh, delayMs = 800, tintColor, progressBackgroundColor, androidColors} = options;
+  const {
+    onRefresh,
+    delayMs = 800,
+    tintColor,
+    progressBackgroundColor,
+    androidColors,
+  } = options;
   const [refreshing, setRefreshing] = useState(false);
 
   const resolvedTintColor = tintColor ?? theme.tint;
   const resolvedProgressBackgroundColor =
-    progressBackgroundColor ?? (Platform.OS === 'android' ? theme.surface : theme.card);
+    progressBackgroundColor ??
+    (Platform.OS === 'android' ? theme.surface : theme.card);
 
   const handleRefresh = useCallback(async () => {
     if (refreshing) {
@@ -58,7 +68,14 @@ export function usePullToRefresh(options: PullToRefreshOptions = {}): PullToRefr
       progressBackgroundColor: resolvedProgressBackgroundColor,
       colors: resolvedAndroidColors,
     }) as React.ReactElement<RefreshControlProps>;
-  }, [handleRefresh, refreshing, resolvedProgressBackgroundColor, resolvedTintColor, androidColors, theme.tint]);
+  }, [
+    handleRefresh,
+    refreshing,
+    resolvedProgressBackgroundColor,
+    resolvedTintColor,
+    androidColors,
+    theme.tint,
+  ]);
 
   return {refreshing, onRefresh: handleRefresh, refreshControl};
 }

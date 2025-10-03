@@ -1,5 +1,11 @@
 import React, {useMemo} from 'react';
-import {View, StyleSheet, TouchableOpacity, FlatList, Platform} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Platform,
+} from 'react-native';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import type {MenuItem} from '@/types';
@@ -29,7 +35,11 @@ export function InfoCard() {
   const renderAction = ({item}: {item: MenuItem}) => (
     <TouchableOpacity style={styles.actionButton}>
       <View style={styles.iconContainer}>
-        <Icon name={item.icon} size={ds.iconSize.xxl} colorToken="quickActionIcon" />
+        <Icon
+          name={item.icon}
+          size={ds.iconSize.xxl}
+          colorToken="quickActionIcon"
+        />
       </View>
       <ThemedText style={styles.actionLabel}>{item.label}</ThemedText>
     </TouchableOpacity>
@@ -68,7 +78,11 @@ export function InfoCard() {
           {quickActions.map((item) => (
             <TouchableOpacity key={item.label} style={styles.actionButton}>
               <View style={styles.iconContainer}>
-                <Icon name={item.icon} size={ds.iconSize.xxl} colorToken="quickActionIcon" />
+                <Icon
+                  name={item.icon}
+                  size={ds.iconSize.xxl}
+                  colorToken="quickActionIcon"
+                />
               </View>
               <ThemedText style={styles.actionLabel}>{item.label}</ThemedText>
             </TouchableOpacity>

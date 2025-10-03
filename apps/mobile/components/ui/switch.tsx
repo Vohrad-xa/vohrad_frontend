@@ -1,5 +1,11 @@
 import React, {useRef, useEffect} from 'react';
-import {TouchableOpacity, Animated, Platform, type StyleProp, type ViewStyle} from 'react-native';
+import {
+  TouchableOpacity,
+  Animated,
+  Platform,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import {impactAsync, ImpactFeedbackStyle} from 'expo-haptics';
 import type {ThemePreference} from '@/constants/colors';
 import {useTheme} from '@/providers/theme-provider';
@@ -42,7 +48,12 @@ export default function Switch({style}: CustomSwitchProps) {
     if (Platform.OS === 'ios') {
       impactAsync(ImpactFeedbackStyle.Light).catch(() => undefined);
     }
-    const nextValue: ThemePreference = preference === 'light' ? 'dark' : preference === 'dark' ? 'system' : 'light';
+    const nextValue: ThemePreference =
+      preference === 'light'
+        ? 'dark'
+        : preference === 'dark'
+          ? 'system'
+          : 'light';
     setScheme(nextValue);
   };
 
@@ -79,11 +90,13 @@ export default function Switch({style}: CustomSwitchProps) {
       activeOpacity={0.7}
       accessibilityRole="switch"
       accessibilityState={{checked: preference !== 'system'}}
-      accessibilityLabel={`Theme toggle. Currently ${preference} mode.`}>
+      accessibilityLabel={`Theme toggle. Currently ${preference} mode.`}
+    >
       <Animated.View
         style={{
           transform: [{rotate: rotation}, {scale: scaleAnim}],
-        }}>
+        }}
+      >
         <Icon name={iconName} size={ds.iconSize.md} color={theme.muted} />
       </Animated.View>
     </TouchableOpacity>

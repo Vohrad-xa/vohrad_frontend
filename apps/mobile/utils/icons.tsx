@@ -117,13 +117,25 @@ export function getIconGlyph(name: IconName): string | undefined {
   return typeof glyph === 'number' ? String.fromCodePoint(glyph) : glyph;
 }
 
-export const Icon: React.FC<IconProps> = ({name, size = 28, color, colorToken, style}) => {
+export const Icon: React.FC<IconProps> = ({
+  name,
+  size = 28,
+  color,
+  colorToken,
+  style,
+}) => {
   const {theme, ds} = useTheme();
-  const resolvedSize = typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
+  const resolvedSize =
+    typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
   const resolvedColor = color ?? (colorToken ? theme[colorToken] : theme.icon);
 
   return (
-    <Ionicons name={name as keyof typeof Ionicons.glyphMap} size={resolvedSize} color={resolvedColor} style={style} />
+    <Ionicons
+      name={name as keyof typeof Ionicons.glyphMap}
+      size={resolvedSize}
+      color={resolvedColor}
+      style={style}
+    />
   );
 };
 

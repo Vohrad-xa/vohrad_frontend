@@ -17,10 +17,15 @@ async function isSecureStoreAvailable(): Promise<boolean> {
   try {
     secureStoreAvailable = await SecureStore.isAvailableAsync();
     if (!secureStoreAvailable) {
-      console.warn('[secure-storage] SecureStore unavailable, using volatile memory fallback.');
+      console.warn(
+        '[secure-storage] SecureStore unavailable, using volatile memory fallback.',
+      );
     }
   } catch (error) {
-    console.error('[secure-storage] SecureStore availability check failed:', error);
+    console.error(
+      '[secure-storage] SecureStore availability check failed:',
+      error,
+    );
     secureStoreAvailable = false;
   }
 
@@ -56,7 +61,9 @@ async function readFromSecureStore(key: string): Promise<string | null> {
       return directValue;
     }
 
-    const meta = await SecureStore.getItemAsync(withPrefix(`${key}${META_SUFFIX}`));
+    const meta = await SecureStore.getItemAsync(
+      withPrefix(`${key}${META_SUFFIX}`),
+    );
     if (!meta) {
       return null;
     }
@@ -68,12 +75,17 @@ async function readFromSecureStore(key: string): Promise<string | null> {
 
     const parts: string[] = [];
     for (let index = 0; index < chunks; index += 1) {
-      const chunk = await SecureStore.getItemAsync(withPrefix(`${key}${CHUNK_SUFFIX}${index}`));
+      const chunk = await SecureStore.getItemAsync(
+        withPrefix(`${key}${CHUNK_SUFFIX}${index}`),
+      );
       if (chunk == null) {
-        console.error('[secure-storage] Missing chunk while rebuilding value, clearing corrupted entry.', {
-          key,
-          chunkIndex: index,
-        });
+        console.error(
+          '[secure-storage] Missing chunk while rebuilding value, clearing corrupted entry.',
+          {
+            key,
+            chunkIndex: index,
+          },
+        );
         await clearChunkedValue(key);
         return null;
       }
@@ -114,10 +126,18 @@ async function writeToSecureStore(key: string, value: string): Promise<void> {
       const start = index * MAX_VALUE_LENGTH;
       const end = start + MAX_VALUE_LENGTH;
       const chunk = value.slice(start, end);
-      await SecureStore.setItemAsync(withPrefix(`${key}${CHUNK_SUFFIX}${index}`), chunk, options);
+      await SecureStore.setItemAsync(
+        withPrefix(`${key}${CHUNK_SUFFIX}${index}`),
+        chunk,
+        options,
+      );
     }
 
-    await SecureStore.setItemAsync(withPrefix(`${key}${META_SUFFIX}`), JSON.stringify({chunks: totalChunks}), options);
+    await SecureStore.setItemAsync(
+      withPrefix(`${key}${META_SUFFIX}`),
+      JSON.stringify({chunks: totalChunks}),
+      options,
+    );
   } catch (error) {
     console.error('[secure-storage] Failed to write to SecureStore:', error);
     throw error;
@@ -147,7 +167,9 @@ async function clearChunkedValue(key: string): Promise<void> {
     const {chunks} = JSON.parse(meta) as {chunks: number};
     if (Number.isFinite(chunks) && chunks > 0) {
       for (let index = 0; index < chunks; index += 1) {
-        await SecureStore.deleteItemAsync(withPrefix(`${key}${CHUNK_SUFFIX}${index}`));
+        await SecureStore.deleteItemAsync(
+          withPrefix(`${key}${CHUNK_SUFFIX}${index}`),
+        );
       }
     }
 
@@ -180,7 +202,10 @@ export async function setSecureItem(key: string, value: string): Promise<void> {
       remember(key, value);
       return;
     } catch (error) {
-      console.warn('[secure-storage] Falling back to memory after write failure:', error);
+      console.warn(
+        '[secure-storage] Falling back to memory after write failure:',
+        error,
+      );
       remember(key, value);
       return;
     }
@@ -196,7 +221,10 @@ export async function removeSecureItem(key: string): Promise<void> {
     try {
       await deleteFromSecureStore(key);
     } catch (error) {
-      console.error('[secure-storage] Failed to remove item, clearing fallback copy only:', error);
+      console.error(
+        '[secure-storage] Failed to remove item, clearing fallback copy only:',
+        error,
+      );
     }
   }
   remember(key, null);

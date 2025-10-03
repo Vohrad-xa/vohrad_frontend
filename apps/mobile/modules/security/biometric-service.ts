@@ -10,11 +10,18 @@ type BiometricSettings = {
   lastPromptAt?: number;
 };
 
-export type BiometricUnavailableReason = 'UNSUPPORTED' | 'NO_HARDWARE' | 'NOT_ENROLLED';
-export type BiometricAuthError = BiometricUnavailableReason | 'LOCKED' | 'unknown';
+export type BiometricUnavailableReason =
+  | 'UNSUPPORTED'
+  | 'NO_HARDWARE'
+  | 'NOT_ENROLLED';
+export type BiometricAuthError =
+  | BiometricUnavailableReason
+  | 'LOCKED'
+  | 'unknown';
 
 export type BiometricAvailability = {
   available: boolean;
+
   reason?: BiometricUnavailableReason;
 };
 
@@ -30,7 +37,12 @@ const DEFAULT_SETTINGS: BiometricSettings = {
 };
 
 const PROMPT_COOLDOWN_MS = 60 * 1000; // Avoid nagging the user too frequently
-const CANCELLED_ERROR_CODES = new Set(['user_cancel', 'system_cancel', 'app_cancel', 'user_fallback']);
+const CANCELLED_ERROR_CODES = new Set([
+  'user_cancel',
+  'system_cancel',
+  'app_cancel',
+  'user_fallback',
+]);
 const AUTH_PROMPT_BASE_OPTIONS = {
   cancelLabel: 'Cancel',
   fallbackLabel: 'Use Passcode',
@@ -139,7 +151,10 @@ export async function shouldPromptEnable(): Promise<boolean> {
   }
 
   const now = Date.now();
-  if (settings.lastPromptAt && now - settings.lastPromptAt < PROMPT_COOLDOWN_MS) {
+  if (
+    settings.lastPromptAt &&
+    now - settings.lastPromptAt < PROMPT_COOLDOWN_MS
+  ) {
     return false;
   }
 
@@ -150,7 +165,12 @@ export async function shouldPromptEnable(): Promise<boolean> {
 // Track that the user declined biometric opt-in.
 export async function recordDecline(): Promise<void> {
   const settings = await readSettings();
-  await writeSettings({...settings, enabled: false, declined: true, lastPromptAt: Date.now()});
+  await writeSettings({
+    ...settings,
+    enabled: false,
+    declined: true,
+    lastPromptAt: Date.now(),
+  });
 }
 
 // Attempt to enable biometrics, prompting the system sheet.
@@ -172,7 +192,12 @@ export async function enableWithAuthentication(
 
   if (result.success) {
     const settings = await readSettings();
-    await writeSettings({...settings, enabled: true, declined: false, lastPromptAt: Date.now()});
+    await writeSettings({
+      ...settings,
+      enabled: true,
+      declined: false,
+      lastPromptAt: Date.now(),
+    });
     return {success: true};
   }
 
@@ -192,7 +217,12 @@ export async function disableBiometrics(): Promise<void> {
   if (!settings.enabled && !settings.declined) {
     return;
   }
-  await writeSettings({...settings, enabled: false, declined: false, lastPromptAt: Date.now()});
+  await writeSettings({
+    ...settings,
+    enabled: false,
+    declined: false,
+    lastPromptAt: Date.now(),
+  });
 }
 
 // Prompt for biometric unlock during app launch.

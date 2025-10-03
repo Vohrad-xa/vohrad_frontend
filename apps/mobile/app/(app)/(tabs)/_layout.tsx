@@ -1,9 +1,19 @@
 import React, {useEffect} from 'react';
 import type {ComponentProps} from 'react';
-import {Platform, View, type ColorValue, type ImageSourcePropType} from 'react-native';
+import {
+  Platform,
+  View,
+  type ColorValue,
+  type ImageSourcePropType,
+} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {Tabs, useNavigation, useSegments} from 'expo-router';
-import {Icon, NativeTabs, Label, VectorIcon} from 'expo-router/unstable-native-tabs';
+import {
+  Icon,
+  NativeTabs,
+  Label,
+  VectorIcon,
+} from 'expo-router/unstable-native-tabs';
 import {useTheme} from '@/providers';
 import type {TabItem} from '@/types/ui';
 import {AppIcons, type IconName} from '@/utils';
@@ -16,7 +26,11 @@ const TAB_ITEMS: TabItem[] = [
 ];
 
 interface IoniconsModule {
-  getImageSource: (name: IconName, size: number, color: ColorValue) => Promise<ImageSourcePropType>;
+  getImageSource: (
+    name: IconName,
+    size: number,
+    color: ColorValue,
+  ) => Promise<ImageSourcePropType>;
 }
 
 const IoniconsFamily: IoniconsModule = {
@@ -24,7 +38,11 @@ const IoniconsFamily: IoniconsModule = {
     if (Platform.OS === 'web') {
       return {uri: ''};
     }
-    const result = await Ionicons.getImageSource(name as keyof typeof Ionicons.glyphMap, size, color as string);
+    const result = await Ionicons.getImageSource(
+      name as keyof typeof Ionicons.glyphMap,
+      size,
+      color as string,
+    );
     return result ?? {uri: ''};
   },
 };
@@ -48,7 +66,8 @@ export default function TabLayout() {
             headerShown: false,
             tabBarActiveTintColor: theme.tabIconSelected,
             tabBarInactiveTintColor: theme.icon,
-          }}>
+          }}
+        >
           {TAB_ITEMS.map((tab) => (
             <Tabs.Screen
               key={tab.name}
@@ -84,7 +103,8 @@ export default function TabLayout() {
       backgroundColor={theme.navigationBar}
       iconColor={theme.icon}
       tintColor={theme.tabIconSelected}
-      indicatorColor={theme.card}>
+      indicatorColor={theme.card}
+    >
       {TAB_ITEMS.map((tab) => (
         <NativeTabs.Trigger key={tab.name} name={tab.name}>
           <Label>{tab.label}</Label>

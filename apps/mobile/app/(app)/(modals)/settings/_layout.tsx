@@ -10,7 +10,11 @@ export default function SettingsLayout() {
   const getScreenOptions = (title: string) => ({
     title,
     headerLeft: () => (
-      <HeaderButton icon={AppIcons.navigation.back} accessibilityLabel="Back" onPress={() => router.back()} />
+      <HeaderButton
+        icon={AppIcons.navigation.back}
+        accessibilityLabel="Back"
+        onPress={() => router.back()}
+      />
     ),
     headerRight: () => null,
   });
@@ -21,10 +25,14 @@ export default function SettingsLayout() {
         contentStyle: {backgroundColor: theme.background},
         headerShown: true,
         headerTransparent: Platform.OS === 'ios',
-        headerStyle: Platform.OS === 'android' ? {backgroundColor: theme.navigationBar} : undefined,
+        headerStyle:
+          Platform.OS === 'android'
+            ? {backgroundColor: theme.navigationBar}
+            : undefined,
         headerTitleStyle: {color: theme.text},
         headerTitleAlign: 'center',
-      }}>
+      }}
+    >
       <Stack.Screen
         name="index"
         options={{
@@ -40,12 +48,27 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen name="profile" options={getScreenOptions('Profile')} />
-      <Stack.Screen name="preferences" options={getScreenOptions('Preferences')} />
-      <Stack.Screen name="language" options={getScreenOptions('App Language')} />
-      <Stack.Screen name="support" options={getScreenOptions('Report an Issue')} />
-      <Stack.Screen name="organization" options={getScreenOptions('Organization')} />
+      <Stack.Screen
+        name="preferences"
+        options={getScreenOptions('Preferences')}
+      />
+      <Stack.Screen
+        name="language"
+        options={getScreenOptions('App Language')}
+      />
+      <Stack.Screen
+        name="support"
+        options={getScreenOptions('Report an Issue')}
+      />
+      <Stack.Screen
+        name="organization"
+        options={getScreenOptions('Organization')}
+      />
       <Stack.Screen name="plan" options={getScreenOptions('Plan')} />
-      <Stack.Screen name="privacy" options={getScreenOptions('Privacy Policy')} />
+      <Stack.Screen
+        name="privacy"
+        options={getScreenOptions('Privacy Policy')}
+      />
       <Stack.Screen name="terms" options={getScreenOptions('Terms of Use')} />
       <Stack.Screen name="about" options={getScreenOptions('About')} />
     </Stack>

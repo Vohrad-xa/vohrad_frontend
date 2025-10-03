@@ -1,4 +1,10 @@
-import {View, TouchableOpacity, StyleSheet, Platform, StatusBar} from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Platform,
+  StatusBar,
+} from 'react-native';
 import {BlurView} from 'expo-blur';
 import Animated from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -30,7 +36,8 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
       <BlurView
         intensity={40}
         tint={scheme === 'dark' ? 'dark' : 'light'}
-        style={[styles.headerBlurView, {paddingTop: topPadding}]}>
+        style={[styles.headerBlurView, {paddingTop: topPadding}]}
+      >
         <View style={styles.headerContent}>
           <SearchBar style={styles.searchBar} placeholder="Search" />
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -42,7 +49,11 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
   );
 }
 
-const createStyles = (theme: ThemeType, ds: typeof DesignSystem, scheme: ColorScheme) =>
+const createStyles = (
+  theme: ThemeType,
+  ds: typeof DesignSystem,
+  scheme: ColorScheme,
+) =>
   StyleSheet.create({
     headerBlurView: {
       paddingLeft: ds.spacing.xl,

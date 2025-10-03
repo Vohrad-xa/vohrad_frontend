@@ -10,7 +10,9 @@ export default function PersonalEmailModal() {
 
   return (
     <>
-      <StatusBar barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'} />
+      <StatusBar
+        barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'}
+      />
       <PersonalEmailForm onSuccess={handleSuccess} />
     </>
   );

@@ -4,7 +4,14 @@ import {useTheme} from '@/providers';
 import {GlassCard} from './glass-card';
 
 export interface ThemedViewProps extends ViewProps {
-  variant?: 'default' | 'card' | 'cardContent' | 'modal' | 'header' | 'headerAccessory' | 'listItem';
+  variant?:
+    | 'default'
+    | 'card'
+    | 'cardContent'
+    | 'modal'
+    | 'header'
+    | 'headerAccessory'
+    | 'listItem';
   shadow?: 'none' | 'sm' | 'md' | 'lg';
   contentStyle?: ViewStyle;
 }
@@ -78,5 +85,7 @@ export const ThemedView: React.FC<ThemedViewProps> = ({
     }
   };
 
-  return <View style={[getVariantStyle(), getShadowStyle(), style]} {...props} />;
+  return (
+    <View style={[getVariantStyle(), getShadowStyle(), style]} {...props} />
+  );
 };

@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Platform, View, type StyleProp, type ViewStyle, AccessibilityInfo} from 'react-native';
+import {
+  Platform,
+  View,
+  type StyleProp,
+  type ViewStyle,
+  AccessibilityInfo,
+} from 'react-native';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 
@@ -78,18 +84,30 @@ export function GlassCard({children, style, contentStyle}: GlassCardProps) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
       const mod = require('expo-glass-effect') as GlassEffectModule;
-      const GlassView = (mod?.GlassView ?? mod) as React.ComponentType<GlassViewProps> | undefined;
-      const GlassContainer = (mod?.GlassContainer ?? mod) as React.ComponentType<GlassContainerProps> | undefined;
+      const GlassView = (mod?.GlassView ?? mod) as
+        | React.ComponentType<GlassViewProps>
+        | undefined;
+      const GlassContainer = (mod?.GlassContainer ?? mod) as
+        | React.ComponentType<GlassContainerProps>
+        | undefined;
       const isLiquidGlassAvailable = mod?.isLiquidGlassAvailable;
 
-      if (GlassView && GlassContainer && (!isLiquidGlassAvailable || isLiquidGlassAvailable())) {
+      if (
+        GlassView &&
+        GlassContainer &&
+        (!isLiquidGlassAvailable || isLiquidGlassAvailable())
+      ) {
         return (
           <GlassContainer spacing={ds.spacing.xs} style={style}>
             <GlassView
               glassEffectStyle={scheme === 'dark' ? 'clear' : 'regular'}
               tintColor={theme.glassTint}
               isInteractive
-              style={[{borderRadius: ds.components.card.borderRadius, flex: 1}, contentStyle]}>
+              style={[
+                {borderRadius: ds.components.card.borderRadius, flex: 1},
+                contentStyle,
+              ]}
+            >
               {children}
             </GlassView>
           </GlassContainer>
