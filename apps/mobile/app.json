@@ -25,7 +25,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
-      "windowSoftInputMode": "adjustResize",
+      "windowSoftInputMode": "adjustPan",
       "package": "vohrad.mobile"
     },
     "web": {

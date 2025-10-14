@@ -23,9 +23,8 @@ const getTextStyle = (
   opacity?: number,
 ) => {
   const brandFontMap: Partial<Record<TextVariant, keyof typeof ds.fonts>> = {
-    callout: 'brand',
-    headline: 'brand',
-    interactive: 'brandMedium',
+    heading: 'brand',
+    body: 'brandMedium',
   };
 
   const variantFontKey = brandFontMap[variant];
@@ -43,11 +42,7 @@ const getTextStyle = (
 
   if (colorToken) {
     textColor = theme[colorToken];
-  } else if (variantForColor === 'secondary') {
-    textColor = theme.muted;
-  } else if (variantForColor === 'tertiary' || variantForColor === 'caption') {
-    textColor = theme.muted;
-  } else if (variantForColor === 'actionBar') {
+  } else if (variantForColor === 'secondary' || variantForColor === 'caption') {
     textColor = theme.muted;
   } else {
     textColor = theme.text;

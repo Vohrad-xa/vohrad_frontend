@@ -33,111 +33,51 @@ export const DesignSystem = {
   },
 
   typography: {
-    // pageTitle: {
-    //   fontSize: 34,
-    //   lineHeight: 41,
-    //   fontWeight: '700' as const,
-    //   letterSpacing: 0.4,
-    // },
-
-    pageTitleScrolled: {
-      fontSize: 17,
-      lineHeight: 22,
-      fontWeight: '500' as const,
-      letterSpacing: -0.43,
-    },
-
-    body: {
-      fontSize: 17,
-      lineHeight: 22,
-      fontWeight: '400' as const,
-      letterSpacing: -0.43,
-    },
-
-    secondary: {
-      fontSize: 15,
-      lineHeight: 20,
-      fontWeight: '400' as const,
-      letterSpacing: -0.24,
-    },
-
-    tertiary: {
-      fontSize: 12,
-      lineHeight: 16,
-      fontWeight: '400' as const,
-      letterSpacing: 0,
-    },
-
-    caption: {
-      fontSize: 12,
-      lineHeight: 16,
-      fontWeight: '400' as const,
-      letterSpacing: 0,
-    },
-
-    actionBar: {
-      fontSize: 10,
-      lineHeight: 12,
-      fontWeight: '400' as const,
-      letterSpacing: 0.12,
-    },
-
-    interactive: {
-      fontSize: 17,
-      lineHeight: 22,
-      fontWeight: '400' as const,
-      letterSpacing: -0.43,
-    },
-
-    largeTitle: {
+    // Page Level - Headers
+    pageTitle: {
       fontSize: 34,
       lineHeight: 41,
       fontWeight: '700' as const,
       letterSpacing: 0.4,
     },
 
-    title1: {
-      fontSize: 28,
-      lineHeight: 34,
-      fontWeight: '400' as const,
-      letterSpacing: 0.36,
-    },
-
-    title2: {
+    sectionTitle: {
       fontSize: 22,
       lineHeight: 28,
       fontWeight: '600' as const,
       letterSpacing: 0.35,
     },
 
-    title3: {
-      fontSize: 20,
-      lineHeight: 24,
-      fontWeight: '400' as const,
-      letterSpacing: 0.38,
-    },
-
-    headline: {
+    heading: {
       fontSize: 17,
       lineHeight: 22,
       fontWeight: '600' as const,
-      letterSpacing: -0.43,
+      letterSpacing: 0.5,
     },
 
-    callout: {
-      fontSize: 16,
-      lineHeight: 20,
-      fontWeight: '600' as const,
-      letterSpacing: -0.32,
+    // Content Level - Text
+    label: {
+      fontSize: 17,
+      lineHeight: 22,
+      fontWeight: '500' as const,
+      letterSpacing: 0.2,
     },
 
-    subheadline: {
+    body: {
+      fontSize: 17,
+      lineHeight: 22,
+      fontWeight: '400' as const,
+      letterSpacing: 0.2,
+    },
+
+    secondary: {
       fontSize: 15,
       lineHeight: 20,
       fontWeight: '400' as const,
-      letterSpacing: -0.24,
+      letterSpacing: 0.2,
     },
 
+    // Utility - Small Text
     footnote: {
       fontSize: 13,
       lineHeight: 18,
@@ -145,25 +85,11 @@ export const DesignSystem = {
       letterSpacing: -0.08,
     },
 
-    caption1: {
+    caption: {
       fontSize: 12,
       lineHeight: 16,
       fontWeight: '400' as const,
       letterSpacing: 0,
-    },
-
-    caption2: {
-      fontSize: 11,
-      lineHeight: 13,
-      fontWeight: '400' as const,
-      letterSpacing: 0.07,
-    },
-
-    tabBar: {
-      fontSize: 10,
-      lineHeight: 12,
-      fontWeight: '400' as const,
-      letterSpacing: 0.12,
     },
   },
 
@@ -209,7 +135,7 @@ export const DesignSystem = {
     },
 
     input: {
-      borderRadius: 10,
+      borderRadius: 15,
       padding: 12,
       height: 44,
       borderWidth: 1,
@@ -217,7 +143,7 @@ export const DesignSystem = {
     },
 
     button: {
-      borderRadius: 10,
+      borderRadius: 15,
       paddingVertical: 12,
       paddingHorizontal: 16,
       height: 44,
@@ -225,7 +151,7 @@ export const DesignSystem = {
     },
 
     card: {
-      borderRadius: 20,
+      borderRadius: 22,
       padding: 16,
     },
 

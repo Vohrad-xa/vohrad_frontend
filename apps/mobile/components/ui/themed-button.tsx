@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {
   TouchableOpacity,
   type TouchableOpacityProps,
@@ -7,6 +7,7 @@ import {
 import {useTheme} from '@/providers/theme-provider';
 import {Icon, type IconName} from '@/utils';
 import {ThemedText} from './themed-text';
+import {Palette} from '@/constants/colors';
 
 export interface ThemedButtonProps extends TouchableOpacityProps {
   title?: string;
@@ -31,6 +32,33 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
   ...props
 }) => {
   const {theme, ds, scheme} = useTheme();
+  const hasTitle = typeof title === 'string';
+  const titleContent = loading ? 'Loading...' : (title ?? '');
+
+  const getTextColor = () => {
+    if (disabled || loading) {
+      return theme.muted;
+    }
+
+    switch (variant) {
+      case 'primary':
+        return scheme === 'dark' ? Palette.black : Palette.Lbackground;
+      case 'secondary':
+        return theme.text;
+      case 'destructive':
+        return theme.destructiveForeground;
+      case 'ghost':
+        return theme.text;
+      default:
+        return theme.primaryForeground;
+    }
+  };
+
+  const textColor = getTextColor();
+  const buttonTextStyle = useMemo(
+    () => ({fontWeight: ds.fontWeight.semibold, color: textColor}),
+    [ds.fontWeight.semibold, textColor],
+  );
 
   const getButtonStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
@@ -62,8 +90,10 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
       case 'primary':
         return {
           ...baseStyle,
-          backgroundColor: scheme === 'dark' ? theme.input : theme.secondary,
-          borderColor: scheme === 'dark' ? theme.input : theme.secondary,
+          backgroundColor:
+            scheme === 'dark' ? Palette.Lbackground : Palette.black,
+          borderColor:
+            scheme === 'dark' ? Palette.Lbackground : Palette.Dbackground,
           borderWidth: 1,
         };
       case 'secondary':
@@ -92,25 +122,6 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
     }
   };
 
-  const getTextColor = () => {
-    if (disabled || loading) {
-      return theme.muted;
-    }
-
-    switch (variant) {
-      case 'primary':
-        return theme.primaryForeground;
-      case 'secondary':
-        return theme.text;
-      case 'destructive':
-        return theme.destructiveForeground;
-      case 'ghost':
-        return theme.text;
-      default:
-        return theme.primaryForeground;
-    }
-  };
-
   return (
     <TouchableOpacity
       style={[getButtonStyle(), style]}
@@ -122,21 +133,21 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
         <Icon
           name={icon}
           size={ds.iconSize.md}
-          color={getTextColor()}
+          color={textColor}
           style={{marginRight: ds.spacing.xs}}
         />
       )}
-      {(title ?? children) && (
-        <ThemedText variant="interactive">
-          {loading ? 'Loading...' : title}
+      {(hasTitle || loading) && (
+        <ThemedText variant="body" style={buttonTextStyle}>
+          {titleContent}
         </ThemedText>
       )}
-      {children && !title && children}
+      {!hasTitle && children && children}
       {icon && iconPosition === 'right' && (
         <Icon
           name={icon}
           size={ds.iconSize.md}
-          color={getTextColor()}
+          color={textColor}
           style={{marginLeft: ds.spacing.xs}}
         />
       )}

@@ -8,6 +8,7 @@ export const Palette = {
     500: '#8E8E93',
     600: '#636366',
     700: '#48484A',
+    750: '#30302E',
     800: '#1C1C1E',
     900: '#0B0B0B',
   },
@@ -26,7 +27,8 @@ export const Palette = {
   black: '#000000',
   Dbackground: '#262624',
   Lbackground: '#FAF9F5',
-  Obsidian: '#111214',
+  Obsidian: '#171717ff',
+  // Obsidian: '#111214',
   mushroom: '#9C9A92',
   Onyx: '#1F1E1D',
   Alabaster: '#F5F4ED',
@@ -63,6 +65,7 @@ export const Tokens = {
 
     // UI
     icon: Palette.black,
+    label: Palette.gray[600],
     tint: Palette.brand.blue,
     tabIconSelected: Palette.brand.blue,
     card: Palette.cardLightGlass,
@@ -111,10 +114,11 @@ export const Tokens = {
 
     // UI
     icon: Palette.mushroom,
+    label: Palette.mushroom,
     tint: Palette.brand.blue,
     tabIconSelected: Palette.brand.blue,
     card: Palette.cardDarkGlass,
-    input: Palette.Obsidian,
+    input: Palette.gray[750],
     purple: Palette.brand.purple,
     iosLightGray: Palette.gray[700],
     iosPlaceholder: Palette.gray[500],
