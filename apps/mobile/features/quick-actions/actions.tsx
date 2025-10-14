@@ -10,9 +10,9 @@ import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import type {MenuItem} from '@/types';
 import {Icon, AppIcons} from '@/utils';
-import {ThemedText} from './themed-text';
+import {ThemedText} from '../../components/ui/themed-text';
 
-export function InfoCard() {
+export function QuickActions() {
   const {ds, theme} = useTheme();
 
   const quickActions: MenuItem[] = useMemo(

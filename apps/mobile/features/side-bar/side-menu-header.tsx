@@ -10,7 +10,6 @@ import Animated from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {SearchBar} from '@/components/ui';
 import type {ColorScheme} from '@/constants/colors';
-import {Palette} from '@/constants/colors';
 import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons} from '@/utils';

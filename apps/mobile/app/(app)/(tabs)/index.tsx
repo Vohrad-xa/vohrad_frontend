@@ -1,10 +1,6 @@
 import {StyleSheet, View, Dimensions, ScrollView, Platform} from 'react-native';
-import {
-  InfoCard,
-  RefreshableScrollView,
-  ThemedText,
-  ThemedView,
-} from '@/components/ui';
+import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
+import {QuickActions} from '@/features/quick-actions';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import type {MenuCard} from '@/types/ui';
@@ -124,7 +120,7 @@ export default function HomeScreen() {
         <ThemedText variant="heading" style={[styles.title, {marginTop: 0}]}>
           Quick Actions
         </ThemedText>
-        <InfoCard />
+        <QuickActions />
 
         <ThemedText variant="heading" style={styles.title}>
           Overview
