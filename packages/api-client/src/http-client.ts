@@ -40,6 +40,7 @@ export class HttpClient {
     }
 
     // DEVELOPMENT ONLY: Send tenant via header for IP-based development
+    // NOTE: Now using subdomain in URL instead (tenant.domain.com)
     if (apiConfig.tenant) {
       headers['X-Tenant-Subdomain'] = apiConfig.tenant;
     }
