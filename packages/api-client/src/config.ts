@@ -76,8 +76,9 @@ export function resolveBaseUrl(): string {
     );
   }
 
-  // DEVELOPMENT: Don't add subdomain to URL, send via X-Tenant-Subdomain header instead
-  // PRODUCTION: Add subdomain to domain (tenant.yourdomain.com)
+  // If tenant is set, construct subdomain URL: tenant.domain.com
+  // Otherwise use base domain (for auth endpoints before tenant is known)
+  // const fullDomain = cfg.tenant ? `${cfg.tenant}.${domain}` : domain;
   return `${proto}://${domain}`;
 }
 
@@ -86,5 +87,7 @@ export function resolveApiUrl(endpoint: string): string {
   const ver = current.version?.replace(/^\//, '');
   const ep = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
   const url = ver ? `${base}/${ver}/${ep}` : `${base}/${ep}`;
+  // LATER TODO : Add /api prefix for professional API structure
+  // const url = ver ? `${base}/api/${ver}/${ep}` : `${base}/api/${ep}`;
   return url.replace(/(?<!:)\/+/g, '/');
 }

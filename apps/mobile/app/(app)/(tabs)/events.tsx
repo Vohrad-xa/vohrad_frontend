@@ -13,7 +13,7 @@ export default function EventsPage() {
       style={{backgroundColor: theme.background}}
     >
       <ThemedView style={STANDARD_TAB_CONTAINER}>
-        <ThemedText variant="largeTitle">Events</ThemedText>
+        <ThemedText variant="pageTitle">Events</ThemedText>
         <ThemedText variant="body" style={STANDARD_CONTENT_SPACING}>
           System events and notifications will be displayed here.
         </ThemedText>

@@ -60,22 +60,24 @@ export default function LoginScreen() {
           >
             <View style={[styles.centered, styles.spacingXl]}>
               <Image source={darkModeImage} style={styles.heroImage} />
-              <ThemedText variant="title2" style={styles.centered}>
+              <ThemedText variant="sectionTitle" style={styles.centered}>
                 Sign in
               </ThemedText>
             </View>
 
             <View style={[styles.spacingXl, styles.actionsStack]}>
               <ThemedButton
-                variant="secondary"
                 fullWidth
                 onPress={handleMicrosoftLogin}
-                style={[styles.microsoftButton, buttonStyles]}
+                style={buttonStyles}
               >
                 <Image source={microsoftLogo} style={styles.microsoftIcon} />
                 <ThemedText
-                  variant="callout"
-                  style={styles.microsoftButtonText}
+                  variant="body"
+                  style={{
+                    fontWeight: ds.fontWeight.semibold,
+                    color: scheme === 'dark' ? '#000' : '#fff',
+                  }}
                 >
                   Continue with Microsoft
                 </ThemedText>
@@ -83,7 +85,7 @@ export default function LoginScreen() {
 
               <View style={[styles.divider, buttonStyles]}>
                 <View style={styles.dividerLine} />
-                <ThemedText variant="subheadline" colorToken="muted">
+                <ThemedText variant="secondary" colorToken="muted">
                   OR
                 </ThemedText>
                 <View style={styles.dividerLine} />
@@ -91,12 +93,11 @@ export default function LoginScreen() {
 
               <ThemedButton
                 variant="primary"
+                title="Use personal email"
                 fullWidth
                 onPress={handlePersonalEmailLogin}
-                style={[styles.continueButton, buttonStyles]}
-              >
-                <ThemedText variant="callout">Use personal email</ThemedText>
-              </ThemedButton>
+                style={[buttonStyles]}
+              />
 
               <View style={styles.footer}>
                 <ThemedText variant="caption" colorToken="muted">
@@ -148,18 +149,6 @@ const createStyles = (
     footer: {
       alignItems: 'center',
       gap: ds.spacing.xs,
-    },
-    microsoftButton: {
-      backgroundColor:
-        scheme === 'dark' ? Palette.Lbackground : Palette.Dbackground,
-      borderColor:
-        scheme === 'dark' ? Palette.Lbackground : Palette.Dbackground,
-    },
-    microsoftButtonText: {
-      color: scheme === 'dark' ? Palette.black : Palette.Lbackground,
-    },
-    continueButton: {
-      borderWidth: 2,
     },
     divider: {
       flexDirection: 'row',

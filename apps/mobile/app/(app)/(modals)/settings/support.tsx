@@ -25,7 +25,7 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
       paddingHorizontal: ds.spacing.xl,
     },
     text: {
-      ...ds.typography.title1,
+      ...ds.typography.sectionTitle,
       color: theme.text,
     },
   });

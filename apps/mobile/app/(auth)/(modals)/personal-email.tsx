@@ -1,19 +1,27 @@
 import React from 'react';
-import {StatusBar} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 import {PersonalEmailForm} from '@/features/auth/personal-email-form';
-import {useTheme} from '@/providers';
+import {ThemedView, ModalScrollView} from '@/components/ui';
 
 export default function PersonalEmailModal() {
-  const {scheme} = useTheme();
-
   const handleSuccess = () => {};
 
   return (
-    <>
-      <StatusBar
-        barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'}
-      />
-      <PersonalEmailForm onSuccess={handleSuccess} />
-    </>
+    <ThemedView style={styles.container}>
+      <ModalScrollView
+        contentContainerStyle={
+          Platform.OS === 'web' && {
+            flexGrow: 1,
+            justifyContent: 'center',
+          }
+        }
+      >
+        <PersonalEmailForm onSuccess={handleSuccess} />
+      </ModalScrollView>
+    </ThemedView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {flex: 1},
+});

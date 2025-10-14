@@ -40,7 +40,7 @@ export function Collapsible({
           style={{transform: [{rotate: isOpen ? '90deg' : '0deg'}]}}
         />
 
-        <ThemedText variant="headline">{title}</ThemedText>
+        <ThemedText variant="heading">{title}</ThemedText>
       </TouchableOpacity>
       {isOpen && <ThemedView style={styles.content}>{children}</ThemedView>}
     </ThemedView>

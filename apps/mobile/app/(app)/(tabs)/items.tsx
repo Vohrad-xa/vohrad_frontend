@@ -13,7 +13,7 @@ export default function ItemsPage() {
       style={{backgroundColor: theme.background}}
     >
       <ThemedView style={STANDARD_TAB_CONTAINER}>
-        <ThemedText variant="largeTitle">Items</ThemedText>
+        <ThemedText variant="pageTitle">Items</ThemedText>
         <ThemedText variant="body" style={STANDARD_CONTENT_SPACING}>
           Inventory items will be displayed here.
         </ThemedText>

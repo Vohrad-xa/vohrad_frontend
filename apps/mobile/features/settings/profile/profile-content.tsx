@@ -1,163 +1,118 @@
-import React, {Fragment} from 'react';
-import {StyleSheet, View, TouchableOpacity} from 'react-native';
-import {Palette} from '@/constants/colors';
-import type {DesignSystem} from '@/constants/typography';
+import React, {useState, useMemo, useEffect} from 'react';
+import {StyleSheet, View} from 'react-native';
+import {ThemedButton, Input, ThemedText} from '@/components/ui';
 import {useTheme} from '@/providers';
-import {ThemedText} from '@/components/ui';
+import {DesignSystem} from '@/constants/typography';
 import {useProfileDetails} from './use-profile-details';
 
 type ThemeType = ReturnType<typeof useTheme>['theme'];
 
-type RowConfig = {
-  key: string;
+type ProfileRow = {
+  key: keyof ProfileState;
   label: string;
-  value: string | null;
+  placeholder: string;
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
 };
 
-export function ProfileContent() {
-  const {ds, theme, scheme} = useTheme();
-  const styles = createStyles(ds, theme, scheme);
-  const profile = useProfileDetails();
+type ProfileState = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: string;
+  phoneNumber: string;
+};
 
-  const buttonBackground =
-    scheme === 'dark' ? Palette.Lbackground : Palette.black;
-  const buttonTextColor =
-    scheme === 'dark' ? Palette.black : Palette.Lbackground;
+export function ProfileContentEditable() {
+  const {ds, theme} = useTheme();
+  const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
 
-  const rows: RowConfig[] = [
-    {key: 'firstName', label: 'First Name', value: profile.firstName},
-    {key: 'lastName', label: 'Last Name', value: profile.lastName},
-    {key: 'email', label: 'Email', value: profile.email},
-    {key: 'address', label: 'Address', value: profile.address},
-    {key: 'phone', label: 'Phone Number', value: profile.phoneNumber},
+  const profileDetails = useProfileDetails();
+
+  const [profile, setProfile] = useState<ProfileState>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    address: '',
+    phoneNumber: '',
+  });
+
+  useEffect(() => {
+    if (profileDetails) {
+      setProfile({
+        firstName: profileDetails.firstName ?? '',
+        lastName: profileDetails.lastName ?? '',
+        email: profileDetails.email ?? '',
+        address: profileDetails.address ?? '',
+        phoneNumber: profileDetails.phoneNumber ?? '',
+      });
+    }
+  }, [profileDetails]);
+
+  const fields: ProfileRow[] = [
+    {key: 'firstName', label: 'First Name', placeholder: 'First Name'},
+    {key: 'lastName', label: 'Last Name', placeholder: 'Last Name'},
+    {
+      key: 'email',
+      label: 'Email Address',
+      placeholder: 'Email Address',
+      keyboardType: 'email-address',
+    },
+    {key: 'address', label: 'Address', placeholder: 'Address'},
+    {
+      key: 'phoneNumber',
+      label: 'Phone Number',
+      placeholder: 'Phone Number',
+      keyboardType: 'phone-pad',
+    },
   ];
+
+  const updateField = (key: keyof ProfileState, value: string) => {
+    setProfile((prev) => ({...prev, [key]: value}));
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.section}>
-        <ThemedText variant="title3" style={styles.sectionTitle}>
-          Profile Information
-        </ThemedText>
-
-        <View style={styles.detailsCard}>
-          {rows.map((row, index) => {
-            const isLast = index === rows.length - 1;
-            const value = row.value ?? 'Not provided';
-
-            return (
-              <Fragment key={row.key}>
-                <View style={styles.row}>
-                  <ThemedText variant="body" style={styles.rowLabel}>
-                    {row.label}
-                  </ThemedText>
-                  <ThemedText
-                    variant="body"
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    style={[
-                      styles.rowValue,
-                      !row.value && styles.placeholderValue,
-                    ]}
-                  >
-                    {value}
-                  </ThemedText>
-                </View>
-                {!isLast && <View style={styles.separator} />}
-              </Fragment>
-            );
-          })}
+      {fields.map((item) => (
+        <View key={item.key} style={styles.fieldContainer}>
+          <ThemedText variant="label" colorToken="label" style={styles.label}>
+            {item.label}
+          </ThemedText>
+          <Input
+            value={profile[item.key]}
+            onChangeText={(text) => updateField(item.key, text)}
+            placeholder={item.placeholder}
+            keyboardType={item.keyboardType}
+          />
         </View>
-      </View>
+      ))}
 
-      <TouchableOpacity
-        activeOpacity={0.7}
-        style={[styles.updateButton, {backgroundColor: buttonBackground}]}
-        onPress={() => {}}
-      >
-        <ThemedText
-          variant="interactive"
-          style={[styles.updateButtonText, {color: buttonTextColor}]}
-        >
-          Update Email
-        </ThemedText>
-      </TouchableOpacity>
+      <View style={styles.actions}>
+        <ThemedButton
+          title="Save Profile"
+          variant="primary"
+          onPress={() => {
+            // logic here
+          }}
+        />
+      </View>
     </View>
   );
 }
 
-const CARD_BACKGROUND = '#30302E';
-
-const createStyles = (
-  ds: typeof DesignSystem,
-  theme: ThemeType,
-  scheme: 'light' | 'dark',
-) => {
-  const primaryText = scheme === 'dark' ? theme.text : Palette.Lbackground;
-  const secondaryText =
-    scheme === 'dark' ? theme.muted : 'rgba(255, 255, 255, 0.66)';
-  const placeholderText =
-    scheme === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.4)';
-  const separatorColor =
-    scheme === 'dark'
-      ? 'rgba(255, 255, 255, 0.12)'
-      : 'rgba(255, 255, 255, 0.16)';
-
-  return StyleSheet.create({
+const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
+  StyleSheet.create({
     container: {
-      gap: ds.spacing.xl,
-      paddingHorizontal: ds.spacing.xl,
-      top: ds.spacing.xl,
+      gap: ds.spacing.lg,
+      paddingTop: ds.spacing.md,
     },
-    section: {
-      gap: ds.spacing.md,
+    fieldContainer: {
+      gap: ds.spacing.sm,
     },
-    sectionTitle: {
-      color: primaryText,
-      fontWeight: ds.fontWeight.semibold,
+    label: {
+      paddingLeft: ds.spacing.sm,
     },
-    detailsCard: {
-      borderRadius: ds.borderRadius.xxxl,
-      backgroundColor: CARD_BACKGROUND,
-      paddingHorizontal: ds.spacing.xl,
-      paddingVertical: ds.spacing.md,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: 'rgba(255, 255, 255, 0.08)',
-    },
-    row: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingVertical: ds.spacing.md,
-    },
-    rowLabel: {
-      flex: 1,
-      marginRight: ds.spacing.md,
-      color: secondaryText,
-      fontWeight: ds.fontWeight.medium,
-    },
-    rowValue: {
-      maxWidth: '60%',
-      textAlign: 'right',
-      color: primaryText,
-      fontWeight: ds.fontWeight.semibold,
-    },
-    placeholderValue: {
-      color: placeholderText,
-    },
-    separator: {
-      height: StyleSheet.hairlineWidth,
-      backgroundColor: separatorColor,
-      marginHorizontal: -ds.spacing.xl,
-    },
-    updateButton: {
-      alignSelf: 'stretch',
-      borderRadius: ds.borderRadius.xxxl,
-      paddingVertical: ds.spacing.md,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    updateButtonText: {
-      fontWeight: ds.fontWeight.semibold,
+    actions: {
+      paddingTop: ds.spacing.md,
+      paddingBottom: ds.spacing.xxxl + ds.spacing.md,
     },
   });
-};

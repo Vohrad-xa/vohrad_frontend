@@ -121,12 +121,12 @@ export default function HomeScreen() {
       style={{backgroundColor: theme.background, flex: 1}}
     >
       <View style={styles.container}>
-        <ThemedText variant="headline" style={[styles.title, {marginTop: 0}]}>
+        <ThemedText variant="heading" style={[styles.title, {marginTop: 0}]}>
           Quick Actions
         </ThemedText>
         <InfoCard />
 
-        <ThemedText variant="headline" style={styles.title}>
+        <ThemedText variant="heading" style={styles.title}>
           Overview
         </ThemedText>
         <View style={styles.cardContainer}>
@@ -148,7 +148,7 @@ export default function HomeScreen() {
                     {card.title}
                   </ThemedText>
                 </View>
-                <ThemedText variant="headline" style={styles.cardCount}>
+                <ThemedText variant="heading" style={styles.cardCount}>
                   {card.count}
                 </ThemedText>
               </ThemedView>

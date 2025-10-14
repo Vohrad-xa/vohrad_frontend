@@ -13,7 +13,7 @@ export default function LocationsPage() {
       style={{backgroundColor: theme.background}}
     >
       <ThemedView style={STANDARD_TAB_CONTAINER}>
-        <ThemedText variant="largeTitle">Locations</ThemedText>
+        <ThemedText variant="pageTitle">Locations</ThemedText>
         <ThemedText variant="body" style={STANDARD_CONTENT_SPACING}>
           Manage storage locations, rooms, and assigned areas here.
         </ThemedText>

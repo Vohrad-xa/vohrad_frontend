@@ -1,6 +1,6 @@
 import {useMemo, useCallback} from 'react';
 import type {ReactNode} from 'react';
-import {StyleSheet, Platform, FlatList} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 import type {ListRenderItem} from 'react-native';
 import {StatusBar as ExpoStatusBar} from 'expo-status-bar';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -10,6 +10,7 @@ import {
   Divider,
   ListItem,
   Switch,
+  ModalFlatList,
 } from '@/components/ui';
 import type {DesignSystem} from '@/constants/typography';
 import {BiometricToggle} from '@/features/settings/biometric-toggle';
@@ -113,19 +114,13 @@ export default function SettingsModal() {
 
   return (
     <ThemedView style={styles.container}>
-      <FlatList
+      <ModalFlatList
         data={allSettingsItems}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        style={styles.scrollContainer}
-        contentContainerStyle={[
-          styles.scrollContentContainer,
-          {
-            paddingTop: ds.spacing.lg,
-            paddingBottom: insets.bottom + ds.spacing.xl,
-          },
-        ]}
-        contentInsetAdjustmentBehavior="automatic"
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + ds.spacing.xl,
+        }}
         showsVerticalScrollIndicator
       />
 
@@ -138,12 +133,6 @@ const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
   StyleSheet.create({
     container: {
       flex: 1,
-    },
-    scrollContainer: {
-      flex: 1,
-    },
-    scrollContentContainer: {
-      paddingHorizontal: ds.spacing.xl,
     },
     divider: {
       marginVertical: ds.spacing.sm,

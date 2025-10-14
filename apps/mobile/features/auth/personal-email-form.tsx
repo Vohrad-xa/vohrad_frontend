@@ -1,118 +1,124 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import type {TextInput} from 'react-native';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {
-  ThemedButton,
-  ThemedInput,
-  ThemedText,
-  ThemedView,
-} from '@/components/ui';
-import {type ColorScheme, Palette} from '@/constants/colors';
-import {type DesignSystem} from '@/constants/typography';
+import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {ThemedButton, ThemedText, Input} from '@/components/ui';
+import type {InputStatus} from '@/components/ui';
+import {DesignSystem} from '@/constants/typography';
 import * as biometricService from '@/modules/security/biometric-service';
 import {useAuth, useTheme} from '@/providers';
 import * as AppStorage from '@/utils/storage';
 import {validateEmail} from '@/utils/validation';
+import {FormCard} from '@/components/ui/form-card';
 
 type PersonalEmailFormProps = {
   onSuccess: () => void;
   onForgotPassword?: () => void;
 };
 
+type ThemeType = ReturnType<typeof useTheme>['theme'];
+
+type FormState = {subdomain: string; email: string; password: string};
+type FieldKey = keyof FormState;
+
+type FieldRow = {
+  key: FieldKey;
+  placeholder: string;
+  keyboardType?: 'default' | 'email-address';
+  secureTextEntry?: boolean;
+  ref?:
+    | React.MutableRefObject<TextInput | null>
+    | React.RefObject<TextInput | null>
+    | React.Ref<TextInput>;
+};
+
 export function PersonalEmailForm({
   onSuccess,
   onForgotPassword,
 }: PersonalEmailFormProps) {
-  // Form state
-  const [subdomain, setSubdomain] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [form, setForm] = useState<FormState>({
+    subdomain: '',
+    email: '',
+    password: '',
+  });
   const [showEmailValidation, setShowEmailValidation] = useState(false);
 
-  // Hooks
   const {loginUser, isLoading, error, clearError} = useAuth();
-  const {ds, theme, scheme} = useTheme();
+  const {ds, theme} = useTheme();
 
-  // Refs
   const subdomainInputRef = useRef<TextInput>(null);
   const emailInputRef = useRef<TextInput>(null);
   const emailValidationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
 
+  const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
+
   useEffect(() => {
-    AppStorage.getTenantSubdomain().then((savedSubdomain) => {
+    AppStorage.getTenantSubdomain().then((saved) => {
       const timer = setTimeout(() => {
-        if (savedSubdomain) {
-          setSubdomain(savedSubdomain);
+        if (saved) {
+          setForm((p) => ({...p, subdomain: saved}));
           emailInputRef.current?.focus();
         } else {
           subdomainInputRef.current?.focus();
         }
       }, 100);
-
       return () => clearTimeout(timer);
     });
   }, []);
 
-  // Clear errors when component mounts
   useEffect(() => {
     clearError();
   }, [clearError]);
 
-  // Debounce email validation
   useEffect(() => {
-    if (emailValidationTimerRef.current) {
+    if (emailValidationTimerRef.current)
       clearTimeout(emailValidationTimerRef.current);
-    }
-
     setShowEmailValidation(false);
-
-    if (email.length > 0) {
-      emailValidationTimerRef.current = setTimeout(() => {
-        setShowEmailValidation(true);
-      }, 800);
+    if (form.email.length > 0) {
+      emailValidationTimerRef.current = setTimeout(
+        () => setShowEmailValidation(true),
+        800,
+      );
     }
-
     return () => {
-      if (emailValidationTimerRef.current) {
+      if (emailValidationTimerRef.current)
         clearTimeout(emailValidationTimerRef.current);
-      }
     };
-  }, [email]);
+  }, [form.email]);
 
-  const emailValidation = useMemo(() => validateEmail(email), [email]);
+  const emailValidation = useMemo(
+    () => validateEmail(form.email),
+    [form.email],
+  );
 
-  // Determine input states based on backend error or frontend validation
   const hasBackendError = !!error;
-
-  const showSubdomainSuccess = subdomain.trim().length > 0;
+  const showSubdomainSuccess =
+    form.subdomain.trim().length > 0 && !hasBackendError;
   const showEmailError =
     !hasBackendError && showEmailValidation && !emailValidation.isValid;
   const showEmailSuccess =
     !hasBackendError &&
     showEmailValidation &&
     emailValidation.isValid &&
-    email.length > 0;
-  const showPasswordSuccess = !hasBackendError && password.length > 0;
+    form.email.length > 0;
+  const showPasswordSuccess = !hasBackendError && form.password.length > 0;
 
-  // Apply typo suggestion
-  const handleApplySuggestion = () => {
-    if (emailValidation.suggestion) {
-      setEmail(emailValidation.suggestion);
-      clearError();
-    }
+  const isFormValid =
+    form.subdomain.trim().length > 0 &&
+    emailValidation.isValid &&
+    form.password.length > 0;
+
+  const setField = (key: FieldKey, value: string) => {
+    setForm((prev) => ({...prev, [key]: value}));
+    clearError();
   };
 
-  // Email requirements alert
+  const handleApplySuggestion = () => {
+    if (emailValidation.suggestion)
+      setField('email', emailValidation.suggestion);
+  };
+
   const handleEmailErrorPress = () => {
     Alert.alert(
       'Email Requirements',
@@ -121,42 +127,9 @@ export function PersonalEmailForm({
     );
   };
 
-  // Handle login submission
-  const handleLogin = async () => {
-    if (!subdomain.trim() || !email.trim() || !password) return;
-    if (!emailValidation.isValid) return;
-
-    try {
-      clearError();
-      await loginUser(email.trim(), password, subdomain.trim());
-      setPassword('');
-      await AppStorage.setTenantSubdomain(subdomain.trim());
-      await promptBiometricEnable();
-      onSuccess();
-    } catch {
-      // Backend error
-    }
-  };
-
-  // Form validation state
-  const isFormValid =
-    subdomain.trim().length > 0 &&
-    emailValidation.isValid &&
-    password.length > 0;
-
-  const handleForgotPassword = () => {
-    onForgotPassword?.();
-  };
-
-  const styles = createStyles(ds, theme, scheme);
-
-  // Offer biometric opt-in immediately after a successful login
   const promptBiometricEnable = async () => {
     const shouldPrompt = await biometricService.shouldPromptEnable();
-    if (!shouldPrompt) {
-      return;
-    }
-
+    if (!shouldPrompt) return;
     Alert.alert(
       'Use Face ID?',
       'Secure your account with Face ID or Touch ID for instant sign-in.',
@@ -189,214 +162,153 @@ export function PersonalEmailForm({
     );
   };
 
+  const handleLogin = async () => {
+    if (!isFormValid) return;
+    try {
+      clearError();
+      await loginUser(form.email.trim(), form.password, form.subdomain.trim());
+      setField('password', '');
+      await AppStorage.setTenantSubdomain(form.subdomain.trim());
+      await promptBiometricEnable();
+      onSuccess();
+    } catch {}
+  };
+
+  const handleForgotPassword = () => onForgotPassword?.();
+
+  const fields: FieldRow[] = [
+    {
+      key: 'subdomain',
+      placeholder: 'Subdomain (e.g., mycompany)',
+      keyboardType: 'default',
+      ref: subdomainInputRef,
+    },
+    {
+      key: 'email',
+      placeholder: 'Email',
+      keyboardType: 'email-address',
+      ref: emailInputRef,
+    },
+    {key: 'password', placeholder: 'Password', secureTextEntry: true},
+  ];
+
+  const statusFor = (key: FieldKey): InputStatus => {
+    if (key === 'email') {
+      if (hasBackendError || showEmailError) return 'error';
+      if (showEmailSuccess) return 'success';
+      return 'none';
+    }
+    if (key === 'subdomain') return showSubdomainSuccess ? 'success' : 'none';
+    if (key === 'password') return showPasswordSuccess ? 'success' : 'none';
+    return 'none';
+  };
+
   return (
-    <ThemedView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          bounces
-          keyboardDismissMode="interactive"
-          contentInsetAdjustmentBehavior="automatic"
-        >
-          <View style={styles.content}>
-            <View style={styles.section}>
-              <ThemedText variant="title2">Welcome Back</ThemedText>
-              <ThemedText variant="subheadline" colorToken="muted">
-                Sign in with your personal email
-              </ThemedText>
-            </View>
-
-            <View style={styles.section}>
-              <ThemedInput
-                ref={subdomainInputRef}
-                placeholder="Subdomain (e.g., mycompany)"
+    <View style={styles.content}>
+      <FormCard<FieldRow>
+        data={fields}
+        keyExtractor={(it) => String(it.key)}
+        renderItem={({item}) => {
+          const isEmail = item.key === 'email';
+          return (
+            <View style={{width: '100%'}}>
+              <Input
+                ref={item.ref as any}
+                placeholder={item.placeholder}
+                keyboardType={item.keyboardType ?? 'default'}
+                secureTextEntry={item.secureTextEntry}
                 autoCapitalize="none"
-                autoComplete="off"
                 autoCorrect={false}
-                value={subdomain}
-                onChangeText={(text) => {
-                  setSubdomain(text);
-                  clearError();
-                }}
-                returnKeyType="next"
-                style={styles.input}
-                accessibilityLabel="Subdomain input"
-                editable={!isLoading}
-                success={showSubdomainSuccess}
-              />
-              <ThemedInput
-                ref={emailInputRef}
-                placeholder="Email"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-                textContentType="emailAddress"
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                  clearError();
-                }}
-                returnKeyType="next"
-                style={styles.input}
-                accessibilityLabel="Email input"
-                editable={!isLoading}
-                error={
-                  hasBackendError
-                    ? 'Invalid'
-                    : showEmailError
-                      ? (emailValidation.error ?? undefined)
-                      : undefined
+                value={form[item.key]}
+                onChangeText={(t) => setField(item.key, t)}
+                returnKeyType={item.key === 'password' ? 'go' : 'next'}
+                onSubmitEditing={
+                  item.key === 'password' ? handleLogin : undefined
                 }
-                success={showEmailSuccess}
-                onErrorPress={handleEmailErrorPress}
+                status={statusFor(item.key)}
+                onStatusIconPress={isEmail ? handleEmailErrorPress : undefined}
               />
-              {emailValidation.suggestion && (
-                <TouchableOpacity
-                  onPress={handleApplySuggestion}
-                  style={styles.suggestion}
-                  accessibilityLabel="Apply email suggestion"
-                >
-                  <ThemedText variant="caption" colorToken="muted">
-                    Did you mean{' '}
-                    <ThemedText
-                      variant="caption"
-                      style={styles.suggestionEmail}
-                    >
-                      {emailValidation.suggestion}
-                    </ThemedText>
-                    ?
-                  </ThemedText>
-                </TouchableOpacity>
+
+              {isEmail && (showEmailError || emailValidation.suggestion) && (
+                <View style={styles.inlineHelper}>
+                  {showEmailError && (
+                    <TouchableOpacity onPress={handleEmailErrorPress}>
+                      <ThemedText variant="caption" colorToken="destructive">
+                        {emailValidation.error ?? 'Invalid email'}
+                      </ThemedText>
+                    </TouchableOpacity>
+                  )}
+                  {emailValidation.suggestion && (
+                    <TouchableOpacity onPress={handleApplySuggestion}>
+                      <ThemedText variant="caption" colorToken="muted">
+                        Did you mean{' '}
+                        <ThemedText
+                          variant="caption"
+                          style={styles.suggestionEmail}
+                        >
+                          {emailValidation.suggestion}
+                        </ThemedText>
+                        ?
+                      </ThemedText>
+                    </TouchableOpacity>
+                  )}
+                </View>
               )}
-              <ThemedInput
-                placeholder="Password"
-                secureTextEntry
-                autoComplete="password"
-                textContentType="password"
-                value={password}
-                onChangeText={(text) => {
-                  setPassword(text);
-                  clearError();
-                }}
-                returnKeyType="go"
-                onSubmitEditing={handleLogin}
-                style={styles.input}
-                accessibilityLabel="Password input"
-                editable={!isLoading}
-                error={hasBackendError ? 'Invalid' : undefined}
-                success={showPasswordSuccess}
-              />
             </View>
+          );
+        }}
+      />
 
-            {error && (
-              <View style={styles.section}>
-                <ThemedText
-                  variant="subheadline"
-                  colorToken="destructive"
-                  style={{textAlign: 'center'}}
-                >
-                  {error}
-                </ThemedText>
-              </View>
-            )}
+      {error && (
+        <View style={styles.section}>
+          <ThemedText
+            variant="secondary"
+            colorToken="destructive"
+            style={{textAlign: 'center'}}
+          >
+            {error}
+          </ThemedText>
+        </View>
+      )}
 
-            <View style={styles.section}>
-              <TouchableOpacity
-                onPress={handleForgotPassword}
-                disabled={isLoading}
-              >
-                <ThemedText
-                  variant="subheadline"
-                  colorToken="muted"
-                  style={{textDecorationLine: 'underline'}}
-                >
-                  Forgot password?
-                </ThemedText>
-              </TouchableOpacity>
-            </View>
+      <View style={styles.section}>
+        <TouchableOpacity onPress={handleForgotPassword} disabled={isLoading}>
+          <ThemedText
+            variant="secondary"
+            colorToken="muted"
+            style={{textDecorationLine: 'underline'}}
+          >
+            Forgot password?
+          </ThemedText>
+        </TouchableOpacity>
+      </View>
 
-            <View style={styles.section}>
-              <ThemedButton
-                variant="primary"
-                onPress={handleLogin}
-                disabled={!isFormValid || isLoading}
-                style={[
-                  styles.loginButton,
-                  (!isFormValid || isLoading) && styles.loginButtonDisabled,
-                ]}
-                accessibilityLabel="Login button"
-              >
-                <ThemedText variant="callout" style={styles.loginButtonText}>
-                  {isLoading ? 'Signing In...' : 'Sign In'}
-                </ThemedText>
-              </ThemedButton>
-            </View>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </ThemedView>
+      <View style={styles.section}>
+        <ThemedButton
+          variant="primary"
+          title={isLoading ? 'Signing In...' : 'Sign In'}
+          onPress={handleLogin}
+          disabled={!isFormValid || isLoading}
+          loading={isLoading}
+          style={[
+            styles.loginButton,
+            (!isFormValid || isLoading) && styles.loginButtonDisabled,
+          ]}
+          accessibilityLabel="Login button"
+        />
+      </View>
+    </View>
   );
 }
 
-type ThemeType = ReturnType<typeof useTheme>['theme'];
-const createStyles = (
-  ds: typeof DesignSystem,
-  theme: ThemeType,
-  scheme: ColorScheme,
-) =>
+const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
   StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    scrollContent: {
-      flexGrow: 1,
-      justifyContent: 'center',
-      padding: ds.layout.screenPadding,
-      paddingBottom: ds.spacing.xxxl * 2,
-    },
-    content: {
-      gap: ds.spacing.xl,
-    },
-    section: {
-      gap: ds.spacing.md,
-      alignItems: 'center',
-      width: '100%',
-    },
-    input: {
-      borderWidth: 0.5,
-      borderColor: theme.divider,
-    },
-    suggestion: {
-      marginTop: ds.spacing.xs,
-      paddingHorizontal: ds.spacing.xs,
-      alignSelf: 'flex-start',
-    },
-    suggestionEmail: {
-      color: theme.accentBlue,
-      fontWeight: '500',
-    },
-    loginButton: {
-      paddingHorizontal: ds.spacing.xxl,
-      alignSelf: 'center',
-      ...(scheme === 'dark' && {
-        backgroundColor: Palette.Lbackground,
-        borderColor: theme.border,
-        borderWidth: 1,
-      }),
-    },
-    loginButtonText: {
-      ...(scheme === 'dark' && {
-        color: Palette.black,
-      }),
-    },
-    loginButtonDisabled: {
-      opacity: ds.opacity.pressed,
-    },
+    content: {gap: ds.spacing.xl},
+    inlineHelper: {marginTop: ds.spacing.xs, alignSelf: 'flex-start'},
+    suggestionEmail: {color: theme.accentBlue, fontWeight: '500'},
+    section: {gap: ds.spacing.md, alignItems: 'center', width: '100%'},
+    loginButton: {paddingHorizontal: ds.spacing.xxl, alignSelf: 'center'},
+    loginButtonDisabled: {opacity: ds.opacity.pressed},
   });
 
 export default PersonalEmailForm;

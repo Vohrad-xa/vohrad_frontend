@@ -1,9 +1,11 @@
+// profile.tsx
 import React from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import type {DesignSystem} from '@/constants/typography';
-import {ThemedView} from '@/components/ui';
+import {ThemedView, ModalScrollView} from '@/components/ui';
 import {useTheme} from '@/providers';
-import {ProfileContent} from '@/features/settings/profile';
+import {ProfileContentEditable} from '@/features/settings/profile/profile-content';
+
 type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 export default function ProfileScreen() {
@@ -12,14 +14,9 @@ export default function ProfileScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-        bounces
-        contentInsetAdjustmentBehavior="automatic"
-      >
-        <ProfileContent />
-      </ScrollView>
+      <ModalScrollView contentContainerStyle={styles.content}>
+        <ProfileContentEditable />
+      </ModalScrollView>
     </ThemedView>
   );
 }
