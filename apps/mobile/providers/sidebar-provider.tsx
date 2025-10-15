@@ -5,16 +5,22 @@ import React, {
   useEffect,
   useCallback,
 } from 'react';
-import {Keyboard, Platform} from 'react-native';
-import {useSegments, router} from 'expo-router';
+import {Keyboard} from 'react-native';
+import {useSegments} from 'expo-router';
 import {
   Gesture,
   type PanGesture,
   type TapGesture,
 } from 'react-native-gesture-handler';
-import {useSharedValue, withSpring, withTiming} from 'react-native-reanimated';
+import {
+  useSharedValue,
+  withSpring,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import {scheduleOnRN} from 'react-native-worklets';
 import type {SharedValue} from 'react-native-reanimated';
+import {SIDEBAR_CONFIG, SIDEBAR_ANIMATION} from '@/constants/sidebar';
 
 interface SidebarContextValue {
   sideMenuOpen: boolean;
@@ -49,31 +55,24 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
   const toggleSideMenu = () => {
     const isOpening = !sideMenuOpen;
     setSideMenuOpen(isOpening);
-    slideAnim.value = withSpring(isOpening ? 320 : 0, {
-      damping: 20,
-      stiffness: 200,
-      mass: 0.8,
-    });
+    slideAnim.value = withTiming(
+      isOpening ? SIDEBAR_CONFIG.width : 0,
+      SIDEBAR_ANIMATION.toggle,
+    );
   };
 
   const closeSideMenu = useCallback(() => {
     setSideMenuOpen(false);
-    slideAnim.value = withSpring(0, {damping: 20, stiffness: 200, mass: 0.8});
+    slideAnim.value = withTiming(0, SIDEBAR_ANIMATION.toggle);
     Keyboard.dismiss();
   }, [slideAnim]);
 
-  // Auto-close sidebar when modal opens on web
+  // Auto-close sidebar when modal opens
   useEffect(() => {
-    if (Platform.OS === 'web' && isModalOpen && sideMenuOpen) {
+    if (isModalOpen && sideMenuOpen) {
       closeSideMenu();
     }
   }, [isModalOpen, sideMenuOpen, closeSideMenu]);
-
-  const closeModalIfOpen = () => {
-    if (isModalOpen) {
-      setTimeout(() => router.back(), 150);
-    }
-  };
 
   // This is the main gesture for the container view.
   // It handles both opening the menu from the edge and closing it from the main content area.
@@ -81,12 +80,11 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
     .activeOffsetX([-10, 10])
     .failOffsetY([-50, 50])
     .simultaneousWithExternalGesture()
-    .enabled(true)
+    .enabled(!isModalOpen)
     .onBegin((event) => {
       'worklet';
-      if (sideMenuOpen || event.x < 50) {
+      if (sideMenuOpen || event.x < SIDEBAR_CONFIG.gestureEdgeWidth) {
         isDragging.value = true;
-        scheduleOnRN(closeModalIfOpen);
       }
     })
     .onUpdate((event) => {
@@ -94,10 +92,19 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
       if (!isDragging.value) return;
 
       if (sideMenuOpen) {
-        const newX = Math.max(0, Math.min(320, 320 + event.translationX));
+        const newX = Math.max(
+          0,
+          Math.min(
+            SIDEBAR_CONFIG.width,
+            SIDEBAR_CONFIG.width + event.translationX,
+          ),
+        );
         slideAnim.value = newX;
       } else {
-        const newX = Math.max(0, Math.min(320, event.translationX));
+        const newX = Math.max(
+          0,
+          Math.min(SIDEBAR_CONFIG.width, event.translationX),
+        );
         slideAnim.value = newX;
       }
     })
@@ -105,8 +112,8 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
       'worklet';
       if (!isDragging.value) return;
 
-      const threshold = 320 * 0.4;
-      const velocityThreshold = 1000;
+      const threshold = SIDEBAR_CONFIG.width * SIDEBAR_CONFIG.openThreshold;
+      const velocityThreshold = SIDEBAR_CONFIG.velocityThreshold;
 
       let targetValue = 0;
       let shouldOpen = false;
@@ -116,7 +123,7 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
           slideAnim.value > threshold &&
           event.velocityX > -velocityThreshold
         ) {
-          targetValue = 320;
+          targetValue = SIDEBAR_CONFIG.width;
           shouldOpen = true;
         } else {
           targetValue = 0;
@@ -127,7 +134,7 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
           slideAnim.value > threshold ||
           event.velocityX > velocityThreshold
         ) {
-          targetValue = 320;
+          targetValue = SIDEBAR_CONFIG.width;
           shouldOpen = true;
         } else {
           targetValue = 0;
@@ -135,12 +142,7 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
         }
       }
 
-      slideAnim.value = withSpring(targetValue, {
-        damping: 18,
-        stiffness: 180,
-        mass: 0.7,
-        velocity: event.velocityX,
-      });
+      slideAnim.value = withTiming(targetValue, SIDEBAR_ANIMATION.toggle);
       scheduleOnRN(setSideMenuOpen, shouldOpen);
       isDragging.value = false;
     })
@@ -160,25 +162,27 @@ export function SidebarProvider({children}: {children: React.ReactNode}) {
     .onUpdate((event) => {
       'worklet';
       const newX = startX.value + event.translationX;
-      if (newX <= 320) {
+      if (newX <= SIDEBAR_CONFIG.width) {
         slideAnim.value = Math.max(0, newX);
       }
     })
     .onEnd(() => {
       'worklet';
-      if (slideAnim.value < 220) {
+      if (slideAnim.value < SIDEBAR_CONFIG.closeThreshold) {
         scheduleOnRN(closeSideMenu);
       } else {
-        slideAnim.value = withTiming(320, {duration: 150});
+        slideAnim.value = withTiming(
+          SIDEBAR_CONFIG.width,
+          SIDEBAR_ANIMATION.timing,
+        );
       }
     });
 
   // This gesture is for tapping the backdrop to close the menu.
   const tapGesture = Gesture.Tap()
-    .enabled(true)
+    .enabled(!isModalOpen)
     .onEnd(() => {
       'worklet';
-      scheduleOnRN(closeModalIfOpen);
       scheduleOnRN(closeSideMenu);
     });
 

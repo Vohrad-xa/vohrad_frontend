@@ -21,6 +21,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import type {DesignSystem} from '@/constants/typography';
+import {SIDEBAR_CONFIG} from '@/constants/sidebar';
 import {useSidebar, useTheme} from '@/providers';
 import type {MenuItem as MenuItemType} from '@/types/ui';
 import {AppIcons} from '@/utils';
@@ -74,10 +75,6 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
   const headerBorderOpacity = useSharedValue(0);
   const footerBorderOpacity = useSharedValue(0);
 
-  const sideMenuStyle = useAnimatedStyle(() => ({
-    transform: [{translateX: slideAnim.value - 320}],
-  }));
-
   const headerStyle = useAnimatedStyle(() => ({
     borderBottomWidth: 1,
     borderBottomColor: interpolateColor(
@@ -113,7 +110,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
 
   return (
     <GestureDetector gesture={composedGesture}>
-      <Animated.View style={[styles.container, sideMenuStyle]}>
+      <Animated.View style={styles.container}>
         <ScrollView
           style={styles.scrollContainer}
           contentContainerStyle={styles.scrollContentContainer}
@@ -141,10 +138,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
           <ProfileSection
             onPressSettings={() => {
               Keyboard.dismiss();
-              router.push('/settings');
-              if (Platform.OS === 'android') {
-                setTimeout(() => onClose(), 180);
-              }
+              router.push('/(app)/(modals)/settings' as any);
             }}
           />
         </Animated.View>
@@ -165,11 +159,9 @@ const createStyles = (
       left: 0,
       top: 0,
       bottom: 0,
-      width: 320,
-      zIndex: 1000,
+      width: SIDEBAR_CONFIG.width,
+      zIndex: 0,
       backgroundColor: theme.sidebarBackground,
-      borderRightWidth: 0.5,
-      borderRightColor: theme.divider,
     },
     scrollContainer: {
       flex: 1,

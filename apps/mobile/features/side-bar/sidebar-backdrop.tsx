@@ -8,6 +8,7 @@ import Animated, {
 import {useTheme} from '@/providers';
 import {useSidebar} from '@/providers/sidebar-provider';
 import type {SharedValue} from 'react-native-reanimated';
+import {SIDEBAR_CONFIG, BACKDROP_CONFIG} from '@/constants/sidebar';
 
 interface SidebarBackdropProps {
   slideAnim: SharedValue<number>;
@@ -21,21 +22,21 @@ export function SidebarBackdrop({slideAnim}: SidebarBackdropProps) {
     backgroundColor: theme.background,
     opacity: interpolate(
       slideAnim.value,
-      [0, 320],
-      [0, 0.85],
+      [0, SIDEBAR_CONFIG.width],
+      [0, BACKDROP_CONFIG.maxOpacity],
       Extrapolate.CLAMP,
     ),
-    display: slideAnim.value > 0 ? 'flex' : 'none',
+    pointerEvents: slideAnim.value > 0 ? 'auto' : 'none',
   }));
 
   return (
     <GestureDetector gesture={tapGesture}>
       <Animated.View
         style={[
+          StyleSheet.absoluteFillObject,
           {
-            ...StyleSheet.absoluteFillObject,
             backgroundColor: 'rgba(0,0,0,0.85)',
-            zIndex: 999,
+            zIndex: BACKDROP_CONFIG.zIndex,
           },
           backdropAnimatedStyle,
         ]}
