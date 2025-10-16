@@ -27,7 +27,7 @@ const createStyles = makeStyleFactory(
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: theme.background,
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
       },
     }),
   (theme) => theme.version.toString(),

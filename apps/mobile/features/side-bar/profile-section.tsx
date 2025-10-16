@@ -1,8 +1,8 @@
 import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import {BlurView} from 'expo-blur';
+import type {User} from '@vohrad/types';
 import type {ColorScheme} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import type {ExtendedUser} from '@/features/settings/profile/types';
 import {useTheme, useAuth} from '@/providers';
 import type {InteractiveProps} from '@/types';
 import {Icon} from '@/utils';
@@ -18,9 +18,7 @@ export function ProfileSection({
   onPressProfile,
 }: ProfileSectionProps) {
   const {theme, ds, scheme} = useTheme();
-  const {user} = useAuth();
-
-  const extendedUser = user as ExtendedUser | null;
+  const {user}: {user: User | null} = useAuth();
 
   const bottomPadding =
     Platform.OS === 'android' ? ds.spacing.xxxl : ds.spacing.lg;
@@ -29,8 +27,8 @@ export function ProfileSection({
 
   // Generate initials from first and last name
   const getInitials = () => {
-    const firstName = extendedUser?.first_name?.trim() ?? '';
-    const lastName = extendedUser?.last_name?.trim() ?? '';
+    const firstName = user?.first_name?.trim() ?? '';
+    const lastName = user?.last_name?.trim() ?? '';
 
     const firstInitial = firstName.charAt(0).toUpperCase();
     const lastInitial = lastName.charAt(0).toUpperCase();
@@ -43,14 +41,14 @@ export function ProfileSection({
 
   // Get full name or fallback
   const getFullName = () => {
-    const firstName = extendedUser?.first_name?.trim() ?? '';
-    const lastName = extendedUser?.last_name?.trim() ?? '';
+    const firstName = user?.first_name?.trim() ?? '';
+    const lastName = user?.last_name?.trim() ?? '';
 
     if (firstName && lastName) {
       return `${firstName} ${lastName}`;
     }
 
-    return firstName ?? lastName ?? extendedUser?.email ?? 'User';
+    return firstName ?? lastName ?? user?.email ?? 'User';
   };
 
   const initials = getInitials();

@@ -83,7 +83,7 @@ const _Tokens = {
     iconWarning: Palette.brand.orange,
     iconDanger: Palette.brand.red,
     sidebarBackground: Palette.Alabaster,
-    secondary: Palette.Obsidian,
+    secondary: Palette.terracotta,
     glassTint: Palette.glassTintLight,
     quickActionIcon: Palette.Lbackground,
 

@@ -19,7 +19,12 @@ import {
   disableBiometrics,
   shouldRequireAuthenticationOnLaunch,
 } from '@/modules/security/biometric-service';
-import {AppThemeProvider, AuthProvider, useAuth} from '@/providers';
+import {
+  AppThemeProvider,
+  AuthProvider,
+  useAuth,
+  LoadingProvider,
+} from '@/providers';
 import {secureStorage} from '@/utils/secure-storage';
 import * as AppStorage from '@/utils/storage';
 
@@ -265,9 +270,11 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{flex: 1}}>
       <ActionSheetProvider>
         <AppThemeProvider>
-          <AuthProvider>
-            <RootNavigation />
-          </AuthProvider>
+          <LoadingProvider>
+            <AuthProvider>
+              <RootNavigation />
+            </AuthProvider>
+          </LoadingProvider>
         </AppThemeProvider>
       </ActionSheetProvider>
     </GestureHandlerRootView>

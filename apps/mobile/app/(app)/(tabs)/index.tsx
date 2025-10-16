@@ -7,6 +7,8 @@ import {
   type ViewStyle,
   type TextStyle,
 } from 'react-native';
+import {userApi} from '@vohrad/api-client';
+import {useAuthStore} from '@vohrad/store';
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {QuickActions} from '@/features/quick-actions';
@@ -19,6 +21,16 @@ export default function HomeScreen() {
   const {ds, theme} = useTheme();
   const screenWidth = Dimensions.get('window').width;
   const styles = createStyles(ds, theme, screenWidth);
+  const setUser = useAuthStore((state) => state.setUser);
+
+  const handleRefresh = async () => {
+    try {
+      const updatedUser = await userApi.getUserProfile();
+      setUser(updatedUser);
+    } catch (error) {
+      console.error('Failed to refresh user profile:', error);
+    }
+  };
 
   const menuCards: MenuCard[] = [
     {
@@ -80,6 +92,7 @@ export default function HomeScreen() {
         Platform.OS !== 'web' ? 'automatic' : undefined
       }
       style={styles.scrollView}
+      {...(Platform.OS !== 'web' && {onRefresh: handleRefresh})}
     >
       <View style={styles.container}>
         <ThemedText
