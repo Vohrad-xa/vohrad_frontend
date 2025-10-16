@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {BlurView} from 'expo-blur';
+import {type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {BaseViewProps} from '@/types';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -17,8 +18,8 @@ export function GlassSurface({
   intensity,
   tint,
 }: GlassSurfaceProps) {
-  const {scheme} = useTheme();
-  const styles = createStyles();
+  const {scheme, ds, theme} = useTheme();
+  const styles = createStyles(ds, theme);
 
   return (
     <View style={[style, styles.container]}>
@@ -35,7 +36,7 @@ export function GlassSurface({
 }
 
 const createStyles = makeStyleFactory(
-  () =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         overflow: 'hidden',
@@ -47,7 +48,7 @@ const createStyles = makeStyleFactory(
         flex: 1,
       },
     }),
-  () => 'glass-surface',
+  (ds, theme) => ds.version.toString() + theme.version.toString(),
 );
 
 export default GlassSurface;

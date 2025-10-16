@@ -2,8 +2,10 @@ import {useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {StyleSheet, TouchableOpacity} from 'react-native';
 
+import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils';
+import {makeStyleFactory} from '@/utils/style-factory';
 import {ThemedText} from './themed-text';
 import {ThemedView} from './themed-view';
 
@@ -14,17 +16,7 @@ export function Collapsible({
   const [isOpen, setIsOpen] = useState(false);
   const {ds} = useTheme();
 
-  const styles = StyleSheet.create({
-    heading: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: ds.spacing.xs,
-    },
-    content: {
-      marginTop: ds.spacing.xs,
-      marginLeft: ds.spacing.lg + ds.spacing.sm,
-    },
-  });
+  const styles = createStyles(ds);
 
   return (
     <ThemedView>
@@ -46,3 +38,19 @@ export function Collapsible({
     </ThemedView>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (ds: DSShape) =>
+    StyleSheet.create({
+      heading: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: ds.spacing.xs,
+      },
+      content: {
+        marginTop: ds.spacing.xs,
+        marginLeft: ds.spacing.lg + ds.spacing.sm,
+      },
+    }),
+  (ds) => ds.version.toString(),
+);

@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
 
 interface ToggleProps {
   value: boolean;
@@ -111,27 +112,26 @@ export function Toggle({
   );
 }
 
-function createStyles(
-  ds: typeof DesignSystem,
-  theme: ReturnType<typeof useTheme>['theme'],
-) {
-  return StyleSheet.create({
-    iosSwitch: {
-      transform: [{scaleX: 0.9}, {scaleY: 0.9}],
-    },
-    track: {
-      width: 50,
-      height: 25,
-      borderRadius: ds.borderRadius.xxl,
-      padding: ds.spacing.xxs,
-      justifyContent: 'center',
-    },
-    thumb: {
-      width: 30,
-      height: 22,
-      borderRadius: ds.borderRadius.full,
-      backgroundColor: theme.toggleThumb,
-      ...ds.shadows.sm,
-    },
-  });
-}
+const createStyles = makeStyleFactory(
+  (ds: typeof DesignSystem, theme: ReturnType<typeof useTheme>['theme']) =>
+    StyleSheet.create({
+      iosSwitch: {
+        transform: [{scaleX: 0.9}, {scaleY: 0.9}],
+      },
+      track: {
+        width: 50,
+        height: 25,
+        borderRadius: ds.borderRadius.xxl,
+        padding: ds.spacing.xxs,
+        justifyContent: 'center',
+      },
+      thumb: {
+        width: 30,
+        height: 22,
+        borderRadius: ds.borderRadius.full,
+        backgroundColor: theme.toggleThumb,
+        ...ds.shadows.sm,
+      },
+    }),
+  (ds, theme) => ds.version.toString() + theme.version.toString(),
+);

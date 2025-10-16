@@ -1,7 +1,7 @@
 import React, {forwardRef} from 'react';
 import {View, StyleSheet, type TextInput} from 'react-native';
-import {type DSShape} from '@/constants/theme';
 import type {ThemeColorTokenName} from '@/constants/colors';
+import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {IconProps, ContainerStyleProps} from '@/types';
 import {Icon, AppIcons} from '@/utils';
