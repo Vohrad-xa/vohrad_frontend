@@ -10,9 +10,13 @@ import type {ExtendedUser} from '@/features/settings/profile/types';
 
 interface ProfileSectionProps extends Pick<InteractiveProps, 'onPress'> {
   onPressSettings: () => void;
+  onPressProfile: () => void;
 }
 
-export function ProfileSection({onPressSettings}: ProfileSectionProps) {
+export function ProfileSection({
+  onPressSettings,
+  onPressProfile,
+}: ProfileSectionProps) {
   const {theme, ds, scheme} = useTheme();
   const {user} = useAuth();
 
@@ -58,14 +62,14 @@ export function ProfileSection({onPressSettings}: ProfileSectionProps) {
       style={styles.profileBlurView}
     >
       <View style={styles.profileContainer}>
-        <View style={styles.profileInfo}>
+        <TouchableOpacity style={styles.profileInfo} onPress={onPressProfile}>
           {initials && (
             <View style={styles.avatar}>
               <Text style={styles.avatarText}>{initials}</Text>
             </View>
           )}
           <Text style={styles.profileName}>{fullName}</Text>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.settingsButton}
           onPress={onPressSettings}

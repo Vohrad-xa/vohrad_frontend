@@ -176,6 +176,10 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
                 Keyboard.dismiss();
                 router.push('/(modals)/settings');
               }}
+              onPressProfile={() => {
+                Keyboard.dismiss();
+                router.push('/(modals)/settings/profile');
+              }}
             />
           </Animated.View>
         </Animated.View>
