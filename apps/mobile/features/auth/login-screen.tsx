@@ -14,6 +14,8 @@ import {type ColorScheme, Palette} from '@/constants/colors';
 import {type DesignSystem} from '@/constants/typography';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export default function LoginScreen() {
   const {ds, theme, scheme} = useTheme();
@@ -41,7 +43,7 @@ export default function LoginScreen() {
     },
   });
 
-  const styles = createStyles(ds, theme, scheme);
+  const styles = createStyles(ds, theme);
 
   return (
     <SafeAreaView
@@ -120,56 +122,54 @@ export default function LoginScreen() {
   );
 }
 
-type ThemeType = ReturnType<typeof useTheme>['theme'];
-const createStyles = (
-  ds: typeof DesignSystem,
-  theme: ThemeType,
-  scheme: ColorScheme,
-) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    scrollContent: {
-      flex: 1,
-      justifyContent: 'center',
-      padding: ds.layout.screenPadding,
-      width: '100%',
-    },
-    centered: {
-      alignItems: 'center',
-      textAlign: 'center',
-    },
-    spacingXl: {
-      marginBottom: ds.spacing.xl,
-    },
-    actionsStack: {
-      gap: ds.spacing.md,
-    },
-    footer: {
-      alignItems: 'center',
-      gap: ds.spacing.xs,
-    },
-    divider: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: ds.spacing.sm,
-    },
-    dividerLine: {
-      flex: 1,
-      height: ds.components.separator.height,
-      backgroundColor: theme.divider,
-    },
-    link: {
-      textDecorationLine: 'underline',
-    },
-    microsoftIcon: {
-      width: ds.iconSize.md,
-      height: ds.iconSize.md,
-      marginRight: ds.spacing.sm,
-    },
-    heroImage: {
-      width: 200,
-      height: 200,
-    },
-  });
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      container: {
+        flex: 1,
+      },
+      scrollContent: {
+        flex: 1,
+        justifyContent: 'center',
+        padding: ds.layout.screenPadding,
+        width: '100%',
+      },
+      centered: {
+        alignItems: 'center',
+        textAlign: 'center',
+      },
+      spacingXl: {
+        marginBottom: ds.spacing.xl,
+      },
+      actionsStack: {
+        gap: ds.spacing.md,
+      },
+      footer: {
+        alignItems: 'center',
+        gap: ds.spacing.xs,
+      },
+      divider: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: ds.spacing.sm,
+      },
+      dividerLine: {
+        flex: 1,
+        height: ds.components.separator.height,
+        backgroundColor: theme.divider,
+      },
+      link: {
+        textDecorationLine: 'underline',
+      },
+      microsoftIcon: {
+        width: ds.iconSize.md,
+        height: ds.iconSize.md,
+        marginRight: ds.spacing.sm,
+      },
+      heroImage: {
+        width: 200,
+        height: 200,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);

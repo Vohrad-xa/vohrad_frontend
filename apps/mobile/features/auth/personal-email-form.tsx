@@ -9,13 +9,13 @@ import {useAuth, useTheme} from '@/providers';
 import * as AppStorage from '@/utils/storage';
 import {validateEmail} from '@/utils/validation';
 import {FormCard} from '@/components/ui/form-card';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 type PersonalEmailFormProps = {
   onSuccess: () => void;
   onForgotPassword?: () => void;
 };
-
-type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 type FormState = {subdomain: string; email: string; password: string};
 type FieldKey = keyof FormState;
@@ -51,7 +51,7 @@ export function PersonalEmailForm({
     null,
   );
 
-  const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
+  const styles = createStyles(ds, theme);
 
   useEffect(() => {
     AppStorage.getTenantSubdomain().then((saved) => {
@@ -301,14 +301,17 @@ export function PersonalEmailForm({
   );
 }
 
-const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
-  StyleSheet.create({
-    content: {gap: ds.spacing.xl},
-    inlineHelper: {marginTop: ds.spacing.xs, alignSelf: 'flex-start'},
-    suggestionEmail: {color: theme.accentBlue, fontWeight: '500'},
-    section: {gap: ds.spacing.md, alignItems: 'center', width: '100%'},
-    loginButton: {paddingHorizontal: ds.spacing.xxl, alignSelf: 'center'},
-    loginButtonDisabled: {opacity: ds.opacity.pressed},
-  });
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      content: {gap: ds.spacing.xl},
+      inlineHelper: {marginTop: ds.spacing.xs, alignSelf: 'flex-start'},
+      suggestionEmail: {color: theme.accentBlue, fontWeight: '500'},
+      section: {gap: ds.spacing.md, alignItems: 'center', width: '100%'},
+      loginButton: {paddingHorizontal: ds.spacing.xxl, alignSelf: 'center'},
+      loginButtonDisabled: {opacity: ds.opacity.pressed},
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);
 
 export default PersonalEmailForm;
