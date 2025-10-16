@@ -14,9 +14,14 @@ import {
   Label,
   VectorIcon,
 } from 'expo-router/unstable-native-tabs';
-import {useTheme} from '@/providers';
+import {HeaderButton} from '@/components/ui';
+import {useSidebar, useTheme} from '@/providers';
 import type {TabItem} from '@/types/ui';
 import {AppIcons, type IconName} from '@/utils';
+
+export const unstable_settings = {
+  initialRouteName: 'index',
+};
 
 const TAB_ITEMS: TabItem[] = [
   {name: 'index', label: 'Dashboard', icon: AppIcons.navigation.home},
@@ -51,12 +56,31 @@ export default function TabLayout() {
   const navigation = useNavigation();
   const segments = useSegments();
   const {theme} = useTheme();
+  const {toggleSideMenu} = useSidebar();
 
   useEffect(() => {
     const currentTab = segments[segments.length - 1] as string;
     const activeTab = TAB_ITEMS.find((tab) => tab.name === currentTab);
-    navigation.setOptions({title: activeTab?.label ?? 'Dashboard'});
-  }, [segments, navigation]);
+    navigation.setOptions({
+      title: activeTab?.label ?? 'Dashboard',
+      headerShown: true,
+      headerTransparent: Platform.OS === 'ios',
+      headerStyle:
+        Platform.OS === 'android'
+          ? {backgroundColor: theme.navigationBar}
+          : undefined,
+      headerTitleStyle: {color: theme.text},
+      headerTitleAlign: 'center',
+      headerLeft: () => (
+        <HeaderButton
+          icon={AppIcons.navigation.menu}
+          accessibilityLabel="Open menu"
+          onPress={toggleSideMenu}
+          size="xxl"
+        />
+      ),
+    });
+  }, [segments, navigation, theme, toggleSideMenu]);
 
   if (Platform.OS === 'web') {
     return (

@@ -38,8 +38,8 @@ export function Toggle({
 
   useEffect(() => {
     animatedValue.value = withSpring(value ? 1 : 0, {
-      damping: 35,
-      stiffness: 250,
+      damping: 45,
+      stiffness: 240,
     });
   }, [value, animatedValue]);
 
@@ -49,7 +49,7 @@ export function Toggle({
       startValue.value = animatedValue.value;
     })
     .onUpdate((event) => {
-      const newValue = startValue.value + event.translationX / 18;
+      const newValue = startValue.value + event.translationX / 15;
       animatedValue.value = Math.max(0, Math.min(1, newValue));
     })
     .onEnd(() => {
@@ -64,7 +64,7 @@ export function Toggle({
     });
 
   const thumbAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{translateX: animatedValue.value * 18}],
+    transform: [{translateX: animatedValue.value * 16}],
   }));
 
   const trackAnimatedStyle = useAnimatedStyle(() => ({
@@ -122,18 +122,18 @@ function createStyles(
 ) {
   return StyleSheet.create({
     iosSwitch: {
-      transform: [{scaleX: 0.8}, {scaleY: 0.8}],
+      transform: [{scaleX: 0.9}, {scaleY: 0.9}],
     },
     track: {
-      width: 42,
-      height: 24,
+      width: 50,
+      height: 25,
       borderRadius: ds.borderRadius.xxl,
       padding: ds.spacing.xxs,
       justifyContent: 'center',
     },
     thumb: {
-      width: 20,
-      height: 20,
+      width: 30,
+      height: 22,
       borderRadius: ds.borderRadius.full,
       backgroundColor: theme.toggleThumb,
       ...ds.shadows.sm,

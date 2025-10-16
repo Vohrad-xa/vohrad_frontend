@@ -16,7 +16,7 @@ export function useSettingsItems() {
           label: 'Profile',
           showDividerAfter: true,
           onPress: () => {
-            router.push('/settings/profile');
+            router.push('/(modals)/settings/profile');
           },
         },
         {
@@ -36,7 +36,7 @@ export function useSettingsItems() {
           icon: AppIcons.navigation.settings,
           label: 'Preferences',
           onPress: () => {
-            router.push('/settings/preferences');
+            router.push('/(modals)/settings/preferences');
           },
         },
         {
@@ -44,7 +44,7 @@ export function useSettingsItems() {
           icon: AppIcons.content.language,
           label: 'App Language',
           onPress: () => {
-            router.push('/settings/language');
+            router.push('/(modals)/settings/language');
           },
         },
         {
@@ -53,7 +53,7 @@ export function useSettingsItems() {
           label: 'Report an Issue',
           showDividerAfter: true,
           onPress: () => {
-            router.push('/settings/support');
+            router.push('/(modals)/settings/support');
           },
         },
         {
@@ -61,7 +61,7 @@ export function useSettingsItems() {
           icon: AppIcons.business.organization,
           label: 'Organization',
           onPress: () => {
-            router.push('/settings/organization');
+            router.push('/(modals)/settings/organization');
           },
         },
         {
@@ -70,7 +70,7 @@ export function useSettingsItems() {
           label: 'Plan',
           showDividerAfter: true,
           onPress: () => {
-            router.push('/settings/plan');
+            router.push('/(modals)/settings/plan');
           },
         },
         {
@@ -78,7 +78,7 @@ export function useSettingsItems() {
           icon: AppIcons.content.privacy,
           label: 'Privacy Policy',
           onPress: () => {
-            router.push('/settings/privacy');
+            router.push('/(modals)/settings/privacy');
           },
         },
         {
@@ -86,7 +86,7 @@ export function useSettingsItems() {
           icon: AppIcons.content.document,
           label: 'Terms of Use',
           onPress: () => {
-            router.push('/settings/terms');
+            router.push('/(modals)/settings/terms');
           },
         },
         {
@@ -94,7 +94,7 @@ export function useSettingsItems() {
           icon: AppIcons.status.info,
           label: 'About',
           onPress: () => {
-            router.push('/settings/about');
+            router.push('/(modals)/settings/about');
           },
         },
       ],

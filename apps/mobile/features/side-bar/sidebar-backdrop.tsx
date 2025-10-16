@@ -5,10 +5,10 @@ import Animated, {
   interpolate,
   Extrapolate,
 } from 'react-native-reanimated';
+import {SIDEBAR_CONFIG, BACKDROP_CONFIG} from '@/constants/sidebar';
 import {useTheme} from '@/providers';
 import {useSidebar} from '@/providers/sidebar-provider';
 import type {SharedValue} from 'react-native-reanimated';
-import {SIDEBAR_CONFIG, BACKDROP_CONFIG} from '@/constants/sidebar';
 
 interface SidebarBackdropProps {
   slideAnim: SharedValue<number>;
@@ -26,12 +26,12 @@ export function SidebarBackdrop({slideAnim}: SidebarBackdropProps) {
       [0, BACKDROP_CONFIG.maxOpacity],
       Extrapolate.CLAMP,
     ),
-    pointerEvents: slideAnim.value > 0 ? 'auto' : 'none',
   }));
 
   return (
     <GestureDetector gesture={tapGesture}>
       <Animated.View
+        pointerEvents={slideAnim.value > 0 ? 'auto' : 'none'}
         style={[
           StyleSheet.absoluteFillObject,
           {

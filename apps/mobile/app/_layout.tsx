@@ -5,7 +5,7 @@ import {setApiTenant} from '@vohrad/api-client';
 import {authService} from '@vohrad/auth';
 import {useAuthStore, setAuthPersistStorage} from '@vohrad/store';
 import {
-  Slot,
+  Stack,
   useRootNavigationState,
   useRouter,
   useSegments,
@@ -47,41 +47,43 @@ export const unstable_settings = {
 // Handles auth-aware routing and splash overlay transitions.
 function RootNavigation() {
   const {isAuthenticated} = useAuth();
-  const segments = useSegments();
-  const router = useRouter();
-  const pathname = usePathname();
   const navigationState = useRootNavigationState();
-  const rootSegment = segments[0];
+  const router = useRouter();
   const {setIntendedRoute, intendedRoute} = useAuthStore();
   const [showOverlay, setShowOverlay] = useState(true);
+  const pathname = usePathname();
 
+  // Save intended route when trying to access protected routes while not authenticated
   useEffect(() => {
     if (!navigationState?.key) {
       return;
     }
 
-    const inAuthGroup = rootSegment === '(auth)';
-    if (!isAuthenticated && !inAuthGroup) {
-      if (pathname !== '/login') {
-        setIntendedRoute(pathname);
-      }
-      router.replace('/login');
-      return;
+    if (
+      !isAuthenticated &&
+      pathname !== '/login' &&
+      !pathname.startsWith('/(auth)')
+    ) {
+      setIntendedRoute(pathname);
     }
+  }, [isAuthenticated, pathname, navigationState?.key, setIntendedRoute]);
 
-    if (isAuthenticated && inAuthGroup) {
-      const destination = intendedRoute ?? '/';
+  // Navigate to intended route after authentication
+  useEffect(() => {
+    if (navigationState?.key && isAuthenticated && intendedRoute) {
+      const destination = intendedRoute;
       setIntendedRoute(null);
-      router.replace(destination as Href);
+      // Small delay to ensure navigation is ready
+      setTimeout(() => {
+        router.replace(destination as Href);
+      }, 100);
     }
   }, [
     isAuthenticated,
-    navigationState?.key,
-    router,
-    rootSegment,
-    pathname,
-    setIntendedRoute,
     intendedRoute,
+    navigationState?.key,
+    setIntendedRoute,
+    router,
   ]);
 
   useEffect(() => {
@@ -96,7 +98,21 @@ function RootNavigation() {
 
   return (
     <>
-      <Slot />
+      <Stack screenOptions={{headerShown: false}}>
+        <Stack.Protected guard={isAuthenticated}>
+          <Stack.Screen name="(app)" />
+          <Stack.Screen
+            name="(modals)"
+            options={{
+              presentation: 'modal',
+            }}
+          />
+        </Stack.Protected>
+
+        <Stack.Protected guard={!isAuthenticated}>
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
+      </Stack>
       {showOverlay && <LoadingOverlay />}
     </>
   );

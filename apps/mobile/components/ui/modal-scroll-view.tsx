@@ -6,6 +6,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import type {ScrollViewProps} from 'react-native';
+import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
 
 type ModalScrollViewProps = ScrollViewProps & {
@@ -18,16 +19,11 @@ export function ModalScrollView({
   ...props
 }: ModalScrollViewProps) {
   const {ds} = useTheme();
-
-  const defaultContentStyle = {
-    paddingTop: ds.spacing.lg,
-    paddingHorizontal: ds.spacing.xl,
-    paddingBottom: ds.spacing.xxl,
-  };
+  const styles = createStyles(ds);
 
   const scrollViewContent = (
     <ScrollView
-      contentContainerStyle={[defaultContentStyle, contentContainerStyle]}
+      contentContainerStyle={[styles.defaultContent, contentContainerStyle]}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       contentInsetAdjustmentBehavior={
@@ -52,6 +48,14 @@ export function ModalScrollView({
   );
 }
 
-const styles = StyleSheet.create({
-  container: {flex: 1},
-});
+const createStyles = (ds: typeof DesignSystem) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    defaultContent: {
+      paddingTop: ds.spacing.lg,
+      paddingHorizontal: ds.spacing.xl,
+      paddingBottom: ds.spacing.xxl,
+    },
+  });

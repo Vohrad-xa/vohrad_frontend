@@ -13,7 +13,7 @@ interface HeaderButtonProps {
   onPress?: () => void;
   color?: string;
   colorToken?: TokenName;
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
 }
@@ -23,7 +23,7 @@ export function HeaderButton({
   onPress,
   color,
   colorToken = 'muted',
-  size = 'xl',
+  size = 'lg',
   accessibilityLabel,
   style,
 }: HeaderButtonProps) {
@@ -44,6 +44,7 @@ export function HeaderButton({
           alignItems: 'center',
           borderRadius: baseSize ? baseSize / 2 : ds.borderRadius.lg,
           alignSelf: 'center',
+          ...(Platform.OS === 'android' && {marginLeft: -8}),
         },
         style,
       ]}
@@ -52,7 +53,7 @@ export function HeaderButton({
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}
     >
-      <Icon name={icon} size={ds.iconSize[size]} color={iconColor} />
+      <Icon name={icon} color={iconColor} size={ds.iconSize[size]} />
     </TouchableOpacity>
   );
 }

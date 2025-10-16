@@ -138,7 +138,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
           <ProfileSection
             onPressSettings={() => {
               Keyboard.dismiss();
-              router.push('/(app)/(modals)/settings' as any);
+              router.push('/(modals)/settings');
             }}
           />
         </Animated.View>

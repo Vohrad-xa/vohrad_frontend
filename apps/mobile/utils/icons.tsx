@@ -15,6 +15,8 @@ export type IconName =
   | 'chevron-back-outline'
   | 'chevron-up-outline'
   | 'chevron-down-outline'
+  | 'arrow-back'
+  | 'arrow-forward'
   | 'search-outline'
   | 'settings-outline'
   | 'help-circle-outline'
@@ -107,6 +109,8 @@ interface IconProps {
   style?: StyleProp<TextStyle>;
 }
 
+import {Platform} from 'react-native';
+
 export const IconFontFamily = 'Ionicons' as const;
 
 export function getIconGlyph(name: IconName): string | undefined {
@@ -155,7 +159,10 @@ export const AppIcons = {
     profile: 'person-outline' as IconName,
     events: 'notifications-outline' as IconName,
     filter: 'options-outline' as IconName,
-    back: 'chevron-back-outline' as IconName,
+    back: Platform.select({
+      ios: 'chevron-back-outline',
+      default: 'arrow-back',
+    }) as IconName,
     forward: 'chevron-forward-outline' as IconName,
     close: 'close-outline' as IconName,
   },

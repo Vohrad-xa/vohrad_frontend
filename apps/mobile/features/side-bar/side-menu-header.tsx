@@ -28,7 +28,7 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
   const topPadding =
     Platform.OS === 'android'
       ? (StatusBar.currentHeight ?? 0) + ds.spacing.lg
-      : Math.max(insets.top, ds.spacing.xl) + ds.spacing.xs;
+      : Math.max(insets.top, ds.spacing.xl);
 
   return (
     <Animated.View style={headerStyle}>
@@ -69,8 +69,8 @@ const createStyles = (
       flex: 1,
     },
     closeButton: {
-      width: 33,
-      height: 33,
+      width: 35,
+      height: 35,
       marginLeft: ds.spacing.sm,
       justifyContent: 'center',
       alignItems: 'center',

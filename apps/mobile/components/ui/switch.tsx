@@ -3,11 +3,13 @@ import {
   TouchableOpacity,
   Animated,
   Platform,
+  StyleSheet,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
 import {impactAsync, ImpactFeedbackStyle} from 'expo-haptics';
 import type {ThemePreference} from '@/constants/colors';
+import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers/theme-provider';
 import {Icon, AppIcons} from '@/utils';
 
@@ -19,6 +21,7 @@ export default function Switch({style}: CustomSwitchProps) {
   const {ds, theme, scheme, setScheme, preference} = useTheme();
   const rotationAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const styles = createStyles(ds);
 
   useEffect(() => {
     Animated.sequence([
@@ -71,34 +74,42 @@ export default function Switch({style}: CustomSwitchProps) {
     outputRange: ['0deg', '360deg'],
   });
 
-  const baseSize = ds.components.tapTarget.minSize;
-
   return (
     <TouchableOpacity
       onPress={handlePress}
-      style={[
-        {
-          minWidth: baseSize,
-          minHeight: baseSize,
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderRadius: baseSize ? baseSize / 2 : ds.borderRadius.lg,
-          alignSelf: 'center',
-        },
-        style,
-      ]}
+      style={[styles.container, style]}
       activeOpacity={0.7}
       accessibilityRole="switch"
       accessibilityState={{checked: preference !== 'system'}}
       accessibilityLabel={`Theme toggle. Currently ${preference} mode.`}
     >
       <Animated.View
-        style={{
-          transform: [{rotate: rotation}, {scale: scaleAnim}],
-        }}
+        style={[
+          styles.iconWrapper,
+          {transform: [{rotate: rotation}, {scale: scaleAnim}]},
+        ]}
       >
         <Icon name={iconName} size={ds.iconSize.md} color={theme.muted} />
       </Animated.View>
     </TouchableOpacity>
   );
 }
+
+const createStyles = (ds: typeof DesignSystem) => {
+  const baseSize = ds.components.tapTarget.minSize;
+
+  return StyleSheet.create({
+    container: {
+      minWidth: baseSize,
+      minHeight: baseSize,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: baseSize ? baseSize / 2 : ds.borderRadius.lg,
+      alignSelf: 'center',
+    },
+    iconWrapper: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+  });
+};

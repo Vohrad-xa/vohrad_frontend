@@ -133,7 +133,7 @@ export const Tokens = {
     glassTint: Palette.glassTintDark,
     quickActionIcon: Palette.Dbackground,
     toggleTrackOff: Palette.gray[400],
-    toggleTrackOn: Palette.terracotta,
+    toggleTrackOn: Palette.brand.green,
     toggleThumb: Palette.white,
   },
 } as const;
