@@ -8,10 +8,10 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import {ThemedView} from '@/components/ui';
+import type {ColorScheme} from '@/constants/colors';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import type {ColorScheme} from '@/constants/colors';
 
 const HEADER_HEIGHT = 250;
 

@@ -1,9 +1,9 @@
 import React from 'react';
 import {FlatList, View, StyleSheet} from 'react-native';
 // import {Separator} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 type FormCardProps<T> = {
   data: T[];

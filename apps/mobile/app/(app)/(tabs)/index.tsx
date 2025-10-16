@@ -8,12 +8,12 @@ import {
   type TextStyle,
 } from 'react-native';
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {QuickActions} from '@/features/quick-actions';
 import {useTheme} from '@/providers';
 import type {MenuCard} from '@/types/ui';
 import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export default function HomeScreen() {
   const {ds, theme} = useTheme();

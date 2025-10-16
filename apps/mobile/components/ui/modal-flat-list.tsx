@@ -6,9 +6,9 @@ import {
   StyleSheet,
 } from 'react-native';
 import type {FlatListProps} from 'react-native';
+import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {type DSShape} from '@/constants/theme';
 
 type ModalFlatListProps<T> = FlatListProps<T> & {
   children?: never;

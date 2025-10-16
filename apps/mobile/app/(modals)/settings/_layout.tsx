@@ -1,11 +1,10 @@
-import {Platform} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
-import {useTheme} from '@/providers';
 import {HeaderButton} from '@/components/ui';
+import {type ThemeShape} from '@/constants/theme';
+import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {type ThemeShape} from '@/constants/theme';
-import {StyleSheet} from 'react-native';
 
 export const unstable_settings = {
   initialRouteName: 'index',

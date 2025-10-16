@@ -2,10 +2,10 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import {ThemedView, ModalScrollView} from '@/components/ui';
-import {useTheme} from '@/providers';
-import {ProfileContentEditable} from '@/features/settings/profile/profile-content';
-import {makeStyleFactory} from '@/utils/style-factory';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {ProfileContentEditable} from '@/features/settings/profile/profile-content';
+import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function ProfileScreen() {
   const {ds, theme} = useTheme();

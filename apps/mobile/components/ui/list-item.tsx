@@ -1,11 +1,11 @@
 import type {FC} from 'react';
 import {View, TouchableOpacity, StyleSheet} from 'react-native';
-import {useTheme} from '@/providers';
-import {Icon} from '@/utils';
-import {ThemedText} from './themed-text';
-import {makeStyleFactory} from '@/utils/style-factory';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {useTheme} from '@/providers';
 import type {ListItemBaseProps} from '@/types';
+import {Icon} from '@/utils';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {ThemedText} from './themed-text';
 
 export type ListItemProps = ListItemBaseProps;
 

@@ -12,6 +12,7 @@ import {
   Switch,
   ModalFlatList,
 } from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {BiometricToggle} from '@/features/settings/biometric';
 import {
   isDividerItem,
@@ -23,7 +24,6 @@ import {useSettingsItems} from '@/features/settings/use-settings-items';
 import {useTheme, useAuth} from '@/providers';
 import {Icon, AppIcons, showConfirmAlert} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export default function SettingsModal() {
   const {ds, theme, preference} = useTheme();
@@ -118,7 +118,7 @@ export default function SettingsModal() {
         </ListItem>
       );
     },
-    [ds, theme, styles, preference],
+    [theme, styles, preference],
   );
 
   return (

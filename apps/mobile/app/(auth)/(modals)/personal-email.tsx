@@ -1,7 +1,7 @@
 import React from 'react';
 import {Platform, StyleSheet} from 'react-native';
-import {PersonalEmailForm} from '@/features/auth/personal-email-form';
 import {ThemedView, ModalScrollView} from '@/components/ui';
+import {PersonalEmailForm} from '@/features/auth/personal-email-form';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function PersonalEmailModal() {

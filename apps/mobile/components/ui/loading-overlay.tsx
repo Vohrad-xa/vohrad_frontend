@@ -1,7 +1,7 @@
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
+import {type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {type ThemeShape} from '@/constants/theme';
 
 export function LoadingOverlay() {
   const {theme} = useTheme();

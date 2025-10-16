@@ -8,12 +8,12 @@ import {
   type ViewStyle,
   type TextStyle,
 } from 'react-native';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {MenuItem} from '@/types';
 import {Icon, AppIcons} from '@/utils';
-import {ThemedText} from '../../components/ui/themed-text';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {ThemedText} from '../../components/ui/themed-text';
 
 export function QuickActions() {
   const {ds, theme} = useTheme();

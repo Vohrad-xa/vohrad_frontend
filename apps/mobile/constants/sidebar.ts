@@ -1,3 +1,5 @@
+import {Easing} from 'react-native-reanimated';
+
 export const SIDEBAR_CONFIG = {
   width: 315,
   gestureEdgeWidth: 50,
@@ -5,8 +7,6 @@ export const SIDEBAR_CONFIG = {
   openThreshold: 0.4,
   closeThreshold: 220,
 } as const;
-
-import {Easing} from 'react-native-reanimated';
 
 export const SIDEBAR_ANIMATION = {
   toggle: {

@@ -9,10 +9,10 @@ import {
 } from 'react-native';
 import {impactAsync, ImpactFeedbackStyle} from 'expo-haptics';
 import type {ThemePreference} from '@/constants/colors';
+import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers/theme-provider';
 import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {type DSShape} from '@/constants/theme';
 
 interface CustomSwitchProps {
   style?: StyleProp<ViewStyle>;

@@ -1,12 +1,12 @@
 import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import {BlurView} from 'expo-blur';
 import type {ColorScheme} from '@/constants/colors';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import type {ExtendedUser} from '@/features/settings/profile/types';
 import {useTheme, useAuth} from '@/providers';
+import type {InteractiveProps} from '@/types';
 import {Icon} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import type {InteractiveProps} from '@/types';
-import type {ExtendedUser} from '@/features/settings/profile/types';
 
 interface ProfileSectionProps extends Pick<InteractiveProps, 'onPress'> {
   onPressSettings: () => void;
@@ -35,9 +35,10 @@ export function ProfileSection({
     const firstInitial = firstName.charAt(0).toUpperCase();
     const lastInitial = lastName.charAt(0).toUpperCase();
 
-    return firstInitial && lastInitial
-      ? `${firstInitial}${lastInitial}`
-      : firstInitial || lastInitial || null;
+    if (firstInitial && lastInitial) {
+      return `${firstInitial}${lastInitial}`;
+    }
+    return firstInitial ?? lastInitial ?? null;
   };
 
   // Get full name or fallback
@@ -49,7 +50,7 @@ export function ProfileSection({
       return `${firstName} ${lastName}`;
     }
 
-    return firstName || lastName || extendedUser?.email || 'User';
+    return firstName ?? lastName ?? extendedUser?.email ?? 'User';
   };
 
   const initials = getInitials();

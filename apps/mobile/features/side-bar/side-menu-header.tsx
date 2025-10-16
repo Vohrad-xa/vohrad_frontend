@@ -10,10 +10,10 @@ import Animated from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {SearchBar} from '@/components/ui';
 import type {ColorScheme} from '@/constants/colors';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 interface SideMenuHeaderProps {
   headerStyle: object;

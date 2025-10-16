@@ -7,10 +7,10 @@ import {
   AccessibilityInfo,
   StyleSheet,
 } from 'react-native';
-import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {useTheme} from '@/providers';
 import type {ContainerStyleProps} from '@/types';
+import {makeStyleFactory} from '@/utils/style-factory';
 
 interface GlassViewProps {
   glassEffectStyle?: string;

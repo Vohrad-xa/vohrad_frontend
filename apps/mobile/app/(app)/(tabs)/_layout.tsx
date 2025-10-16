@@ -16,11 +16,11 @@ import {
   VectorIcon,
 } from 'expo-router/unstable-native-tabs';
 import {HeaderButton} from '@/components/ui';
+import {type ThemeShape} from '@/constants/theme';
 import {useSidebar, useTheme} from '@/providers';
 import type {TabItem} from '@/types/ui';
 import {AppIcons, type IconName} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {type ThemeShape} from '@/constants/theme';
 
 export const unstable_settings = {
   initialRouteName: 'index',

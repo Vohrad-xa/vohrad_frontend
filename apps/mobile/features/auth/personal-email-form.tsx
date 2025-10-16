@@ -3,13 +3,13 @@ import type {TextInput} from 'react-native';
 import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {ThemedButton, ThemedText, Input} from '@/components/ui';
 import type {InputStatus} from '@/components/ui';
+import {FormCard} from '@/components/ui/form-card';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import * as biometricService from '@/modules/security/biometric-service';
 import {useAuth, useTheme} from '@/providers';
 import * as AppStorage from '@/utils/storage';
-import {validateEmail} from '@/utils/validation';
-import {FormCard} from '@/components/ui/form-card';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {validateEmail} from '@/utils/validation';
 
 type PersonalEmailFormProps = {
   onSuccess: () => void;
@@ -212,7 +212,7 @@ export function PersonalEmailForm({
           return (
             <View style={styles.fieldWrapper}>
               <Input
-                ref={item.ref as any}
+                ref={item.ref}
                 placeholder={item.placeholder}
                 keyboardType={item.keyboardType ?? 'default'}
                 secureTextEntry={item.secureTextEntry}

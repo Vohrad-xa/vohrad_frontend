@@ -1,17 +1,19 @@
 import React, {forwardRef} from 'react';
 import {View, StyleSheet, type TextInput} from 'react-native';
+import {type DSShape} from '@/constants/theme';
+import type {ThemeColorTokenName} from '@/constants/colors';
 import {useTheme} from '@/providers';
-import {Icon, AppIcons} from '@/utils';
-import {Input, type InputProps} from './input';
-import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape} from '@/constants/theme';
 import type {IconProps, ContainerStyleProps} from '@/types';
+import {Icon, AppIcons} from '@/utils';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {Input, type InputProps} from './input';
 
 export interface SearchBarProps
   extends InputProps,
-    Pick<IconProps, 'icon' | 'iconColorToken'>,
+    Pick<IconProps, 'icon'>,
     Pick<ContainerStyleProps, 'containerStyle'> {
   showIcon?: boolean;
+  iconColorToken?: ThemeColorTokenName;
 }
 
 export const SearchBar = forwardRef<TextInput, SearchBarProps>(
@@ -31,7 +33,7 @@ export const SearchBar = forwardRef<TextInput, SearchBarProps>(
     ref,
   ) => {
     const {theme, ds} = useTheme();
-    const iconColor = (theme as any)[iconColorToken] ?? theme.muted;
+    const iconColor = theme[iconColorToken] ?? theme.muted;
     const styles = createStyles(ds);
 
     return (

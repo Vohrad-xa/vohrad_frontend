@@ -10,10 +10,10 @@ import {
 import {useRouter} from 'expo-router';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ThemedButton, ThemedText, ThemedView} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export default function LoginScreen() {
   const {ds, theme, scheme} = useTheme();

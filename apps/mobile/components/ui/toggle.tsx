@@ -1,9 +1,6 @@
-import {
-  Platform,
-  Pressable,
-  StyleSheet,
-  Switch as RNSwitch,
-} from 'react-native';
+import {useEffect, useMemo} from 'react';
+import {Platform, StyleSheet, Switch as RNSwitch} from 'react-native';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -11,10 +8,8 @@ import Animated, {
   interpolateColor,
   runOnJS,
 } from 'react-native-reanimated';
-import {Gesture, GestureDetector} from 'react-native-gesture-handler';
-import {useEffect, useMemo} from 'react';
-import {useTheme} from '@/providers';
 import type {DesignSystem} from '@/constants/typography';
+import {useTheme} from '@/providers';
 
 interface ToggleProps {
   value: boolean;

@@ -8,10 +8,10 @@ import {
   Platform,
 } from 'react-native';
 
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers/theme-provider';
 import {Icon, type IconName} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export type InputStatus = 'none' | 'error' | 'success';
 

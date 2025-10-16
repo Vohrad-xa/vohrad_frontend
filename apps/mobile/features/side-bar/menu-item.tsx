@@ -1,9 +1,9 @@
 import {TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {MenuItemProps} from '@/types/ui';
 import {Icon} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export function MenuItem({icon, label, onPress, isDestructive}: MenuItemProps) {
   const {theme, ds} = useTheme();

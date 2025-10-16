@@ -1,5 +1,6 @@
 import React from 'react';
 import type {OpaqueColorValue, StyleProp, TextStyle} from 'react-native';
+import {Platform} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {type TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers/theme-provider';
@@ -108,8 +109,6 @@ interface IconProps {
   colorToken?: TokenName; // prefer passing a token over raw color
   style?: StyleProp<TextStyle>;
 }
-
-import {Platform} from 'react-native';
 
 export const IconFontFamily = 'Ionicons' as const;
 

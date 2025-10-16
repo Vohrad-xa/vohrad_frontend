@@ -1,5 +1,5 @@
-import {Tokens} from './colors';
-import {DesignSystem} from './typography';
+import type {Tokens} from './colors';
+import type {DesignSystem} from './typography';
 
 export type ThemeShape = typeof Tokens.light | typeof Tokens.dark;
 export type DSShape = typeof DesignSystem;

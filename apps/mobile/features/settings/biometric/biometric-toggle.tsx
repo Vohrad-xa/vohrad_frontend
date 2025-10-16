@@ -1,8 +1,8 @@
 import {StyleSheet, View} from 'react-native';
 import {ThemedText, Toggle} from '@/components/ui';
-import {makeStyleFactory} from '@/utils/style-factory';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
 import {useBiometricToggle} from './use-biometric-toggle';
 
 export function BiometricToggle() {

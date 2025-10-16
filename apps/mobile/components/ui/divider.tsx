@@ -1,12 +1,10 @@
 import {View, StyleSheet} from 'react-native';
-import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {useTheme} from '@/providers';
 import type {BaseViewProps} from '@/types';
+import {makeStyleFactory} from '@/utils/style-factory';
 
-interface DividerProps extends Pick<BaseViewProps, 'style'> {}
-
-export function Divider({style}: DividerProps) {
+export function Divider({style}: Pick<BaseViewProps, 'style'>) {
   const {theme, ds} = useTheme();
   const styles = createStyles(theme, ds);
 

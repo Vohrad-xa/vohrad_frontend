@@ -1,10 +1,10 @@
 import React from 'react';
 import {Text, type TextProps, StyleSheet} from 'react-native';
 import type {TokenName} from '@/constants/colors';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import type {Typography} from '@/constants/typography';
 import {useTheme} from '@/providers/theme-provider';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 // Text variants based on typography system
 export type TextVariant = Typography;
@@ -43,7 +43,7 @@ const createStyles = makeStyleFactory(
     let textColor: string;
 
     if (colorToken) {
-      textColor = (theme as any)[colorToken];
+      textColor = theme[colorToken];
     } else if (
       variantForColor === 'secondary' ||
       variantForColor === 'caption'

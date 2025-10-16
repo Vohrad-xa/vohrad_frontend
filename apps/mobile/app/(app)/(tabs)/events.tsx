@@ -1,8 +1,8 @@
+import {StyleSheet} from 'react-native';
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {StyleSheet} from 'react-native';
 
 export default function EventsPage() {
   const {theme, ds} = useTheme();

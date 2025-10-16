@@ -1,10 +1,10 @@
 import React from 'react';
 import {View, type ViewProps, type ViewStyle, StyleSheet} from 'react-native';
-import {useTheme} from '@/providers';
-import {GlassCard} from './glass-card';
-import {makeStyleFactory} from '@/utils/style-factory';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {useTheme} from '@/providers';
 import type {ContainerStyleProps} from '@/types';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {GlassCard} from './glass-card';
 
 export interface ThemedViewProps
   extends ViewProps,

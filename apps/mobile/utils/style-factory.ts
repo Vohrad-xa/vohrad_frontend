@@ -1,4 +1,5 @@
-import {StyleSheet, ViewStyle, TextStyle, ImageStyle} from 'react-native';
+import type {ViewStyle, TextStyle, ImageStyle} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 type AnyStyle = ViewStyle | TextStyle | ImageStyle;
 type NamedStyles<T> = {[P in keyof T]: AnyStyle};

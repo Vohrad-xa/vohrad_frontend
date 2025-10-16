@@ -153,6 +153,7 @@ export const Tokens = {
 export type ColorScheme = keyof typeof _Tokens; // 'light' | 'dark'
 export type ThemePreference = ColorScheme | 'system'; // 'light' | 'dark' | 'system'
 export type TokenName = keyof typeof _Tokens.light;
+export type ThemeColorTokenName = Exclude<TokenName, 'version'>;
 
 // Optional: React Navigation compatible themes
 const NavigationFonts = {

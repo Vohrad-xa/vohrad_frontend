@@ -7,8 +7,8 @@ import {
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
-import {router} from 'expo-router';
 import {LinearGradient} from 'expo-linear-gradient';
+import {router} from 'expo-router';
 import {
   Gesture,
   GestureDetector,
@@ -23,15 +23,15 @@ import Animated, {
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {SIDEBAR_CONFIG} from '@/constants/sidebar';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useSidebar, useTheme} from '@/providers';
 import type {MenuItem as MenuItemType} from '@/types/ui';
 import {AppIcons} from '@/utils';
+import {makeStyleFactory} from '@/utils/style-factory';
 import {MenuItem} from './menu-item';
 import {ProfileSection} from './profile-section';
 import {SideMenuHeader} from './side-menu-header';
 import type {SharedValue} from 'react-native-reanimated';
-import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 interface SideMenuProps {
   slideAnim: SharedValue<number>;

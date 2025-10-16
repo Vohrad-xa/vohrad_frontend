@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ThemedButton, Input, ThemedText} from '@/components/ui';
-import {useTheme} from '@/providers';
-import {useProfileDetails} from './use-profile-details';
-import {makeStyleFactory} from '@/utils/style-factory';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {useProfileDetails} from './use-profile-details';
 
 type ProfileRow = {
   key: keyof ProfileState;
@@ -99,7 +99,7 @@ export function ProfileContentEditable() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         gap: ds.spacing.lg,

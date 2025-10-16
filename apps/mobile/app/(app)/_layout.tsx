@@ -1,10 +1,11 @@
 import {Platform, View, StyleSheet} from 'react-native';
 import {Stack} from 'expo-router';
-import Animated, {useAnimatedStyle, interpolate} from 'react-native-reanimated';
 import {GestureDetector} from 'react-native-gesture-handler';
+import Animated, {useAnimatedStyle, interpolate} from 'react-native-reanimated';
+import {SIDEBAR_CONFIG} from '@/constants/sidebar';
+import {type ThemeShape} from '@/constants/theme';
 import {SideMenu} from '@/features/side-bar/side-menu';
 import {SidebarBackdrop} from '@/features/side-bar/sidebar-backdrop';
-import {SIDEBAR_CONFIG} from '@/constants/sidebar';
 import {
   HeaderVisibilityProvider,
   SidebarProvider,
@@ -12,7 +13,6 @@ import {
   useTheme,
 } from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {type ThemeShape} from '@/constants/theme';
 
 function AppStack() {
   const {theme} = useTheme();

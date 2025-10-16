@@ -1,11 +1,11 @@
 import type {FC} from 'react';
 import {Platform, TouchableOpacity, StyleSheet} from 'react-native';
+import type {TokenName} from '@/constants/colors';
+import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
+import type {RequiredIconProps, BaseViewProps} from '@/types';
 import {Icon} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {type DSShape} from '@/constants/theme';
-import type {RequiredIconProps, BaseViewProps} from '@/types';
-import type {TokenName} from '@/constants/colors';
 
 export interface HeaderButtonProps
   extends RequiredIconProps,

@@ -2,8 +2,8 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {BlurView} from 'expo-blur';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
 import type {BaseViewProps} from '@/types';
+import {makeStyleFactory} from '@/utils/style-factory';
 
 export interface GlassSurfaceProps extends BaseViewProps {
   intensity?: number;
