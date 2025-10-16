@@ -24,7 +24,6 @@ type ThemeContextValue = {
   preference: ThemePreference;
   setScheme: (preference: ThemePreference) => void;
   toggle: () => void;
-  tokens: typeof Tokens.light | typeof Tokens.dark;
   theme: typeof Tokens.light | typeof Tokens.dark;
   ds: typeof DesignSystem;
 };
@@ -110,7 +109,6 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
     });
   }, [overlayOpacity, scheme]);
 
-  const tokens = useMemo(() => Tokens[scheme], [scheme]);
   const theme = useMemo(() => Tokens[scheme], [scheme]);
   const value = useMemo(
     () => ({
@@ -118,11 +116,10 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
       preference,
       setScheme: setPreference,
       toggle,
-      tokens,
       theme,
       ds: DesignSystem,
     }),
-    [scheme, preference, toggle, tokens, theme],
+    [scheme, preference, toggle, theme],
   );
 
   const navTheme = NavigationThemes[scheme];

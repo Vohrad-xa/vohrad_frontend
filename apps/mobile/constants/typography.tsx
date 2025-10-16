@@ -1,8 +1,10 @@
 import {Dimensions} from 'react-native';
 
+import {generateVersion} from '../utils/versioning';
+
 const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
 
-export const DesignSystem = {
+const _DesignSystem = {
   borderRadius: {
     none: 0,
     xs: 2,
@@ -233,10 +235,15 @@ export const DesignSystem = {
   },
 } as const;
 
+export const DesignSystem = {
+  ..._DesignSystem,
+  version: generateVersion(_DesignSystem),
+} as const;
+
 // Type exports
-export type BorderRadius = keyof typeof DesignSystem.borderRadius;
-export type Spacing = keyof typeof DesignSystem.spacing;
-export type Typography = keyof typeof DesignSystem.typography;
-export type FontFamily = keyof typeof DesignSystem.fonts;
-export type FontWeight = keyof typeof DesignSystem.fontWeight;
-export type Opacity = keyof typeof DesignSystem.opacity;
+export type BorderRadius = keyof typeof _DesignSystem.borderRadius;
+export type Spacing = keyof typeof _DesignSystem.spacing;
+export type Typography = keyof typeof _DesignSystem.typography;
+export type FontFamily = keyof typeof _DesignSystem.fonts;
+export type FontWeight = keyof typeof _DesignSystem.fontWeight;
+export type Opacity = keyof typeof _DesignSystem.opacity;

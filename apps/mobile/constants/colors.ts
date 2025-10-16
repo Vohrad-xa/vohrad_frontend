@@ -1,3 +1,5 @@
+import {generateVersion} from '../utils/versioning';
+
 export const Palette = {
   gray: {
     50: '#F2F2F7',
@@ -40,7 +42,7 @@ export const Palette = {
   glassTintDark: 'rgba(186, 185, 185, 0.06)',
 } as const;
 
-export const Tokens = {
+const _Tokens = {
   light: {
     // Surfaces & text
     background: Palette.Lbackground,
@@ -140,9 +142,16 @@ export const Tokens = {
   },
 } as const;
 
-export type ColorScheme = keyof typeof Tokens; // 'light' | 'dark'
+const version = generateVersion(_Tokens);
+
+export const Tokens = {
+  light: {..._Tokens.light, version},
+  dark: {..._Tokens.dark, version},
+} as const;
+
+export type ColorScheme = keyof typeof _Tokens; // 'light' | 'dark'
 export type ThemePreference = ColorScheme | 'system'; // 'light' | 'dark' | 'system'
-export type TokenName = keyof typeof Tokens.light;
+export type TokenName = keyof typeof _Tokens.light;
 
 // Optional: React Navigation compatible themes
 const NavigationFonts = {
@@ -156,24 +165,24 @@ export const NavigationThemes = {
   light: {
     dark: false,
     colors: {
-      primary: Tokens.light.tint,
-      background: Tokens.light.background,
+      primary: _Tokens.light.tint,
+      background: _Tokens.light.background,
       card: Palette.white,
-      text: Tokens.light.text,
-      border: Tokens.light.border,
-      notification: Tokens.light.primary,
+      text: _Tokens.light.text,
+      border: _Tokens.light.border,
+      notification: _Tokens.light.primary,
     },
     fonts: NavigationFonts,
   },
   dark: {
     dark: true,
     colors: {
-      primary: Tokens.dark.tint,
-      background: Tokens.dark.background,
-      card: Tokens.dark.card,
-      text: Tokens.dark.text,
-      border: Tokens.dark.border,
-      notification: Tokens.dark.primary,
+      primary: _Tokens.dark.tint,
+      background: _Tokens.dark.background,
+      card: _Tokens.dark.card,
+      text: _Tokens.dark.text,
+      border: _Tokens.dark.border,
+      notification: _Tokens.dark.primary,
     },
     fonts: NavigationFonts,
   },
