@@ -1,12 +1,12 @@
 import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
 import {BlurView} from 'expo-blur';
-import type {User} from '@vohrad/types';
 import type {ColorScheme} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useAuth} from '@/providers';
 import type {InteractiveProps} from '@/types';
 import {Icon} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
+import type {User} from '@vohrad/types';
 
 interface ProfileSectionProps extends Pick<InteractiveProps, 'onPress'> {
   onPressSettings: () => void;

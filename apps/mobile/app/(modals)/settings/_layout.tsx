@@ -87,7 +87,7 @@ export default function SettingsLayout() {
 }
 
 const createStyles = makeStyleFactory(
-  (theme: ThemeShape, ds: DSShape) =>
+  (theme: ThemeShape, _ds: DSShape) =>
     StyleSheet.create({
       headerStyleAndroid: {
         backgroundColor: theme.navigationBar,

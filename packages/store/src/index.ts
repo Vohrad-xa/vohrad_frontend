@@ -59,6 +59,7 @@ function sanitizeUser(user: User | null): User | null {
     id: user.id,
     email: user.email,
     role: user.role,
+    role_description: user.role_description,
     tenant_id: user.tenant_id,
     first_name: user.first_name,
     last_name: user.last_name,

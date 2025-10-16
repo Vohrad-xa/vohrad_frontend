@@ -5,7 +5,13 @@ import React, {
   useCallback,
   type ReactNode,
 } from 'react';
-import {Platform, View, ActivityIndicator, StyleSheet, Modal} from 'react-native';
+import {
+  Platform,
+  View,
+  ActivityIndicator,
+  StyleSheet,
+  Modal,
+} from 'react-native';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {makeStyleFactory} from '@/utils/style-factory';

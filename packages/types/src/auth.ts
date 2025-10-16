@@ -3,6 +3,7 @@ export interface User {
   id: string;
   email: string;
   role: string;
+  role_description?: string | null;
   tenant_id?: string;
   first_name?: string | null;
   last_name?: string | null;

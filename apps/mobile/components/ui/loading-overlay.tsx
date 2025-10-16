@@ -17,7 +17,7 @@ export function LoadingOverlay() {
 }
 
 const createStyles = makeStyleFactory(
-  (theme: ThemeShape) =>
+  (_theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         ...StyleSheet.absoluteFillObject,
