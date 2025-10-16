@@ -1,22 +1,43 @@
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {StyleSheet} from 'react-native';
 
 export default function LocationsPage() {
   const {theme, ds} = useTheme();
+  const styles = createStyles(theme, ds);
 
   return (
     <RefreshableScrollView
       bounces
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior="automatic"
-      style={{backgroundColor: theme.background}}
+      style={styles.scrollView}
     >
-      <ThemedView style={{flex: 1, padding: ds.spacing.lg}}>
+      <ThemedView style={styles.container}>
         <ThemedText variant="pageTitle">Locations</ThemedText>
-        <ThemedText variant="body" style={{marginTop: ds.spacing.lg}}>
+        <ThemedText variant="body" style={styles.textMarginTop}>
           Manage storage locations, rooms, and assigned areas here.
         </ThemedText>
       </ThemedView>
     </RefreshableScrollView>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (theme: ThemeShape, ds: DSShape) =>
+    StyleSheet.create({
+      scrollView: {
+        backgroundColor: theme.background,
+      },
+      container: {
+        flex: 1,
+        padding: ds.spacing.lg,
+      },
+      textMarginTop: {
+        marginTop: ds.spacing.lg,
+      },
+    }),
+  (theme, ds) => themeKey(theme, ds),
+);

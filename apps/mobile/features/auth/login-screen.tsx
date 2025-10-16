@@ -10,8 +10,6 @@ import {
 import {useRouter} from 'expo-router';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ThemedButton, ThemedText, ThemedView} from '@/components/ui';
-import {type ColorScheme, Palette} from '@/constants/colors';
-import {type DesignSystem} from '@/constants/typography';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';

@@ -11,7 +11,7 @@ import {useTheme} from '@/providers';
 import {useSidebar} from '@/providers/sidebar-provider';
 import type {SharedValue} from 'react-native-reanimated';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type ThemeShape} from '@/constants/theme';
+import {type ThemeShape} from '@/constants/theme';
 
 interface SidebarBackdropProps {
   slideAnim: SharedValue<number>;

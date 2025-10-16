@@ -3,6 +3,9 @@ import {Stack, useRouter} from 'expo-router';
 import {useTheme} from '@/providers';
 import {HeaderButton} from '@/components/ui';
 import {AppIcons} from '@/utils';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {type ThemeShape} from '@/constants/theme';
+import {StyleSheet} from 'react-native';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -11,6 +14,7 @@ export const unstable_settings = {
 export default function SettingsLayout() {
   const {theme} = useTheme();
   const router = useRouter();
+  const styles = createStyles(theme);
 
   return (
     <Stack
@@ -18,10 +22,8 @@ export default function SettingsLayout() {
         headerShown: true,
         headerTransparent: Platform.OS === 'ios',
         headerStyle:
-          Platform.OS === 'android'
-            ? {backgroundColor: theme.navigationBar}
-            : undefined,
-        headerTitleStyle: {color: theme.text},
+          Platform.OS === 'android' ? styles.headerStyleAndroid : undefined,
+        headerTitleStyle: styles.headerTitleStyle,
         headerTitleAlign: 'center',
         headerBackButtonDisplayMode: 'minimal',
       }}
@@ -52,7 +54,22 @@ export default function SettingsLayout() {
           ),
         }}
       />
-      <Stack.Screen name="profile" options={{title: 'Profile'}} />
+      <Stack.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          headerLeft: () => (
+            <HeaderButton
+              icon={AppIcons.navigation.back}
+              onPress={() =>
+                router.canGoBack() ? router.back() : router.dismiss()
+              }
+              iconColorToken="text"
+              accessibilityLabel="Back"
+            />
+          ),
+        }}
+      />
       <Stack.Screen name="preferences" options={{title: 'Preferences'}} />
       <Stack.Screen name="language" options={{title: 'App Language'}} />
       <Stack.Screen name="support" options={{title: 'Report an Issue'}} />
@@ -64,3 +81,16 @@ export default function SettingsLayout() {
     </Stack>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (theme: ThemeShape) =>
+    StyleSheet.create({
+      headerStyleAndroid: {
+        backgroundColor: theme.navigationBar,
+      },
+      headerTitleStyle: {
+        color: theme.text,
+      },
+    }),
+  (theme) => theme.version.toString(),
+);

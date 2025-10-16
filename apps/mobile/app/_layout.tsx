@@ -8,7 +8,6 @@ import {
   Stack,
   useRootNavigationState,
   useRouter,
-  useSegments,
   usePathname,
   type Href,
 } from 'expo-router';

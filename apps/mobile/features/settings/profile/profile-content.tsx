@@ -1,11 +1,10 @@
-import React, {useState, useMemo, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ThemedButton, Input, ThemedText} from '@/components/ui';
 import {useTheme} from '@/providers';
-import {DesignSystem} from '@/constants/typography';
 import {useProfileDetails} from './use-profile-details';
-
-type ThemeType = ReturnType<typeof useTheme>['theme'];
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 type ProfileRow = {
   key: keyof ProfileState;
@@ -24,7 +23,7 @@ type ProfileState = {
 
 export function ProfileContentEditable() {
   const {ds, theme} = useTheme();
-  const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
+  const styles = createStyles(ds, theme);
 
   const profileDetails = useProfileDetails();
 
@@ -99,20 +98,23 @@ export function ProfileContentEditable() {
   );
 }
 
-const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
-  StyleSheet.create({
-    container: {
-      gap: ds.spacing.lg,
-      paddingTop: ds.spacing.md,
-    },
-    fieldContainer: {
-      gap: ds.spacing.sm,
-    },
-    label: {
-      paddingLeft: ds.spacing.sm,
-    },
-    actions: {
-      paddingTop: ds.spacing.md,
-      paddingBottom: ds.spacing.xxxl + ds.spacing.md,
-    },
-  });
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      container: {
+        gap: ds.spacing.lg,
+        paddingTop: ds.spacing.md,
+      },
+      fieldContainer: {
+        gap: ds.spacing.sm,
+      },
+      label: {
+        paddingLeft: ds.spacing.sm,
+      },
+      actions: {
+        paddingTop: ds.spacing.md,
+        paddingBottom: ds.spacing.xxxl + ds.spacing.md,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);

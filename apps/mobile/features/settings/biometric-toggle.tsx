@@ -1,7 +1,6 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {Alert, StyleSheet, View} from 'react-native';
 import {ThemedText, Toggle} from '@/components/ui';
-import type {DesignSystem} from '@/constants/typography';
 import {
   getBiometricAvailability,
   isBiometricEnabled,
@@ -11,8 +10,8 @@ import {
   type BiometricAvailability,
 } from '@/modules/security/biometric-service';
 import {useTheme} from '@/providers';
-
-type ThemeType = ReturnType<typeof useTheme>['theme'];
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 type BiometricStatus = {
   availability: BiometricAvailability;
@@ -74,7 +73,7 @@ function resolveEnableErrorMessage(errorCode?: string): {
 
 export function BiometricToggle() {
   const {ds, theme} = useTheme();
-  const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
+  const styles = createStyles(ds, theme);
   const [status, setStatus] = useState<BiometricStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const isMountedRef = useRef(true);
@@ -208,17 +207,19 @@ export function BiometricToggle() {
 
 export default BiometricToggle;
 
-function createStyles(ds: typeof DesignSystem, theme: ThemeType) {
-  return StyleSheet.create({
-    container: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    message: {
-      ...ds.typography.secondary,
-      color: theme.muted,
-      marginRight: ds.spacing.sm,
-      flexShrink: 1,
-    },
-  });
-}
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      container: {
+        flexDirection: 'row',
+        alignItems: 'center',
+      },
+      message: {
+        ...ds.typography.secondary,
+        color: theme.muted,
+        marginRight: ds.spacing.sm,
+        flexShrink: 1,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);

@@ -12,7 +12,6 @@ import {
   Switch,
   ModalFlatList,
 } from '@/components/ui';
-import type {DesignSystem} from '@/constants/typography';
 import {BiometricToggle} from '@/features/settings/biometric-toggle';
 import {
   isDividerItem,
@@ -23,14 +22,15 @@ import {
 import {useSettingsItems} from '@/features/settings/use-settings-items';
 import {useTheme, useAuth} from '@/providers';
 import {Icon, AppIcons, showConfirmAlert} from '@/utils';
-type ThemeType = ReturnType<typeof useTheme>['theme'];
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export default function SettingsModal() {
   const {ds, theme, preference} = useTheme();
   const {logout} = useAuth();
-  const styles = createStyles(ds, theme);
-  const computedSettingsItems = useSettingsItems();
   const insets = useSafeAreaInsets();
+  const styles = createStyles(ds, theme, insets.bottom);
+  const computedSettingsItems = useSettingsItems();
 
   // Type guard to check for toggle items
   const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem =>
@@ -127,9 +127,7 @@ export default function SettingsModal() {
         data={allSettingsItems}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + ds.spacing.xl,
-        }}
+        contentContainerStyle={styles.modalFlatListContent}
         showsVerticalScrollIndicator
       />
 
@@ -138,23 +136,29 @@ export default function SettingsModal() {
   );
 }
 
-const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    divider: {
-      marginVertical: ds.spacing.sm,
-    },
-    themeStatusText: {
-      ...ds.typography.secondary,
-      color: theme.muted,
-      fontWeight: ds.fontWeight.medium,
-      marginRight: ds.spacing.sm,
-    },
-    appearanceSwitch: {
-      alignSelf: 'auto',
-      minWidth: ds.iconSize.md,
-      minHeight: ds.iconSize.xs,
-    },
-  });
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape, insetsBottom: number) =>
+    StyleSheet.create({
+      container: {
+        flex: 1,
+      },
+      divider: {
+        marginVertical: ds.spacing.sm,
+      },
+      themeStatusText: {
+        ...ds.typography.secondary,
+        color: theme.muted,
+        fontWeight: ds.fontWeight.medium,
+        marginRight: ds.spacing.sm,
+      },
+      appearanceSwitch: {
+        alignSelf: 'auto',
+        minWidth: ds.iconSize.md,
+        minHeight: ds.iconSize.xs,
+      },
+      modalFlatListContent: {
+        paddingBottom: insetsBottom + ds.spacing.xl,
+      },
+    }),
+  (ds, theme, insetsBottom) => themeKey(theme, ds) + `|${insetsBottom}`,
+);

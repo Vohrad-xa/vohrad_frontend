@@ -11,6 +11,8 @@ import {
   useSidebar,
   useTheme,
 } from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {type ThemeShape} from '@/constants/theme';
 
 function AppStack() {
   const {theme} = useTheme();
@@ -94,37 +96,38 @@ export default function AppLayout() {
   );
 }
 
-const createStyles = (theme: ThemeType) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.sidebarBackground,
-    },
-    mainContent: {
-      flex: 1,
-      backgroundColor: theme.background,
-      shadowColor: '#000000ab',
-      shadowOffset: {width: 2, height: 0},
-      shadowRadius: 10,
-      ...(Platform.OS !== 'web' && {
-        borderRadius: 40,
-        overflow: 'hidden',
-      }),
-    },
-    border: {
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      bottom: 0,
-      right: 0,
-      ...(Platform.OS !== 'web' && {
-        borderRadius: 40,
-      }),
-      borderWidth: 0.5,
-      borderColor: theme.lightdivider,
-      zIndex: 10000,
-      pointerEvents: 'none',
-    },
-  });
-
-type ThemeType = ReturnType<typeof useTheme>['theme'];
+const createStyles = makeStyleFactory(
+  (theme: ThemeShape) =>
+    StyleSheet.create({
+      container: {
+        flex: 1,
+        backgroundColor: theme.sidebarBackground,
+      },
+      mainContent: {
+        flex: 1,
+        backgroundColor: theme.background,
+        shadowColor: '#000000ab',
+        shadowOffset: {width: 2, height: 0},
+        shadowRadius: 10,
+        ...(Platform.OS !== 'web' && {
+          borderRadius: 40,
+          overflow: 'hidden',
+        }),
+      },
+      border: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        bottom: 0,
+        right: 0,
+        ...(Platform.OS !== 'web' && {
+          borderRadius: 40,
+        }),
+        borderWidth: 0.5,
+        borderColor: theme.lightdivider,
+        zIndex: 10000,
+        pointerEvents: 'none',
+      },
+    }),
+  (theme) => theme.version.toString(),
+);

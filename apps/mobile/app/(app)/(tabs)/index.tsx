@@ -1,16 +1,24 @@
-import {StyleSheet, View, Dimensions, ScrollView, Platform} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  ScrollView,
+  Platform,
+  type ViewStyle,
+  type TextStyle,
+} from 'react-native';
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {QuickActions} from '@/features/quick-actions';
-import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import type {MenuCard} from '@/types/ui';
 import {Icon, AppIcons} from '@/utils';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export default function HomeScreen() {
   const {ds, theme} = useTheme();
   const screenWidth = Dimensions.get('window').width;
-  const cardWidth =
-    (screenWidth - ds.layout.screenPadding * 2 - ds.spacing.md) / 2;
+  const styles = createStyles(ds, theme, screenWidth);
 
   const menuCards: MenuCard[] = [
     {
@@ -51,57 +59,14 @@ export default function HomeScreen() {
     },
   ];
 
-  const menuGridStyles = usePlatformStyles({
-    web: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-      gap: ds.spacing.md,
-    },
-    mobile: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: ds.spacing.md,
-    },
+  const menuGridStyles = Platform.select({
+    web: styles.menuGridWeb,
+    default: styles.menuGridMobile,
   });
 
-  const cardStyles = usePlatformStyles({
-    web: {
-      height: ds.components.button.height * 2.3,
-    },
-    mobile: {
-      height: ds.components.button.height * 2.3,
-      width: cardWidth,
-    },
-  });
-
-  const styles = StyleSheet.create({
-    container: {
-      padding: ds.layout.screenPadding,
-    },
-    cardContainer: {
-      gap: ds.spacing.md,
-    },
-    cardContent: {
-      flex: 1,
-      padding: ds.spacing.md,
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-    },
-    topSection: {
-      alignSelf: 'flex-start',
-      gap: ds.spacing.xs,
-    },
-    cardTitle: {
-      fontWeight: ds.fontWeight.medium,
-    },
-    cardCount: {
-      alignSelf: 'flex-start',
-      fontWeight: ds.fontWeight.bold,
-    },
-    title: {
-      marginTop: ds.spacing.lg,
-      marginBottom: ds.spacing.md,
-    },
+  const cardStyles = Platform.select({
+    web: styles.cardWeb,
+    default: styles.cardMobile,
   });
 
   const ScrollComponent =
@@ -114,10 +79,13 @@ export default function HomeScreen() {
       contentInsetAdjustmentBehavior={
         Platform.OS !== 'web' ? 'automatic' : undefined
       }
-      style={{backgroundColor: theme.background, flex: 1}}
+      style={styles.scrollView}
     >
       <View style={styles.container}>
-        <ThemedText variant="heading" style={[styles.title, {marginTop: 0}]}>
+        <ThemedText
+          variant="heading"
+          style={[styles.title, styles.titleNoMarginTop]}
+        >
           Quick Actions
         </ThemedText>
         <QuickActions />
@@ -155,3 +123,69 @@ export default function HomeScreen() {
     </ScrollComponent>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape, screenWidth: number) => {
+    const cardWidth =
+      (screenWidth - ds.layout.screenPadding * 2 - ds.spacing.md) / 2;
+
+    return StyleSheet.create({
+      scrollView: {
+        backgroundColor: theme.background,
+        flex: 1,
+      } as ViewStyle,
+      container: {
+        padding: ds.layout.screenPadding,
+      } as ViewStyle,
+      title: {
+        marginTop: ds.spacing.lg,
+        marginBottom: ds.spacing.md,
+      } as TextStyle,
+      titleNoMarginTop: {
+        marginTop: 0,
+      } as TextStyle,
+      cardContainer: {
+        gap: ds.spacing.md,
+      } as ViewStyle,
+      cardContent: {
+        flex: 1,
+        padding: ds.spacing.md,
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      } as ViewStyle,
+      topSection: {
+        alignSelf: 'flex-start',
+        gap: ds.spacing.xs,
+      } as ViewStyle,
+      cardTitle: {
+        fontWeight: ds.fontWeight.medium,
+      } as TextStyle,
+      cardCount: {
+        alignSelf: 'flex-start',
+        fontWeight: ds.fontWeight.bold,
+      } as TextStyle,
+      menuGridWeb: {
+        ...Platform.select({
+          web: {
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          },
+        }),
+        gap: ds.spacing.md,
+      } as ViewStyle,
+      menuGridMobile: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        gap: ds.spacing.md,
+      } as ViewStyle,
+      cardWeb: {
+        height: ds.components.button.height * 2.3,
+      } as ViewStyle,
+      cardMobile: {
+        height: ds.components.button.height * 2.3,
+        width: cardWidth,
+      } as ViewStyle,
+    });
+  },
+  (ds, theme, screenWidth) => themeKey(theme, ds) + `|${screenWidth}`,
+);

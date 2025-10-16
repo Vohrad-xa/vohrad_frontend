@@ -1,9 +1,9 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 import {ThemedView, ThemedText} from '@/components/ui';
-import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
-type ThemeType = ReturnType<typeof useTheme>['theme'];
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export default function PreferencesScreen() {
   const {ds, theme} = useTheme();
@@ -16,16 +16,19 @@ export default function PreferencesScreen() {
   );
 }
 
-const createStyles = (ds: typeof DesignSystem, theme: ThemeType) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: ds.spacing.xl,
-    },
-    text: {
-      ...ds.typography.sectionTitle,
-      color: theme.text,
-    },
-  });
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: ds.spacing.xl,
+      },
+      text: {
+        ...ds.typography.sectionTitle,
+        color: theme.text,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);

@@ -5,12 +5,15 @@ import {
   TouchableOpacity,
   FlatList,
   Platform,
+  type ViewStyle,
+  type TextStyle,
 } from 'react-native';
-import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import type {MenuItem} from '@/types';
 import {Icon, AppIcons} from '@/utils';
 import {ThemedText} from '../../components/ui/themed-text';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export function QuickActions() {
   const {ds, theme} = useTheme();
@@ -45,31 +48,7 @@ export function QuickActions() {
     </TouchableOpacity>
   );
 
-  // Platform-specific container styles
-  const containerStyles = usePlatformStyles({
-    web: {
-      marginLeft: -ds.layout.screenPadding,
-      marginRight: -ds.layout.screenPadding,
-    },
-    mobile: {
-      marginHorizontal: -ds.layout.screenPadding,
-    },
-  });
-
-  // Platform-specific content styles
-  const contentStyles = usePlatformStyles({
-    web: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(78.5px, 1fr))',
-      gap: ds.spacing.md,
-      overflow: 'auto',
-    },
-    mobile: {
-      // Mobile uses FlatList, no styles needed
-    },
-  });
-
-  const styles = createStyles(containerStyles, contentStyles, theme, ds);
+  const styles = createStyles(ds, theme);
 
   return (
     <View style={styles.card}>
@@ -101,34 +80,60 @@ export function QuickActions() {
   );
 }
 
-const createStyles = (
-  containerStyles: ReturnType<typeof usePlatformStyles>,
-  contentStyles: ReturnType<typeof usePlatformStyles>,
-  theme: ReturnType<typeof useTheme>['theme'],
-  ds: ReturnType<typeof useTheme>['ds'],
-) =>
-  StyleSheet.create({
-    card: containerStyles,
-    webGrid: contentStyles,
-    actionButton: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingVertical: ds.spacing.md,
-      gap: ds.spacing.xs,
-      minWidth: 78.5,
-    },
-    iconContainer: {
-      width: 48,
-      height: 48,
-      borderRadius: ds.borderRadius.full,
-      backgroundColor: theme.secondary,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    actionLabel: {
-      ...ds.typography.footnote,
-      textAlign: 'center',
-      color: theme.muted,
-      fontWeight: ds.fontWeight.semibold,
-    },
-  });
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) => {
+    const containerStylesWeb = {
+      marginLeft: -ds.layout.screenPadding as number | undefined,
+      marginRight: -ds.layout.screenPadding as number | undefined,
+      marginHorizontal: undefined as number | undefined,
+    };
+    const containerStylesMobile = {
+      marginHorizontal: -ds.layout.screenPadding as number | undefined,
+      marginLeft: undefined as number | undefined,
+      marginRight: undefined as number | undefined,
+    };
+
+    const contentStylesWeb = {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(78.5px, 1fr))',
+      gap: ds.spacing.md,
+      overflow: 'auto',
+    };
+    const contentStylesMobile = {
+      // Mobile uses FlatList, no styles needed
+    };
+
+    return StyleSheet.create({
+      card: Platform.select({
+        web: containerStylesWeb,
+        default: containerStylesMobile,
+      }) as ViewStyle,
+      webGrid: Platform.select({
+        web: contentStylesWeb,
+        default: contentStylesMobile,
+      }) as ViewStyle,
+      actionButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: ds.spacing.md,
+        gap: ds.spacing.xs,
+        minWidth: 78.5,
+      } as ViewStyle,
+      iconContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: ds.borderRadius.full,
+        backgroundColor: theme.secondary,
+        alignItems: 'center',
+        justifyContent: 'center',
+      } as ViewStyle,
+      actionLabel: {
+        ...ds.typography.footnote,
+        textAlign: 'center',
+        color: theme.muted,
+        fontWeight: ds.fontWeight.semibold,
+      } as TextStyle,
+    });
+  },
+  (ds, theme) => themeKey(theme, ds),
+);

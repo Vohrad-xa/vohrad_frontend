@@ -3,7 +3,6 @@ import type {TextInput} from 'react-native';
 import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {ThemedButton, ThemedText, Input} from '@/components/ui';
 import type {InputStatus} from '@/components/ui';
-import {DesignSystem} from '@/constants/typography';
 import * as biometricService from '@/modules/security/biometric-service';
 import {useAuth, useTheme} from '@/providers';
 import * as AppStorage from '@/utils/storage';

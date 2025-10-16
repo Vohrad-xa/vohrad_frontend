@@ -5,6 +5,7 @@ import {
   View,
   type ColorValue,
   type ImageSourcePropType,
+  StyleSheet,
 } from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {Tabs, useNavigation, useSegments} from 'expo-router';
@@ -18,6 +19,8 @@ import {HeaderButton} from '@/components/ui';
 import {useSidebar, useTheme} from '@/providers';
 import type {TabItem} from '@/types/ui';
 import {AppIcons, type IconName} from '@/utils';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {type ThemeShape} from '@/constants/theme';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -57,6 +60,7 @@ export default function TabLayout() {
   const segments = useSegments();
   const {theme} = useTheme();
   const {toggleSideMenu} = useSidebar();
+  const styles = createStyles(theme);
 
   useEffect(() => {
     const currentTab = segments[segments.length - 1] as string;
@@ -66,10 +70,8 @@ export default function TabLayout() {
       headerShown: true,
       headerTransparent: Platform.OS === 'ios',
       headerStyle:
-        Platform.OS === 'android'
-          ? {backgroundColor: theme.navigationBar}
-          : undefined,
-      headerTitleStyle: {color: theme.text},
+        Platform.OS === 'android' ? styles.headerStyleAndroid : undefined,
+      headerTitleStyle: styles.headerTitleStyle,
       headerTitleAlign: 'center',
       headerLeft: () => (
         <HeaderButton
@@ -80,11 +82,11 @@ export default function TabLayout() {
         />
       ),
     });
-  }, [segments, navigation, theme, toggleSideMenu]);
+  }, [segments, navigation, theme, toggleSideMenu, styles]);
 
   if (Platform.OS === 'web') {
     return (
-      <View style={{flex: 1, backgroundColor: theme.background}}>
+      <View style={styles.webContainer}>
         <Tabs
           screenOptions={{
             headerShown: false,
@@ -138,3 +140,20 @@ export default function TabLayout() {
     </NativeTabs>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (theme: ThemeShape) =>
+    StyleSheet.create({
+      headerStyleAndroid: {
+        backgroundColor: theme.navigationBar,
+      },
+      headerTitleStyle: {
+        color: theme.text,
+      },
+      webContainer: {
+        flex: 1,
+        backgroundColor: theme.background,
+      },
+    }),
+  (theme) => theme.version.toString(),
+);
