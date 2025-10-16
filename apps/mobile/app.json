@@ -4,25 +4,30 @@
     "slug": "vohrad-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/icons/android/playstore-512.png",
     "scheme": "mobile",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "vohrad.mobile",
+      "icon": "./assets/icons/ios/AppIcon.appiconset/Icon-AppStore-1024x1024.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSFaceIDUsageDescription": "Face ID lets you unlock the app quickly and securely."
       }
     },
     "android": {
+      "icon": "./assets/icons/android/playstore-512.png",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/icons/android/playstore-512.png",
+        "backgroundColor": "#00000000"
       },
+      "notification": {
+        "icon": "./assets/icons/android/mipmap-hdpi/ic_launcher.png",
+        "color": "#E6F4FE"
+      },
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=vohrad.mobile",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
       "windowSoftInputMode": "adjustPan",
@@ -30,7 +35,7 @@
     },
     "web": {
       "output": "single",
-      "favicon": "./assets/images/favicon.png",
+      "favicon": "./assets/icons/web/favicon-48x48.png",
       "bundler": "metro"
     },
     "plugins": [
@@ -39,11 +44,12 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/icons/web/icon-512x512.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {
+            "image": "./assets/icons/web/icon-512x512.png",
             "backgroundColor": "#000000"
           }
         }
