@@ -1,4 +1,5 @@
 import type {TokenResponse, UserLoginRequest, AdminLoginRequest} from './api';
+import type {Tenant} from './tenant';
 export interface User {
   id: string;
   email: string;
@@ -17,6 +18,9 @@ export interface User {
   email_verified_at?: string | null;
   created_at?: string;
   updated_at?: string;
+  pending_email?: string | null;
+  pending_email_requested_at?: string | null;
+  pending_email_expires_at?: string | null;
 }
 export type UserCredentials = UserLoginRequest;
 export type AdminCredentials = AdminLoginRequest;
@@ -45,17 +49,20 @@ export interface AsyncState<TData = unknown, TError = string | null> {
 }
 export interface AuthState {
   user: User | null;
+  tenant: Tenant | null;
   tokens: AuthTokens | null;
   isAuthenticated: boolean;
   intendedRoute: string | null;
   isLoading: boolean;
   error: string | null;
   setUser: (user: User) => void;
+  setTenant: (tenant: Tenant | null) => void;
   setTokens: (tokens: AuthTokens) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setIntendedRoute: (route: string | null) => void;
   updateUser: (userData: Partial<User>) => void;
+  updateTenant: (tenantData: Partial<Tenant>) => void;
   login: (user: User, tokens: AuthTokens) => void;
   logout: () => void;
   clearError: () => void;

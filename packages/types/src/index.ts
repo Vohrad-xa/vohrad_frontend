@@ -17,5 +17,11 @@ export type {
   ApiResponse,
   ApiResponseMetadata,
 } from './api';
+export type {
+  Tenant,
+  TenantSettingsUpdate,
+  TenantLicenseInfo,
+  JsonValue,
+} from './tenant';
 
 export {ApiError} from './api';

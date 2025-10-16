@@ -10,6 +10,11 @@ export const API_ENDPOINTS = {
     ME: '/users/me',
     UPDATE_PROFILE: '/users/me',
   },
+  TENANT: {
+    INFO: '/tenant',
+    SETTINGS: '/tenant/settings',
+    LICENSE_INFO: '/tenant/license-info',
+  },
 } as const;
 export type ApiEndpoint =
   (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS][keyof (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS]];
