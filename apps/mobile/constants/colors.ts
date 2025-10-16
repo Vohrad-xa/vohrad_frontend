@@ -48,6 +48,7 @@ export const Tokens = {
     surface: Palette.gray[50],
     border: Palette.gray[200],
     divider: Palette.gray[300],
+    lightdivider: Palette.gray[100],
     muted: Palette.gray[600],
     navigationBar: Palette.white,
 
@@ -98,6 +99,7 @@ export const Tokens = {
     muted: Palette.gray[500],
     border: Palette.gray[700],
     divider: Palette.gray[600],
+    lightdivider: Palette.gray[750],
     navigationBar: Palette.Onyx,
 
     // Brand & accents

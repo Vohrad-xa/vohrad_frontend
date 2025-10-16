@@ -90,7 +90,7 @@ const createStyles = (theme: ThemeType) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.background,
+      backgroundColor: theme.sidebarBackground,
     },
     mainContent: {
       flex: 1,
@@ -98,15 +98,20 @@ const createStyles = (theme: ThemeType) =>
       shadowColor: '#000000ab',
       shadowOffset: {width: 2, height: 0},
       shadowRadius: 10,
+      borderRadius: 40,
+      overflow: 'hidden',
     },
     border: {
       position: 'absolute',
       left: 0,
       top: 0,
       bottom: 0,
-      width: 0.5,
-      backgroundColor: theme.divider,
+      right: 0,
+      borderRadius: 40,
+      borderWidth: 0.5,
+      borderColor: theme.lightdivider,
       zIndex: 10000,
+      pointerEvents: 'none',
     },
   });
 
