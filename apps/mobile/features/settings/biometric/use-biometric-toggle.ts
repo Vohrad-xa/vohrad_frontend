@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {Alert, StyleSheet, View} from 'react-native';
-import {ThemedText, Toggle} from '@/components/ui';
+import {Alert} from 'react-native';
 import {
   getBiometricAvailability,
   isBiometricEnabled,
@@ -9,11 +8,8 @@ import {
   recordDecline,
   type BiometricAvailability,
 } from '@/modules/security/biometric-service';
-import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
-type BiometricStatus = {
+export type BiometricStatus = {
   availability: BiometricAvailability;
   enabled: boolean;
 };
@@ -71,9 +67,7 @@ function resolveEnableErrorMessage(errorCode?: string): {
   }
 }
 
-export function BiometricToggle() {
-  const {ds, theme} = useTheme();
-  const styles = createStyles(ds, theme);
+export function useBiometricToggle() {
   const [status, setStatus] = useState<BiometricStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const isMountedRef = useRef(true);
@@ -187,39 +181,11 @@ export function BiometricToggle() {
     ? null
     : resolveAvailabilityMessage(availability);
 
-  return (
-    <View style={styles.container}>
-      {availabilityMessage && (
-        <ThemedText style={styles.message} accessibilityRole="text">
-          {availabilityMessage}
-        </ThemedText>
-      )}
-      <Toggle
-        value={isEnabled}
-        onValueChange={handleToggle}
-        disabled={loading || !isAvailable}
-        accessibilityLabel="Biometric unlock"
-        testID="settings-biometric-toggle"
-      />
-    </View>
-  );
+  return {
+    isEnabled,
+    isAvailable,
+    loading,
+    availabilityMessage,
+    handleToggle,
+  };
 }
-
-export default BiometricToggle;
-
-const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flexDirection: 'row',
-        alignItems: 'center',
-      },
-      message: {
-        ...ds.typography.secondary,
-        color: theme.muted,
-        marginRight: ds.spacing.sm,
-        flexShrink: 1,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);

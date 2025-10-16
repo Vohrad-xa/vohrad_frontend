@@ -12,7 +12,7 @@ import {
   Switch,
   ModalFlatList,
 } from '@/components/ui';
-import {BiometricToggle} from '@/features/settings/biometric-toggle';
+import {BiometricToggle} from '@/features/settings/biometric';
 import {
   isDividerItem,
   type ListItem as SettingsListItem,
