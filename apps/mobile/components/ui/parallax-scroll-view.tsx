@@ -9,6 +9,9 @@ import Animated, {
 
 import {ThemedView} from '@/components/ui';
 import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import type {ColorScheme} from '@/constants/colors';
 
 const HEADER_HEIGHT = 250;
 
@@ -23,7 +26,7 @@ export default function ParallaxScrollView({
   headerBackgroundColor,
 }: Props) {
   const {scheme: colorScheme, ds, theme} = useTheme();
-  const backgroundColor = theme.background;
+  const styles = createStyles(ds, theme, colorScheme, headerBackgroundColor);
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollOffset(scrollRef);
   const headerAnimatedStyle = useAnimatedStyle(() => {
@@ -47,37 +50,46 @@ export default function ParallaxScrollView({
     };
   });
 
-  const styles = StyleSheet.create({
-    header: {
-      height: HEADER_HEIGHT,
-      overflow: 'hidden',
-    },
-    content: {
-      flex: 1,
-      padding: ds.spacing.xxl,
-      gap: ds.spacing.lg,
-      overflow: 'hidden',
-    },
-  });
-
   return (
     <Animated.ScrollView
       ref={scrollRef}
-      style={{backgroundColor, flex: 1}}
+      style={styles.scrollView}
       scrollEventThrottle={16}
       showsVerticalScrollIndicator={Platform.OS === 'web'}
       showsHorizontalScrollIndicator={Platform.OS === 'web'}
     >
-      <Animated.View
-        style={[
-          styles.header,
-          {backgroundColor: headerBackgroundColor[colorScheme]},
-          headerAnimatedStyle,
-        ]}
-      >
+      <Animated.View style={[styles.header, headerAnimatedStyle]}>
         {headerImage}
       </Animated.View>
       <ThemedView style={styles.content}>{children}</ThemedView>
     </Animated.ScrollView>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (
+    ds: DSShape,
+    theme: ThemeShape,
+    colorScheme: ColorScheme,
+    headerBackgroundColor: {dark: string; light: string},
+  ) =>
+    StyleSheet.create({
+      scrollView: {
+        backgroundColor: theme.background,
+        flex: 1,
+      },
+      header: {
+        height: HEADER_HEIGHT,
+        overflow: 'hidden',
+        backgroundColor: headerBackgroundColor[colorScheme],
+      },
+      content: {
+        flex: 1,
+        padding: ds.spacing.xxl,
+        gap: ds.spacing.lg,
+        overflow: 'hidden',
+      },
+    }),
+  (ds, theme, colorScheme, headerBackgroundColor) =>
+    `${themeKey(theme, ds)}|${headerBackgroundColor.dark}|${headerBackgroundColor.light}|${colorScheme}`,
+);

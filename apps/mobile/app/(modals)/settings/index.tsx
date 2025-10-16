@@ -22,7 +22,7 @@ import {
 } from '@/features/settings/types';
 import {useSettingsItems} from '@/features/settings/use-settings-items';
 import {useTheme, useAuth} from '@/providers';
-import {Icon, AppIcons} from '@/utils';
+import {Icon, AppIcons, showConfirmAlert} from '@/utils';
 type ThemeType = ReturnType<typeof useTheme>['theme'];
 
 export default function SettingsModal() {
@@ -46,7 +46,16 @@ export default function SettingsModal() {
         label: 'Logout',
         isDestructive: true,
         onPress: () => {
-          logout();
+          showConfirmAlert({
+            title: 'Logout',
+            message: 'Are you sure you want to logout?',
+            confirmText: 'Logout',
+            cancelText: 'Cancel',
+            destructive: true,
+            onConfirm: () => {
+              logout();
+            },
+          });
         },
       },
     ];

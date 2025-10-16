@@ -37,16 +37,16 @@ export default function SettingsLayout() {
                   <HeaderButton
                     icon={AppIcons.navigation.back}
                     onPress={() => router.dismiss()}
-                    colorToken="text"
+                    iconColorToken="text"
                     accessibilityLabel="Close settings"
-                    size="lg"
+                    iconSize="lg"
                   />
                 ),
           headerRight: () => (
             <HeaderButton
               icon={AppIcons.navigation.close}
               onPress={() => router.dismiss()}
-              colorToken="text"
+              iconColorToken="text"
               accessibilityLabel="Close settings"
             />
           ),

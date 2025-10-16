@@ -76,7 +76,7 @@ export default function TabLayout() {
           icon={AppIcons.navigation.menu}
           accessibilityLabel="Open menu"
           onPress={toggleSideMenu}
-          size="xxl"
+          iconSize="xxl"
         />
       ),
     });

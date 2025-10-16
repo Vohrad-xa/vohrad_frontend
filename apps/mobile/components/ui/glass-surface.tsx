@@ -1,12 +1,11 @@
 import React from 'react';
-import type {StyleProp, ViewStyle} from 'react-native';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {BlurView} from 'expo-blur';
 import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
+import type {BaseViewProps} from '@/types';
 
-export interface GlassSurfaceProps {
-  children?: React.ReactNode;
-  style?: StyleProp<ViewStyle>;
+export interface GlassSurfaceProps extends BaseViewProps {
   intensity?: number;
   tint?: 'default' | 'light' | 'dark';
   bordered?: boolean;
@@ -19,19 +18,36 @@ export function GlassSurface({
   tint,
 }: GlassSurfaceProps) {
   const {scheme} = useTheme();
+  const styles = createStyles();
 
   return (
-    <View style={[style, {overflow: 'hidden'}]}>
+    <View style={[style, styles.container]}>
       <BlurView
         intensity={intensity ?? 20}
         tint={tint ?? (scheme === 'dark' ? 'dark' : 'light')}
         experimentalBlurMethod="dimezisBlurView"
-        style={{flex: 1}}
+        style={styles.blurView}
       >
-        <View style={{flex: 1}}>{children}</View>
+        <View style={styles.childrenContainer}>{children}</View>
       </BlurView>
     </View>
   );
 }
+
+const createStyles = makeStyleFactory(
+  () =>
+    StyleSheet.create({
+      container: {
+        overflow: 'hidden',
+      },
+      blurView: {
+        flex: 1,
+      },
+      childrenContainer: {
+        flex: 1,
+      },
+    }),
+  () => 'glass-surface',
+);
 
 export default GlassSurface;

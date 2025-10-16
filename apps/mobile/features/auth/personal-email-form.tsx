@@ -211,7 +211,7 @@ export function PersonalEmailForm({
         renderItem={({item}) => {
           const isEmail = item.key === 'email';
           return (
-            <View style={{width: '100%'}}>
+            <View style={styles.fieldWrapper}>
               <Input
                 ref={item.ref as any}
                 placeholder={item.placeholder}
@@ -264,7 +264,7 @@ export function PersonalEmailForm({
           <ThemedText
             variant="secondary"
             colorToken="destructive"
-            style={{textAlign: 'center'}}
+            style={styles.errorText}
           >
             {error}
           </ThemedText>
@@ -276,7 +276,7 @@ export function PersonalEmailForm({
           <ThemedText
             variant="secondary"
             colorToken="muted"
-            style={{textDecorationLine: 'underline'}}
+            style={styles.forgotPasswordLink}
           >
             Forgot password?
           </ThemedText>
@@ -310,6 +310,15 @@ const createStyles = makeStyleFactory(
       section: {gap: ds.spacing.md, alignItems: 'center', width: '100%'},
       loginButton: {paddingHorizontal: ds.spacing.xxl, alignSelf: 'center'},
       loginButtonDisabled: {opacity: ds.opacity.pressed},
+      fieldWrapper: {
+        width: '100%',
+      },
+      errorText: {
+        textAlign: 'center',
+      },
+      forgotPasswordLink: {
+        textDecorationLine: 'underline',
+      },
     }),
   (ds, theme) => themeKey(theme, ds),
 );

@@ -30,7 +30,7 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
-export function useTheme() {
+export function useTheme(): ThemeContextValue {
   const ctx = useContext(ThemeContext);
   if (!ctx) {
     throw new Error('useTheme must be used within AppThemeProvider');
@@ -38,7 +38,11 @@ export function useTheme() {
   return ctx;
 }
 
-export function AppThemeProvider({children}: {children: React.ReactNode}) {
+interface AppThemeProviderProps {
+  children: React.ReactNode;
+}
+
+export function AppThemeProvider({children}: AppThemeProviderProps) {
   const systemScheme = useRNColorScheme() ?? 'light';
   const [preference, setPreference] = useState<ThemePreference>('system');
   const [hydrated, setHydrated] = useState(false);

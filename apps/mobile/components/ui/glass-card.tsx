@@ -5,9 +5,12 @@ import {
   type StyleProp,
   type ViewStyle,
   AccessibilityInfo,
+  StyleSheet,
 } from 'react-native';
-import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import type {ContainerStyleProps} from '@/types';
 
 interface GlassViewProps {
   glassEffectStyle?: string;
@@ -30,10 +33,8 @@ interface GlassEffectModule {
   default?: React.ComponentType<GlassViewProps>;
 }
 
-export interface GlassCardProps {
+export interface GlassCardProps extends ContainerStyleProps {
   children?: React.ReactNode;
-  style?: StyleProp<ViewStyle>;
-  contentStyle?: StyleProp<ViewStyle>;
 }
 
 export function GlassCard({children, style, contentStyle}: GlassCardProps) {
@@ -61,23 +62,11 @@ export function GlassCard({children, style, contentStyle}: GlassCardProps) {
     }
   }, []);
 
-  // Platform-aware fallback background styles
-  const fallbackCardStyles = usePlatformStyles({
-    mobile: {
-      borderRadius: ds.components.card.borderRadius,
-      flex: 1,
-      backgroundColor: theme.card,
-      borderWidth: 1,
-      borderColor: theme.border,
-      overflow: 'visible',
-    },
-    web: {
-      borderRadius: ds.components.card.borderRadius,
-      flex: 1,
-      backgroundColor: theme.card,
-      borderWidth: 1,
-      borderColor: theme.border,
-    },
+  const styles = createStyles(ds, theme);
+
+  const fallbackCardStyles = Platform.select({
+    web: styles.fallbackCardWeb,
+    default: styles.fallbackCardMobile,
   });
 
   if (Platform.OS === 'ios' && !reduceTransparency) {
@@ -103,10 +92,7 @@ export function GlassCard({children, style, contentStyle}: GlassCardProps) {
               glassEffectStyle={scheme === 'dark' ? 'clear' : 'regular'}
               tintColor={theme.glassTint}
               isInteractive
-              style={[
-                {borderRadius: ds.components.card.borderRadius, flex: 1},
-                contentStyle,
-              ]}
+              style={[styles.glassView, contentStyle]}
             >
               {children}
             </GlassView>
@@ -122,5 +108,31 @@ export function GlassCard({children, style, contentStyle}: GlassCardProps) {
     </View>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      fallbackCardMobile: {
+        borderRadius: ds.components.card.borderRadius,
+        flex: 1,
+        backgroundColor: theme.card,
+        borderWidth: 1,
+        borderColor: theme.border,
+        overflow: 'visible',
+      },
+      fallbackCardWeb: {
+        borderRadius: ds.components.card.borderRadius,
+        flex: 1,
+        backgroundColor: theme.card,
+        borderWidth: 1,
+        borderColor: theme.border,
+      },
+      glassView: {
+        borderRadius: ds.components.card.borderRadius,
+        flex: 1,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);
 
 export default GlassCard;

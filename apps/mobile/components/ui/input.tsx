@@ -10,6 +10,8 @@ import {
 
 import {useTheme} from '@/providers/theme-provider';
 import {Icon, type IconName} from '@/utils';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export type InputStatus = 'none' | 'error' | 'success';
 
@@ -34,10 +36,9 @@ export const Input = forwardRef<TextInput, InputProps>(
     ref,
   ) => {
     const {theme, ds} = useTheme();
+    const styles = createStyles(ds, theme);
 
     const iconSize = ds.iconSize.md;
-    const rightPad = ds.spacing.xxxl;
-    const inputMinHeight = 36;
 
     const hasStatus = status === 'error' || status === 'success';
     const hasCustomRight = !hasStatus && !!rightIconName;
@@ -50,33 +51,14 @@ export const Input = forwardRef<TextInput, InputProps>(
           ? {name: 'checkmark-outline' as IconName, color: theme.accentGreen}
           : null;
 
-    const baseInputStyle = {
-      backgroundColor: theme.input,
-      color: theme.text,
-      borderColor: theme.divider,
-      borderWidth: 0.2,
-      borderRadius: ds.components.input.borderRadius,
-      paddingVertical: ds.spacing.md,
-      paddingHorizontal: ds.spacing.md,
-      fontSize: ds.typography.body.fontSize,
-      fontWeight: ds.typography.body.fontWeight,
-      minHeight: inputMinHeight,
-      ...(Platform.OS === 'android'
-        ? {
-            textAlignVertical: 'center' as const,
-            includeFontPadding: false,
-          }
-        : null),
-    } as const;
-
     return (
       <View style={styles.container}>
         <TextInput
           ref={ref}
           style={[
             styles.input,
-            baseInputStyle,
-            showRightIcon && {paddingRight: rightPad},
+            styles.baseInput,
+            showRightIcon && styles.inputWithRightIcon,
             style,
           ]}
           placeholderTextColor={placeholderTextColor ?? theme.iosPlaceholder}
@@ -85,17 +67,7 @@ export const Input = forwardRef<TextInput, InputProps>(
 
         {showRightIcon && (
           <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
-            <View
-              style={{
-                position: 'absolute',
-                right: ds.spacing.md,
-                top: 0,
-                bottom: 0,
-                minWidth: ds.components.tapTarget.minSize,
-                justifyContent: 'center',
-                alignItems: 'flex-end',
-              }}
-            >
+            <View style={styles.rightIconContainer}>
               {statusIcon ? (
                 <TouchableOpacity
                   activeOpacity={onStatusIconPress ? 0.6 : 1}
@@ -131,14 +103,52 @@ export const Input = forwardRef<TextInput, InputProps>(
 
 Input.displayName = 'Input';
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-    width: '100%',
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) => {
+    const rightPad = ds.spacing.xxxl;
+    const inputMinHeight = 36;
+
+    return StyleSheet.create({
+      container: {
+        position: 'relative',
+        width: '100%',
+      },
+      input: {
+        flex: 1,
+        borderWidth: 0,
+        textAlign: 'left',
+      },
+      baseInput: {
+        backgroundColor: theme.input,
+        color: theme.text,
+        borderColor: theme.divider,
+        borderWidth: 0.2,
+        borderRadius: ds.components.input.borderRadius,
+        paddingVertical: ds.spacing.md,
+        paddingHorizontal: ds.spacing.md,
+        fontSize: ds.typography.body.fontSize,
+        fontWeight: ds.typography.body.fontWeight,
+        minHeight: inputMinHeight,
+        ...Platform.select({
+          android: {
+            textAlignVertical: 'center' as const,
+            includeFontPadding: false,
+          },
+        }),
+      },
+      inputWithRightIcon: {
+        paddingRight: rightPad,
+      },
+      rightIconContainer: {
+        position: 'absolute',
+        right: ds.spacing.md,
+        top: 0,
+        bottom: 0,
+        minWidth: ds.components.tapTarget.minSize,
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+      },
+    });
   },
-  input: {
-    flex: 1,
-    borderWidth: 0,
-    textAlign: 'left',
-  },
-});
+  (ds, theme) => themeKey(theme, ds),
+);

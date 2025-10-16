@@ -2,7 +2,8 @@ import React from 'react';
 import {FlatList, View, StyleSheet} from 'react-native';
 // import {Separator} from '@/components/ui';
 import {useTheme} from '@/providers';
-// import {DesignSystem} from '@/constants/typography';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 type FormCardProps<T> = {
   data: T[];
@@ -19,18 +20,7 @@ export function FormCard<T>({
   scrollEnabled = false,
 }: FormCardProps<T>) {
   const {ds, theme} = useTheme();
-  const styles = StyleSheet.create({
-    card: {
-      borderRadius: ds.components.card.borderRadius,
-      backgroundColor: theme.input,
-    },
-    row: {
-      minHeight: ds.components.listItem.minHeight,
-      paddingVertical: ds.spacing.sm,
-      paddingHorizontal: ds.spacing.md,
-      justifyContent: 'center',
-    },
-  });
+  const styles = createStyles(ds, theme);
 
   return (
     <View style={styles.card}>
@@ -46,3 +36,20 @@ export function FormCard<T>({
     </View>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      card: {
+        borderRadius: ds.components.card.borderRadius,
+        backgroundColor: theme.input,
+      },
+      row: {
+        minHeight: ds.components.listItem.minHeight,
+        paddingVertical: ds.spacing.sm,
+        paddingHorizontal: ds.spacing.md,
+        justifyContent: 'center',
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);

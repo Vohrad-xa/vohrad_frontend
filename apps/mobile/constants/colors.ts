@@ -83,7 +83,7 @@ const _Tokens = {
     iconWarning: Palette.brand.orange,
     iconDanger: Palette.brand.red,
     sidebarBackground: Palette.Alabaster,
-    secondary: Palette.terracotta,
+    secondary: Palette.Obsidian,
     glassTint: Palette.glassTintLight,
     quickActionIcon: Palette.Lbackground,
 
@@ -142,11 +142,12 @@ const _Tokens = {
   },
 } as const;
 
-const version = generateVersion(_Tokens);
+const lightVersion = generateVersion(_Tokens.light);
+const darkVersion = generateVersion(_Tokens.dark);
 
 export const Tokens = {
-  light: {..._Tokens.light, version},
-  dark: {..._Tokens.dark, version},
+  light: {..._Tokens.light, version: lightVersion},
+  dark: {..._Tokens.dark, version: darkVersion},
 } as const;
 
 export type ColorScheme = keyof typeof _Tokens; // 'light' | 'dark'

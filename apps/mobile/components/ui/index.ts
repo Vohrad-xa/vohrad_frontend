@@ -9,6 +9,5 @@ export {Divider} from './divider';
 export * from './themed-components';
 export {default as ListItem} from './list-item';
 export {LoadingOverlay} from './loading-overlay';
-export {Separator} from './separator';
 export {ModalScrollView} from './modal-scroll-view';
 export {ModalFlatList} from './modal-flat-list';

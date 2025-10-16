@@ -9,11 +9,13 @@ const HeaderVisibilityContext = createContext<
   HeaderVisibilityContextValue | undefined
 >(undefined);
 
+interface HeaderVisibilityProviderProps {
+  children: React.ReactNode;
+}
+
 export function HeaderVisibilityProvider({
   children,
-}: {
-  children: React.ReactNode;
-}) {
+}: HeaderVisibilityProviderProps) {
   const [scrolled, setScrolled] = useState(false);
   const value = useMemo(() => ({scrolled, setScrolled}), [scrolled]);
   return (
@@ -23,7 +25,7 @@ export function HeaderVisibilityProvider({
   );
 }
 
-export function useHeaderVisibility() {
+export function useHeaderVisibility(): HeaderVisibilityContextValue {
   const ctx = useContext(HeaderVisibilityContext);
   if (!ctx) {
     throw new Error(

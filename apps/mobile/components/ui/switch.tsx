@@ -9,9 +9,10 @@ import {
 } from 'react-native';
 import {impactAsync, ImpactFeedbackStyle} from 'expo-haptics';
 import type {ThemePreference} from '@/constants/colors';
-import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers/theme-provider';
 import {Icon, AppIcons} from '@/utils';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {type DSShape} from '@/constants/theme';
 
 interface CustomSwitchProps {
   style?: StyleProp<ViewStyle>;
@@ -95,21 +96,24 @@ export default function Switch({style}: CustomSwitchProps) {
   );
 }
 
-const createStyles = (ds: typeof DesignSystem) => {
-  const baseSize = ds.components.tapTarget.minSize;
+const createStyles = makeStyleFactory(
+  (ds: DSShape) => {
+    const baseSize = ds.components.tapTarget.minSize;
 
-  return StyleSheet.create({
-    container: {
-      minWidth: baseSize,
-      minHeight: baseSize,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: baseSize ? baseSize / 2 : ds.borderRadius.lg,
-      alignSelf: 'center',
-    },
-    iconWrapper: {
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-  });
-};
+    return StyleSheet.create({
+      container: {
+        minWidth: baseSize,
+        minHeight: baseSize,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: baseSize ? baseSize / 2 : ds.borderRadius.lg,
+        alignSelf: 'center',
+      },
+      iconWrapper: {
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+    });
+  },
+  (ds) => ds.version.toString(),
+);

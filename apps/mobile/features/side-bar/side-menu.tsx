@@ -22,7 +22,6 @@ import Animated, {
   interpolate,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import type {DesignSystem} from '@/constants/typography';
 import {SIDEBAR_CONFIG} from '@/constants/sidebar';
 import {useSidebar, useTheme} from '@/providers';
 import type {MenuItem as MenuItemType} from '@/types/ui';
@@ -31,6 +30,8 @@ import {MenuItem} from './menu-item';
 import {ProfileSection} from './profile-section';
 import {SideMenuHeader} from './side-menu-header';
 import type {SharedValue} from 'react-native-reanimated';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 interface SideMenuProps {
   slideAnim: SharedValue<number>;
@@ -129,7 +130,9 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
       transform: [{scale}],
       opacity,
     };
-  }); // Gradient shadow opacity
+  });
+
+  // Gradient shadow opacity
   const shadowStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
       slideAnim.value,
@@ -158,8 +161,8 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
                 icon={item.icon}
                 label={item.label}
                 onPress={() => {
-                  onClose();
                   Keyboard.dismiss();
+                  // TODO: Navigate to page when routes are ready
                 }}
               />
             ))}
@@ -194,53 +197,56 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
   );
 }
 
-const createStyles = (
-  theme: ThemeType,
-  ds: typeof DesignSystem,
-  headerHeight: number,
-  footerHeight: number,
-) =>
-  StyleSheet.create({
-    container: {
-      position: 'absolute',
-      left: 0,
-      top: 0,
-      bottom: 0,
-      width: SIDEBAR_CONFIG.width,
-      zIndex: 0,
-      backgroundColor: theme.sidebarBackground,
-    },
-    scrollContainer: {
-      flex: 1,
-    },
-    scrollContentContainer: {
-      paddingHorizontal: ds.spacing.xl,
-      paddingTop: headerHeight,
-      paddingBottom: footerHeight + ds.spacing.md,
-    },
-    absoluteTop: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0.5,
-      zIndex: 1,
-    },
-    absoluteBottom: {
-      position: 'absolute',
-      bottom: 0,
-      left: 0,
-      right: 0.5,
-    },
-    shadowContainer: {
-      position: 'absolute',
-      right: 0,
-      top: 0,
-      bottom: 0,
-      width: 120,
-      zIndex: 3,
-    },
-    gradient: {
-      flex: 1,
-    },
-  });
-type ThemeType = ReturnType<typeof useTheme>['theme'];
+const createStyles = makeStyleFactory(
+  (
+    theme: ThemeShape,
+    ds: DSShape,
+    headerHeight: number,
+    footerHeight: number,
+  ) =>
+    StyleSheet.create({
+      container: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        bottom: 0,
+        width: SIDEBAR_CONFIG.width,
+        zIndex: 0,
+        backgroundColor: theme.sidebarBackground,
+      },
+      scrollContainer: {
+        flex: 1,
+      },
+      scrollContentContainer: {
+        paddingHorizontal: ds.spacing.xl,
+        paddingTop: headerHeight,
+        paddingBottom: footerHeight + ds.spacing.md,
+      },
+      absoluteTop: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0.5,
+        zIndex: 1,
+      },
+      absoluteBottom: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0.5,
+      },
+      shadowContainer: {
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        bottom: 0,
+        width: 120,
+        zIndex: 3,
+      },
+      gradient: {
+        flex: 1,
+      },
+    }),
+  (theme, ds, headerHeight, footerHeight) =>
+    `${themeKey(theme, ds)}|${headerHeight}|${footerHeight}`,
+);

@@ -6,8 +6,9 @@ import {
   StyleSheet,
 } from 'react-native';
 import type {FlatListProps} from 'react-native';
-import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {type DSShape} from '@/constants/theme';
 
 type ModalFlatListProps<T> = FlatListProps<T> & {
   children?: never;
@@ -36,14 +37,17 @@ export function ModalFlatList<T>({
   );
 }
 
-const createStyles = (ds: typeof DesignSystem) =>
-  StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    defaultContent: {
-      paddingTop: ds.spacing.lg,
-      paddingHorizontal: ds.spacing.xl,
-      paddingBottom: ds.spacing.xxl,
-    },
-  });
+const createStyles = makeStyleFactory(
+  (ds: DSShape) =>
+    StyleSheet.create({
+      container: {
+        flex: 1,
+      },
+      defaultContent: {
+        paddingTop: ds.spacing.lg,
+        paddingHorizontal: ds.spacing.xl,
+        paddingBottom: ds.spacing.xxl,
+      },
+    }),
+  (ds) => ds.version.toString(),
+);

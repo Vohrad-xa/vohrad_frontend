@@ -1,9 +1,8 @@
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {useTheme} from '@/providers';
-import {STANDARD_TAB_CONTAINER, STANDARD_CONTENT_SPACING} from '@/types/ui';
 
 export default function LocationsPage() {
-  const {theme} = useTheme();
+  const {theme, ds} = useTheme();
 
   return (
     <RefreshableScrollView
@@ -12,9 +11,9 @@ export default function LocationsPage() {
       contentInsetAdjustmentBehavior="automatic"
       style={{backgroundColor: theme.background}}
     >
-      <ThemedView style={STANDARD_TAB_CONTAINER}>
+      <ThemedView style={{flex: 1, padding: ds.spacing.lg}}>
         <ThemedText variant="pageTitle">Locations</ThemedText>
-        <ThemedText variant="body" style={STANDARD_CONTENT_SPACING}>
+        <ThemedText variant="body" style={{marginTop: ds.spacing.lg}}>
           Manage storage locations, rooms, and assigned areas here.
         </ThemedText>
       </ThemedView>

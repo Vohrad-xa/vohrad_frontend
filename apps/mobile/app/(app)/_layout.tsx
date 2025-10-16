@@ -19,6 +19,14 @@ function AppStack() {
   const styles = createStyles(theme);
 
   const mainContentStyle = useAnimatedStyle(() => {
+    // On web: use margin to shrink content width (triggers CSS Grid reflow)
+    if (Platform.OS === 'web') {
+      return {
+        marginLeft: slideAnim.value,
+      };
+    }
+
+    // Mobile: use transform (pushes content, hides overflow)
     const shadowOpacity = interpolate(
       slideAnim.value,
       [0, SIDEBAR_CONFIG.width],
@@ -98,8 +106,10 @@ const createStyles = (theme: ThemeType) =>
       shadowColor: '#000000ab',
       shadowOffset: {width: 2, height: 0},
       shadowRadius: 10,
-      borderRadius: 40,
-      overflow: 'hidden',
+      ...(Platform.OS !== 'web' && {
+        borderRadius: 40,
+        overflow: 'hidden',
+      }),
     },
     border: {
       position: 'absolute',
@@ -107,7 +117,9 @@ const createStyles = (theme: ThemeType) =>
       top: 0,
       bottom: 0,
       right: 0,
-      borderRadius: 40,
+      ...(Platform.OS !== 'web' && {
+        borderRadius: 40,
+      }),
       borderWidth: 0.5,
       borderColor: theme.lightdivider,
       zIndex: 10000,

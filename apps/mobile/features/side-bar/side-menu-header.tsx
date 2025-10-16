@@ -10,10 +10,10 @@ import Animated from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {SearchBar} from '@/components/ui';
 import type {ColorScheme} from '@/constants/colors';
-import type {DesignSystem} from '@/constants/typography';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons} from '@/utils';
-type ThemeType = ReturnType<typeof useTheme>['theme'];
+import {makeStyleFactory} from '@/utils/style-factory';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 interface SideMenuHeaderProps {
   headerStyle: object;
@@ -23,23 +23,28 @@ interface SideMenuHeaderProps {
 export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
   const {theme, ds, scheme} = useTheme();
   const insets = useSafeAreaInsets();
-  const styles = createStyles(theme, ds, scheme);
 
   const topPadding =
     Platform.OS === 'android'
       ? (StatusBar.currentHeight ?? 0) + ds.spacing.lg
       : Math.max(insets.top, ds.spacing.xl);
 
+  const styles = createStyles(theme, ds, scheme, topPadding);
+
   return (
     <Animated.View style={headerStyle}>
       <BlurView
         intensity={40}
         tint={scheme === 'dark' ? 'dark' : 'light'}
-        style={[styles.headerBlurView, {paddingTop: topPadding}]}
+        style={styles.headerBlurView}
       >
         <View style={styles.headerContent}>
           <SearchBar style={styles.searchBar} placeholder="Search" />
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={onClose}
+            accessibilityLabel="Close sidebar"
+          >
             <Icon name={AppIcons.navigation.close} />
           </TouchableOpacity>
         </View>
@@ -48,34 +53,35 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
   );
 }
 
-const createStyles = (
-  theme: ThemeType,
-  ds: typeof DesignSystem,
-  scheme: ColorScheme,
-) =>
-  StyleSheet.create({
-    headerBlurView: {
-      paddingLeft: ds.spacing.lg,
-      paddingRight: ds.spacing.lg,
-      paddingVertical: ds.spacing.md,
-    },
-    headerContent: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      width: '100%',
-    },
-    searchBar: {
-      flex: 1,
-    },
-    closeButton: {
-      width: 36,
-      height: 36,
-      marginLeft: ds.spacing.sm,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderRadius: ds.borderRadius.full,
-      backgroundColor: theme.background,
-      ...ds.shadows.sm,
-    },
-  });
+const createStyles = makeStyleFactory(
+  (theme: ThemeShape, ds: DSShape, scheme: ColorScheme, topPadding: number) =>
+    StyleSheet.create({
+      headerBlurView: {
+        paddingLeft: ds.spacing.lg,
+        paddingRight: ds.spacing.lg,
+        paddingVertical: ds.spacing.md,
+        paddingTop: topPadding,
+      },
+      headerContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+      },
+      searchBar: {
+        flex: 1,
+      },
+      closeButton: {
+        width: 36,
+        height: 36,
+        marginLeft: ds.spacing.sm,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: ds.borderRadius.full,
+        backgroundColor: theme.background,
+        ...ds.shadows.sm,
+      },
+    }),
+  (theme, ds, scheme, topPadding) =>
+    `${themeKey(theme, ds)}|${scheme}|${topPadding}`,
+);
