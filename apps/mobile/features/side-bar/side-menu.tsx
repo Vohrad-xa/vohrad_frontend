@@ -8,6 +8,7 @@ import {
   type NativeScrollEvent,
 } from 'react-native';
 import {router} from 'expo-router';
+import {LinearGradient} from 'expo-linear-gradient';
 import {
   Gesture,
   GestureDetector,
@@ -18,6 +19,7 @@ import Animated, {
   useSharedValue,
   withTiming,
   interpolateColor,
+  interpolate,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import type {DesignSystem} from '@/constants/typography';
@@ -108,38 +110,83 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
     });
   };
 
+  const contentStyle = useAnimatedStyle(() => {
+    const scale = interpolate(
+      slideAnim.value,
+      [0, SIDEBAR_CONFIG.width],
+      [0.95, 1],
+      'clamp',
+    );
+
+    const opacity = interpolate(
+      slideAnim.value,
+      [0, SIDEBAR_CONFIG.width * 0.3, SIDEBAR_CONFIG.width],
+      [0.3, 0.6, 1],
+      'clamp',
+    );
+
+    return {
+      transform: [{scale}],
+      opacity,
+    };
+  }); // Gradient shadow opacity
+  const shadowStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      slideAnim.value,
+      [0, SIDEBAR_CONFIG.width],
+      [1, 0],
+      'clamp',
+    );
+    return {opacity};
+  });
+
   return (
     <GestureDetector gesture={composedGesture}>
       <Animated.View style={styles.container}>
-        <ScrollView
-          style={styles.scrollContainer}
-          contentContainerStyle={styles.scrollContentContainer}
-          showsVerticalScrollIndicator
-          bounces
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-        >
-          {menuItems.map((item, index) => (
-            <MenuItem
-              key={index}
-              icon={item.icon}
-              label={item.label}
-              onPress={() => {
-                onClose();
+        <Animated.View style={[StyleSheet.absoluteFill, contentStyle]}>
+          <ScrollView
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.scrollContentContainer}
+            showsVerticalScrollIndicator
+            bounces
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+          >
+            {menuItems.map((item, index) => (
+              <MenuItem
+                key={index}
+                icon={item.icon}
+                label={item.label}
+                onPress={() => {
+                  onClose();
+                  Keyboard.dismiss();
+                }}
+              />
+            ))}
+          </ScrollView>
+          <View style={styles.absoluteTop}>
+            <SideMenuHeader headerStyle={headerStyle} onClose={onClose} />
+          </View>
+          <Animated.View style={[styles.absoluteBottom, footerStyle]}>
+            <ProfileSection
+              onPressSettings={() => {
                 Keyboard.dismiss();
+                router.push('/(modals)/settings');
               }}
             />
-          ))}
-        </ScrollView>
-        <View style={styles.absoluteTop}>
-          <SideMenuHeader headerStyle={headerStyle} onClose={onClose} />
-        </View>
-        <Animated.View style={[styles.absoluteBottom, footerStyle]}>
-          <ProfileSection
-            onPressSettings={() => {
-              Keyboard.dismiss();
-              router.push('/(modals)/settings');
-            }}
+          </Animated.View>
+        </Animated.View>
+
+        {/* Premium edge shadow gradient */}
+        <Animated.View
+          pointerEvents="none"
+          style={[styles.shadowContainer, shadowStyle]}
+        >
+          <LinearGradient
+            colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.2)', 'transparent']}
+            start={{x: 1, y: 0}}
+            end={{x: 0, y: 0}}
+            style={styles.gradient}
           />
         </Animated.View>
       </Animated.View>
@@ -183,6 +230,17 @@ const createStyles = (
       bottom: 0,
       left: 0,
       right: 0.5,
+    },
+    shadowContainer: {
+      position: 'absolute',
+      right: 0,
+      top: 0,
+      bottom: 0,
+      width: 120,
+      zIndex: 3,
+    },
+    gradient: {
+      flex: 1,
     },
   });
 type ThemeType = ReturnType<typeof useTheme>['theme'];

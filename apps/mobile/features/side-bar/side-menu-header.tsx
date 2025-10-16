@@ -55,8 +55,8 @@ const createStyles = (
 ) =>
   StyleSheet.create({
     headerBlurView: {
-      paddingLeft: ds.spacing.xl,
-      paddingRight: ds.spacing.xl,
+      paddingLeft: ds.spacing.lg,
+      paddingRight: ds.spacing.lg,
       paddingVertical: ds.spacing.md,
     },
     headerContent: {
@@ -69,8 +69,8 @@ const createStyles = (
       flex: 1,
     },
     closeButton: {
-      width: 35,
-      height: 35,
+      width: 36,
+      height: 36,
       marginLeft: ds.spacing.sm,
       justifyContent: 'center',
       alignItems: 'center',
