@@ -7,6 +7,7 @@ export type {
 export {ApiError} from '@vohrad/types';
 export {httpClient} from './http-client';
 export {authApi} from './auth-api';
+export {userApi} from './user-api';
 export {API_ENDPOINTS} from './endpoints';
 export {
   initApiConfig,

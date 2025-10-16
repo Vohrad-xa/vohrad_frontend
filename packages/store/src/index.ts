@@ -55,9 +55,24 @@ function sanitizeUser(user: User | null): User | null {
     return null;
   }
 
-  const {id, email, role, tenant_id} = user;
-  const sanitized: User = {id, email, role, tenant_id};
-  return sanitized;
+  return {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+    tenant_id: user.tenant_id,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    phone_number: user.phone_number,
+    date_of_birth: user.date_of_birth,
+    address: user.address,
+    city: user.city,
+    province: user.province,
+    postal_code: user.postal_code,
+    country: user.country,
+    email_verified_at: user.email_verified_at,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
+  };
 }
 
 function redactTokens(tokens: AuthTokens | null): AuthTokens | null {
@@ -93,6 +108,11 @@ export const useAuthStore = create<AuthState>()(
       setError: (error: string | null) => set({error}),
       setIntendedRoute: (route: string | null) => set({intendedRoute: route}),
       clearError: () => set({error: null}),
+
+      updateUser: (userData: Partial<User>) =>
+        set((state) => ({
+          user: state.user ? {...state.user, ...userData} : null,
+        })),
 
       login: (user: User, tokens: AuthTokens) =>
         set({

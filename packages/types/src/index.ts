@@ -6,6 +6,7 @@ export type {
   AsyncState,
   UserCredentials,
   AdminCredentials,
+  UserUpdateData,
 } from './auth';
 export type {
   BaseCredentials,

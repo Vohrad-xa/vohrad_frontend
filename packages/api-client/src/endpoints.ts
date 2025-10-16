@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
   },
   USERS: {
     ME: '/users/me',
+    UPDATE_PROFILE: '/users/me',
   },
 } as const;
 export type ApiEndpoint =

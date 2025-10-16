@@ -4,9 +4,36 @@ export interface User {
   email: string;
   role: string;
   tenant_id?: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  phone_number?: string | null;
+  date_of_birth?: string | null;
+  address?: string | null;
+  city?: string | null;
+  province?: string | null;
+  postal_code?: string | null;
+  country?: string | null;
+  email_verified_at?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 export type UserCredentials = UserLoginRequest;
 export type AdminCredentials = AdminLoginRequest;
+export type UserUpdateData = Partial<
+  Pick<
+    User,
+    | 'first_name'
+    | 'last_name'
+    | 'email'
+    | 'phone_number'
+    | 'date_of_birth'
+    | 'address'
+    | 'city'
+    | 'province'
+    | 'postal_code'
+    | 'country'
+  >
+>;
 export interface AuthTokens extends TokenResponse {
   issued_at?: number;
 }
@@ -27,6 +54,7 @@ export interface AuthState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setIntendedRoute: (route: string | null) => void;
+  updateUser: (userData: Partial<User>) => void;
   login: (user: User, tokens: AuthTokens) => void;
   logout: () => void;
   clearError: () => void;
