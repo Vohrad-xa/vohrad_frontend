@@ -9,6 +9,9 @@ export const API_ENDPOINTS = {
   USERS: {
     ME: '/users/me',
     UPDATE_PROFILE: '/users/me',
+    RESEND_PENDING_EMAIL: '/users/me/email/resend',
+    CONFIRM_PENDING_EMAIL: '/users/me/email/confirm',
+    CONFIRM_PENDING_EMAIL_PUBLIC: '/users/email/confirm',
   },
   TENANT: {
     INFO: '/tenant',

@@ -56,6 +56,7 @@ function RootNavigation() {
   const {setIntendedRoute, intendedRoute} = useAuthStore();
   const [showOverlay, setShowOverlay] = useState(true);
   const pathname = usePathname();
+  const isEmailConfirmRoute = pathname === '/email/confirm';
 
   // Save intended route when trying to access protected routes while not authenticated
   useEffect(() => {
@@ -66,15 +67,27 @@ function RootNavigation() {
     if (
       !isAuthenticated &&
       pathname !== '/login' &&
-      !pathname.startsWith('/(auth)')
+      !pathname.startsWith('/(auth)') &&
+      !isEmailConfirmRoute
     ) {
       setIntendedRoute(pathname);
     }
-  }, [isAuthenticated, pathname, navigationState?.key, setIntendedRoute]);
+  }, [
+    isAuthenticated,
+    pathname,
+    navigationState?.key,
+    setIntendedRoute,
+    isEmailConfirmRoute,
+  ]);
 
   // Navigate to intended route after authentication
   useEffect(() => {
-    if (navigationState?.key && isAuthenticated && intendedRoute) {
+    if (
+      navigationState?.key &&
+      isAuthenticated &&
+      intendedRoute &&
+      intendedRoute !== '/email/confirm'
+    ) {
       const destination = intendedRoute;
       setIntendedRoute(null);
       // Small delay to ensure navigation is ready
@@ -89,6 +102,12 @@ function RootNavigation() {
     setIntendedRoute,
     router,
   ]);
+  
+  useEffect(() => {
+    if (intendedRoute === '/email/confirm') {
+      setIntendedRoute(null);
+    }
+  }, [intendedRoute, setIntendedRoute]);
 
   useEffect(() => {
     if (navigationState?.key) {
@@ -102,7 +121,8 @@ function RootNavigation() {
 
   return (
     <>
-      <Stack screenOptions={{headerShown: false}}>
+      <Stack initialRouteName="(auth)" screenOptions={{headerShown: false}}>
+        <Stack.Screen name="email/confirm" />
         <Stack.Protected guard={isAuthenticated}>
           <Stack.Screen name="(app)" />
           <Stack.Screen

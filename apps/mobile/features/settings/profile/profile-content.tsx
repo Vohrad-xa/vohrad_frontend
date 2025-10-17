@@ -20,6 +20,7 @@ import {makeStyleFactory} from '@/utils/style-factory';
 import {formatDate} from './format-date';
 import {useProfileDetails} from './use-profile-details';
 import {useUpdateProfile} from './use-update-profile';
+import {useEmailConfirmation} from './use-email-confirmation';
 import type {UserUpdateData} from '@vohrad/types';
 
 type ProfileRow = {
@@ -51,6 +52,8 @@ export const ProfileContentEditable = forwardRef<
 
   const profileDetails = useProfileDetails();
   const {updateProfile, error, clearError} = useUpdateProfile();
+  const {resendPendingEmail, isProcessing: isResendingEmail} =
+    useEmailConfirmation();
 
   const emptyProfileState: ProfileFormState = useMemo(
     () => ({
@@ -212,6 +215,21 @@ export const ProfileContentEditable = forwardRef<
     saveProfile: handleSaveProfile,
   }));
 
+  const handleResendPendingEmail = async () => {
+    const succeeded = await resendPendingEmail();
+    if (succeeded) {
+      showAlert({
+        title: 'Verification Email Sent',
+        message: 'Check your inbox to confirm the new address.',
+      });
+    } else {
+      showAlert({
+        title: 'Unable to Resend',
+        message: 'Please try again in a moment.',
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       {profileDetails ? (
@@ -223,10 +241,33 @@ export const ProfileContentEditable = forwardRef<
                   {profileDetails.role ?? 'Member'}
                 </ThemedText>
               </View>
-              <ThemedText variant="secondary" style={styles.metaSupporting}>
-                {profileDetails.role_description ??
-                  'Role managed by your administrator'}
-              </ThemedText>
+              {profileDetails.role_description ? (
+                <ThemedText variant="secondary" style={styles.metaSupporting}>
+                  {profileDetails.role_description}
+                </ThemedText>
+              ) : null}
+              {profileDetails.pending_email ? (
+                <ThemedText
+                  variant="secondary"
+                  style={[styles.metaSupporting, styles.pendingText]}
+                >
+                  Pending confirmation: {profileDetails.pending_email}
+                </ThemedText>
+              ) : null}
+              {profileDetails.pending_email ? (
+                <ThemedButton
+                  title={
+                    isResendingEmail
+                      ? 'Resending…'
+                      : 'Resend confirmation email'
+                  }
+                  variant="ghost"
+                  fullWidth={false}
+                  onPress={handleResendPendingEmail}
+                  style={styles.resendButton}
+                  disabled={isResendingEmail}
+                />
+              ) : null}
             </View>
             <View style={styles.metaSeparator} />
             <View style={styles.metaColumn}>
@@ -239,6 +280,12 @@ export const ProfileContentEditable = forwardRef<
               <ThemedText variant="secondary" style={styles.metaSupporting}>
                 Last updated {formatDate(profileDetails.updated_at)}
               </ThemedText>
+              {profileDetails.pending_email_expires_at ? (
+                <ThemedText variant="secondary" style={styles.metaSupporting}>
+                  Confirmation expires{' '}
+                  {formatDate(profileDetails.pending_email_expires_at)}
+                </ThemedText>
+              ) : null}
             </View>
           </View>
         </GlassCard>
@@ -328,6 +375,13 @@ const createStyles = makeStyleFactory(
       metaSupporting: {
         opacity: 0.7,
         fontSize: ds.typography.caption.fontSize,
+      },
+      pendingText: {
+        color: theme.primary,
+      },
+      resendButton: {
+        marginTop: ds.spacing.sm,
+        alignSelf: 'flex-start',
       },
       metaSeparator: {
         width: StyleSheet.hairlineWidth,
