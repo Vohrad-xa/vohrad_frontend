@@ -9,13 +9,16 @@ export const API_ENDPOINTS = {
   USERS: {
     ME: '/users/me',
     UPDATE_PROFILE: '/users/me',
-    RESEND_PENDING_EMAIL: '/users/me/email/resend',
-    CONFIRM_PENDING_EMAIL: '/users/me/email/confirm',
-    CONFIRM_PENDING_EMAIL_PUBLIC: '/users/email/confirm',
+  },
+  EMAIL_VERIFICATION: {
+    RESEND: '/email-verification/resend',
+    CONFIRM: '/email-verification/confirm',
+    CONFIRM_PUBLIC: '/email-verification/confirm/public',
   },
   TENANT: {
-    INFO: '/tenant',
+    INFO: '/tenant/',
     SETTINGS: '/tenant/settings',
+    PROFILE: '/tenant/profile',
     LICENSE_INFO: '/tenant/license-info',
   },
 } as const;

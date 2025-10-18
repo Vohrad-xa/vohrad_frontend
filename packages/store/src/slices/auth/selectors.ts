@@ -8,4 +8,5 @@ export const authSelectors = {
   isLoading: (state: AuthSlice) => state.isLoading,
   error: (state: AuthSlice) => state.error,
   intendedRoute: (state: AuthSlice) => state.intendedRoute,
+  updateUser: (state: AuthSlice) => state.updateUser,
 };

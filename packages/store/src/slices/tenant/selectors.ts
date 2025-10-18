@@ -7,4 +7,6 @@ export const tenantSelectors = {
   subDomain: (state: TenantSlice) => state.tenant?.sub_domain ?? null,
   industry: (state: TenantSlice) => state.tenant?.industry ?? null,
   timezone: (state: TenantSlice) => state.tenant?.timezone ?? null,
+  updateTenant: (state: TenantSlice) => state.updateTenant,
+  setTenant: (state: TenantSlice) => state.setTenant,
 };

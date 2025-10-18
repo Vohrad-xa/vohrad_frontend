@@ -43,6 +43,25 @@ export interface TenantSettingsUpdate {
   business_hour_end?: string;
 }
 
+export type TenantProfileUpdate = Partial<
+  Pick<
+    Tenant,
+    | 'telephone'
+    | 'street'
+    | 'street_number'
+    | 'city'
+    | 'province'
+    | 'postal_code'
+    | 'country'
+    | 'billing_address'
+    | 'website'
+    | 'logo'
+    | 'industry'
+    | 'tax_id'
+    | 'remarks'
+  >
+>;
+
 export interface TenantLicenseInfo {
   license_id?: string | null;
   seat_usage?: {

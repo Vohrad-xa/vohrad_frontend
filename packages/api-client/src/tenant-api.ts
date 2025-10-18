@@ -1,6 +1,7 @@
 import type {
   Tenant,
   TenantSettingsUpdate,
+  TenantProfileUpdate,
   TenantLicenseInfo,
 } from '@vohrad/types';
 import {httpClient} from './http-client';
@@ -15,6 +16,14 @@ export class TenantApi {
   async updateTenantSettings(data: TenantSettingsUpdate): Promise<Tenant> {
     const response = await httpClient.put<Tenant>(
       API_ENDPOINTS.TENANT.SETTINGS,
+      data,
+    );
+    return response.data;
+  }
+
+  async updateTenantProfile(data: TenantProfileUpdate): Promise<Tenant> {
+    const response = await httpClient.put<Tenant>(
+      API_ENDPOINTS.TENANT.PROFILE,
       data,
     );
     return response.data;

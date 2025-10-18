@@ -5,7 +5,7 @@ import type {
   AuthTokens,
 } from '@vohrad/types';
 import {ApiError} from '@vohrad/types';
-import {authApi} from '@vohrad/api-client';
+import {authApi, tenantApi} from '@vohrad/api-client';
 import {httpClient, setApiTenant} from '@vohrad/api-client';
 
 export class AuthService {
@@ -60,8 +60,21 @@ export class AuthService {
       const credentials: UserLoginRequest = {email, password};
       const {tokens, user} = await authApi.loginUser(credentials);
 
+      // Explicitly set access token in httpClient before fetching tenant
+      httpClient.setAccessToken(tokens.access_token);
+
+      // Set tokens in store
       login(user, tokens);
       this.scheduleTokenRefresh(tokens);
+
+      // Fetch tenant data after successful login (after token is set)
+      try {
+        const tenant = await tenantApi.getTenantInfo();
+        const {setTenant} = useAuthStore.getState();
+        setTenant(tenant);
+      } catch (error) {
+        console.warn('Failed to fetch tenant info:', error);
+      }
     } catch (error) {
       const errorMessage =
         error instanceof ApiError
@@ -85,8 +98,19 @@ export class AuthService {
       const {tokens, user} = await authApi.loginAdmin(credentials);
 
       httpClient.setAccessToken(tokens.access_token);
+
+      // Set tokens in store first
       login(user, tokens);
       this.scheduleTokenRefresh(tokens);
+
+      // Fetch tenant data after successful login (after token is set)
+      try {
+        const tenant = await tenantApi.getTenantInfo();
+        const {setTenant} = useAuthStore.getState();
+        setTenant(tenant);
+      } catch (error) {
+        console.warn('Failed to fetch tenant info:', error);
+      }
     } catch (error) {
       const errorMessage =
         error instanceof ApiError
@@ -193,6 +217,19 @@ export class AuthService {
       const tokens = await authApi.refreshToken();
       httpClient.setAccessToken(tokens.access_token);
       const user = await authApi.getCurrentUser();
+
+      // Fetch tenant data during session restore
+      try {
+        const tenant = await tenantApi.getTenantInfo();
+        const {setTenant} = useAuthStore.getState();
+        setTenant(tenant);
+      } catch (error) {
+        console.warn(
+          'Failed to fetch tenant info during session restore:',
+          error,
+        );
+      }
+
       login(user, tokens);
       this.scheduleTokenRefresh(tokens);
       return true;
