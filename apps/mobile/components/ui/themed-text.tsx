@@ -39,7 +39,7 @@ const createStyles = makeStyleFactory(
       return StyleSheet.create({
         text: {
           ...baseStyle,
-          ...ds.typography.secondary,
+          ...ds.typography.caption,
           fontWeight: ds.fontWeight.semibold,
           letterSpacing: 0.5,
           textTransform: 'uppercase',

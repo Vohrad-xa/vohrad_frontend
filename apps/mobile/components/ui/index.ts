@@ -11,6 +11,6 @@ export {default as ListItem} from './list-item';
 export {LoadingOverlay} from './loading-overlay';
 export {ModalScrollView} from './modal-scroll-view';
 export {ModalFlatList} from './modal-flat-list';
-export {DatePicker} from './date-picker';
 export {FormCard} from './form-card';
 export {InfoRow} from './info-row';
+export {InfoRowCard} from './info-row-card';

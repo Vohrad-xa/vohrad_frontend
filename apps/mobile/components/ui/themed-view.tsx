@@ -106,8 +106,8 @@ const createStyles = makeStyleFactory(
         case 'roleBadge':
           return {
             borderRadius: ds.borderRadius.xl,
-            paddingVertical: ds.spacing.xs,
-            paddingHorizontal: ds.spacing.md,
+            paddingVertical: ds.spacing.xxs,
+            paddingHorizontal: ds.spacing.sm,
             borderWidth: 0,
             alignSelf: 'flex-start',
             backgroundColor:

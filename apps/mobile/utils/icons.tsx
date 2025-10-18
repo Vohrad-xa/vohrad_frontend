@@ -1,7 +1,7 @@
 import React from 'react';
 import type {OpaqueColorValue, StyleProp, TextStyle} from 'react-native';
 import {Platform} from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
+import {Ionicons, FontAwesome} from '@expo/vector-icons';
 import {type TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers/theme-provider';
 
@@ -98,7 +98,8 @@ export type IconName =
   | 'remove-outline'
   | 'sunny-outline'
   | 'moon-outline'
-  | 'sparkles-outline';
+  | 'sparkles-outline'
+  | 'pencil-square-o';
 
 type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -132,6 +133,19 @@ export const Icon: React.FC<IconProps> = ({
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
   const resolvedColor = color ?? (colorToken ? theme[colorToken] : theme.icon);
 
+  // Check FontAwesome
+  if (name in FontAwesome.glyphMap) {
+    return (
+      <FontAwesome
+        name={name as keyof typeof FontAwesome.glyphMap}
+        size={resolvedSize}
+        color={resolvedColor}
+        style={style}
+      />
+    );
+  }
+
+  // Default to Ionicons
   return (
     <Ionicons
       name={name as keyof typeof Ionicons.glyphMap}
@@ -177,7 +191,7 @@ export const AppIcons = {
     scan: 'scan-outline' as IconName,
     camera: 'camera-outline' as IconName,
     input: 'keypad-outline' as IconName,
-    edit: 'create-outline' as IconName,
+    edit: 'pencil-square-o' as IconName,
     add: 'add-outline' as IconName,
     save: 'checkmark-outline' as IconName,
     delete: 'trash-outline' as IconName,

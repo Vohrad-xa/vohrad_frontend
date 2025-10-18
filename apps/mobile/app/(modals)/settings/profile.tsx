@@ -1,13 +1,13 @@
-// profile.tsx
-import React, {useRef} from 'react';
-import {StyleSheet} from 'react-native';
+import React, {useRef, useState, useLayoutEffect} from 'react';
+import {StyleSheet, Text, Pressable} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ThemedView, ModalScrollView, ThemedButton} from '@/components/ui';
+import {useNavigation} from 'expo-router';
+import {ThemedView, ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
-  ProfileContentEditable,
+  ProfileContent,
   type ProfileContentHandle,
-} from '@/features/settings/profile/profile-content';
+} from '@/features/settings/profile';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -15,23 +15,44 @@ export default function ProfileScreen() {
   const {ds, theme} = useTheme();
   const insets = useSafeAreaInsets();
   const styles = createStyles(ds, theme, insets.bottom);
+  const navigation = useNavigation();
   const profileContentRef = useRef<ProfileContentHandle>(null);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleEditSave = () => {
+    if (isEditing) {
+      profileContentRef.current?.saveProfile();
+    } else {
+      setIsEditing(true);
+    }
+  };
+
+  const handleSaveComplete = () => {
+    setIsEditing(false);
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerBackTitle: 'Settings',
+      headerRight: () => (
+        <Pressable onPress={handleEditSave} style={{paddingHorizontal: 16}}>
+          <Text style={{color: theme.text, fontSize: 17}}>
+            {isEditing ? 'Save' : 'Edit'}
+          </Text>
+        </Pressable>
+      ),
+    });
+  }, [navigation, theme.primary, isEditing]);
 
   return (
     <ThemedView style={styles.container}>
       <ModalScrollView contentContainerStyle={styles.content}>
-        <ProfileContentEditable
+        <ProfileContent
           ref={profileContentRef}
-          showInlineSaveButton={false}
+          isEditing={isEditing}
+          onSaveComplete={handleSaveComplete}
         />
       </ModalScrollView>
-      <ThemedView style={styles.footer}>
-        <ThemedButton
-          title="Save Profile"
-          variant="primary"
-          onPress={() => profileContentRef.current?.saveProfile()}
-        />
-      </ThemedView>
     </ThemedView>
   );
 }
@@ -45,16 +66,8 @@ const createStyles = makeStyleFactory(
       },
       content: {
         gap: ds.spacing.xxl,
-        paddingBottom: ds.spacing.xxxl + insetBottom + ds.spacing.lg,
-      },
-      footer: {
-        paddingHorizontal: ds.spacing.xl,
-        paddingTop: ds.spacing.md,
-        paddingBottom: insetBottom + ds.spacing.md,
-        backgroundColor: theme.background,
-        borderTopWidth: StyleSheet.hairlineWidth,
-        borderTopColor: theme.border,
+        paddingBottom: ds.spacing.xxl + insetBottom,
       },
     }),
-  (ds, theme) => themeKey(theme, ds),
+  (ds, theme, insetBottom) => themeKey(theme, ds) + `|${insetBottom}`,
 );

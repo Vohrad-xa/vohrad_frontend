@@ -1,30 +1,88 @@
-import React from 'react';
+import React, {forwardRef, useImperativeHandle} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useOrganizationDetails} from '@vohrad/store';
-import {
-  ThemedText,
-  ThemedView,
-  FormCard,
-  GlassCard,
-  InfoRow,
-} from '@/components/ui';
+import {ThemedText, ThemedView, GlassCard, InfoRowCard} from '@/components/ui';
 import type {BadgeStatus} from '@/components/ui/themed-view';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useTheme} from '@/providers';
-import {formatDate} from '@/utils';
+import {useTheme, useLoading} from '@/providers';
+import {formatDate, showConfirmAlert, showAlert} from '@/utils';
 import {Icon, AppIcons} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
+import {useOrganizationForm} from './use-organization-form';
 
-type InfoField = {
-  key: string;
-  label: string;
-  value?: string | null;
+export type OrganizationContentHandle = {
+  saveOrganization: () => void;
 };
 
-export const OrganizationContent: React.FC = () => {
+type OrganizationContentProps = {
+  isEditing: boolean;
+  onSaveComplete?: () => void;
+};
+
+export const OrganizationContent = forwardRef<
+  OrganizationContentHandle,
+  OrganizationContentProps
+>(({isEditing, onSaveComplete}, ref) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
-  const organization = useOrganizationDetails();
+  const {showLoading, hideLoading} = useLoading();
+
+  const {
+    organization,
+    stagedValues,
+    businessFields,
+    addressFields,
+    remarksFields,
+    handleFieldChange,
+    hasChanges,
+    submitUpdate,
+  } = useOrganizationForm(isEditing);
+
+  const performUpdate = async () => {
+    showLoading('Updating organization...');
+
+    if (!hasChanges()) {
+      hideLoading();
+      showAlert({
+        title: 'No Changes Detected',
+        message: 'Update a field before saving your organization.',
+      });
+      return;
+    }
+
+    try {
+      await submitUpdate();
+      hideLoading();
+      onSaveComplete?.();
+      showAlert({
+        title: 'Success',
+        message: 'Organization updated successfully',
+      });
+    } catch (err) {
+      hideLoading();
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to update organization';
+      showAlert({
+        title: 'Error',
+        message: errorMessage,
+      });
+    }
+  };
+
+  const handleSaveProfile = () => {
+    showConfirmAlert({
+      title: 'Update Organization',
+      message: 'Are you sure you want to save these changes?',
+      confirmText: 'Save',
+      cancelText: 'Cancel',
+      onConfirm: () => {
+        performUpdate();
+      },
+    });
+  };
+
+  useImperativeHandle(ref, () => ({
+    saveOrganization: handleSaveProfile,
+  }));
 
   if (!organization) {
     return (
@@ -36,48 +94,15 @@ export const OrganizationContent: React.FC = () => {
     );
   }
 
-  const renderInfoField = ({item}: {item: InfoField}) => (
-    <InfoRow label={item.label} value={item.value} />
-  );
-
-  const businessFields: InfoField[] = [
-    {key: 'email', label: 'Email', value: organization.email},
-    {key: 'telephone', label: 'Phone', value: organization.telephone},
-    {key: 'website', label: 'Website', value: organization.website},
-    {key: 'industry', label: 'Industry', value: organization.industry},
-    {key: 'tax_id', label: 'Tax ID', value: organization.tax_id},
-  ];
-
-  const addressFields: InfoField[] = [
-    {key: 'street', label: 'Street', value: organization.street},
-    {
-      key: 'street_number',
-      label: 'Street Number',
-      value: organization.street_number,
-    },
-    {key: 'city', label: 'City', value: organization.city},
-    {key: 'province', label: 'Province', value: organization.province},
-    {key: 'postal_code', label: 'Postal Code', value: organization.postal_code},
-    {key: 'country', label: 'Country', value: organization.country},
-  ];
-
-  const businessHoursFields: InfoField[] = [
-    {key: 'timezone', label: 'Timezone', value: organization.timezone},
-    {
-      key: 'business_hour_start',
-      label: 'Business Hours Start',
-      value: organization.business_hour_start,
-    },
-    {
-      key: 'business_hour_end',
-      label: 'Business Hours End',
-      value: organization.business_hour_end,
-    },
-  ];
-
-  const remarksFields: InfoField[] = organization.remarks
-    ? [{key: 'remarks', label: 'Remarks', value: organization.remarks}]
-    : [];
+  const renderSectionHeader = (title: string) => {
+    return (
+      <View style={styles.sectionHeader}>
+        <ThemedText variant="heading" style={styles.sectionTitle}>
+          {title}
+        </ThemedText>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -105,10 +130,10 @@ export const OrganizationContent: React.FC = () => {
               </ThemedView>
             </View>
             <ThemedText variant="secondary" colorToken="label">
-              Since {formatDate(organization.created_at)}
+              {organization.email}
             </ThemedText>
             <ThemedText variant="secondary" style={styles.metaSupporting}>
-              Last updated {formatDate(organization.updated_at)}
+              Since {formatDate(organization.created_at)}
             </ThemedText>
           </View>
         </View>
@@ -116,56 +141,46 @@ export const OrganizationContent: React.FC = () => {
 
       {/* Business Details */}
       <View style={styles.section}>
-        <ThemedText variant="heading" style={styles.sectionTitle}>
-          Business Details
-        </ThemedText>
-        <FormCard<InfoField>
-          data={businessFields}
-          keyExtractor={(item) => item.key}
-          renderItem={renderInfoField}
+        {renderSectionHeader('Business Details')}
+        <InfoRowCard
+          fields={businessFields}
+          editable={isEditing}
+          values={stagedValues}
+          onFieldChange={handleFieldChange}
+          autoFocus={true}
         />
       </View>
 
       {/* Address */}
       <View style={styles.section}>
-        <ThemedText variant="heading" style={styles.sectionTitle}>
-          Address
-        </ThemedText>
-        <FormCard<InfoField>
-          data={addressFields}
-          keyExtractor={(item) => item.key}
-          renderItem={renderInfoField}
-        />
-      </View>
-
-      {/* Business Hours */}
-      <View style={styles.section}>
-        <ThemedText variant="heading" style={styles.sectionTitle}>
-          Business Hours & Settings
-        </ThemedText>
-        <FormCard<InfoField>
-          data={businessHoursFields}
-          keyExtractor={(item) => item.key}
-          renderItem={renderInfoField}
+        {renderSectionHeader('Address')}
+        <InfoRowCard
+          fields={addressFields}
+          editable={isEditing}
+          values={stagedValues}
+          onFieldChange={handleFieldChange}
+          autoFocus={false}
         />
       </View>
 
       {/* Additional Information */}
       {remarksFields.length > 0 && (
         <View style={styles.section}>
-          <ThemedText variant="heading" style={styles.sectionTitle}>
-            Additional Information
-          </ThemedText>
-          <FormCard<InfoField>
-            data={remarksFields}
-            keyExtractor={(item) => item.key}
-            renderItem={renderInfoField}
+          {renderSectionHeader('Additional Information')}
+          <InfoRowCard
+            fields={remarksFields}
+            editable={isEditing}
+            values={stagedValues}
+            onFieldChange={handleFieldChange}
+            autoFocus={false}
           />
         </View>
       )}
     </View>
   );
-};
+});
+
+OrganizationContent.displayName = 'OrganizationContent';
 
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
@@ -210,8 +225,8 @@ const createStyles = makeStyleFactory(
         opacity: ds.opacity.muted,
       },
       metaSupporting: {
+        ...ds.typography.caption,
         opacity: ds.opacity.muted,
-        fontSize: ds.typography.caption.fontSize,
       },
       metaSeparator: {
         width: StyleSheet.hairlineWidth,
@@ -222,8 +237,11 @@ const createStyles = makeStyleFactory(
       section: {
         gap: ds.spacing.md,
       },
-      sectionTitle: {
+      sectionHeader: {
         paddingLeft: ds.spacing.xs,
+      },
+      sectionTitle: {
+        flex: 1,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

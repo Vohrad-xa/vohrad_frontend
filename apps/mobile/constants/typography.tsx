@@ -79,6 +79,13 @@ const _DesignSystem = {
       letterSpacing: 0.2,
     },
 
+    value: {
+      fontSize: 16,
+      lineHeight: 21,
+      fontWeight: '400' as const,
+      letterSpacing: 0.2,
+    },
+
     // Utility - Small Text
     footnote: {
       fontSize: 13,

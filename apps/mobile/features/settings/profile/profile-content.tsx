@@ -1,180 +1,52 @@
-import React, {
-  useState,
-  useEffect,
-  forwardRef,
-  useImperativeHandle,
-  useMemo,
-} from 'react';
+import React, {forwardRef, useImperativeHandle} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {
-  useEmailConfirmation,
-  useProfileDetails,
-  useUpdateProfile,
-} from '@vohrad/store';
+import {useEmailConfirmation} from '@vohrad/store';
 import {
   ThemedButton,
-  Input,
   ThemedText,
-  DatePicker,
-  GlassCard,
   ThemedView,
+  GlassCard,
+  InfoRowCard,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useLoading} from '@/providers';
 import {showConfirmAlert, showAlert, formatDate} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import type {UserUpdateData} from '@vohrad/types';
-
-type ProfileRow = {
-  key: keyof ProfileFormState;
-  label: string;
-  placeholder: string;
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
-};
-
-type ProfileFormState = Required<{
-  [K in keyof UserUpdateData]: string;
-}>;
-
-type ProfileContentEditableProps = {
-  showInlineSaveButton?: boolean;
-};
+import {useProfileForm} from './use-profile-form';
 
 export type ProfileContentHandle = {
   saveProfile: () => void;
 };
 
+type ProfileContentEditableProps = {
+  isEditing: boolean;
+  onSaveComplete?: () => void;
+};
+
 export const ProfileContentEditable = forwardRef<
   ProfileContentHandle,
   ProfileContentEditableProps
->(({showInlineSaveButton = true}, ref) => {
+>(({isEditing, onSaveComplete}, ref) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
   const {showLoading, hideLoading} = useLoading();
 
-  const profileDetails = useProfileDetails();
-  const {updateProfile, error, clearError} = useUpdateProfile();
+  const {
+    profileDetails,
+    profile,
+    allFields,
+    updateField,
+    hasChanges,
+    submitUpdate,
+  } = useProfileForm(isEditing);
+
   const {resendPendingEmail, isProcessing: isResendingEmail} =
     useEmailConfirmation();
 
-  const emptyProfileState: ProfileFormState = useMemo(
-    () => ({
-      first_name: '',
-      last_name: '',
-      email: '',
-      phone_number: '',
-      date_of_birth: '',
-      address: '',
-      city: '',
-      province: '',
-      postal_code: '',
-      country: '',
-    }),
-    [],
-  );
-
-  const [profile, setProfile] = useState<ProfileFormState>(emptyProfileState);
-  const [initialProfile, setInitialProfile] =
-    useState<ProfileFormState>(emptyProfileState);
-
-  useEffect(() => {
-    if (profileDetails) {
-      const nextProfile: ProfileFormState = {
-        first_name: profileDetails.first_name ?? '',
-        last_name: profileDetails.last_name ?? '',
-        email: profileDetails.email ?? '',
-        phone_number: profileDetails.phone_number ?? '',
-        date_of_birth: profileDetails.date_of_birth ?? '',
-        address: profileDetails.address ?? '',
-        city: profileDetails.city ?? '',
-        province: profileDetails.province ?? '',
-        postal_code: profileDetails.postal_code ?? '',
-        country: profileDetails.country ?? '',
-      };
-
-      setProfile(nextProfile);
-      setInitialProfile(nextProfile);
-    } else {
-      setProfile(emptyProfileState);
-      setInitialProfile(emptyProfileState);
-    }
-  }, [profileDetails, emptyProfileState]);
-
-  const basicFields: ProfileRow[] = [
-    {key: 'first_name', label: 'First Name', placeholder: 'First Name'},
-    {key: 'last_name', label: 'Last Name', placeholder: 'Last Name'},
-    {
-      key: 'email',
-      label: 'Email Address',
-      placeholder: 'Email Address',
-      keyboardType: 'email-address',
-    },
-    {
-      key: 'phone_number',
-      label: 'Phone Number',
-      placeholder: 'Phone Number',
-      keyboardType: 'phone-pad',
-    },
-  ];
-
-  const addressFields: ProfileRow[] = [
-    {key: 'address', label: 'Address', placeholder: 'Street Address'},
-    {key: 'city', label: 'City', placeholder: 'City'},
-    {key: 'province', label: 'Province', placeholder: 'Province/State'},
-    {key: 'postal_code', label: 'Postal Code', placeholder: 'Postal Code'},
-    {key: 'country', label: 'Country', placeholder: 'Country'},
-  ];
-
-  const updateField = (key: keyof ProfileFormState, value: string) => {
-    setProfile((prev) => ({...prev, [key]: value}));
-  };
-
-  const computeUpdateValue = (
-    key: keyof ProfileFormState,
-  ): string | null | undefined => {
-    const currentValue = profile[key].trim();
-    const originalValue = initialProfile[key].trim();
-
-    if (currentValue === originalValue) {
-      return undefined;
-    }
-
-    if (key === 'email' && currentValue.length === 0) {
-      return undefined;
-    }
-
-    if (currentValue.length === 0) {
-      return originalValue.length > 0 ? null : undefined;
-    }
-
-    return currentValue;
-  };
-
   const performUpdate = async () => {
-    clearError();
     showLoading('Updating profile...');
 
-    const updateData: UserUpdateData = {
-      first_name: computeUpdateValue('first_name'),
-      last_name: computeUpdateValue('last_name'),
-      email: (() => {
-        const value = computeUpdateValue('email');
-        return value ?? undefined;
-      })(),
-      phone_number: computeUpdateValue('phone_number'),
-      date_of_birth: computeUpdateValue('date_of_birth'),
-      address: computeUpdateValue('address'),
-      city: computeUpdateValue('city'),
-      province: computeUpdateValue('province'),
-      postal_code: computeUpdateValue('postal_code'),
-      country: computeUpdateValue('country'),
-    };
-
-    const hasChanges = Object.values(updateData).some(
-      (value) => value !== undefined,
-    );
-
-    if (!hasChanges) {
+    if (!hasChanges()) {
       hideLoading();
       showAlert({
         title: 'No Changes Detected',
@@ -183,20 +55,21 @@ export const ProfileContentEditable = forwardRef<
       return;
     }
 
-    const success = await updateProfile(updateData);
-
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    hideLoading();
-
-    if (success) {
+    try {
+      await submitUpdate();
+      hideLoading();
+      onSaveComplete?.();
       showAlert({
         title: 'Success',
         message: 'Profile updated successfully',
       });
-    } else {
+    } catch (err) {
+      hideLoading();
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to update profile';
       showAlert({
         title: 'Error',
-        message: error ?? 'Failed to update profile',
+        message: errorMessage,
       });
     }
   };
@@ -232,31 +105,37 @@ export const ProfileContentEditable = forwardRef<
     }
   };
 
+  if (!profileDetails) {
+    return (
+      <View style={styles.container}>
+        <ThemedText variant="secondary" style={styles.emptyState}>
+          No profile information available
+        </ThemedText>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {profileDetails ? (
-        <GlassCard style={styles.metaCard}>
-          <View style={styles.metaContent}>
-            <View style={styles.metaColumn}>
-              <ThemedView variant="roleBadge">
-                <ThemedText variant="badgeText">
-                  {profileDetails.role ?? 'Member'}
-                </ThemedText>
-              </ThemedView>
-              {profileDetails.role_description ? (
+      {/* Profile Meta Card */}
+      <GlassCard style={styles.metaCard}>
+        <View style={styles.metaContent}>
+          <View style={styles.metaColumn}>
+            <ThemedView variant="roleBadge">
+              <ThemedText variant="badgeText">
+                {profileDetails.role ?? 'Member'}
+              </ThemedText>
+            </ThemedView>
+            {profileDetails.role_description && (
+              <ThemedText variant="secondary" style={styles.metaSupporting}>
+                {profileDetails.role_description}
+              </ThemedText>
+            )}
+            {profileDetails.pending_email && (
+              <>
                 <ThemedText variant="secondary" style={styles.metaSupporting}>
-                  {profileDetails.role_description}
-                </ThemedText>
-              ) : null}
-              {profileDetails.pending_email ? (
-                <ThemedText
-                  variant="secondary"
-                  style={[styles.metaSupporting, styles.pendingText]}
-                >
                   Pending confirmation: {profileDetails.pending_email}
                 </ThemedText>
-              ) : null}
-              {profileDetails.pending_email ? (
                 <ThemedButton
                   title={
                     isResendingEmail
@@ -266,85 +145,42 @@ export const ProfileContentEditable = forwardRef<
                   variant="ghost"
                   fullWidth={false}
                   onPress={handleResendPendingEmail}
-                  style={styles.resendButton}
                   disabled={isResendingEmail}
                 />
-              ) : null}
-            </View>
-            <View style={styles.metaSeparator} />
-            <View style={styles.metaColumn}>
-              <ThemedText variant="label" colorToken="label">
-                Member Since
-              </ThemedText>
-              <ThemedText variant="secondary" colorToken="label">
-                {formatDate(profileDetails.created_at)}
-              </ThemedText>
-              <ThemedText variant="secondary" style={styles.metaSupporting}>
-                Last updated {formatDate(profileDetails.updated_at)}
-              </ThemedText>
-              {profileDetails.pending_email_expires_at ? (
-                <ThemedText variant="secondary" style={styles.metaSupporting}>
-                  Confirmation expires{' '}
-                  {formatDate(profileDetails.pending_email_expires_at)}
-                </ThemedText>
-              ) : null}
-            </View>
+              </>
+            )}
           </View>
-        </GlassCard>
-      ) : null}
 
-      {/* Basic Information Fields */}
-      {basicFields.map((item) => (
-        <View key={item.key} style={styles.fieldContainer}>
-          <ThemedText variant="label" colorToken="label" style={styles.label}>
-            {item.label}
-          </ThemedText>
-          <Input
-            value={profile[item.key]}
-            onChangeText={(text) => updateField(item.key, text)}
-            placeholder={item.placeholder}
-            keyboardType={item.keyboardType}
-          />
+          <View style={styles.metaSeparator} />
+
+          <View style={styles.metaColumn}>
+            <ThemedText variant="label" colorToken="label">
+              Member Since
+            </ThemedText>
+            <ThemedText variant="secondary" colorToken="label">
+              {formatDate(profileDetails.created_at)}
+            </ThemedText>
+            <ThemedText variant="secondary" style={styles.metaSupporting}>
+              Last updated {formatDate(profileDetails.updated_at)}
+            </ThemedText>
+            {profileDetails.pending_email_expires_at && (
+              <ThemedText variant="secondary" style={styles.metaSupporting}>
+                Confirmation expires{' '}
+                {formatDate(profileDetails.pending_email_expires_at)}
+              </ThemedText>
+            )}
+          </View>
         </View>
-      ))}
+      </GlassCard>
 
-      {/* Date of Birth Field */}
-      <View style={styles.fieldContainer}>
-        <ThemedText variant="label" colorToken="label" style={styles.label}>
-          Date of Birth
-        </ThemedText>
-        <DatePicker
-          value={profile.date_of_birth}
-          onChange={(date) => updateField('date_of_birth', date)}
-          maximumDate={new Date()}
-          placeholder="Select date"
-        />
-      </View>
-
-      {/* Address Fields */}
-      {addressFields.map((item) => (
-        <View key={item.key} style={styles.fieldContainer}>
-          <ThemedText variant="label" colorToken="label" style={styles.label}>
-            {item.label}
-          </ThemedText>
-          <Input
-            value={profile[item.key]}
-            onChangeText={(text) => updateField(item.key, text)}
-            placeholder={item.placeholder}
-            keyboardType={item.keyboardType}
-          />
-        </View>
-      ))}
-
-      {showInlineSaveButton ? (
-        <View style={styles.actions}>
-          <ThemedButton
-            title="Save Profile"
-            variant="primary"
-            onPress={handleSaveProfile}
-          />
-        </View>
-      ) : null}
+      {/* Profile Information */}
+      <InfoRowCard
+        fields={allFields}
+        editable={isEditing}
+        values={profile}
+        onFieldChange={(key, value) => updateField(key as any, value)}
+        autoFocus={true}
+      />
     </View>
   );
 });
@@ -355,8 +191,13 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       container: {
-        gap: ds.spacing.lg,
+        gap: ds.spacing.xl,
         paddingTop: ds.spacing.md,
+      },
+      emptyState: {
+        textAlign: 'center',
+        opacity: ds.opacity.muted,
+        paddingVertical: ds.spacing.xxxl,
       },
       metaCard: {
         width: '100%',
@@ -365,7 +206,7 @@ const createStyles = makeStyleFactory(
       },
       metaContent: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         paddingVertical: ds.spacing.md,
         paddingHorizontal: ds.spacing.lg,
         gap: ds.spacing.lg,
@@ -375,31 +216,14 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.xs,
       },
       metaSupporting: {
-        opacity: 0.7,
-        fontSize: ds.typography.caption.fontSize,
-      },
-      pendingText: {
-        color: theme.primary,
-      },
-      resendButton: {
-        marginTop: ds.spacing.sm,
-        alignSelf: 'flex-start',
+        ...ds.typography.caption,
+        opacity: ds.opacity.muted,
       },
       metaSeparator: {
         width: StyleSheet.hairlineWidth,
         alignSelf: 'stretch',
         backgroundColor: theme.divider,
-        opacity: 0.6,
-      },
-      fieldContainer: {
-        gap: ds.spacing.sm,
-      },
-      label: {
-        paddingLeft: ds.spacing.xs,
-      },
-      actions: {
-        paddingTop: ds.spacing.md,
-        paddingBottom: ds.spacing.xxxl + ds.spacing.md,
+        opacity: ds.opacity.muted,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

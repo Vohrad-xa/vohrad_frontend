@@ -10,25 +10,17 @@ export function useOrganizationDetails(): Tenant | null {
 
 export function useUpdateTenant() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const updateTenant = useAuthStore(tenantSelectors.updateTenant);
 
   const updateTenantProfile = useCallback(
-    async (data: TenantProfileUpdate): Promise<boolean> => {
+    async (data: TenantProfileUpdate): Promise<void> => {
       setIsLoading(true);
-      setError(null);
 
       try {
         const updatedTenant = await tenantApi.updateTenantProfile(data);
         updateTenant(updatedTenant);
-        return true;
       } catch (err) {
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : 'Failed to update organization profile';
-        setError(errorMessage);
-        return false;
+        throw err;
       } finally {
         setIsLoading(false);
       }
@@ -36,14 +28,8 @@ export function useUpdateTenant() {
     [updateTenant],
   );
 
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
-
   return {
     updateTenantProfile,
     isLoading,
-    error,
-    clearError,
   };
 }
