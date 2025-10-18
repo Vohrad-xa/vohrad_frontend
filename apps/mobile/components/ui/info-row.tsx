@@ -134,12 +134,12 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
       <TextInput
         ref={inputRef}
         value={displayValue}
-        onChangeText={type === 'date' ? undefined : onChangeText}
+        onChangeText={type === 'date' && Platform.OS !== 'web' ? undefined : onChangeText}
         placeholder={placeholder ?? 'Not set'}
         placeholderTextColor={theme.iosPlaceholder}
         selectionColor={theme.tint}
         underlineColorAndroid="transparent"
-        editable={type === 'date' ? false : editable}
+        editable={type === 'date' && Platform.OS === 'android' ? false : editable}
         textAlignVertical="center"
         {...inputProps}
         style={[styles.valueText, inputStyle]}
