@@ -80,12 +80,26 @@ export class HttpClient {
       const data = await response.json();
 
       if (!response.ok) {
-        // Backend error responses have nested structure: { error: { message: "..." } }
-        const errorMessage =
+        // Backend error responses have nested structure: { error: { message: "...", details: {...} } }
+        let errorMessage =
           data.error?.message ||
           data.error ||
           data.message ||
           `HTTP ${response.status}`;
+
+        // Extract field-specific validation error if available (Pydantic validation)
+        if (data.error?.details?.validation_errors?.length > 0) {
+          const firstError = data.error.details.validation_errors[0];
+          let message = firstError.message || errorMessage;
+          // Remove "Value error, " prefix from Pydantic validation errors
+          message = message.replace(/^Value error,\s*/i, '');
+          errorMessage = message;
+        }
+        // Extract field-specific error from custom validation (e.g., CHECK constraints)
+        else if (data.error?.details?.reason) {
+          errorMessage = data.error.details.reason;
+        }
+
         throw new ApiError(errorMessage, response.status);
       }
 

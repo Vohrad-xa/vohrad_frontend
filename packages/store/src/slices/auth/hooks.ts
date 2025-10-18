@@ -10,23 +10,17 @@ export function useProfileDetails(): User | null {
 
 export function useUpdateProfile() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const updateUser = useAuthStore(authSelectors.updateUser);
 
   const updateProfile = useCallback(
-    async (data: UserUpdateData): Promise<boolean> => {
+    async (data: UserUpdateData): Promise<void> => {
       setIsLoading(true);
-      setError(null);
 
       try {
         const updatedUser = await userApi.updateUserProfile(data);
         updateUser(updatedUser);
-        return true;
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'Failed to update profile';
-        setError(errorMessage);
-        return false;
+        throw err;
       } finally {
         setIsLoading(false);
       }
@@ -34,15 +28,9 @@ export function useUpdateProfile() {
     [updateUser],
   );
 
-  const clearError = useCallback(() => {
-    setError(null);
-  }, []);
-
   return {
     updateProfile,
     isLoading,
-    error,
-    clearError,
   };
 }
 
