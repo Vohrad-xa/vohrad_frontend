@@ -7,20 +7,22 @@ import React, {
 } from 'react';
 import {StyleSheet, View} from 'react-native';
 import {
+  useEmailConfirmation,
+  useProfileDetails,
+  useUpdateProfile,
+} from '@vohrad/store';
+import {
   ThemedButton,
   Input,
   ThemedText,
   DatePicker,
   GlassCard,
+  ThemedView,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useLoading} from '@/providers';
-import {showConfirmAlert, showAlert} from '@/utils';
+import {showConfirmAlert, showAlert, formatDate} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {formatDate} from './format-date';
-import {useProfileDetails} from './use-profile-details';
-import {useUpdateProfile} from './use-update-profile';
-import {useEmailConfirmation} from './use-email-confirmation';
 import type {UserUpdateData} from '@vohrad/types';
 
 type ProfileRow = {
@@ -236,11 +238,11 @@ export const ProfileContentEditable = forwardRef<
         <GlassCard style={styles.metaCard}>
           <View style={styles.metaContent}>
             <View style={styles.metaColumn}>
-              <View style={styles.roleBadge}>
-                <ThemedText variant="secondary" style={styles.roleBadgeText}>
+              <ThemedView variant="roleBadge">
+                <ThemedText variant="badgeText">
                   {profileDetails.role ?? 'Member'}
                 </ThemedText>
-              </View>
+              </ThemedView>
               {profileDetails.role_description ? (
                 <ThemedText variant="secondary" style={styles.metaSupporting}>
                   {profileDetails.role_description}
@@ -388,20 +390,6 @@ const createStyles = makeStyleFactory(
         alignSelf: 'stretch',
         backgroundColor: theme.divider,
         opacity: 0.6,
-      },
-      roleBadge: {
-        borderRadius: ds.borderRadius.xl,
-        paddingVertical: ds.spacing.xs,
-        paddingHorizontal: ds.spacing.md,
-        backgroundColor: theme.primary,
-        borderWidth: 0,
-        alignSelf: 'flex-start',
-      },
-      roleBadgeText: {
-        textTransform: 'uppercase',
-        fontWeight: ds.fontWeight.semibold,
-        letterSpacing: 0.5,
-        color: theme.primaryForeground,
       },
       fieldContainer: {
         gap: ds.spacing.sm,

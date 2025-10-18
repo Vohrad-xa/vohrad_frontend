@@ -1,34 +1,37 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import {ThemedView, ThemedText} from '@/components/ui';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {ThemedView, ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {OrganizationContent} from '@/features/settings/organization';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function OrganizationScreen() {
   const {ds, theme} = useTheme();
-  const styles = createStyles(ds, theme);
+  const insets = useSafeAreaInsets();
+  const styles = createStyles(ds, theme, insets.bottom);
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.text}>Organization</ThemedText>
+      <ModalScrollView contentContainerStyle={styles.content}>
+        <OrganizationContent />
+      </ModalScrollView>
     </ThemedView>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape, insetBottom: number) =>
     StyleSheet.create({
       container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: ds.spacing.xl,
+        backgroundColor: theme.background,
       },
-      text: {
-        ...ds.typography.sectionTitle,
-        color: theme.text,
+      content: {
+        gap: ds.spacing.xxl,
+        paddingBottom: ds.spacing.xxxl + insetBottom + ds.spacing.lg,
       },
     }),
-  (ds, theme) => themeKey(theme, ds),
+  (ds, theme, insetBottom) => themeKey(theme, ds) + `|${insetBottom}`,
 );

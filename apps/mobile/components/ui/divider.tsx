@@ -15,7 +15,7 @@ const createStyles = makeStyleFactory(
   (theme: ThemeShape, ds: DSShape) =>
     StyleSheet.create({
       divider: {
-        height: 0.3,
+        height: StyleSheet.hairlineWidth,
         backgroundColor: theme.divider,
         marginVertical: ds.spacing.md,
       },

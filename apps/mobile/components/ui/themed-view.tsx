@@ -6,6 +6,8 @@ import type {ContainerStyleProps} from '@/types';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {GlassCard} from './glass-card';
 
+export type BadgeStatus = 'active' | 'inactive' | 'suspended';
+
 export interface ThemedViewProps
   extends ViewProps,
     Pick<ContainerStyleProps, 'contentStyle'> {
@@ -16,13 +18,18 @@ export interface ThemedViewProps
     | 'modal'
     | 'header'
     | 'headerAccessory'
-    | 'listItem';
+    | 'listItem'
+    | 'badge'
+    | 'statusBadge'
+    | 'roleBadge';
   shadow?: 'none' | 'sm' | 'md' | 'lg';
+  badgeStatus?: BadgeStatus;
 }
 
 export const ThemedView: React.FC<ThemedViewProps> = ({
   variant = 'default',
   shadow = 'none',
+  badgeStatus,
   style,
   contentStyle,
   ...props
@@ -34,15 +41,29 @@ export const ThemedView: React.FC<ThemedViewProps> = ({
     return <GlassCard style={style} contentStyle={contentStyle} {...props} />;
   }
 
-  const styles = createStyles(variant, shadow, theme, ds);
+  const styles = createStyles(variant, shadow, badgeStatus, theme, ds);
 
   return <View style={[styles.view, style]} {...props} />;
+};
+
+const getStatusColor = (status: BadgeStatus, theme: ThemeShape): string => {
+  switch (status) {
+    case 'active':
+      return theme.accentGreen;
+    case 'inactive':
+      return theme.accentYellow;
+    case 'suspended':
+      return theme.destructive;
+    default:
+      return theme.accentYellow;
+  }
 };
 
 const createStyles = makeStyleFactory(
   (
     variant: ThemedViewProps['variant'],
     shadow: ThemedViewProps['shadow'],
+    badgeStatus: BadgeStatus | undefined,
     theme: ThemeShape,
     ds: DSShape,
   ) => {
@@ -80,6 +101,20 @@ const createStyles = makeStyleFactory(
             paddingVertical: ds.components.listItem.paddingVertical,
             paddingHorizontal: ds.components.listItem.paddingHorizontal,
           };
+        case 'badge':
+        case 'statusBadge':
+        case 'roleBadge':
+          return {
+            borderRadius: ds.borderRadius.xl,
+            paddingVertical: ds.spacing.xs,
+            paddingHorizontal: ds.spacing.md,
+            borderWidth: 0,
+            alignSelf: 'flex-start',
+            backgroundColor:
+              variant === 'statusBadge' && badgeStatus
+                ? getStatusColor(badgeStatus, theme)
+                : theme.primary,
+          };
         default:
           return {
             backgroundColor: theme.background,
@@ -107,5 +142,6 @@ const createStyles = makeStyleFactory(
       },
     });
   },
-  (variant, shadow, theme, ds) => `${variant}|${shadow}|${themeKey(theme, ds)}`,
+  (variant, shadow, badgeStatus, theme, ds) =>
+    `${variant}|${shadow}|${badgeStatus ?? ''}|${themeKey(theme, ds)}`,
 );

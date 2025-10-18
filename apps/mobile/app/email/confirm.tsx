@@ -1,14 +1,13 @@
 import {useEffect, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
-import {useLocalSearchParams, useRouter} from 'expo-router';
-import {ThemedText, ThemedButton, ThemedView} from '@/components/ui';
 import {userApi} from '@vohrad/api-client';
 import {useAuthStore} from '@vohrad/store';
-import {formatDate} from '@/features/settings/profile/format-date';
-import {useAuth, useTheme} from '@/providers';
+import {useLocalSearchParams, useRouter} from 'expo-router';
+import {ThemedText, ThemedButton, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {useAuth, useTheme} from '@/providers';
+import {showAlert, formatDate} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {showAlert} from '@/utils';
 
 export default function EmailConfirmScreen() {
   const params = useLocalSearchParams<{
@@ -33,7 +32,9 @@ export default function EmailConfirmScreen() {
   const waitForMinimumLoading = async (startedAt: number) => {
     const elapsed = Date.now() - startedAt;
     if (elapsed < MIN_LOADING_MS) {
-      await new Promise((resolve) => setTimeout(resolve, MIN_LOADING_MS - elapsed));
+      await new Promise((resolve) =>
+        setTimeout(resolve, MIN_LOADING_MS - elapsed),
+      );
     }
   };
 

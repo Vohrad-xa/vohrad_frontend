@@ -7,7 +7,7 @@ import {useTheme} from '@/providers/theme-provider';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 // Text variants based on typography system
-export type TextVariant = Typography;
+export type TextVariant = Typography | 'badgeText';
 
 export type ThemedTextProps = TextProps & {
   variant?: TextVariant;
@@ -34,7 +34,21 @@ const createStyles = makeStyleFactory(
       fontFamily: variantFontKey ? ds.fonts[variantFontKey] : ds.fonts.system,
     };
 
-    const typographyStyle = ds.typography[variant];
+    // Handle badgeText variant specially
+    if (variant === 'badgeText') {
+      return StyleSheet.create({
+        text: {
+          ...baseStyle,
+          ...ds.typography.secondary,
+          fontWeight: ds.fontWeight.semibold,
+          letterSpacing: 0.5,
+          textTransform: 'uppercase',
+          color: theme.primaryForeground,
+        },
+      });
+    }
+
+    const typographyStyle = ds.typography[variant as Typography];
     const fallbackStyle = ds.typography.body;
     const resolvedTypography = typographyStyle ?? fallbackStyle;
     const variantForColor = typographyStyle ? variant : 'body';

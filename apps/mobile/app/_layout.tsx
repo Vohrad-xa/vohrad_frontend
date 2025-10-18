@@ -102,7 +102,7 @@ function RootNavigation() {
     setIntendedRoute,
     router,
   ]);
-  
+
   useEffect(() => {
     if (intendedRoute === '/email/confirm') {
       setIntendedRoute(null);

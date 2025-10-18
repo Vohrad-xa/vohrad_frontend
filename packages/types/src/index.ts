@@ -20,6 +20,7 @@ export type {
 export type {
   Tenant,
   TenantSettingsUpdate,
+  TenantProfileUpdate,
   TenantLicenseInfo,
   JsonValue,
 } from './tenant';
