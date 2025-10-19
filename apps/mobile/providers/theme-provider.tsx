@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {Animated, Easing, StyleSheet} from 'react-native';
+import {Animated, Easing, StyleSheet, Appearance, Platform} from 'react-native';
 import {ThemeProvider as NavigationThemeProvider} from '@react-navigation/native';
 import {
   NavigationThemes,
@@ -85,6 +85,12 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
       });
     }
   }, [preference, hydrated]);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') {
+      Appearance.setColorScheme(scheme);
+    }
+  }, [scheme]);
 
   const toggle = useCallback(() => {
     if (isAnimating.current) {
