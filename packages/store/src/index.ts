@@ -11,6 +11,7 @@ export {
   tenantSelectors,
   useOrganizationDetails,
   useUpdateTenant,
+  useUpdateTenantSettings,
 } from './slices/tenant';
 export type {User, AuthTokens, Tenant} from '@vohrad/types';
 export type {AuthSlice} from './slices/auth';

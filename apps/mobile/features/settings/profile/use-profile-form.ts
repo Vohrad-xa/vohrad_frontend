@@ -1,7 +1,7 @@
 import {useState, useCallback, useMemo, useEffect} from 'react';
 import {useProfileDetails, useUpdateProfile} from '@vohrad/store';
-import type {UserUpdateData} from '@vohrad/types';
 import type {InfoField} from '@/components/ui';
+import type {UserUpdateData} from '@vohrad/types';
 
 type ProfileFormState = Required<{
   [K in keyof UserUpdateData]: string;

@@ -1,8 +1,8 @@
 import {useState, useCallback, useMemo, useEffect} from 'react';
 import {Platform} from 'react-native';
 import {useOrganizationDetails, useUpdateTenant} from '@vohrad/store';
-import type {Tenant} from '@vohrad/types';
 import type {InfoField} from '@/components/ui';
+import type {Tenant} from '@vohrad/types';
 
 type SectionKey = 'business' | 'address' | 'remarks';
 

@@ -38,9 +38,9 @@ export interface Tenant {
 }
 
 export interface TenantSettingsUpdate {
-  timezone?: string;
-  business_hour_start?: string;
-  business_hour_end?: string;
+  timezone?: string | null;
+  business_hour_start?: string | null;
+  business_hour_end?: string | null;
 }
 
 export type TenantProfileUpdate = Partial<
