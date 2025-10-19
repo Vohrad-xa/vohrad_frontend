@@ -208,6 +208,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
           inputStyle={platformValueTextStyles}
           theme={theme}
           scheme={scheme}
+          ds={ds}
         />
       </View>
     );
@@ -235,6 +236,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
           inputStyle={platformValueTextStyles}
           theme={theme}
           scheme={scheme}
+          ds={ds}
         />
       </View>
     );
