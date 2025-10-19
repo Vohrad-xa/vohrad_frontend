@@ -38,17 +38,18 @@ export default function PreferencesScreen() {
     saveOptions: {skipConfirm: true} satisfies SavePreferencesOptions,
   });
 
-  const handleSaveComplete = useCallback(() => {
-    setHasChanges(false);
-    handleNavigationAfterSave();
-  }, [handleNavigationAfterSave]);
-
-  useSettingsHeader({
+  const {triggerSuccess} = useSettingsHeader({
     navigation,
     isEditing: true,
     hasChanges,
     onSave: handleSave,
   });
+
+  const handleSaveComplete = useCallback(() => {
+    setHasChanges(false);
+    triggerSuccess();
+    handleNavigationAfterSave();
+  }, [handleNavigationAfterSave, triggerSuccess]);
 
   return (
     <ThemedView style={styles.container}>

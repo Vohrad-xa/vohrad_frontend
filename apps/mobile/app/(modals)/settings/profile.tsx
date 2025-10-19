@@ -1,5 +1,5 @@
 import React, {useRef, useState, useCallback} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 import {useNavigation} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedView, ModalScrollView} from '@/components/ui';
@@ -7,6 +7,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   ProfileContent,
   type ProfileContentHandle,
+  type SaveProfileOptions,
 } from '@/features/settings/profile';
 import {useSettingsHeader, useUnsavedChangesGuard} from '@/hooks';
 import {useTheme} from '@/providers';
@@ -18,7 +19,7 @@ export default function ProfileScreen() {
   const styles = createStyles(ds, theme, insets.bottom);
   const navigation = useNavigation();
   const profileContentRef = useRef<ProfileContentHandle>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(Platform.OS === 'web');
   const [hasChanges, setHasChanges] = useState(false);
 
   const checkForChanges = useCallback(() => {
@@ -34,6 +35,7 @@ export default function ProfileScreen() {
       setIsEditing(false);
       setHasChanges(false);
     },
+    saveOptions: {skipConfirm: true} satisfies SaveProfileOptions,
   });
 
   const handleEditSave = useCallback(() => {
@@ -44,18 +46,19 @@ export default function ProfileScreen() {
     }
   }, [isEditing]);
 
-  const handleSaveComplete = useCallback(() => {
-    setIsEditing(false);
-    setHasChanges(false);
-    handleNavigationAfterSave();
-  }, [handleNavigationAfterSave]);
-
-  useSettingsHeader({
+  const {triggerSuccess} = useSettingsHeader({
     navigation,
     isEditing,
     hasChanges,
     onSave: handleEditSave,
   });
+
+  const handleSaveComplete = useCallback(() => {
+    setIsEditing(false);
+    setHasChanges(false);
+    triggerSuccess();
+    handleNavigationAfterSave();
+  }, [handleNavigationAfterSave, triggerSuccess]);
 
   return (
     <ThemedView style={styles.container}>

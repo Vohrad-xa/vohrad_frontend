@@ -9,8 +9,12 @@ import {Icon, AppIcons} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {useOrganizationForm} from './use-organization-form';
 
+export type SaveOrganizationOptions = {
+  skipConfirm?: boolean;
+};
+
 export type OrganizationContentHandle = {
-  saveOrganization: () => void;
+  saveOrganization: (options?: SaveOrganizationOptions) => void;
   hasChanges: () => boolean;
 };
 
@@ -66,7 +70,12 @@ export const OrganizationContent = forwardRef<
     }
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = (options?: SaveOrganizationOptions) => {
+    if (options?.skipConfirm) {
+      void performUpdate();
+      return;
+    }
+
     showConfirmAlert({
       title: 'Update Organization',
       message: 'Are you sure you want to save these changes?',
@@ -74,7 +83,7 @@ export const OrganizationContent = forwardRef<
       cancelText: 'Discard',
       cancelIsDestructive: true,
       onConfirm: () => {
-        performUpdate();
+        void performUpdate();
       },
     });
   };

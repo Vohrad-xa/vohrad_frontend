@@ -14,8 +14,12 @@ import {showConfirmAlert, showAlert, formatDate} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {useProfileForm} from './use-profile-form';
 
+export type SaveProfileOptions = {
+  skipConfirm?: boolean;
+};
+
 export type ProfileContentHandle = {
-  saveProfile: () => void;
+  saveProfile: (options?: SaveProfileOptions) => void;
   hasChanges: () => boolean;
 };
 
@@ -74,7 +78,12 @@ export const ProfileContentEditable = forwardRef<
     }
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = (options?: SaveProfileOptions) => {
+    if (options?.skipConfirm) {
+      void performUpdate();
+      return;
+    }
+
     showConfirmAlert({
       title: 'Update Profile',
       message: 'Are you sure you want to save these changes?',
@@ -82,7 +91,7 @@ export const ProfileContentEditable = forwardRef<
       cancelText: 'Discard',
       cancelIsDestructive: true,
       onConfirm: () => {
-        performUpdate();
+        void performUpdate();
       },
     });
   };

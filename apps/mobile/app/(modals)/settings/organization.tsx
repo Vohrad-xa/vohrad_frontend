@@ -7,6 +7,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   OrganizationContent,
   type OrganizationContentHandle,
+  type SaveOrganizationOptions,
 } from '@/features/settings/organization';
 import {useSettingsHeader, useUnsavedChangesGuard} from '@/hooks';
 import {useTheme} from '@/providers';
@@ -18,7 +19,7 @@ export default function OrganizationScreen() {
   const styles = createStyles(ds, theme, insets.bottom);
   const navigation = useNavigation();
   const organizationContentRef = useRef<OrganizationContentHandle>(null);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(Platform.OS === 'web');
   const [hasChanges, setHasChanges] = useState(false);
 
   const checkForChanges = useCallback(() => {
@@ -34,6 +35,7 @@ export default function OrganizationScreen() {
       setIsEditing(false);
       setHasChanges(false);
     },
+    saveOptions: {skipConfirm: true} satisfies SaveOrganizationOptions,
   });
 
   const handleEditSave = useCallback(() => {
@@ -46,18 +48,19 @@ export default function OrganizationScreen() {
     }
   }, [isEditing]);
 
-  const handleSaveComplete = useCallback(() => {
-    setIsEditing(false);
-    setHasChanges(false);
-    handleNavigationAfterSave();
-  }, [handleNavigationAfterSave]);
-
-  useSettingsHeader({
+  const {triggerSuccess} = useSettingsHeader({
     navigation,
     isEditing,
     hasChanges,
     onSave: handleEditSave,
   });
+
+  const handleSaveComplete = useCallback(() => {
+    setIsEditing(false);
+    setHasChanges(false);
+    triggerSuccess();
+    handleNavigationAfterSave();
+  }, [handleNavigationAfterSave, triggerSuccess]);
 
   return (
     <ThemedView style={styles.container}>

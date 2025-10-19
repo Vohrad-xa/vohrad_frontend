@@ -47,7 +47,7 @@ export type IconName =
   | 'add-outline'
   | 'add-circle-outline'
   | 'add-circle'
-  | 'checkmark-outline'
+  | 'checkmark-circle-outline'
   | 'trash-outline'
   | 'create-outline'
   | 'duplicate-outline'
@@ -193,7 +193,7 @@ export const AppIcons = {
     input: 'keypad-outline' as IconName,
     edit: 'pencil-square-o' as IconName,
     add: 'add-outline' as IconName,
-    save: 'checkmark-outline' as IconName,
+    save: 'checkmark-circle-outline' as IconName,
     delete: 'trash-outline' as IconName,
     duplicate: 'duplicate-outline' as IconName,
     share: 'share-outline' as IconName,
