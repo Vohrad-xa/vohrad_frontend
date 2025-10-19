@@ -90,7 +90,7 @@ export function GlassCard({children, style, contentStyle}: GlassCardProps) {
           <GlassContainer spacing={ds.spacing.xs} style={style}>
             <GlassView
               glassEffectStyle={scheme === 'dark' ? 'clear' : 'regular'}
-              tintColor={theme.glassTint}
+              // tintColor={theme.glassTint}
               isInteractive
               style={[styles.glassView, contentStyle]}
             >

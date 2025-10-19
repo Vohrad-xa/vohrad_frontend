@@ -59,7 +59,7 @@ const _DesignSystem = {
 
     // Content Level - Text
     label: {
-      fontSize: 17,
+      fontSize: 18,
       lineHeight: 22,
       fontWeight: '500' as const,
       letterSpacing: 0.2,
@@ -80,8 +80,8 @@ const _DesignSystem = {
     },
 
     value: {
-      fontSize: 16,
-      lineHeight: 21,
+      fontSize: 17,
+      lineHeight: 20,
       fontWeight: '400' as const,
       letterSpacing: 0.2,
     },

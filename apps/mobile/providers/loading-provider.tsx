@@ -12,7 +12,7 @@ import {
   StyleSheet,
   Modal,
 } from 'react-native';
-import {ThemedText} from '@/components/ui';
+import {ThemedText} from '@/components/ui/themed-text';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {useTheme} from './theme-provider';
