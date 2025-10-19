@@ -34,7 +34,7 @@ export default function SettingsLayout() {
           options={{
             title: 'Settings',
             headerLeft:
-              Platform.OS === 'ios'
+              Platform.OS === 'ios' || Platform.OS === 'web'
                 ? undefined
                 : () => (
                     <HeaderButton

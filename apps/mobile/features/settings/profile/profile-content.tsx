@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle} from 'react';
+import React, {forwardRef, useImperativeHandle, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useEmailConfirmation} from '@vohrad/store';
 import {
@@ -16,17 +16,19 @@ import {useProfileForm} from './use-profile-form';
 
 export type ProfileContentHandle = {
   saveProfile: () => void;
+  hasChanges: () => boolean;
 };
 
 type ProfileContentEditableProps = {
   isEditing: boolean;
   onSaveComplete?: () => void;
+  onFieldChange?: () => void;
 };
 
 export const ProfileContentEditable = forwardRef<
   ProfileContentHandle,
   ProfileContentEditableProps
->(({isEditing, onSaveComplete}, ref) => {
+>(({isEditing, onSaveComplete, onFieldChange}, ref) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
   const {showLoading, hideLoading} = useLoading();
@@ -88,7 +90,12 @@ export const ProfileContentEditable = forwardRef<
 
   useImperativeHandle(ref, () => ({
     saveProfile: handleSaveProfile,
+    hasChanges,
   }));
+
+  useEffect(() => {
+    onFieldChange?.();
+  }, [profile, onFieldChange]);
 
   const handleResendPendingEmail = async () => {
     const succeeded = await resendPendingEmail();

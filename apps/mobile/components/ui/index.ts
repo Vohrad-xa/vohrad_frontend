@@ -13,4 +13,6 @@ export {ModalScrollView} from './modal-scroll-view';
 export {ModalFlatList} from './modal-flat-list';
 export {FormCard} from './form-card';
 export {InfoRow} from './info-row';
-export {InfoRowCard} from './info-row-card';
+export {InfoRowCard, type InfoField} from './info-row-card';
+export {DatePickerWeb} from './date-picker-web';
+export {DatePickerMobile} from './date-picker-mobile';

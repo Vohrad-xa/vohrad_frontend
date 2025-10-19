@@ -30,6 +30,7 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
   iconPosition = 'left',
   loading = false,
   fullWidth = false,
+  size = 'md',
   style,
   disabled,
   children,
@@ -45,6 +46,7 @@ export const ThemedButton: React.FC<ThemedButtonProps> = ({
     scheme,
     variant,
     fullWidth,
+    size,
     disabled ?? loading,
     loading,
   );
@@ -89,6 +91,7 @@ const createStyles = makeStyleFactory(
     scheme: ColorScheme,
     variant: ThemedButtonProps['variant'],
     fullWidth: boolean,
+    size: 'sm' | 'md' | 'lg',
     disabled: boolean,
     loading: boolean,
   ) => {
@@ -113,15 +116,38 @@ const createStyles = makeStyleFactory(
 
     const textColor = getTextColor();
 
+    const getSizePadding = () => {
+      switch (size) {
+        case 'sm':
+          return {
+            paddingHorizontal: ds.spacing.md,
+            paddingVertical: ds.spacing.xs,
+            minHeight: 32,
+          };
+        case 'lg':
+          return {
+            paddingHorizontal: ds.spacing.xl,
+            paddingVertical: ds.spacing.md,
+            minHeight: ds.components.button.height + 8,
+          };
+        default:
+          return {
+            paddingHorizontal: ds.components.button.paddingHorizontal,
+            paddingVertical: ds.components.button.paddingVertical,
+            minHeight: ds.components.button.height,
+          };
+      }
+    };
+
+    const sizePadding = getSizePadding();
+
     const baseStyle: ViewStyle = {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: ds.components.button.borderRadius,
-      paddingHorizontal: ds.components.button.paddingHorizontal,
-      paddingVertical: ds.components.button.paddingVertical,
-      minHeight: ds.components.button.height,
-      minWidth: ds.components.tapTarget.minSize,
+      ...sizePadding,
+      minWidth: size === 'sm' ? undefined : ds.components.tapTarget.minSize,
     };
 
     const buttonStyle: ViewStyle = {...baseStyle};
@@ -178,6 +204,6 @@ const createStyles = makeStyleFactory(
       },
     });
   },
-  (ds, theme, scheme, variant, fullWidth, disabled, loading) =>
-    `${themeKey(theme, ds)}|${scheme}|${variant}|${fullWidth}|${disabled}|${loading}`,
+  (ds, theme, scheme, variant, fullWidth, size, disabled, loading) =>
+    `${themeKey(theme, ds)}|${scheme}|${variant}|${fullWidth}|${size}|${disabled}|${loading}`,
 );

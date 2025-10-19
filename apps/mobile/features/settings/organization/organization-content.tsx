@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle} from 'react';
+import React, {forwardRef, useImperativeHandle, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ThemedText, ThemedView, GlassCard, InfoRowCard} from '@/components/ui';
 import type {BadgeStatus} from '@/components/ui/themed-view';
@@ -11,17 +11,19 @@ import {useOrganizationForm} from './use-organization-form';
 
 export type OrganizationContentHandle = {
   saveOrganization: () => void;
+  hasChanges: () => boolean;
 };
 
 type OrganizationContentProps = {
   isEditing: boolean;
   onSaveComplete?: () => void;
+  onFieldChange?: () => void;
 };
 
 export const OrganizationContent = forwardRef<
   OrganizationContentHandle,
   OrganizationContentProps
->(({isEditing, onSaveComplete}, ref) => {
+>(({isEditing, onSaveComplete, onFieldChange}, ref) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
   const {showLoading, hideLoading} = useLoading();
@@ -82,7 +84,14 @@ export const OrganizationContent = forwardRef<
 
   useImperativeHandle(ref, () => ({
     saveOrganization: handleSaveProfile,
+    hasChanges,
   }));
+
+  useEffect(() => {
+    if (Object.keys(stagedValues).length > 0) {
+      onFieldChange?.();
+    }
+  }, [stagedValues, onFieldChange]);
 
   if (!organization) {
     return (

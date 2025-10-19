@@ -2,17 +2,19 @@ import React, {useEffect, useRef} from 'react';
 import type {TextInput} from 'react-native';
 import {StyleSheet, View, Platform} from 'react-native';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {Divider} from './divider';
 import {InfoRow} from './info-row';
 
-type InfoField = {
+export type InfoField = {
   key: string;
   label: string;
   value?: string | null;
   placeholder?: string;
   type?: 'text' | 'date';
+  span?: 'half' | 'full';
 };
 
 type InfoRowCardProps = {
@@ -32,6 +34,19 @@ export const InfoRowCard: React.FC<InfoRowCardProps> = ({
 }) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
+  const cardStyles = usePlatformStyles({
+    mobile: styles.card,
+    web: styles.cardWeb,
+  });
+  const rowContainerStyles = usePlatformStyles({
+    mobile: styles.rowContainer,
+    web: styles.rowContainerWeb,
+  });
+  const cardContentStyles = usePlatformStyles({
+    mobile: styles.cardContent,
+    web: styles.cardContentWeb,
+  });
+  const isEditable = editable || Platform.OS === 'web';
   const inputRefs = useRef<Map<string, React.RefObject<TextInput | null>>>(
     new Map(),
   );
@@ -48,42 +63,90 @@ export const InfoRowCard: React.FC<InfoRowCardProps> = ({
   });
 
   useEffect(() => {
-    if (editable && autoFocus && fields.length > 0) {
+    if (isEditable && autoFocus && fields.length > 0) {
       setTimeout(() => {
         firstInputRef.current?.focus();
       }, 100);
     }
-  }, [editable, autoFocus, fields.length]);
+  }, [isEditable, autoFocus, fields.length]);
 
-  return (
-    <View style={styles.card}>
-      {fields.map((field, index) => {
-        const displayValue = editable
-          ? (values[field.key] ?? field.value)
-          : field.value;
-        const inputRef = inputRefs.current.get(field.key);
+  const renderField = (field: InfoField) => {
+    const displayValue = isEditable
+      ? (values[field.key] ?? field.value)
+      : field.value;
+    const inputRef = inputRefs.current.get(field.key);
+
+    return (
+      <InfoRow
+        label={field.label}
+        value={displayValue}
+        editable={isEditable}
+        onChangeText={(text) => onFieldChange?.(field.key, text)}
+        placeholder={field.placeholder}
+        inputRef={inputRef}
+        type={field.type}
+      />
+    );
+  };
+
+  const renderFields = () => {
+    if (Platform.OS === 'web') {
+      const rows: InfoField[][] = [];
+      let currentRow: InfoField[] = [];
+
+      fields.forEach((field) => {
+        if (field.span === 'full' || !field.span) {
+          if (currentRow.length > 0) {
+            rows.push(currentRow);
+            currentRow = [];
+          }
+          rows.push([field]);
+        } else if (field.span === 'half') {
+          currentRow.push(field);
+          if (currentRow.length === 2) {
+            rows.push(currentRow);
+            currentRow = [];
+          }
+        }
+      });
+
+      if (currentRow.length > 0) {
+        rows.push(currentRow);
+      }
+
+      return rows.map((row, rowIndex) => {
+        const hasDateField = row.some((field) => field.type === 'date');
+        const fieldRowStyle = hasDateField
+          ? [styles.fieldRow, styles.fieldRowWithDate]
+          : styles.fieldRow;
 
         return (
-          <React.Fragment key={field.key}>
-            {index > 0 && (
-              <View style={styles.separatorContainer}>
-                <Divider style={styles.separator} />
+          <View key={rowIndex} style={fieldRowStyle}>
+            {row.map((field) => (
+              <View key={field.key} style={rowContainerStyles}>
+                {renderField(field)}
               </View>
-            )}
-            <View style={styles.rowContainer}>
-              <InfoRow
-                label={field.label}
-                value={displayValue}
-                editable={editable}
-                onChangeText={(text) => onFieldChange?.(field.key, text)}
-                placeholder={field.placeholder}
-                inputRef={inputRef}
-                type={field.type}
-              />
-            </View>
-          </React.Fragment>
+            ))}
+          </View>
         );
-      })}
+      });
+    }
+
+    return fields.map((field, index) => (
+      <React.Fragment key={field.key}>
+        {index > 0 && (
+          <View style={styles.separatorContainer}>
+            <Divider style={styles.separator} />
+          </View>
+        )}
+        <View style={rowContainerStyles}>{renderField(field)}</View>
+      </React.Fragment>
+    ));
+  };
+
+  return (
+    <View style={cardStyles}>
+      <View style={cardContentStyles}>{renderFields()}</View>
     </View>
   );
 };
@@ -94,12 +157,35 @@ const createStyles = makeStyleFactory(
       card: {
         borderRadius: ds.components.card.borderRadius,
         backgroundColor: theme.input,
-        // ...ds.shadows.sm,
+      },
+      cardWeb: {
+        borderRadius: ds.borderRadius.lg,
+        backgroundColor: 'transparent',
+      },
+      cardContent: {},
+      cardContentWeb: {
+        flexDirection: 'column',
+        gap: ds.spacing.lg,
+      },
+      fieldRow: {
+        flexDirection: 'row',
+        gap: ds.spacing.md,
+        width: '100%',
+      },
+      fieldRowWithDate: {
+        position: 'relative',
+        zIndex: 100,
       },
       rowContainer: {
         paddingVertical:
           Platform.OS === 'android' ? ds.spacing.xs : ds.spacing.lg,
         paddingHorizontal: ds.spacing.md,
+        justifyContent: 'center',
+      },
+      rowContainerWeb: {
+        flex: 1,
+        paddingVertical: 0,
+        paddingHorizontal: 0,
         justifyContent: 'center',
       },
       separatorContainer: {

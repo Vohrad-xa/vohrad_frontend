@@ -53,13 +53,11 @@ const splashControlGlobal = globalThis as typeof globalThis & {
   __vohradSplashControl?: SplashControlState;
 };
 
-if (!splashControlGlobal.__vohradSplashControl) {
-  splashControlGlobal.__vohradSplashControl = {
-    attempted: false,
-    prevented: false,
-    hidden: false,
-  };
-}
+splashControlGlobal.__vohradSplashControl ??= {
+  attempted: false,
+  prevented: false,
+  hidden: false,
+};
 
 const splashControl = splashControlGlobal.__vohradSplashControl;
 

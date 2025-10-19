@@ -1,5 +1,5 @@
-import React, {useRef, useState, useLayoutEffect, useCallback} from 'react';
-import {StyleSheet, Text, Pressable} from 'react-native';
+import React, {useRef, useState, useCallback} from 'react';
+import {StyleSheet, Platform} from 'react-native';
 import {useNavigation} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedView, ModalScrollView} from '@/components/ui';
@@ -8,6 +8,7 @@ import {
   OrganizationContent,
   type OrganizationContentHandle,
 } from '@/features/settings/organization';
+import {useSettingsHeader} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -18,9 +19,17 @@ export default function OrganizationScreen() {
   const navigation = useNavigation();
   const organizationContentRef = useRef<OrganizationContentHandle>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const checkForChanges = useCallback(() => {
+    const changed = organizationContentRef.current?.hasChanges() ?? false;
+    setHasChanges(changed);
+  }, []);
 
   const handleEditSave = useCallback(() => {
-    if (isEditing) {
+    if (Platform.OS === 'web') {
+      organizationContentRef.current?.saveOrganization();
+    } else if (isEditing) {
       organizationContentRef.current?.saveOrganization();
     } else {
       setIsEditing(true);
@@ -29,20 +38,15 @@ export default function OrganizationScreen() {
 
   const handleSaveComplete = () => {
     setIsEditing(false);
+    setHasChanges(false);
   };
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerBackTitle: 'Settings',
-      headerRight: () => (
-        <Pressable onPress={handleEditSave} style={{paddingHorizontal: 16}}>
-          <Text style={{color: theme.text, fontSize: 17}}>
-            {isEditing ? 'Save' : 'Edit'}
-          </Text>
-        </Pressable>
-      ),
-    });
-  }, [navigation, handleEditSave, isEditing, theme.text]);
+  useSettingsHeader({
+    navigation,
+    isEditing,
+    hasChanges,
+    onSave: handleEditSave,
+  });
 
   return (
     <ThemedView style={styles.container}>
@@ -51,6 +55,7 @@ export default function OrganizationScreen() {
           ref={organizationContentRef}
           isEditing={isEditing}
           onSaveComplete={handleSaveComplete}
+          onFieldChange={checkForChanges}
         />
       </ModalScrollView>
     </ThemedView>

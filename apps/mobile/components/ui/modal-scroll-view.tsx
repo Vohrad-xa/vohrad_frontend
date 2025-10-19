@@ -25,7 +25,7 @@ export function ModalScrollView({
   const scrollViewContent = (
     <ScrollView
       contentContainerStyle={[styles.defaultContent, contentContainerStyle]}
-      showsVerticalScrollIndicator={false}
+      showsVerticalScrollIndicator={Platform.OS === 'web'}
       keyboardShouldPersistTaps="handled"
       contentInsetAdjustmentBehavior={
         Platform.OS === 'ios' ? 'automatic' : undefined

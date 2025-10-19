@@ -9,13 +9,16 @@ import {
   type StyleProp,
   type TextStyle,
 } from 'react-native';
-import DateTimePicker, {
+import {
   DateTimePickerAndroid,
   type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
+import {DatePickerMobile} from './date-picker-mobile';
+import {DatePickerWeb} from './date-picker-web';
 import {ThemedText} from './themed-text';
 
 type InfoRowInputProps = Omit<
@@ -46,6 +49,14 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
 }) => {
   const {ds, theme, scheme} = useTheme();
   const styles = createStyles(ds, theme);
+  const rowStyles = usePlatformStyles({
+    mobile: styles.row,
+    web: styles.rowWeb,
+  });
+  const platformValueTextStyles = usePlatformStyles({
+    mobile: styles.valueText,
+    web: styles.valueTextWeb,
+  });
   const displayValue = value ?? '';
   const inputStyle = inputProps?.style as StyleProp<TextStyle> | undefined;
   const fallbackLabel = placeholder ?? 'Not set';
@@ -92,50 +103,59 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
     }
   };
 
-  if (type === 'date' && Platform.OS === 'ios' && editable) {
+  // === DATE PICKERS ===
+
+  // iOS: Native date picker
+  if (type === 'date' && Platform.OS === 'ios') {
     return (
-      <View style={styles.row}>
+      <DatePickerMobile
+        label={label}
+        selectedDate={selectedDate}
+        onDateChange={handleDateChange}
+        editable={editable}
+        displayValue={displayValue}
+        fallbackLabel={fallbackLabel}
+        scheme={scheme}
+        styles={styles}
+      />
+    );
+  }
+
+  // Web: react-datepicker
+  if (type === 'date' && Platform.OS === 'web') {
+    return (
+      <View style={rowStyles}>
         <ThemedText variant="label" colorToken="label">
           {label}
         </ThemedText>
-        <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display="compact"
-          onChange={handleDateChange}
-          maximumDate={new Date()}
-          themeVariant={scheme}
-          // accentColor={theme.tint}
-          style={styles.iosDatePicker}
+        <DatePickerWeb
+          selectedDate={selectedDate}
+          onDateChange={(date) => {
+            if (onChangeText) {
+              onChangeText(formatDate(date));
+            }
+          }}
+          placeholder={fallbackLabel}
+          disabled={!editable}
+          inputStyle={platformValueTextStyles}
+          theme={theme}
+          scheme={scheme}
         />
       </View>
     );
   }
 
-  if (type === 'date' && Platform.OS === 'ios' && !editable) {
-    return (
-      <View style={styles.row}>
-        <ThemedText variant="label" colorToken="label">
-          {label}
-        </ThemedText>
-        <ThemedText variant="value" style={styles.valueText}>
-          {displayValue || fallbackLabel}
-        </ThemedText>
-      </View>
-    );
-  }
+  // === STANDARD TEXT INPUT (Android date + all text inputs) ===
 
   return (
-    <Pressable onPress={handleRowPress} style={styles.row}>
+    <Pressable onPress={handleRowPress} style={rowStyles}>
       <ThemedText variant="label" colorToken="label">
         {label}
       </ThemedText>
       <TextInput
         ref={inputRef}
         value={displayValue}
-        onChangeText={
-          type === 'date' && Platform.OS !== 'web' ? undefined : onChangeText
-        }
+        onChangeText={onChangeText}
         placeholder={fallbackLabel}
         placeholderTextColor={theme.iosPlaceholder}
         selectionColor={theme.tint}
@@ -145,7 +165,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
         }
         textAlignVertical="center"
         {...inputProps}
-        style={[styles.valueText, inputStyle]}
+        style={[platformValueTextStyles, inputStyle]}
       />
     </Pressable>
   );
@@ -164,15 +184,31 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
         gap: ds.spacing.md,
       },
+      rowWeb: {
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        gap: ds.spacing.xs,
+        width: '100%',
+        flex: 1,
+      },
       valueText: {
         ...ds.typography.value,
         flexShrink: 1,
         textAlign: 'right',
         color: theme.muted,
       },
-      emptyValue: {
-        fontStyle: 'italic',
-        opacity: ds.opacity.disabled,
+      valueTextWeb: {
+        ...ds.typography.body,
+        width: '100%',
+        textAlign: 'left',
+        color: theme.text,
+        paddingHorizontal: ds.spacing.md,
+        paddingVertical: ds.spacing.sm,
+        borderRadius: ds.borderRadius.md,
+        borderWidth: 1,
+        borderColor: theme.border,
+        backgroundColor: theme.input,
+        minHeight: ds.components.tapTarget.minSize,
       },
       iosDatePicker: {
         flex: 1,

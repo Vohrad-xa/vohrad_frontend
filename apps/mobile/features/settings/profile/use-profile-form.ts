@@ -1,6 +1,7 @@
 import {useState, useCallback, useMemo, useEffect} from 'react';
 import {useProfileDetails, useUpdateProfile} from '@vohrad/store';
 import type {UserUpdateData} from '@vohrad/types';
+import type {InfoField} from '@/components/ui';
 
 type ProfileFormState = Required<{
   [K in keyof UserUpdateData]: string;
@@ -53,7 +54,7 @@ export function useProfileForm() {
     }
   }, [profileDetails, emptyProfileState]);
 
-  const allFields = useMemo(() => {
+  const allFields = useMemo((): InfoField[] => {
     if (!profileDetails) return [];
 
     return [
@@ -62,12 +63,14 @@ export function useProfileForm() {
         label: 'First Name',
         placeholder: 'First Name',
         value: profileDetails.first_name,
+        span: 'half' as const,
       },
       {
         key: 'last_name',
         label: 'Last Name',
         placeholder: 'Last Name',
         value: profileDetails.last_name,
+        span: 'half' as const,
       },
       {
         key: 'email',
@@ -75,6 +78,7 @@ export function useProfileForm() {
         placeholder: 'Email',
         keyboardType: 'email-address' as const,
         value: profileDetails.email,
+        span: 'full' as const,
       },
       {
         key: 'phone_number',
@@ -82,6 +86,7 @@ export function useProfileForm() {
         placeholder: 'Phone Number',
         keyboardType: 'phone-pad' as const,
         value: profileDetails.phone_number,
+        span: 'half' as const,
       },
       {
         key: 'date_of_birth',
@@ -89,36 +94,42 @@ export function useProfileForm() {
         placeholder: 'Select date',
         type: 'date' as const,
         value: profileDetails.date_of_birth,
+        span: 'half' as const,
       },
       {
         key: 'address',
         label: 'Address',
         placeholder: 'Street Address',
         value: profileDetails.address,
+        span: 'half' as const,
       },
       {
         key: 'city',
         label: 'City',
         placeholder: 'City',
         value: profileDetails.city,
-      },
-      {
-        key: 'province',
-        label: 'Province',
-        placeholder: 'Province/State',
-        value: profileDetails.province,
+        span: 'half' as const,
       },
       {
         key: 'postal_code',
         label: 'Zip Code',
         placeholder: 'Zip Code',
         value: profileDetails.postal_code,
+        span: 'half' as const,
+      },
+      {
+        key: 'province',
+        label: 'Province',
+        placeholder: 'Province/State',
+        value: profileDetails.province,
+        span: 'half' as const,
       },
       {
         key: 'country',
         label: 'Country',
         placeholder: 'Country',
         value: profileDetails.country,
+        span: 'full' as const,
       },
     ];
   }, [profileDetails]);

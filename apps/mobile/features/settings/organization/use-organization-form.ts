@@ -1,13 +1,8 @@
 import {useState, useCallback, useMemo, useEffect} from 'react';
+import {Platform} from 'react-native';
 import {useOrganizationDetails, useUpdateTenant} from '@vohrad/store';
 import type {Tenant} from '@vohrad/types';
-
-type InfoField = {
-  key: string;
-  label: string;
-  value?: string | null;
-  placeholder?: string;
-};
+import type {InfoField} from '@/components/ui';
 
 type SectionKey = 'business' | 'address' | 'remarks';
 
@@ -29,31 +24,80 @@ export function useOrganizationForm(isEditing: boolean) {
       switch (section) {
         case 'business':
           return [
-            {key: 'telephone', label: 'Phone', value: organization?.telephone},
-            {key: 'website', label: 'Website', value: organization?.website},
-            {key: 'industry', label: 'Industry', value: organization?.industry},
-            {key: 'tax_id', label: 'Tax ID', value: organization?.tax_id},
+            {
+              key: 'telephone',
+              label: 'Phone',
+              value: organization?.telephone,
+              span: 'half' as const,
+            },
+            {
+              key: 'website',
+              label: 'Website',
+              value: organization?.website,
+              span: 'half' as const,
+            },
+            {
+              key: 'industry',
+              label: 'Industry',
+              value: organization?.industry,
+              span: 'half' as const,
+            },
+            {
+              key: 'tax_id',
+              label: 'Tax ID',
+              value: organization?.tax_id,
+              span: 'half' as const,
+            },
           ];
         case 'address':
           return [
-            {key: 'street', label: 'Street', value: organization?.street},
+            {
+              key: 'street',
+              label: 'Street',
+              value: organization?.street,
+              span: 'half' as const,
+            },
             {
               key: 'street_number',
               label: 'Street Number',
               value: organization?.street_number,
+              span: 'half' as const,
             },
-            {key: 'city', label: 'City', value: organization?.city},
-            {key: 'province', label: 'Province', value: organization?.province},
+            {
+              key: 'city',
+              label: 'City',
+              value: organization?.city,
+              span: 'half' as const,
+            },
+            {
+              key: 'province',
+              label: 'Province',
+              value: organization?.province,
+              span: 'half' as const,
+            },
             {
               key: 'postal_code',
               label: 'Zip Code',
               value: organization?.postal_code,
+              span: 'half' as const,
             },
-            {key: 'country', label: 'Country', value: organization?.country},
+            {
+              key: 'country',
+              label: 'Country',
+              value: organization?.country,
+              span: 'half' as const,
+            },
           ];
         case 'remarks':
           return organization?.remarks
-            ? [{key: 'remarks', label: 'Remarks', value: organization.remarks}]
+            ? [
+                {
+                  key: 'remarks',
+                  label: 'Remarks',
+                  value: organization.remarks,
+                  span: 'full' as const,
+                },
+              ]
             : [];
         default:
           return [];
@@ -62,9 +106,9 @@ export function useOrganizationForm(isEditing: boolean) {
     [organization],
   );
 
-  // Initialize all fields when entering edit mode
+  // Initialize all fields when entering edit mode or on web (always editable)
   useEffect(() => {
-    if (isEditing && organization) {
+    if ((isEditing || Platform.OS === 'web') && organization) {
       const allFields = [
         ...getSectionFields('business'),
         ...getSectionFields('address'),
@@ -75,7 +119,7 @@ export function useOrganizationForm(isEditing: boolean) {
         initialValues[field.key] = field.value ?? '';
       });
       setStagedValues(initialValues);
-    } else if (!isEditing) {
+    } else if (!isEditing && Platform.OS !== 'web') {
       setStagedValues({});
     }
   }, [isEditing, organization, getSectionFields]);
