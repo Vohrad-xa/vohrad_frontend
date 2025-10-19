@@ -1,5 +1,6 @@
 import React, {useEffect, useRef} from 'react';
-import {StyleSheet, View, TextInput, Platform} from 'react-native';
+import type {TextInput} from 'react-native';
+import {StyleSheet, View, Platform} from 'react-native';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';

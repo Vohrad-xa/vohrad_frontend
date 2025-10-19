@@ -44,10 +44,11 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
   inputRef,
   type = 'text',
 }) => {
-  const {ds, theme} = useTheme();
+  const {ds, theme, scheme} = useTheme();
   const styles = createStyles(ds, theme);
   const displayValue = value ?? '';
   const inputStyle = inputProps?.style as StyleProp<TextStyle> | undefined;
+  const fallbackLabel = placeholder ?? 'Not set';
 
   const selectedDate = useMemo(() => {
     if (!value || type !== 'date') return new Date();
@@ -103,10 +104,8 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
           display="compact"
           onChange={handleDateChange}
           maximumDate={new Date()}
-          themeVariant={
-            theme.version.toString().includes('dark') ? 'dark' : 'light'
-          }
-          textColor={theme.muted}
+          themeVariant={scheme}
+          // accentColor={theme.tint}
           style={styles.iosDatePicker}
         />
       </View>
@@ -120,7 +119,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
           {label}
         </ThemedText>
         <ThemedText variant="value" style={styles.valueText}>
-          {displayValue || placeholder || 'Not set'}
+          {displayValue || fallbackLabel}
         </ThemedText>
       </View>
     );
@@ -134,12 +133,16 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
       <TextInput
         ref={inputRef}
         value={displayValue}
-        onChangeText={type === 'date' && Platform.OS !== 'web' ? undefined : onChangeText}
-        placeholder={placeholder ?? 'Not set'}
+        onChangeText={
+          type === 'date' && Platform.OS !== 'web' ? undefined : onChangeText
+        }
+        placeholder={fallbackLabel}
         placeholderTextColor={theme.iosPlaceholder}
         selectionColor={theme.tint}
         underlineColorAndroid="transparent"
-        editable={type === 'date' && Platform.OS === 'android' ? false : editable}
+        editable={
+          type === 'date' && Platform.OS === 'android' ? false : editable
+        }
         textAlignVertical="center"
         {...inputProps}
         style={[styles.valueText, inputStyle]}
@@ -166,11 +169,6 @@ const createStyles = makeStyleFactory(
         flexShrink: 1,
         textAlign: 'right',
         color: theme.muted,
-        ...Platform.select({
-          web: {
-            outlineStyle: 'none',
-          } as any,
-        }),
       },
       emptyValue: {
         fontStyle: 'italic',
