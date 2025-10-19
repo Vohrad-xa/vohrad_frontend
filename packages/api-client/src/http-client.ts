@@ -80,23 +80,34 @@ export class HttpClient {
       const data = await response.json();
 
       if (!response.ok) {
-        // Backend error responses have nested structure: { error: { message: "...", details: {...} } }
         let errorMessage =
-          data.error?.message ||
-          data.error ||
-          data.message ||
+          data?.error?.message ||
+          data?.error ||
+          data?.message ||
           `HTTP ${response.status}`;
 
-        // Extract field-specific validation error if available (Pydantic validation)
-        if (data.error?.details?.validation_errors?.length > 0) {
+        if (Array.isArray(data?.detail) && data.detail.length > 0) {
+          const firstDetail = data.detail[0];
+          let message = firstDetail.msg || firstDetail.message || errorMessage;
+          message = message.replace(/^Value error,\s*/i, '');
+
+          if (Array.isArray(firstDetail.loc) && firstDetail.loc.length > 0) {
+            const field = firstDetail.loc[firstDetail.loc.length - 1];
+            if (typeof field === 'string' && field.length > 0) {
+              const lowerField = field.toLowerCase();
+              if (!message.toLowerCase().includes(lowerField)) {
+                message = `${field}: ${message}`;
+              }
+            }
+          }
+
+          errorMessage = message;
+        } else if (data?.error?.details?.validation_errors?.length > 0) {
           const firstError = data.error.details.validation_errors[0];
           let message = firstError.message || errorMessage;
-          // Remove "Value error, " prefix from Pydantic validation errors
           message = message.replace(/^Value error,\s*/i, '');
           errorMessage = message;
-        }
-        // Extract field-specific error from custom validation (e.g., CHECK constraints)
-        else if (data.error?.details?.reason) {
+        } else if (data?.error?.details?.reason) {
           errorMessage = data.error.details.reason;
         }
 
