@@ -53,10 +53,17 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
 }) => {
   const {ds, theme, scheme} = useTheme();
   const styles = createStyles(ds, theme);
-  const rowStyles = usePlatformStyles({
-    mobile: styles.row,
-    web: styles.rowWeb,
-  });
+  const rowStyles = usePlatformStyles(
+    renderAccessory
+      ? {
+          mobile: styles.row,
+          web: styles.rowWebAccessory,
+        }
+      : {
+          mobile: styles.row,
+          web: styles.rowWeb,
+        },
+  );
   const platformValueTextStyles = usePlatformStyles({
     mobile: styles.valueText,
     web: styles.valueTextWeb,
@@ -341,6 +348,12 @@ const createStyles = makeStyleFactory(
         width: '100%',
         flex: 1,
       },
+      rowWebAccessory: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+      },
       accessoryContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -348,7 +361,6 @@ const createStyles = makeStyleFactory(
         justifyContent: 'flex-end',
       },
       accessoryContainerWeb: {
-        width: '100%',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'flex-start',

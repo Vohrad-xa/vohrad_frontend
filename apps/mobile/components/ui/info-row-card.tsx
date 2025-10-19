@@ -148,8 +148,16 @@ export const InfoRowCard: React.FC<InfoRowCardProps> = ({
     ));
   };
 
+  const hasDateOrTimePicker =
+    Platform.OS === 'web' &&
+    fields.some((field) => field.type === 'date' || field.type === 'time');
+
+  const cardContainerStyle = hasDateOrTimePicker
+    ? [cardStyles, {position: 'relative' as const, zIndex: 100}]
+    : cardStyles;
+
   return (
-    <View style={cardStyles}>
+    <View style={cardContainerStyle}>
       <View style={cardContentStyles}>{renderFields()}</View>
     </View>
   );
