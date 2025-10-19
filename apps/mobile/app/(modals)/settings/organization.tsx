@@ -1,7 +1,7 @@
-import React, {useRef, useState, useLayoutEffect} from 'react';
-import {StyleSheet, Text, Pressable, Platform} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import React, {useRef, useState, useLayoutEffect, useCallback} from 'react';
+import {StyleSheet, Text, Pressable} from 'react-native';
 import {useNavigation} from 'expo-router';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedView, ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
@@ -19,13 +19,13 @@ export default function OrganizationScreen() {
   const organizationContentRef = useRef<OrganizationContentHandle>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleEditSave = () => {
+  const handleEditSave = useCallback(() => {
     if (isEditing) {
       organizationContentRef.current?.saveOrganization();
     } else {
       setIsEditing(true);
     }
-  };
+  }, [isEditing]);
 
   const handleSaveComplete = () => {
     setIsEditing(false);
@@ -42,7 +42,7 @@ export default function OrganizationScreen() {
         </Pressable>
       ),
     });
-  }, [navigation, theme.primary, isEditing]);
+  }, [navigation, handleEditSave, isEditing, theme.text]);
 
   return (
     <ThemedView style={styles.container}>

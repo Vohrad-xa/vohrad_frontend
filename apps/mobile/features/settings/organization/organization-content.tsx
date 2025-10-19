@@ -147,7 +147,7 @@ export const OrganizationContent = forwardRef<
           editable={isEditing}
           values={stagedValues}
           onFieldChange={handleFieldChange}
-          autoFocus={true}
+          autoFocus
         />
       </View>
 
