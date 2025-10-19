@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {userApi} from '@vohrad/api-client';
 import {useAuthStore} from '@vohrad/store';
@@ -38,13 +38,23 @@ export default function EmailConfirmScreen() {
     }
   };
 
-  useEffect(() => {
-    const token = params.token;
-    const rawTenantId =
-      (typeof params.tenant_id === 'string' ? params.tenant_id : undefined) ??
-      (typeof params.tenantId === 'string' ? params.tenantId : undefined);
+  const token = useMemo(
+    () => (typeof params.token === 'string' ? params.token : undefined),
+    [params.token],
+  );
 
-    if (!token || typeof token !== 'string') {
+  const rawTenantId = useMemo(() => {
+    if (typeof params.tenant_id === 'string') {
+      return params.tenant_id;
+    }
+    if (typeof params.tenantId === 'string') {
+      return params.tenantId;
+    }
+    return undefined;
+  }, [params.tenant_id, params.tenantId]);
+
+  useEffect(() => {
+    if (!token) {
       setStatus('error');
       setMessage('This confirmation link is invalid.');
       if (isAuthenticated) {
@@ -105,7 +115,7 @@ export default function EmailConfirmScreen() {
     return () => {
       isMounted = false;
     };
-  }, [params.token, setUser, router, isAuthenticated]);
+  }, [token, rawTenantId, setUser, router, isAuthenticated]);
 
   const navigateBackToApp = () => {
     if (isAuthenticated) {

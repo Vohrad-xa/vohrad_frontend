@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {Alert, Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {setApiTenant} from '@vohrad/api-client';
@@ -42,7 +42,44 @@ if (Platform.OS === 'web') {
   };
 }
 
-SplashScreen.preventAutoHideAsync().catch(() => {});
+type SplashControlState = {
+  attempted: boolean;
+  prevented: boolean;
+  hidden: boolean;
+  preventPromise?: Promise<boolean>;
+};
+
+const splashControlGlobal = globalThis as typeof globalThis & {
+  __vohradSplashControl?: SplashControlState;
+};
+
+if (!splashControlGlobal.__vohradSplashControl) {
+  splashControlGlobal.__vohradSplashControl = {
+    attempted: false,
+    prevented: false,
+    hidden: false,
+  };
+}
+
+const splashControl = splashControlGlobal.__vohradSplashControl;
+
+if (!splashControl.attempted) {
+  splashControl.attempted = true;
+  splashControl.preventPromise = SplashScreen.preventAutoHideAsync()
+    .then((result) => {
+      splashControl.prevented = result;
+      return result;
+    })
+    .catch((error) => {
+      console.warn(
+        '[app/_layout] Unable to prevent splash screen auto-hide:',
+        error,
+      );
+      splashControl.prevented = false;
+      splashControl.hidden = true;
+      return false;
+    });
+}
 
 export const unstable_settings = {
   initialRouteName: '(auth)',
@@ -55,6 +92,7 @@ function RootNavigation() {
   const router = useRouter();
   const {setIntendedRoute, intendedRoute} = useAuthStore();
   const [showOverlay, setShowOverlay] = useState(true);
+  const hasHiddenSplash = useRef(false);
   const pathname = usePathname();
   const isEmailConfirmRoute = pathname === '/email/confirm';
 
@@ -110,18 +148,56 @@ function RootNavigation() {
   }, [intendedRoute, setIntendedRoute]);
 
   useEffect(() => {
-    if (navigationState?.key) {
-      const timer = setTimeout(() => {
-        setShowOverlay(false);
-        SplashScreen.hideAsync().catch(() => {});
-      }, 500);
-      return () => clearTimeout(timer);
+    if (!navigationState?.key || hasHiddenSplash.current) {
+      return;
     }
+
+    const timer = setTimeout(() => {
+      setShowOverlay(false);
+
+      const hideSplash = () => {
+        if (hasHiddenSplash.current) {
+          return;
+        }
+
+        hasHiddenSplash.current = true;
+
+        if (!splashControl.hidden) {
+          splashControl.hidden = true;
+
+          if (splashControl.prevented) {
+            SplashScreen.hideAsync().catch((error) => {
+              console.warn(
+                '[app/_layout] Failed to hide splash screen gracefully:',
+                error,
+              );
+            });
+          }
+        }
+      };
+
+      if (splashControl.preventPromise) {
+        splashControl.preventPromise.finally(hideSplash);
+      } else {
+        hideSplash();
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [navigationState?.key]);
+
+  const initialRouteName = isEmailConfirmRoute
+    ? 'email/confirm'
+    : isAuthenticated
+      ? '(app)'
+      : '(auth)';
 
   return (
     <>
-      <Stack initialRouteName="(auth)" screenOptions={{headerShown: false}}>
+      <Stack
+        initialRouteName={initialRouteName}
+        screenOptions={{headerShown: false}}
+      >
         <Stack.Screen name="email/confirm" />
         <Stack.Protected guard={isAuthenticated}>
           <Stack.Screen name="(app)" />
