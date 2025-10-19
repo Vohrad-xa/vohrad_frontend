@@ -78,9 +78,10 @@ export const PreferencesContentEditable = forwardRef<
       title: 'Update Preferences',
       message: 'Are you sure you want to save these changes?',
       confirmText: 'Save',
-      cancelText: 'Cancel',
+      cancelText: 'Discard',
+      cancelIsDestructive: true,
       onConfirm: () => {
-        void performUpdate();
+        performUpdate();
       },
     });
   };

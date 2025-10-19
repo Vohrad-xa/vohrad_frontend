@@ -8,7 +8,7 @@ import {
   ProfileContent,
   type ProfileContentHandle,
 } from '@/features/settings/profile';
-import {useSettingsHeader} from '@/hooks';
+import {useSettingsHeader, useUnsavedChangesGuard} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -26,6 +26,16 @@ export default function ProfileScreen() {
     setHasChanges(changed);
   }, []);
 
+  const {handleNavigationAfterSave} = useUnsavedChangesGuard({
+    hasChanges: hasChanges && isEditing,
+    contentRef: profileContentRef,
+    saveMethodName: 'saveProfile',
+    onSaveComplete: () => {
+      setIsEditing(false);
+      setHasChanges(false);
+    },
+  });
+
   const handleEditSave = useCallback(() => {
     if (isEditing) {
       profileContentRef.current?.saveProfile();
@@ -34,10 +44,11 @@ export default function ProfileScreen() {
     }
   }, [isEditing]);
 
-  const handleSaveComplete = () => {
+  const handleSaveComplete = useCallback(() => {
     setIsEditing(false);
     setHasChanges(false);
-  };
+    handleNavigationAfterSave();
+  }, [handleNavigationAfterSave]);
 
   useSettingsHeader({
     navigation,

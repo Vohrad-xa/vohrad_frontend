@@ -1,9 +1,5 @@
 import React, {useRef, useState, useCallback} from 'react';
 import {StyleSheet} from 'react-native';
-import {
-  usePreventRemove,
-  type NavigationAction,
-} from '@react-navigation/native';
 import {useNavigation} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedView, ModalScrollView} from '@/components/ui';
@@ -13,9 +9,8 @@ import {
   type PreferencesContentHandle,
   type SavePreferencesOptions,
 } from '@/features/settings/preferences';
-import {useSettingsHeader} from '@/hooks';
+import {useSettingsHeader, useUnsavedChangesGuard} from '@/hooks';
 import {useTheme} from '@/providers';
-import {showConfirmAlert} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function PreferencesScreen() {
@@ -25,7 +20,6 @@ export default function PreferencesScreen() {
   const navigation = useNavigation();
   const preferencesContentRef = useRef<PreferencesContentHandle>(null);
   const [hasChanges, setHasChanges] = useState(false);
-  const pendingNavigationActionRef = useRef<NavigationAction | null>(null);
 
   const checkForChanges = useCallback(() => {
     const changed = preferencesContentRef.current?.hasChanges() ?? false;
@@ -36,40 +30,24 @@ export default function PreferencesScreen() {
     preferencesContentRef.current?.savePreferences();
   }, []);
 
-  const handleSaveComplete = () => {
+  const {handleNavigationAfterSave} = useUnsavedChangesGuard({
+    hasChanges,
+    contentRef: preferencesContentRef,
+    saveMethodName: 'savePreferences',
+    onSaveComplete: () => setHasChanges(false),
+    saveOptions: {skipConfirm: true} satisfies SavePreferencesOptions,
+  });
+
+  const handleSaveComplete = useCallback(() => {
     setHasChanges(false);
-    const pendingAction = pendingNavigationActionRef.current;
-    if (pendingAction) {
-      pendingNavigationActionRef.current = null;
-      navigation.dispatch(pendingAction);
-    }
-  };
+    handleNavigationAfterSave();
+  }, [handleNavigationAfterSave]);
 
   useSettingsHeader({
     navigation,
     isEditing: true,
     hasChanges,
     onSave: handleSave,
-  });
-
-  usePreventRemove(hasChanges, (event) => {
-    showConfirmAlert({
-      title: 'Save Changes?',
-      message: 'You have unsaved edits. Save before leaving?',
-      confirmText: 'Save',
-      cancelText: 'Discard',
-      cancelIsDestructive: true,
-      onConfirm: () => {
-        pendingNavigationActionRef.current = event.data.action;
-        preferencesContentRef.current?.savePreferences({
-          skipConfirm: true,
-        } satisfies SavePreferencesOptions);
-      },
-      onCancel: () => {
-        pendingNavigationActionRef.current = null;
-        navigation.dispatch(event.data.action);
-      },
-    });
   });
 
   return (

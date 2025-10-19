@@ -63,10 +63,6 @@ export const ProfileContentEditable = forwardRef<
       await submitUpdate();
       hideLoading();
       onSaveComplete?.();
-      showAlert({
-        title: 'Success',
-        message: 'Profile updated successfully',
-      });
     } catch (err) {
       hideLoading();
       const errorMessage =

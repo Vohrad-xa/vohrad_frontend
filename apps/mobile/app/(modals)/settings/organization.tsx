@@ -8,7 +8,7 @@ import {
   OrganizationContent,
   type OrganizationContentHandle,
 } from '@/features/settings/organization';
-import {useSettingsHeader} from '@/hooks';
+import {useSettingsHeader, useUnsavedChangesGuard} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -26,6 +26,16 @@ export default function OrganizationScreen() {
     setHasChanges(changed);
   }, []);
 
+  const {handleNavigationAfterSave} = useUnsavedChangesGuard({
+    hasChanges: hasChanges && isEditing,
+    contentRef: organizationContentRef,
+    saveMethodName: 'saveOrganization',
+    onSaveComplete: () => {
+      setIsEditing(false);
+      setHasChanges(false);
+    },
+  });
+
   const handleEditSave = useCallback(() => {
     if (Platform.OS === 'web') {
       organizationContentRef.current?.saveOrganization();
@@ -36,10 +46,11 @@ export default function OrganizationScreen() {
     }
   }, [isEditing]);
 
-  const handleSaveComplete = () => {
+  const handleSaveComplete = useCallback(() => {
     setIsEditing(false);
     setHasChanges(false);
-  };
+    handleNavigationAfterSave();
+  }, [handleNavigationAfterSave]);
 
   useSettingsHeader({
     navigation,

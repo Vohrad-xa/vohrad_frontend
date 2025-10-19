@@ -55,10 +55,6 @@ export const OrganizationContent = forwardRef<
       await submitUpdate();
       hideLoading();
       onSaveComplete?.();
-      showAlert({
-        title: 'Success',
-        message: 'Organization updated successfully',
-      });
     } catch (err) {
       hideLoading();
       const errorMessage =
@@ -75,7 +71,8 @@ export const OrganizationContent = forwardRef<
       title: 'Update Organization',
       message: 'Are you sure you want to save these changes?',
       confirmText: 'Save',
-      cancelText: 'Cancel',
+      cancelText: 'Discard',
+      cancelIsDestructive: true,
       onConfirm: () => {
         performUpdate();
       },
