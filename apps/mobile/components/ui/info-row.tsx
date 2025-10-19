@@ -9,7 +9,7 @@ import {
   type StyleProp,
   type TextStyle,
 } from 'react-native';
-import {
+import DateTimePicker, {
   DateTimePickerAndroid,
   type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
@@ -34,7 +34,9 @@ type InfoRowProps = {
   placeholder?: string;
   inputProps?: InfoRowInputProps;
   inputRef?: React.RefObject<TextInput | null>;
-  type?: 'text' | 'date';
+  type?: 'text' | 'date' | 'time';
+  keyboardType?: TextInputProps['keyboardType'];
+  renderAccessory?: React.ReactNode;
 };
 
 const InfoRowComponent: React.FC<InfoRowProps> = ({
@@ -46,6 +48,8 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
   inputProps,
   inputRef,
   type = 'text',
+  keyboardType,
+  renderAccessory,
 }) => {
   const {ds, theme, scheme} = useTheme();
   const styles = createStyles(ds, theme);
@@ -57,15 +61,44 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
     mobile: styles.valueText,
     web: styles.valueTextWeb,
   });
-  const displayValue = value ?? '';
   const inputStyle = inputProps?.style as StyleProp<TextStyle> | undefined;
   const fallbackLabel = placeholder ?? 'Not set';
+  const displayValue = value ?? '';
+  const accessoryStyles = usePlatformStyles({
+    mobile: styles.accessoryContainer,
+    web: styles.accessoryContainerWeb,
+  });
 
   const selectedDate = useMemo(() => {
     if (!value || type !== 'date') return new Date();
     const parsed = new Date(value);
     return isNaN(parsed.getTime()) ? new Date() : parsed;
   }, [value, type]);
+
+  const selectedTime = useMemo(() => {
+    if (!value || type !== 'time') {
+      const now = new Date();
+      now.setHours(9, 0, 0, 0);
+      return now;
+    }
+    const [hours, minutes] = value.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours || 0, minutes || 0, 0, 0);
+    return date;
+  }, [value, type]);
+
+  if (renderAccessory) {
+    return (
+      <View style={rowStyles}>
+        <View style={styles.accessoryLabelContainer}>
+          <ThemedText variant="label" colorToken="label">
+            {label}
+          </ThemedText>
+        </View>
+        <View style={accessoryStyles}>{renderAccessory}</View>
+      </View>
+    );
+  }
 
   const formatDate = (date: Date): string => {
     const year = date.getFullYear();
@@ -74,9 +107,21 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
     return `${year}-${month}-${day}`;
   };
 
+  const formatTime = (date: Date): string => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
   const handleDateChange = (event: DateTimePickerEvent, date?: Date) => {
     if (event.type === 'set' && date && onChangeText) {
       onChangeText(formatDate(date));
+    }
+  };
+
+  const handleTimeChange = (event: DateTimePickerEvent, date?: Date) => {
+    if (event.type === 'set' && date && onChangeText) {
+      onChangeText(formatTime(date));
     }
   };
 
@@ -93,11 +138,26 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
     }
   };
 
+  const openTimePicker = () => {
+    if (!editable || type !== 'time') return;
+
+    if (Platform.OS === 'android') {
+      DateTimePickerAndroid.open({
+        value: selectedTime,
+        onChange: handleTimeChange,
+        mode: 'time',
+        is24Hour: true,
+      });
+    }
+  };
+
   const handleRowPress = () => {
     if (!editable) return;
 
     if (type === 'date') {
       openDatePicker();
+    } else if (type === 'time') {
+      openTimePicker();
     } else if (inputRef?.current) {
       inputRef.current.focus();
     }
@@ -129,6 +189,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
           {label}
         </ThemedText>
         <DatePickerWeb
+          mode="date"
           selectedDate={selectedDate}
           onDateChange={(date) => {
             if (onChangeText) {
@@ -142,6 +203,94 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
           scheme={scheme}
         />
       </View>
+    );
+  }
+
+  // Web: react-datepicker for time selection
+  if (type === 'time' && Platform.OS === 'web') {
+    const selectedTimeValue = displayValue ? selectedTime : null;
+
+    return (
+      <View style={rowStyles}>
+        <ThemedText variant="label" colorToken="label">
+          {label}
+        </ThemedText>
+        <DatePickerWeb
+          mode="time"
+          selectedDate={selectedTimeValue}
+          onDateChange={(date) => {
+            if (onChangeText) {
+              onChangeText(formatTime(date));
+            }
+          }}
+          placeholder={fallbackLabel}
+          disabled={!editable}
+          inputStyle={platformValueTextStyles}
+          theme={theme}
+          scheme={scheme}
+        />
+      </View>
+    );
+  }
+
+  // === TIME PICKERS ===
+
+  // iOS: Native time picker
+  if (type === 'time' && Platform.OS === 'ios') {
+    if (editable) {
+      return (
+        <View style={styles.row}>
+          <ThemedText variant="label" colorToken="label">
+            {label}
+          </ThemedText>
+          <DateTimePicker
+            value={selectedTime}
+            mode="time"
+            display="compact"
+            onChange={handleTimeChange}
+            themeVariant={scheme}
+            style={styles.iosDatePicker}
+          />
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.row}>
+        <ThemedText variant="label" colorToken="label">
+          {label}
+        </ThemedText>
+        <ThemedText variant="value" style={styles.valueText}>
+          {displayValue || fallbackLabel}
+        </ThemedText>
+      </View>
+    );
+  }
+
+  // Android: Text input that opens native modal via press
+  if (type === 'time' && Platform.OS === 'android') {
+    return (
+      <Pressable onPress={handleRowPress} style={rowStyles}>
+        <ThemedText variant="label" colorToken="label">
+          {label}
+        </ThemedText>
+        <TextInput
+          ref={inputRef}
+          value={displayValue}
+          onChangeText={onChangeText}
+          placeholder={fallbackLabel}
+          placeholderTextColor={theme.iosPlaceholder}
+          selectionColor={theme.tint}
+          underlineColorAndroid="transparent"
+          editable={
+            type === 'time' && Platform.OS === 'android' ? false : editable
+          }
+          textAlignVertical="center"
+          keyboardType={keyboardType}
+          {...inputProps}
+          style={[platformValueTextStyles, inputStyle]}
+        />
+      </Pressable>
     );
   }
 
@@ -164,6 +313,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
           type === 'date' && Platform.OS === 'android' ? false : editable
         }
         textAlignVertical="center"
+        keyboardType={keyboardType}
         {...inputProps}
         style={[platformValueTextStyles, inputStyle]}
       />
@@ -191,6 +341,23 @@ const createStyles = makeStyleFactory(
         width: '100%',
         flex: 1,
       },
+      accessoryContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: ds.spacing.md,
+        justifyContent: 'flex-end',
+      },
+      accessoryContainerWeb: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        gap: ds.spacing.sm,
+      },
+      accessoryLabelContainer: {
+        flex: 1,
+        paddingVertical: Platform.OS === 'android' ? ds.spacing.md : 0,
+      },
       valueText: {
         ...ds.typography.value,
         flexShrink: 1,
@@ -212,7 +379,9 @@ const createStyles = makeStyleFactory(
       },
       iosDatePicker: {
         flex: 1,
-        alignSelf: 'flex-end',
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        marginVertical: -ds.spacing.md,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

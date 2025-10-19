@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'react';
-import type {TextInput} from 'react-native';
+import type {TextInput, TextInputProps} from 'react-native';
 import {StyleSheet, View, Platform} from 'react-native';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {usePlatformStyles} from '@/hooks';
@@ -13,8 +13,10 @@ export type InfoField = {
   label: string;
   value?: string | null;
   placeholder?: string;
-  type?: 'text' | 'date';
+  type?: 'text' | 'date' | 'time';
   span?: 'half' | 'full';
+  keyboardType?: TextInputProps['keyboardType'];
+  renderAccessory?: React.ReactNode;
 };
 
 type InfoRowCardProps = {
@@ -85,6 +87,8 @@ export const InfoRowCard: React.FC<InfoRowCardProps> = ({
         placeholder={field.placeholder}
         inputRef={inputRef}
         type={field.type}
+        keyboardType={field.keyboardType}
+        renderAccessory={field.renderAccessory}
       />
     );
   };
