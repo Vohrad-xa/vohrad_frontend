@@ -1,22 +1,12 @@
 import {useState, useCallback, useMemo, useEffect} from 'react';
 import {useProfileDetails, useUpdateProfile} from '@vohrad/store';
-import type {User, UserUpdateData} from '@vohrad/types';
-
-type InfoField = {
-  key: string;
-  label: string;
-  value?: string | null;
-  placeholder?: string;
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
-};
-
-type SectionKey = 'all';
+import type {UserUpdateData} from '@vohrad/types';
 
 type ProfileFormState = Required<{
   [K in keyof UserUpdateData]: string;
 }>;
 
-export function useProfileForm(isEditing: boolean) {
+export function useProfileForm() {
   const profileDetails = useProfileDetails();
   const {updateProfile, isLoading} = useUpdateProfile();
 
@@ -133,9 +123,18 @@ export function useProfileForm(isEditing: boolean) {
     ];
   }, [profileDetails]);
 
-  const updateField = (key: keyof ProfileFormState, value: string) => {
-    setProfile((prev) => ({...prev, [key]: value}));
-  };
+  const updateField = useCallback(
+    (key: keyof ProfileFormState, value: string) => {
+      setProfile((prev) => ({...prev, [key]: value}));
+    },
+    [],
+  );
+
+  const isProfileKey = useCallback(
+    (key: string): key is keyof ProfileFormState =>
+      Object.prototype.hasOwnProperty.call(emptyProfileState, key),
+    [emptyProfileState],
+  );
 
   const computeUpdateValue = useCallback(
     (key: keyof ProfileFormState): string | null | undefined => {
@@ -202,12 +201,21 @@ export function useProfileForm(isEditing: boolean) {
     await updateProfile(updateData);
   }, [getUpdateData, updateProfile]);
 
+  const handleFieldChange = useCallback(
+    (key: string, value: string) => {
+      if (isProfileKey(key)) {
+        updateField(key, value);
+      }
+    },
+    [isProfileKey, updateField],
+  );
+
   return {
     profileDetails,
     isLoading,
     profile,
     allFields,
-    updateField,
+    updateField: handleFieldChange,
     hasChanges,
     submitUpdate,
   };

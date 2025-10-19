@@ -38,7 +38,7 @@ export const ProfileContentEditable = forwardRef<
     updateField,
     hasChanges,
     submitUpdate,
-  } = useProfileForm(isEditing);
+  } = useProfileForm();
 
   const {resendPendingEmail, isProcessing: isResendingEmail} =
     useEmailConfirmation();
@@ -178,8 +178,8 @@ export const ProfileContentEditable = forwardRef<
         fields={allFields}
         editable={isEditing}
         values={profile}
-        onFieldChange={(key, value) => updateField(key as any, value)}
-        autoFocus={true}
+        onFieldChange={updateField}
+        autoFocus
       />
     </View>
   );
