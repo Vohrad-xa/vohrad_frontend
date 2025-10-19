@@ -47,13 +47,57 @@ export function LoadingProvider({children}: LoadingProviderProps) {
 
   const styles = createStyles(theme, ds);
 
+  const showDelayTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const minDisplayTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const isActuallyShowingRef = React.useRef(false);
+
   const showLoading = useCallback((msg?: string) => {
     setMessage(msg ?? 'Loading...');
-    setIsLoading(true);
+
+    if (showDelayTimerRef.current) {
+      clearTimeout(showDelayTimerRef.current);
+    }
+
+    showDelayTimerRef.current = setTimeout(() => {
+      setIsLoading(true);
+      isActuallyShowingRef.current = true;
+    }, 300);
   }, []);
 
   const hideLoading = useCallback(() => {
-    setIsLoading(false);
+    if (showDelayTimerRef.current) {
+      clearTimeout(showDelayTimerRef.current);
+      showDelayTimerRef.current = null;
+    }
+
+    if (!isActuallyShowingRef.current) {
+      setIsLoading(false);
+      return;
+    }
+
+    if (minDisplayTimerRef.current) {
+      clearTimeout(minDisplayTimerRef.current);
+    }
+
+    minDisplayTimerRef.current = setTimeout(() => {
+      setIsLoading(false);
+      isActuallyShowingRef.current = false;
+    }, 500);
+  }, []);
+
+  React.useEffect(() => {
+    return () => {
+      if (showDelayTimerRef.current) {
+        clearTimeout(showDelayTimerRef.current);
+      }
+      if (minDisplayTimerRef.current) {
+        clearTimeout(minDisplayTimerRef.current);
+      }
+    };
   }, []);
 
   const contextValue: LoadingContextValue = {

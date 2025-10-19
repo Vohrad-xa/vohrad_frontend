@@ -43,11 +43,18 @@ export function usePullToRefresh(
     }
 
     setRefreshing(true);
+    const startTime = Date.now();
+
     try {
       if (onRefresh) {
         await onRefresh();
-      } else if (delayMs > 0) {
-        await wait(delayMs);
+      }
+
+      const elapsed = Date.now() - startTime;
+      const remainingTime = delayMs - elapsed;
+
+      if (remainingTime > 0) {
+        await wait(remainingTime);
       }
     } finally {
       setRefreshing(false);
