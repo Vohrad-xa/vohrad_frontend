@@ -54,7 +54,7 @@ export function useProfileForm() {
     }
   }, [profileDetails, emptyProfileState]);
 
-  const allFields = useMemo((): InfoField[] => {
+  const personalInfoFields = useMemo((): InfoField[] => {
     if (!profileDetails) return [];
 
     return [
@@ -73,6 +73,21 @@ export function useProfileForm() {
         span: 'half' as const,
       },
       {
+        key: 'date_of_birth',
+        label: 'Date of Birth',
+        placeholder: 'Select date',
+        type: 'date' as const,
+        value: profileDetails.date_of_birth,
+        span: 'full' as const,
+      },
+    ];
+  }, [profileDetails]);
+
+  const contactFields = useMemo((): InfoField[] => {
+    if (!profileDetails) return [];
+
+    return [
+      {
         key: 'email',
         label: 'Email',
         placeholder: 'Email',
@@ -86,22 +101,21 @@ export function useProfileForm() {
         placeholder: 'Phone Number',
         keyboardType: 'phone-pad' as const,
         value: profileDetails.phone_number,
-        span: 'half' as const,
+        span: 'full' as const,
       },
-      {
-        key: 'date_of_birth',
-        label: 'Date of Birth',
-        placeholder: 'Select date',
-        type: 'date' as const,
-        value: profileDetails.date_of_birth,
-        span: 'half' as const,
-      },
+    ];
+  }, [profileDetails]);
+
+  const addressFields = useMemo((): InfoField[] => {
+    if (!profileDetails) return [];
+
+    return [
       {
         key: 'address',
         label: 'Address',
         placeholder: 'Street Address',
         value: profileDetails.address,
-        span: 'half' as const,
+        span: 'full' as const,
       },
       {
         key: 'city',
@@ -129,7 +143,7 @@ export function useProfileForm() {
         label: 'Country',
         placeholder: 'Country',
         value: profileDetails.country,
-        span: 'full' as const,
+        span: 'half' as const,
       },
     ];
   }, [profileDetails]);
@@ -225,7 +239,9 @@ export function useProfileForm() {
     profileDetails,
     isLoading,
     profile,
-    allFields,
+    personalInfoFields,
+    contactFields,
+    addressFields,
     updateField: handleFieldChange,
     hasChanges,
     submitUpdate,

@@ -36,7 +36,9 @@ export const ProfileContentEditable = forwardRef<
   const {
     profileDetails,
     profile,
-    allFields,
+    personalInfoFields,
+    contactFields,
+    addressFields,
     updateField,
     hasChanges,
     submitUpdate,
@@ -81,7 +83,8 @@ export const ProfileContentEditable = forwardRef<
       title: 'Update Profile',
       message: 'Are you sure you want to save these changes?',
       confirmText: 'Save',
-      cancelText: 'Cancel',
+      cancelText: 'Discard',
+      cancelIsDestructive: true,
       onConfirm: () => {
         performUpdate();
       },
@@ -180,14 +183,47 @@ export const ProfileContentEditable = forwardRef<
         </View>
       </GlassCard>
 
-      {/* Profile Information */}
-      <InfoRowCard
-        fields={allFields}
-        editable={isEditing}
-        values={profile}
-        onFieldChange={updateField}
-        autoFocus
-      />
+      {/* Personal Information */}
+      <View style={[styles.section, styles.sectionWithDatePicker]}>
+        <ThemedText variant="heading" style={styles.sectionTitle}>
+          Personal Information
+        </ThemedText>
+        <InfoRowCard
+          fields={personalInfoFields}
+          editable={isEditing}
+          values={profile}
+          onFieldChange={updateField}
+          autoFocus
+        />
+      </View>
+
+      {/* Contact */}
+      <View style={styles.section}>
+        <ThemedText variant="heading" style={styles.sectionTitle}>
+          Contact
+        </ThemedText>
+        <InfoRowCard
+          fields={contactFields}
+          editable={isEditing}
+          values={profile}
+          onFieldChange={updateField}
+          autoFocus={false}
+        />
+      </View>
+
+      {/* Address */}
+      <View style={styles.section}>
+        <ThemedText variant="heading" style={styles.sectionTitle}>
+          Address
+        </ThemedText>
+        <InfoRowCard
+          fields={addressFields}
+          editable={isEditing}
+          values={profile}
+          onFieldChange={updateField}
+          autoFocus={false}
+        />
+      </View>
     </View>
   );
 });
@@ -205,6 +241,16 @@ const createStyles = makeStyleFactory(
         textAlign: 'center',
         opacity: ds.opacity.muted,
         paddingVertical: ds.spacing.xxxl,
+      },
+      section: {
+        gap: ds.spacing.md,
+      },
+      sectionWithDatePicker: {
+        position: 'relative',
+        zIndex: 100,
+      },
+      sectionTitle: {
+        ...ds.typography.heading,
       },
       metaCard: {
         width: '100%',
