@@ -12,7 +12,8 @@ if (Platform.OS === 'web') {
 }
 
 type DatePickerWebProps = {
-  selectedDate: Date;
+  mode: 'date' | 'time';
+  selectedDate: Date | null;
   onDateChange: (date: Date) => void;
   placeholder: string;
   disabled: boolean;
@@ -22,6 +23,7 @@ type DatePickerWebProps = {
 };
 
 export const DatePickerWeb: React.FC<DatePickerWebProps> = ({
+  mode,
   selectedDate,
   onDateChange,
   placeholder,
@@ -45,34 +47,61 @@ export const DatePickerWeb: React.FC<DatePickerWebProps> = ({
         .react-datepicker__day--selected { background: ${theme.tint} !important; color: #fff !important; }
         .react-datepicker__day:hover { background: ${theme.surface} !important; }
         .react-datepicker__day--disabled { color: ${theme.muted} !important; }
+        .react-datepicker__time-container { background: ${theme.background} !important; border-left-color: ${theme.border} !important; width: 208px !important; }
+        .react-datepicker__time-container .react-datepicker__time { background: ${theme.background} !important; width: 100% !important; }
+        .react-datepicker__time-container .react-datepicker__time-box { width: 100% !important; }
+        .react-datepicker__time-list { width: 100% !important; }
+        .react-datepicker__time-container .react-datepicker__time-box { border-color: ${theme.border} !important; }
+        .react-datepicker__time-list-item { color: ${theme.text} !important; }
+        .react-datepicker__time-list-item:hover { background: ${theme.surface} !important; }
+        .react-datepicker__time-list-item--selected { background: ${theme.tint} !important; color: #fff !important; }
       `;
       document.head.appendChild(style);
     }
   }
 
-  const formatDate = (date: Date): string => {
+  const formatDate = (date: Date | null): string => {
+    if (!date) return '';
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
+  const formatTime = (date: Date | null): string => {
+    if (!date) return '';
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  const selected = selectedDate ?? undefined;
+  const isTimeMode = mode === 'time';
+  const formattedValue = isTimeMode
+    ? formatTime(selectedDate)
+    : formatDate(selectedDate);
+
   return (
     <View style={{width: '100%'}}>
       <ReactDatePicker
-        selected={selectedDate}
+        selected={selected}
         onChange={(date: Date | null) => {
           if (date) {
             onDateChange(date);
           }
         }}
-        dateFormat="yyyy-MM-dd"
-        maxDate={new Date()}
+        dateFormat={isTimeMode ? 'HH:mm' : 'yyyy-MM-dd'}
+        timeFormat={isTimeMode ? 'HH:mm' : undefined}
+        showTimeSelect={isTimeMode}
+        showTimeSelectOnly={isTimeMode}
+        timeIntervals={isTimeMode ? 15 : undefined}
+        timeCaption={isTimeMode ? 'Time' : undefined}
+        maxDate={isTimeMode ? undefined : new Date()}
         placeholderText={placeholder}
         disabled={disabled}
         customInput={
           <TextInput
-            value={formatDate(selectedDate)}
+            value={formattedValue}
             placeholder={placeholder}
             editable={false}
             style={inputStyle}

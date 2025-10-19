@@ -116,7 +116,8 @@ const createStyles = makeStyleFactory(
   (ds: typeof DesignSystem, theme: ReturnType<typeof useTheme>['theme']) =>
     StyleSheet.create({
       iosSwitch: {
-        transform: [{scaleX: 0.9}, {scaleY: 0.9}],
+        transform: [{scaleX: 0.9}, {scaleY: 0.85}],
+        marginVertical: -ds.spacing.xs,
       },
       track: {
         width: 50,

@@ -37,15 +37,16 @@ export const DatePickerMobile: React.FC<DatePickerMobileProps> = ({
         <ThemedText variant="label" colorToken="label">
           {label}
         </ThemedText>
-        <DateTimePicker
-          value={selectedDate}
-          mode="date"
-          display="compact"
-          onChange={onDateChange}
-          maximumDate={new Date()}
-          themeVariant={scheme}
-          style={styles.iosDatePicker}
-        />
+        <View style={styles.iosDatePicker}>
+          <DateTimePicker
+            value={selectedDate}
+            mode="date"
+            display="compact"
+            onChange={onDateChange}
+            maximumDate={new Date()}
+            themeVariant={scheme}
+          />
+        </View>
       </View>
     );
   }

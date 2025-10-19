@@ -48,6 +48,7 @@ export function showConfirmAlert({
   onConfirm,
   onCancel,
   destructive = false,
+  cancelIsDestructive = false,
 }: {
   title: string;
   message?: string;
@@ -56,6 +57,7 @@ export function showConfirmAlert({
   onConfirm: () => void;
   onCancel?: () => void;
   destructive?: boolean;
+  cancelIsDestructive?: boolean;
 }): void {
   showAlert({
     title,
@@ -63,7 +65,7 @@ export function showConfirmAlert({
     buttons: [
       {
         text: cancelText,
-        style: 'cancel',
+        style: cancelIsDestructive ? 'destructive' : 'cancel',
         onPress: onCancel,
       },
       {
