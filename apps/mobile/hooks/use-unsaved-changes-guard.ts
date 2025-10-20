@@ -5,6 +5,7 @@ import {
 } from '@react-navigation/native';
 import {useNavigation} from 'expo-router';
 import {showConfirmAlert} from '@/utils';
+import {triggerHaptic} from '@/utils/haptics';
 
 type ContentHandle = {
   hasChanges: () => boolean;
@@ -39,6 +40,9 @@ export function useUnsavedChangesGuard<T extends ContentHandle>({
   const pendingNavigationActionRef = useRef<NavigationAction | null>(null);
 
   usePreventRemove(hasChanges, (event) => {
+    // Trigger warning haptic when user tries to leave with unsaved changes
+    void triggerHaptic('warning');
+
     showConfirmAlert({
       title,
       message,

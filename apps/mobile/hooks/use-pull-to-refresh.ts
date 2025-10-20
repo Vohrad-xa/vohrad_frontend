@@ -1,5 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {Platform, RefreshControl, type RefreshControlProps} from 'react-native';
+import {useHaptic} from '@/providers';
 import {useTheme} from '@/providers/theme-provider';
 
 interface PullToRefreshOptions {
@@ -23,6 +24,7 @@ export function usePullToRefresh(
   options: PullToRefreshOptions = {},
 ): PullToRefreshResult {
   const {theme} = useTheme();
+  const {triggerHaptic} = useHaptic();
   const {
     onRefresh,
     delayMs = 800,
@@ -42,8 +44,10 @@ export function usePullToRefresh(
       return;
     }
 
+    triggerHaptic('light');
     setRefreshing(true);
     const startTime = Date.now();
+    let didError = false;
 
     try {
       if (onRefresh) {
@@ -56,10 +60,14 @@ export function usePullToRefresh(
       if (remainingTime > 0) {
         await wait(remainingTime);
       }
+    } catch (error) {
+      didError = true;
+      throw error;
     } finally {
+      triggerHaptic(didError ? 'warning' : 'success');
       setRefreshing(false);
     }
-  }, [refreshing, onRefresh, delayMs]);
+  }, [refreshing, onRefresh, delayMs, triggerHaptic]);
 
   const refreshControl = useMemo(() => {
     if (Platform.OS === 'web') {

@@ -2,7 +2,7 @@ import React, {forwardRef, useImperativeHandle} from 'react';
 import {StyleSheet, View, Platform} from 'react-native';
 import {ThemedText, InfoRowCard, Toggle, type InfoField} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useTheme, useLoading} from '@/providers';
+import {useTheme, useLoading, useHaptic} from '@/providers';
 import {showConfirmAlert, showAlert} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {usePreferencesForm} from './use-preferences-form';
@@ -27,6 +27,7 @@ export const PreferencesContentEditable = forwardRef<
   PreferencesContentEditableProps
 >(({isEditing, onSaveComplete, onFieldChange}, ref) => {
   const {ds, theme} = useTheme();
+  const {triggerHaptic} = useHaptic();
   const styles = createStyles(ds, theme);
   const {showLoading, hideLoading} = useLoading();
 
@@ -97,6 +98,8 @@ export const PreferencesContentEditable = forwardRef<
 
   const handleToggleBusinessHours = React.useCallback(
     async (enabled: boolean) => {
+      triggerHaptic(enabled ? 'light' : 'warning');
+
       try {
         await toggleBusinessHours(enabled);
       } catch (err) {
@@ -110,7 +113,7 @@ export const PreferencesContentEditable = forwardRef<
         });
       }
     },
-    [toggleBusinessHours],
+    [toggleBusinessHours, triggerHaptic],
   );
 
   if (!organization) {

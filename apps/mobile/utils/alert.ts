@@ -1,4 +1,5 @@
 import {Alert, Platform} from 'react-native';
+import {triggerHaptic} from './haptics';
 
 interface AlertButton {
   text: string;
@@ -11,6 +12,7 @@ interface AlertOptions {
   message?: string;
   buttons?: AlertButton[];
   cancelable?: boolean;
+  hapticType?: 'error' | 'warning' | 'none';
 }
 
 export function showAlert({
@@ -18,7 +20,25 @@ export function showAlert({
   message,
   buttons = [{text: 'OK'}],
   cancelable = true,
+  hapticType,
 }: AlertOptions): void {
+  // Auto-detect haptic type based on title if not specified
+  if (!hapticType) {
+    const titleLower = title.toLowerCase();
+    if (titleLower.includes('error') || titleLower.includes('failed')) {
+      hapticType = 'error';
+    } else if (
+      titleLower.includes('warning') ||
+      titleLower.includes('confirm')
+    ) {
+      hapticType = 'warning';
+    }
+  }
+
+  // Trigger haptic if applicable
+  if (hapticType && hapticType !== 'none') {
+    void triggerHaptic(hapticType);
+  }
   if (Platform.OS === 'web') {
     if (buttons.length === 2) {
       const confirmed = window.confirm(

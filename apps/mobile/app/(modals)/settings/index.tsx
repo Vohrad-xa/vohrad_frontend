@@ -13,7 +13,7 @@ import {
   ModalFlatList,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {BiometricToggle} from '@/features/settings/biometric';
+import {BiometricToggle} from '@/features/settings/app-settings';
 import {
   isDividerItem,
   type ListItem as SettingsListItem,

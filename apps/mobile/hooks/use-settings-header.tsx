@@ -2,6 +2,7 @@ import {useLayoutEffect, useState, useCallback, useRef, useEffect} from 'react';
 import {Platform, View, Text, Pressable} from 'react-native';
 import {ThemedButton} from '@/components/ui';
 import {useTheme} from '@/providers';
+import {triggerHaptic} from '@/utils/haptics';
 import {Icon, AppIcons} from '@/utils/icons';
 
 type Navigation = {
@@ -28,6 +29,7 @@ export function useSettingsHeader({
 
   const triggerSuccess = useCallback(() => {
     setShowSuccess(true);
+    void triggerHaptic('success');
     if (successTimeoutRef.current) {
       clearTimeout(successTimeoutRef.current);
     }

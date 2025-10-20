@@ -6,7 +6,6 @@ import type {SettingsItem, ToggleSettingsItem} from './types';
 
 export function useSettingsItems() {
   const {scheme} = useTheme();
-
   const computedSettingsItems: Array<SettingsItem | ToggleSettingsItem> =
     useMemo(
       () => [
@@ -20,15 +19,17 @@ export function useSettingsItems() {
           },
         },
         {
+          id: 'app-settings',
+          icon: AppIcons.navigation.settings,
+          label: 'App Settings',
+          onPress: () => {
+            router.push('/(modals)/settings/app-settings');
+          },
+        },
+        {
           id: 'appearance',
           icon: scheme === 'dark' ? AppIcons.theme.light : AppIcons.theme.dark,
           label: 'Appearance',
-          hasToggle: true,
-        },
-        {
-          id: 'biometric-unlock',
-          icon: AppIcons.content.privacy,
-          label: 'Biometric Unlock',
           hasToggle: true,
         },
         {

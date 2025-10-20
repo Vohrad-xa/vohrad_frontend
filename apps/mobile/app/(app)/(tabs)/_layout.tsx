@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef} from 'react';
 import type {ComponentProps} from 'react';
 import {
   Platform,
@@ -17,7 +17,7 @@ import {
 } from 'expo-router/unstable-native-tabs';
 import {HeaderButton} from '@/components/ui';
 import {type ThemeShape} from '@/constants/theme';
-import {useSidebar, useTheme} from '@/providers';
+import {useHaptic, useSidebar, useTheme} from '@/providers';
 import type {TabItem} from '@/types/ui';
 import {AppIcons, type IconName} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -59,12 +59,21 @@ export default function TabLayout() {
   const navigation = useNavigation();
   const segments = useSegments();
   const {theme} = useTheme();
+  const {triggerHaptic} = useHaptic();
   const {toggleSideMenu} = useSidebar();
   const styles = createStyles(theme);
+  const previousTabRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const currentTab = segments[segments.length - 1] as string;
-    const activeTab = TAB_ITEMS.find((tab) => tab.name === currentTab);
+    const currentSegment = segments[segments.length - 1] ?? 'index';
+    const activeTab =
+      TAB_ITEMS.find((tab) => tab.name === currentSegment) ?? TAB_ITEMS[0];
+
+    if (previousTabRef.current && previousTabRef.current !== activeTab.name) {
+      triggerHaptic('selection');
+    }
+    previousTabRef.current = activeTab.name;
+
     navigation.setOptions({
       title: activeTab?.label ?? 'Dashboard',
       headerShown: true,
@@ -82,7 +91,7 @@ export default function TabLayout() {
         />
       ),
     });
-  }, [segments, navigation, theme, toggleSideMenu, styles]);
+  }, [segments, navigation, theme, toggleSideMenu, styles, triggerHaptic]);
 
   if (Platform.OS === 'web') {
     return (

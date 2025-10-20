@@ -24,6 +24,7 @@ import {
   AuthProvider,
   useAuth,
   LoadingProvider,
+  HapticProvider,
 } from '@/providers';
 import {secureStorage} from '@/utils/secure-storage';
 import * as AppStorage from '@/utils/storage';
@@ -364,11 +365,13 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{flex: 1}}>
       <ActionSheetProvider>
         <AppThemeProvider>
-          <LoadingProvider>
-            <AuthProvider>
-              <RootNavigation />
-            </AuthProvider>
-          </LoadingProvider>
+          <HapticProvider>
+            <LoadingProvider>
+              <AuthProvider>
+                <RootNavigation />
+              </AuthProvider>
+            </LoadingProvider>
+          </HapticProvider>
         </AppThemeProvider>
       </ActionSheetProvider>
     </GestureHandlerRootView>
