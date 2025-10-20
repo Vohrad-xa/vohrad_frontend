@@ -7,9 +7,9 @@ import {
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
-import {impactAsync, ImpactFeedbackStyle} from 'expo-haptics';
 import type {ThemePreference} from '@/constants/colors';
 import {type DSShape} from '@/constants/theme';
+import {useHaptic} from '@/providers';
 import {useTheme} from '@/providers/theme-provider';
 import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -20,6 +20,7 @@ interface CustomSwitchProps {
 
 export default function Switch({style}: CustomSwitchProps) {
   const {ds, theme, scheme, setScheme, preference} = useTheme();
+  const {triggerHaptic} = useHaptic();
   const rotationAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const styles = createStyles(ds);
@@ -49,9 +50,7 @@ export default function Switch({style}: CustomSwitchProps) {
   }, [preference, rotationAnim, scaleAnim]);
 
   const handlePress = () => {
-    if (Platform.OS === 'ios') {
-      impactAsync(ImpactFeedbackStyle.Light).catch(() => undefined);
-    }
+    triggerHaptic('selection');
     const nextValue: ThemePreference =
       preference === 'light'
         ? 'dark'

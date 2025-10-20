@@ -63,7 +63,6 @@ export default function TabLayout() {
   const {toggleSideMenu} = useSidebar();
   const styles = createStyles(theme);
   const previousTabRef = useRef<string | null>(null);
-
   useEffect(() => {
     const currentSegment = segments[segments.length - 1] ?? 'index';
     const activeTab =
