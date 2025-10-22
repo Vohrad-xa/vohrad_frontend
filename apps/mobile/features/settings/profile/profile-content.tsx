@@ -133,7 +133,7 @@ export const ProfileContentEditable = forwardRef<
   return (
     <View style={styles.container}>
       {/* Profile Meta Card */}
-      <GlassCard style={styles.metaCard}>
+      <GlassCard style={styles.metaCard} isInteractive>
         <View style={styles.metaContent}>
           <View style={styles.metaColumn}>
             <ThemedView variant="roleBadge">

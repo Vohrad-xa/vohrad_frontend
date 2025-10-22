@@ -12,6 +12,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers/theme-provider';
 import {Icon, type IconName} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
+import {GlassCard} from './glass-card';
 
 export type InputStatus = 'none' | 'error' | 'success';
 
@@ -20,6 +21,7 @@ export type InputProps = TextInputProps & {
   onStatusIconPress?: () => void;
   rightIconName?: IconName;
   onRightIconPress?: () => void;
+  disableGlass?: boolean;
 };
 
 export const Input = forwardRef<TextInput, InputProps>(
@@ -31,6 +33,7 @@ export const Input = forwardRef<TextInput, InputProps>(
       onStatusIconPress,
       rightIconName,
       onRightIconPress,
+      disableGlass = false,
       ...props
     },
     ref,
@@ -51,8 +54,8 @@ export const Input = forwardRef<TextInput, InputProps>(
           ? {name: 'checkmark-outline' as IconName, color: theme.accentGreen}
           : null;
 
-    return (
-      <View style={styles.container}>
+    const inputContent = (
+      <>
         <TextInput
           ref={ref}
           style={[
@@ -96,7 +99,25 @@ export const Input = forwardRef<TextInput, InputProps>(
             </View>
           </View>
         )}
-      </View>
+      </>
+    );
+
+    if (disableGlass) {
+      return (
+        <View style={styles.container}>
+          <View style={styles.glassContainer}>{inputContent}</View>
+        </View>
+      );
+    }
+
+    return (
+      <GlassCard
+        style={styles.container}
+        contentStyle={styles.glassContainer}
+        isInteractive
+      >
+        {inputContent}
+      </GlassCard>
     );
   },
 );
@@ -110,8 +131,10 @@ const createStyles = makeStyleFactory(
 
     return StyleSheet.create({
       container: {
-        position: 'relative',
         width: '100%',
+      },
+      glassContainer: {
+        position: 'relative',
       },
       input: {
         flex: 1,
@@ -119,10 +142,8 @@ const createStyles = makeStyleFactory(
         textAlign: 'left',
       },
       baseInput: {
-        backgroundColor: theme.input,
+        backgroundColor: 'transparent',
         color: theme.text,
-        borderColor: theme.divider,
-        borderWidth: 0.2,
         borderRadius: ds.components.input.borderRadius,
         paddingVertical: ds.spacing.md,
         paddingHorizontal: ds.spacing.md,

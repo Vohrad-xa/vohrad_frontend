@@ -8,7 +8,7 @@ import {
 import {BlurView} from 'expo-blur';
 import Animated from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {SearchBar} from '@/components/ui';
+import {SearchBar, GlassCard} from '@/components/ui';
 import type {ColorScheme} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
@@ -40,13 +40,15 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
       >
         <View style={styles.headerContent}>
           <SearchBar style={styles.searchBar} placeholder="Search" />
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={onClose}
-            accessibilityLabel="Close sidebar"
-          >
-            <Icon name={AppIcons.navigation.close} />
-          </TouchableOpacity>
+          <GlassCard isInteractive>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={onClose}
+              accessibilityLabel="Close sidebar"
+            >
+              <Icon name={AppIcons.navigation.close} />
+            </TouchableOpacity>
+          </GlassCard>
         </View>
       </BlurView>
     </Animated.View>
@@ -67,6 +69,7 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '100%',
+        gap: ds.spacing.sm,
       },
       searchBar: {
         flex: 1,
@@ -74,12 +77,8 @@ const createStyles = makeStyleFactory(
       closeButton: {
         width: 36,
         height: 36,
-        marginLeft: ds.spacing.sm,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: ds.borderRadius.full,
-        backgroundColor: theme.background,
-        ...ds.shadows.sm,
       },
     }),
   (theme, ds, scheme, topPadding) =>

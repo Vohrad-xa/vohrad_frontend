@@ -86,6 +86,7 @@ const _Tokens = {
     secondary: Palette.terracotta,
     glassTint: Palette.glassTintLight,
     quickActionIcon: Palette.Lbackground,
+    highlight: 'rgba(0, 0, 0, 0.05)',
 
     // Toggle
     toggleTrackOff: Palette.Greige,
@@ -136,6 +137,7 @@ const _Tokens = {
     secondary: Palette.Greige,
     glassTint: Palette.glassTintDark,
     quickActionIcon: Palette.Dbackground,
+    highlight: 'rgba(255, 255, 255, 0.1)',
     toggleTrackOff: Palette.gray[400],
     toggleTrackOn: Palette.brand.green,
     toggleThumb: Palette.white,

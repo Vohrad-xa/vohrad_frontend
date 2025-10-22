@@ -30,7 +30,7 @@ export function useSettingsItems() {
           id: 'appearance',
           icon: scheme === 'dark' ? AppIcons.theme.light : AppIcons.theme.dark,
           label: 'Appearance',
-          hasToggle: true,
+          onPress: () => {},
         },
         {
           id: 'preferences',

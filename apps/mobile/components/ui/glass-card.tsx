@@ -20,25 +20,26 @@ interface GlassViewProps {
   children?: React.ReactNode;
 }
 
-interface GlassContainerProps {
-  spacing?: number;
-  style?: StyleProp<ViewStyle>;
-  children?: React.ReactNode;
-}
-
 interface GlassEffectModule {
   GlassView?: React.ComponentType<GlassViewProps>;
-  GlassContainer?: React.ComponentType<GlassContainerProps>;
   isLiquidGlassAvailable?: () => boolean;
   default?: React.ComponentType<GlassViewProps>;
 }
 
 export interface GlassCardProps extends ContainerStyleProps {
   children?: React.ReactNode;
+  glassEffectStyle?: 'regular' | 'clear';
+  isInteractive?: boolean;
 }
 
-export function GlassCard({children, style, contentStyle}: GlassCardProps) {
-  const {scheme, ds, theme} = useTheme();
+export function GlassCard({
+  children,
+  style,
+  contentStyle,
+  glassEffectStyle = 'regular',
+  isInteractive,
+}: GlassCardProps) {
+  const {ds, theme} = useTheme();
   const [reduceTransparency, setReduceTransparency] = useState(false);
 
   useEffect(() => {
@@ -76,27 +77,19 @@ export function GlassCard({children, style, contentStyle}: GlassCardProps) {
       const GlassView = (mod?.GlassView ?? mod) as
         | React.ComponentType<GlassViewProps>
         | undefined;
-      const GlassContainer = (mod?.GlassContainer ?? mod) as
-        | React.ComponentType<GlassContainerProps>
-        | undefined;
       const isLiquidGlassAvailable = mod?.isLiquidGlassAvailable;
 
-      if (
-        GlassView &&
-        GlassContainer &&
-        (!isLiquidGlassAvailable || isLiquidGlassAvailable())
-      ) {
+      if (GlassView && (!isLiquidGlassAvailable || isLiquidGlassAvailable())) {
         return (
-          <GlassContainer spacing={ds.spacing.xs} style={style}>
+          <View style={style}>
             <GlassView
-              glassEffectStyle={scheme === 'dark' ? 'clear' : 'regular'}
-              // tintColor={theme.glassTint}
-              isInteractive
+              glassEffectStyle={glassEffectStyle}
               style={[styles.glassView, contentStyle]}
+              isInteractive={isInteractive}
             >
               {children}
             </GlassView>
-          </GlassContainer>
+          </View>
         );
       }
     } catch {}

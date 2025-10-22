@@ -122,7 +122,7 @@ export const OrganizationContent = forwardRef<
   return (
     <View style={styles.container}>
       {/* Organization Meta Card */}
-      <GlassCard style={styles.metaCard}>
+      <GlassCard style={styles.metaCard} isInteractive>
         <View style={styles.metaContent}>
           <View style={styles.logoCircle}>
             <Icon name={AppIcons.business.organization} size={32} />

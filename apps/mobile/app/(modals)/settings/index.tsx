@@ -1,6 +1,6 @@
-import {useMemo, useCallback} from 'react';
+import {useMemo, useCallback, useRef, useState} from 'react';
 import type {ReactNode} from 'react';
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet, Platform, View} from 'react-native';
 import type {ListRenderItem} from 'react-native';
 import {StatusBar as ExpoStatusBar} from 'expo-status-bar';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -9,11 +9,11 @@ import {
   ThemedText,
   Divider,
   ListItem,
-  Switch,
   ModalFlatList,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {BiometricToggle} from '@/features/settings/app-settings';
+import {AppearanceMenu} from '@/features/settings/appearance-menu';
 import {
   isDividerItem,
   type ListItem as SettingsListItem,
@@ -31,6 +31,9 @@ export default function SettingsModal() {
   const insets = useSafeAreaInsets();
   const styles = createStyles(ds, theme, insets.bottom);
   const computedSettingsItems = useSettingsItems();
+  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
+  const appearanceAnchorRef = useRef<View>(null);
+  const containerRef = useRef<View>(null);
 
   // Type guard to check for toggle items
   const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem =>
@@ -76,6 +79,10 @@ export default function SettingsModal() {
     return itemsWithDividers;
   }, [computedSettingsItems, logout]);
 
+  const openAppearanceMenu = useCallback(() => {
+    setThemeMenuOpen(true);
+  }, []);
+
   const renderItem: ListRenderItem<SettingsListItem> = useCallback(
     ({item}) => {
       if (isDividerItem(item)) {
@@ -85,60 +92,88 @@ export default function SettingsModal() {
       let accessory: ReactNode = null;
 
       if (isToggleItem(item)) {
-        if (item.id === 'appearance') {
-          accessory = (
-            <>
-              <ThemedText style={styles.themeStatusText}>
-                {preference === 'system'
-                  ? 'System'
-                  : preference === 'light'
-                    ? 'Light'
-                    : 'Dark'}
-              </ThemedText>
-              <Switch style={styles.appearanceSwitch} />
-            </>
-          );
-        } else if (item.id === 'biometric-unlock') {
+        if (item.id === 'biometric-unlock') {
           accessory = <BiometricToggle />;
         }
+      } else if (item.id === 'appearance') {
+        accessory = (
+          <>
+            <ThemedText style={styles.themeStatusText}>
+              {preference === 'system'
+                ? 'System'
+                : preference === 'light'
+                  ? 'Light'
+                  : 'Dark'}
+            </ThemedText>
+            <Icon name={AppIcons.navigation.forward} color={theme.muted} />
+          </>
+        );
       } else if (!item.isDestructive) {
         accessory = (
           <Icon name={AppIcons.navigation.forward} color={theme.muted} />
         );
       }
 
-      return (
+      const content = (
         <ListItem
           label={item.label}
           icon={item.icon}
-          onPress={item.onPress}
+          onPress={item.id === 'appearance' ? openAppearanceMenu : item.onPress}
           isDestructive={item.isDestructive}
         >
           {accessory}
         </ListItem>
       );
+
+      if (item.id === 'appearance') {
+        return (
+          <View ref={appearanceAnchorRef} collapsable={false}>
+            {content}
+          </View>
+        );
+      }
+
+      return content;
     },
-    [theme, styles, preference],
+    [openAppearanceMenu, preference, styles, theme],
   );
 
   return (
-    <ThemedView style={styles.container}>
-      <ModalFlatList
-        data={allSettingsItems}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.modalFlatListContent}
-        showsVerticalScrollIndicator
-      />
+    <View
+      ref={containerRef}
+      collapsable={false}
+      style={styles.containerWrapper}
+    >
+      <ThemedView style={styles.container}>
+        <ModalFlatList
+          data={allSettingsItems}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.modalFlatListContent}
+          showsVerticalScrollIndicator
+        />
 
-      <ExpoStatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-    </ThemedView>
+        <AppearanceMenu
+          isOpen={themeMenuOpen}
+          onClose={() => {
+            setThemeMenuOpen(false);
+          }}
+          anchorRef={appearanceAnchorRef}
+          containerRef={containerRef}
+        />
+
+        <ExpoStatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
+      </ThemedView>
+    </View>
   );
 }
 
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape, insetsBottom: number) =>
     StyleSheet.create({
+      containerWrapper: {
+        flex: 1,
+      },
       container: {
         flex: 1,
       },
@@ -150,11 +185,6 @@ const createStyles = makeStyleFactory(
         color: theme.muted,
         fontWeight: ds.fontWeight.medium,
         marginRight: ds.spacing.sm,
-      },
-      appearanceSwitch: {
-        alignSelf: 'auto',
-        minWidth: ds.iconSize.md,
-        minHeight: ds.iconSize.xs,
       },
       modalFlatListContent: {
         paddingBottom: insetsBottom + ds.spacing.xl,

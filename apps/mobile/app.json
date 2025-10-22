@@ -28,7 +28,6 @@
         "color": "#E6F4FE"
       },
       "playStoreUrl": "https://play.google.com/store/apps/details?id=vohrad.mobile",
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
       "windowSoftInputMode": "adjustPan",
       "package": "vohrad.mobile"

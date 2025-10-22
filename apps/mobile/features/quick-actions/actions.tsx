@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useRef} from 'react';
 import {
   View,
   StyleSheet,
@@ -14,9 +14,11 @@ import type {MenuItem} from '@/types';
 import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {ThemedText} from '../../components/ui/themed-text';
+import {AddQuickAction} from './add/add';
 
 export function QuickActions() {
   const {ds, theme} = useTheme();
+  const containerRef = useRef<View>(null);
 
   const quickActions: MenuItem[] = useMemo(
     () => [
@@ -35,37 +37,68 @@ export function QuickActions() {
     [],
   );
 
-  const renderAction = ({item}: {item: MenuItem}) => (
-    <TouchableOpacity style={styles.actionButton}>
-      <View style={styles.iconContainer}>
-        <Icon
-          name={item.icon}
-          size={ds.iconSize.xxl}
-          colorToken="quickActionIcon"
-        />
-      </View>
-      <ThemedText style={styles.actionLabel}>{item.label}</ThemedText>
-    </TouchableOpacity>
+  const styles = createStyles(ds, theme);
+  const addActionStyles = useMemo(
+    () => ({
+      actionButton: styles.actionButton,
+      iconContainer: styles.iconContainer,
+      actionLabel: styles.actionLabel,
+    }),
+    [styles.actionButton, styles.iconContainer, styles.actionLabel],
   );
 
-  const styles = createStyles(ds, theme);
+  const renderAction = ({item}: {item: MenuItem}) => {
+    if (item.label === 'Add') {
+      return (
+        <AddQuickAction
+          icon={item.icon}
+          label={item.label}
+          containerRef={containerRef}
+          actionStyles={addActionStyles}
+        />
+      );
+    }
+
+    return (
+      <TouchableOpacity style={styles.actionButton}>
+        <View style={styles.iconContainer}>
+          <Icon
+            name={item.icon}
+            size={ds.iconSize.xxl}
+            colorToken="quickActionIcon"
+          />
+        </View>
+        <ThemedText style={styles.actionLabel}>{item.label}</ThemedText>
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <View style={styles.card}>
+    <View ref={containerRef} collapsable={false} style={styles.card}>
       {Platform.OS === 'web' ? (
         <View style={styles.webGrid}>
-          {quickActions.map((item) => (
-            <TouchableOpacity key={item.label} style={styles.actionButton}>
-              <View style={styles.iconContainer}>
-                <Icon
-                  name={item.icon}
-                  size={ds.iconSize.xxl}
-                  colorToken="quickActionIcon"
-                />
-              </View>
-              <ThemedText style={styles.actionLabel}>{item.label}</ThemedText>
-            </TouchableOpacity>
-          ))}
+          {quickActions.map((item) =>
+            item.label === 'Add' ? (
+              <AddQuickAction
+                key={item.label}
+                icon={item.icon}
+                label={item.label}
+                containerRef={containerRef}
+                actionStyles={addActionStyles}
+              />
+            ) : (
+              <TouchableOpacity key={item.label} style={styles.actionButton}>
+                <View style={styles.iconContainer}>
+                  <Icon
+                    name={item.icon}
+                    size={ds.iconSize.xxl}
+                    colorToken="quickActionIcon"
+                  />
+                </View>
+                <ThemedText style={styles.actionLabel}>{item.label}</ThemedText>
+              </TouchableOpacity>
+            ),
+          )}
         </View>
       ) : (
         <FlatList

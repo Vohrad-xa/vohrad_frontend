@@ -34,11 +34,19 @@ export const ThemedView: React.FC<ThemedViewProps> = ({
   contentStyle,
   ...props
 }) => {
-  const {theme, ds} = useTheme();
+  const {theme, ds, scheme} = useTheme();
 
   // Special handling for card variant - delegate to GlassCard
   if (variant === 'card') {
-    return <GlassCard style={style} contentStyle={contentStyle} {...props} />;
+    return (
+      <GlassCard
+        style={style}
+        contentStyle={contentStyle}
+        {...props}
+        glassEffectStyle={scheme === 'dark' ? 'clear' : 'regular'}
+        isInteractive
+      />
+    );
   }
 
   const styles = createStyles(variant, shadow, badgeStatus, theme, ds);

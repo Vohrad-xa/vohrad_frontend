@@ -197,6 +197,7 @@ const createStyles = makeStyleFactory(
       cardMobile: {
         height: ds.components.button.height * 2.3,
         width: cardWidth,
+        backgroundColor: 'none',
       } as ViewStyle,
     });
   },

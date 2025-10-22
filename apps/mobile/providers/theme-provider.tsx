@@ -88,9 +88,9 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
-      Appearance.setColorScheme(scheme);
+      Appearance.setColorScheme(preference === 'system' ? null : preference);
     }
-  }, [scheme]);
+  }, [preference]);
 
   const toggle = useCallback(() => {
     if (isAnimating.current) {
