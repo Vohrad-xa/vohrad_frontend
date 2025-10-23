@@ -9,7 +9,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import type {DesignSystem} from '@/constants/typography';
-import {useTheme} from '@/providers';
+import {useTheme, useHaptic} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 interface ToggleProps {
@@ -28,14 +28,23 @@ export function Toggle({
   accessibilityLabel,
 }: ToggleProps) {
   const {theme, ds} = useTheme();
+  const {isEnabled: hapticsEnabled, triggerHaptic} = useHaptic();
   const animatedValue = useSharedValue(value ? 1 : 0);
   const startValue = useSharedValue(0);
   const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
 
+  // Wrap onValueChange to control haptics
+  const handleChange = (newValue: boolean) => {
+    if (hapticsEnabled) {
+      triggerHaptic('selection');
+    }
+    onValueChange(newValue);
+  };
+
   useEffect(() => {
     animatedValue.value = withSpring(value ? 1 : 0, {
-      damping: 45,
-      stiffness: 240,
+      damping: 30,
+      stiffness: 400,
     });
   }, [value, animatedValue]);
 
@@ -55,6 +64,9 @@ export function Toggle({
         stiffness: 250,
       });
       if (shouldBeOn !== value) {
+        if (hapticsEnabled) {
+          runOnJS(triggerHaptic)('selection');
+        }
         runOnJS(onValueChange)(shouldBeOn);
       }
     });
@@ -75,7 +87,7 @@ export function Toggle({
     return (
       <RNSwitch
         value={value}
-        onValueChange={onValueChange}
+        onValueChange={handleChange}
         disabled={disabled}
         trackColor={{false: theme.toggleTrackOff, true: theme.toggleTrackOn}}
         ios_backgroundColor={theme.toggleTrackOff}
@@ -91,6 +103,9 @@ export function Toggle({
   const tapGesture = Gesture.Tap()
     .enabled(!disabled)
     .onEnd(() => {
+      if (hapticsEnabled) {
+        runOnJS(triggerHaptic)('selection');
+      }
       runOnJS(onValueChange)(!value);
     });
 

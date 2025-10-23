@@ -29,6 +29,7 @@ export const Palette = {
   black: '#000000',
   Dbackground: '#262624',
   Lbackground: '#FAF9F5',
+  Mbackground: '#F2F2F6',
   Obsidian: '#171717ff',
   // Obsidian: '#111214',
   mushroom: '#9C9A92',
@@ -46,6 +47,7 @@ const _Tokens = {
   light: {
     // Surfaces & text
     background: Palette.Lbackground,
+    secondbackground: Palette.Mbackground,
     text: '#11181C',
     surface: Palette.gray[50],
     border: Palette.gray[200],
@@ -82,11 +84,12 @@ const _Tokens = {
     iconCaution: Palette.brand.yellow,
     iconWarning: Palette.brand.orange,
     iconDanger: Palette.brand.red,
-    sidebarBackground: Palette.Alabaster,
+    sidebarBackground: '#ffffffff',
     secondary: Palette.terracotta,
     glassTint: Palette.glassTintLight,
     quickActionIcon: Palette.Lbackground,
     highlight: 'rgba(0, 0, 0, 0.05)',
+    backdrop: 'rgba(0, 0, 0, 0.5)',
 
     // Toggle
     toggleTrackOff: Palette.Greige,
@@ -96,7 +99,8 @@ const _Tokens = {
 
   dark: {
     // Surfaces & text
-    background: Palette.Dbackground,
+    background: Palette.black,
+    secondbackground: Palette.gray[900],
     surface: Palette.gray[800],
     text: '#ECEDEE',
     muted: Palette.gray[500],
@@ -123,7 +127,7 @@ const _Tokens = {
     tint: Palette.brand.blue,
     tabIconSelected: Palette.brand.blue,
     card: Palette.cardDarkGlass,
-    input: Palette.gray[750],
+    input: Palette.gray[800],
     purple: Palette.brand.purple,
     iosLightGray: Palette.gray[700],
     iosPlaceholder: Palette.gray[500],
@@ -133,11 +137,13 @@ const _Tokens = {
     iconCaution: Palette.brand.yellow,
     iconWarning: Palette.brand.orange,
     iconDanger: Palette.brand.red,
-    sidebarBackground: Palette.Onyx,
+    // sidebarBackground: Palette.Onyx,
+    sidebarBackground: '#0e0d0dff',
     secondary: Palette.Greige,
     glassTint: Palette.glassTintDark,
     quickActionIcon: Palette.Dbackground,
     highlight: 'rgba(255, 255, 255, 0.1)',
+    backdrop: 'rgba(0, 0, 0, 0.5)',
     toggleTrackOff: Palette.gray[400],
     toggleTrackOn: Palette.brand.green,
     toggleThumb: Palette.white,

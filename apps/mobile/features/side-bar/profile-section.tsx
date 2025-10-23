@@ -1,5 +1,5 @@
 import {View, Text, TouchableOpacity, StyleSheet, Platform} from 'react-native';
-import {BlurView} from 'expo-blur';
+import {AnimatedBlurView} from '@/components/ui';
 import type {ColorScheme} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useAuth} from '@/providers';
@@ -7,15 +7,18 @@ import type {InteractiveProps} from '@/types';
 import {Icon} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import type {User} from '@vohrad/types';
+import type {SharedValue} from 'react-native-reanimated';
 
 interface ProfileSectionProps extends Pick<InteractiveProps, 'onPress'> {
   onPressSettings: () => void;
   onPressProfile: () => void;
+  blurIntensity: SharedValue<number>;
 }
 
 export function ProfileSection({
   onPressSettings,
   onPressProfile,
+  blurIntensity,
 }: ProfileSectionProps) {
   const {theme, ds, scheme} = useTheme();
   const {user}: {user: User | null} = useAuth();
@@ -55,8 +58,8 @@ export function ProfileSection({
   const fullName = getFullName();
 
   return (
-    <BlurView
-      intensity={20}
+    <AnimatedBlurView
+      blurIntensity={blurIntensity}
       tint={scheme === 'dark' ? 'dark' : 'light'}
       style={styles.profileBlurView}
     >
@@ -80,7 +83,7 @@ export function ProfileSection({
           />
         </TouchableOpacity>
       </View>
-    </BlurView>
+    </AnimatedBlurView>
   );
 }
 

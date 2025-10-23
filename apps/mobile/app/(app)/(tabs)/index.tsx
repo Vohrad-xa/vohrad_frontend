@@ -1,27 +1,37 @@
+import {useCallback} from 'react';
 import {
   StyleSheet,
-  View,
-  Dimensions,
   ScrollView,
   Platform,
+  useWindowDimensions,
   type ViewStyle,
-  type TextStyle,
 } from 'react-native';
 import {userApi} from '@vohrad/api-client';
 import {useAuthStore} from '@vohrad/store';
+import {router} from 'expo-router';
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {QuickActions} from '@/features/quick-actions';
-import {useTheme} from '@/providers';
-import type {MenuCard} from '@/types/ui';
-import {Icon, AppIcons} from '@/utils';
+import {OverviewCards} from '@/features/dashboard/overview/overview-cards';
+import {QuickActions} from '@/features/dashboard/quick-actions';
+import {useHaptic, useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function HomeScreen() {
   const {ds, theme} = useTheme();
-  const screenWidth = Dimensions.get('window').width;
-  const styles = createStyles(ds, theme, screenWidth);
+  const {width: screenWidth} = useWindowDimensions();
+  const styles = createStyles(ds, theme);
   const setUser = useAuthStore((state) => state.setUser);
+  const {triggerHaptic} = useHaptic();
+
+  const handlePresentModal = useCallback(() => {
+    triggerHaptic('light');
+    router.push('/filter');
+  }, [triggerHaptic]);
+
+  const handleScanOpen = useCallback(() => {
+    triggerHaptic('light');
+    router.push('/scan');
+  }, [triggerHaptic]);
 
   const handleRefresh = async () => {
     try {
@@ -31,55 +41,6 @@ export default function HomeScreen() {
       console.error('Failed to refresh user profile:', error);
     }
   };
-
-  const menuCards: MenuCard[] = [
-    {
-      title: 'Items',
-      icon: AppIcons.inventory.items,
-      count: 245,
-      colorToken: 'accentBlue',
-    },
-    {
-      title: 'Locations',
-      icon: AppIcons.inventory.locations,
-      count: 8,
-      colorToken: 'accentYellow',
-    },
-    {
-      title: 'Maintenance',
-      icon: AppIcons.business.maintenance,
-      count: 12,
-      colorToken: 'accentOrange',
-    },
-    {
-      title: 'Suppliers',
-      icon: AppIcons.business.suppliers,
-      count: 18,
-      colorToken: 'accentGreen',
-    },
-    {
-      title: 'Check In/Out',
-      icon: AppIcons.actions.move,
-      count: 3,
-      colorToken: 'destructive',
-    },
-    {
-      title: 'Documents',
-      icon: AppIcons.content.document,
-      count: 156,
-      colorToken: 'accentIndigo',
-    },
-  ];
-
-  const menuGridStyles = Platform.select({
-    web: styles.menuGridWeb,
-    default: styles.menuGridMobile,
-  });
-
-  const cardStyles = Platform.select({
-    web: styles.cardWeb,
-    default: styles.cardMobile,
-  });
 
   const ScrollComponent =
     Platform.OS === 'web' ? ScrollView : RefreshableScrollView;
@@ -94,55 +55,24 @@ export default function HomeScreen() {
       style={styles.scrollView}
       {...(Platform.OS !== 'web' && {onRefresh: handleRefresh})}
     >
-      <View style={styles.container}>
-        <ThemedText
-          variant="heading"
-          style={[styles.title, styles.titleNoMarginTop]}
-        >
+      <ThemedView style={styles.container}>
+        <ThemedText variant="heading" style={styles.titleNoMarginTop}>
           Quick Actions
         </ThemedText>
-        <QuickActions />
+        <QuickActions onScanPress={handleScanOpen} />
 
-        <ThemedText variant="heading" style={styles.title}>
-          Overview
-        </ThemedText>
-        <View style={styles.cardContainer}>
-          <View style={menuGridStyles}>
-            {menuCards.map((card, i) => (
-              <ThemedView
-                key={i}
-                variant="card"
-                style={cardStyles}
-                contentStyle={styles.cardContent}
-              >
-                <View style={styles.topSection}>
-                  <Icon
-                    name={card.icon}
-                    size="lg"
-                    colorToken={card.colorToken}
-                  />
-                  <ThemedText variant="secondary" style={styles.cardTitle}>
-                    {card.title}
-                  </ThemedText>
-                </View>
-                <ThemedText variant="heading" style={styles.cardCount}>
-                  {card.count}
-                </ThemedText>
-              </ThemedView>
-            ))}
-          </View>
-        </View>
-      </View>
+        <OverviewCards
+          onFilterPress={handlePresentModal}
+          screenWidth={screenWidth}
+        />
+      </ThemedView>
     </ScrollComponent>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape, screenWidth: number) => {
-    const cardWidth =
-      (screenWidth - ds.layout.screenPadding * 2 - ds.spacing.md) / 2;
-
-    return StyleSheet.create({
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
       scrollView: {
         backgroundColor: theme.background,
         flex: 1,
@@ -150,56 +80,10 @@ const createStyles = makeStyleFactory(
       container: {
         padding: ds.layout.screenPadding,
       } as ViewStyle,
-      title: {
-        marginTop: ds.spacing.lg,
-        marginBottom: ds.spacing.md,
-      } as TextStyle,
       titleNoMarginTop: {
         marginTop: 0,
-      } as TextStyle,
-      cardContainer: {
-        gap: ds.spacing.md,
-      } as ViewStyle,
-      cardContent: {
-        flex: 1,
-        padding: ds.spacing.md,
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-      } as ViewStyle,
-      topSection: {
-        alignSelf: 'flex-start',
-        gap: ds.spacing.xs,
-      } as ViewStyle,
-      cardTitle: {
-        fontWeight: ds.fontWeight.medium,
-      } as TextStyle,
-      cardCount: {
-        alignSelf: 'flex-start',
-        fontWeight: ds.fontWeight.bold,
-      } as TextStyle,
-      menuGridWeb: {
-        ...Platform.select({
-          web: {
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          },
-        }),
-        gap: ds.spacing.md,
-      } as ViewStyle,
-      menuGridMobile: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: ds.spacing.md,
-      } as ViewStyle,
-      cardWeb: {
-        height: ds.components.button.height * 2.3,
-      } as ViewStyle,
-      cardMobile: {
-        height: ds.components.button.height * 2.3,
-        width: cardWidth,
-        backgroundColor: 'none',
-      } as ViewStyle,
-    });
-  },
-  (ds, theme, screenWidth) => themeKey(theme, ds) + `|${screenWidth}`,
+        marginBottom: ds.spacing.md,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
 );

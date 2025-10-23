@@ -1,5 +1,5 @@
 import React, {useRef, useState, useCallback} from 'react';
-import {StyleSheet} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 import {useNavigation} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedView, ModalScrollView} from '@/components/ui';
@@ -70,7 +70,8 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: theme.background,
+        backgroundColor:
+          Platform.OS === 'web' ? theme.background : theme.secondbackground,
       },
       content: {
         gap: ds.spacing.xxl,

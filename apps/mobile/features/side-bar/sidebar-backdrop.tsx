@@ -24,7 +24,7 @@ export function SidebarBackdrop({slideAnim}: SidebarBackdropProps) {
 
   const backdropAnimatedStyle = useAnimatedStyle(() => {
     return {
-      backgroundColor: theme.background,
+      backgroundColor: theme.sidebarBackground,
       opacity: interpolate(
         slideAnim.value,
         [0, SIDEBAR_CONFIG.width],

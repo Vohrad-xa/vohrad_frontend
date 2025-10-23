@@ -51,7 +51,7 @@ const _DesignSystem = {
     },
 
     heading: {
-      fontSize: 17,
+      fontSize: 16,
       lineHeight: 22,
       fontWeight: '600' as const,
       letterSpacing: 0.5,
@@ -60,7 +60,7 @@ const _DesignSystem = {
     // Content Level - Text
     label: {
       fontSize: 17,
-      lineHeight: 22,
+      lineHeight: 20,
       fontWeight: '500' as const,
       letterSpacing: 0.2,
     },
@@ -97,8 +97,8 @@ const _DesignSystem = {
     caption: {
       fontSize: 12,
       lineHeight: 16,
-      fontWeight: '400' as const,
-      letterSpacing: 0,
+      fontWeight: '500' as const,
+      letterSpacing: 0.2,
     },
   },
 
@@ -160,7 +160,7 @@ const _DesignSystem = {
     },
 
     card: {
-      borderRadius: 22,
+      borderRadius: 30,
       padding: 16,
     },
 

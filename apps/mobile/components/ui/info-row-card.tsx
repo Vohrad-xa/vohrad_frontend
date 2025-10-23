@@ -1,9 +1,11 @@
 import React, {useEffect, useRef} from 'react';
 import type {TextInput, TextInputProps} from 'react-native';
 import {StyleSheet, View, Platform} from 'react-native';
+import {type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
+import {type IconName} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {Divider} from './divider';
 import {InfoRow} from './info-row';
@@ -17,6 +19,9 @@ export type InfoField = {
   span?: 'half' | 'full';
   keyboardType?: TextInputProps['keyboardType'];
   renderAccessory?: React.ReactNode;
+  icon?: IconName; // Icon name to display at the start of the row
+  iconSize?: number; // Icon size (defaults to 20)
+  iconColorToken?: TokenName; // Icon color token (defaults to 'muted')
 };
 
 type InfoRowCardProps = {
@@ -89,6 +94,9 @@ export const InfoRowCard: React.FC<InfoRowCardProps> = ({
         type={field.type}
         keyboardType={field.keyboardType}
         renderAccessory={field.renderAccessory}
+        icon={field.icon}
+        iconSize={field.iconSize}
+        iconColorToken={field.iconColorToken}
       />
     );
   };
@@ -139,7 +147,16 @@ export const InfoRowCard: React.FC<InfoRowCardProps> = ({
     return fields.map((field, index) => (
       <React.Fragment key={field.key}>
         {index > 0 && (
-          <View style={styles.separatorContainer}>
+          <View
+            style={[
+              styles.separatorContainer,
+              {
+                paddingLeft: field.icon
+                  ? (field.iconSize ?? 20) + ds.spacing.xl + ds.spacing.xl
+                  : ds.spacing.xl,
+              },
+            ]}
+          >
             <Divider style={styles.separator} />
           </View>
         )}
@@ -190,8 +207,8 @@ const createStyles = makeStyleFactory(
       },
       rowContainer: {
         paddingVertical:
-          Platform.OS === 'android' ? ds.spacing.xs : ds.spacing.lg,
-        paddingHorizontal: ds.spacing.md,
+          Platform.OS === 'android' ? ds.spacing.md : ds.spacing.lg,
+        paddingHorizontal: ds.spacing.xl,
         justifyContent: 'center',
       },
       rowContainerWeb: {
@@ -201,7 +218,7 @@ const createStyles = makeStyleFactory(
         justifyContent: 'center',
       },
       separatorContainer: {
-        paddingHorizontal: ds.spacing.md,
+        paddingHorizontal: ds.spacing.xl,
       },
       separator: {
         marginVertical: 0,

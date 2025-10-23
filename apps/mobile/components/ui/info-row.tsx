@@ -13,9 +13,12 @@ import DateTimePicker, {
   DateTimePickerAndroid,
   type DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
+import {type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
+import {type IconName} from '@/utils/icons';
+import {Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {DatePickerMobile} from './date-picker-mobile';
 import {DatePickerWeb} from './date-picker-web';
@@ -37,6 +40,9 @@ type InfoRowProps = {
   type?: 'text' | 'date' | 'time';
   keyboardType?: TextInputProps['keyboardType'];
   renderAccessory?: React.ReactNode;
+  icon?: IconName; // Icon name to display at the start of the row
+  iconSize?: number; // Icon size (defaults to 20)
+  iconColorToken?: TokenName; // Icon color token (defaults to 'muted')
 };
 
 const InfoRowComponent: React.FC<InfoRowProps> = ({
@@ -50,6 +56,9 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
   type = 'text',
   keyboardType,
   renderAccessory,
+  icon,
+  iconSize = 20,
+  iconColorToken = 'muted',
 }) => {
   const {ds, theme, scheme} = useTheme();
   const styles = createStyles(ds, theme);
@@ -76,6 +85,27 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
     web: styles.accessoryContainerWeb,
   });
 
+  // Helper function to render label with optional icon
+  const renderLabelWithIcon = (labelText: string) => {
+    if (icon) {
+      return (
+        <View style={styles.labelWithIcon}>
+          <View style={styles.iconContainer}>
+            <Icon name={icon} size={iconSize} colorToken={iconColorToken} />
+          </View>
+          <ThemedText variant="label" colorToken="label">
+            {labelText}
+          </ThemedText>
+        </View>
+      );
+    }
+    return (
+      <ThemedText variant="label" colorToken="label">
+        {labelText}
+      </ThemedText>
+    );
+  };
+
   const selectedDate = useMemo(() => {
     if (!value || type !== 'date') return new Date();
     const parsed = new Date(value);
@@ -98,9 +128,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
     return (
       <View style={rowStyles}>
         <View style={styles.accessoryLabelContainer}>
-          <ThemedText variant="label" colorToken="label">
-            {label}
-          </ThemedText>
+          {renderLabelWithIcon(label)}
         </View>
         <View style={accessoryStyles}>{renderAccessory}</View>
       </View>
@@ -192,9 +220,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
   if (type === 'date' && Platform.OS === 'web') {
     return (
       <View style={rowStyles}>
-        <ThemedText variant="label" colorToken="label">
-          {label}
-        </ThemedText>
+        {renderLabelWithIcon(label)}
         <DatePickerWeb
           mode="date"
           selectedDate={selectedDate}
@@ -220,9 +246,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
 
     return (
       <View style={rowStyles}>
-        <ThemedText variant="label" colorToken="label">
-          {label}
-        </ThemedText>
+        {renderLabelWithIcon(label)}
         <DatePickerWeb
           mode="time"
           selectedDate={selectedTimeValue}
@@ -249,9 +273,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
     if (editable) {
       return (
         <View style={styles.row}>
-          <ThemedText variant="label" colorToken="label">
-            {label}
-          </ThemedText>
+          {renderLabelWithIcon(label)}
           <DateTimePicker
             value={selectedTime}
             mode="time"
@@ -266,9 +288,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
 
     return (
       <View style={styles.row}>
-        <ThemedText variant="label" colorToken="label">
-          {label}
-        </ThemedText>
+        {renderLabelWithIcon(label)}
         <ThemedText variant="value" style={styles.valueText}>
           {displayValue || fallbackLabel}
         </ThemedText>
@@ -370,7 +390,20 @@ const createStyles = makeStyleFactory(
       },
       accessoryLabelContainer: {
         flex: 1,
-        paddingVertical: Platform.OS === 'android' ? ds.spacing.md : 0,
+        paddingVertical: Platform.OS === 'android' ? ds.spacing.xs : 0,
+      },
+      iconContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: ds.spacing.xl,
+        borderRadius: ds.borderRadius.lg,
+        padding: 4,
+        backgroundColor: theme.highlight,
+      },
+      labelWithIcon: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
       },
       valueText: {
         ...ds.typography.value,

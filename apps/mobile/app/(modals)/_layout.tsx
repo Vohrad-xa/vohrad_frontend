@@ -8,6 +8,8 @@ export default function ModalsLayout() {
       }}
     >
       <Stack.Screen name="settings" />
+      <Stack.Screen name="filter" />
+      <Stack.Screen name="scan" />
     </Stack>
   );
 }

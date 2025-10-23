@@ -81,7 +81,8 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: theme.background,
+        backgroundColor:
+          Platform.OS === 'web' ? theme.background : theme.secondbackground,
       },
       content: {
         gap: ds.spacing.xxl,

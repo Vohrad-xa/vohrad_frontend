@@ -1,6 +1,12 @@
 import React, {forwardRef, useImperativeHandle, useEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {ThemedText, ThemedView, GlassCard, InfoRowCard} from '@/components/ui';
+import {Platform, StyleSheet, View} from 'react-native';
+import {
+  ThemedText,
+  ThemedView,
+  GlassCard,
+  InfoRowCard,
+  EmptyState,
+} from '@/components/ui';
 import type {BadgeStatus} from '@/components/ui/themed-view';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useLoading} from '@/providers';
@@ -100,13 +106,7 @@ export const OrganizationContent = forwardRef<
   }, [stagedValues, onFieldChange]);
 
   if (!organization) {
-    return (
-      <View style={styles.container}>
-        <ThemedText variant="secondary" style={styles.emptyState}>
-          No organization information available
-        </ThemedText>
-      </View>
-    );
+    return <EmptyState message="No organization information available" />;
   }
 
   const renderSectionHeader = (title: string) => {
@@ -204,11 +204,6 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.xl,
         paddingTop: ds.spacing.md,
       },
-      emptyState: {
-        textAlign: 'center',
-        opacity: ds.opacity.muted,
-        paddingVertical: ds.spacing.xxxl,
-      },
       metaCard: {
         width: '100%',
         borderRadius: ds.components.card.borderRadius,
@@ -253,7 +248,7 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.md,
       },
       sectionHeader: {
-        paddingLeft: ds.spacing.xs,
+        paddingHorizontal: Platform.OS === 'web' ? 0 : ds.spacing.xl,
       },
       sectionTitle: {
         flex: 1,

@@ -1,5 +1,5 @@
 import React, {forwardRef, useImperativeHandle, useEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 import {useEmailConfirmation} from '@vohrad/store';
 import {
   ThemedButton,
@@ -7,6 +7,7 @@ import {
   ThemedView,
   GlassCard,
   InfoRowCard,
+  EmptyState,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useLoading} from '@/providers';
@@ -121,13 +122,7 @@ export const ProfileContentEditable = forwardRef<
   };
 
   if (!profileDetails) {
-    return (
-      <View style={styles.container}>
-        <ThemedText variant="secondary" style={styles.emptyState}>
-          No profile information available
-        </ThemedText>
-      </View>
-    );
+    return <EmptyState message="No profile information available" />;
   }
 
   return (
@@ -242,11 +237,6 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.xl,
         paddingTop: ds.spacing.md,
       },
-      emptyState: {
-        textAlign: 'center',
-        opacity: ds.opacity.muted,
-        paddingVertical: ds.spacing.xxxl,
-      },
       section: {
         gap: ds.spacing.md,
       },
@@ -256,6 +246,7 @@ const createStyles = makeStyleFactory(
       },
       sectionTitle: {
         ...ds.typography.heading,
+        paddingHorizontal: Platform.OS === 'web' ? 0 : ds.spacing.xl,
       },
       metaCard: {
         width: '100%',

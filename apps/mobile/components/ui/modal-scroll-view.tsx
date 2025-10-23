@@ -57,7 +57,7 @@ const createStyles = makeStyleFactory(
       },
       defaultContent: {
         paddingTop: ds.spacing.lg,
-        paddingHorizontal: ds.spacing.xl,
+        paddingHorizontal: ds.spacing.md,
         paddingBottom: ds.spacing.xxl,
       },
     }),

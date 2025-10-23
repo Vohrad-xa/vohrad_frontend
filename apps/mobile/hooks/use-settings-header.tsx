@@ -1,6 +1,6 @@
 import {useLayoutEffect, useState, useCallback, useRef, useEffect} from 'react';
 import {Platform, View, Text, Pressable} from 'react-native';
-import {ThemedButton} from '@/components/ui';
+import {ThemedButton} from '@/components/ui/themed-components';
 import {useTheme} from '@/providers';
 import {triggerHaptic} from '@/utils/haptics';
 import {Icon, AppIcons} from '@/utils/icons';

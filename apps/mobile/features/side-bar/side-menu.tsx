@@ -75,26 +75,8 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
     (Platform.OS === 'android' ? ds.spacing.xxxl : ds.spacing.lg);
 
   const styles = createStyles(theme, ds, headerHeight, footerHeight);
-  const headerBorderOpacity = useSharedValue(0);
-  const footerBorderOpacity = useSharedValue(0);
-
-  const headerStyle = useAnimatedStyle(() => ({
-    borderBottomWidth: 1,
-    borderBottomColor: interpolateColor(
-      headerBorderOpacity.value,
-      [0, 1],
-      ['transparent', theme.border],
-    ),
-  }));
-
-  const footerStyle = useAnimatedStyle(() => ({
-    borderTopWidth: 1,
-    borderTopColor: interpolateColor(
-      footerBorderOpacity.value,
-      [0, 1],
-      ['transparent', theme.border],
-    ),
-  }));
+  const headerBlurIntensity = useSharedValue(0);
+  const footerBlurIntensity = useSharedValue(0);
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const {contentOffset, contentSize, layoutMeasurement} = event.nativeEvent;
@@ -102,11 +84,14 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
     const maxScroll = contentSize.height - layoutMeasurement.height;
     const distanceFromBottom = maxScroll - scrollY;
 
-    headerBorderOpacity.value = withTiming(scrollY > 10 ? 1 : 0, {
+    const isScrolled = scrollY > 10;
+    const isAtBottom = distanceFromBottom > 10;
+
+    headerBlurIntensity.value = withTiming(isScrolled ? 40 : 0, {
       duration: 200,
     });
 
-    footerBorderOpacity.value = withTiming(distanceFromBottom > 10 ? 1 : 0, {
+    footerBlurIntensity.value = withTiming(isAtBottom ? 40 : 0, {
       duration: 200,
     });
   };
@@ -132,6 +117,19 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
     };
   });
 
+  // Color swap for the container, not the content
+  const containerStyle = useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(
+      slideAnim.value,
+      [0, SIDEBAR_CONFIG.width],
+      [theme.sidebarBackground, theme.background], // Start: gray, End: black
+    );
+
+    return {
+      backgroundColor,
+    };
+  });
+
   // Gradient shadow opacity
   const shadowStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -145,7 +143,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
 
   return (
     <GestureDetector gesture={composedGesture}>
-      <Animated.View style={styles.container}>
+      <Animated.View style={[styles.container, containerStyle]}>
         <Animated.View style={[StyleSheet.absoluteFill, contentStyle]}>
           <ScrollView
             style={styles.scrollContainer}
@@ -168,10 +166,14 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
             ))}
           </ScrollView>
           <View style={styles.absoluteTop}>
-            <SideMenuHeader headerStyle={headerStyle} onClose={onClose} />
+            <SideMenuHeader
+              onClose={onClose}
+              blurIntensity={headerBlurIntensity}
+            />
           </View>
-          <Animated.View style={[styles.absoluteBottom, footerStyle]}>
+          <View style={styles.absoluteBottom}>
             <ProfileSection
+              blurIntensity={footerBlurIntensity}
               onPressSettings={() => {
                 Keyboard.dismiss();
                 router.push('/(modals)/settings');
@@ -181,7 +183,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
                 router.push('/(modals)/settings/profile');
               }}
             />
-          </Animated.View>
+          </View>
         </Animated.View>
 
         {/* Premium edge shadow gradient */}
@@ -216,7 +218,8 @@ const createStyles = makeStyleFactory(
         bottom: 0,
         width: SIDEBAR_CONFIG.width,
         zIndex: 0,
-        backgroundColor: theme.sidebarBackground,
+        // Background color is now animated in contentStyle
+        overflow: 'hidden', // Hide any overflow from scaling
       },
       scrollContainer: {
         flex: 1,

@@ -20,7 +20,7 @@ export const SIDEBAR_ANIMATION = {
 } as const;
 
 export const BACKDROP_CONFIG = {
-  maxOpacity: 0.85,
+  maxOpacity: 0.9,
   zIndex: 999,
 } as const;
 

@@ -14,7 +14,8 @@
       "icon": "./assets/icons/ios/AppIcon.appiconset/Icon-AppStore-1024x1024.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSFaceIDUsageDescription": "Face ID lets you unlock the app quickly and securely."
+        "NSFaceIDUsageDescription": "Face ID lets you unlock the app quickly and securely.",
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes and QR codes for quick data entry."
       }
     },
     "android": {
@@ -29,8 +30,10 @@
       },
       "playStoreUrl": "https://play.google.com/store/apps/details?id=vohrad.mobile",
       "predictiveBackGestureEnabled": true,
+      "edgeToEdgeEnabled": true,
       "windowSoftInputMode": "adjustPan",
-      "package": "vohrad.mobile"
+      "package": "vohrad.mobile",
+      "permissions": ["CAMERA"]
     },
     "web": {
       "output": "single",
@@ -40,6 +43,7 @@
     "plugins": [
       "expo-dev-client",
       "expo-router",
+      "expo-camera",
       [
         "expo-splash-screen",
         {

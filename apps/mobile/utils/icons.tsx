@@ -23,7 +23,7 @@ export type IconName =
   | 'help-circle-outline'
   | 'information-circle-outline'
   | 'exit-outline'
-  | 'options-outline'
+  | 'filter-outline'
   | 'planet-outline'
   | 'card-outline'
   | 'business-outline'
@@ -123,7 +123,7 @@ export function getIconGlyph(name: IconName): string | undefined {
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 20,
+  size = 'md',
   color,
   colorToken,
   style,
@@ -171,7 +171,7 @@ export const AppIcons = {
     scan: 'barcode-outline' as IconName,
     profile: 'person-outline' as IconName,
     events: 'notifications-outline' as IconName,
-    filter: 'options-outline' as IconName,
+    filter: 'filter-outline' as IconName,
     back: Platform.select({
       ios: 'chevron-back-outline',
       default: 'arrow-back',

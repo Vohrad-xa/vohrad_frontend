@@ -1,6 +1,12 @@
 import React, {forwardRef, useImperativeHandle} from 'react';
 import {StyleSheet, View, Platform} from 'react-native';
-import {ThemedText, InfoRowCard, Toggle, type InfoField} from '@/components/ui';
+import {
+  ThemedText,
+  InfoRowCard,
+  Toggle,
+  EmptyState,
+  type InfoField,
+} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useLoading, useHaptic} from '@/providers';
 import {showConfirmAlert, showAlert} from '@/utils';
@@ -98,11 +104,10 @@ export const PreferencesContentEditable = forwardRef<
 
   const handleToggleBusinessHours = React.useCallback(
     async (enabled: boolean) => {
-      triggerHaptic(enabled ? 'light' : 'warning');
-
       try {
         await toggleBusinessHours(enabled);
       } catch (err) {
+        triggerHaptic('warning');
         const errorMessage =
           err instanceof Error
             ? err.message
@@ -117,13 +122,7 @@ export const PreferencesContentEditable = forwardRef<
   );
 
   if (!organization) {
-    return (
-      <View style={styles.container}>
-        <ThemedText variant="secondary" style={styles.emptyState}>
-          No organization information available
-        </ThemedText>
-      </View>
-    );
+    return <EmptyState message="No organization information available" />;
   }
 
   const isEditable = isEditing || Platform.OS === 'web';
@@ -197,7 +196,7 @@ export const PreferencesContentEditable = forwardRef<
           />
         )}
 
-        <ThemedText variant="secondary" style={styles.caption}>
+        <ThemedText variant="caption" style={styles.caption}>
           Toggle to enable, adjust start and end times as needed then save your
           preferences, the software will be locked outside of these hours.
         </ThemedText>
@@ -225,28 +224,14 @@ const createStyles = makeStyleFactory(
       },
       sectionTitle: {
         ...ds.typography.heading,
-      },
-      emptyState: {
-        textAlign: 'center',
-        opacity: ds.opacity.muted,
-        paddingVertical: ds.spacing.xxxl,
-      },
-      disabledMessage: {
-        paddingVertical: ds.spacing.lg,
-        paddingHorizontal: ds.spacing.md,
-        borderRadius: ds.borderRadius.lg,
-        borderWidth: 1,
-        borderColor: theme.border,
-        backgroundColor: theme.surface,
+        paddingHorizontal: Platform.OS === 'web' ? 0 : ds.spacing.xl,
       },
       disabledText: {
         textAlign: 'center',
         color: theme.muted,
       },
       caption: {
-        ...ds.typography.caption,
-        color: theme.muted,
-        paddingHorizontal: ds.spacing.md,
+        paddingHorizontal: ds.spacing.xl,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

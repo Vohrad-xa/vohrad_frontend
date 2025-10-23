@@ -5,22 +5,21 @@ import {
   Platform,
   StatusBar,
 } from 'react-native';
-import {BlurView} from 'expo-blur';
-import Animated from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {SearchBar, GlassCard} from '@/components/ui';
+import {SearchBar, GlassCard, AnimatedBlurView} from '@/components/ui';
 import type {ColorScheme} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
+import type {SharedValue} from 'react-native-reanimated';
 
 interface SideMenuHeaderProps {
-  headerStyle: object;
   onClose: () => void;
+  blurIntensity: SharedValue<number>;
 }
 
-export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
+export function SideMenuHeader({onClose, blurIntensity}: SideMenuHeaderProps) {
   const {theme, ds, scheme} = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -32,26 +31,24 @@ export function SideMenuHeader({headerStyle, onClose}: SideMenuHeaderProps) {
   const styles = createStyles(theme, ds, scheme, topPadding);
 
   return (
-    <Animated.View style={headerStyle}>
-      <BlurView
-        intensity={40}
-        tint={scheme === 'dark' ? 'dark' : 'light'}
-        style={styles.headerBlurView}
-      >
-        <View style={styles.headerContent}>
-          <SearchBar style={styles.searchBar} placeholder="Search" />
-          <GlassCard isInteractive>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={onClose}
-              accessibilityLabel="Close sidebar"
-            >
-              <Icon name={AppIcons.navigation.close} />
-            </TouchableOpacity>
-          </GlassCard>
-        </View>
-      </BlurView>
-    </Animated.View>
+    <AnimatedBlurView
+      blurIntensity={blurIntensity}
+      tint={scheme === 'dark' ? 'dark' : 'light'}
+      style={styles.headerBlurView}
+    >
+      <View style={styles.headerContent}>
+        <SearchBar style={styles.searchBar} placeholder="Search" />
+        <GlassCard isInteractive>
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={onClose}
+            accessibilityLabel="Close sidebar"
+          >
+            <Icon name={AppIcons.navigation.close} />
+          </TouchableOpacity>
+        </GlassCard>
+      </View>
+    </AnimatedBlurView>
   );
 }
 

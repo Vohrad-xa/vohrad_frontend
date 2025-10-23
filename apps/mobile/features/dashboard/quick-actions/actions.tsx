@@ -8,15 +8,20 @@ import {
   type ViewStyle,
   type TextStyle,
 } from 'react-native';
+import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {MenuItem} from '@/types';
 import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {ThemedText} from '../../components/ui/themed-text';
 import {AddQuickAction} from './add/add';
+import {ScanQuickAction} from './scan-action';
 
-export function QuickActions() {
+type QuickActionsProps = {
+  onScanPress?: () => void;
+};
+
+export function QuickActions({onScanPress}: QuickActionsProps) {
   const {ds, theme} = useTheme();
   const containerRef = useRef<View>(null);
 
@@ -59,6 +64,17 @@ export function QuickActions() {
       );
     }
 
+    if (item.label === 'Scan') {
+      return (
+        <ScanQuickAction
+          icon={item.icon}
+          label={item.label}
+          actionStyles={addActionStyles}
+          onScanPress={onScanPress}
+        />
+      );
+    }
+
     return (
       <TouchableOpacity style={styles.actionButton}>
         <View style={styles.iconContainer}>
@@ -77,16 +93,32 @@ export function QuickActions() {
     <View ref={containerRef} collapsable={false} style={styles.card}>
       {Platform.OS === 'web' ? (
         <View style={styles.webGrid}>
-          {quickActions.map((item) =>
-            item.label === 'Add' ? (
-              <AddQuickAction
-                key={item.label}
-                icon={item.icon}
-                label={item.label}
-                containerRef={containerRef}
-                actionStyles={addActionStyles}
-              />
-            ) : (
+          {quickActions.map((item) => {
+            if (item.label === 'Add') {
+              return (
+                <AddQuickAction
+                  key={item.label}
+                  icon={item.icon}
+                  label={item.label}
+                  containerRef={containerRef}
+                  actionStyles={addActionStyles}
+                />
+              );
+            }
+
+            if (item.label === 'Scan') {
+              return (
+                <ScanQuickAction
+                  key={item.label}
+                  icon={item.icon}
+                  label={item.label}
+                  actionStyles={addActionStyles}
+                  onScanPress={onScanPress}
+                />
+              );
+            }
+
+            return (
               <TouchableOpacity key={item.label} style={styles.actionButton}>
                 <View style={styles.iconContainer}>
                   <Icon
@@ -97,8 +129,8 @@ export function QuickActions() {
                 </View>
                 <ThemedText style={styles.actionLabel}>{item.label}</ThemedText>
               </TouchableOpacity>
-            ),
-          )}
+            );
+          })}
         </View>
       ) : (
         <FlatList

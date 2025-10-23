@@ -12,8 +12,10 @@ import {
   type Href,
 } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import {StatusBar} from 'expo-status-bar';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {LoadingOverlay} from '@/components/ui';
+import {FilterProvider} from '@/features/dashboard/overview/filter-context';
 import {
   authenticateWithBiometrics,
   disableBiometrics,
@@ -25,6 +27,7 @@ import {
   useAuth,
   LoadingProvider,
   HapticProvider,
+  useTheme,
 } from '@/providers';
 import {secureStorage} from '@/utils/secure-storage';
 import * as AppStorage from '@/utils/storage';
@@ -217,6 +220,23 @@ function RootNavigation() {
   );
 }
 
+// Global status bar controller
+function GlobalStatusBar() {
+  const {scheme} = useTheme();
+
+  return (
+    <StatusBar
+      style={
+        Platform.OS === 'android'
+          ? scheme === 'dark'
+            ? 'light'
+            : 'dark'
+          : 'auto'
+      }
+    />
+  );
+}
+
 // Bootstraps secure auth persistence and wires global providers.
 export default function RootLayout() {
   useEffect(() => {
@@ -363,17 +383,20 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <ActionSheetProvider>
-        <AppThemeProvider>
+      <AppThemeProvider>
+        <ActionSheetProvider>
           <HapticProvider>
             <LoadingProvider>
               <AuthProvider>
-                <RootNavigation />
+                <FilterProvider>
+                  <GlobalStatusBar />
+                  <RootNavigation />
+                </FilterProvider>
               </AuthProvider>
             </LoadingProvider>
           </HapticProvider>
-        </AppThemeProvider>
-      </ActionSheetProvider>
+        </ActionSheetProvider>
+      </AppThemeProvider>
     </GestureHandlerRootView>
   );
 }
