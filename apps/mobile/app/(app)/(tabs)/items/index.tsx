@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Stack} from 'expo-router';
+import {Stack, useRouter} from 'expo-router';
 import {
   ThemedView,
   ModalFlatList,
@@ -236,6 +236,7 @@ const exampleItems: ListRowData[] = [
 
 export default function SupportScreen() {
   const {ds} = useTheme();
+  const router = useRouter();
   const styles = createStyles(ds);
   const [_searchQuery, setSearchQuery] = useState('');
 
@@ -247,9 +248,16 @@ export default function SupportScreen() {
     onRefresh: handleRefresh,
   });
 
+  const handleItemPress = (itemId: string) => {
+    router.push(`/(app)/(tabs)/items/${itemId}`);
+  };
+
   const renderItem = ({item, index}: {item: ListRowData; index: number}) => (
     <View>
-      <ListRow item={item} showImage />
+      <ListRow
+        item={{...item, onPress: () => handleItemPress(item.id)}}
+        showImage
+      />
       {index < exampleItems.length - 1 && (
         <View style={styles.dividerContainer}>
           <Divider />

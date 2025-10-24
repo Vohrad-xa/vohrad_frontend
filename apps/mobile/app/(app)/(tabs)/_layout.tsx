@@ -106,7 +106,6 @@ export default function TabLayout() {
         ios: 'onScrollDown',
         default: undefined,
       })}
-      // disableTransparentOnScrollEdge={true}
       disableIndicator={false}
       backgroundColor={theme.navigationBar}
       tintColor={theme.tabIconSelected}
