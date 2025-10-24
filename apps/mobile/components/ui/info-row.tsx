@@ -390,7 +390,7 @@ const createStyles = makeStyleFactory(
       },
       accessoryLabelContainer: {
         flex: 1,
-        paddingVertical: Platform.OS === 'android' ? ds.spacing.xs : 0,
+        paddingVertical: Platform.OS === 'android' ? 10 : 0,
       },
       iconContainer: {
         justifyContent: 'center',

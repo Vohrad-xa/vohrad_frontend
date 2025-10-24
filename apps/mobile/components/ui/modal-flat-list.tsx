@@ -28,7 +28,7 @@ export function ModalFlatList<T>({
     >
       <FlatList
         contentContainerStyle={[styles.defaultContent, contentContainerStyle]}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={Platform.OS === 'web'}
         keyboardShouldPersistTaps="handled"
         contentInsetAdjustmentBehavior="automatic"
         {...props}
@@ -45,7 +45,7 @@ const createStyles = makeStyleFactory(
       },
       defaultContent: {
         paddingTop: ds.spacing.lg,
-        paddingHorizontal: ds.spacing.xl,
+        paddingHorizontal: ds.spacing.md,
         paddingBottom: ds.spacing.xxl,
       },
     }),

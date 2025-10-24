@@ -6,7 +6,13 @@ import type {ContainerStyleProps} from '@/types';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {GlassCard} from './glass-card';
 
-export type BadgeStatus = 'active' | 'inactive' | 'suspended';
+export type BadgeStatus =
+  | 'success'
+  | 'error'
+  | 'inactive'
+  | 'maintenance'
+  | 'active'
+  | 'suspended';
 
 export interface ThemedViewProps
   extends ViewProps,
@@ -56,14 +62,19 @@ export const ThemedView: React.FC<ThemedViewProps> = ({
 
 const getStatusColor = (status: BadgeStatus, theme: ThemeShape): string => {
   switch (status) {
+    case 'success':
     case 'active':
       return theme.accentGreen;
-    case 'inactive':
-      return theme.accentYellow;
-    case 'suspended':
+    case 'error':
       return theme.destructive;
-    default:
+    case 'inactive':
+      return theme.muted;
+    case 'maintenance':
+      return theme.accentOrange;
+    case 'suspended':
       return theme.accentYellow;
+    default:
+      return theme.primary;
   }
 };
 
@@ -117,7 +128,7 @@ const createStyles = makeStyleFactory(
             paddingVertical: ds.spacing.xxs,
             paddingHorizontal: ds.spacing.sm,
             borderWidth: 0,
-            alignSelf: 'flex-start',
+            alignSelf: 'center',
             backgroundColor:
               variant === 'statusBadge' && badgeStatus
                 ? getStatusColor(badgeStatus, theme)

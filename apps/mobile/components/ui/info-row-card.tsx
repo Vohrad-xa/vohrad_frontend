@@ -206,8 +206,7 @@ const createStyles = makeStyleFactory(
         zIndex: 100,
       },
       rowContainer: {
-        paddingVertical:
-          Platform.OS === 'android' ? ds.spacing.md : ds.spacing.lg,
+        paddingVertical: Platform.OS === 'android' ? 6 : ds.spacing.lg,
         paddingHorizontal: ds.spacing.xl,
         justifyContent: 'center',
       },

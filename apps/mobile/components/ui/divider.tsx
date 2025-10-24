@@ -1,24 +1,24 @@
-import {View, StyleSheet} from 'react-native';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {View, StyleSheet, Platform} from 'react-native';
+import {type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {BaseViewProps} from '@/types';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 export function Divider({style}: Pick<BaseViewProps, 'style'>) {
-  const {theme, ds} = useTheme();
-  const styles = createStyles(theme, ds);
+  const {theme} = useTheme();
+  const styles = createStyles(theme);
 
   return <View style={[styles.divider, style]} />;
 }
 
 const createStyles = makeStyleFactory(
-  (theme: ThemeShape, ds: DSShape) =>
+  (theme: ThemeShape) =>
     StyleSheet.create({
       divider: {
-        height: StyleSheet.hairlineWidth,
+        height: Platform.OS === 'android' ? 1 : StyleSheet.hairlineWidth,
         backgroundColor: theme.divider,
-        marginVertical: ds.spacing.md,
+        marginVertical: 0,
       },
     }),
-  (theme, ds) => themeKey(theme, ds),
+  (theme) => `${theme.version}`,
 );

@@ -178,6 +178,7 @@ export const AppIcons = {
     }) as IconName,
     forward: 'chevron-forward-outline' as IconName,
     close: 'close-outline' as IconName,
+    chevron: 'chevron-forward-outline' as IconName,
   },
 
   inventory: {
@@ -201,17 +202,21 @@ export const AppIcons = {
     refresh: 'refresh-outline' as IconName,
     move: 'return-down-forward-outline' as IconName,
     logout: 'exit-outline' as IconName,
+    close: 'close-outline' as IconName,
   },
 
   content: {
     document: 'document-text-outline' as IconName,
     folder: 'folder-outline' as IconName,
     image: 'image-outline' as IconName,
+    imageFallback: 'image-outline' as IconName,
     download: 'cloud-download-outline' as IconName,
     export: 'share-outline' as IconName,
     print: 'print-outline' as IconName,
     language: 'planet-outline' as IconName,
     privacy: 'lock-closed-outline' as IconName,
+    search: 'search-outline' as IconName,
+    list: 'list-outline' as IconName,
   },
 
   status: {
@@ -220,6 +225,8 @@ export const AppIcons = {
     error: 'alert-circle-outline' as IconName,
     info: 'information-circle-outline' as IconName,
     help: 'help-circle-outline' as IconName,
+    time: 'time-outline' as IconName,
+    checkmarkCircleOutline: 'checkmark-circle-outline' as IconName,
   },
 
   business: {
