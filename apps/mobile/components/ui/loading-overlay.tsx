@@ -3,9 +3,13 @@ import {type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
-export function LoadingOverlay() {
+interface LoadingOverlayProps {
+  fullScreen?: boolean;
+}
+
+export function LoadingOverlay({fullScreen = false}: LoadingOverlayProps) {
   const {theme} = useTheme();
-  const styles = createStyles(theme);
+  const styles = createStyles(theme, fullScreen);
 
   return (
     <View style={styles.container}>
@@ -17,7 +21,7 @@ export function LoadingOverlay() {
 }
 
 const createStyles = makeStyleFactory(
-  (_theme: ThemeShape) =>
+  (theme: ThemeShape, fullScreen: boolean) =>
     StyleSheet.create({
       container: {
         ...StyleSheet.absoluteFillObject,
@@ -27,8 +31,8 @@ const createStyles = makeStyleFactory(
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        backgroundColor: fullScreen ? theme.background : 'rgba(0, 0, 0, 0.3)',
       },
     }),
-  (theme) => theme.version.toString(),
+  (theme, fullScreen) => `${theme.version}|${fullScreen}`,
 );

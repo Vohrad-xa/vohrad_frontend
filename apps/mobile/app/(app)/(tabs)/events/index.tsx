@@ -1,4 +1,5 @@
 import {StyleSheet} from 'react-native';
+import {Stack} from 'expo-router';
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
@@ -9,19 +10,22 @@ export default function EventsPage() {
   const styles = createStyles(theme, ds);
 
   return (
-    <RefreshableScrollView
-      bounces
-      showsVerticalScrollIndicator={false}
-      contentInsetAdjustmentBehavior="automatic"
-      style={styles.scrollView}
-    >
-      <ThemedView style={styles.container}>
-        <ThemedText variant="pageTitle">Events</ThemedText>
-        <ThemedText variant="body" style={styles.textMarginTop}>
-          System events and notifications will be displayed here.
-        </ThemedText>
-      </ThemedView>
-    </RefreshableScrollView>
+    <>
+      <Stack.Screen options={{title: 'Events'}} />
+      <RefreshableScrollView
+        bounces
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="automatic"
+        style={styles.scrollView}
+      >
+        <ThemedView style={styles.container}>
+          <ThemedText variant="pageTitle">Events</ThemedText>
+          <ThemedText variant="body" style={styles.textMarginTop}>
+            System events and notifications will be displayed here.
+          </ThemedText>
+        </ThemedView>
+      </RefreshableScrollView>
+    </>
   );
 }
 

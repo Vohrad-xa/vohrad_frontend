@@ -1,13 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import type {ComponentProps} from 'react';
-import {
-  Platform,
-  View,
-  type ColorValue,
-  type ImageSourcePropType,
-  StyleSheet,
-} from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
+import {Platform, View, StyleSheet} from 'react-native';
+import {Ionicons, MaterialIcons} from '@expo/vector-icons';
 import {Tabs, useNavigation, useSegments} from 'expo-router';
 import {
   Icon,
@@ -15,56 +9,48 @@ import {
   Label,
   VectorIcon,
 } from 'expo-router/unstable-native-tabs';
-import {HeaderButton} from '@/components/ui';
 import {type ThemeShape} from '@/constants/theme';
-import {useHaptic, useSidebar, useTheme} from '@/providers';
+import {useHaptic, useTheme} from '@/providers';
 import type {TabItem} from '@/types/ui';
-import {AppIcons, type IconName} from '@/utils';
+import {AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 export const unstable_settings = {
-  initialRouteName: 'index',
+  initialRouteName: 'dashboard',
 };
 
 const TAB_ITEMS: TabItem[] = [
-  {name: 'index', label: 'Dashboard', icon: AppIcons.navigation.home},
+  {name: 'dashboard', label: 'Dashboard', icon: AppIcons.navigation.home},
   {name: 'items', label: 'Items', icon: AppIcons.inventory.items},
   {name: 'locations', label: 'Locations', icon: AppIcons.inventory.locations},
   {name: 'events', label: 'Events', icon: AppIcons.navigation.events},
 ];
 
-interface IoniconsModule {
-  getImageSource: (
-    name: IconName,
-    size: number,
-    color: ColorValue,
-  ) => Promise<ImageSourcePropType>;
-}
+// Icon mappings for different platforms
+const iOS_SF_SYMBOLS = {
+  dashboard: 'house.fill',
+  items: 'folder.fill',
+  locations: 'map.fill',
+  events: 'bell.fill',
+} as const;
 
-const IoniconsFamily: IoniconsModule = {
-  getImageSource: async (name: IconName, size: number, color: ColorValue) => {
-    if (Platform.OS === 'web') {
-      return {uri: ''};
-    }
-    const result = await Ionicons.getImageSource(
-      name as keyof typeof Ionicons.glyphMap,
-      size,
-      color as string,
-    );
-    return result ?? {uri: ''};
-  },
-};
+const ANDROID_MATERIAL_ICONS = {
+  dashboard: 'dashboard',
+  items: 'inventory',
+  locations: 'edit-location',
+  events: 'notifications',
+} as const;
 
 export default function TabLayout() {
   const navigation = useNavigation();
   const segments = useSegments();
   const {theme} = useTheme();
   const {triggerHaptic} = useHaptic();
-  const {toggleSideMenu} = useSidebar();
+  // const {toggleSideMenu} = useSidebar();
   const styles = createStyles(theme);
   const previousTabRef = useRef<string | null>(null);
   useEffect(() => {
-    const currentSegment = segments[segments.length - 1] ?? 'index';
+    const currentSegment = segments[segments.length - 1] ?? 'dashboard';
     const activeTab =
       TAB_ITEMS.find((tab) => tab.name === currentSegment) ?? TAB_ITEMS[0];
 
@@ -73,24 +59,11 @@ export default function TabLayout() {
     }
     previousTabRef.current = activeTab.name;
 
+    // Hide header for all tabs since they now use Stack layouts
     navigation.setOptions({
-      title: activeTab?.label ?? 'Dashboard',
-      headerShown: true,
-      headerTransparent: Platform.OS === 'ios',
-      headerStyle:
-        Platform.OS === 'android' ? styles.headerStyleAndroid : undefined,
-      headerTitleStyle: styles.headerTitleStyle,
-      headerTitleAlign: 'center',
-      headerLeft: () => (
-        <HeaderButton
-          icon={AppIcons.navigation.menu}
-          accessibilityLabel="Open menu"
-          onPress={toggleSideMenu}
-          iconSize="xxl"
-        />
-      ),
+      headerShown: false,
     });
-  }, [segments, navigation, theme, toggleSideMenu, styles, triggerHaptic]);
+  }, [segments, navigation, triggerHaptic]);
 
   if (Platform.OS === 'web') {
     return (
@@ -133,16 +106,37 @@ export default function TabLayout() {
         ios: 'onScrollDown',
         default: undefined,
       })}
+      // disableTransparentOnScrollEdge={true}
       disableIndicator={false}
       backgroundColor={theme.navigationBar}
-      iconColor={theme.icon}
       tintColor={theme.tabIconSelected}
       indicatorColor={theme.card}
+      iconColor={Platform.OS === 'android' ? theme.icon : undefined}
     >
       {TAB_ITEMS.map((tab) => (
         <NativeTabs.Trigger key={tab.name} name={tab.name}>
           <Label>{tab.label}</Label>
-          <Icon src={<VectorIcon family={IoniconsFamily} name={tab.icon} />} />
+          {Platform.select({
+            ios: (
+              <Icon
+                sf={iOS_SF_SYMBOLS[tab.name as keyof typeof iOS_SF_SYMBOLS]}
+              />
+            ),
+            android: (
+              <Icon
+                src={
+                  <VectorIcon
+                    family={MaterialIcons}
+                    name={
+                      ANDROID_MATERIAL_ICONS[
+                        tab.name as keyof typeof ANDROID_MATERIAL_ICONS
+                      ]
+                    }
+                  />
+                }
+              />
+            ),
+          })}
         </NativeTabs.Trigger>
       ))}
     </NativeTabs>

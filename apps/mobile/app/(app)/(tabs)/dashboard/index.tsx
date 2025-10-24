@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {userApi} from '@vohrad/api-client';
 import {useAuthStore} from '@vohrad/store';
-import {router} from 'expo-router';
+import {router, Stack} from 'expo-router';
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {OverviewCards} from '@/features/dashboard/overview/overview-cards';
@@ -46,27 +46,30 @@ export default function HomeScreen() {
     Platform.OS === 'web' ? ScrollView : RefreshableScrollView;
 
   return (
-    <ScrollComponent
-      bounces={Platform.OS !== 'web'}
-      showsVerticalScrollIndicator={false}
-      contentInsetAdjustmentBehavior={
-        Platform.OS !== 'web' ? 'automatic' : undefined
-      }
-      style={styles.scrollView}
-      {...(Platform.OS !== 'web' && {onRefresh: handleRefresh})}
-    >
-      <ThemedView style={styles.container}>
-        <ThemedText variant="heading" style={styles.titleNoMarginTop}>
-          Quick Actions
-        </ThemedText>
-        <QuickActions onScanPress={handleScanOpen} />
+    <>
+      <Stack.Screen options={{title: 'Dashboard'}} />
+      <ScrollComponent
+        bounces={Platform.OS !== 'web'}
+        showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior={
+          Platform.OS !== 'web' ? 'automatic' : undefined
+        }
+        style={styles.scrollView}
+        {...(Platform.OS !== 'web' && {onRefresh: handleRefresh})}
+      >
+        <ThemedView style={styles.container}>
+          <ThemedText variant="heading" style={styles.titleNoMarginTop}>
+            Quick Actions
+          </ThemedText>
+          <QuickActions onScanPress={handleScanOpen} />
 
-        <OverviewCards
-          onFilterPress={handlePresentModal}
-          screenWidth={screenWidth}
-        />
-      </ThemedView>
-    </ScrollComponent>
+          <OverviewCards
+            onFilterPress={handlePresentModal}
+            screenWidth={screenWidth}
+          />
+        </ThemedView>
+      </ScrollComponent>
+    </>
   );
 }
 

@@ -6,6 +6,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import type {FlatListProps} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -19,7 +20,9 @@ export function ModalFlatList<T>({
   ...props
 }: ModalFlatListProps<T>) {
   const {ds} = useTheme();
-  const styles = createStyles(ds);
+  const insets = useSafeAreaInsets();
+  const tabBarHeight = Platform.OS === 'android' ? 80 : 0;
+  const styles = createStyles(ds, insets.bottom + tabBarHeight);
 
   return (
     <KeyboardAvoidingView
@@ -30,7 +33,9 @@ export function ModalFlatList<T>({
         contentContainerStyle={[styles.defaultContent, contentContainerStyle]}
         showsVerticalScrollIndicator={Platform.OS === 'web'}
         keyboardShouldPersistTaps="handled"
-        contentInsetAdjustmentBehavior="automatic"
+        contentInsetAdjustmentBehavior={
+          Platform.OS === 'ios' ? 'automatic' : undefined
+        }
         {...props}
       />
     </KeyboardAvoidingView>
@@ -38,7 +43,7 @@ export function ModalFlatList<T>({
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape) =>
+  (ds: DSShape, bottomInset: number) =>
     StyleSheet.create({
       container: {
         flex: 1,
@@ -46,8 +51,8 @@ const createStyles = makeStyleFactory(
       defaultContent: {
         paddingTop: ds.spacing.lg,
         paddingHorizontal: ds.spacing.md,
-        paddingBottom: ds.spacing.xxl,
+        paddingBottom: bottomInset + ds.spacing.xxl,
       },
     }),
-  (ds) => ds.version.toString(),
+  (ds, bottomInset) => `${ds.version}|${bottomInset}`,
 );

@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
+import {Stack} from 'expo-router';
 import {
   ThemedView,
   ModalFlatList,
@@ -8,6 +9,7 @@ import {
   type ListRowData,
 } from '@/components/ui';
 import {type DSShape} from '@/constants/theme';
+import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -235,6 +237,15 @@ const exampleItems: ListRowData[] = [
 export default function SupportScreen() {
   const {ds} = useTheme();
   const styles = createStyles(ds);
+  const [_searchQuery, setSearchQuery] = useState('');
+
+  const handleRefresh = async () => {
+    // TODO: Implement items refresh logic
+  };
+
+  const {refreshControl} = usePullToRefresh({
+    onRefresh: handleRefresh,
+  });
 
   const renderItem = ({item, index}: {item: ListRowData; index: number}) => (
     <View>
@@ -248,13 +259,29 @@ export default function SupportScreen() {
   );
 
   return (
-    <ThemedView style={styles.container}>
-      <ModalFlatList
-        data={exampleItems}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+    <>
+      <Stack.Screen
+        options={{
+          title: 'Items',
+          headerSearchBarOptions: {
+            obscureBackground: true,
+            placement: 'integrated',
+            placeholder: 'Search...',
+            onChangeText: (event) => {
+              setSearchQuery(event.nativeEvent.text);
+            },
+          },
+        }}
       />
-    </ThemedView>
+      <ThemedView style={styles.container}>
+        <ModalFlatList
+          data={exampleItems}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          refreshControl={refreshControl}
+        />
+      </ThemedView>
+    </>
   );
 }
 

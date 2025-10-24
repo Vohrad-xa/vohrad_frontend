@@ -88,12 +88,11 @@ export const unstable_settings = {
 };
 
 // Handles auth-aware routing and splash overlay transitions.
-function RootNavigation() {
+function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
   const {isAuthenticated} = useAuth();
   const navigationState = useRootNavigationState();
   const router = useRouter();
   const {setIntendedRoute, intendedRoute} = useAuthStore();
-  const [showOverlay, setShowOverlay] = useState(true);
   const hasHiddenSplash = useRef(false);
   const pathname = usePathname();
   const isEmailConfirmRoute = pathname === '/email/confirm';
@@ -130,7 +129,6 @@ function RootNavigation() {
     ) {
       const destination = intendedRoute;
       setIntendedRoute(null);
-      // Small delay to ensure navigation is ready
       setTimeout(() => {
         router.replace(destination as Href);
       }, 100);
@@ -149,44 +147,33 @@ function RootNavigation() {
     }
   }, [intendedRoute, setIntendedRoute]);
 
+  // Hide splash screen once bootstrap and navigation are ready
   useEffect(() => {
-    if (!navigationState?.key || hasHiddenSplash.current) {
+    if (
+      !navigationState?.key ||
+      !isBootstrapComplete ||
+      hasHiddenSplash.current
+    ) {
       return;
     }
 
-    const timer = setTimeout(() => {
-      setShowOverlay(false);
+    hasHiddenSplash.current = true;
 
-      const hideSplash = () => {
-        if (hasHiddenSplash.current) {
-          return;
-        }
+    if (!splashControl.hidden) {
+      splashControl.hidden = true;
 
-        hasHiddenSplash.current = true;
-
-        if (!splashControl.hidden) {
-          splashControl.hidden = true;
-
-          if (splashControl.prevented) {
-            SplashScreen.hideAsync().catch((error) => {
-              console.warn(
-                '[app/_layout] Failed to hide splash screen gracefully:',
-                error,
-              );
-            });
-          }
-        }
-      };
-
-      if (splashControl.preventPromise) {
-        splashControl.preventPromise.finally(hideSplash);
-      } else {
-        hideSplash();
+      if (splashControl.prevented) {
+        SplashScreen.hideAsync().catch((error) => {
+          console.warn('[app/_layout] Failed to hide splash screen:', error);
+        });
       }
-    }, 500);
+    }
+  }, [navigationState?.key, isBootstrapComplete]);
 
-    return () => clearTimeout(timer);
-  }, [navigationState?.key]);
+  // Don't render navigation until bootstrap completes
+  if (!isBootstrapComplete) {
+    return <LoadingOverlay fullScreen />;
+  }
 
   const initialRouteName = isEmailConfirmRoute
     ? 'email/confirm'
@@ -195,28 +182,25 @@ function RootNavigation() {
       : '(auth)';
 
   return (
-    <>
-      <Stack
-        initialRouteName={initialRouteName}
-        screenOptions={{headerShown: false}}
-      >
-        <Stack.Screen name="email/confirm" />
-        <Stack.Protected guard={isAuthenticated}>
-          <Stack.Screen name="(app)" />
-          <Stack.Screen
-            name="(modals)"
-            options={{
-              presentation: 'modal',
-            }}
-          />
-        </Stack.Protected>
+    <Stack
+      initialRouteName={initialRouteName}
+      screenOptions={{headerShown: false}}
+    >
+      <Stack.Screen name="email/confirm" />
+      <Stack.Protected guard={isAuthenticated}>
+        <Stack.Screen name="(app)" />
+        <Stack.Screen
+          name="(modals)"
+          options={{
+            presentation: 'modal',
+          }}
+        />
+      </Stack.Protected>
 
-        <Stack.Protected guard={!isAuthenticated}>
-          <Stack.Screen name="(auth)" />
-        </Stack.Protected>
-      </Stack>
-      {showOverlay && <LoadingOverlay />}
-    </>
+      <Stack.Protected guard={!isAuthenticated}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+    </Stack>
   );
 }
 
@@ -239,6 +223,8 @@ function GlobalStatusBar() {
 
 // Bootstraps secure auth persistence and wires global providers.
 export default function RootLayout() {
+  const [isBootstrapComplete, setIsBootstrapComplete] = useState(false);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -332,6 +318,9 @@ export default function RootLayout() {
             intendedRoute: null,
             error: null,
           });
+          if (!cancelled) {
+            setIsBootstrapComplete(true);
+          }
           return;
         }
 
@@ -366,11 +355,18 @@ export default function RootLayout() {
             );
           }
         }
+
+        if (!cancelled) {
+          setIsBootstrapComplete(true);
+        }
       } catch (error) {
         console.error(
           '[app/_layout] Failed to bootstrap secure auth persistence:',
           error,
         );
+        if (!cancelled) {
+          setIsBootstrapComplete(true);
+        }
       }
     };
 
@@ -390,7 +386,7 @@ export default function RootLayout() {
               <AuthProvider>
                 <FilterProvider>
                   <GlobalStatusBar />
-                  <RootNavigation />
+                  <RootNavigation isBootstrapComplete={isBootstrapComplete} />
                 </FilterProvider>
               </AuthProvider>
             </LoadingProvider>
