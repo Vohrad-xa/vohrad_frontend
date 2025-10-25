@@ -175,8 +175,8 @@ const createStyles = makeStyleFactory(
         padding: ds.spacing.xl,
       },
       dividerContainer: {
-        paddingLeft: ds.spacing.xl + 25 + ds.spacing.md,
-        paddingRight: ds.spacing.xl,
+        paddingLeft: ds.spacing.xl + ds.spacing.xl + 8,
+        paddingRight: ds.spacing.xs,
       },
       loadingText: {
         marginTop: ds.spacing.md,
