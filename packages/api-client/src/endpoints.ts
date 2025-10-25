@@ -21,6 +21,21 @@ export const API_ENDPOINTS = {
     PROFILE: '/tenant/profile',
     LICENSE_INFO: '/tenant/license-info',
   },
+  ITEMS: {
+    LIST: '/items/',
+    CREATE: '/items/',
+    SEARCH: '/items/search',
+    ACTIVE: '/items/active',
+    DETAIL: (id: string) => `/items/${id}`,
+    BY_CODE: (code: string) => `/items/code/${code}`,
+    BY_BARCODE: (barcode: string) => `/items/barcode/${barcode}`,
+    BY_SERIAL: (serial: string) => `/items/serial/${serial}`,
+    UPDATE: (id: string) => `/items/${id}`,
+    DELETE: (id: string) => `/items/${id}`,
+  },
+  ATTACHMENTS: {
+    GET_URL: (id: string) => `/attachments/${id}/url`,
+  },
 } as const;
 export type ApiEndpoint =
   (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS][keyof (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS]];

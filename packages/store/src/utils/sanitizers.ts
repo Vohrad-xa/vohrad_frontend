@@ -34,11 +34,17 @@ export function redactTokens(tokens: AuthTokens | null): AuthTokens | null {
     return null;
   }
 
-  const {refresh_token, refresh_expires_in, expires_in, issued_at, token_type} =
-    tokens;
+  const {
+    access_token,
+    refresh_token,
+    refresh_expires_in,
+    expires_in,
+    issued_at,
+    token_type,
+  } = tokens;
 
   return {
-    access_token: '',
+    access_token,
     refresh_token,
     refresh_expires_in,
     expires_in,

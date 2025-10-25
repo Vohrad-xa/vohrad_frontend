@@ -13,27 +13,11 @@ export class AuthService {
   private refreshTimer: ReturnType<typeof setTimeout> | null = null;
   // Single-flight refresh: ensures only one token refresh runs at a time
   private refreshPromise: Promise<void> | null = null;
+  private static readonly NETWORK_RETRY_DELAY_MS = 60_000;
 
   private constructor() {
-    this.syncTokenFromStore();
     this.setupAutoRefresh();
-
     httpClient.setTokenRefreshHandler(() => this.refreshToken());
-
-    useAuthStore.subscribe((state) => {
-      if (state.tokens?.access_token) {
-        httpClient.setAccessToken(state.tokens.access_token);
-      } else {
-        httpClient.setAccessToken(null);
-      }
-    });
-  }
-
-  private syncTokenFromStore() {
-    const {tokens} = useAuthStore.getState();
-    if (tokens?.access_token) {
-      httpClient.setAccessToken(tokens.access_token);
-    }
   }
 
   static getInstance(): AuthService {
@@ -60,14 +44,11 @@ export class AuthService {
       const credentials: UserLoginRequest = {email, password};
       const {tokens, user} = await authApi.loginUser(credentials);
 
-      // Explicitly set access token in httpClient before fetching tenant
-      httpClient.setAccessToken(tokens.access_token);
-
-      // Set tokens in store
+      // login() automatically syncs token to httpClient
       login(user, tokens);
       this.scheduleTokenRefresh(tokens);
 
-      // Fetch tenant data after successful login (after token is set)
+      // Fetch tenant data after successful login
       try {
         const tenant = await tenantApi.getTenantInfo();
         const {setTenant} = useAuthStore.getState();
@@ -97,13 +78,11 @@ export class AuthService {
       const credentials: AdminLoginRequest = {email, password};
       const {tokens, user} = await authApi.loginAdmin(credentials);
 
-      httpClient.setAccessToken(tokens.access_token);
-
-      // Set tokens in store first
+      // login() automatically syncs token to httpClient
       login(user, tokens);
       this.scheduleTokenRefresh(tokens);
 
-      // Fetch tenant data after successful login (after token is set)
+      // Fetch tenant data after successful login
       try {
         const tenant = await tenantApi.getTenantInfo();
         const {setTenant} = useAuthStore.getState();
@@ -136,8 +115,8 @@ export class AuthService {
         console.warn('Logout API call failed:', error);
       }
 
-      httpClient.setAccessToken(null);
       this.clearRefreshTimer();
+      // logout() automatically clears token from httpClient
       logout();
     } catch (error) {
       setError('Logout failed');
@@ -155,8 +134,8 @@ export class AuthService {
       setError(null);
 
       await authApi.logoutAllDevices();
-      httpClient.setAccessToken(null);
       this.clearRefreshTimer();
+      // logout() automatically clears token from httpClient
       logout();
     } catch (error) {
       const errorMessage =
@@ -187,13 +166,18 @@ export class AuthService {
     this.refreshPromise = (async () => {
       try {
         const newTokens = await authApi.refreshToken(refreshSource);
-        httpClient.setAccessToken(newTokens.access_token);
+        // setTokens() automatically syncs to httpClient
         setTokens(newTokens);
         this.scheduleTokenRefresh(newTokens);
       } catch (error) {
+        const isNetworkError = error instanceof ApiError && error.status === 0;
+        if (isNetworkError) {
+          this.scheduleNetworkRetry();
+          throw error;
+        }
         setError('Session expired. Please login again.');
-        httpClient.setAccessToken(null);
         this.clearRefreshTimer();
+        // logout() automatically clears token from httpClient
         logout();
         throw error;
       } finally {
@@ -215,7 +199,6 @@ export class AuthService {
     try {
       // Trigger cookie-based refresh and then hydrate user + timers.
       const tokens = await authApi.refreshToken();
-      httpClient.setAccessToken(tokens.access_token);
       const user = await authApi.getCurrentUser();
 
       // Fetch tenant data during session restore
@@ -230,11 +213,11 @@ export class AuthService {
         );
       }
 
+      // login() automatically syncs token to httpClient
       login(user, tokens);
       this.scheduleTokenRefresh(tokens);
       return true;
     } catch (_error) {
-      httpClient.setAccessToken(null);
       // Cookie missing or invalid: leave the store in a signed-out state.
       return false;
     }
@@ -255,6 +238,15 @@ export class AuthService {
     if (tokens?.access_token && tokens.expires_in) {
       this.scheduleTokenRefresh(tokens);
     }
+  }
+
+  private scheduleNetworkRetry(): void {
+    this.clearRefreshTimer();
+    this.refreshTimer = setTimeout(() => {
+      this.refreshToken().catch(() => {
+        // Intentionally swallow; further handling occurs in refreshToken catch.
+      });
+    }, AuthService.NETWORK_RETRY_DELAY_MS);
   }
 
   private scheduleTokenRefresh(tokens: AuthTokens): void {

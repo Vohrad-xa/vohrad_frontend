@@ -1,5 +1,6 @@
 import type {StateCreator} from 'zustand';
 import type {User, AuthTokens} from '@vohrad/types';
+import {httpClient} from '@vohrad/api-client';
 
 export interface AuthSlice {
   user: User | null;
@@ -9,7 +10,7 @@ export interface AuthSlice {
   isLoading: boolean;
   error: string | null;
   setUser: (user: User) => void;
-  setTokens: (tokens: AuthTokens) => void;
+  setTokens: (tokens: AuthTokens | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setIntendedRoute: (route: string | null) => void;
@@ -28,7 +29,13 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
   error: null,
 
   setUser: (user: User) => set({user}),
-  setTokens: (tokens: AuthTokens) => set({tokens}),
+
+  // CRITICAL: setTokens ALWAYS syncs to httpClient
+  setTokens: (tokens: AuthTokens | null) => {
+    httpClient.setAccessToken(tokens?.access_token || null);
+    set({tokens});
+  },
+
   setLoading: (loading: boolean) => set({isLoading: loading}),
   setError: (error: string | null) => set({error}),
   setIntendedRoute: (route: string | null) => set({intendedRoute: route}),
@@ -39,20 +46,26 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
       user: state.user ? {...state.user, ...userData} : null,
     })),
 
-  login: (user: User, tokens: AuthTokens) =>
+  login: (user: User, tokens: AuthTokens) => {
+    // Sync token to httpClient before updating state
+    httpClient.setAccessToken(tokens.access_token);
     set({
       user,
       tokens,
       isAuthenticated: true,
       error: null,
-    }),
+    });
+  },
 
-  logout: () =>
+  logout: () => {
+    // Clear token from httpClient
+    httpClient.setAccessToken(null);
     set({
       user: null,
       tokens: null,
       isAuthenticated: false,
       intendedRoute: null,
       error: null,
-    }),
+    });
+  },
 });

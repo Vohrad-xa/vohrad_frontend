@@ -1,6 +1,6 @@
 import {Platform, StyleSheet} from 'react-native';
 import {Stack, useLocalSearchParams, useRouter} from 'expo-router';
-import {ThemedView, ThemedText, HeaderButton} from '@/components/ui';
+import {ThemedView, HeaderButton} from '@/components/ui';
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';

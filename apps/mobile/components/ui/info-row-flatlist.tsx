@@ -39,7 +39,7 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
     item,
     showImage = true,
     showBadge = true,
-    imageContainerSize = 25,
+    imageContainerSize = 35,
     position = 'single',
   }) => {
     const {ds, theme} = useTheme();
@@ -67,7 +67,7 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
                   resizeMode="cover"
                 />
               ) : (
-                <Icon name={AppIcons.content.imageFallback} />
+                <Icon name={AppIcons.content.imageFallback} size="xl" />
               )}
             </View>
             {showBadge && item.badge && (
@@ -81,7 +81,7 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
         )}
 
         <View style={styles.contentContainer}>
-          <ThemedText variant="body" numberOfLines={1}>
+          <ThemedText variant="label" numberOfLines={1}>
             {item.name}
           </ThemedText>
           {hasSecondaryContent && (
@@ -156,7 +156,7 @@ const createStyles = makeStyleFactory(
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: ds.borderRadius.md,
+        borderRadius: ds.borderRadius.lg,
         backgroundColor: theme.surface,
       },
       imageBadge: {

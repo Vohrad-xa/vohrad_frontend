@@ -1,7 +1,7 @@
 import {Platform} from 'react-native';
 import {HeaderButton} from '@/components/ui';
 import {type ThemeShape} from '@/constants/theme';
-import {AppIcons} from '@/utils';
+import {AppIcons} from './icons';
 
 export function getTabStackOptions(
   theme: ThemeShape,

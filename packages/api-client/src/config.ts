@@ -46,7 +46,7 @@ const defaultConfig: ApiClientConfig = {
     'EXPO_PUBLIC_API_BASE_DOMAIN',
     'NEXT_PUBLIC_API_BASE_DOMAIN',
   ]),
-  tenant: undefined,
+  tenant: readEnv(['EXPO_PUBLIC_TENANT', 'NEXT_PUBLIC_TENANT']),
   version: readEnv(['EXPO_PUBLIC_API_VERSION', 'NEXT_PUBLIC_API_VERSION']),
 };
 
@@ -76,10 +76,13 @@ export function resolveBaseUrl(): string {
     );
   }
 
-  // If tenant is set, construct subdomain URL: tenant.domain.com
-  // Otherwise use base domain (for auth endpoints before tenant is known)
-  // const fullDomain = cfg.tenant ? `${cfg.tenant}.${domain}` : domain;
-  return `${proto}://${domain}`;
+  // Check if domain is an IP address - if so, don't use subdomain (invalid DNS)
+  const isIpAddress = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(domain);
+
+  // For IP addresses, tenant is sent via X-Tenant-Subdomain header (see http-client.ts)
+  const fullDomain =
+    cfg.tenant && !isIpAddress ? `${cfg.tenant}.${domain}` : domain;
+  return `${proto}://${fullDomain}`;
 }
 
 export function resolveApiUrl(endpoint: string): string {
@@ -90,4 +93,21 @@ export function resolveApiUrl(endpoint: string): string {
   // LATER TODO : Add /api prefix for professional API structure
   // const url = ver ? `${base}/api/${ver}/${ep}` : `${base}/api/${ep}`;
   return url.replace(/(?<!:)\/+/g, '/');
+}
+
+// ONLY DEBELOPMENT USAGE FOR ATTACHMENT URLS
+export function resolveAttachmentUrl(relativePath: string): string {
+  const baseUrl = resolveBaseUrl();
+  const isIpAddress = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(
+    current.baseDomain || '',
+  );
+
+  if (isIpAddress && current.tenant) {
+    const urlObj = new URL(baseUrl);
+    const tenantDomain = `${current.tenant}.${urlObj.host}`;
+    const tenantUrl = `${urlObj.protocol}//${tenantDomain}`;
+    return `${tenantUrl}${relativePath}`;
+  }
+
+  return `${baseUrl}${relativePath}`;
 }

@@ -1,0 +1,23 @@
+import type {ItemSlice} from './slice';
+
+export const itemSelectors = {
+  items: (state: ItemSlice) => state.items,
+  selectedItem: (state: ItemSlice) => state.selectedItem,
+  total: (state: ItemSlice) => state.total,
+  page: (state: ItemSlice) => state.page,
+  size: (state: ItemSlice) => state.size,
+  totalPages: (state: ItemSlice) => state.totalPages,
+  hasNext: (state: ItemSlice) => state.hasNext,
+  hasPrevious: (state: ItemSlice) => state.hasPrevious,
+  isLoading: (state: ItemSlice) => state.isLoading,
+  error: (state: ItemSlice) => state.error,
+  updatePage: (state: ItemSlice) => state.updatePage,
+  setSelectedItem: (state: ItemSlice) => state.setSelectedItem,
+  addItem: (state: ItemSlice) => state.addItem,
+  updateItemInList: (state: ItemSlice) => state.updateItemInList,
+  removeItem: (state: ItemSlice) => state.removeItem,
+  setLoading: (state: ItemSlice) => state.setLoading,
+  setError: (state: ItemSlice) => state.setError,
+  clearError: (state: ItemSlice) => state.clearError,
+  clearItems: (state: ItemSlice) => state.clearItems,
+};

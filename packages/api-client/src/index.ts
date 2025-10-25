@@ -6,9 +6,11 @@ export type {
 } from '@vohrad/types';
 export {ApiError} from '@vohrad/types';
 export {httpClient} from './http-client';
-export {authApi} from './auth-api';
-export {userApi} from './user-api';
-export {tenantApi} from './tenant-api';
+export * from './auth-api';
+export * from './item-api';
+export * from './tenant-api';
+export * from './user-api';
+export * from './attachment-api';
 export {API_ENDPOINTS} from './endpoints';
 export {
   initApiConfig,
@@ -16,4 +18,5 @@ export {
   getApiConfig,
   resolveBaseUrl,
   resolveApiUrl,
+  resolveAttachmentUrl,
 } from './config';

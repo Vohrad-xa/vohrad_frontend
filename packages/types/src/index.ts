@@ -16,6 +16,7 @@ export type {
   TokenResponse,
   ApiResponse,
   ApiResponseMetadata,
+  PaginatedResponse,
 } from './api';
 export type {
   Tenant,
@@ -24,5 +25,15 @@ export type {
   TenantLicenseInfo,
   JsonValue,
 } from './tenant';
+export type {
+  Item,
+  ItemDetail,
+  ItemCreate,
+  ItemUpdate,
+  ItemLocationData,
+  ItemLocationInput,
+  ItemAttachment,
+  TrackingMode,
+} from './item';
 
 export {ApiError} from './api';

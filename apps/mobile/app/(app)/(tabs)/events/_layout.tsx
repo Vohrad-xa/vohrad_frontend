@@ -1,6 +1,6 @@
 import {Stack} from 'expo-router';
 import {useTheme, useSidebar} from '@/providers';
-import {getTabStackOptions} from '@/utils';
+import {getTabStackOptions} from '@/utils/navigation-config';
 
 export default function EventsLayout() {
   const {theme} = useTheme();

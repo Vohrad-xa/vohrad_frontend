@@ -43,6 +43,16 @@ export interface ApiResponse<T> {
   metadata?: ApiResponseMetadata;
 }
 
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  size: number;
+  total_pages: number;
+  has_next: boolean;
+  has_previous: boolean;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
