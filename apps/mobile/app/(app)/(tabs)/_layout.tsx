@@ -11,10 +11,6 @@ import type {TabItem} from '@/types/ui';
 import {AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
-export const unstable_settings = {
-  initialRouteName: 'home',
-};
-
 const TAB_ITEMS: TabItem[] = [
   {name: 'home', label: 'Home', icon: AppIcons.navigation.home},
   {name: 'locations', label: 'Locations', icon: AppIcons.inventory.locations},

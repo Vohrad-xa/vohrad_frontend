@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState, useRef} from 'react';
 import {Platform, Pressable, Text, View} from 'react-native';
-import {useAuthStore} from '@vohrad/store';
+import {useAuthStore, type StoreState} from '@vohrad/store';
 import {useLocalSearchParams, useNavigation} from 'expo-router';
 import {ThemedView, ModalScrollView, ThemedButton} from '@/components/ui';
 import {
@@ -21,7 +21,7 @@ export default function ItemDetailScreen() {
   const {triggerHaptic} = useHaptic();
   const [showSuccess, setShowSuccess] = useState(false);
   const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const clearError = useAuthStore((state) => state.clearError);
+  const clearError = useAuthStore((state: StoreState) => state.clearError);
 
   const {item, isLoading, getItemImageUrl, error} = useItemDetail(itemId);
 

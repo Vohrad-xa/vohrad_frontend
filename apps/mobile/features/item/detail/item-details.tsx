@@ -8,7 +8,6 @@ import {Specifications} from './specifications/specifications';
 import {StatusField} from './status-field';
 import {TrackingModeField} from './tracking-mode-field';
 import type {UseItemFormReturn} from '../hooks/use-item-form';
-import type {_TrackingMode} from '@vohrad/types';
 
 interface ItemDetailsProps {
   quantity?: string;

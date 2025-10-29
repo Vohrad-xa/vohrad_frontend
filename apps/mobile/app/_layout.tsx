@@ -1,26 +1,12 @@
-import {useEffect, useRef, useState} from 'react';
-import {Alert, Platform} from 'react-native';
+import {useEffect, useState, useRef} from 'react';
+import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
-import {setApiTenant} from '@vohrad/api-client';
-import {authService} from '@vohrad/auth';
-import {useAuthStore, setAuthPersistStorage} from '@vohrad/store';
-import {
-  Stack,
-  useRootNavigationState,
-  useRouter,
-  usePathname,
-  type Href,
-} from 'expo-router';
+import {Stack, usePathname, useRootNavigationState} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {StatusBar} from 'expo-status-bar';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {LoadingOverlay} from '@/components/ui';
 import {FilterProvider} from '@/features/home/overview/filter-context';
-import {
-  authenticateWithBiometrics,
-  disableBiometrics,
-  shouldRequireAuthenticationOnLaunch,
-} from '@/modules/security/biometric-service';
 import {
   AppThemeProvider,
   AuthProvider,
@@ -29,8 +15,7 @@ import {
   HapticProvider,
   useTheme,
 } from '@/providers';
-import {secureStorage} from '@/utils/secure-storage';
-import * as AppStorage from '@/utils/storage';
+import {bootstrap} from '@/utils/bootstrap';
 
 // TODO: Remove when expo-router updates to new pointerEvents API
 if (Platform.OS === 'web') {
@@ -87,65 +72,13 @@ export const unstable_settings = {
   initialRouteName: '(auth)',
 };
 
-// Handles auth-aware routing and splash overlay transitions.
 function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
   const {isAuthenticated} = useAuth();
-  const navigationState = useRootNavigationState();
-  const router = useRouter();
-  const {setIntendedRoute, intendedRoute} = useAuthStore();
-  const hasHiddenSplash = useRef(false);
   const pathname = usePathname();
   const isEmailConfirmRoute = pathname === '/email/confirm';
+  const navigationState = useRootNavigationState();
+  const hasHiddenSplash = useRef(false);
 
-  // Save intended route when trying to access protected routes while not authenticated
-  useEffect(() => {
-    if (!navigationState?.key) {
-      return;
-    }
-
-    if (
-      !isAuthenticated &&
-      pathname !== '/login' &&
-      !pathname.startsWith('/(auth)') &&
-      !isEmailConfirmRoute
-    ) {
-      setIntendedRoute(pathname);
-    }
-  }, [
-    isAuthenticated,
-    pathname,
-    navigationState?.key,
-    setIntendedRoute,
-    isEmailConfirmRoute,
-  ]);
-
-  // Navigate to intended route after authentication
-  useEffect(() => {
-    if (
-      navigationState?.key &&
-      isAuthenticated &&
-      intendedRoute &&
-      intendedRoute !== '/email/confirm'
-    ) {
-      const destination = intendedRoute;
-      setIntendedRoute(null);
-      router.replace(destination as Href);
-    }
-  }, [
-    isAuthenticated,
-    intendedRoute,
-    navigationState?.key,
-    setIntendedRoute,
-    router,
-  ]);
-
-  useEffect(() => {
-    if (intendedRoute === '/email/confirm') {
-      setIntendedRoute(null);
-    }
-  }, [intendedRoute, setIntendedRoute]);
-
-  // Hide splash screen once bootstrap and navigation are ready
   useEffect(() => {
     if (
       !navigationState?.key ||
@@ -168,7 +101,6 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
     }
   }, [navigationState?.key, isBootstrapComplete]);
 
-  // Don't render navigation until bootstrap completes
   if (!isBootstrapComplete) {
     return <LoadingOverlay fullScreen />;
   }
@@ -202,7 +134,6 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
   );
 }
 
-// Global status bar controller
 function GlobalStatusBar() {
   const {scheme} = useTheme();
 
@@ -226,149 +157,14 @@ export default function RootLayout() {
   useEffect(() => {
     let cancelled = false;
 
-    const bootstrapAuthPersistence = async () => {
-      try {
-        const legacyKey = 'vohrad-auth';
-        // Restore tenant affinity before any web requests fire.
-        const savedTenantSubdomain = await AppStorage.getTenantSubdomain();
-        if (savedTenantSubdomain) {
-          setApiTenant(savedTenantSubdomain);
-        }
-
-        const legacyPayload = await AppStorage.getItem(legacyKey);
-
-        if (legacyPayload) {
-          await secureStorage.setItem(legacyKey, legacyPayload);
-          await AppStorage.removeItem(legacyKey);
-        }
-
-        if (cancelled) return;
-
-        const hydrationState = {locked: true};
-
-        // Swap zustand persistence backend to secure storage with a hydration lock.
-        setAuthPersistStorage({
-          getItem: (key: string) => secureStorage.getItem(key),
-          setItem: async (key: string, value: string) => {
-            if (hydrationState.locked) {
-              return;
-            }
-            await secureStorage.setItem(key, value);
-          },
-          removeItem: async (key: string) => {
-            if (hydrationState.locked) {
-              return;
-            }
-            await secureStorage.removeItem(key);
-          },
-        });
-
-        // Peek at persisted snapshot to decide if biometric gate is needed.
-        const storedSnapshotRaw = await secureStorage.getItem(legacyKey);
-        let shouldHydrate = true;
-        let persistedHasRefreshToken = false;
-
-        if (storedSnapshotRaw) {
-          try {
-            const snapshot = JSON.parse(storedSnapshotRaw) as {
-              state?: {tokens?: {refresh_token?: string}};
-            };
-            persistedHasRefreshToken = Boolean(
-              snapshot?.state?.tokens?.refresh_token,
-            );
-          } catch (error) {
-            console.error(
-              '[app/_layout] Failed to parse persisted auth snapshot:',
-              error,
-            );
-          }
-        }
-
-        if (persistedHasRefreshToken) {
-          // Require biometric auth before hydrating sensitive tokens.
-          const requireBiometric = await shouldRequireAuthenticationOnLaunch();
-          if (requireBiometric) {
-            const authResult = await authenticateWithBiometrics(
-              'Unlock your account',
-            );
-            if (!authResult.success) {
-              await disableBiometrics();
-              await secureStorage.removeItem(legacyKey);
-              shouldHydrate = false;
-              if (!authResult.cancelled) {
-                Alert.alert(
-                  'Authentication failed',
-                  'Please sign in again to continue.',
-                );
-              }
-            }
-          }
-        }
-
-        hydrationState.locked = false;
-
-        if (!shouldHydrate) {
-          // Biometric failed: reset auth store and skip hydrate.
-          useAuthStore.setState({
-            user: null,
-            tokens: null,
-            isAuthenticated: false,
-            intendedRoute: null,
-            error: null,
-          });
-          if (!cancelled) {
-            setIsBootstrapComplete(true);
-          }
-          return;
-        }
-
-        await useAuthStore.persist?.rehydrate?.();
-
-        if (cancelled) return;
-
-        if (Platform.OS === 'web') {
-          const {isAuthenticated} = useAuthStore.getState();
-          if (!isAuthenticated) {
-            try {
-              // Attempt to rehydrate session using HttpOnly refresh cookie.
-              await authService.restoreSessionFromCookie();
-            } catch (error) {
-              console.error(
-                '[app/_layout] Failed to restore web session from cookie:',
-                error,
-              );
-            }
-          }
-        }
-
-        const {tokens, isAuthenticated} = useAuthStore.getState();
-
-        if (isAuthenticated && tokens?.refresh_token && !tokens.access_token) {
-          try {
-            await authService.refreshToken();
-          } catch (error) {
-            console.error(
-              '[app/_layout] Failed to refresh access token on boot:',
-              error,
-            );
-          }
-        }
-
-        if (!cancelled) {
-          setIsBootstrapComplete(true);
-        }
-      } catch (error) {
-        console.error(
-          '[app/_layout] Failed to bootstrap secure auth persistence:',
-          error,
-        );
-        if (!cancelled) {
-          setIsBootstrapComplete(true);
-        }
+    async function bootstrapApp() {
+      await bootstrap();
+      if (!cancelled) {
+        setIsBootstrapComplete(true);
       }
-    };
+    }
 
-    bootstrapAuthPersistence();
+    bootstrapApp();
 
     return () => {
       cancelled = true;

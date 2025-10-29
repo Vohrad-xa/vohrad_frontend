@@ -13,6 +13,10 @@ interface ItemChangesContextType {
   setHasChanges: (hasChanges: boolean) => void;
 }
 
+export const unstable_settings = {
+  initialRouteName: 'index',
+};
+
 const ItemChangesContext = createContext<ItemChangesContextType | null>(null);
 
 export function useItemChanges() {

@@ -12,8 +12,8 @@ type EmptyStateProps = {
 };
 
 export function EmptyState({message, icon, iconSize = 48}: EmptyStateProps) {
-  const {ds, theme} = useTheme();
-  const styles = createStyles(ds, theme);
+  const {ds} = useTheme();
+  const styles = createStyles(ds);
 
   return (
     <View style={styles.container}>
@@ -49,5 +49,5 @@ const createStyles = makeStyleFactory(
         opacity: ds.opacity.muted,
       },
     }),
-  (ds) => ds.version,
+  (ds) => ds.version.toString(),
 );

@@ -7,7 +7,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import {userApi} from '@vohrad/api-client';
-import {useAuthStore} from '@vohrad/store';
+import {useAuthStore, type StoreState} from '@vohrad/store';
 import {router} from 'expo-router';
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -20,7 +20,7 @@ export default function HomeScreen() {
   const {ds, theme} = useTheme();
   const {width: screenWidth} = useWindowDimensions();
   const styles = createStyles(ds, theme);
-  const setUser = useAuthStore((state) => state.setUser);
+  const setUser = useAuthStore((state: StoreState) => state.setUser);
   const {triggerHaptic} = useHaptic();
 
   const handlePresentModal = useCallback(() => {

@@ -64,3 +64,4 @@ GEMINI.md
 *.swp
 .DS_Store
 Thumbs.db
+packages/store/ARCHITECTURE.md

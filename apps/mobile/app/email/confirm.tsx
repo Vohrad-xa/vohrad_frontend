@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {userApi} from '@vohrad/api-client';
-import {useAuthStore} from '@vohrad/store';
+import {useAuthStore, type StoreState} from '@vohrad/store';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {ThemedText, ThemedButton, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -15,7 +15,7 @@ export default function EmailConfirmScreen() {
     tenant_id?: string;
     tenantId?: string;
   }>();
-  const setUser = useAuthStore((state) => state.setUser);
+  const setUser = useAuthStore((state: StoreState) => state.setUser);
   const router = useRouter();
   const {theme, ds} = useTheme();
   const {isAuthenticated} = useAuth();
@@ -58,7 +58,7 @@ export default function EmailConfirmScreen() {
       setStatus('error');
       setMessage('This confirmation link is invalid.');
       if (isAuthenticated) {
-        router.replace('/(app)/(tabs)');
+        router.replace('/(app)/(tabs)/home');
       } else {
         router.replace('/(auth)/login');
       }
@@ -119,7 +119,7 @@ export default function EmailConfirmScreen() {
 
   const navigateBackToApp = () => {
     if (isAuthenticated) {
-      router.replace('/(app)/(tabs)');
+      router.replace('/(app)/(tabs)/home');
     } else {
       router.replace('/(auth)/login');
     }
