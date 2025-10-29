@@ -3,12 +3,14 @@ import {Platform, Pressable, Text, View} from 'react-native';
 import {useAuthStore} from '@vohrad/store';
 import {useLocalSearchParams, useNavigation} from 'expo-router';
 import {ThemedView, ModalScrollView, ThemedButton} from '@/components/ui';
-import {ItemDetails, ItemHeader} from '@/features/item';
-import {useItemDetail} from '@/features/item/use-item-detail';
-import {useItemForm} from '@/features/item/use-item-form';
+import {
+  ItemDetails,
+  ItemHeader,
+  useItemDetail,
+  useItemForm,
+} from '@/features/item';
 import {useTheme, useHaptic} from '@/providers';
-import {AppIcons, showAlert} from '@/utils';
-import {Icon} from '@/utils/icons';
+import {AppIcons, showAlert, Icon} from '@/utils';
 import {useItemChanges} from '../_layout';
 
 export default function ItemDetailScreen() {

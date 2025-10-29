@@ -14,8 +14,8 @@ import {
   ThemedButton,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {useItemDetail} from '@/features/item';
 import {SpecificationsForm} from '@/features/item/detail/specifications/specifications-form';
-import {useItemDetail} from '@/features/item/use-item-detail';
 import {useTheme, useHaptic} from '@/providers';
 import {AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';

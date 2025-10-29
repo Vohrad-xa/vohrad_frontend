@@ -2,7 +2,7 @@ import {useMemo} from 'react';
 import {router} from 'expo-router';
 import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
-import type {SettingsItem, ToggleSettingsItem} from './types';
+import type {SettingsItem, ToggleSettingsItem} from '../types';
 
 export function useSettingsItems() {
   const {scheme} = useTheme();

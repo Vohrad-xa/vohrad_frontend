@@ -13,13 +13,13 @@ import {
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {BiometricToggle} from '@/features/settings/app-settings';
 import {AppearanceMenu} from '@/features/settings/appearance-menu';
+import {useSettingsItems} from '@/features/settings/hooks/use-settings-items';
 import {
   isDividerItem,
   type ListItem as SettingsListItem,
   type SettingsItem,
   type ToggleSettingsItem,
 } from '@/features/settings/types';
-import {useSettingsItems} from '@/features/settings/use-settings-items';
 import {useTheme, useAuth} from '@/providers';
 import {Icon, AppIcons, showConfirmAlert} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
