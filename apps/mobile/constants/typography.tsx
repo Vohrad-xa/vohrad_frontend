@@ -53,15 +53,15 @@ const _DesignSystem = {
     heading: {
       fontSize: 16,
       lineHeight: 22,
-      fontWeight: '600' as const,
+      fontWeight: '500' as const,
       letterSpacing: 0.5,
     },
 
     // Content Level - Text
     label: {
-      fontSize: 17,
+      fontSize: 16,
       lineHeight: 20,
-      fontWeight: '500' as const,
+      fontWeight: '400' as const,
       letterSpacing: 0.2,
     },
 

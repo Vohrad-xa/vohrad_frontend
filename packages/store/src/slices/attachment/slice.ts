@@ -5,7 +5,9 @@ export interface AttachmentSlice {
   isAttachmentLoading: boolean;
   attachmentError: string | null;
   setImageUrls: (
-    urls: Record<string, string> | ((prev: Record<string, string>) => Record<string, string>),
+    urls:
+      | Record<string, string>
+      | ((prev: Record<string, string>) => Record<string, string>),
   ) => void;
   setAttachmentLoading: (loading: boolean) => void;
   setAttachmentError: (error: string | null) => void;

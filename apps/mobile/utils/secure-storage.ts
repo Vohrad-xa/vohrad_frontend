@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 
 const PREFIX = 'vohrad.secure.';
 const fallbackMemory = new Map<string, string>();
-const MAX_VALUE_LENGTH = 1000;
+const MAX_VALUE_LENGTH = 2000;
 const META_SUFFIX = '.meta';
 const CHUNK_SUFFIX = '.chunk.';
 let secureStoreAvailable: boolean | null = null;

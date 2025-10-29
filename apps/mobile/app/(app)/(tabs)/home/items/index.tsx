@@ -1,19 +1,20 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback} from 'react';
 import {StyleSheet} from 'react-native';
-import {Stack, useRouter} from 'expo-router';
+import {useRouter} from 'expo-router';
 import {ThemedView} from '@/components/ui';
-import {type DSShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {useSearch} from '@/features/home/search-context';
 import {ItemsList} from '@/features/item/list';
-import {useItemsManager} from '@/features/item/list/use-items';
+import {useItemsManager} from '@/features/item/use-items';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function ItemsScreen() {
-  const {ds} = useTheme();
+  const {ds, theme} = useTheme();
   const router = useRouter();
-  const styles = createStyles(ds);
-  const [searchQuery, setSearchQuery] = useState('');
+  const styles = createStyles(ds, theme);
+  const {searchQuery} = useSearch();
   const {
     items,
     isLoading,
@@ -41,24 +42,14 @@ export default function ItemsScreen() {
   }, [loadMore]);
 
   const handleItemPress = (itemId: string) => {
-    router.push(`/(app)/(tabs)/items/${itemId}`);
+    router.push({
+      pathname: '/(app)/(tabs)/home/items/[id]',
+      params: {id: itemId},
+    });
   };
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: 'Items',
-          headerSearchBarOptions: {
-            obscureBackground: true,
-            placement: 'integrated',
-            placeholder: 'Search...',
-            onChangeText: (event) => {
-              setSearchQuery(event.nativeEvent.text);
-            },
-          },
-        }}
-      />
       <ThemedView style={styles.container}>
         <ItemsList
           searchQuery={searchQuery}
@@ -81,11 +72,12 @@ export default function ItemsScreen() {
 }
 
 const createStyles = makeStyleFactory(
-  (_ds: DSShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
+        backgroundColor: theme.background,
       },
     }),
-  (ds) => `${ds.version}`,
+  (ds, theme) => `${themeKey(theme, ds)}`,
 );

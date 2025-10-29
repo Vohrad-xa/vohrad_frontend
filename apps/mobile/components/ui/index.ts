@@ -1,8 +1,7 @@
 export {GlassSurface} from './glass-surface';
-export {GlassCard} from './glass-card';
+export {GlassCard} from '../cards/glass-card';
 export {Collapsible} from './collapsible';
 export {RefreshableScrollView} from './refreshable-scroll-view';
-export {default as Switch} from './switch';
 export {Toggle} from './toggle';
 export {HeaderButton} from './header-button';
 export {Divider} from './divider';
@@ -14,8 +13,8 @@ export {LoadingOverlay} from './loading-overlay';
 export {ModalScrollView} from './modal-scroll-view';
 export {ModalFlatList} from './modal-flat-list';
 export {FormCard} from './form-card';
-export {InfoRow} from './info-row';
-export {InfoRowCard, type InfoField} from './info-row-card';
+export {InfoRow} from '../cards/info-row';
+export {InfoRowCard, type InfoField} from '../cards/info-row-card';
 export {DatePickerWeb} from './date-picker-web';
 export {DatePickerMobile} from './date-picker-mobile';
 export {ContextMenu, type ContextMenuItem} from './context-menu';
@@ -25,3 +24,4 @@ export {
   type ListPosition,
 } from './info-row-flatlist';
 export {type BadgeStatus} from './themed-view';
+export {Card} from '../cards/card';

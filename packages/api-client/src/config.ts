@@ -98,16 +98,5 @@ export function resolveApiUrl(endpoint: string): string {
 // ONLY DEBELOPMENT USAGE FOR ATTACHMENT URLS
 export function resolveAttachmentUrl(relativePath: string): string {
   const baseUrl = resolveBaseUrl();
-  const isIpAddress = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(
-    current.baseDomain || '',
-  );
-
-  if (isIpAddress && current.tenant) {
-    const urlObj = new URL(baseUrl);
-    const tenantDomain = `${current.tenant}.${urlObj.host}`;
-    const tenantUrl = `${urlObj.protocol}//${tenantDomain}`;
-    return `${tenantUrl}${relativePath}`;
-  }
-
   return `${baseUrl}${relativePath}`;
 }

@@ -15,7 +15,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import {StatusBar} from 'expo-status-bar';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {LoadingOverlay} from '@/components/ui';
-import {FilterProvider} from '@/features/dashboard/overview/filter-context';
+import {FilterProvider} from '@/features/home/overview/filter-context';
 import {
   authenticateWithBiometrics,
   disableBiometrics,
@@ -129,9 +129,7 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
     ) {
       const destination = intendedRoute;
       setIntendedRoute(null);
-      setTimeout(() => {
-        router.replace(destination as Href);
-      }, 100);
+      router.replace(destination as Href);
     }
   }, [
     isAuthenticated,
@@ -378,7 +376,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView style={{flex: 1, backgroundColor: 'black'}}>
       <AppThemeProvider>
         <ActionSheetProvider>
           <HapticProvider>

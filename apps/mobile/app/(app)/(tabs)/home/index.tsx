@@ -8,11 +8,11 @@ import {
 } from 'react-native';
 import {userApi} from '@vohrad/api-client';
 import {useAuthStore} from '@vohrad/store';
-import {router, Stack} from 'expo-router';
+import {router} from 'expo-router';
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {OverviewCards} from '@/features/dashboard/overview/overview-cards';
-import {QuickActions} from '@/features/dashboard/quick-actions';
+import {OverviewCards} from '@/features/home/overview/overview-cards';
+import {QuickActions} from '@/features/home/quick-actions';
 import {useHaptic, useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -47,7 +47,6 @@ export default function HomeScreen() {
 
   return (
     <>
-      <Stack.Screen options={{title: 'Dashboard'}} />
       <ScrollComponent
         bounces={Platform.OS !== 'web'}
         showsVerticalScrollIndicator={false}
@@ -55,7 +54,7 @@ export default function HomeScreen() {
           Platform.OS !== 'web' ? 'automatic' : undefined
         }
         style={styles.scrollView}
-        {...(Platform.OS !== 'web' && {onRefresh: handleRefresh})}
+        onRefresh={Platform.OS !== 'web' ? handleRefresh : undefined}
       >
         <ThemedView style={styles.container}>
           <ThemedText variant="heading" style={styles.titleNoMarginTop}>

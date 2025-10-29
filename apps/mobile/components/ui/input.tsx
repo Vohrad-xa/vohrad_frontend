@@ -12,7 +12,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers/theme-provider';
 import {Icon, type IconName} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {GlassCard} from './glass-card';
+import {GlassCard} from '../cards/glass-card';
 
 export type InputStatus = 'none' | 'error' | 'success';
 

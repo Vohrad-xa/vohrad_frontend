@@ -21,8 +21,7 @@ export function ModalFlatList<T>({
 }: ModalFlatListProps<T>) {
   const {ds} = useTheme();
   const insets = useSafeAreaInsets();
-  const tabBarHeight = Platform.OS === 'android' ? 80 : 0;
-  const styles = createStyles(ds, insets.bottom + tabBarHeight);
+  const styles = createStyles(ds, insets.bottom);
 
   return (
     <KeyboardAvoidingView
@@ -51,7 +50,7 @@ const createStyles = makeStyleFactory(
       defaultContent: {
         paddingTop: ds.spacing.lg,
         paddingHorizontal: ds.spacing.xl,
-        paddingBottom: bottomInset + ds.spacing.xxl,
+        paddingBottom: bottomInset,
       },
     }),
   (ds, bottomInset) => `${ds.version}|${bottomInset}`,

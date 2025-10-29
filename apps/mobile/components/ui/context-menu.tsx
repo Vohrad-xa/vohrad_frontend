@@ -16,7 +16,7 @@ import {usePopupAnimation} from '@/hooks';
 import {useTheme} from '@/providers';
 import {triggerHaptic} from '@/utils/haptics';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {GlassCard} from './glass-card';
+import {GlassCard} from '../cards/glass-card';
 import {ThemedText} from './themed-text';
 
 type Frame = {x: number; y: number; width: number; height: number};

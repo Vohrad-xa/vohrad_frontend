@@ -1,5 +1,6 @@
 import {useLayoutEffect, useState, useCallback, useRef, useEffect} from 'react';
 import {Platform, View, Text, Pressable} from 'react-native';
+import {useRouter} from 'expo-router';
 import {ThemedButton} from '@/components/ui/themed-components';
 import {useTheme} from '@/providers';
 import {triggerHaptic} from '@/utils/haptics';
@@ -15,6 +16,8 @@ type UseSettingsHeaderOptions = {
   isEditing: boolean;
   hasChanges: boolean;
   onSave: () => void;
+  onCancel?: () => void;
+  showCancel?: boolean;
 };
 
 export function useSettingsHeader({
@@ -22,10 +25,14 @@ export function useSettingsHeader({
   isEditing,
   hasChanges,
   onSave,
+  onCancel,
+  showCancel = false,
 }: UseSettingsHeaderOptions) {
   const {ds, theme} = useTheme();
+  const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
   const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const canShowCancel = showCancel && typeof onCancel === 'function';
 
   const triggerSuccess = useCallback(() => {
     setShowSuccess(true);
@@ -48,7 +55,8 @@ export function useSettingsHeader({
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerBackTitle: 'Settings',
+      headerBackTitle:
+        canShowCancel && Platform.OS !== 'web' ? undefined : 'Back',
       headerLeft:
         Platform.OS === 'web'
           ? () => (
@@ -57,11 +65,28 @@ export function useSettingsHeader({
                   title="Back"
                   variant="primary"
                   size="sm"
-                  onPress={() => navigation.goBack()}
+                  onPress={() => router.back()}
                 />
               </View>
             )
-          : undefined,
+          : canShowCancel
+            ? () => (
+                <Pressable
+                  onPress={onCancel}
+                  style={{
+                    paddingHorizontal: 20,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    minHeight: 30,
+                    minWidth: ds.components.tapTarget.minSize,
+                  }}
+                >
+                  <Text style={{color: theme.destructive, fontSize: 17}}>
+                    Cancel
+                  </Text>
+                </Pressable>
+              )
+            : undefined,
       headerRight: () =>
         Platform.OS === 'web' ? (
           <View style={{paddingHorizontal: ds.spacing.md}}>
@@ -83,6 +108,7 @@ export function useSettingsHeader({
               justifyContent: 'center',
               alignItems: 'center',
               minHeight: 30,
+              minWidth: ds.components.tapTarget.minSize,
             }}
             disabled={showSuccess}
           >
@@ -102,13 +128,18 @@ export function useSettingsHeader({
     });
   }, [
     navigation,
+    router,
     onSave,
     isEditing,
     theme.text,
     theme.accentGreen,
+    theme.destructive,
     ds.spacing.md,
+    ds.components.tapTarget.minSize,
     hasChanges,
     showSuccess,
+    canShowCancel,
+    onCancel,
   ]);
 
   return {triggerSuccess};

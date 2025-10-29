@@ -77,39 +77,6 @@ const FilterContext = createContext<FilterContextType | null>(null);
 export function FilterProvider({children}: {children: ReactNode}) {
   const [visibility, setVisibility] =
     useState<CardVisibilityState>(defaultVisibility);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  // Load visibility from storage on mount
-  useEffect(() => {
-    const loadVisibility = async () => {
-      try {
-        const stored = await AppStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          const parsedVisibility = JSON.parse(stored);
-          setVisibility(parsedVisibility);
-        }
-      } catch (error) {
-        console.error('Failed to load card visibility:', error);
-      } finally {
-        setIsLoaded(true);
-      }
-    };
-    loadVisibility();
-  }, []);
-
-  // Save visibility to storage whenever it changes
-  useEffect(() => {
-    if (isLoaded) {
-      const saveVisibility = async () => {
-        try {
-          await AppStorage.setItem(STORAGE_KEY, JSON.stringify(visibility));
-        } catch (error) {
-          console.error('Failed to save card visibility:', error);
-        }
-      };
-      saveVisibility();
-    }
-  }, [visibility, isLoaded]);
 
   const setCardVisibility = (
     card: keyof CardVisibilityState,
@@ -148,6 +115,18 @@ export function FilterProvider({children}: {children: ReactNode}) {
   };
 
   const filteredCards = getFilteredCards();
+
+  // Save visibility to storage whenever it changes
+  useEffect(() => {
+    const saveVisibility = async () => {
+      try {
+        await AppStorage.setItem(STORAGE_KEY, JSON.stringify(visibility));
+      } catch (error) {
+        console.error('Failed to save card visibility:', error);
+      }
+    };
+    saveVisibility();
+  }, [visibility]);
 
   const contextValue: FilterContextType = {
     visibility,

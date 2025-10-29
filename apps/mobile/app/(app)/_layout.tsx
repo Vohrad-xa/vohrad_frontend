@@ -44,14 +44,14 @@ function AppStack() {
     const shadowOpacity = interpolate(
       slideAnim.value,
       [0, SIDEBAR_CONFIG.width],
-      [0, Platform.OS === 'ios' ? 0.05 : 0.05], // Much reduced shadow
+      [0, Platform.OS === 'ios' ? 0.05 : 0.05],
       'clamp',
     );
 
     const elevation = interpolate(
       slideAnim.value,
       [0, SIDEBAR_CONFIG.width],
-      [0, 2], // Much reduced elevation
+      [0, 2],
       'clamp',
     );
 
@@ -80,7 +80,7 @@ function AppStack() {
     <View style={styles.container}>
       <SideMenu slideAnim={slideAnim} onClose={closeSideMenu} />
 
-      <GestureDetector gesture={mainGesture}>
+      {Platform.OS === 'web' ? (
         <Animated.View style={[styles.mainContent, mainContentStyle]}>
           <Animated.View style={[styles.border, borderStyle]} />
 
@@ -94,7 +94,23 @@ function AppStack() {
             <Stack.Screen name="(tabs)" />
           </Stack>
         </Animated.View>
-      </GestureDetector>
+      ) : (
+        <GestureDetector gesture={mainGesture}>
+          <Animated.View style={[styles.mainContent, mainContentStyle]}>
+            <Animated.View style={[styles.border, borderStyle]} />
+
+            <SidebarBackdrop slideAnim={slideAnim} />
+
+            <Stack
+              screenOptions={{
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="(tabs)" />
+            </Stack>
+          </Animated.View>
+        </GestureDetector>
+      )}
     </View>
   );
 }
@@ -118,11 +134,9 @@ const createStyles = makeStyleFactory(
       },
       mainContent: {
         flex: 1,
-        // Background color is now animated in mainContentStyle
         shadowColor: '#000000ab',
         shadowOffset: {width: 2, height: 0},
         shadowRadius: 10,
-        // Removed borderRadius to prevent visual conflicts with sidebar scaling
       },
       border: {
         position: 'absolute',

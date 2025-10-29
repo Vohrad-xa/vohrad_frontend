@@ -1,4 +1,4 @@
-import {Alert, Platform} from 'react-native';
+import {Alert, Platform, Keyboard} from 'react-native';
 import {triggerHaptic} from './haptics';
 
 interface AlertButton {
@@ -56,6 +56,7 @@ export function showAlert({
       }
     }
   } else {
+    Keyboard.dismiss();
     Alert.alert(title, message, buttons, {cancelable});
   }
 }

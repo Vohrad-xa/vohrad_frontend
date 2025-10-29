@@ -90,8 +90,7 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
     set((state) => ({
       items: state.items.filter((item) => item.id !== id),
       total: state.total - 1,
-      selectedItem:
-        state.selectedItem?.id === id ? null : state.selectedItem,
+      selectedItem: state.selectedItem?.id === id ? null : state.selectedItem,
     })),
 
   setLoading: (loading: boolean) => set({isLoading: loading}),

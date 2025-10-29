@@ -20,9 +20,9 @@ import {useTheme} from '@/providers';
 import {type IconName} from '@/utils/icons';
 import {Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {DatePickerMobile} from './date-picker-mobile';
-import {DatePickerWeb} from './date-picker-web';
-import {ThemedText} from './themed-text';
+import {DatePickerMobile} from '../ui/date-picker-mobile';
+import {DatePickerWeb} from '../ui/date-picker-web';
+import {ThemedText} from '../ui/themed-text';
 
 type InfoRowInputProps = Omit<
   TextInputProps,

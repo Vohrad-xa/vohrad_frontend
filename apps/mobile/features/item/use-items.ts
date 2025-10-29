@@ -1,10 +1,9 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
+import {resolveAttachmentUrl} from '@vohrad/api-client';
 import {
   useItems,
   useFetchItems,
   useSearchItems,
-  useFetchAttachmentUrls,
-  useAttachmentUrls,
   useAuthStore,
 } from '@vohrad/store';
 import type {Item} from '@vohrad/types';
@@ -14,13 +13,11 @@ const MIN_SEARCH_LENGTH = 3;
 
 export function useItemsManager() {
   const {items, total, page, size, hasNext, isLoading, error} = useItems();
-  const imageUrls = useAttachmentUrls();
   const {isAuthenticated, tokens, _hasHydrated} = useAuthStore();
 
   // Actions
   const {fetchItems} = useFetchItems();
   const {searchItems} = useSearchItems();
-  const {fetchAttachmentUrls} = useFetchAttachmentUrls();
 
   // Track whether we've attempted initial fetch to prevent infinite loops
   const hasAttemptedFetch = useRef(false);
@@ -91,13 +88,6 @@ export function useItemsManager() {
     size,
     performFetchItems,
   ]);
-
-  // Fetch attachment URLs when items change
-  useEffect(() => {
-    if (items.length > 0) {
-      fetchAttachmentUrls(items).catch(() => {});
-    }
-  }, [items, fetchAttachmentUrls]);
 
   // Search items with debounced query
   const search = useCallback(
@@ -173,12 +163,14 @@ export function useItemsManager() {
   ]);
 
   // Get image URL for an item
-  const getItemImageUrl = useCallback(
-    (item: Item) => {
-      return imageUrls[item.id] ? {uri: imageUrls[item.id]} : undefined;
-    },
-    [imageUrls],
-  );
+  const getItemImageUrl = useCallback((item: Item) => {
+    const url = item.thumbnail?.download_url;
+    if (!url) {
+      return undefined;
+    }
+    const resolved = url.startsWith('/') ? resolveAttachmentUrl(url) : url;
+    return {uri: resolved};
+  }, []);
 
   return {
     // Data

@@ -4,7 +4,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {ContainerStyleProps} from '@/types';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {GlassCard} from './glass-card';
+import {GlassCard} from '../cards/glass-card';
 
 export type BadgeStatus =
   | 'success'
@@ -124,11 +124,11 @@ const createStyles = makeStyleFactory(
         case 'statusBadge':
         case 'roleBadge':
           return {
-            borderRadius: ds.borderRadius.xl,
+            borderRadius: ds.borderRadius.xxl,
             paddingVertical: ds.spacing.xxs,
             paddingHorizontal: ds.spacing.sm,
             borderWidth: 0,
-            alignSelf: 'center',
+            alignSelf: 'flex-start',
             backgroundColor:
               variant === 'statusBadge' && badgeStatus
                 ? getStatusColor(badgeStatus, theme)

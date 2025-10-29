@@ -2,7 +2,13 @@ import {useState, useCallback} from 'react';
 import {itemApi} from '@vohrad/api-client';
 import {useAuthStore} from '../../store';
 import {itemSelectors} from './selectors';
-import type {Item, ItemCreate, ItemUpdate} from '@vohrad/types';
+import type {Item, ItemCreate, ItemUpdate, ItemDetail} from '@vohrad/types';
+
+const inFlightItemDetailRequests: Record<string, Promise<void>> = {};
+const lastItemDetailFetchAt: Record<string, number> = {};
+const itemHasFullDetails: Record<string, boolean> = {};
+// Prevent duplicate rapid requests (e.g., double clicks)
+const ITEM_DETAIL_REFETCH_THROTTLE_MS = 1000; // 1 second to prevent duplicate rapid requests
 
 export function useItems() {
   const items = useAuthStore(itemSelectors.items);
@@ -142,28 +148,83 @@ export function useSearchItems() {
 }
 
 export function useFetchItemDetail() {
-  const setSelectedItem = useAuthStore(itemSelectors.setSelectedItem);
-  const setLoading = useAuthStore(itemSelectors.setLoading);
-  const setError = useAuthStore(itemSelectors.setError);
-
+  const store = useAuthStore((state) => state);
   const fetchItemDetail = useCallback(
-    async (id: string): Promise<void> => {
+    async (
+      id: string,
+      options?: {
+        force?: boolean;
+      },
+    ): Promise<void> => {
+      const {force = false} = options ?? {};
+      const existingRequest = inFlightItemDetailRequests[id];
+      if (existingRequest) {
+        return existingRequest;
+      }
+
+      // Get current store values (not from closure)
+      const selectedItem = store.selectedItem;
+      const items = store.items;
+      const setSelectedItem = store.setSelectedItem;
+      const setLoading = store.setLoading;
+      const setError = store.setError;
+
+      // Check if we already have this item data
+      if (!force) {
+        if (selectedItem?.id === id) {
+          if (itemHasFullDetails[id]) {
+            return Promise.resolve();
+          }
+        } else {
+          const itemInList = items.find((item) => item.id === id);
+          if (itemInList) {
+            setSelectedItem(itemInList as ItemDetail);
+            lastItemDetailFetchAt[id] = Date.now();
+
+            if (!itemInList.thumbnail) {
+              itemHasFullDetails[id] = true;
+              return Promise.resolve();
+            }
+          }
+        }
+
+        // Throttling only prevents rapid duplicate requests (within 1 second)
+        const lastFetch = lastItemDetailFetchAt[id];
+        if (
+          lastFetch &&
+          Date.now() - lastFetch < ITEM_DETAIL_REFETCH_THROTTLE_MS
+        ) {
+          return Promise.resolve();
+        }
+      }
+
+      // Log only when making actual API call
+      console.warn(`[API] Fetching item details from server: ${id}`);
       setLoading(true);
       setError(null);
 
-      try {
-        const item = await itemApi.getItemById(id);
-        setSelectedItem(item);
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Failed to fetch item details';
-        setError(message);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
+      const request = (async () => {
+        try {
+          const item = await itemApi.getItemById(id);
+          setSelectedItem(item);
+          lastItemDetailFetchAt[id] = Date.now();
+          itemHasFullDetails[id] = true; // Mark as having full details
+        } catch (err) {
+          const message =
+            err instanceof Error ? err.message : 'Failed to fetch item details';
+          setError(message);
+          throw err;
+        } finally {
+          delete inFlightItemDetailRequests[id];
+          setLoading(false);
+        }
+      })();
+
+      inFlightItemDetailRequests[id] = request;
+
+      return request;
     },
-    [setSelectedItem, setLoading, setError],
+    [store],
   );
 
   return {fetchItemDetail};

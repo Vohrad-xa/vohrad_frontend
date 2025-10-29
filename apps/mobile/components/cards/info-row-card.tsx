@@ -7,7 +7,7 @@ import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import {type IconName} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {Divider} from './divider';
+import {Divider} from '../ui/divider';
 import {InfoRow} from './info-row';
 
 export type InfoField = {

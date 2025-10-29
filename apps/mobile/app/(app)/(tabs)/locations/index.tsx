@@ -23,30 +23,6 @@ export default function LocationsPage() {
           <ThemedText variant="body" style={styles.textMarginTop}>
             Manage storage locations, rooms, and assigned areas here.
           </ThemedText>
-          <ThemedText variant="body" style={styles.textMarginTop}>
-            Manage storage locations, rooms, and assigned areas here.
-          </ThemedText>
-          <ThemedText variant="body" style={styles.textMarginTop}>
-            Manage storage locations, rooms, and assigned areas here.
-          </ThemedText>
-          <ThemedText variant="body" style={styles.textMarginTop}>
-            Manage storage locations, rooms, and assigned areas here.
-          </ThemedText>
-          <ThemedText variant="body" style={styles.textMarginTop}>
-            Manage storage locations, rooms, and assigned areas here.
-          </ThemedText>
-          <ThemedText variant="body" style={styles.textMarginTop}>
-            Manage storage locations, rooms, and assigned areas here.
-          </ThemedText>
-          <ThemedText variant="body" style={styles.textMarginTop}>
-            Manage storage locations, rooms, and assigned areas here.
-          </ThemedText>
-          <ThemedText variant="body" style={styles.textMarginTop}>
-            Manage storage locations, rooms, and assigned areas here.
-          </ThemedText>
-          <ThemedText variant="body" style={styles.textMarginTop}>
-            Manage storage locations, rooms, and assigned areas here.
-          </ThemedText>
         </ThemedView>
       </RefreshableScrollView>
     </>

@@ -2,7 +2,11 @@ import {useState, useCallback} from 'react';
 import {tenantApi} from '@vohrad/api-client';
 import {useAuthStore} from '../../store';
 import {tenantSelectors} from './selectors';
-import type {Tenant, TenantProfileUpdate, TenantSettingsUpdate} from '@vohrad/types';
+import type {
+  Tenant,
+  TenantProfileUpdate,
+  TenantSettingsUpdate,
+} from '@vohrad/types';
 
 export function useOrganizationDetails(): Tenant | null {
   return useAuthStore(tenantSelectors.tenant);

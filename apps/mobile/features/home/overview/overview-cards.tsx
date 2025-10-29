@@ -7,6 +7,7 @@ import {
   type ViewStyle,
   type TextStyle,
 } from 'react-native';
+import {useRouter} from 'expo-router';
 import {ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
@@ -24,11 +25,24 @@ export function OverviewCards({
   screenWidth,
 }: OverviewCardsProps) {
   const {ds, theme} = useTheme();
+  const router = useRouter();
   const styles = createStyles(ds, theme, screenWidth);
 
   // Get visibility state and filtered cards
   const {visibility, getFilteredCards} = useFilterContext();
   const menuCards = getFilteredCards();
+
+  // Handle card press navigation
+  const handleCardPress = (cardTitle: string) => {
+    switch (cardTitle) {
+      case 'Items':
+        router.push('/(app)/(tabs)/home/items');
+        break;
+      // Add other navigation cases here if needed in the future
+      default:
+        break;
+    }
+  };
 
   const menuGridStyles = Platform.select({
     web: styles.menuGridWeb,
@@ -72,22 +86,31 @@ export function OverviewCards({
       <View style={styles.cardContainer}>
         <View style={menuGridStyles}>
           {menuCards.map((card, i) => (
-            <ThemedView
+            <Pressable
               key={i}
-              variant="card"
+              onPress={() => handleCardPress(card.title)}
               style={cardStyles}
-              contentStyle={styles.cardContent}
             >
-              <View style={styles.topSection}>
-                <Icon name={card.icon} size="lg" colorToken={card.colorToken} />
-                <ThemedText variant="secondary" style={styles.cardTitle}>
-                  {card.title}
+              <ThemedView
+                variant="card"
+                style={styles.cardInner}
+                contentStyle={styles.cardContent}
+              >
+                <View style={styles.topSection}>
+                  <Icon
+                    name={card.icon}
+                    size="lg"
+                    colorToken={card.colorToken}
+                  />
+                  <ThemedText variant="secondary" style={styles.cardTitle}>
+                    {card.title}
+                  </ThemedText>
+                </View>
+                <ThemedText variant="heading" style={styles.cardCount}>
+                  {card.count}
                 </ThemedText>
-              </View>
-              <ThemedText variant="heading" style={styles.cardCount}>
-                {card.count}
-              </ThemedText>
-            </ThemedView>
+              </ThemedView>
+            </Pressable>
           ))}
         </View>
       </View>
@@ -159,6 +182,9 @@ const createStyles = makeStyleFactory(
         height: ds.components.button.height * 2.3,
         width: cardWidth,
         backgroundColor: 'none',
+      } as ViewStyle,
+      cardInner: {
+        flex: 1,
       } as ViewStyle,
     });
   },

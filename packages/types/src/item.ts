@@ -22,6 +22,7 @@ export interface ItemAttachment {
   extension?: string | null;
   size: number;
   file_path: string;
+  download_url?: string | null;
   created_at?: string;
 }
 
