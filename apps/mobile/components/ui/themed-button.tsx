@@ -197,10 +197,10 @@ const createStyles = makeStyleFactory(
         color: textColor,
       },
       iconLeft: {
-        marginRight: ds.spacing.xs,
+        marginRight: 0,
       },
       iconRight: {
-        marginLeft: ds.spacing.xs,
+        marginLeft: 0,
       },
     });
   },

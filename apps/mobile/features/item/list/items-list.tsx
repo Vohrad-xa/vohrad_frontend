@@ -6,7 +6,6 @@ import {
   type RefreshControlProps,
 } from 'react-native';
 import {
-  ThemedView,
   ThemedText,
   ModalFlatList,
   ListRow,
@@ -117,24 +116,24 @@ export function ItemsList({
 
   if (isLoading && !hasItems) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color={theme.tint} />
         <ThemedText style={styles.loadingText}>Loading items...</ThemedText>
-      </ThemedView>
+      </View>
     );
   }
 
   if (error) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <View style={styles.centerContainer}>
         <ThemedText style={styles.errorText}>Error: {error}</ThemedText>
-      </ThemedView>
+      </View>
     );
   }
 
   if (isEmpty) {
     return (
-      <ThemedView style={styles.container}>
+      <View style={styles.container}>
         <EmptyState
           message={
             searchQuery
@@ -143,12 +142,12 @@ export function ItemsList({
           }
           icon="cube-outline"
         />
-      </ThemedView>
+      </View>
     );
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <ModalFlatList
         data={listData}
         renderItem={renderItem}
@@ -158,7 +157,7 @@ export function ItemsList({
         onEndReachedThreshold={0.4}
         ListFooterComponent={listFooter}
       />
-    </ThemedView>
+    </View>
   );
 }
 
@@ -193,6 +192,9 @@ const createStyles = makeStyleFactory(
       footerSpinner: {
         paddingVertical: ds.spacing.md,
         alignItems: 'center',
+      },
+      listContentWithHeader: {
+        paddingTop: 0,
       },
     }),
   (ds) => `${ds.version}`,

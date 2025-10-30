@@ -1,19 +1,36 @@
-import React, {useCallback} from 'react';
-import {StyleSheet} from 'react-native';
-import {useRouter} from 'expo-router';
-import {ThemedView} from '@/components/ui';
+import React, {useCallback, useState, useLayoutEffect} from 'react';
+import {StyleSheet, View} from 'react-native';
+import {useRouter, useNavigation} from 'expo-router';
+import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useSearch} from '@/features/home/search-context';
-import {ItemsList, useItemsManager} from '@/features/item';
+import {ItemsList, useItemsManager, FilterItemsModal} from '@/features/item';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
+import {AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function ItemsScreen() {
   const {ds, theme} = useTheme();
   const router = useRouter();
+  const navigation = useNavigation();
   const styles = createStyles(ds, theme);
   const {searchQuery} = useSearch();
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderButton
+          icon={AppIcons.navigation.filter}
+          accessibilityLabel="Filter items"
+          iconSize="xl"
+          onPress={() => setFilterModalVisible(true)}
+        />
+      ),
+    });
+  }, [navigation]);
+
   const {
     items,
     isLoading,
@@ -49,7 +66,7 @@ export default function ItemsScreen() {
 
   return (
     <>
-      <ThemedView style={styles.container}>
+      <View style={styles.container}>
         <ItemsList
           searchQuery={searchQuery}
           onItemPress={handleItemPress}
@@ -65,7 +82,11 @@ export default function ItemsScreen() {
           canLoadMore={canLoadMore}
           isLoadingMore={isLoadingMore}
         />
-      </ThemedView>
+      </View>
+      <FilterItemsModal
+        visible={filterModalVisible}
+        onClose={() => setFilterModalVisible(false)}
+      />
     </>
   );
 }

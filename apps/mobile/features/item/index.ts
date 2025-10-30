@@ -8,6 +8,7 @@ export * from './detail/basic-info';
 
 // list
 export * from './list/items-list';
+export * from './list/filter-items-modal';
 
 // hooks
 export * from './hooks/use-item-detail';

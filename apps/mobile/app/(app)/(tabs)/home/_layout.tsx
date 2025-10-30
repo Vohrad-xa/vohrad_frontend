@@ -98,9 +98,10 @@ function DashboardStack() {
         <Stack.Screen
           name="items/index"
           options={{
+            headerBackButtonDisplayMode: 'minimal',
             headerTitle: 'Items',
             headerSearchBarOptions: {
-              obscureBackground: true,
+              headerIconColor: theme.text,
               placement: 'integrated',
               placeholder: 'Search...',
               onChangeText: handleSearchChange,
