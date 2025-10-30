@@ -119,10 +119,14 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
 
   // Color swap for the container, not the content
   const containerStyle = useAnimatedStyle(() => {
+    // On web, keep sidebarBackground even when open
+    // On mobile, transition to background when open
     const backgroundColor = interpolateColor(
       slideAnim.value,
       [0, SIDEBAR_CONFIG.width],
-      [theme.sidebarBackground, theme.background], // Start: gray, End: black
+      Platform.OS === 'web'
+        ? [theme.sidebarBackground, theme.sidebarBackground] // Always sidebarBackground on web
+        : [theme.sidebarBackground, theme.background], // Mobile: sidebarBackground -> background
     );
 
     return {

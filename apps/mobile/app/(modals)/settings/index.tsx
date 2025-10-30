@@ -1,6 +1,6 @@
 import {useMemo, useCallback, useRef, useState} from 'react';
 import type {ReactNode} from 'react';
-import {StyleSheet, View, Platform} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import type {ListRenderItem} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
@@ -173,8 +173,6 @@ const createStyles = makeStyleFactory(
       },
       container: {
         flex: 1,
-        backgroundColor:
-          Platform.OS === 'web' ? theme.background : theme.secondbackground,
       },
       divider: {
         marginVertical: ds.spacing.sm,

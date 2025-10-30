@@ -27,6 +27,7 @@ export default function SettingsLayout() {
           headerTitleStyle: styles.headerTitleStyle,
           headerTitleAlign: 'center',
           headerBackButtonDisplayMode: 'minimal',
+          contentStyle: styles.container,
         }}
       >
         <Stack.Screen
@@ -89,6 +90,11 @@ export default function SettingsLayout() {
 const createStyles = makeStyleFactory(
   (theme: ThemeShape, _ds: DSShape) =>
     StyleSheet.create({
+      container: {
+        flex: 1,
+        backgroundColor:
+          Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
+      },
       headerStyleAndroid: {
         backgroundColor: theme.navigationBar,
       },

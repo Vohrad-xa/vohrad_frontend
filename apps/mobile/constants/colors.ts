@@ -48,6 +48,7 @@ const _Tokens = {
     // Surfaces & text
     background: Palette.Lbackground,
     secondbackground: Palette.Mbackground,
+    webbackground: Palette.Lbackground,
     text: '#11181C',
     textlabel: Palette.gray[700],
     surface: Palette.gray[50],
@@ -102,6 +103,7 @@ const _Tokens = {
     // Surfaces & text
     background: Palette.black,
     secondbackground: Palette.gray[900],
+    webbackground: Palette.Dbackground,
     surface: Palette.gray[800],
     text: '#ECEDEE',
     textlabel: Palette.Greige,

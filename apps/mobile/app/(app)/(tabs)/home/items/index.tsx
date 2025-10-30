@@ -71,11 +71,10 @@ export default function ItemsScreen() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: theme.background,
       },
     }),
   (ds, theme) => `${themeKey(theme, ds)}`,

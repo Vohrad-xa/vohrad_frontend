@@ -56,8 +56,6 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor:
-          Platform.OS === 'web' ? theme.background : theme.secondbackground,
       },
       headerStyleAndroid: {
         backgroundColor: theme.navigationBar,

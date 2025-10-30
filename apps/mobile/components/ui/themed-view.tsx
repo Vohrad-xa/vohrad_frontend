@@ -136,7 +136,8 @@ const createStyles = makeStyleFactory(
           };
         default:
           return {
-            backgroundColor: theme.background,
+            // backgroundColor:
+            //   Platform.OS === 'web' ? theme.webbackground : theme.background,
           };
       }
     };

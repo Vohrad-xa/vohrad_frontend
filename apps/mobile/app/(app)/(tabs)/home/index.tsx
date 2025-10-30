@@ -76,7 +76,8 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       scrollView: {
-        backgroundColor: theme.background,
+        backgroundColor:
+          Platform.OS === 'web' ? theme.webbackground : theme.background,
         flex: 1,
       } as ViewStyle,
       container: {

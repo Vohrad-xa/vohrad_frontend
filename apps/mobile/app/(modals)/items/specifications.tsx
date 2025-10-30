@@ -192,7 +192,6 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: theme.secondbackground,
       },
       headerStyleAndroid: {
         backgroundColor: theme.background,

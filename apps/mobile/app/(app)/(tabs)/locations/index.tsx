@@ -16,7 +16,6 @@ export default function LocationsPage() {
         bounces
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic"
-        style={styles.scrollView}
       >
         <ThemedView style={styles.container}>
           <ThemedText variant="pageTitle">Locations</ThemedText>
@@ -32,9 +31,6 @@ export default function LocationsPage() {
 const createStyles = makeStyleFactory(
   (theme: ThemeShape, ds: DSShape) =>
     StyleSheet.create({
-      scrollView: {
-        backgroundColor: theme.background,
-      },
       container: {
         flex: 1,
         padding: ds.spacing.lg,

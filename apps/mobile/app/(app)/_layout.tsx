@@ -130,7 +130,6 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: theme.sidebarBackground,
       },
       mainContent: {
         flex: 1,

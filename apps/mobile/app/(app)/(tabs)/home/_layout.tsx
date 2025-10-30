@@ -70,7 +70,8 @@ function DashboardStack() {
       headerTitleStyle: {color: theme.text},
       headerTitleAlign: 'center' as const,
       contentStyle: {
-        backgroundColor: theme.background,
+        backgroundColor:
+          Platform.OS === 'web' ? theme.webbackground : theme.background,
         flex: 1,
       },
     }),
