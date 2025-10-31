@@ -55,13 +55,17 @@ export function useFetchItems() {
     async (
       page: number,
       size: number,
-      options?: {append?: boolean},
+      options?: {append?: boolean; odataFilter?: string},
     ): Promise<void> => {
       setLoading(true);
       setError(null);
 
       try {
-        const response = await itemApi.getItems(page, size);
+        const response = await itemApi.getItems(
+          page,
+          size,
+          options?.odataFilter,
+        );
         const {
           items: pageItems,
           total,

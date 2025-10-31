@@ -3,6 +3,7 @@ export {GlassCard} from '../cards/glass-card';
 export {Collapsible} from './collapsible';
 export {RefreshableScrollView} from './refreshable-scroll-view';
 export {Toggle} from './toggle';
+export {Slider} from './slider';
 export {HeaderButton} from './header-button';
 export {Divider} from './divider';
 export {EmptyState} from './empty-state';

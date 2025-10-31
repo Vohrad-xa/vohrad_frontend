@@ -5,8 +5,9 @@ import {
   useFetchItems,
   useSearchItems,
   useAuthStore,
+  buildODataFilter,
 } from '@vohrad/store';
-import type {Item} from '@vohrad/types';
+import type {ItemFilterState, Item} from '@vohrad/types';
 
 const DEFAULT_SEARCH_QUERY = '';
 const MIN_SEARCH_LENGTH = 3;
@@ -15,6 +16,15 @@ export function useItemsManager() {
   const {items, total, page, size, hasNext, isLoading, error} = useItems();
   const {isAuthenticated, tokens, _hasHydrated} = useAuthStore();
 
+  // Manage filter state internally
+  const [filters, setFilters] = useState<ItemFilterState>({
+    statuses: [],
+    trackingModes: [],
+    priceMin: null,
+    priceMax: null,
+    specifications: null,
+  });
+
   // Actions
   const {fetchItems} = useFetchItems();
   const {searchItems} = useSearchItems();
@@ -22,6 +32,7 @@ export function useItemsManager() {
   // Track whether we've attempted initial fetch to prevent infinite loops
   const hasAttemptedFetch = useRef(false);
   const activeQueryRef = useRef(DEFAULT_SEARCH_QUERY);
+  const previousFiltersRef = useRef<string | undefined>(undefined);
   const [isAppending, setIsAppending] = useState(false);
 
   const performFetchItems = useCallback(
@@ -30,14 +41,15 @@ export function useItemsManager() {
         setIsAppending(true);
       }
       try {
-        await fetchItems(targetPage, pageSize, {append});
+        const odataFilter = filters ? buildODataFilter(filters) : undefined;
+        await fetchItems(targetPage, pageSize, {append, odataFilter});
       } finally {
         if (append) {
           setIsAppending(false);
         }
       }
     },
-    [fetchItems],
+    [fetchItems, filters],
   );
 
   const performSearchItems = useCallback(
@@ -87,6 +99,41 @@ export function useItemsManager() {
     items.length,
     size,
     performFetchItems,
+  ]);
+
+  // Refetch when filters change
+  useEffect(() => {
+    if (!isAuthenticated || !tokens?.access_token || !_hasHydrated) {
+      return;
+    }
+
+    const currentFilterString = JSON.stringify(filters);
+
+    // Skip if filters haven't actually changed
+    if (previousFiltersRef.current === currentFilterString) {
+      return;
+    }
+
+    previousFiltersRef.current = currentFilterString;
+
+    // Always fetch if filters change and we're authenticated
+    if (hasAttemptedFetch.current) {
+      if (activeQueryRef.current) {
+        performSearchItems(activeQueryRef.current, 1, size, false).catch(
+          () => {},
+        );
+      } else {
+        performFetchItems(1, size, false).catch(() => {});
+      }
+    }
+  }, [
+    filters,
+    isAuthenticated,
+    tokens?.access_token,
+    _hasHydrated,
+    performFetchItems,
+    performSearchItems,
+    size,
   ]);
 
   // Search items with debounced query
@@ -188,5 +235,9 @@ export function useItemsManager() {
     search,
     refresh,
     getItemImageUrl,
+
+    // Filters
+    filters,
+    setFilters,
   };
 }

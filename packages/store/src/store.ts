@@ -7,6 +7,7 @@ import {
   createAttachmentSlice,
   type AttachmentSlice,
 } from './slices/attachment/slice';
+import {createFilterSlice, type FilterSlice} from './slices/filter/slice';
 import {sanitizeUser, redactTokens} from './utils/sanitizers';
 import {getPersistBackend} from './utils/storage';
 import {httpClient} from '@vohrad/api-client';
@@ -14,7 +15,8 @@ import {httpClient} from '@vohrad/api-client';
 export type StoreState = AuthSlice &
   TenantSlice &
   ItemSlice &
-  AttachmentSlice & {
+  AttachmentSlice &
+  FilterSlice & {
     _hasHydrated: boolean;
   };
 
@@ -25,6 +27,7 @@ export const useAuthStore = create<StoreState>()(
       ...createTenantSlice(set, get, store),
       ...createItemSlice(set, get, store),
       ...createAttachmentSlice(set, get, store),
+      ...createFilterSlice(set, get, store),
       _hasHydrated: false,
     }),
     {

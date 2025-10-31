@@ -133,7 +133,7 @@ export function ItemsList({
 
   if (isEmpty) {
     return (
-      <View style={styles.container}>
+      <View style={styles.centerContainer}>
         <EmptyState
           message={
             searchQuery

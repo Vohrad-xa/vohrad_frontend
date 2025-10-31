@@ -94,7 +94,7 @@ const _Tokens = {
     backdrop: 'rgba(0, 0, 0, 0.5)',
 
     // Toggle
-    toggleTrackOff: Palette.Greige,
+    toggleTrackOff: Palette.gray[100],
     toggleTrackOn: Palette.terracotta,
     toggleThumb: Palette.white,
   },

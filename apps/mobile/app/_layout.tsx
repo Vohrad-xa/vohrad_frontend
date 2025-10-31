@@ -1,7 +1,6 @@
 import {useEffect, useState, useRef} from 'react';
 import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
-import {BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 import {Stack, usePathname, useRootNavigationState} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {StatusBar} from 'expo-status-bar';
@@ -175,20 +174,18 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <AppThemeProvider>
-        <BottomSheetModalProvider>
+        <HapticProvider>
           <ActionSheetProvider>
-            <HapticProvider>
-              <LoadingProvider>
-                <AuthProvider>
-                  <FilterProvider>
-                    <GlobalStatusBar />
-                    <RootNavigation isBootstrapComplete={isBootstrapComplete} />
-                  </FilterProvider>
-                </AuthProvider>
-              </LoadingProvider>
-            </HapticProvider>
+            <LoadingProvider>
+              <AuthProvider>
+                <FilterProvider>
+                  <GlobalStatusBar />
+                  <RootNavigation isBootstrapComplete={isBootstrapComplete} />
+                </FilterProvider>
+              </AuthProvider>
+            </LoadingProvider>
           </ActionSheetProvider>
-        </BottomSheetModalProvider>
+        </HapticProvider>
       </AppThemeProvider>
     </GestureHandlerRootView>
   );

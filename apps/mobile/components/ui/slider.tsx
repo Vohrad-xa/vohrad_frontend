@@ -1,0 +1,31 @@
+import React from 'react';
+import {StyleSheet, Platform} from 'react-native';
+import RNSlider, {type SliderProps} from '@react-native-community/slider';
+import {type DSShape, type ThemeShape} from '@/constants/theme';
+import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
+
+export function Slider(props: SliderProps) {
+  const {theme, ds} = useTheme();
+  const styles = createStyles(ds, theme);
+
+  return (
+    <RNSlider
+      minimumTrackTintColor={theme.toggleTrackOn}
+      maximumTrackTintColor={theme.surface}
+      thumbTintColor={Platform.OS === 'ios' ? theme.toggleThumb : theme.divider}
+      style={styles.slider}
+      {...props}
+    />
+  );
+}
+
+const createStyles = makeStyleFactory(
+  (_ds: DSShape, _theme: ThemeShape) =>
+    StyleSheet.create({
+      slider: {
+        height: 30,
+      },
+    }),
+  (ds, theme) => `${ds.version}|${theme.version}`,
+);

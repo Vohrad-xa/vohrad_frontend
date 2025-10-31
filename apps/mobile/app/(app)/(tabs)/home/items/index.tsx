@@ -1,10 +1,12 @@
-import React, {useCallback, useState, useLayoutEffect} from 'react';
+import React, {useCallback, useLayoutEffect, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useRouter, useNavigation} from 'expo-router';
+import {usePendingFilters, useClearPendingFilters} from '@vohrad/store';
+import {type ItemFilterState} from '@vohrad/types';
+import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useSearch} from '@/features/home/search-context';
-import {ItemsList, useItemsManager, FilterItemsModal} from '@/features/item';
+import {ItemsList, useItemsManager} from '@/features/item';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
@@ -16,20 +18,9 @@ export default function ItemsScreen() {
   const navigation = useNavigation();
   const styles = createStyles(ds, theme);
   const {searchQuery} = useSearch();
-  const [filterModalVisible, setFilterModalVisible] = useState(false);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <HeaderButton
-          icon={AppIcons.navigation.filter}
-          accessibilityLabel="Filter items"
-          iconSize="xl"
-          onPress={() => setFilterModalVisible(true)}
-        />
-      ),
-    });
-  }, [navigation]);
+  // Read filters
+  const params = useLocalSearchParams<{filters?: string}>();
 
   const {
     items,
@@ -43,7 +34,52 @@ export default function ItemsScreen() {
     canLoadMore,
     loadMore,
     isLoadingMore,
+    filters,
+    setFilters,
   } = useItemsManager();
+  const pendingFilters = usePendingFilters();
+  const clearPendingFilters = useClearPendingFilters();
+
+  // Apply filters from URL params
+  useEffect(() => {
+    if (params.filters) {
+      try {
+        const parsedFilters = JSON.parse(
+          decodeURIComponent(params.filters),
+        ) as ItemFilterState;
+        setFilters(parsedFilters);
+      } catch (error) {
+        console.error('Failed to parse filters from params:', error);
+      }
+    }
+  }, [params.filters, setFilters]);
+
+  // Apply filters from modal when available
+  useEffect(() => {
+    if (pendingFilters) {
+      setFilters(pendingFilters);
+      clearPendingFilters();
+    }
+  }, [pendingFilters, setFilters, clearPendingFilters]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderButton
+          icon={AppIcons.navigation.filter}
+          accessibilityLabel="Filter items"
+          iconSize="xl"
+          onPress={() => {
+            router.push(
+              `/(modals)/items/filters?initialFilters=${encodeURIComponent(
+                JSON.stringify(filters),
+              )}`,
+            );
+          }}
+        />
+      ),
+    });
+  }, [navigation, filters, router]);
 
   const handleRefresh = useCallback(async () => {
     await refresh();
@@ -65,29 +101,23 @@ export default function ItemsScreen() {
   };
 
   return (
-    <>
-      <View style={styles.container}>
-        <ItemsList
-          searchQuery={searchQuery}
-          onItemPress={handleItemPress}
-          refreshControl={refreshControl}
-          items={items}
-          isLoading={isLoading}
-          error={error}
-          hasItems={hasItems}
-          isEmpty={isEmpty}
-          search={search}
-          getItemImageUrl={getItemImageUrl}
-          onLoadMore={handleLoadMore}
-          canLoadMore={canLoadMore}
-          isLoadingMore={isLoadingMore}
-        />
-      </View>
-      <FilterItemsModal
-        visible={filterModalVisible}
-        onClose={() => setFilterModalVisible(false)}
+    <View style={styles.container}>
+      <ItemsList
+        searchQuery={searchQuery}
+        onItemPress={handleItemPress}
+        refreshControl={refreshControl}
+        items={items}
+        isLoading={isLoading}
+        error={error}
+        hasItems={hasItems}
+        isEmpty={isEmpty}
+        search={search}
+        getItemImageUrl={getItemImageUrl}
+        onLoadMore={handleLoadMore}
+        canLoadMore={canLoadMore}
+        isLoadingMore={isLoadingMore}
       />
-    </>
+    </View>
   );
 }
 

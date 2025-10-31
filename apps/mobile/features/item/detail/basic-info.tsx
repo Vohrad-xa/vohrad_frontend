@@ -38,15 +38,19 @@ export function BasicInfo({
           <ThemedText variant="label" style={styles.fieldLabel}>
             Name
           </ThemedText>
-          <ThemedInput
-            ref={nameInputRef}
-            variant="label"
-            textAlign="right"
-            borderless
-            value={name ?? ''}
-            onChangeText={(value) => onFieldChange?.('name', value)}
-            placeholder="Item name"
-          />
+          <View style={styles.inputContainer}>
+            <ThemedInput
+              ref={nameInputRef}
+              variant="label"
+              textAlign="right"
+              borderless
+              value={name ?? ''}
+              onChangeText={(value) => onFieldChange?.('name', value)}
+              placeholder="Item name"
+              style={styles.input}
+              numberOfLines={1}
+            />
+          </View>
         </View>
       </Pressable>
 
@@ -55,15 +59,19 @@ export function BasicInfo({
           <ThemedText variant="label" style={styles.fieldLabel}>
             Code
           </ThemedText>
-          <ThemedInput
-            ref={codeInputRef}
-            variant="label"
-            textAlign="right"
-            borderless
-            value={code ?? ''}
-            onChangeText={(value) => onFieldChange?.('code', value)}
-            placeholder="Item code"
-          />
+          <View style={styles.inputContainer}>
+            <ThemedInput
+              ref={codeInputRef}
+              variant="label"
+              textAlign="right"
+              borderless
+              value={code ?? ''}
+              onChangeText={(value) => onFieldChange?.('code', value)}
+              placeholder="Item code"
+              style={styles.input}
+              numberOfLines={1}
+            />
+          </View>
         </View>
       </Pressable>
 
@@ -72,15 +80,19 @@ export function BasicInfo({
           <ThemedText variant="label" style={styles.fieldLabel}>
             Serial Number
           </ThemedText>
-          <ThemedInput
-            ref={serialNumberInputRef}
-            variant="label"
-            textAlign="right"
-            borderless
-            value={serialNumber ?? ''}
-            onChangeText={(value) => onFieldChange?.('serial_number', value)}
-            placeholder="Serial number"
-          />
+          <View style={styles.inputContainer}>
+            <ThemedInput
+              ref={serialNumberInputRef}
+              variant="label"
+              textAlign="right"
+              borderless
+              value={serialNumber ?? ''}
+              onChangeText={(value) => onFieldChange?.('serial_number', value)}
+              placeholder="Serial number"
+              style={styles.input}
+              numberOfLines={1}
+            />
+          </View>
         </View>
       </Pressable>
     </Card>
@@ -88,7 +100,7 @@ export function BasicInfo({
 }
 
 const createStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       fieldRow: {
         flexDirection: 'row',
@@ -96,7 +108,17 @@ const createStyles = makeStyleFactory(
         justifyContent: 'space-between',
       },
       fieldLabel: {
+        flexShrink: 0,
+        marginRight: ds.spacing.md,
+      },
+      inputContainer: {
         flex: 1,
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        minWidth: 0,
+      },
+      input: {
+        width: '100%',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

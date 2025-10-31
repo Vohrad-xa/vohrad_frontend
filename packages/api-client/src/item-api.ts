@@ -13,9 +13,13 @@ export class ItemApi {
   async getItems(
     page: number,
     size: number,
+    odataFilter?: string,
   ): Promise<ApiResponse<PaginatedResponse<Item>>> {
+    const filterParam = odataFilter
+      ? `&odata_filter=${encodeURIComponent(odataFilter)}`
+      : '';
     return httpClient.get<PaginatedResponse<Item>>(
-      `${API_ENDPOINTS.ITEMS.LIST}?page=${page}&size=${size}`,
+      `${API_ENDPOINTS.ITEMS.LIST}?page=${page}&size=${size}${filterParam}`,
     );
   }
 

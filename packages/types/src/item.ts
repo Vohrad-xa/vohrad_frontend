@@ -2,6 +2,14 @@ import type {JsonValue} from './tenant';
 
 export type TrackingMode = 'abstract' | 'standard' | 'serialized';
 
+export type ItemFilterState = {
+  statuses?: Array<'active' | 'inactive'>;
+  trackingModes?: Array<TrackingMode>;
+  priceMin?: number | null;
+  priceMax?: number | null;
+  specifications?: Record<string, JsonValue> | null;
+};
+
 export interface ItemLocationData {
   id: string;
   name: string;

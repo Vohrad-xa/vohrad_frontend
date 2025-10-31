@@ -30,8 +30,19 @@ export {
   useAttachmentUrls,
   useFetchAttachmentUrls,
 } from './slices/attachment';
+export {
+  usePendingFilters,
+  useSetPendingFilters,
+  useClearPendingFilters,
+} from './slices/filter/hooks';
+export type {FilterSlice} from './slices/filter';
 export type {User, AuthTokens, Tenant, Item, ItemDetail} from '@vohrad/types';
 export type {AuthSlice} from './slices/auth';
 export type {TenantSlice} from './slices/tenant';
 export type {ItemSlice} from './slices/item';
 export type {AttachmentSlice} from './slices/attachment';
+export {
+  buildODataFilter,
+  hasActiveFilters,
+  clearAllFilters,
+} from './utils/odata-filter-builder';

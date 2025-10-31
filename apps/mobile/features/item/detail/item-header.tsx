@@ -103,14 +103,17 @@ const createStyles = makeStyleFactory(
         justifyContent: 'center',
         gap: ds.spacing.sm,
         marginBottom: ds.spacing.sm,
+        flexWrap: 'wrap',
       },
       itemName: {
         ...ds.typography.heading,
         textAlign: 'center',
+        flexShrink: 0,
       },
       itemCode: {
         ...ds.typography.caption,
         color: theme.muted,
+        flexShrink: 0,
       },
       description: {
         textAlign: 'center',

@@ -11,13 +11,11 @@ import {
   ModalScrollView,
   ThemedView,
   ThemedText,
-  ThemedButton,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useItemDetail} from '@/features/item';
 import {SpecificationsForm} from '@/features/item/detail/specifications/specifications-form';
 import {useTheme, useHaptic} from '@/providers';
-import {AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function SpecificationsModal() {
@@ -28,7 +26,6 @@ export default function SpecificationsModal() {
   const styles = createStyles(ds, theme);
   const {id: itemId} = useLocalSearchParams<{id: string}>();
   const {item, isLoading} = useItemDetail(itemId);
-
   const [hasChanges, setHasChanges] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -62,7 +59,7 @@ export default function SpecificationsModal() {
       triggerSuccess();
       setTimeout(() => {
         router.dismiss();
-      }, 1000);
+      }, 1500);
     } catch (_error) {
       // Error is handled by the form component
     }
@@ -77,42 +74,38 @@ export default function SpecificationsModal() {
   // Update header options based on changes and edit mode
   useEffect(() => {
     if (showSuccess) {
-      // Show success checkmark
       navigation.setOptions({
         headerRight: () => (
-          <HeaderButton
-            icon={AppIcons.actions.save}
-            iconColor={theme.accentGreen}
-            accessibilityLabel="Saved"
-          />
+          <HeaderButton variant="success" accessibilityLabel="Saved" />
         ),
       });
     } else if (hasChanges) {
-      // Show Save button
       navigation.setOptions({
         headerRight: () => (
-          <View style={styles.headerButtonContainer}>
-            <ThemedButton
-              title="Save"
-              variant="ghost"
-              size="sm"
-              onPress={handleSave}
-            />
-          </View>
+          <HeaderButton
+            variant="save"
+            onPress={handleSave}
+            accessibilityLabel="Save specifications"
+          />
         ),
       });
     } else if (item && Object.keys(item.specifications ?? {}).length > 0) {
-      // Show Edit/Done button
       navigation.setOptions({
         headerRight: () => (
-          <View style={styles.headerButtonContainer}>
-            <ThemedButton
-              title={isEditMode ? 'Done' : 'Edit'}
-              variant="ghost"
-              size="sm"
-              onPress={handleEditToggle}
-            />
-          </View>
+          <HeaderButton
+            variant={isEditMode ? 'save' : 'edit'}
+            text={
+              isEditMode && hasChanges ? 'Save' : isEditMode ? 'Done' : 'Edit'
+            }
+            onPress={isEditMode && hasChanges ? handleSave : handleEditToggle}
+            accessibilityLabel={
+              isEditMode && hasChanges
+                ? 'Save specifications'
+                : isEditMode
+                  ? 'Done editing'
+                  : 'Edit specifications'
+            }
+          />
         ),
       });
     } else {
@@ -129,10 +122,8 @@ export default function SpecificationsModal() {
     handleEditToggle,
     navigation,
     theme.accentGreen,
-    styles.headerButtonContainer,
   ]);
 
-  // Clean up success timeout
   useEffect(() => {
     return () => {
       if (successTimeoutRef.current) {
@@ -154,7 +145,7 @@ export default function SpecificationsModal() {
           headerTitleAlign: 'center',
           headerLeft: () => (
             <HeaderButton
-              icon={AppIcons.navigation.close}
+              variant="close"
               onPress={handleClose}
               accessibilityLabel="Close specifications"
             />
@@ -200,9 +191,6 @@ const createStyles = makeStyleFactory(
         color: theme.text,
         fontFamily: 'System',
         fontWeight: '600',
-      },
-      headerButtonContainer: {
-        paddingHorizontal: Platform.OS === 'android' ? 0 : ds.spacing.sm,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

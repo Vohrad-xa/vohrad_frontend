@@ -8,7 +8,10 @@ export * from './detail/basic-info';
 
 // list
 export * from './list/items-list';
-export * from './list/filter-items-modal';
+
+// filter
+export * from './filter/status-filter';
+export * from './filter/tracking-mode-filter';
 
 // hooks
 export * from './hooks/use-item-detail';

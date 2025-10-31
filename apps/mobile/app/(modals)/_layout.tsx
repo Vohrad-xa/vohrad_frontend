@@ -17,6 +17,7 @@ export default function ModalsLayout() {
     >
       <Stack.Screen name="settings" />
       <Stack.Screen name="filter/index" options={{title: 'Filter'}} />
+      <Stack.Screen name="items/filters" options={{title: 'Item Filters'}} />
       <Stack.Screen name="scan/index" options={{title: 'Scan'}} />
     </Stack>
   );

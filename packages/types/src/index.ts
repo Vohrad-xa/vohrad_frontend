@@ -33,7 +33,8 @@ export type {
   ItemLocationData,
   ItemLocationInput,
   ItemAttachment,
-  TrackingMode,
+  ItemFilterState,
 } from './item';
 
 export {ApiError} from './api';
+export {TrackingMode} from './item';

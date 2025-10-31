@@ -85,6 +85,7 @@ const createStyles = makeStyleFactory(
         paddingHorizontal: 0,
         paddingVertical: 0,
         textAlign,
+        minWidth: 100,
         ...(borderless
           ? {
               borderWidth: 0,
