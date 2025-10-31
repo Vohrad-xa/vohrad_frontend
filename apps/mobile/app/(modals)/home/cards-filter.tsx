@@ -23,7 +23,7 @@ export default function FilterModal() {
     <>
       <Stack.Screen
         options={{
-          title: 'Filters',
+          title: 'Filter',
           headerShown: true,
           headerTransparent: Platform.OS === 'ios',
           headerStyle:

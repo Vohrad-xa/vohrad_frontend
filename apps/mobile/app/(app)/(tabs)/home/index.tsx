@@ -25,7 +25,7 @@ export default function HomeScreen() {
 
   const handlePresentModal = useCallback(() => {
     triggerHaptic('light');
-    router.push('/filter');
+    router.push('/home/cards-filter');
   }, [triggerHaptic]);
 
   const handleScanOpen = useCallback(() => {
