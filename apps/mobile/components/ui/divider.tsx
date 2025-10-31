@@ -1,4 +1,4 @@
-import {View, StyleSheet, Platform} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {BaseViewProps} from '@/types';
@@ -15,7 +15,7 @@ const createStyles = makeStyleFactory(
   (theme: ThemeShape) =>
     StyleSheet.create({
       divider: {
-        height: Platform.OS === 'android' ? 1 : StyleSheet.hairlineWidth,
+        height: StyleSheet.hairlineWidth,
         backgroundColor: theme.divider,
         marginVertical: 0,
       },

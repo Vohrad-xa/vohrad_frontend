@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, View} from 'react-native';
 import {useRouter} from 'expo-router';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ThemedButton, ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -48,73 +42,71 @@ export default function LoginScreen() {
       style={[styles.container, {backgroundColor: theme.background}]}
     >
       <ThemedView style={styles.container}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.container}
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          contentInsetAdjustmentBehavior="automatic"
+          bottomOffset={0}
+          enabled
+          extraKeyboardSpace={0}
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-            contentInsetAdjustmentBehavior="automatic"
-          >
-            <View style={[styles.centered, styles.spacingXl]}>
-              <Image source={darkModeImage} style={styles.heroImage} />
-              <ThemedText variant="sectionTitle" style={styles.centered}>
-                Sign in
+          <View style={[styles.centered, styles.spacingXl]}>
+            <Image source={darkModeImage} style={styles.heroImage} />
+            <ThemedText variant="sectionTitle" style={styles.centered}>
+              Sign in
+            </ThemedText>
+          </View>
+
+          <View style={[styles.spacingXl, styles.actionsStack]}>
+            <ThemedButton
+              fullWidth
+              onPress={handleMicrosoftLogin}
+              style={buttonStyles}
+            >
+              <Image source={microsoftLogo} style={styles.microsoftIcon} />
+              <ThemedText
+                variant="body"
+                style={{
+                  fontWeight: ds.fontWeight.semibold,
+                  color: scheme === 'dark' ? '#000' : '#fff',
+                }}
+              >
+                Continue with Microsoft
+              </ThemedText>
+            </ThemedButton>
+
+            <View style={[styles.divider, buttonStyles]}>
+              <View style={styles.dividerLine} />
+              <ThemedText variant="secondary" colorToken="muted">
+                OR
+              </ThemedText>
+              <View style={styles.dividerLine} />
+            </View>
+
+            <ThemedButton
+              variant="primary"
+              title="Use personal email"
+              fullWidth
+              onPress={handlePersonalEmailLogin}
+              style={[buttonStyles]}
+            />
+
+            <View style={styles.footer}>
+              <ThemedText variant="caption" colorToken="muted">
+                By continuing, you acknowledge Vohrad’s
+              </ThemedText>
+              <ThemedText
+                variant="caption"
+                colorToken="muted"
+                style={styles.link}
+                accessibilityRole="link"
+              >
+                Privacy Policy
               </ThemedText>
             </View>
-
-            <View style={[styles.spacingXl, styles.actionsStack]}>
-              <ThemedButton
-                fullWidth
-                onPress={handleMicrosoftLogin}
-                style={buttonStyles}
-              >
-                <Image source={microsoftLogo} style={styles.microsoftIcon} />
-                <ThemedText
-                  variant="body"
-                  style={{
-                    fontWeight: ds.fontWeight.semibold,
-                    color: scheme === 'dark' ? '#000' : '#fff',
-                  }}
-                >
-                  Continue with Microsoft
-                </ThemedText>
-              </ThemedButton>
-
-              <View style={[styles.divider, buttonStyles]}>
-                <View style={styles.dividerLine} />
-                <ThemedText variant="secondary" colorToken="muted">
-                  OR
-                </ThemedText>
-                <View style={styles.dividerLine} />
-              </View>
-
-              <ThemedButton
-                variant="primary"
-                title="Use personal email"
-                fullWidth
-                onPress={handlePersonalEmailLogin}
-                style={[buttonStyles]}
-              />
-
-              <View style={styles.footer}>
-                <ThemedText variant="caption" colorToken="muted">
-                  By continuing, you acknowledge Vohrad’s
-                </ThemedText>
-                <ThemedText
-                  variant="caption"
-                  colorToken="muted"
-                  style={styles.link}
-                  accessibilityRole="link"
-                >
-                  Privacy Policy
-                </ThemedText>
-              </View>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+          </View>
+        </KeyboardAwareScrollView>
       </ThemedView>
     </SafeAreaView>
   );

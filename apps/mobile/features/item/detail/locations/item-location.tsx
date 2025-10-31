@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useLocalSearchParams} from 'expo-router';
 import {useItemDetailManager} from '@vohrad/store';
+import {useLocalSearchParams} from 'expo-router';
 import {Card} from '@/components/cards/card';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';

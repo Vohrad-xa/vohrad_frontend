@@ -5,6 +5,7 @@ import {Stack, usePathname, useRootNavigationState} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {StatusBar} from 'expo-status-bar';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {KeyboardProvider} from 'react-native-keyboard-controller';
 import {LoadingOverlay} from '@/components/ui';
 import {FilterProvider} from '@/features/home/overview/filter-context';
 import {
@@ -173,20 +174,22 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
-      <AppThemeProvider>
-        <HapticProvider>
-          <ActionSheetProvider>
-            <LoadingProvider>
-              <AuthProvider>
-                <FilterProvider>
-                  <GlobalStatusBar />
-                  <RootNavigation isBootstrapComplete={isBootstrapComplete} />
-                </FilterProvider>
-              </AuthProvider>
-            </LoadingProvider>
-          </ActionSheetProvider>
-        </HapticProvider>
-      </AppThemeProvider>
+      <KeyboardProvider>
+        <AppThemeProvider>
+          <HapticProvider>
+            <ActionSheetProvider>
+              <LoadingProvider>
+                <AuthProvider>
+                  <FilterProvider>
+                    <GlobalStatusBar />
+                    <RootNavigation isBootstrapComplete={isBootstrapComplete} />
+                  </FilterProvider>
+                </AuthProvider>
+              </LoadingProvider>
+            </ActionSheetProvider>
+          </HapticProvider>
+        </AppThemeProvider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }

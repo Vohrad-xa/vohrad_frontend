@@ -1,7 +1,7 @@
 import React, {useState, useRef, useCallback} from 'react';
 import {Platform} from 'react-native';
-import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {useItemDetailManager} from '@vohrad/store';
+import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {useSettingsHeader} from '@/hooks';
 import {SpecificationsForm} from './specifications-form';
 

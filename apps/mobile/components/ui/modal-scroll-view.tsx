@@ -1,11 +1,7 @@
 import React from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 import type {ScrollViewProps} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -22,30 +18,21 @@ export function ModalScrollView({
   const {ds} = useTheme();
   const styles = createStyles(ds);
 
-  const scrollViewContent = (
-    <ScrollView
-      contentContainerStyle={[styles.defaultContent, contentContainerStyle]}
-      showsVerticalScrollIndicator={Platform.OS === 'web'}
-      keyboardShouldPersistTaps="handled"
-      contentInsetAdjustmentBehavior={
-        Platform.OS === 'ios' ? 'automatic' : undefined
-      }
-      nestedScrollEnabled={Platform.OS === 'android'}
-      overScrollMode={Platform.OS === 'android' ? 'always' : undefined}
-      {...props}
-    >
-      {children}
-    </ScrollView>
-  );
-
-  return Platform.OS === 'ios' ? (
-    <KeyboardAvoidingView behavior="padding" style={styles.container}>
-      {scrollViewContent}
-    </KeyboardAvoidingView>
-  ) : (
-    <KeyboardAvoidingView behavior="height" style={styles.container}>
-      {scrollViewContent}
-    </KeyboardAvoidingView>
+  return (
+    <View style={styles.container}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={[styles.defaultContent, contentContainerStyle]}
+        showsVerticalScrollIndicator={Platform.OS === 'web'}
+        keyboardShouldPersistTaps="handled"
+        contentInsetAdjustmentBehavior="automatic"
+        bottomOffset={0}
+        enabled
+        extraKeyboardSpace={0}
+        {...props}
+      >
+        {children}
+      </KeyboardAwareScrollView>
+    </View>
   );
 }
 

@@ -165,6 +165,9 @@ importers:
       react-native-google-places-autocomplete:
         specifier: ^2.5.7
         version: 2.5.7(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))
+      react-native-keyboard-controller:
+        specifier: ^1.19.3
+        version: 1.19.3(react-native-reanimated@4.1.2(@babel/core@7.28.4)(react-native-worklets@0.5.1(@babel/core@7.28.4)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
       react-native-popup-menu:
         specifier: ^0.18.0
         version: 0.18.0
@@ -4612,6 +4615,13 @@ packages:
     peerDependencies:
       react: '*'
       react-native: '*'
+
+  react-native-keyboard-controller@1.19.3:
+    resolution: {integrity: sha512-62vfV/xbZ8xGurbOUIgsDDkgVY4NsTpY7ZjVA97XibUcC/9pXVVyqBAI79dmp+TurSuPnBenf08Va1DJOZf9lg==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+      react-native-reanimated: '>=3.0.0'
 
   react-native-popup-menu@0.18.0:
     resolution: {integrity: sha512-XD3gyp/hwL5YWw2J034DerfvbJ6S2YHqAzvqAFRU+UGnFD4JyTqggfm4UyynBD26O1PDoRb45Loil+NZCGfCnA==}
@@ -10522,6 +10532,13 @@ snapshots:
     dependencies:
       react: 19.1.0
       react-native: 0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0)
+
+  react-native-keyboard-controller@1.19.3(react-native-reanimated@4.1.2(@babel/core@7.28.4)(react-native-worklets@0.5.1(@babel/core@7.28.4)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-native: 0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0)
+      react-native-is-edge-to-edge: 1.2.1(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+      react-native-reanimated: 4.1.2(@babel/core@7.28.4)(react-native-worklets@0.5.1(@babel/core@7.28.4)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
 
   react-native-popup-menu@0.18.0: {}
 

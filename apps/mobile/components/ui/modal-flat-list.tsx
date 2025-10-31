@@ -1,12 +1,7 @@
 import React from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform,
-  FlatList,
-  StyleSheet,
-} from 'react-native';
+import {Platform, FlatList, StyleSheet, View} from 'react-native';
 import type {FlatListProps} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -20,29 +15,32 @@ export function ModalFlatList<T>({
   ...props
 }: ModalFlatListProps<T>) {
   const {ds} = useTheme();
-  const insets = useSafeAreaInsets();
-  const styles = createStyles(ds, insets.bottom);
+  const styles = createStyles(ds);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}
-    >
-      <FlatList
+    <View style={styles.container}>
+      <KeyboardAwareScrollView
         contentContainerStyle={[styles.defaultContent, contentContainerStyle]}
         showsVerticalScrollIndicator={Platform.OS === 'web'}
         keyboardShouldPersistTaps="handled"
-        contentInsetAdjustmentBehavior={
-          Platform.OS === 'ios' ? 'automatic' : undefined
-        }
-        {...props}
-      />
-    </KeyboardAvoidingView>
+        contentInsetAdjustmentBehavior="automatic"
+        bottomOffset={0}
+        enabled
+        extraKeyboardSpace={0}
+      >
+        <FlatList
+          {...props}
+          contentContainerStyle={undefined}
+          scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
+        />
+      </KeyboardAwareScrollView>
+    </View>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, bottomInset: number) =>
+  (ds: DSShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
@@ -50,8 +48,8 @@ const createStyles = makeStyleFactory(
       defaultContent: {
         paddingTop: ds.spacing.lg,
         paddingHorizontal: ds.spacing.xl,
-        paddingBottom: bottomInset,
+        paddingBottom: ds.spacing.xxl,
       },
     }),
-  (ds, bottomInset) => `${ds.version}|${bottomInset}`,
+  (ds) => ds.version.toString(),
 );

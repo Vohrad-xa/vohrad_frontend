@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, Platform} from 'react-native';
 import {useNavigation} from 'expo-router';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedView, ModalScrollView, InfoRowCard} from '@/components/ui';
 import type {InfoField} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -12,8 +11,7 @@ import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function AppSettingsScreen() {
   const {ds, theme} = useTheme();
-  const insets = useSafeAreaInsets();
-  const styles = createStyles(ds, theme, insets.bottom);
+  const styles = createStyles(ds, theme);
   const navigation = useNavigation();
 
   useSettingsHeader({
@@ -57,7 +55,7 @@ export default function AppSettingsScreen() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape, insetBottom: number) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
@@ -65,8 +63,8 @@ const createStyles = makeStyleFactory(
       content: {
         gap: ds.spacing.xl,
         paddingTop: ds.spacing.md,
-        paddingBottom: ds.spacing.xxl + insetBottom,
+        paddingBottom: ds.spacing.xxl,
       },
     }),
-  (ds, theme, insetBottom) => themeKey(theme, ds) + `|${insetBottom}`,
+  (ds, theme) => themeKey(theme, ds),
 );

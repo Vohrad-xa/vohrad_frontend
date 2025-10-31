@@ -1,6 +1,6 @@
 import React from 'react';
-import {useLocalSearchParams} from 'expo-router';
 import {useItemDetailManager} from '@vohrad/store';
+import {useLocalSearchParams} from 'expo-router';
 import {ModalScrollView, EmptyState} from '@/components/ui';
 import {ItemLocation} from '@/features/item/detail/locations/item-location';
 

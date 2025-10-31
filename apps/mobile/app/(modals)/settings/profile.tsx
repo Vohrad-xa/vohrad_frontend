@@ -1,7 +1,6 @@
 import React, {useRef, useState, useCallback} from 'react';
 import {StyleSheet, Platform} from 'react-native';
 import {useNavigation} from 'expo-router';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedView, ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
@@ -15,8 +14,7 @@ import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function ProfileScreen() {
   const {ds, theme} = useTheme();
-  const insets = useSafeAreaInsets();
-  const styles = createStyles(ds, theme, insets.bottom);
+  const styles = createStyles(ds, theme);
   const navigation = useNavigation();
   const profileContentRef = useRef<ProfileContentHandle>(null);
   const [isEditing, setIsEditing] = useState(Platform.OS === 'web');
@@ -75,15 +73,15 @@ export default function ProfileScreen() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape, insetBottom: number) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
       },
       content: {
         gap: ds.spacing.xxl,
-        paddingBottom: ds.spacing.xxl + insetBottom,
+        paddingBottom: ds.spacing.xxl,
       },
     }),
-  (ds, theme, insetBottom) => themeKey(theme, ds) + `|${insetBottom}`,
+  (ds, theme) => themeKey(theme, ds),
 );
