@@ -2,27 +2,26 @@ import React from 'react';
 import {useLocalSearchParams} from 'expo-router';
 import {ModalScrollView, EmptyState} from '@/components/ui';
 import {useItemDetail} from '@/features/item';
-import {ItemSpecifications} from '@/features/item/detail/specifications/item-specifications';
+import {ItemLocation} from '@/features/item/detail/locations/item-location';
 
-export default function SpecificationsModal() {
+export default function LocationModal() {
   const {id: itemId} = useLocalSearchParams<{id: string}>();
   const {item, isLoading} = useItemDetail(itemId);
 
-  const hasSpecifications =
-    item?.specifications && Object.keys(item.specifications).length > 0;
+  const displayLocations = item?.locations ?? [];
 
-  if (!isLoading && !hasSpecifications) {
+  if (!isLoading && displayLocations.length === 0) {
     return (
       <EmptyState
-        message="No specifications found for this item"
-        icon="hardware-chip-outline"
+        message="No locations found for this item"
+        icon="locate-outline"
       />
     );
   }
 
   return (
     <ModalScrollView>
-      <ItemSpecifications />
+      <ItemLocation />
     </ModalScrollView>
   );
 }

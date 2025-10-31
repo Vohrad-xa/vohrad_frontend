@@ -3,6 +3,7 @@ import {View} from 'react-native';
 import {Card} from '@/components/cards/card';
 import {useTheme} from '@/providers';
 import {BasicInfo} from './basic-info';
+import {Locations} from './locations/locations';
 import {QuantityField} from './quantity-field';
 import {Specifications} from './specifications/specifications';
 import {StatusField} from './status-field';
@@ -76,6 +77,9 @@ export function ItemDetails({
 
         {/* Specifications field */}
         <Specifications key="specifications" itemId={itemId} />
+
+        {/* Locations field */}
+        <Locations key="locations" itemId={itemId} />
       </Card>
     </View>
   );

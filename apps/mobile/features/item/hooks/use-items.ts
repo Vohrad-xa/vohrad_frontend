@@ -32,7 +32,7 @@ export function useItemsManager() {
   // Track whether we've attempted initial fetch to prevent infinite loops
   const hasAttemptedFetch = useRef(false);
   const activeQueryRef = useRef(DEFAULT_SEARCH_QUERY);
-  const previousFiltersRef = useRef<string | undefined>(undefined);
+  const previousFiltersRef = useRef<string>(JSON.stringify(filters));
   const [isAppending, setIsAppending] = useState(false);
 
   const performFetchItems = useCallback(

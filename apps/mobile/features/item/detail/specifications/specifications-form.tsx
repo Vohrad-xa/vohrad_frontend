@@ -79,7 +79,6 @@ export const SpecificationsForm = forwardRef<
 
   // Add new field
   const handleAddField = useCallback(() => {
-    triggerHaptic('light');
     const newField: SpecField = {
       id: `new-${nextIdRef.current++}`,
       label: '',
@@ -91,16 +90,12 @@ export const SpecificationsForm = forwardRef<
     setTimeout(() => {
       inputRefs.current[newField.id]?.focus();
     }, 100);
-  }, [triggerHaptic]);
+  }, []);
 
   // Remove field
-  const handleRemoveField = useCallback(
-    (id: string) => {
-      triggerHaptic('light');
-      setFields((prev) => prev.filter((field) => field.id !== id));
-    },
-    [triggerHaptic],
-  );
+  const handleRemoveField = useCallback((id: string) => {
+    setFields((prev) => prev.filter((field) => field.id !== id));
+  }, []);
 
   // Check if there are changes
   const checkForChanges = useCallback(() => {
@@ -186,8 +181,7 @@ export const SpecificationsForm = forwardRef<
   // Toggle edit mode
   const toggleEditMode = useCallback(() => {
     setIsEditMode((prev) => !prev);
-    triggerHaptic('light');
-  }, [triggerHaptic]);
+  }, []);
 
   // Expose methods and state through ref
   React.useImperativeHandle(ref, () => ({
@@ -234,18 +228,16 @@ export const SpecificationsForm = forwardRef<
                   value={field.label}
                   onChangeText={(text) => handleLabelChange(field.id, text)}
                   placeholder="label"
-                  placeholderTextColor={theme.iosPlaceholder}
-                  style={styles.labelInput}
+                  // style={styles.labelInput}
                 />
 
                 <ThemedInput
-                  variant="label"
+                  variant="secondary"
                   textAlign="right"
                   borderless
                   value={field.value}
                   onChangeText={(text) => handleValueChange(field.id, text)}
-                  placeholder="value"
-                  placeholderTextColor={theme.iosPlaceholder}
+                  placeholder="secondary"
                   style={styles.valueInput}
                 />
               </View>
@@ -263,9 +255,7 @@ export const SpecificationsForm = forwardRef<
           <Icon name="add-circle-outline" size="md" colorToken="tint" />
         </Pressable>
         <Pressable onPress={handleAddField} style={styles.addTextButton}>
-          <ThemedText variant="label" style={styles.addFieldText}>
-            add new field
-          </ThemedText>
+          <ThemedText variant="label">add new field</ThemedText>
         </Pressable>
       </View>
     </View>
@@ -303,10 +293,10 @@ const createStyles = makeStyleFactory(
       inputsContainerWithMinus: {
         flex: 1,
       },
-      labelInput: {
-        flex: 1,
-        minWidth: 0,
-      },
+      // labelInput: {
+      //   flex: 1,
+      //   minWidth: 0,
+      // },
       valueInput: {
         flex: 1,
         minWidth: 0,
@@ -323,9 +313,6 @@ const createStyles = makeStyleFactory(
       },
       addTextButton: {
         flex: 1,
-      },
-      addFieldText: {
-        color: theme.tint,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

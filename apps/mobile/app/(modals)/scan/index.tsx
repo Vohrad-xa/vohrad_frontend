@@ -58,9 +58,22 @@ export default function ScanModal() {
   );
 
   const handleClose = useCallback(() => {
-    triggerHaptic('light');
     router.back();
-  }, [triggerHaptic, router]);
+  }, [router]);
+
+  const CloseButton = useCallback(
+    () => (
+      <HeaderButton
+        variant="close"
+        onPress={handleClose}
+        accessibilityLabel="Close scanner"
+      />
+    ),
+    [handleClose],
+  );
+
+  const headerLeftConfig =
+    Platform.OS === 'ios' || Platform.OS === 'web' ? CloseButton : undefined;
 
   if (!permission?.granted) {
     return (
@@ -71,18 +84,7 @@ export default function ScanModal() {
             headerShown: true,
             headerTransparent: Platform.OS === 'ios',
             headerBackButtonDisplayMode: 'default',
-            headerLeft:
-              Platform.OS === 'ios' || Platform.OS === 'web'
-                ? () => (
-                    <HeaderButton
-                      icon={AppIcons.navigation.close}
-                      onPress={handleClose}
-                      iconColorToken="text"
-                      accessibilityLabel="Close scanner"
-                      iconSize="xl"
-                    />
-                  )
-                : undefined,
+            headerLeft: headerLeftConfig,
           }}
         />
         <ThemedView style={styles.container}>
@@ -110,18 +112,7 @@ export default function ScanModal() {
             color: theme.primaryForeground,
           },
           headerBackTitle: 'Back ',
-          headerLeft:
-            Platform.OS === 'ios' || Platform.OS === 'web'
-              ? () => (
-                  <HeaderButton
-                    icon={AppIcons.navigation.close}
-                    onPress={handleClose}
-                    iconColorToken="text"
-                    accessibilityLabel="Close scanner"
-                    iconSize="xl"
-                  />
-                )
-              : undefined,
+          headerLeft: headerLeftConfig,
         }}
       />
       <View style={styles.cameraContainer}>

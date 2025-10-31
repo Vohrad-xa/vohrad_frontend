@@ -4,18 +4,15 @@ import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ModalScrollView, ThemedView} from '@/components/ui';
 import {type DSShape, type ThemeShape} from '@/constants/theme';
 import {FilterContent} from '@/features/home/overview/filter';
-import {useTheme, useHaptic} from '@/providers';
-import {AppIcons} from '@/utils';
+import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function FilterModal() {
   const {ds, theme} = useTheme();
-  const {triggerHaptic} = useHaptic();
   const router = useRouter();
   const styles = createStyles(ds, theme);
 
   const handleClose = () => {
-    triggerHaptic('light');
     router.dismiss();
   };
 
@@ -33,11 +30,9 @@ export default function FilterModal() {
           headerBackButtonDisplayMode: 'minimal',
           headerLeft: () => (
             <HeaderButton
-              icon={AppIcons.navigation.close}
+              variant="close"
               onPress={handleClose}
-              iconColorToken="text"
               accessibilityLabel="Close filters"
-              iconSize="lg"
             />
           ),
         }}

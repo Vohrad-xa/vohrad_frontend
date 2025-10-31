@@ -1,5 +1,5 @@
 import type {FC} from 'react';
-import {Platform, TouchableOpacity, StyleSheet, Text} from 'react-native';
+import {Platform, Pressable, StyleSheet, Text} from 'react-native';
 import type {TokenName} from '@/constants/colors';
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
@@ -39,7 +39,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
   iconColorToken,
   textColor,
   textColorToken,
-  iconSize = 'lg',
+  iconSize,
   accessibilityLabel,
   testID,
   style,
@@ -58,6 +58,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
         return {
           icon: AppIcons.navigation.close,
           color: theme.muted,
+          iconSize: 'lg' as const,
         };
       case 'cancel':
         return {
@@ -73,6 +74,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
         return {
           icon: AppIcons.actions.save,
           color: theme.accentGreen,
+          iconSize: 'xxl' as const,
         };
       case 'edit':
         return {
@@ -83,6 +85,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
         return {
           icon: AppIcons.navigation.back,
           color: theme.text,
+          iconSize: 'lg' as const,
         };
       case 'action':
         return {
@@ -95,9 +98,10 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
     }
   })();
 
-  // Use variant config as defaults, override with explicit props
+  // Use variant config as defaults
   const finalIcon = icon ?? variantConfig.icon;
   const finalText = text ?? variantConfig.text;
+  const finalIconSize = iconSize ?? variantConfig.iconSize ?? 'lg';
   const finalIconColor =
     iconColor ??
     (iconColorToken ? theme[iconColorToken as TokenName] : variantConfig.color);
@@ -110,16 +114,26 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
     <Icon
       name={finalIcon}
       color={finalIconColor}
-      size={ds.iconSize[iconSize]}
+      size={ds.iconSize[finalIconSize]}
     />
   ) : finalText ? (
     <Text style={[styles.text, {color: finalTextColor}]}>{finalText}</Text>
   ) : null;
 
+  // Apply consistent padding for edit/save/cancel/success variants
+  const isActionButton =
+    variant === 'edit' ||
+    variant === 'save' ||
+    variant === 'cancel' ||
+    variant === 'success';
+
   return (
-    <TouchableOpacity
-      style={[styles.button, finalText ? styles.textButton : null, style]}
-      activeOpacity={0.7}
+    <Pressable
+      style={[
+        styles.button,
+        isActionButton ? styles.actionButton : null,
+        style,
+      ]}
       accessibilityRole="button"
       accessibilityLabel={
         accessibilityLabel ??
@@ -134,7 +148,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
       disabled={!onPress}
     >
       {buttonContent}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -146,7 +160,6 @@ const createStyles = makeStyleFactory(
         minHeight: baseSize,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: baseSize ? baseSize / 2 : ds.borderRadius.lg,
         alignSelf: 'center',
         ...Platform.select({
           android: {
@@ -154,13 +167,11 @@ const createStyles = makeStyleFactory(
           },
         }),
       },
-      textButton: {
-        paddingHorizontal: ds.spacing.md,
-        borderRadius: ds.borderRadius.sm,
+      actionButton: {
+        paddingHorizontal: ds.spacing.lg,
       },
       text: {
-        fontSize: 17,
-        fontWeight: '400',
+        ...ds.typography.body,
       },
     }),
   (ds, baseSize) => baseSize.toString(),

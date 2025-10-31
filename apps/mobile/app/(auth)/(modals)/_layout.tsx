@@ -29,8 +29,9 @@ export default function AuthModalsLayout() {
           title: 'Login',
           headerRight: () => (
             <HeaderButton
-              icon="close-outline"
+              variant="close"
               onPress={() => router.dismiss()}
+              accessibilityLabel="Close"
             />
           ),
         }}

@@ -1,4 +1,5 @@
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Platform} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon, type IconName} from '@/utils/icons';
@@ -13,21 +14,29 @@ type EmptyStateProps = {
 
 export function EmptyState({message, icon, iconSize = 48}: EmptyStateProps) {
   const {ds} = useTheme();
+  const insets = useSafeAreaInsets();
   const styles = createStyles(ds);
 
   return (
-    <View style={styles.container}>
-      {icon && (
-        <Icon
-          name={icon}
-          size={iconSize}
-          colorToken="muted"
-          style={styles.icon}
-        />
-      )}
-      <ThemedText variant="secondary" style={styles.message}>
-        {message}
-      </ThemedText>
+    <View
+      style={[
+        styles.outerContainer,
+        Platform.OS === 'ios' && {marginTop: -insets.top * 2},
+      ]}
+    >
+      <View style={styles.container}>
+        {icon && (
+          <Icon
+            name={icon}
+            size={iconSize}
+            colorToken="muted"
+            style={styles.icon}
+          />
+        )}
+        <ThemedText variant="secondary" style={styles.message}>
+          {message}
+        </ThemedText>
+      </View>
     </View>
   );
 }
@@ -35,6 +44,11 @@ export function EmptyState({message, icon, iconSize = 48}: EmptyStateProps) {
 const createStyles = makeStyleFactory(
   (ds: DSShape) =>
     StyleSheet.create({
+      outerContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
       container: {
         alignItems: 'center',
         justifyContent: 'center',

@@ -1,5 +1,4 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {Platform} from 'react-native';
 import {useSetPendingFilters} from '@vohrad/store';
 import {type ItemFilterState} from '@vohrad/types';
 import {Stack, useRouter, useLocalSearchParams} from 'expo-router';
@@ -68,14 +67,6 @@ export default function ItemFiltersModal() {
     <>
       <Stack.Screen
         options={{
-          title: 'Item Filters',
-          headerShown: true,
-          headerTransparent: Platform.OS === 'ios',
-          headerStyle:
-            Platform.OS === 'android' ? styles.headerStyleAndroid : undefined,
-          headerTitleStyle: styles.headerTitleStyle,
-          headerTitleAlign: 'center',
-          headerBackButtonDisplayMode: 'minimal',
           headerLeft: () => (
             <HeaderButton
               variant="cancel"
@@ -129,12 +120,6 @@ const createStyles = makeStyleFactory(
     content: {
       padding: ds.spacing.lg,
       gap: ds.spacing.xl,
-    },
-    headerStyleAndroid: {
-      backgroundColor: theme.navigationBar,
-    },
-    headerTitleStyle: {
-      color: theme.text,
     },
   }),
   (ds, theme) => `${ds.version}|${theme.version}`,
