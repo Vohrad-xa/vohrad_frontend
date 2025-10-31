@@ -28,7 +28,6 @@ export function useItemForm({
 }: UseItemFormProps) {
   const {updateItem} = useUpdateItem();
 
-  // Form state
   const [formValues, setFormValues] = useState<ItemFormValues>(() => ({
     name: initialValues.name ?? '',
     code: initialValues.code ?? '',
@@ -42,7 +41,7 @@ export function useItemForm({
     initialValues.trackingMode,
   );
 
-  // Track original values for change detection
+  // Track original values
   const originalValues = useRef<ItemFormValues>({
     name: initialValues.name ?? '',
     code: initialValues.code ?? '',
@@ -76,7 +75,6 @@ export function useItemForm({
     setOptimisticTrackingMode(initialValues.trackingMode);
   }, [initialValues.trackingMode]);
 
-  // Check if form has changes
   const checkForChanges = useCallback((): boolean => {
     return (
       formValues.name !== originalValues.current.name ||
@@ -109,7 +107,6 @@ export function useItemForm({
       } catch (error) {
         setOptimisticStatus(initialValues.isActive);
         // Error is already handled by the store hook
-        // Just re-throw to let the caller handle UI feedback
         throw error;
       }
     },
@@ -126,15 +123,13 @@ export function useItemForm({
         });
       } catch (error) {
         setOptimisticTrackingMode(initialValues.trackingMode);
-        // Error is already handled by the store hook
-        // Just re-throw to let the caller handle UI feedback
+        // Error is already handled by the store hookck
         throw error;
       }
     },
     [itemId, updateItem, initialValues.trackingMode],
   );
 
-  // Save form changes
   const performSave = useCallback(async (): Promise<void> => {
     const updates: Partial<ItemUpdate> = {};
 
@@ -157,29 +152,23 @@ export function useItemForm({
       await updateItem(itemId, updates);
       originalValues.current = {...formValues};
       onHasChangesChange?.(false);
-      // Dismiss keyboard after successful save
       Keyboard.dismiss();
     } catch (error) {
       // Error is already handled by the store hook
-      // Store hook sets the error in state, so we just re-throw
       throw error;
     }
   }, [formValues, itemId, updateItem, onHasChangesChange]);
 
-  // Reset form to original values
   const resetForm = useCallback((): void => {
     setFormValues({...originalValues.current});
     onHasChangesChange?.(false);
   }, [onHasChangesChange]);
 
   return {
-    // State
     formValues,
     optimisticStatus,
     optimisticTrackingMode,
     hasChanges: checkForChanges(),
-
-    // Actions
     handleFieldChange,
     handleStatusChange,
     handleTrackingModeChange,

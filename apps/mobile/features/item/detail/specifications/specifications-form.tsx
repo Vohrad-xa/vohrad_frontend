@@ -57,27 +57,22 @@ export const SpecificationsForm = forwardRef<
   });
 
   const [isEditMode, setIsEditMode] = useState(false);
-
-  // Track original values for change detection
   const originalFields = useRef<SpecField[]>(fields);
   const nextIdRef = useRef(fields.length);
   const inputRefs = useRef<Record<string, TextInput | null>>({});
 
-  // Handle label change
   const handleLabelChange = useCallback((id: string, label: string) => {
     setFields((prev) =>
       prev.map((field) => (field.id === id ? {...field, label} : field)),
     );
   }, []);
 
-  // Handle value change
   const handleValueChange = useCallback((id: string, value: string) => {
     setFields((prev) =>
       prev.map((field) => (field.id === id ? {...field, value} : field)),
     );
   }, []);
 
-  // Add new field
   const handleAddField = useCallback(() => {
     const newField: SpecField = {
       id: `new-${nextIdRef.current++}`,
@@ -86,18 +81,15 @@ export const SpecificationsForm = forwardRef<
     };
     setFields((prev) => [...prev, newField]);
 
-    // Focus on the new field's label input after it's rendered
     setTimeout(() => {
       inputRefs.current[newField.id]?.focus();
     }, 100);
   }, []);
 
-  // Remove field
   const handleRemoveField = useCallback((id: string) => {
     setFields((prev) => prev.filter((field) => field.id !== id));
   }, []);
 
-  // Check if there are changes
   const checkForChanges = useCallback(() => {
     if (fields.length !== originalFields.current.length) {
       return true;
@@ -116,7 +108,7 @@ export const SpecificationsForm = forwardRef<
       return;
     }
 
-    // Check for duplicate labels (case-insensitive) before converting to object
+    // Check for duplicate labels
     const labels = fields
       .map((f) => f.label.trim().toLowerCase())
       .filter((label) => label !== '');
@@ -128,7 +120,7 @@ export const SpecificationsForm = forwardRef<
         message: 'Duplicate specification keys are not allowed',
       });
 
-      // Focus back on the last field (most recently added/edited)
+      // Focus back on the last field
       setTimeout(() => {
         const lastField = fields[fields.length - 1];
         if (lastField) {
@@ -139,7 +131,6 @@ export const SpecificationsForm = forwardRef<
       throw new Error('Duplicate specification keys are not allowed');
     }
 
-    // Convert fields array back to object, filtering out empty labels
     const specifications: Record<string, string> = {};
     fields.forEach((field) => {
       if (field.label.trim()) {
@@ -166,7 +157,6 @@ export const SpecificationsForm = forwardRef<
     checkForChanges,
   ]);
 
-  // Show error alerts when errors occur
   const error = useAuthStore((state) => state.error);
   useEffect(() => {
     if (error) {
@@ -178,7 +168,6 @@ export const SpecificationsForm = forwardRef<
     }
   }, [error, clearError]);
 
-  // Toggle edit mode
   const toggleEditMode = useCallback(() => {
     setIsEditMode((prev) => !prev);
   }, []);
@@ -293,10 +282,6 @@ const createStyles = makeStyleFactory(
       inputsContainerWithMinus: {
         flex: 1,
       },
-      // labelInput: {
-      //   flex: 1,
-      //   minWidth: 0,
-      // },
       valueInput: {
         flex: 1,
         minWidth: 0,

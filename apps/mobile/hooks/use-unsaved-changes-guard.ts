@@ -40,7 +40,6 @@ export function useUnsavedChangesGuard<T extends ContentHandle>({
   const pendingNavigationActionRef = useRef<NavigationAction | null>(null);
 
   usePreventRemove(hasChanges, (event) => {
-    // Trigger warning haptic when user tries to leave with unsaved changes
     void triggerHaptic('warning');
 
     showConfirmAlert({
@@ -52,7 +51,7 @@ export function useUnsavedChangesGuard<T extends ContentHandle>({
       onConfirm: () => {
         pendingNavigationActionRef.current = event.data.action;
 
-        // Call the save method with options if provided
+        // Call the save method
         const saveMethod = contentRef.current?.[saveMethodName];
         if (typeof saveMethod === 'function') {
           (saveMethod as (options?: unknown) => void)(saveOptions);

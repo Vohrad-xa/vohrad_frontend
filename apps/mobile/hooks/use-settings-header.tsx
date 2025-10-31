@@ -53,7 +53,6 @@ export function useSettingsHeader({
   }, []);
 
   useLayoutEffect(() => {
-    // Determine headerLeft
     let headerLeft;
     if (onClose) {
       headerLeft = () => (
@@ -83,7 +82,6 @@ export function useSettingsHeader({
       headerLeft = undefined;
     }
 
-    // Determine headerRight
     let headerRight;
     if (showSuccess) {
       headerRight = () => (
