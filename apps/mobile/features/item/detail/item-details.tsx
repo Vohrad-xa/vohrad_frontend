@@ -8,7 +8,7 @@ import {QuantityField} from './quantity-field';
 import {Specifications} from './specifications/specifications-field';
 import {StatusField} from './status-field';
 import {TrackingModeField} from './tracking-mode-field';
-import type {UseItemFormReturn} from '../hooks/use-item-form';
+import type {UseItemFormReturn} from './use-item-form';
 
 interface ItemDetailsProps {
   quantity?: string;

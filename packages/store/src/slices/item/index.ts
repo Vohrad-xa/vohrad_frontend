@@ -10,4 +10,9 @@ export {
   useUpdateItem,
   useDeleteItem,
 } from './hooks';
+export {
+  useItemsManager,
+  useItemDetailManager,
+  useItemFiltersManager,
+} from './managers';
 export type {ItemSlice} from './slice';

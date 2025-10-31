@@ -1,7 +1,7 @@
 import {useCallback, useState} from 'react';
 import {type ItemFilterState} from '@vohrad/types';
 
-export function useItemFilters(initialFilters: ItemFilterState) {
+export function useItemFiltersManager(initialFilters: ItemFilterState) {
   const [filters, setFilters] = useState<ItemFilterState>(initialFilters);
 
   const toggleFilter = useCallback(

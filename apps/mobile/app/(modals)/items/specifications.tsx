@@ -1,12 +1,12 @@
 import React from 'react';
 import {useLocalSearchParams} from 'expo-router';
+import {useItemDetailManager} from '@vohrad/store';
 import {ModalScrollView, EmptyState} from '@/components/ui';
-import {useItemDetail} from '@/features/item';
 import {ItemSpecifications} from '@/features/item/detail/specifications/item-specifications';
 
 export default function SpecificationsModal() {
   const {id: itemId} = useLocalSearchParams<{id: string}>();
-  const {item, isLoading} = useItemDetail(itemId);
+  const {item, isLoading} = useItemDetailManager(itemId);
 
   const hasSpecifications =
     item?.specifications && Object.keys(item.specifications).length > 0;

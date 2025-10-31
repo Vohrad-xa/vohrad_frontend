@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {useSetPendingFilters} from '@vohrad/store';
+import {useSetPendingFilters, useItemFiltersManager} from '@vohrad/store';
 import {type ItemFilterState} from '@vohrad/types';
 import {Stack, useRouter, useLocalSearchParams} from 'expo-router';
 import {HeaderButton, ThemedView, ModalScrollView} from '@/components/ui';
@@ -7,7 +7,6 @@ import {type DSShape, type ThemeShape} from '@/constants/theme';
 import {PriceRangeFilter} from '@/features/item/filter/price-range-filter';
 import {StatusFilter} from '@/features/item/filter/status-filter';
 import {TrackingModeFilter} from '@/features/item/filter/tracking-mode-filter';
-import {useItemFilters} from '@/features/item/hooks/use-item-filters';
 import {useTheme} from '@/providers';
 import {triggerHaptic} from '@/utils/haptics';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -29,7 +28,7 @@ export default function ItemFiltersModal() {
     : {};
 
   const {filters, toggleFilter, updatePriceMin, updatePriceMax} =
-    useItemFilters(initialFilters);
+    useItemFiltersManager(initialFilters);
   const [hasChanges, setHasChanges] = useState(false);
   const previousFiltersRef = useRef<string | undefined>(undefined);
 

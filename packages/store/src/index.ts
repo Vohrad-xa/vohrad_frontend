@@ -23,6 +23,9 @@ export {
   useCreateItem,
   useUpdateItem,
   useDeleteItem,
+  useItemsManager,
+  useItemDetailManager,
+  useItemFiltersManager,
 } from './slices/item';
 export {
   useAttachmentLoading,

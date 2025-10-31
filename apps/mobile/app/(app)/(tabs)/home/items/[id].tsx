@@ -1,13 +1,12 @@
 import {useCallback, useEffect, useState, useRef} from 'react';
-import {useAuthStore, type StoreState} from '@vohrad/store';
+import {
+  useAuthStore,
+  useItemDetailManager,
+  type StoreState,
+} from '@vohrad/store';
 import {useLocalSearchParams, useNavigation} from 'expo-router';
 import {ThemedView, ModalScrollView, HeaderButton} from '@/components/ui';
-import {
-  ItemDetails,
-  ItemHeader,
-  useItemDetail,
-  useItemForm,
-} from '@/features/item';
+import {ItemDetails, ItemHeader, useItemForm} from '@/features/item';
 import {useTheme, useHaptic} from '@/providers';
 import {showAlert} from '@/utils';
 import {useItemChanges} from '../_layout';
@@ -21,7 +20,8 @@ export default function ItemDetailScreen() {
   const [showSuccess, setShowSuccess] = useState(false);
   const successTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const clearError = useAuthStore((state: StoreState) => state.clearError);
-  const {item, isLoading, getItemImageUrl, error} = useItemDetail(itemId);
+  const {item, isLoading, getItemImageUrl, error} =
+    useItemDetailManager(itemId);
 
   const formState = useItemForm({
     itemId: itemId!,

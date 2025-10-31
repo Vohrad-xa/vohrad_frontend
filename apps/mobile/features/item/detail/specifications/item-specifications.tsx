@@ -1,7 +1,7 @@
 import React, {useState, useRef, useCallback} from 'react';
 import {Platform} from 'react-native';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
-import {useItemDetail} from '@/features/item';
+import {useItemDetailManager} from '@vohrad/store';
 import {useSettingsHeader} from '@/hooks';
 import {SpecificationsForm} from './specifications-form';
 
@@ -9,7 +9,7 @@ export function ItemSpecifications() {
   const router = useRouter();
   const navigation = useNavigation();
   const {id: itemId} = useLocalSearchParams<{id: string}>();
-  const {item} = useItemDetail(itemId);
+  const {item} = useItemDetailManager(itemId);
   const [hasChanges, setHasChanges] = useState(false);
   const [isEditMode, setIsEditMode] = useState(Platform.OS === 'web');
   const specificationsFormRef = useRef<{

@@ -1,12 +1,16 @@
 import React, {useCallback, useLayoutEffect, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {usePendingFilters, useClearPendingFilters} from '@vohrad/store';
+import {
+  usePendingFilters,
+  useClearPendingFilters,
+  useItemsManager,
+} from '@vohrad/store';
 import {type ItemFilterState} from '@vohrad/types';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useSearch} from '@/features/home/search-context';
-import {ItemsList, useItemsManager} from '@/features/item';
+import {ItemsList} from '@/features/item';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';

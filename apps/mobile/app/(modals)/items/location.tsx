@@ -1,12 +1,12 @@
 import React from 'react';
 import {useLocalSearchParams} from 'expo-router';
+import {useItemDetailManager} from '@vohrad/store';
 import {ModalScrollView, EmptyState} from '@/components/ui';
-import {useItemDetail} from '@/features/item';
 import {ItemLocation} from '@/features/item/detail/locations/item-location';
 
 export default function LocationModal() {
   const {id: itemId} = useLocalSearchParams<{id: string}>();
-  const {item, isLoading} = useItemDetail(itemId);
+  const {item, isLoading} = useItemDetailManager(itemId);
 
   const displayLocations = item?.locations ?? [];
 

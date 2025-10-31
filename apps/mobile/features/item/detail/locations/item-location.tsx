@@ -1,10 +1,10 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useLocalSearchParams} from 'expo-router';
+import {useItemDetailManager} from '@vohrad/store';
 import {Card} from '@/components/cards/card';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useItemDetail} from '@/features/item';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -12,7 +12,7 @@ export function ItemLocation() {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
   const {id: itemId} = useLocalSearchParams<{id: string}>();
-  const {item} = useItemDetail(itemId);
+  const {item} = useItemDetailManager(itemId);
 
   const displayLocations = item?.locations ?? [];
 
