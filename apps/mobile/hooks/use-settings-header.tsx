@@ -1,7 +1,7 @@
 import {useLayoutEffect, useState, useCallback, useRef, useEffect} from 'react';
 import {Platform} from 'react-native';
 import {useRouter} from 'expo-router';
-import {HeaderButton} from '@/components/ui/header-button';
+import {HeaderButton} from '@/components/ui';
 import {triggerHaptic} from '@/utils/haptics';
 
 type Navigation = {
@@ -90,13 +90,13 @@ export function useSettingsHeader({
     } else if (hasChanges || isEditing) {
       headerRight = () => (
         <HeaderButton
-          variant={isEditing ? 'save' : 'edit'}
-          text={isEditing ? 'Save' : 'Edit'}
+          variant="save"
+          text="Save"
           onPress={onSave}
-          accessibilityLabel={isEditing ? 'Save changes' : 'Edit'}
+          accessibilityLabel="Save changes"
         />
       );
-    } else {
+    } else if (Platform.OS !== 'web') {
       headerRight = () => (
         <HeaderButton
           variant="edit"
@@ -105,6 +105,8 @@ export function useSettingsHeader({
           accessibilityLabel="Edit"
         />
       );
+    } else {
+      headerRight = undefined;
     }
 
     navigation.setOptions({

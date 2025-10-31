@@ -1,12 +1,16 @@
-import React, {createContext, useContext, useCallback} from 'react';
-import {Keyboard} from 'react-native';
+import React, {createContext, useContext, useCallback, useEffect} from 'react';
 import {
   Gesture,
   type PanGesture,
   type TapGesture,
 } from 'react-native-gesture-handler';
-import {useSharedValue, withTiming} from 'react-native-reanimated';
+import {
+  useSharedValue,
+  withTiming,
+  useAnimatedReaction,
+} from 'react-native-reanimated';
 import {SIDEBAR_CONFIG, SIDEBAR_ANIMATION} from '@/constants/sidebar';
+import {getItem, setItem} from '@/utils/storage';
 import type {SharedValue} from 'react-native-reanimated';
 
 interface SidebarContextValue {
@@ -38,6 +42,40 @@ export function SidebarProvider({children}: SidebarProviderProps) {
   const slideAnim = useSharedValue(0);
   const wasOpen = useSharedValue(false);
 
+  // Load initial value
+  useEffect(() => {
+    const loadInitialValue = async () => {
+      try {
+        const saved = await getItem('sidebar-open');
+        const value = saved === 'true' ? SIDEBAR_CONFIG.width : 0;
+        slideAnim.value = value;
+      } catch {
+        // sidebar will default to closed
+      }
+    };
+    loadInitialValue();
+  }, [slideAnim]);
+
+  // Save state to storage on change
+  const saveSidebarState = async (isOpen: boolean) => {
+    'worklet';
+    try {
+      await setItem('sidebar-open', isOpen.toString());
+    } catch {}
+  };
+
+  useAnimatedReaction(
+    () => slideAnim.value,
+    (value, previous) => {
+      'worklet';
+      // Only save when changed
+      if (value !== previous) {
+        const isOpen = value > 0;
+        saveSidebarState(isOpen);
+      }
+    },
+  );
+
   const closeSidebarWorklet = useCallback(() => {
     'worklet';
     slideAnim.value = withTiming(0, SIDEBAR_ANIMATION.toggle);
@@ -52,7 +90,6 @@ export function SidebarProvider({children}: SidebarProviderProps) {
 
   const closeSideMenu = useCallback(() => {
     closeSidebarWorklet();
-    Keyboard.dismiss();
   }, [closeSidebarWorklet]);
 
   const mainGesture = Gesture.Pan()
@@ -66,15 +103,14 @@ export function SidebarProvider({children}: SidebarProviderProps) {
       const isInHeader = touch.y < 100;
 
       if (wasOpen.value) {
-        // allow closing from anywhere (except header)
         if (!isInHeader) {
           manager.activate();
         } else {
           manager.fail();
         }
       } else {
-        // only activate from very left edge (first 20px, not 50px)
-        if (touch.x < 20 && !isInHeader) {
+        // only activate starting 30px from left edge
+        if (touch.x < 30 && !isInHeader) {
           manager.activate();
         } else {
           manager.fail();
@@ -130,7 +166,7 @@ export function SidebarProvider({children}: SidebarProviderProps) {
       slideAnim.value = withTiming(targetValue, SIDEBAR_ANIMATION.toggle);
     });
 
-  // This gesture is specifically for panning on the SideMenu component itself.
+  // This gesture is for panning on the SideMenu component itself.
   const menuCloseGesture = Gesture.Pan()
     .activeOffsetX([-10, 10])
     .enabled(true)
