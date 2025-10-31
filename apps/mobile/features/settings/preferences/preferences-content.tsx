@@ -1,5 +1,6 @@
 import React, {forwardRef, useImperativeHandle} from 'react';
 import {StyleSheet, View, Platform} from 'react-native';
+import {usePreferencesManager} from '@vohrad/store';
 import {
   ThemedText,
   InfoRowCard,
@@ -11,7 +12,6 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useLoading, useHaptic} from '@/providers';
 import {showConfirmAlert, showAlert} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {usePreferencesForm} from './use-preferences-form';
 
 export type SavePreferencesOptions = {
   skipConfirm?: boolean;
@@ -46,7 +46,7 @@ export const PreferencesContentEditable = forwardRef<
     toggleBusinessHours,
     hasChanges,
     submitUpdate,
-  } = usePreferencesForm();
+  } = usePreferencesManager();
 
   const performUpdate = async () => {
     showLoading('Updating preferences...');

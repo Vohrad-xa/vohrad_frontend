@@ -5,4 +5,5 @@ export {
   useUpdateTenant,
   useUpdateTenantSettings,
 } from './hooks';
+export {usePreferencesManager, useOrganizationManager} from './managers';
 export type {TenantSlice} from './slice';

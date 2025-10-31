@@ -6,12 +6,15 @@ export {
   useProfileDetails,
   useUpdateProfile,
   useEmailConfirmation,
+  useProfileManager,
 } from './slices/auth';
 export {
   tenantSelectors,
   useOrganizationDetails,
   useUpdateTenant,
   useUpdateTenantSettings,
+  usePreferencesManager,
+  useOrganizationManager,
 } from './slices/tenant';
 export {
   itemSelectors,

@@ -1,5 +1,5 @@
 import {useState, useCallback, useMemo, useEffect} from 'react';
-import {useOrganizationDetails, useUpdateTenantSettings} from '@vohrad/store';
+import {useOrganizationDetails, useUpdateTenantSettings} from '../hooks';
 import type {Tenant} from '@vohrad/types';
 
 type PreferencesFormState = {
@@ -16,7 +16,7 @@ type BusinessHourCache = {
 const DEFAULT_BUSINESS_HOUR_START = '09:00';
 const DEFAULT_BUSINESS_HOUR_END = '17:00';
 
-export function usePreferencesForm() {
+export function usePreferencesManager() {
   const organization = useOrganizationDetails();
   const {updateTenantSettings, isLoading} = useUpdateTenantSettings();
   const deviceTimezone = useMemo(() => {

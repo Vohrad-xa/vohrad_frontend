@@ -1,6 +1,6 @@
 import type {ReactNode} from 'react';
 import React, {createContext, useContext, useState, useEffect} from 'react';
-import type {MenuCard} from '@/types/ui';
+import type {MenuCard} from '@/types';
 import {AppIcons} from '@/utils';
 import * as AppStorage from '@/utils/storage';
 
