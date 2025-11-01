@@ -1,7 +1,7 @@
 import {useLayoutEffect, useState, useCallback, useRef, useEffect} from 'react';
 import {Platform} from 'react-native';
 import {useRouter} from 'expo-router';
-import {HeaderButton} from '@/components/ui';
+import {HeaderButton} from '@/components/ui/header-button';
 import {triggerHaptic} from '@/utils/haptics';
 
 type Navigation = {

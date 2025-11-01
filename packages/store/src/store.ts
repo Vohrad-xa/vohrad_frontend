@@ -1,4 +1,4 @@
-import {create} from 'zustand';
+import {createWithEqualityFn} from 'zustand/traditional';
 import {persist, createJSONStorage} from 'zustand/middleware';
 import {createAuthSlice, type AuthSlice} from './slices/auth/slice';
 import {createTenantSlice, type TenantSlice} from './slices/tenant/slice';
@@ -22,7 +22,7 @@ export type StoreState = AuthSlice &
     _hasHydrated: boolean;
   };
 
-export const useAuthStore = create<StoreState>()(
+export const useAuthStore = createWithEqualityFn<StoreState>()(
   persist(
     (set, get, store) => ({
       ...createAuthSlice(set, get, store),

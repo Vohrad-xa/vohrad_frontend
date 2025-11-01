@@ -3,6 +3,7 @@ import {useCallback, useMemo, createContext, useContext, useState} from 'react';
 import type {NativeSyntheticEvent, TextInputFocusEventData} from 'react-native';
 import {View, Platform} from 'react-native';
 import {Stack} from 'expo-router';
+import {NavigationGradient} from '@/components/navigation';
 import {HeaderButton} from '@/components/ui';
 import {SearchProvider, useSearch} from '@/features/home/search-context';
 import {useTheme, useSidebar} from '@/providers';
@@ -47,7 +48,7 @@ function ItemChangesProvider({children}: {children: ReactNode}) {
 }
 
 function DashboardStack() {
-  const {theme} = useTheme();
+  const {theme, scheme} = useTheme();
   const {toggleSideMenu} = useSidebar();
   const {setSearchQuery} = useSearch();
   const handleSearchChange = useCallback(
@@ -61,12 +62,11 @@ function DashboardStack() {
     () => ({
       headerShown: true,
       headerTransparent: Platform.OS === 'ios',
-      headerStyle:
-        Platform.OS === 'ios'
-          ? undefined
-          : {
-              backgroundColor: theme.navigationBar,
-            },
+      headerShadowVisible: false,
+      headerBackground:
+        Platform.OS !== 'ios'
+          ? () => <NavigationGradient scheme={scheme} />
+          : undefined,
       headerTitleStyle: {color: theme.text},
       headerTitleAlign: 'center' as const,
       contentStyle: {
@@ -75,7 +75,7 @@ function DashboardStack() {
         flex: 1,
       },
     }),
-    [theme],
+    [theme, scheme],
   );
 
   return (

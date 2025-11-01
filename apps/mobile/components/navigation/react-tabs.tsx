@@ -11,6 +11,7 @@ import {Tabs} from 'expo-router';
 import {type ThemeShape, type DSShape} from '@/constants';
 import {makeStyleFactory} from '@/utils';
 import {Icon, type IconName} from '@/utils/icons';
+import {NavigationGradient} from './navigation-gradient';
 
 const ANIMATION_CONFIG = {
   scale: {
@@ -50,6 +51,7 @@ type ReactTabsProps = {
   theme: ThemeShape;
   ds: DSShape;
   insetBottom: number;
+  scheme: 'light' | 'dark';
 };
 
 function TabButton({
@@ -108,7 +110,13 @@ function TabButton({
   );
 }
 
-export function ReactTabs({tabs, theme, ds, insetBottom}: ReactTabsProps) {
+export function ReactTabs({
+  tabs,
+  theme,
+  ds,
+  insetBottom,
+  scheme,
+}: ReactTabsProps) {
   const styles = createStyles(theme, ds, insetBottom);
 
   const renderTabButton = useCallback(
@@ -141,6 +149,11 @@ export function ReactTabs({tabs, theme, ds, insetBottom}: ReactTabsProps) {
     [ds.iconSize.lg, styles.iconContainer, styles.iconContainerActive],
   );
 
+  const renderTabBarBackground = useCallback(
+    () => <NavigationGradient scheme={scheme} />,
+    [scheme],
+  );
+
   return (
     <View style={styles.container}>
       <Tabs
@@ -150,6 +163,7 @@ export function ReactTabs({tabs, theme, ds, insetBottom}: ReactTabsProps) {
           tabBarActiveTintColor: theme.tabIconSelected,
           tabBarInactiveTintColor: theme.icon,
           tabBarStyle: styles.tabBar,
+          tabBarBackground: renderTabBarBackground,
           tabBarButton: Platform.OS === 'android' ? renderTabButton : undefined,
         }}
       >
@@ -178,8 +192,9 @@ const createStyles = makeStyleFactory(
       tabBar: {
         height: ds.layout.tabBarHeight + insetBottom * 1.2,
         paddingTop: ds.spacing.md,
-        paddingBottom: insetBottom + ds.spacing.md,
-        backgroundColor: theme.navigationBar,
+        backgroundColor: 'transparent',
+        borderTopWidth: 0,
+        elevation: 0,
       },
       tabButtonContainer: {
         flex: 1,
@@ -194,8 +209,8 @@ const createStyles = makeStyleFactory(
       iconContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        width: ds.iconSize.lg + ds.spacing.md * 2,
-        height: ds.iconSize.lg + ds.spacing.xs * 2,
+        width: ds.iconSize.xxl * 2,
+        height: ds.iconSize.xl,
         borderRadius: ds.borderRadius.full,
       },
       iconContainerActive: {

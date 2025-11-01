@@ -2,8 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import {Platform} from 'react-native';
 import {useNavigation, useSegments} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {NativeTabsComponent} from '@/components/navigation/native-tabs';
-import {ReactTabs} from '@/components/navigation/react-tabs';
+import {NativeTabsComponent, ReactTabs} from '@/components/navigation';
 import {useHaptic, useTheme} from '@/providers';
 import type {TabItem} from '@/types/ui';
 import {AppIcons} from '@/utils';
@@ -23,7 +22,7 @@ const iOS_SF_SYMBOLS = {
 export default function TabLayout() {
   const navigation = useNavigation();
   const segments = useSegments();
-  const {theme, ds} = useTheme();
+  const {theme, ds, scheme} = useTheme();
   const {triggerHaptic} = useHaptic();
   const insets = useSafeAreaInsets();
   const previousTabRef = useRef<string | null>(null);
@@ -55,6 +54,7 @@ export default function TabLayout() {
       theme={theme}
       ds={ds}
       insetBottom={insets.bottom}
+      scheme={scheme}
     />
   );
 }

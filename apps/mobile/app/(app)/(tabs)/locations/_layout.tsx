@@ -3,8 +3,10 @@ import {useTheme, useSidebar} from '@/providers';
 import {getTabStackOptions} from '@/utils/navigation-config';
 
 export default function LocationsLayout() {
-  const {theme} = useTheme();
+  const {theme, scheme} = useTheme();
   const {toggleSideMenu} = useSidebar();
 
-  return <Stack screenOptions={getTabStackOptions(theme, toggleSideMenu)} />;
+  return (
+    <Stack screenOptions={getTabStackOptions(theme, toggleSideMenu, scheme)} />
+  );
 }

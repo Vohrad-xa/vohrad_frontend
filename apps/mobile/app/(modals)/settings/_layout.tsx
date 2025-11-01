@@ -1,5 +1,6 @@
 import {Platform, StyleSheet} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
+import {NavigationGradient} from '@/components/navigation';
 import {HeaderButton, LoadingOverlay} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useLoading} from '@/providers';
@@ -11,7 +12,7 @@ export const unstable_settings = {
 };
 
 export default function SettingsLayout() {
-  const {theme, ds} = useTheme();
+  const {theme, ds, scheme} = useTheme();
   const router = useRouter();
   const {isLoading} = useLoading();
   const styles = createStyles(theme, ds);
@@ -22,8 +23,10 @@ export default function SettingsLayout() {
         screenOptions={{
           headerShown: true,
           headerTransparent: Platform.OS === 'ios',
-          headerStyle:
-            Platform.OS === 'android' ? styles.headerStyleAndroid : undefined,
+          headerBackground:
+            Platform.OS !== 'ios'
+              ? () => <NavigationGradient scheme={scheme} />
+              : undefined,
           headerTitleAlign: 'center',
           headerBackButtonDisplayMode: 'minimal',
           contentStyle: styles.container,
@@ -78,9 +81,6 @@ const createStyles = makeStyleFactory(
         flex: 1,
         backgroundColor:
           Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
-      },
-      headerStyleAndroid: {
-        backgroundColor: theme.navigationBar,
       },
     }),
   (theme, ds) => themeKey(theme, ds),
