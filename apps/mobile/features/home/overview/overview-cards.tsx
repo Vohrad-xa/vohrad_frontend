@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {
   StyleSheet,
   View,
@@ -10,8 +10,7 @@ import {useRouter} from 'expo-router';
 import {ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon, AppIcons} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {Icon, AppIcons, makeStyleFactory} from '@/utils';
 import {
   useFilteredDashboardCards,
   useDashboardCardVisibility,
@@ -29,22 +28,28 @@ export function OverviewCards({
   const {ds, theme} = useTheme();
   const router = useRouter();
   const styles = createStyles(ds, theme, screenWidth);
+  const isWeb = Platform.OS === 'web';
+  const isAndroid = Platform.OS === 'android';
+  const isFeedbackEnabled = isAndroid || isWeb;
 
   // Get visibility state and filtered cards
   const visibility = useDashboardCardVisibility();
   const menuCards = useFilteredDashboardCards();
 
   // Handle card press navigation
-  const handleCardPress = (cardTitle: string) => {
-    switch (cardTitle) {
-      case 'Items':
-        router.push('/(app)/(tabs)/home/items');
-        break;
-      // Other navigation cases
-      default:
-        break;
-    }
-  };
+  const handleCardPress = useCallback(
+    (cardTitle: string) => {
+      switch (cardTitle) {
+        case 'Items':
+          router.push('/(app)/(tabs)/home/items');
+          break;
+        // Other navigation cases
+        default:
+          break;
+      }
+    },
+    [router],
+  );
 
   const hasActiveFilters =
     !visibility.items ||
@@ -79,7 +84,20 @@ export function OverviewCards({
             <Pressable
               key={i}
               onPress={() => handleCardPress(card.title)}
-              style={styles.cardWrapper}
+              android_ripple={
+                isAndroid
+                  ? {
+                      color: `${theme.highlight}`,
+                      borderless: false,
+                      radius: ds.components.card.borderRadius,
+                    }
+                  : undefined
+              }
+              style={({pressed, hovered}) => [
+                styles.cardWrapper,
+                hovered && isWeb ? styles.cardWrapperHover : null,
+                pressed && isFeedbackEnabled ? styles.cardWrapperPressed : null,
+              ]}
             >
               <ThemedView
                 variant="card"
@@ -125,11 +143,25 @@ const createStyles = makeStyleFactory(
       gap: ds.spacing.md,
     };
 
-    const cardWrapperWeb = {
-      height: ds.components.button.height * 2.3,
+    const cardBorderRadius = ds.components.card.borderRadius;
+    const isAndroid = Platform.OS === 'android';
+
+    const sharedCardWrapper: ViewStyle = {
+      borderRadius: cardBorderRadius,
+      overflow: isAndroid ? 'hidden' : 'visible',
     };
 
-    const cardWrapperMobile = {
+    const cardWrapperWeb = {
+      ...sharedCardWrapper,
+      height: ds.components.button.height * 2.3,
+      cursor: 'pointer',
+      transitionProperty: 'transform, box-shadow, opacity',
+      transitionDuration: '120ms',
+      transitionTimingFunction: 'ease-out',
+    } as ViewStyle;
+
+    const cardWrapperMobile: ViewStyle = {
+      ...sharedCardWrapper,
       height: ds.components.button.height * 2.3,
       width: cardWidth,
       backgroundColor: 'transparent',
@@ -159,6 +191,22 @@ const createStyles = makeStyleFactory(
       } as ViewStyle,
       menuGrid: (isWeb ? menuGridWeb : menuGridMobile) as ViewStyle,
       cardWrapper: (isWeb ? cardWrapperWeb : cardWrapperMobile) as ViewStyle,
+      cardWrapperPressed: {
+        opacity: isWeb ? 0.98 : 0.94,
+        transform: [{scale: isWeb ? 0.998 : 0.985}],
+        shadowColor: theme.background,
+        shadowOpacity: isWeb ? 0.06 : 0.12,
+        shadowRadius: ds.spacing.sm,
+        shadowOffset: {width: 0, height: ds.spacing.xs},
+        elevation: 1,
+        borderRadius: cardBorderRadius,
+      } as ViewStyle,
+      cardWrapperHover: isWeb
+        ? ({
+            transform: [{scale: 0.99}],
+            boxShadow: '0 6px 12px rgba(17, 24, 28, 0.09)',
+          } as unknown as ViewStyle)
+        : ({} as ViewStyle),
       card: {
         flex: 1,
       },
