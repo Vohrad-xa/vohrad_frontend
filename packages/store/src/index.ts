@@ -17,6 +17,13 @@ export {
   useOrganizationManager,
 } from './slices/tenant';
 export {
+  systemSelectors,
+  useDashboardOverview,
+  useDashboardVisibility,
+  useSetDashboardVisibility,
+  useResetDashboardVisibility,
+} from './slices/system';
+export {
   itemSelectors,
   useItems,
   useItemDetails,
@@ -45,6 +52,13 @@ export type {FilterSlice} from './slices/filter';
 export type {User, AuthTokens, Tenant, Item, ItemDetail} from '@vohrad/types';
 export type {AuthSlice} from './slices/auth';
 export type {TenantSlice} from './slices/tenant';
+export type {
+  SystemSlice,
+  DashboardCardKey,
+  DashboardVisibilityState,
+  DashboardOverviewStatus,
+} from './slices/system';
+export {defaultDashboardVisibility} from './slices/system';
 export type {ItemSlice} from './slices/item';
 export type {AttachmentSlice} from './slices/attachment';
 export {

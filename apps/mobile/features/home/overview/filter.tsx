@@ -6,43 +6,17 @@ import {type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {useFilterContext} from './filter-context';
+import {useDashboardCardControls} from './filter-context';
 
 export function FilterContent() {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
 
-  const {visibility, setCardVisibility} = useFilterContext();
+  const {visibility, setCardVisibility, cardConfig} =
+    useDashboardCardControls();
 
-  const handleToggleChange = (card: string, value: boolean) => {
-    setCardVisibility(card as keyof typeof visibility, value);
-  };
-
-  const {allCards} = useFilterContext();
-
-  const fields: InfoField[] = allCards.map((card) => {
-    const getVisibilityKey = (title: string): keyof typeof visibility => {
-      switch (title) {
-        case 'Items':
-          return 'items';
-        case 'Locations':
-          return 'locations';
-        case 'Maintenance':
-          return 'maintenance';
-        case 'Suppliers':
-          return 'suppliers';
-        case 'Check In/Out':
-          return 'checkInOut';
-        case 'Documents':
-          return 'documents';
-        default:
-          return title
-            .toLowerCase()
-            .replace(/\s+/g, '') as keyof typeof visibility;
-      }
-    };
-
-    const visibilityKey = getVisibilityKey(card.title);
+  const fields: InfoField[] = cardConfig.map((card) => {
+    const visibilityKey = card.key;
     const isVisible = visibility[visibilityKey];
 
     return {
@@ -57,7 +31,7 @@ export function FilterContent() {
       renderAccessory: (
         <Toggle
           value={isVisible}
-          onValueChange={(value) => handleToggleChange(visibilityKey, value)}
+          onValueChange={(value) => setCardVisibility(visibilityKey, value)}
           accessibilityLabel={`Toggle ${card.title} card`}
         />
       ),

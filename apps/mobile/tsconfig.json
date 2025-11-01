@@ -18,5 +18,6 @@
     "expo-env.d.ts",
     "features/item/use-item-detail-form.bak",
     "features/item/hooks/use-item-detail.ts"
-  ]
+  ],
+  "exclude": ["docs"]
 }

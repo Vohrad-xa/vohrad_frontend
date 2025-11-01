@@ -7,7 +7,6 @@ import {StatusBar} from 'expo-status-bar';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
 import {LoadingOverlay} from '@/components/ui';
-import {FilterProvider} from '@/features/home/overview/filter-context';
 import {
   AppThemeProvider,
   AuthProvider,
@@ -180,10 +179,8 @@ export default function RootLayout() {
             <ActionSheetProvider>
               <LoadingProvider>
                 <AuthProvider>
-                  <FilterProvider>
-                    <GlobalStatusBar />
-                    <RootNavigation isBootstrapComplete={isBootstrapComplete} />
-                  </FilterProvider>
+                  <GlobalStatusBar />
+                  <RootNavigation isBootstrapComplete={isBootstrapComplete} />
                 </AuthProvider>
               </LoadingProvider>
             </ActionSheetProvider>

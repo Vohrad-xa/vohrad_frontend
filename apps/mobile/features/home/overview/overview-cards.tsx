@@ -5,7 +5,6 @@ import {
   Platform,
   Pressable,
   type ViewStyle,
-  type TextStyle,
 } from 'react-native';
 import {useRouter} from 'expo-router';
 import {ThemedText, ThemedView} from '@/components/ui';
@@ -13,7 +12,10 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {useFilterContext} from './filter-context';
+import {
+  useFilteredDashboardCards,
+  useDashboardCardVisibility,
+} from './filter-context';
 
 type OverviewCardsProps = {
   onFilterPress?: () => void;
@@ -29,8 +31,8 @@ export function OverviewCards({
   const styles = createStyles(ds, theme, screenWidth);
 
   // Get visibility state and filtered cards
-  const {visibility, getFilteredCards} = useFilterContext();
-  const menuCards = getFilteredCards();
+  const visibility = useDashboardCardVisibility();
+  const menuCards = useFilteredDashboardCards();
 
   // Handle card press navigation
   const handleCardPress = (cardTitle: string) => {
@@ -38,21 +40,11 @@ export function OverviewCards({
       case 'Items':
         router.push('/(app)/(tabs)/home/items');
         break;
-      // Add other navigation cases here if needed in the future
+      // Other navigation cases
       default:
         break;
     }
   };
-
-  const menuGridStyles = Platform.select({
-    web: styles.menuGridWeb,
-    default: styles.menuGridMobile,
-  });
-
-  const cardStyles = Platform.select({
-    web: styles.cardWeb,
-    default: styles.cardMobile,
-  });
 
   const hasActiveFilters =
     !visibility.items ||
@@ -65,9 +57,7 @@ export function OverviewCards({
   return (
     <>
       <View style={styles.overviewHeader}>
-        <ThemedText variant="heading" style={styles.title}>
-          Overview
-        </ThemedText>
+        <ThemedText variant="heading">Overview</ThemedText>
         <View style={styles.headerRight}>
           {hasActiveFilters && (
             <ThemedText variant="body" style={styles.filterStatus}>
@@ -84,16 +74,16 @@ export function OverviewCards({
         </View>
       </View>
       <View style={styles.cardContainer}>
-        <View style={menuGridStyles}>
+        <View style={styles.menuGrid}>
           {menuCards.map((card, i) => (
             <Pressable
               key={i}
               onPress={() => handleCardPress(card.title)}
-              style={cardStyles}
+              style={styles.cardWrapper}
             >
               <ThemedView
                 variant="card"
-                style={styles.cardInner}
+                style={styles.card}
                 contentStyle={styles.cardContent}
               >
                 <View style={styles.topSection}>
@@ -123,6 +113,30 @@ const createStyles = makeStyleFactory(
     const cardWidth =
       (screenWidth - ds.layout.screenPadding * 2 - ds.spacing.md) / 2;
 
+    const menuGridWeb = {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: ds.spacing.md,
+    };
+
+    const menuGridMobile = {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: ds.spacing.md,
+    };
+
+    const cardWrapperWeb = {
+      height: ds.components.button.height * 2.3,
+    };
+
+    const cardWrapperMobile = {
+      height: ds.components.button.height * 2.3,
+      width: cardWidth,
+      backgroundColor: 'transparent',
+    };
+
+    const isWeb = Platform.OS === 'web';
+
     return StyleSheet.create({
       overviewHeader: {
         flexDirection: 'row',
@@ -136,7 +150,6 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
         gap: ds.spacing.sm,
       },
-      title: {} as TextStyle,
       filterStatus: {
         fontSize: 12,
         color: theme.muted,
@@ -144,49 +157,29 @@ const createStyles = makeStyleFactory(
       cardContainer: {
         gap: ds.spacing.md,
       } as ViewStyle,
+      menuGrid: (isWeb ? menuGridWeb : menuGridMobile) as ViewStyle,
+      cardWrapper: (isWeb ? cardWrapperWeb : cardWrapperMobile) as ViewStyle,
+      card: {
+        flex: 1,
+      },
       cardContent: {
         flex: 1,
         padding: ds.spacing.md,
         flexDirection: 'column',
         justifyContent: 'space-between',
-      } as ViewStyle,
+      },
       topSection: {
         alignSelf: 'flex-start',
         gap: ds.spacing.xs,
       } as ViewStyle,
       cardTitle: {
         fontWeight: ds.fontWeight.medium,
-      } as TextStyle,
+      },
       cardCount: {
         alignSelf: 'flex-start',
         fontWeight: ds.fontWeight.bold,
-      } as TextStyle,
-      menuGridWeb: {
-        ...Platform.select({
-          web: {
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          },
-        }),
-        gap: ds.spacing.md,
-      } as ViewStyle,
-      menuGridMobile: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: ds.spacing.md,
-      } as ViewStyle,
-      cardWeb: {
-        height: ds.components.button.height * 2.3,
-      } as ViewStyle,
-      cardMobile: {
-        height: ds.components.button.height * 2.3,
-        width: cardWidth,
-        backgroundColor: 'none',
-      } as ViewStyle,
-      cardInner: {
-        flex: 1,
-      } as ViewStyle,
+      },
     });
   },
-  (ds, theme, screenWidth) => themeKey(theme, ds) + `|${screenWidth}`,
+  (ds, theme, screenWidth) => `${themeKey(theme, ds)}|${screenWidth}`,
 );

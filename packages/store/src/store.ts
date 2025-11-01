@@ -2,6 +2,7 @@ import {create} from 'zustand';
 import {persist, createJSONStorage} from 'zustand/middleware';
 import {createAuthSlice, type AuthSlice} from './slices/auth/slice';
 import {createTenantSlice, type TenantSlice} from './slices/tenant/slice';
+import {createSystemSlice, type SystemSlice} from './slices/system/slice';
 import {createItemSlice, type ItemSlice} from './slices/item/slice';
 import {
   createAttachmentSlice,
@@ -14,6 +15,7 @@ import {httpClient} from '@vohrad/api-client';
 
 export type StoreState = AuthSlice &
   TenantSlice &
+  SystemSlice &
   ItemSlice &
   AttachmentSlice &
   FilterSlice & {
@@ -25,6 +27,7 @@ export const useAuthStore = create<StoreState>()(
     (set, get, store) => ({
       ...createAuthSlice(set, get, store),
       ...createTenantSlice(set, get, store),
+      ...createSystemSlice(set, get, store),
       ...createItemSlice(set, get, store),
       ...createAttachmentSlice(set, get, store),
       ...createFilterSlice(set, get, store),
@@ -54,6 +57,7 @@ export const useAuthStore = create<StoreState>()(
         tokens: redactTokens(state.tokens),
         isAuthenticated: state.isAuthenticated,
         imageUrls: state.imageUrls,
+        dashboardVisibility: state.dashboardVisibility,
       }),
     },
   ),

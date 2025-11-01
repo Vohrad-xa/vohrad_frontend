@@ -165,12 +165,12 @@ export const IconPresets = {
 
 export const AppIcons = {
   navigation: {
-    home: 'home-outline' as IconName,
+    home: 'home' as IconName,
     menu: 'reorder-two' as IconName,
     settings: 'settings-outline' as IconName,
     scan: 'barcode-outline' as IconName,
     profile: 'person-outline' as IconName,
-    events: 'notifications-outline' as IconName,
+    events: 'notifications' as IconName,
     filter: 'filter-outline' as IconName,
     back: Platform.select({
       ios: 'chevron-back-outline',
@@ -184,7 +184,7 @@ export const AppIcons = {
   inventory: {
     items: 'cube-outline' as IconName,
     categories: 'layers-outline' as IconName,
-    locations: 'locate-outline' as IconName,
+    locations: 'location' as IconName,
     search: 'search-outline' as IconName,
   },
 

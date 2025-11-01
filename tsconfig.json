@@ -8,6 +8,13 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "paths": {
+      "@vohrad/api-client": ["packages/api-client/src"],
+      "@vohrad/auth": ["packages/auth/src"],
+      "@vohrad/store": ["packages/store/src"],
+      "@vohrad/types": ["packages/types/src"]
+    }
   }
 }

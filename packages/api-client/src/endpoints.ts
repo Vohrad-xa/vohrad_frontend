@@ -36,6 +36,9 @@ export const API_ENDPOINTS = {
   ATTACHMENTS: {
     GET_URL: (id: string) => `/attachments/${id}/url`,
   },
+  SYSTEM: {
+    DASHBOARD_OVERVIEW: '/system/dashboard/overview',
+  },
 } as const;
 export type ApiEndpoint =
   (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS][keyof (typeof API_ENDPOINTS)[keyof typeof API_ENDPOINTS]];
