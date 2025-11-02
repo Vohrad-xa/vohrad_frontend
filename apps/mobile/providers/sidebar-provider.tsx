@@ -1,4 +1,5 @@
 import React, {createContext, useContext, useCallback, useEffect} from 'react';
+import {Keyboard} from 'react-native';
 import {
   Gesture,
   type PanGesture,
@@ -9,6 +10,7 @@ import {
   withTiming,
   useAnimatedReaction,
 } from 'react-native-reanimated';
+import {scheduleOnRN} from 'react-native-worklets';
 import {SIDEBAR_CONFIG, SIDEBAR_ANIMATION} from '@/constants/sidebar';
 import {getItem, setItem} from '@/utils/storage';
 import type {SharedValue} from 'react-native-reanimated';
@@ -41,6 +43,11 @@ interface SidebarProviderProps {
 export function SidebarProvider({children}: SidebarProviderProps) {
   const slideAnim = useSharedValue(0);
   const wasOpen = useSharedValue(false);
+
+  // Helper function to dismiss keyboard (must be regular function, not arrow)
+  const dismissKeyboard = useCallback(() => {
+    Keyboard.dismiss();
+  }, []);
 
   // Load initial value
   useEffect(() => {
@@ -79,7 +86,8 @@ export function SidebarProvider({children}: SidebarProviderProps) {
   const closeSidebarWorklet = useCallback(() => {
     'worklet';
     slideAnim.value = withTiming(0, SIDEBAR_ANIMATION.toggle);
-  }, [slideAnim]);
+    scheduleOnRN(dismissKeyboard);
+  }, [slideAnim, dismissKeyboard]);
 
   const toggleSideMenu = useCallback(() => {
     'worklet';

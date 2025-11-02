@@ -21,6 +21,7 @@ export default function SettingsLayout() {
       <Stack
         screenOptions={{
           headerShown: true,
+          headerShadowVisible: false,
           headerTransparent: Platform.OS === 'ios',
           headerTitleAlign: 'center',
           headerBackButtonDisplayMode: 'minimal',

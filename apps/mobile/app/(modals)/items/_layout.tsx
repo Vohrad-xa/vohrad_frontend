@@ -30,6 +30,7 @@ export default function ItemsModalsLayout() {
     <Stack
       screenOptions={{
         headerShown: true,
+        headerShadowVisible: false,
         headerTransparent: Platform.OS === 'ios',
         headerLeft: CloseButton,
         headerBackButtonDisplayMode: 'minimal',

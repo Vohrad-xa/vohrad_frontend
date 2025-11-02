@@ -9,6 +9,7 @@ export default function EventsLayout() {
     <Stack
       screenOptions={{
         headerShown: true,
+        headerShadowVisible: false,
         headerTransparent: Platform.OS === 'ios',
         headerStyle: {
           backgroundColor:
