@@ -111,7 +111,7 @@ const _Tokens = {
     border: Palette.gray[700],
     divider: Palette.gray[600],
     lightdivider: Palette.gray[750],
-    navigationBar: Palette.Onyx,
+    navigationBar: Palette.Obsidian,
 
     // Brand & accents
     primary: Palette.Greige,

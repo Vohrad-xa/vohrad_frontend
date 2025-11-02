@@ -34,7 +34,9 @@ export default function ItemsModalsLayout() {
         headerLeft: CloseButton,
         headerBackButtonDisplayMode: 'minimal',
         headerStyle:
-          Platform.OS === 'android' ? styles.headerStyleAndroid : undefined,
+          Platform.OS === 'android'
+            ? {backgroundColor: theme.navigationBar}
+            : undefined,
         headerTitleAlign: 'center',
         contentStyle: styles.container,
       }}
@@ -71,9 +73,6 @@ export default function ItemsModalsLayout() {
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      headerStyleAndroid: {
-        backgroundColor: theme.background,
-      },
       container: {
         flex: 1,
         backgroundColor:

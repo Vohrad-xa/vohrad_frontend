@@ -9,7 +9,7 @@ import {ThemedView, ModalScrollView, HeaderButton} from '@/components/ui';
 import {ItemDetails, ItemHeader, useItemForm} from '@/features/item';
 import {useTheme, useHaptic} from '@/providers';
 import {showAlert} from '@/utils';
-import {useItemChanges} from '../_layout';
+import {useItemChanges} from './_layout';
 
 export default function ItemDetailScreen() {
   const {ds} = useTheme();

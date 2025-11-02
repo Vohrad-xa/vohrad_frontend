@@ -1,12 +1,25 @@
+import {Platform} from 'react-native';
 import {Stack} from 'expo-router';
-import {useTheme, useSidebar} from '@/providers';
-import {getTabStackOptions} from '@/utils/navigation-config';
+import {useTheme} from '@/providers';
 
 export default function EventsLayout() {
-  const {theme, scheme} = useTheme();
-  const {toggleSideMenu} = useSidebar();
+  const {theme} = useTheme();
 
   return (
-    <Stack screenOptions={getTabStackOptions(theme, toggleSideMenu, scheme)} />
+    <Stack
+      screenOptions={{
+        headerShown: true,
+        headerTransparent: Platform.OS === 'ios',
+        headerStyle: {
+          backgroundColor:
+            Platform.OS === 'android' ? theme.navigationBar : undefined,
+        },
+        headerTitleStyle: {color: theme.text},
+        headerTitleAlign: 'center',
+        contentStyle: {
+          backgroundColor: theme.background,
+        },
+      }}
+    />
   );
 }

@@ -8,13 +8,12 @@ import {
 import {type ItemFilterState} from '@vohrad/types';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useSearch} from '@/features/home/search-context';
 import {ItemsList} from '@/features/item';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
-import {AppIcons} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {AppIcons, makeStyleFactory} from '@/utils';
 
 export default function ItemsScreen() {
   const {ds, theme} = useTheme();
@@ -99,7 +98,7 @@ export default function ItemsScreen() {
 
   const handleItemPress = (itemId: string) => {
     router.push({
-      pathname: '/(app)/(tabs)/home/items/[id]',
+      pathname: '/(app)/(tabs)/items/[id]',
       params: {id: itemId},
     });
   };

@@ -30,7 +30,7 @@ export type IconName =
   | 'lock-closed-outline'
 
   // Inventory & Management
-  | 'cube-outline'
+  | 'albums-outline'
   | 'layers-outline'
   | 'build-outline'
   | 'hardware-chip-outline'
@@ -38,6 +38,7 @@ export type IconName =
   | 'log-out-outline'
   | 'bar-chart-outline'
   | 'stats-chart-outline'
+  | 'album'
 
   // Actions
   | 'camera-outline'
@@ -182,9 +183,10 @@ export const AppIcons = {
   },
 
   inventory: {
-    items: 'cube-outline' as IconName,
+    items: 'albums-outline' as IconName,
+    itemsSecondary: 'albums' as IconName,
     categories: 'layers-outline' as IconName,
-    locations: 'location' as IconName,
+    locations: 'location-outline' as IconName,
     search: 'search-outline' as IconName,
   },
 

@@ -8,6 +8,7 @@ type NavigationGradientProps = {
 export function NavigationGradient({scheme}: NavigationGradientProps) {
   return (
     <LinearGradient
+      pointerEvents="none"
       colors={
         scheme === 'light'
           ? [
