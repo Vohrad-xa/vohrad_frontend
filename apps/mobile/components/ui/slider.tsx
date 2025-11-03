@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Platform} from 'react-native';
 import RNSlider, {type SliderProps} from '@react-native-community/slider';
-import {type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -27,5 +27,5 @@ const createStyles = makeStyleFactory(
         height: 30,
       },
     }),
-  (ds, theme) => `${ds.version}|${theme.version}`,
+  (ds, theme) => themeKey(theme, ds),
 );

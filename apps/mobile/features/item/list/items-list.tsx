@@ -140,7 +140,7 @@ export function ItemsList({
               ? 'No items match your search.'
               : 'You have no items yet.'
           }
-          icon="cube-outline"
+          icon="albums-outline"
         />
       </View>
     );

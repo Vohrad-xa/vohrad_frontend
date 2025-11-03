@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Platform} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ModalScrollView, ThemedView} from '@/components/ui';
-import {type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {FilterContent} from '@/features/home/overview/filter';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -59,5 +59,5 @@ const createStyles = makeStyleFactory(
         color: theme.text,
       },
     }),
-  (ds, theme) => `${theme.version}|${ds.version}`,
+  (ds, theme) => themeKey(theme, ds),
 );

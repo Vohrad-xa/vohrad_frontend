@@ -24,21 +24,11 @@ const createStyles = makeStyleFactory(
     colorToken?: TokenName,
     opacity?: number,
   ) => {
-    const brandFontMap: Partial<Record<TextVariant, keyof typeof ds.fonts>> = {
-      heading: 'brand',
-      body: 'brandMedium',
-    };
-
-    const variantFontKey = brandFontMap[variant];
-    const baseStyle = {
-      fontFamily: variantFontKey ? ds.fonts[variantFontKey] : ds.fonts.system,
-    };
-
     // Handle badgeText variant specially
     if (variant === 'badgeText') {
       return StyleSheet.create({
         text: {
-          ...baseStyle,
+          fontFamily: ds.fonts.system,
           ...ds.typography.caption,
           fontWeight: ds.fontWeight.semibold,
           letterSpacing: 0.5,
@@ -49,19 +39,14 @@ const createStyles = makeStyleFactory(
     }
 
     const typographyStyle = ds.typography[variant as Typography];
-    const fallbackStyle = ds.typography.body;
-    const resolvedTypography = typographyStyle ?? fallbackStyle;
-    const variantForColor = typographyStyle ? variant : 'body';
+    const resolvedTypography = typographyStyle ?? ds.typography.body;
 
     // Determine color based on variant or token
     let textColor: string;
 
     if (colorToken) {
       textColor = theme[colorToken];
-    } else if (
-      variantForColor === 'secondary' ||
-      variantForColor === 'caption'
-    ) {
+    } else if (variant === 'secondary' || variant === 'caption') {
       textColor = theme.muted;
     } else {
       textColor = theme.text;
@@ -78,16 +63,9 @@ const createStyles = makeStyleFactory(
       }
     }
 
-    const typographyWithFamily =
-      resolvedTypography as typeof resolvedTypography & {
-        fontFamily?: string;
-      };
-    const fontFamily = typographyWithFamily.fontFamily ?? baseStyle.fontFamily;
-
     return StyleSheet.create({
       text: {
-        ...baseStyle,
-        fontFamily,
+        fontFamily: ds.fonts.system,
         fontSize: resolvedTypography.fontSize,
         lineHeight: resolvedTypography.lineHeight,
         fontWeight: resolvedTypography.fontWeight,

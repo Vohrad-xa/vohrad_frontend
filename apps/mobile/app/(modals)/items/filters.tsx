@@ -3,7 +3,7 @@ import {useSetPendingFilters, useItemFiltersManager} from '@vohrad/store';
 import {type ItemFilterState} from '@vohrad/types';
 import {Stack, useRouter, useLocalSearchParams} from 'expo-router';
 import {HeaderButton, ThemedView, ModalScrollView} from '@/components/ui';
-import {type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {PriceRangeFilter} from '@/features/item/filter/price-range-filter';
 import {StatusFilter} from '@/features/item/filter/status-filter';
 import {TrackingModeFilter} from '@/features/item/filter/tracking-mode-filter';
@@ -121,5 +121,5 @@ const createStyles = makeStyleFactory(
       gap: ds.spacing.xl,
     },
   }),
-  (ds, theme) => `${ds.version}|${theme.version}`,
+  (ds, theme) => themeKey(theme, ds),
 );

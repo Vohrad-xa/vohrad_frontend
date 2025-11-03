@@ -53,37 +53,24 @@ const createStyles = makeStyleFactory(
     textAlign: 'left' | 'center' | 'right',
     borderless: boolean,
   ) => {
-    // Font mapping similar to ThemedText
-    const brandFontMap: Partial<Record<Typography, keyof typeof ds.fonts>> = {
-      heading: 'brand',
-      body: 'brandMedium',
-    };
-
-    const variantFontKey = brandFontMap[variant];
-    const baseStyle = {
-      fontFamily: variantFontKey ? ds.fonts[variantFontKey] : ds.fonts.system,
-    };
-
     const typographyStyle = ds.typography[variant];
     const resolvedTypography = typographyStyle ?? ds.typography.body;
 
-    const typographyWithFamily =
-      resolvedTypography as typeof resolvedTypography & {
-        fontFamily?: string;
-      };
-    const fontFamily = typographyWithFamily.fontFamily ?? baseStyle.fontFamily;
+    // Match ThemedText color logic
+    const textColor =
+      variant === 'secondary' || variant === 'caption' || variant === 'value'
+        ? theme.muted
+        : theme.text;
 
     return StyleSheet.create({
       input: {
-        ...baseStyle,
-        fontFamily,
-        color: theme.textlabel,
+        fontFamily: ds.fonts.system,
+        color: textColor,
         fontSize: resolvedTypography.fontSize,
         lineHeight: resolvedTypography.lineHeight,
         fontWeight: resolvedTypography.fontWeight,
         letterSpacing: resolvedTypography.letterSpacing,
-        paddingHorizontal: 0,
-        paddingVertical: 0,
+        padding: 0,
         textAlign,
         minWidth: 100,
         ...(borderless

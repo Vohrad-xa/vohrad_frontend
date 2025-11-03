@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Card} from '@/components/cards/card';
 import {ThemedText, Toggle} from '@/components/ui';
-import {type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 import type {TrackingMode} from '@vohrad/types';
@@ -71,5 +71,5 @@ const createStyles = makeStyleFactory(
         justifyContent: 'space-between',
       },
     }),
-  (ds, theme) => `${ds.version}|${theme.version}`,
+  (ds, theme) => themeKey(theme, ds),
 );

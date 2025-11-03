@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Card} from '@/components/cards/card';
 import {ThemedText, Slider} from '@/components/ui';
-import {type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -96,5 +96,5 @@ const createStyles = makeStyleFactory(
         color: theme.text,
       },
     }),
-  (ds, theme) => `${ds.version}|${theme.version}`,
+  (ds, theme) => themeKey(theme, ds),
 );

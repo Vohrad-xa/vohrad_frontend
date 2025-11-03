@@ -7,7 +7,15 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {Animated, Easing, StyleSheet, Appearance, Platform} from 'react-native';
+import {
+  Animated,
+  Easing,
+  StyleSheet,
+  Appearance,
+  Platform,
+  useWindowDimensions,
+  PixelRatio,
+} from 'react-native';
 import {ThemeProvider as NavigationThemeProvider} from '@react-navigation/native';
 import {
   NavigationThemes,
@@ -15,7 +23,7 @@ import {
   type ColorScheme,
   type ThemePreference,
 } from '@/constants/colors';
-import {DesignSystem} from '@/constants/typography';
+import {createDesignSystem} from '@/constants/typography';
 import {useColorScheme as useRNColorScheme} from '@/hooks/use-color-scheme';
 import * as storage from '@/utils/storage';
 
@@ -25,7 +33,7 @@ type ThemeContextValue = {
   setScheme: (preference: ThemePreference) => void;
   toggle: () => void;
   theme: typeof Tokens.light | typeof Tokens.dark;
-  ds: typeof DesignSystem;
+  ds: ReturnType<typeof createDesignSystem>;
 };
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -51,6 +59,14 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
   const isAnimating = useRef(false);
   const scheme: ColorScheme =
     preference === 'system' ? systemScheme : preference;
+
+  // Reactive design system - updates on dimension/font scale changes
+  const {width, height} = useWindowDimensions();
+  const fontScale = PixelRatio.getFontScale();
+  const ds = useMemo(
+    () => createDesignSystem(width, height, fontScale),
+    [width, height, fontScale],
+  );
 
   const STORAGE_KEY = 'app.theme.scheme';
 
@@ -127,9 +143,9 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
       setScheme: setPreference,
       toggle,
       theme,
-      ds: DesignSystem,
+      ds,
     }),
-    [scheme, preference, toggle, theme],
+    [scheme, preference, toggle, theme, ds],
   );
 
   const navTheme = NavigationThemes[scheme];

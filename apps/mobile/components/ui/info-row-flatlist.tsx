@@ -142,9 +142,9 @@ const createStyles = makeStyleFactory(
       touchableContent: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: ds.spacing.md,
+        paddingVertical: ds.spacing.lg,
         // paddingHorizontal: ds.spacing.md,
-        gap: ds.spacing.md,
+        gap: ds.spacing.lg,
         minHeight: ds.components.tapTarget.minSize,
       },
       imageWrapper: {
