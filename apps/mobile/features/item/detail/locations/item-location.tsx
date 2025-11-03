@@ -20,7 +20,7 @@ export function ItemLocation() {
     <View style={{gap: ds.spacing.xl}}>
       {displayLocations.map((location) => (
         <View key={location.id} style={{gap: ds.spacing.sm}}>
-          <ThemedText variant="heading" style={styles.locationTitle}>
+          <ThemedText variant="value" style={styles.locationTitle}>
             {location.name}
           </ThemedText>
           <Card withDivider>

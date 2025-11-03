@@ -47,9 +47,7 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       card: {
         backgroundColor: theme.input,
-        borderRadius: 30,
-        // ...ds.shadows.sm,
-        // shadowColor: '#e0e0e0ff',
+        borderRadius: ds.components.card.borderRadius,
       },
       childContainer: {
         padding: ds.spacing.lg,
