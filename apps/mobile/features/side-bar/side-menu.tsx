@@ -39,6 +39,7 @@ interface SideMenuProps {
 }
 
 const menuItems: MenuItemType[] = [
+  {icon: AppIcons.navigation.home, label: 'Home'},
   {icon: AppIcons.business.maintenance, label: 'Maintenances'},
   {icon: AppIcons.actions.move, label: 'Check In/Out'},
   {icon: AppIcons.inventory.items, label: 'Items'},
@@ -164,7 +165,17 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
                 label={item.label}
                 onPress={() => {
                   Keyboard.dismiss();
-                  // TODO: Navigate to page when routes are ready
+                  if (item.label === 'Home') {
+                    router.navigate('/(app)/(tabs)/home');
+                  } else if (item.label === 'Items') {
+                    router.navigate('/(app)/(tabs)/items');
+                  } else if (item.label === 'Events') {
+                    router.navigate('/(app)/(tabs)/events');
+                  }
+                  // Delay close to ensure navigation completes
+                  setTimeout(() => {
+                    onClose();
+                  }, 200);
                 }}
               />
             ))}
@@ -190,7 +201,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
           </View>
         </Animated.View>
 
-        {/* Premium edge shadow gradient */}
+        {/* edge shadow gradient */}
         <Animated.View
           pointerEvents="none"
           style={[styles.shadowContainer, shadowStyle]}
@@ -222,8 +233,7 @@ const createStyles = makeStyleFactory(
         bottom: 0,
         width: SIDEBAR_CONFIG.width,
         zIndex: 0,
-        // Background color is now animated in contentStyle
-        overflow: 'hidden', // Hide any overflow from scaling
+        overflow: 'hidden',
       },
       scrollContainer: {
         flex: 1,

@@ -162,16 +162,16 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
         alignSelf: 'center',
         ...Platform.select({
-          android: {
-            marginLeft: -8,
+          web: {
+            marginRight: ds.spacing.sm,
           },
         }),
       },
       actionButton: {
-        paddingHorizontal: ds.spacing.lg,
+        paddingHorizontal: ds.spacing.sm,
       },
       text: {
-        ...ds.typography.body,
+        ...ds.typography.heading,
       },
     }),
   (ds, baseSize) => baseSize.toString(),

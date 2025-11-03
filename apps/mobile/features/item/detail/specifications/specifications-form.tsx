@@ -20,12 +20,11 @@ interface SpecificationsFormProps {
   item: ItemDetail;
   onSave?: () => void;
   onHasChangesChange?: (hasChanges: boolean) => void;
+  isEditMode: boolean;
 }
 
 export interface SpecificationsFormRef {
   performSave: () => Promise<void>;
-  isEditMode: boolean;
-  toggleEditMode: () => void;
 }
 
 interface SpecField {
@@ -37,7 +36,7 @@ interface SpecField {
 export const SpecificationsForm = forwardRef<
   SpecificationsFormRef,
   SpecificationsFormProps
->(({item, onSave, onHasChangesChange}, ref) => {
+>(({item, onSave, onHasChangesChange, isEditMode}, ref) => {
   const {ds, theme} = useTheme();
   const {triggerHaptic} = useHaptic();
   const {updateItem} = useUpdateItem();
@@ -56,7 +55,6 @@ export const SpecificationsForm = forwardRef<
     }));
   });
 
-  const [isEditMode, setIsEditMode] = useState(false);
   const originalFields = useRef<SpecField[]>(fields);
   const nextIdRef = useRef(fields.length);
   const inputRefs = useRef<Record<string, TextInput | null>>({});
@@ -168,15 +166,9 @@ export const SpecificationsForm = forwardRef<
     }
   }, [error, clearError]);
 
-  const toggleEditMode = useCallback(() => {
-    setIsEditMode((prev) => !prev);
-  }, []);
-
-  // Expose methods and state through ref
+  // Expose methods through ref
   React.useImperativeHandle(ref, () => ({
     performSave,
-    isEditMode,
-    toggleEditMode,
   }));
 
   return (
@@ -217,6 +209,7 @@ export const SpecificationsForm = forwardRef<
                   value={field.label}
                   onChangeText={(text) => handleLabelChange(field.id, text)}
                   placeholder="label"
+                  editable={isEditMode}
                   // style={styles.labelInput}
                 />
 
@@ -227,6 +220,7 @@ export const SpecificationsForm = forwardRef<
                   value={field.value}
                   onChangeText={(text) => handleValueChange(field.id, text)}
                   placeholder="value"
+                  editable={isEditMode}
                   style={styles.valueInput}
                 />
               </View>
@@ -235,18 +229,20 @@ export const SpecificationsForm = forwardRef<
         </Card>
       )}
 
-      <View style={styles.addFieldRow}>
-        <Pressable
-          onPress={handleAddField}
-          style={styles.addButton}
-          hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
-        >
-          <Icon name="add-circle-outline" size="md" colorToken="tint" />
-        </Pressable>
-        <Pressable onPress={handleAddField} style={styles.addTextButton}>
-          <ThemedText variant="label">add new field</ThemedText>
-        </Pressable>
-      </View>
+      {isEditMode && (
+        <View style={styles.addFieldRow}>
+          <Pressable
+            onPress={handleAddField}
+            style={styles.addButton}
+            hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
+          >
+            <Icon name="add-circle-outline" size="md" colorToken="tint" />
+          </Pressable>
+          <Pressable onPress={handleAddField} style={styles.addTextButton}>
+            <ThemedText variant="label">add new field</ThemedText>
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 });
