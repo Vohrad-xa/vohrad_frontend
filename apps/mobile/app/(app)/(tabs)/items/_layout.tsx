@@ -60,7 +60,7 @@ function ItemsStack() {
   );
 
   return (
-    <View style={{flex: 1, backgroundColor: theme.background}}>
+    <View style={{flex: 1}}>
       <Stack
         screenOptions={{
           headerShown: true,
@@ -73,7 +73,8 @@ function ItemsStack() {
           headerTitleStyle: {color: theme.text},
           headerTitleAlign: 'center',
           contentStyle: {
-            backgroundColor: theme.background,
+            backgroundColor:
+              Platform.OS === 'web' ? theme.webbackground : theme.background,
           },
         }}
       >

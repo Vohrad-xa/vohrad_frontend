@@ -46,7 +46,11 @@ const createStyles = makeStyleFactory(
 
     if (colorToken) {
       textColor = theme[colorToken];
-    } else if (variant === 'secondary' || variant === 'caption') {
+    } else if (
+      variant === 'secondary' ||
+      variant === 'caption' ||
+      variant === 'value'
+    ) {
       textColor = theme.muted;
     } else {
       textColor = theme.text;

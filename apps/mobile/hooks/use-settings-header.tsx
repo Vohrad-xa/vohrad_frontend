@@ -70,11 +70,11 @@ export function useSettingsHeader({
           accessibilityLabel="Back"
         />
       );
-    } else if (canShowCancel) {
+    } else if (isEditing || (canShowCancel && hasChanges)) {
       headerLeft = () => (
         <HeaderButton
           variant="cancel"
-          onPress={onCancel!}
+          onPress={onCancel ?? (() => router.back())}
           accessibilityLabel="Cancel"
         />
       );
@@ -96,7 +96,7 @@ export function useSettingsHeader({
           accessibilityLabel="Save changes"
         />
       );
-    } else if (Platform.OS !== 'web') {
+    } else {
       headerRight = () => (
         <HeaderButton
           variant="edit"
@@ -105,8 +105,6 @@ export function useSettingsHeader({
           accessibilityLabel="Edit"
         />
       );
-    } else {
-      headerRight = undefined;
     }
 
     navigation.setOptions({

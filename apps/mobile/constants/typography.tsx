@@ -2,14 +2,12 @@ import {Platform, PixelRatio} from 'react-native';
 import {generateVersion} from '../utils/versioning';
 
 /**
- * Professional Dynamic Design System
+ * Dynamic Design System
  * Base: 375px width (iPhone 13/14 standard)
  * Fully reactive to screen dimensions and accessibility settings
  */
 
-// ============================================================================
 // CONFIGURATION
-// ============================================================================
 
 const BASE_WIDTH = 390;
 
@@ -21,9 +19,7 @@ const PLATFORM_MULTIPLIER: Record<string, number> = {
   windows: 1.0,
 };
 
-// ============================================================================
 // SCALING UTILITIES
-// ============================================================================
 
 const calculateScale = (width: number, fontScale: number): number => {
   const baseScale = width / BASE_WIDTH;
@@ -73,10 +69,6 @@ const createPlatformTypography = (
   };
 };
 
-// ============================================================================
-// DESIGN SYSTEM FACTORY
-// ============================================================================
-
 /**
  * Creates a design system instance with responsive scaling
  * Call with current dimensions for dynamic updates
@@ -96,87 +88,232 @@ export const createDesignSystem = (
     },
 
     typography: {
-      // Page Level - Headers
-      pageTitle: {
-        fontSize: scaleFont(34, scale),
-        lineHeight: Math.round(scaleFont(34, scale) * 1.21),
-        fontWeight: '700' as const,
-        letterSpacing: 0.37,
-      },
+      // LARGE TITLES & HEADLINES
 
-      sectionTitle: {
-        fontSize: scaleFont(22, scale),
-        lineHeight: Math.round(scaleFont(22, scale) * 1.27),
-        fontWeight: '600' as const,
-        letterSpacing: 0.35,
-      },
-
-      heading: {
-        fontSize: scaleFont(17, scale),
-        lineHeight: Math.round(scaleFont(17, scale) * 1.29),
-        fontWeight: '600' as const,
-        letterSpacing: -0.41,
-      },
-
-      // Content Level - Text (Platform-aware)
-      label: createPlatformTypography(
+      // Page Title - iOS Large Title / Android Headline Large
+      pageTitle: createPlatformTypography(
         {
-          fontSize: 17,
-          lineHeight: 1.294,
+          fontSize: 34,
+          lineHeight: 1.206,
+          fontWeight: '700',
+          letterSpacing: 0.37,
+        },
+        {
+          fontSize: 32,
+          lineHeight: 1.25,
           fontWeight: '400',
-          letterSpacing: -0.43,
-        }, // iOS Body
-        {fontSize: 16, lineHeight: 1.5, fontWeight: '400', letterSpacing: 0}, // Android Body Large
+          letterSpacing: 0,
+        },
         scale,
       ),
 
+      // Title 1 - iOS Title 1 / Android Headline Medium
+      title1: createPlatformTypography(
+        {
+          fontSize: 28,
+          lineHeight: 1.214,
+          fontWeight: '400',
+          letterSpacing: 0.36,
+        },
+        {
+          fontSize: 28,
+          lineHeight: 1.286,
+          fontWeight: '400',
+          letterSpacing: 0,
+        },
+        scale,
+      ),
+
+      // Section Title - iOS Title 2 / Android Title Large
+      sectionTitle: createPlatformTypography(
+        {
+          fontSize: 22,
+          lineHeight: 1.273,
+          fontWeight: '400',
+          letterSpacing: 0.35,
+        },
+        {
+          fontSize: 22,
+          lineHeight: 1.273,
+          fontWeight: '400',
+          letterSpacing: 0,
+        },
+        scale,
+      ),
+
+      // Title 3 - iOS Title 3 / Android Headline Small
+      title3: createPlatformTypography(
+        {
+          fontSize: 20,
+          lineHeight: 1.25,
+          fontWeight: '400',
+          letterSpacing: 0.38,
+        },
+        {
+          fontSize: 24,
+          lineHeight: 1.333,
+          fontWeight: '400',
+          letterSpacing: 0,
+        },
+        scale,
+      ),
+
+      // CONTENT TEXT
+
+      // Heading - iOS Headline / Android Title Medium
+      heading: createPlatformTypography(
+        {
+          fontSize: 17,
+          lineHeight: 1.294,
+          fontWeight: '600',
+          letterSpacing: -0.41,
+        },
+        {
+          fontSize: 16,
+          lineHeight: 1.5,
+          fontWeight: '500',
+          letterSpacing: 0.15,
+        },
+        scale,
+      ),
+
+      // Body - iOS Body / Android Body Large
       body: createPlatformTypography(
         {
           fontSize: 17,
           lineHeight: 1.294,
           fontWeight: '400',
           letterSpacing: -0.43,
-        }, // iOS Body
-        {fontSize: 16, lineHeight: 1.5, fontWeight: '400', letterSpacing: 0}, // Android Body Large
-        scale,
-      ),
-
-      secondary: createPlatformTypography(
+        },
         {
-          fontSize: 15,
-          lineHeight: 1.33,
+          fontSize: 16,
+          lineHeight: 1.5,
           fontWeight: '400',
-          letterSpacing: -0.24,
-        }, // iOS Subheadline
-        {fontSize: 14, lineHeight: 1.43, fontWeight: '400', letterSpacing: 0}, // Android Body Medium
+          letterSpacing: 0.5,
+        },
         scale,
       ),
 
+      // Label (Settings left side) - iOS Body / Android Body Large
+      label: createPlatformTypography(
+        {
+          fontSize: 17,
+          lineHeight: 1.294,
+          fontWeight: '400',
+          letterSpacing: -0.43,
+        },
+        {
+          fontSize: 16,
+          lineHeight: 1.5,
+          fontWeight: '400',
+          letterSpacing: 0.5,
+        },
+        scale,
+      ),
+
+      // Value (Settings right side) - iOS Body / Android Label Large
       value: createPlatformTypography(
         {
           fontSize: 17,
           lineHeight: 1.294,
           fontWeight: '400',
           letterSpacing: -0.43,
-        }, // iOS Body (same as label)
-        {fontSize: 14, lineHeight: 1.43, fontWeight: '500', letterSpacing: 0}, // Android Label Large
+        },
+        {
+          fontSize: 14,
+          lineHeight: 1.429,
+          fontWeight: '500',
+          letterSpacing: 0.1,
+        },
         scale,
       ),
 
-      // Utility - Small Text
-      footnote: {
-        fontSize: scaleFont(13, scale),
-        lineHeight: Math.round(scaleFont(13, scale) * 1.38),
-        fontWeight: '400' as const,
-        letterSpacing: -0.08,
-      },
+      // Callout - iOS Callout / Android Body Large
+      callout: createPlatformTypography(
+        {
+          fontSize: 16,
+          lineHeight: 1.313,
+          fontWeight: '400',
+          letterSpacing: -0.32,
+        },
+        {
+          fontSize: 16,
+          lineHeight: 1.5,
+          fontWeight: '400',
+          letterSpacing: 0.5,
+        },
+        scale,
+      ),
 
-      caption: {
-        fontSize: scaleFont(12, scale),
-        lineHeight: Math.round(scaleFont(12, scale) * 1.33),
-        fontWeight: '400' as const,
-        letterSpacing: 0,
-      },
+      // Secondary - iOS Subhead / Android Body Medium
+      secondary: createPlatformTypography(
+        {
+          fontSize: 15,
+          lineHeight: 1.333,
+          fontWeight: '400',
+          letterSpacing: -0.24,
+        },
+        {
+          fontSize: 14,
+          lineHeight: 1.429,
+          fontWeight: '400',
+          letterSpacing: 0.25,
+        },
+        scale,
+      ),
+
+      // SMALL TEXT
+
+      // Footnote - iOS Footnote / Android Body Small
+      footnote: createPlatformTypography(
+        {
+          fontSize: 13,
+          lineHeight: 1.385,
+          fontWeight: '400',
+          letterSpacing: -0.08,
+        },
+        {
+          fontSize: 12,
+          lineHeight: 1.333,
+          fontWeight: '400',
+          letterSpacing: 0.4,
+        },
+        scale,
+      ),
+
+      // Caption - iOS Caption 1 / Android Label Medium
+      caption: createPlatformTypography(
+        {
+          fontSize: 12,
+          lineHeight: 1.333,
+          fontWeight: '400',
+          letterSpacing: 0,
+        },
+        {
+          fontSize: 12,
+          lineHeight: 1.333,
+          fontWeight: '500',
+          letterSpacing: 0.5,
+        },
+        scale,
+      ),
+
+      // Caption 2 - iOS Caption 2 / Android Label Small
+      caption2: createPlatformTypography(
+        {
+          fontSize: 11,
+          lineHeight: 1.182,
+          fontWeight: '400',
+          letterSpacing: 0.07,
+        },
+        {
+          fontSize: 11,
+          lineHeight: 1.455,
+          fontWeight: '500',
+          letterSpacing: 0.5,
+        },
+        scale,
+      ),
     },
 
     fontWeight: {
@@ -265,7 +402,7 @@ export const createDesignSystem = (
       },
 
       modal: {
-        borderRadius: 10,
+        borderRadius: 25,
         padding: 24,
       },
 
@@ -348,9 +485,7 @@ export const createDesignSystem = (
   } as const;
 };
 
-// ============================================================================
 // DEFAULT EXPORT (Lazy Initialized)
-// ============================================================================
 
 let _cachedDesignSystem: ReturnType<typeof createDesignSystem> | null = null;
 let _cachedDimensions = {width: 0, height: 0, fontScale: 0};
@@ -360,6 +495,7 @@ let _cachedDimensions = {width: 0, height: 0, fontScale: 0};
  * Automatically updates when dimensions or font scale changes
  */
 export const getDesignSystem = () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Dimensions = require('react-native').Dimensions;
   const {width, height} = Dimensions.get('window');
   const fontScale = PixelRatio.getFontScale();
@@ -384,9 +520,7 @@ export const getDesignSystem = () => {
  */
 export const DesignSystem = getDesignSystem();
 
-// ============================================================================
 // TYPE EXPORTS
-// ============================================================================
 
 export type DesignSystemType = ReturnType<typeof createDesignSystem>;
 export type Typography = keyof DesignSystemType['typography'];

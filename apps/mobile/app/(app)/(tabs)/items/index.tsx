@@ -1,5 +1,5 @@
 import React, {useCallback, useLayoutEffect, useEffect} from 'react';
-import {Platform, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {
   usePendingFilters,
   useClearPendingFilters,
@@ -125,12 +125,10 @@ export default function ItemsScreen() {
 }
 
 const createStyles = makeStyleFactory(
-  (_ds: DSShape, theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor:
-          Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
       },
     }),
   (ds, theme) => `${themeKey(theme, ds)}`,

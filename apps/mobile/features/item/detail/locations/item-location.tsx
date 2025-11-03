@@ -28,14 +28,14 @@ export function ItemLocation() {
               <ThemedText variant="label" style={styles.fieldLabel}>
                 Code
               </ThemedText>
-              <ThemedText variant="secondary">{location.code}</ThemedText>
+              <ThemedText variant="value">{location.code}</ThemedText>
             </View>
 
             <View style={styles.fieldRow}>
               <ThemedText variant="label" style={styles.fieldLabel}>
                 Quantity
               </ThemedText>
-              <ThemedText variant="secondary">{location.quantity}</ThemedText>
+              <ThemedText variant="value">{location.quantity}</ThemedText>
             </View>
           </Card>
         </View>

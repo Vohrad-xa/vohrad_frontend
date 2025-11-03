@@ -92,7 +92,7 @@ const TrackingModeFieldComponent = ({
         Tracking Mode
       </ThemedText>
       <View style={styles.trackingModeValue}>
-        <ThemedText variant="value" style={styles.valueText}>
+        <ThemedText variant="value">
           {TRACKING_MODE_LABEL_LOOKUP[trackingMode ?? 'abstract'] ?? 'Abstract'}
         </ThemedText>
         <Icon
@@ -111,7 +111,7 @@ TrackingModeFieldComponent.displayName = 'TrackingModeField';
 export const TrackingModeField = React.memo(TrackingModeFieldComponent);
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       fieldRow: {
         flexDirection: 'row',
@@ -125,9 +125,6 @@ const createStyles = makeStyleFactory(
         flexDirection: 'row',
         alignItems: 'center',
         gap: ds.spacing.sm,
-      },
-      valueText: {
-        color: theme.muted,
       },
       chevron: {},
     }),

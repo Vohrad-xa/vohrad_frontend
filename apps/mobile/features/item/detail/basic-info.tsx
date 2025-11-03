@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {Card} from '@/components/cards/card';
 import {ThemedText, ThemedInput} from '@/components/ui';
@@ -14,6 +14,7 @@ interface BasicInfoProps {
     field: 'name' | 'code' | 'serial_number',
     value: string,
   ) => void;
+  isEditing: boolean;
 }
 
 export function BasicInfo({
@@ -21,11 +22,22 @@ export function BasicInfo({
   code,
   serialNumber,
   onFieldChange,
+  isEditing,
 }: BasicInfoProps) {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
 
   const [editingField, setEditingField] = useState<string | null>(null);
+
+  useEffect(() => {
+    setEditingField(isEditing ? 'name' : null);
+  }, [isEditing]);
+
+  const handlePress = (field: string) => {
+    if (isEditing) {
+      setEditingField(field);
+    }
+  };
 
   const fields: Array<{
     label: string;
@@ -62,8 +74,8 @@ export function BasicInfo({
           </ThemedText>
           <Pressable
             style={styles.inputContainer}
-            onPress={() => setEditingField(field)}
-            disabled={editingField === field}
+            onPress={() => handlePress(field)}
+            disabled={editingField === field || !isEditing}
           >
             {editingField === field ? (
               <ThemedInput

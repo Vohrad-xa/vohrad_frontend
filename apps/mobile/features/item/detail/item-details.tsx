@@ -14,12 +14,14 @@ interface ItemDetailsProps {
   quantity?: string;
   formState: UseItemFormReturn;
   itemId?: string;
+  isEditing: boolean;
 }
 
 export function ItemDetails({
   quantity,
   formState,
   itemId,
+  isEditing,
 }: ItemDetailsProps): React.JSX.Element {
   const {ds} = useTheme();
 
@@ -50,6 +52,7 @@ export function ItemDetails({
         code={formValues.code}
         serialNumber={formValues.serialNumber}
         onFieldChange={handleBasicInfoChange}
+        isEditing={isEditing}
       />
 
       {/* Status, Tracking Mode, and Quantity */}

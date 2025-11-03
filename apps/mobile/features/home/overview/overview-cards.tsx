@@ -183,7 +183,7 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.sm,
       },
       filterStatus: {
-        fontSize: 12,
+        ...ds.typography.caption,
         color: theme.muted,
       },
       cardContainer: {

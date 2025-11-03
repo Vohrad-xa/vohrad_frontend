@@ -221,12 +221,12 @@ export const SpecificationsForm = forwardRef<
                 />
 
                 <ThemedInput
-                  variant="secondary"
+                  variant="value"
                   textAlign="right"
                   borderless
                   value={field.value}
                   onChangeText={(text) => handleValueChange(field.id, text)}
-                  placeholder="secondary"
+                  placeholder="value"
                   style={styles.valueInput}
                 />
               </View>

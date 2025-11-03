@@ -33,21 +33,15 @@ export function QuantityField({field, value}: QuantityFieldProps) {
         {field.label}
       </ThemedText>
       <View style={styles.valueContainer}>
-        <ThemedText variant="value" style={styles.valueText}>
-          {value ?? '0'}
-        </ThemedText>
-        <Icon
-          name="chevron-forward-outline"
-          size="md"
-          style={styles.valueText}
-        />
+        <ThemedText variant="value">{value ?? '0'}</ThemedText>
+        <Icon name="chevron-forward-outline" size="md" colorToken="muted" />
       </View>
     </Pressable>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       fieldRow: {
         flexDirection: 'row',
@@ -61,10 +55,6 @@ const createStyles = makeStyleFactory(
         flexDirection: 'row',
         alignItems: 'center',
         gap: ds.spacing.sm,
-        color: theme.muted,
-      },
-      valueText: {
-        color: theme.muted,
       },
     }),
   (ds, theme) => themeKey(theme, ds),
