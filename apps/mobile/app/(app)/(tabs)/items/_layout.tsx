@@ -1,11 +1,13 @@
 import type {ReactNode} from 'react';
 import {useCallback, createContext, useContext, useState} from 'react';
-import {Platform, View} from 'react-native';
+import {Platform, View, StyleSheet} from 'react-native';
 import {Stack} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {SearchProvider, useSearch} from '@/features/home/search-context';
 import {useTheme, useSidebar} from '@/providers';
 import {AppIcons} from '@/utils';
+import {makeStyleFactory} from '@/utils/style-factory';
 
 interface SearchChangeEvent {
   nativeEvent: {
@@ -47,9 +49,10 @@ function ItemChangesProvider({children}: {children: ReactNode}) {
 }
 
 function ItemsStack() {
-  const {theme} = useTheme();
+  const {theme, ds} = useTheme();
   const {toggleSideMenu} = useSidebar();
   const {setSearchQuery} = useSearch();
+  const styles = createStyles(ds, theme);
 
   const handleSearchChange = useCallback(
     (event: SearchChangeEvent) => {
@@ -60,7 +63,7 @@ function ItemsStack() {
   );
 
   return (
-    <View style={{flex: 1}}>
+    <View style={styles.container}>
       <Stack
         screenOptions={{
           headerShown: true,
@@ -110,6 +113,18 @@ function ItemsStack() {
     </View>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      container: {
+        flex: 1,
+        backgroundColor:
+          Platform.OS === 'web' ? theme.webbackground : theme.background,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);
 
 export default function ItemsLayout() {
   return (
