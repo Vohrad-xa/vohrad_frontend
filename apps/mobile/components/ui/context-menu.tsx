@@ -332,9 +332,7 @@ const createStyles = makeStyleFactory(
         }),
         borderColor: theme.border,
         overflow: 'hidden',
-        shadowColor: 'black',
         boxShadow: '0px 4px 16px rgba(0, 0, 0, 0.12)',
-        elevation: 8,
       },
       menuContent: {
         paddingHorizontal: ds.spacing.md,

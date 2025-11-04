@@ -194,11 +194,9 @@ const createStyles = makeStyleFactory(
       cardWrapperPressed: {
         opacity: isWeb ? 0.98 : 0.94,
         transform: [{scale: isWeb ? 0.998 : 0.985}],
-        shadowColor: theme.background,
-        shadowOpacity: isWeb ? 0.06 : 0.12,
-        shadowRadius: ds.spacing.sm,
-        shadowOffset: {width: 0, height: ds.spacing.xs},
-        elevation: 1,
+        boxShadow: isWeb
+          ? `0px ${ds.spacing.xs}px ${ds.spacing.sm}px rgba(0, 0, 0, 0.06)`
+          : `0px ${ds.spacing.xs}px ${ds.spacing.sm}px rgba(0, 0, 0, 0.12)`,
         borderRadius: cardBorderRadius,
       } as ViewStyle,
       cardWrapperHover: isWeb

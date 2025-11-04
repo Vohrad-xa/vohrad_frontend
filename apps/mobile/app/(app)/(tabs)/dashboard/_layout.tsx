@@ -18,7 +18,7 @@ export default function HomeLayout() {
         <Stack.Screen
           name="index"
           options={{
-            headerTitle: 'Home',
+            headerTitle: 'Dashboard',
             headerLeft: () => (
               <HeaderButton
                 icon={AppIcons.navigation.menu}

@@ -58,7 +58,7 @@ export default function EmailConfirmScreen() {
       setStatus('error');
       setMessage('This confirmation link is invalid.');
       if (isAuthenticated) {
-        router.replace('/(app)/(tabs)/home');
+        router.replace('/(app)/(tabs)/dashboard');
       } else {
         router.replace('/(auth)/login');
       }
@@ -119,7 +119,7 @@ export default function EmailConfirmScreen() {
 
   const navigateBackToApp = () => {
     if (isAuthenticated) {
-      router.replace('/(app)/(tabs)/home');
+      router.replace('/(app)/(tabs)/dashboard');
     } else {
       router.replace('/(auth)/login');
     }

@@ -166,7 +166,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
                 onPress={() => {
                   Keyboard.dismiss();
                   if (item.label === 'Home') {
-                    router.navigate('/(app)/(tabs)/home');
+                    router.navigate('/(app)/(tabs)/dashboard');
                   } else if (item.label === 'Items') {
                     router.navigate('/(app)/(tabs)/items');
                   } else if (item.label === 'Events') {

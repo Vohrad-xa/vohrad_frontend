@@ -1,19 +1,16 @@
 import React from 'react';
 import {Stack} from 'expo-router';
-import {StatusBar} from 'expo-status-bar';
-import {useTheme} from '@/providers';
+import {ThemedStatusBar} from '@/components/ui';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
 }
 
 function AuthLayout({children}: AuthLayoutProps) {
-  const {scheme} = useTheme();
-
   return (
     <>
       {children}
-      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      <ThemedStatusBar />
     </>
   );
 }

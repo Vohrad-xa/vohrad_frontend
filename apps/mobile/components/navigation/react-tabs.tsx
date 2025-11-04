@@ -157,7 +157,6 @@ export function ReactTabs({
   return (
     <View style={styles.container}>
       <Tabs
-        initialRouteName="home"
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: theme.tabIconSelected,

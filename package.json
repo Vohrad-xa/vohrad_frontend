@@ -28,7 +28,7 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check"
   },
-  "packageManager": "pnpm@10.17.0",
+  "packageManager": "pnpm@10.20.0",
   "pnpm": {
     "overrides": {
       "glob": "^10.4.5",

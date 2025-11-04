@@ -8,16 +8,20 @@ import type {TabItem} from '@/types/ui';
 import {AppIcons} from '@/utils';
 
 const TAB_ITEMS: TabItem[] = [
-  {name: 'home', label: 'Home', icon: AppIcons.navigation.home},
+  {name: 'dashboard', label: 'Dashboard', icon: AppIcons.navigation.home},
   {name: 'items', label: 'Items', icon: AppIcons.inventory.itemsSecondary},
   {name: 'events', label: 'Events', icon: AppIcons.navigation.events},
 ];
 
 const iOS_SF_SYMBOLS = {
-  home: 'house.fill',
+  dashboard: 'house.fill',
   items: 'folder.fill',
   events: 'bell.fill',
 } as const;
+
+export const unstable_settings = {
+  initialRouteName: 'dashboard',
+};
 
 export default function TabLayout() {
   const navigation = useNavigation();
@@ -28,7 +32,7 @@ export default function TabLayout() {
   const previousTabRef = useRef<string | null>(null);
 
   useEffect(() => {
-    const currentSegment = segments[segments.length - 1] ?? 'home';
+    const currentSegment = segments[segments.length - 1] ?? 'dashboard';
     const activeTab =
       TAB_ITEMS.find((tab) => tab.name === currentSegment) ?? TAB_ITEMS[0];
 

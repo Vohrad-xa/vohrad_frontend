@@ -16,7 +16,7 @@ async function isSecureStoreAvailable(): Promise<boolean> {
 
   try {
     secureStoreAvailable = await SecureStore.isAvailableAsync();
-    if (!secureStoreAvailable) {
+    if (!secureStoreAvailable && Platform.OS !== 'web') {
       console.warn(
         '[secure-storage] SecureStore unavailable, using volatile memory fallback.',
       );

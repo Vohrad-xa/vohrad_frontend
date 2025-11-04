@@ -26,3 +26,4 @@ export {
 } from './info-row-flatlist';
 export {type BadgeStatus} from './themed-view';
 export {Card} from '../cards/card';
+export {ThemedStatusBar} from './themed-status-bar';

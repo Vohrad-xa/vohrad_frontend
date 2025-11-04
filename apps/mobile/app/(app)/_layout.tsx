@@ -6,6 +6,7 @@ import Animated, {
   interpolate,
   interpolateColor,
 } from 'react-native-reanimated';
+import {ThemedStatusBar} from '@/components/ui';
 import {SIDEBAR_CONFIG} from '@/constants/sidebar';
 import {type ThemeShape} from '@/constants/theme';
 import {SideMenu} from '@/features/side-bar/side-menu';
@@ -119,6 +120,7 @@ export default function AppLayout() {
   return (
     <HeaderVisibilityProvider>
       <SidebarProvider>
+        <ThemedStatusBar />
         <AppStack />
       </SidebarProvider>
     </HeaderVisibilityProvider>
@@ -133,9 +135,7 @@ const createStyles = makeStyleFactory(
       },
       mainContent: {
         flex: 1,
-        shadowColor: '#000000ab',
-        shadowOffset: {width: 2, height: 0},
-        shadowRadius: 10,
+        boxShadow: '2px 0px 10px rgba(0, 0, 0, 0.67)',
       },
       border: {
         position: 'absolute',
