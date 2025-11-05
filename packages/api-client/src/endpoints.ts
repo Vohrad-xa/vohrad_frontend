@@ -32,6 +32,10 @@ export const API_ENDPOINTS = {
     BY_SERIAL: (serial: string) => `/items/serial/${serial}`,
     UPDATE: (id: string) => `/items/${id}`,
     DELETE: (id: string) => `/items/${id}`,
+    UPDATE_LOCATION: (itemId: string, locationId: string) =>
+      `/items/${itemId}/locations/${locationId}`,
+    DELETE_LOCATION: (itemId: string, locationId: string) =>
+      `/items/${itemId}/locations/${locationId}`,
   },
   ATTACHMENTS: {
     GET_URL: (id: string) => `/attachments/${id}/url`,

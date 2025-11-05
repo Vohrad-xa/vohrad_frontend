@@ -1,16 +1,23 @@
 import React from 'react';
-import {useItemDetailManager} from '@vohrad/store';
-import {useLocalSearchParams} from 'expo-router';
-import {ModalScrollView, EmptyState} from '@/components/ui';
-import {ItemLocation} from '@/features/item/detail/locations/item-location';
+import {StyleSheet, View} from 'react-native';
+import {
+  ModalScrollView,
+  Card,
+  EmptyState,
+  ThemedText,
+  ThemedInput,
+} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {useItemLocation} from '@/features/item/detail/locations/use-item-location';
+import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function LocationModal() {
-  const {id: itemId} = useLocalSearchParams<{id: string}>();
-  const {item, isLoading} = useItemDetailManager(itemId);
+  const {ds, theme} = useTheme();
+  const styles = createStyles(ds, theme);
+  const {locations, isEditMode, handleQuantityChange} = useItemLocation();
 
-  const displayLocations = item?.locations ?? [];
-
-  if (!isLoading && displayLocations.length === 0) {
+  if (locations.length === 0) {
     return (
       <EmptyState
         message="No locations found for this item"
@@ -21,7 +28,63 @@ export default function LocationModal() {
 
   return (
     <ModalScrollView>
-      <ItemLocation />
+      <View>
+        {locations.map((location) => (
+          <View key={location.id} style={{gap: ds.spacing.sm}}>
+            <ThemedText variant="value" style={styles.locationTitle}>
+              {location.name}
+            </ThemedText>
+            <Card withDivider>
+              <View style={styles.fieldRow}>
+                <ThemedText variant="label" style={styles.fieldLabel}>
+                  Code
+                </ThemedText>
+                <ThemedText variant="value">{location.code}</ThemedText>
+              </View>
+
+              <View style={styles.fieldRow}>
+                <ThemedText variant="label" style={styles.fieldLabel}>
+                  Quantity
+                </ThemedText>
+                <ThemedInput
+                  variant="value"
+                  textAlign="right"
+                  borderless
+                  value={location.quantity}
+                  onChangeText={(text) =>
+                    handleQuantityChange(location.id, text)
+                  }
+                  editable={isEditMode}
+                  keyboardType="decimal-pad"
+                  style={styles.quantityInput}
+                />
+              </View>
+            </Card>
+          </View>
+        ))}
+      </View>
     </ModalScrollView>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (ds: DSShape, _theme: ThemeShape) =>
+    StyleSheet.create({
+      locationTitle: {
+        paddingHorizontal: ds.spacing.lg,
+      },
+      fieldRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      },
+      fieldLabel: {
+        flexShrink: 0,
+        marginRight: ds.spacing.md,
+      },
+      quantityInput: {
+        minWidth: 60,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);

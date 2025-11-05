@@ -25,6 +25,7 @@ export interface ItemSlice {
   setSelectedItem: (item: ItemDetail | null) => void;
   addItem: (item: Item) => void;
   updateItemInList: (id: string, updates: Partial<Item>) => void;
+  updateItemLocation: (locationId: string, quantity: number) => void;
   removeItem: (id: string) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -85,6 +86,22 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
           ? {...state.selectedItem, ...updates}
           : state.selectedItem,
     })),
+
+  updateItemLocation: (locationId: string, quantity: number) =>
+    set((state) => {
+      if (!state.selectedItem?.locations) return state;
+
+      const updatedLocations = state.selectedItem.locations.map((loc) =>
+        loc.id === locationId ? {...loc, quantity} : loc,
+      );
+
+      return {
+        selectedItem: {
+          ...state.selectedItem,
+          locations: updatedLocations,
+        },
+      };
+    }),
 
   removeItem: (id: string) =>
     set((state) => ({

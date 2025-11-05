@@ -6,12 +6,14 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
+import type {ItemDetail} from '@vohrad/store';
 
 interface LocationsProps {
   itemId?: string;
+  item?: ItemDetail;
 }
 
-export function Locations({itemId}: LocationsProps): React.JSX.Element {
+export function Locations({itemId, item}: LocationsProps): React.JSX.Element {
   const {ds, theme} = useTheme();
   const router = useRouter();
   const styles = createStyles(ds, theme);
@@ -19,7 +21,7 @@ export function Locations({itemId}: LocationsProps): React.JSX.Element {
   const handlePress = () => {
     router.push({
       pathname: '/items/location',
-      params: {id: itemId},
+      params: {id: itemId, itemData: JSON.stringify(item)},
     });
   };
 

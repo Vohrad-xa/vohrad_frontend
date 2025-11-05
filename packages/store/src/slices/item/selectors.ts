@@ -15,6 +15,7 @@ export const itemSelectors = {
   setSelectedItem: (state: ItemSlice) => state.setSelectedItem,
   addItem: (state: ItemSlice) => state.addItem,
   updateItemInList: (state: ItemSlice) => state.updateItemInList,
+  updateItemLocation: (state: ItemSlice) => state.updateItemLocation,
   removeItem: (state: ItemSlice) => state.removeItem,
   setLoading: (state: ItemSlice) => state.setLoading,
   setError: (state: ItemSlice) => state.setError,

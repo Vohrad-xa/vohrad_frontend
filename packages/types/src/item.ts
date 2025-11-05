@@ -22,6 +22,12 @@ export interface ItemLocationInput {
   quantity: number;
 }
 
+export interface ItemLocationUpdate {
+  quantity?: number;
+  moved_date?: string | null;
+  notes?: string | null;
+}
+
 export interface ItemAttachment {
   id: string;
   filename: string;

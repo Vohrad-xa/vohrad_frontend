@@ -3,6 +3,7 @@ import type {
   ItemDetail,
   ItemCreate,
   ItemUpdate,
+  ItemLocationUpdate,
   ApiResponse,
   PaginatedResponse,
 } from '@vohrad/types';
@@ -74,6 +75,17 @@ export class ItemApi {
 
   async deleteItem(id: string): Promise<void> {
     await httpClient.delete(API_ENDPOINTS.ITEMS.DELETE(id));
+  }
+
+  async updateItemLocation(
+    itemId: string,
+    locationId: string,
+    data: ItemLocationUpdate,
+  ): Promise<void> {
+    await httpClient.put(
+      API_ENDPOINTS.ITEMS.UPDATE_LOCATION(itemId, locationId),
+      data,
+    );
   }
 }
 

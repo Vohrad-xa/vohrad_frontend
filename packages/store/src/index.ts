@@ -33,6 +33,7 @@ export {
   useCreateItem,
   useUpdateItem,
   useDeleteItem,
+  useUpdateItemLocation,
   useItemsManager,
   useItemDetailManager,
   useItemFiltersManager,
@@ -49,7 +50,14 @@ export {
   useClearPendingFilters,
 } from './slices/filter/hooks';
 export type {FilterSlice} from './slices/filter';
-export type {User, AuthTokens, Tenant, Item, ItemDetail} from '@vohrad/types';
+export type {
+  User,
+  AuthTokens,
+  Tenant,
+  Item,
+  ItemDetail,
+  ItemLocationUpdate,
+} from '@vohrad/types';
 export type {AuthSlice} from './slices/auth';
 export type {TenantSlice} from './slices/tenant';
 export type {

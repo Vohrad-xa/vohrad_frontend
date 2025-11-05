@@ -34,6 +34,7 @@ export type {
   ItemLocationInput,
   ItemAttachment,
   ItemFilterState,
+  ItemLocationUpdate,
 } from './item';
 
 export {ApiError} from './api';

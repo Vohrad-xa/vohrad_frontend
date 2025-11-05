@@ -1,11 +1,12 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
+import {View} from 'react-native';
 import {
   useAuthStore,
   useItemDetailManager,
   type StoreState,
 } from '@vohrad/store';
 import {useLocalSearchParams, useNavigation} from 'expo-router';
-import {ThemedView, ModalScrollView} from '@/components/ui';
+import {ModalScrollView, LoadingOverlay} from '@/components/ui';
 import {ItemDetails, ItemHeader, useItemForm} from '@/features/item';
 import {useSettingsHeader} from '@/hooks/use-settings-header';
 import {useTheme, useHaptic} from '@/providers';
@@ -22,6 +23,10 @@ export default function ItemDetailScreen() {
   const clearError = useAuthStore((state: StoreState) => state.clearError);
   const {item, isLoading, getItemImageUrl, error} =
     useItemDetailManager(itemId);
+  const [isOverlayVisible, setIsOverlayVisible] = useState(isLoading);
+  const overlayHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
 
   const formState = useItemForm({
     itemId: itemId!,
@@ -72,19 +77,46 @@ export default function ItemDetailScreen() {
     }
   }, [error, clearError]);
 
-  if (isLoading || !item) {
-    return <ThemedView style={{flex: 1}} />;
+  useEffect(() => {
+    if (isLoading) {
+      if (overlayHideTimerRef.current) {
+        clearTimeout(overlayHideTimerRef.current);
+        overlayHideTimerRef.current = null;
+      }
+      setIsOverlayVisible(true);
+      return;
+    }
+
+    overlayHideTimerRef.current = setTimeout(() => {
+      setIsOverlayVisible(false);
+      overlayHideTimerRef.current = null;
+    }, 500);
+  }, [isLoading]);
+
+  useEffect(() => {
+    return () => {
+      if (overlayHideTimerRef.current) {
+        clearTimeout(overlayHideTimerRef.current);
+      }
+    };
+  }, []);
+
+  if (!item) {
+    return <LoadingOverlay fullScreen />;
   }
 
   return (
-    <ModalScrollView contentContainerStyle={{gap: ds.spacing.xl}}>
-      <ItemHeader item={item} imageUrl={getItemImageUrl()} />
-      <ItemDetails
-        quantity={item.total_quantity?.toString() ?? ''}
-        formState={formState}
-        itemId={itemId}
-        isEditing={isEditing}
-      />
-    </ModalScrollView>
+    <View style={{flex: 1}}>
+      <ModalScrollView contentContainerStyle={{gap: ds.spacing.xl}}>
+        <ItemHeader item={item} imageUrl={getItemImageUrl()} />
+        <ItemDetails
+          quantity={item.total_quantity?.toString() ?? ''}
+          formState={formState}
+          itemId={itemId}
+          isEditing={isEditing}
+        />
+      </ModalScrollView>
+      {isOverlayVisible && <LoadingOverlay />}
+    </View>
   );
 }

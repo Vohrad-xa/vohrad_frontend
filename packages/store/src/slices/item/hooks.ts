@@ -2,13 +2,19 @@ import {useState, useCallback} from 'react';
 import {itemApi} from '@vohrad/api-client';
 import {useAuthStore} from '../../store';
 import {itemSelectors} from './selectors';
-import type {Item, ItemCreate, ItemUpdate, ItemDetail} from '@vohrad/types';
+import type {
+  Item,
+  ItemCreate,
+  ItemUpdate,
+  ItemDetail,
+  ItemLocationUpdate,
+} from '@vohrad/types';
 
 const inFlightItemDetailRequests: Record<string, Promise<void>> = {};
 const lastItemDetailFetchAt: Record<string, number> = {};
 const itemHasFullDetails: Record<string, boolean> = {};
 // Prevent duplicate rapid requests (e.g., double clicks)
-const ITEM_DETAIL_REFETCH_THROTTLE_MS = 1000; // 1 second to prevent duplicate rapid requests
+const ITEM_DETAIL_REFETCH_THROTTLE_MS = 1000;
 
 export function useItems() {
   const items = useAuthStore(itemSelectors.items);
@@ -325,6 +331,43 @@ export function useDeleteItem() {
 
   return {
     deleteItem,
+    isLoading,
+  };
+}
+
+export function useUpdateItemLocation() {
+  const [isLoading, setIsLoading] = useState(false);
+  const updateItemLocation = useAuthStore(itemSelectors.updateItemLocation);
+  const setError = useAuthStore(itemSelectors.setError);
+
+  const updateLocation = useCallback(
+    async (
+      itemId: string,
+      locationId: string,
+      data: ItemLocationUpdate,
+    ): Promise<void> => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        await itemApi.updateItemLocation(itemId, locationId, data);
+        if (data.quantity !== undefined) {
+          updateItemLocation(locationId, data.quantity);
+        }
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Failed to update item location';
+        setError(message);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [updateItemLocation, setError],
+  );
+
+  return {
+    updateLocation,
     isLoading,
   };
 }

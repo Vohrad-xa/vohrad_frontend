@@ -9,6 +9,7 @@ export {
   useCreateItem,
   useUpdateItem,
   useDeleteItem,
+  useUpdateItemLocation,
 } from './hooks';
 export {
   useItemsManager,
