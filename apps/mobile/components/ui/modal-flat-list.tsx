@@ -25,6 +25,10 @@ export function ModalFlatList<T>({
       {...props}
       contentContainerStyle={[styles.defaultContent, contentContainerStyle]}
       refreshControl={refreshControl}
+      contentInsetAdjustmentBehavior={
+        Platform.OS === 'ios' ? 'automatic' : undefined
+      }
+      keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={Platform.OS === 'web'}
       keyboardDismissMode={Platform.select({
         ios: 'interactive',
