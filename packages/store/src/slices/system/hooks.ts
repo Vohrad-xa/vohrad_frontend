@@ -73,7 +73,10 @@ export function useDashboardOverview() {
         err instanceof Error ? err.message : 'Failed to fetch overview';
       setDashboardOverviewError(message);
       setDashboardOverviewStatus('error');
-      throw err;
+
+      // Use global error handling with retry callback
+      const {setError} = useAuthStore.getState();
+      setError(message, fetchOverview);
     }
   }, [
     hasHydrated,

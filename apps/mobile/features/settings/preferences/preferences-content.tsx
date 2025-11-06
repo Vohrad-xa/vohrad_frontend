@@ -9,7 +9,7 @@ import {
   type InfoField,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useTheme, useLoading, useHaptic} from '@/providers';
+import {useTheme, useHaptic} from '@/providers';
 import {showConfirmAlert, showAlert} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -35,7 +35,6 @@ export const PreferencesContentEditable = forwardRef<
   const {ds, theme} = useTheme();
   const {triggerHaptic} = useHaptic();
   const styles = createStyles(ds, theme);
-  const {showLoading, hideLoading} = useLoading();
 
   const {
     organization,
@@ -49,10 +48,7 @@ export const PreferencesContentEditable = forwardRef<
   } = usePreferencesManager();
 
   const performUpdate = async () => {
-    showLoading('Updating preferences...');
-
     if (!hasChanges()) {
-      hideLoading();
       showAlert({
         title: 'No Changes Detected',
         message: 'Update a field before saving your preferences.',
@@ -60,19 +56,8 @@ export const PreferencesContentEditable = forwardRef<
       return;
     }
 
-    try {
-      await submitUpdate();
-      hideLoading();
-      onSaveComplete?.();
-    } catch (err) {
-      hideLoading();
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to update preferences';
-      showAlert({
-        title: 'Error',
-        message: errorMessage,
-      });
-    }
+    await submitUpdate();
+    onSaveComplete?.();
   };
 
   const handleSavePreferences = (options?: SavePreferencesOptions) => {
@@ -104,19 +89,8 @@ export const PreferencesContentEditable = forwardRef<
 
   const handleToggleBusinessHours = React.useCallback(
     async (enabled: boolean) => {
-      try {
-        await toggleBusinessHours(enabled);
-      } catch (err) {
-        triggerHaptic('warning');
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : 'Failed to update business hours';
-        showAlert({
-          title: 'Error',
-          message: errorMessage,
-        });
-      }
+      triggerHaptic('light');
+      await toggleBusinessHours(enabled);
     },
     [toggleBusinessHours, triggerHaptic],
   );

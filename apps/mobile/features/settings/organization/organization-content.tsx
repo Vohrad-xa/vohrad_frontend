@@ -9,7 +9,7 @@ import {
 } from '@/components/ui';
 import type {BadgeStatus} from '@/components/ui/themed-view';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useTheme, useLoading} from '@/providers';
+import {useTheme} from '@/providers';
 import {formatDate, showConfirmAlert, showAlert} from '@/utils';
 import {Icon, AppIcons} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -36,7 +36,6 @@ export const OrganizationContent = forwardRef<
 >(({isEditing, onSaveComplete, onFieldChange}, ref) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
-  const {showLoading, hideLoading} = useLoading();
 
   const {
     organization,
@@ -50,10 +49,7 @@ export const OrganizationContent = forwardRef<
   } = useOrganizationForm(isEditing);
 
   const performUpdate = async () => {
-    showLoading('Updating organization...');
-
     if (!hasChanges()) {
-      hideLoading();
       showAlert({
         title: 'No Changes Detected',
         message: 'Update a field before saving your organization.',
@@ -61,19 +57,8 @@ export const OrganizationContent = forwardRef<
       return;
     }
 
-    try {
-      await submitUpdate();
-      hideLoading();
-      onSaveComplete?.();
-    } catch (err) {
-      hideLoading();
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to update organization';
-      showAlert({
-        title: 'Error',
-        message: errorMessage,
-      });
-    }
+    await submitUpdate();
+    onSaveComplete?.();
   };
 
   const handleSaveProfile = (options?: SaveOrganizationOptions) => {

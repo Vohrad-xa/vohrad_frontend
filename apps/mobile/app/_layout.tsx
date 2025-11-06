@@ -23,7 +23,7 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
 
   useEffect(() => {
     if (navigationState?.key && isBootstrapComplete) {
-      SplashScreen.hideAsync();
+      SplashScreen.hideAsync().catch(() => {});
     }
   }, [navigationState?.key, isBootstrapComplete]);
 

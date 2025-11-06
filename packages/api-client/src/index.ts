@@ -13,6 +13,8 @@ export * from './user-api';
 export * from './attachment-api';
 export * from './dashboard-api';
 export {API_ENDPOINTS} from './endpoints';
+export {loadingManager} from './loading-manager';
+export type {LoadingState, LoadingError} from './loading-manager';
 export {
   initApiConfig,
   setApiTenant,

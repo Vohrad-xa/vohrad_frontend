@@ -4,6 +4,7 @@ export {setAuthPersistStorage} from './utils/storage';
 export {
   authSelectors,
   useProfileDetails,
+  useFetchUserProfile,
   useUpdateProfile,
   useEmailConfirmation,
   useProfileManager,

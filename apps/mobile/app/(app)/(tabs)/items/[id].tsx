@@ -1,16 +1,10 @@
-import {useEffect, useRef, useState} from 'react';
-import {View} from 'react-native';
-import {
-  useAuthStore,
-  useItemDetailManager,
-  type StoreState,
-} from '@vohrad/store';
+import {useState} from 'react';
+import {useItemDetailManager} from '@vohrad/store';
 import {useLocalSearchParams, useNavigation} from 'expo-router';
-import {ModalScrollView, LoadingOverlay} from '@/components/ui';
+import {ModalScrollView, ThemedView} from '@/components/ui';
 import {ItemDetails, ItemHeader, useItemForm} from '@/features/item';
 import {useSettingsHeader} from '@/hooks/use-settings-header';
 import {useTheme, useHaptic} from '@/providers';
-import {showAlert} from '@/utils';
 import {useItemChanges} from './_layout';
 
 export default function ItemDetailScreen() {
@@ -20,13 +14,7 @@ export default function ItemDetailScreen() {
   const {hasChanges, setHasChanges} = useItemChanges();
   const {triggerHaptic} = useHaptic();
   const [isEditing, setIsEditing] = useState(false);
-  const clearError = useAuthStore((state: StoreState) => state.clearError);
-  const {item, isLoading, getItemImageUrl, error} =
-    useItemDetailManager(itemId);
-  const [isOverlayVisible, setIsOverlayVisible] = useState(isLoading);
-  const overlayHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
+  const {item, getItemImageUrl} = useItemDetailManager(itemId);
 
   const formState = useItemForm({
     itemId: itemId!,
@@ -55,8 +43,8 @@ export default function ItemDetailScreen() {
         await formState.performSave();
         setIsEditing(false);
         triggerSuccess();
-      } catch (_error) {
-        // Error is handled by the store hook
+      } catch {
+        // Ignored
       }
     },
     onCancel: () => {
@@ -66,57 +54,19 @@ export default function ItemDetailScreen() {
     },
   });
 
-  // Show error alerts when errors occur
-  useEffect(() => {
-    if (error) {
-      showAlert({
-        title: 'Error',
-        message: error,
-      });
-      clearError();
-    }
-  }, [error, clearError]);
-
-  useEffect(() => {
-    if (isLoading) {
-      if (overlayHideTimerRef.current) {
-        clearTimeout(overlayHideTimerRef.current);
-        overlayHideTimerRef.current = null;
-      }
-      setIsOverlayVisible(true);
-      return;
-    }
-
-    overlayHideTimerRef.current = setTimeout(() => {
-      setIsOverlayVisible(false);
-      overlayHideTimerRef.current = null;
-    }, 500);
-  }, [isLoading]);
-
-  useEffect(() => {
-    return () => {
-      if (overlayHideTimerRef.current) {
-        clearTimeout(overlayHideTimerRef.current);
-      }
-    };
-  }, []);
-
   if (!item) {
-    return <LoadingOverlay fullScreen />;
+    return <ThemedView style={{flex: 1}} />;
   }
 
   return (
-    <View style={{flex: 1}}>
-      <ModalScrollView contentContainerStyle={{gap: ds.spacing.xl}}>
-        <ItemHeader item={item} imageUrl={getItemImageUrl()} />
-        <ItemDetails
-          quantity={item.total_quantity?.toString() ?? ''}
-          formState={formState}
-          itemId={itemId}
-          isEditing={isEditing}
-        />
-      </ModalScrollView>
-      {isOverlayVisible && <LoadingOverlay />}
-    </View>
+    <ModalScrollView contentContainerStyle={{gap: ds.spacing.xl}}>
+      <ItemHeader item={item} imageUrl={getItemImageUrl()} />
+      <ItemDetails
+        quantity={item.total_quantity?.toString() ?? ''}
+        formState={formState}
+        itemId={itemId}
+        isEditing={isEditing}
+      />
+    </ModalScrollView>
   );
 }

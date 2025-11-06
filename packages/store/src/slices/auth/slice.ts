@@ -9,10 +9,11 @@ export interface AuthSlice {
   intendedRoute: string | null;
   isLoading: boolean;
   error: string | null;
+  retryCallback: (() => void) | null;
   setUser: (user: User) => void;
   setTokens: (tokens: AuthTokens | null) => void;
   setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
+  setError: (error: string | null, retryCallback?: () => void) => void;
   setIntendedRoute: (route: string | null) => void;
   updateUser: (userData: Partial<User>) => void;
   login: (user: User, tokens: AuthTokens) => void;
@@ -27,6 +28,7 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
   intendedRoute: null,
   isLoading: false,
   error: null,
+  retryCallback: null,
 
   setUser: (user: User) => set({user}),
 
@@ -37,9 +39,10 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
   },
 
   setLoading: (loading: boolean) => set({isLoading: loading}),
-  setError: (error: string | null) => set({error}),
+  setError: (error: string | null, retryCallback?: () => void) =>
+    set({error, retryCallback: retryCallback ?? null}),
   setIntendedRoute: (route: string | null) => set({intendedRoute: route}),
-  clearError: () => set({error: null}),
+  clearError: () => set({error: null, retryCallback: null}),
 
   updateUser: (userData: Partial<User>) =>
     set((state) => ({

@@ -15,6 +15,7 @@ export function useOrganizationDetails(): Tenant | null {
 export function useUpdateTenant() {
   const [isLoading, setIsLoading] = useState(false);
   const updateTenant = useAuthStore(tenantSelectors.updateTenant);
+  const setError = useAuthStore((state) => state.setError);
 
   const updateTenantProfile = useCallback(
     async (data: TenantProfileUpdate): Promise<void> => {
@@ -24,12 +25,15 @@ export function useUpdateTenant() {
         const updatedTenant = await tenantApi.updateTenantProfile(data);
         updateTenant(updatedTenant);
       } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Failed to update organization';
+        setError(message, () => updateTenantProfile(data));
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [updateTenant],
+    [updateTenant, setError],
   );
 
   return {
@@ -41,6 +45,7 @@ export function useUpdateTenant() {
 export function useUpdateTenantSettings() {
   const [isLoading, setIsLoading] = useState(false);
   const updateTenant = useAuthStore(tenantSelectors.updateTenant);
+  const setError = useAuthStore((state) => state.setError);
 
   const updateTenantSettings = useCallback(
     async (data: TenantSettingsUpdate): Promise<void> => {
@@ -50,12 +55,15 @@ export function useUpdateTenantSettings() {
         const updatedTenant = await tenantApi.updateTenantSettings(data);
         updateTenant(updatedTenant);
       } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Failed to update preferences';
+        setError(message, () => updateTenantSettings(data));
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [updateTenant],
+    [updateTenant, setError],
   );
 
   return {

@@ -1,8 +1,7 @@
 import {useState, useCallback, useEffect, useRef} from 'react';
-import {useItemDetailManager, useAuthStore} from '@vohrad/store';
+import {useItemDetailManager} from '@vohrad/store';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {useSettingsHeader} from '@/hooks';
-import {showAlert} from '@/utils/alert';
 
 interface LocationQuantity {
   id: string;
@@ -19,7 +18,6 @@ export function useItemLocation() {
     useItemDetailManager(itemId);
   const [hasChanges, setHasChanges] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const clearError = useAuthStore((state) => state.clearError);
 
   const [locations, setLocations] = useState<LocationQuantity[]>([]);
   const originalLocations = useRef<LocationQuantity[]>([]);
@@ -118,17 +116,6 @@ export function useItemLocation() {
   useEffect(() => {
     setHasChanges(checkForChanges());
   }, [checkForChanges]);
-
-  const error = useAuthStore((state) => state.error);
-  useEffect(() => {
-    if (error) {
-      showAlert({
-        title: 'Error',
-        message: error,
-      });
-      clearError();
-    }
-  }, [error, clearError]);
 
   return {
     locations,

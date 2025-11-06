@@ -1,34 +1,23 @@
 import React, {
   createContext,
   useContext,
+  useEffect,
   useState,
-  useCallback,
   type ReactNode,
 } from 'react';
-import {
-  Platform,
-  View,
-  ActivityIndicator,
-  StyleSheet,
-  Modal,
-} from 'react-native';
-import {ThemedText} from '@/components/ui/themed-text';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {makeStyleFactory} from '@/utils/style-factory';
-import {useTheme} from './theme-provider';
+import {loadingManager} from '@vohrad/api-client';
+import {ErrorHandlerProvider} from './error-handler-provider';
 
-interface LoadingContextValue {
+type LoadingContextValue = {
   isLoading: boolean;
-  message: string;
-  showLoading: (message?: string) => void;
-  hideLoading: () => void;
-}
+  forceLoading: boolean;
+};
 
 const LoadingContext = createContext<LoadingContextValue | undefined>(
   undefined,
 );
 
-export function useLoading() {
+export function useLoading(): LoadingContextValue {
   const context = useContext(LoadingContext);
   if (!context) {
     throw new Error('useLoading must be used within LoadingProvider');
@@ -36,124 +25,25 @@ export function useLoading() {
   return context;
 }
 
-interface LoadingProviderProps {
+type LoadingProviderProps = {
   children: ReactNode;
-}
+};
 
 export function LoadingProvider({children}: LoadingProviderProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<string>('Loading...');
-  const {theme, ds} = useTheme();
+  const [forceLoading, setForceLoading] = useState(false);
 
-  const styles = createStyles(theme, ds);
-
-  const showDelayTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const minDisplayTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-  const isActuallyShowingRef = React.useRef(false);
-
-  const showLoading = useCallback((msg?: string) => {
-    setMessage(msg ?? 'Loading...');
-
-    if (showDelayTimerRef.current) {
-      clearTimeout(showDelayTimerRef.current);
-    }
-
-    showDelayTimerRef.current = setTimeout(() => {
-      setIsLoading(true);
-      isActuallyShowingRef.current = true;
-    }, 300);
+  useEffect(() => {
+    return loadingManager.subscribe((state) => {
+      setIsLoading(state.isVisible);
+    });
   }, []);
-
-  const hideLoading = useCallback(() => {
-    if (showDelayTimerRef.current) {
-      clearTimeout(showDelayTimerRef.current);
-      showDelayTimerRef.current = null;
-    }
-
-    if (!isActuallyShowingRef.current) {
-      setIsLoading(false);
-      return;
-    }
-
-    if (minDisplayTimerRef.current) {
-      clearTimeout(minDisplayTimerRef.current);
-    }
-
-    minDisplayTimerRef.current = setTimeout(() => {
-      setIsLoading(false);
-      isActuallyShowingRef.current = false;
-    }, 500);
-  }, []);
-
-  React.useEffect(() => {
-    return () => {
-      if (showDelayTimerRef.current) {
-        clearTimeout(showDelayTimerRef.current);
-      }
-      if (minDisplayTimerRef.current) {
-        clearTimeout(minDisplayTimerRef.current);
-      }
-    };
-  }, []);
-
-  const contextValue: LoadingContextValue = {
-    isLoading,
-    message,
-    showLoading,
-    hideLoading,
-  };
 
   return (
-    <LoadingContext.Provider value={contextValue}>
-      {children}
-      {Platform.OS === 'web' && isLoading && (
-        <Modal
-          visible={isLoading}
-          transparent
-          animationType="fade"
-          statusBarTranslucent
-        >
-          <View style={styles.overlay}>
-            <View style={styles.container}>
-              <ActivityIndicator size="large" color={theme.primary} />
-              <ThemedText variant="body" style={styles.message}>
-                {message}
-              </ThemedText>
-            </View>
-          </View>
-        </Modal>
-      )}
-    </LoadingContext.Provider>
+    <ErrorHandlerProvider onNetworkError={setForceLoading}>
+      <LoadingContext.Provider value={{isLoading, forceLoading}}>
+        {children}
+      </LoadingContext.Provider>
+    </ErrorHandlerProvider>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (theme: ThemeShape, ds: DSShape) =>
-    StyleSheet.create({
-      overlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 99999,
-      },
-      container: {
-        backgroundColor: theme.card,
-        borderRadius: ds.borderRadius.lg,
-        padding: ds.spacing.xxl,
-        minWidth: 150,
-        alignItems: 'center',
-        gap: ds.spacing.md,
-        ...ds.shadows.lg,
-      },
-      message: {
-        textAlign: 'center',
-        color: theme.text,
-      },
-    }),
-  (theme, ds) => themeKey(theme, ds),
-);

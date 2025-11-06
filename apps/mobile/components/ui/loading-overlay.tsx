@@ -1,6 +1,6 @@
 import {View, ActivityIndicator, StyleSheet} from 'react-native';
 import {type ThemeShape} from '@/constants/theme';
-import {useTheme} from '@/providers';
+import {useTheme} from '@/providers/theme-provider';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 interface LoadingOverlayProps {
@@ -31,7 +31,7 @@ const createStyles = makeStyleFactory(
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: fullScreen ? theme.background : 'rgba(0, 0, 0, 0.3)',
+        backgroundColor: fullScreen ? 'rgba(0, 0, 0, 0.3)' : 'transparent',
       },
     }),
   (theme, fullScreen) => `${theme.version}|${fullScreen}`,

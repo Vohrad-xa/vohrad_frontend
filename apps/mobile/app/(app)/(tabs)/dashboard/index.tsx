@@ -6,8 +6,7 @@ import {
   useWindowDimensions,
   type ViewStyle,
 } from 'react-native';
-import {userApi} from '@vohrad/api-client';
-import {useAuthStore, type StoreState} from '@vohrad/store';
+import {useDashboardOverview, useFetchUserProfile} from '@vohrad/store';
 import {router} from 'expo-router';
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -20,8 +19,9 @@ export default function HomeScreen() {
   const {ds, theme} = useTheme();
   const {width: screenWidth} = useWindowDimensions();
   const styles = createStyles(ds, theme);
-  const setUser = useAuthStore((state: StoreState) => state.setUser);
   const {triggerHaptic} = useHaptic();
+  const {fetchOverview} = useDashboardOverview();
+  const {fetchUserProfile} = useFetchUserProfile();
 
   const handlePresentModal = useCallback(() => {
     triggerHaptic('light');
@@ -33,14 +33,9 @@ export default function HomeScreen() {
     router.push('/scan');
   }, [triggerHaptic]);
 
-  const handleRefresh = async () => {
-    try {
-      const updatedUser = await userApi.getUserProfile();
-      setUser(updatedUser);
-    } catch (error) {
-      console.error('Failed to refresh user profile:', error);
-    }
-  };
+  const handleRefresh = useCallback(async () => {
+    await Promise.all([fetchUserProfile(), fetchOverview()]);
+  }, [fetchUserProfile, fetchOverview]);
 
   const ScrollComponent =
     Platform.OS === 'web' ? ScrollView : RefreshableScrollView;

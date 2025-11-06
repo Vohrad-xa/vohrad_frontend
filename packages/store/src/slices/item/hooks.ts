@@ -94,7 +94,7 @@ export function useFetchItems() {
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to fetch items';
-        setError(message);
+        setError(message, () => fetchItems(page, size, options));
         throw err;
       } finally {
         setLoading(false);
@@ -145,7 +145,7 @@ export function useSearchItems() {
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to search items';
-        setError(message);
+        setError(message, () => searchItems(query, page, size, options));
         throw err;
       } finally {
         setLoading(false);
@@ -158,7 +158,10 @@ export function useSearchItems() {
 }
 
 export function useFetchItemDetail() {
-  const store = useAuthStore((state) => state);
+  const setSelectedItem = useAuthStore(itemSelectors.setSelectedItem);
+  const setLoading = useAuthStore(itemSelectors.setLoading);
+  const setError = useAuthStore(itemSelectors.setError);
+
   const fetchItemDetail = useCallback(
     async (
       id: string,
@@ -172,12 +175,9 @@ export function useFetchItemDetail() {
         return existingRequest;
       }
 
-      // Get current store values (not from closure)
-      const selectedItem = store.selectedItem;
-      const items = store.items;
-      const setSelectedItem = store.setSelectedItem;
-      const setLoading = store.setLoading;
-      const setError = store.setError;
+      // Read current store values inside the callback (not from closure)
+      const selectedItem = useAuthStore.getState().selectedItem;
+      const items = useAuthStore.getState().items;
 
       // Check if we already have this item data
       if (!force) {
@@ -218,11 +218,11 @@ export function useFetchItemDetail() {
           const item = await itemApi.getItemById(id);
           setSelectedItem(item);
           lastItemDetailFetchAt[id] = Date.now();
-          itemHasFullDetails[id] = true; // Mark as having full details
+          itemHasFullDetails[id] = true;
         } catch (err) {
           const message =
             err instanceof Error ? err.message : 'Failed to fetch item details';
-          setError(message);
+          setError(message, () => fetchItemDetail(id, {force: true}));
           throw err;
         } finally {
           delete inFlightItemDetailRequests[id];
@@ -234,7 +234,7 @@ export function useFetchItemDetail() {
 
       return request;
     },
-    [store],
+    [setSelectedItem, setLoading, setError],
   );
 
   return {fetchItemDetail};

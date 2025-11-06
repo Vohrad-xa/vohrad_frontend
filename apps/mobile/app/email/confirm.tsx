@@ -102,11 +102,6 @@ export default function EmailConfirmScreen() {
             : 'Unable to confirm your email. The link may have expired.';
         setMessage(msg);
         setStatus('error');
-
-        showAlert({
-          title: 'Error',
-          message: msg,
-        });
       }
     };
 

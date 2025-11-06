@@ -1,16 +1,12 @@
 import React, {useCallback, useEffect, useMemo} from 'react';
-import {
-  StyleSheet,
-  View,
-  ActivityIndicator,
-  type RefreshControlProps,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {
   ThemedText,
   ModalFlatList,
   ListRow,
   Divider,
   EmptyState,
+  RefreshableScrollView,
   type ListRowData,
 } from '@/components/ui';
 import {type DSShape} from '@/constants/theme';
@@ -23,7 +19,7 @@ const SEARCH_DEBOUNCE_MS = 500;
 type ItemsListProps = {
   searchQuery?: string;
   onItemPress: (itemId: string) => void;
-  refreshControl?: React.ReactElement<RefreshControlProps>;
+  onRefresh?: () => void | Promise<void>;
   items: Item[];
   isLoading: boolean;
   error: string | null;
@@ -39,11 +35,8 @@ type ItemsListProps = {
 export function ItemsList({
   searchQuery,
   onItemPress,
-  refreshControl,
+  onRefresh,
   items,
-  isLoading,
-  error,
-  hasItems,
   isEmpty,
   search,
   getItemImageUrl,
@@ -51,7 +44,7 @@ export function ItemsList({
   canLoadMore,
   isLoadingMore,
 }: ItemsListProps) {
-  const {ds, theme} = useTheme();
+  const {ds} = useTheme();
   const styles = createStyles(ds);
 
   // Debounced search
@@ -101,11 +94,11 @@ export function ItemsList({
       return null;
     }
     return (
-      <View style={styles.footerSpinner}>
-        <ActivityIndicator size="small" color={theme.tint} />
+      <View style={styles.footerMessage}>
+        <ThemedText>Loading more...</ThemedText>
       </View>
     );
-  }, [isLoadingMore, styles, theme.tint]);
+  }, [isLoadingMore, styles]);
 
   const handleEndReached = useCallback(() => {
     if (!canLoadMore || !onLoadMore) {
@@ -114,26 +107,12 @@ export function ItemsList({
     onLoadMore();
   }, [canLoadMore, onLoadMore]);
 
-  if (isLoading && !hasItems) {
-    return (
-      <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color={theme.tint} />
-        <ThemedText style={styles.loadingText}>Loading items...</ThemedText>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.centerContainer}>
-        <ThemedText style={styles.errorText}>Error: {error}</ThemedText>
-      </View>
-    );
-  }
-
   if (isEmpty) {
     return (
-      <View style={styles.centerContainer}>
+      <RefreshableScrollView
+        contentContainerStyle={styles.centerContainer}
+        onRefresh={onRefresh}
+      >
         <EmptyState
           message={
             searchQuery
@@ -142,7 +121,7 @@ export function ItemsList({
           }
           icon="albums-outline"
         />
-      </View>
+      </RefreshableScrollView>
     );
   }
 
@@ -152,7 +131,7 @@ export function ItemsList({
         data={listData}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        refreshControl={refreshControl}
+        onRefresh={onRefresh}
         onEndReached={canLoadMore ? handleEndReached : undefined}
         onEndReachedThreshold={0.4}
         ListFooterComponent={listFooter}
@@ -177,10 +156,6 @@ const createStyles = makeStyleFactory(
         paddingLeft: ds.spacing.xl + ds.spacing.xl + 8,
         paddingRight: ds.spacing.xs,
       },
-      loadingText: {
-        marginTop: ds.spacing.md,
-        fontSize: ds.typography.body.fontSize,
-      },
       errorText: {
         fontSize: ds.typography.body.fontSize,
         textAlign: 'center',
@@ -189,7 +164,7 @@ const createStyles = makeStyleFactory(
         fontSize: ds.typography.body.fontSize,
         textAlign: 'center',
       },
-      footerSpinner: {
+      footerMessage: {
         paddingVertical: ds.spacing.md,
         alignItems: 'center',
       },

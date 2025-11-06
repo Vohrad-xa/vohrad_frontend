@@ -1,8 +1,8 @@
 import {Platform, StyleSheet} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
-import {HeaderButton, LoadingOverlay} from '@/components/ui';
+import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useTheme, useLoading} from '@/providers';
+import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -13,11 +13,10 @@ export const unstable_settings = {
 export default function SettingsLayout() {
   const {theme, ds} = useTheme();
   const router = useRouter();
-  const {isLoading} = useLoading();
   const styles = createStyles(theme, ds);
 
   return (
-    <>
+    <ScreenLoadingWrapper>
       <Stack
         screenOptions={{
           headerShown: true,
@@ -68,9 +67,7 @@ export default function SettingsLayout() {
         <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
         <Stack.Screen name="about" options={{title: 'About'}} />
       </Stack>
-
-      {Platform.OS !== 'web' && isLoading && <LoadingOverlay />}
-    </>
+    </ScreenLoadingWrapper>
   );
 }
 

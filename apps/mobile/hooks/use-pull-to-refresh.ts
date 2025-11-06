@@ -1,13 +1,10 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {Platform, RefreshControl, type RefreshControlProps} from 'react-native';
-import {useHaptic, useTheme} from '@/providers';
+import {useHaptic, useLoading} from '@/providers';
 
 interface PullToRefreshOptions {
   onRefresh?: () => void | Promise<void>;
-  delayMs?: number;
-  tintColor?: RefreshControlProps['tintColor'];
-  progressBackgroundColor?: RefreshControlProps['progressBackgroundColor'];
-  androidColors?: RefreshControlProps['colors'];
+  minDelayMs?: number;
 }
 
 interface PullToRefreshResult {
@@ -22,21 +19,13 @@ const wait = (ms: number) =>
 export function usePullToRefresh(
   options: PullToRefreshOptions = {},
 ): PullToRefreshResult {
-  const {theme} = useTheme();
   const {triggerHaptic} = useHaptic();
-  const {
-    onRefresh,
-    delayMs = 800,
-    tintColor,
-    progressBackgroundColor,
-    androidColors,
-  } = options;
+  const {forceLoading} = useLoading();
+  const {onRefresh, minDelayMs = 300} = options;
   const [refreshing, setRefreshing] = useState(false);
 
-  const resolvedTintColor = tintColor ?? theme.tint;
-  const resolvedProgressBackgroundColor =
-    progressBackgroundColor ??
-    (Platform.OS === 'android' ? theme.surface : theme.card);
+  // Keep spinner active while forceLoading is true
+  const isActivelyRefreshing = refreshing || forceLoading;
 
   const handleRefresh = useCallback(async () => {
     if (refreshing) {
@@ -54,42 +43,33 @@ export function usePullToRefresh(
       }
 
       const elapsed = Date.now() - startTime;
-      const remainingTime = delayMs - elapsed;
+      const remainingTime = minDelayMs - elapsed;
 
       if (remainingTime > 0) {
         await wait(remainingTime);
       }
-    } catch (error) {
+    } catch (_error) {
       didError = true;
-      throw error;
     } finally {
       triggerHaptic(didError ? 'warning' : 'success');
       setRefreshing(false);
     }
-  }, [refreshing, onRefresh, delayMs, triggerHaptic]);
+  }, [refreshing, onRefresh, minDelayMs, triggerHaptic]);
 
   const refreshControl = useMemo(() => {
     if (Platform.OS === 'web') {
       return undefined;
     }
 
-    const resolvedAndroidColors = androidColors ?? [theme.tint];
-
     return React.createElement(RefreshControl, {
-      refreshing,
+      refreshing: isActivelyRefreshing,
       onRefresh: handleRefresh,
-      tintColor: resolvedTintColor,
-      progressBackgroundColor: resolvedProgressBackgroundColor,
-      colors: resolvedAndroidColors,
     }) as React.ReactElement<RefreshControlProps>;
-  }, [
-    handleRefresh,
-    refreshing,
-    resolvedProgressBackgroundColor,
-    resolvedTintColor,
-    androidColors,
-    theme.tint,
-  ]);
+  }, [handleRefresh, isActivelyRefreshing]);
 
-  return {refreshing, onRefresh: handleRefresh, refreshControl};
+  return {
+    refreshing: isActivelyRefreshing,
+    onRefresh: handleRefresh,
+    refreshControl,
+  };
 }

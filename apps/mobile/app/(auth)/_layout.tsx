@@ -1,6 +1,6 @@
 import React from 'react';
 import {Stack} from 'expo-router';
-import {ThemedStatusBar} from '@/components/ui';
+import {ThemedStatusBar, ScreenLoadingWrapper} from '@/components/ui';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -8,10 +8,10 @@ interface AuthLayoutProps {
 
 function AuthLayout({children}: AuthLayoutProps) {
   return (
-    <>
+    <ScreenLoadingWrapper>
       {children}
       <ThemedStatusBar />
-    </>
+    </ScreenLoadingWrapper>
   );
 }
 

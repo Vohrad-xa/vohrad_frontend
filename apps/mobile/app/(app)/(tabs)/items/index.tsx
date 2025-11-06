@@ -11,7 +11,6 @@ import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useSearch} from '@/features/home/search-context';
 import {ItemsList} from '@/features/item';
-import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
 import {AppIcons, makeStyleFactory} from '@/utils';
 
@@ -85,12 +84,12 @@ export default function ItemsScreen() {
   }, [navigation, filters, router]);
 
   const handleRefresh = useCallback(async () => {
-    await refresh();
+    try {
+      await refresh();
+    } catch {
+      // Ignored
+    }
   }, [refresh]);
-
-  const {refreshControl} = usePullToRefresh({
-    onRefresh: handleRefresh,
-  });
 
   const handleLoadMore = useCallback(() => {
     loadMore();
@@ -108,7 +107,7 @@ export default function ItemsScreen() {
       <ItemsList
         searchQuery={searchQuery}
         onItemPress={handleItemPress}
-        refreshControl={refreshControl}
+        onRefresh={handleRefresh}
         items={items}
         isLoading={isLoading}
         error={error}

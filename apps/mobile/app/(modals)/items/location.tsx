@@ -15,7 +15,12 @@ import {makeStyleFactory} from '@/utils/style-factory';
 export default function LocationModal() {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
-  const {locations, isEditMode, handleQuantityChange} = useItemLocation();
+  const {locations, isEditMode, item, isLoading, handleQuantityChange} =
+    useItemLocation();
+
+  if (!item || isLoading) {
+    return null;
+  }
 
   if (locations.length === 0) {
     return (

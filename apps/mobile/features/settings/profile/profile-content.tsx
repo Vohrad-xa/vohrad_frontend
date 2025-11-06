@@ -10,7 +10,7 @@ import {
   EmptyState,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useTheme, useLoading} from '@/providers';
+import {useTheme} from '@/providers';
 import {showConfirmAlert, showAlert, formatDate} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {useProfileForm} from './use-profile-form';
@@ -36,7 +36,6 @@ export const ProfileContentEditable = forwardRef<
 >(({isEditing, onSaveComplete, onFieldChange}, ref) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
-  const {showLoading, hideLoading} = useLoading();
 
   const {
     profileDetails,
@@ -53,10 +52,7 @@ export const ProfileContentEditable = forwardRef<
     useEmailConfirmation();
 
   const performUpdate = async () => {
-    showLoading('Updating profile...');
-
     if (!hasChanges()) {
-      hideLoading();
       showAlert({
         title: 'No Changes Detected',
         message: 'Update a field before saving your profile.',
@@ -64,19 +60,8 @@ export const ProfileContentEditable = forwardRef<
       return;
     }
 
-    try {
-      await submitUpdate();
-      hideLoading();
-      onSaveComplete?.();
-    } catch (err) {
-      hideLoading();
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to update profile';
-      showAlert({
-        title: 'Error',
-        message: errorMessage,
-      });
-    }
+    await submitUpdate();
+    onSaveComplete?.();
   };
 
   const handleSaveProfile = (options?: SaveProfileOptions) => {

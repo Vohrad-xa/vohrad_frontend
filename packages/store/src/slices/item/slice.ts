@@ -12,6 +12,7 @@ export interface ItemSlice {
   hasPrevious: boolean;
   isLoading: boolean;
   error: string | null;
+  retryCallback: (() => void) | null;
   updatePage: (payload: {
     items: Item[];
     total: number;
@@ -28,7 +29,7 @@ export interface ItemSlice {
   updateItemLocation: (locationId: string, quantity: number) => void;
   removeItem: (id: string) => void;
   setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
+  setError: (error: string | null, retryCallback?: () => void) => void;
   clearError: () => void;
   clearItems: () => void;
 }
@@ -44,6 +45,7 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
   hasPrevious: false,
   isLoading: false,
   error: null,
+  retryCallback: null,
 
   updatePage: ({
     items,
@@ -112,9 +114,10 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
 
   setLoading: (loading: boolean) => set({isLoading: loading}),
 
-  setError: (error: string | null) => set({error}),
+  setError: (error: string | null, retryCallback?: () => void) =>
+    set({error, retryCallback: retryCallback ?? null}),
 
-  clearError: () => set({error: null}),
+  clearError: () => set({error: null, retryCallback: null}),
 
   clearItems: () =>
     set({

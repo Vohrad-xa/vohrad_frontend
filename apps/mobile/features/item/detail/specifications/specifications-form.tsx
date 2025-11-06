@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import type {TextInput} from 'react-native';
 import {Pressable, StyleSheet, View} from 'react-native';
-import {useUpdateItem, useAuthStore} from '@vohrad/store';
+import {useUpdateItem} from '@vohrad/store';
 import {ThemedText, ThemedInput, Card} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
@@ -40,7 +40,6 @@ export const SpecificationsForm = forwardRef<
   const {ds, theme} = useTheme();
   const {triggerHaptic} = useHaptic();
   const {updateItem} = useUpdateItem();
-  const clearError = useAuthStore((state) => state.clearError);
   const styles = createStyles(ds, theme);
 
   // Parse specifications into editable fields with unique IDs
@@ -154,17 +153,6 @@ export const SpecificationsForm = forwardRef<
     onSave,
     checkForChanges,
   ]);
-
-  const error = useAuthStore((state) => state.error);
-  useEffect(() => {
-    if (error) {
-      showAlert({
-        title: 'Error',
-        message: error,
-      });
-      clearError();
-    }
-  }, [error, clearError]);
 
   // Expose methods through ref
   React.useImperativeHandle(ref, () => ({

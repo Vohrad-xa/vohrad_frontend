@@ -30,6 +30,7 @@ export type {
   ItemDetail,
   ItemCreate,
   ItemUpdate,
+  ItemSpecifications,
   ItemLocationData,
   ItemLocationInput,
   ItemAttachment,
@@ -38,4 +39,4 @@ export type {
 } from './item';
 
 export {ApiError} from './api';
-export {TrackingMode} from './item';
+export type {TrackingMode} from './item';
