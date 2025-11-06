@@ -14,7 +14,9 @@ export default function ItemDetailScreen() {
   const {hasChanges, setHasChanges} = useItemChanges();
   const {triggerHaptic} = useHaptic();
   const [isEditing, setIsEditing] = useState(false);
-  const {item, getItemImageUrl} = useItemDetailManager(itemId);
+  const {item, getItemImageUrl} = useItemDetailManager(itemId, {
+    fetchOnMount: false,
+  });
 
   const formState = useItemForm({
     itemId: itemId!,

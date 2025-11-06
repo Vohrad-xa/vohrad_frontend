@@ -3,7 +3,11 @@ import {attachmentApi} from '@vohrad/api-client';
 import type {Item} from '@vohrad/types';
 import {useAuthStore, type StoreState} from '../../store';
 import {attachmentSelectors} from './selectors';
-import {createAttachmentTargetKey, type AttachmentTargetKey} from './slice';
+import {
+  createAttachmentTargetKey,
+  type AttachmentTargetKey,
+  type AttachmentImageUrlEntry,
+} from './slice';
 import type {AttachmentTargetType} from '@vohrad/types';
 
 type AttachmentTargetRef = {
@@ -89,28 +93,52 @@ export const useFetchAttachmentUrls = () => {
       setAttachmentLoading(true);
       setAttachmentError(null);
       try {
-        const urlsToFetch = items.filter(
-          (item) => item.thumbnail?.id && !imageUrls[item.id],
-        );
+        const staleCacheIds: string[] = [];
+        const urlsToFetch = items.filter((item) => {
+          const thumbnailId = item.thumbnail?.id;
+          const cached = imageUrls[item.id];
 
-        if (urlsToFetch.length === 0) {
+          if (!thumbnailId) {
+            if (cached) {
+              staleCacheIds.push(item.id);
+            }
+            return false;
+          }
+
+          return !cached || cached.attachmentId !== thumbnailId;
+        });
+
+        if (urlsToFetch.length === 0 && staleCacheIds.length === 0) {
           setAttachmentLoading(false);
           return;
         }
 
-        const fetchedUrls: Record<string, string> = {};
+        const fetchedUrls: Record<string, AttachmentImageUrlEntry> = {};
         await Promise.all(
           urlsToFetch.map(async (item) => {
             if (item.thumbnail?.id) {
               const url = await attachmentApi.getAttachmentUrl(
                 item.thumbnail.id,
               );
-              fetchedUrls[item.id] = url;
+              fetchedUrls[item.id] = {
+                attachmentId: item.thumbnail.id,
+                url,
+              };
             }
           }),
         );
 
-        setImageUrls((prevUrls) => ({...prevUrls, ...fetchedUrls}));
+        if (staleCacheIds.length === 0) {
+          setImageUrls((prevUrls) => ({...prevUrls, ...fetchedUrls}));
+        } else {
+          setImageUrls((prevUrls) => {
+            const nextUrls = {...prevUrls};
+            for (const id of staleCacheIds) {
+              delete nextUrls[id];
+            }
+            return {...nextUrls, ...fetchedUrls};
+          });
+        }
       } catch (err: unknown) {
         const errorMessage =
           err instanceof Error ? err.message : 'An unknown error occurred';

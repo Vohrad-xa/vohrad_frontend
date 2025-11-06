@@ -5,20 +5,32 @@ import {
   useFetchItemDetail,
   useUpdateItemLocation,
 } from '../hooks';
+import {useAuthStore} from '../../../store';
 import type {ItemDetail, ItemLocationUpdate} from '@vohrad/types';
 
-export function useItemDetailManager(itemId: string | null | undefined) {
+type UseItemDetailManagerOptions = {
+  fetchOnMount?: boolean;
+};
+
+export function useItemDetailManager(
+  itemId: string | null | undefined,
+  options?: UseItemDetailManagerOptions,
+) {
   const normalizedItemId = typeof itemId === 'string' ? itemId.trim() : '';
   const {fetchItemDetail} = useFetchItemDetail();
   const {item, isLoading, error} = useItemDetails();
   const {updateLocation, isLoading: isUpdatingLocation} =
     useUpdateItemLocation();
+  const fetchOnMount = options?.fetchOnMount ?? true;
 
   useEffect(() => {
     if (!normalizedItemId) return;
 
-    fetchItemDetail(normalizedItemId).catch(() => {});
-  }, [normalizedItemId, fetchItemDetail]);
+    const current = useAuthStore.getState().selectedItem;
+    if (fetchOnMount || !current || current.id !== normalizedItemId) {
+      fetchItemDetail(normalizedItemId).catch(() => {});
+    }
+  }, [normalizedItemId, fetchItemDetail, fetchOnMount]);
 
   const getItemImageUrl = useCallback(() => {
     const url = item?.thumbnail?.download_url;

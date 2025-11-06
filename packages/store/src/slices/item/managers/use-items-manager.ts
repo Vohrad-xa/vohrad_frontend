@@ -3,7 +3,8 @@ import {resolveAttachmentUrl} from '@vohrad/api-client';
 import {useAuthStore} from '../../../store';
 import {buildODataFilter} from '../../../utils/odata-filter-builder';
 import {useItems, useFetchItems, useSearchItems} from '../hooks';
-import type {ItemFilterState, Item} from '@vohrad/types';
+import {itemSelectors} from '../selectors';
+import type {ItemFilterState, Item, ItemDetail} from '@vohrad/types';
 
 const DEFAULT_SEARCH_QUERY = '';
 const MIN_SEARCH_LENGTH = 3;
@@ -11,6 +12,7 @@ const MIN_SEARCH_LENGTH = 3;
 export function useItemsManager() {
   const {items, total, page, size, hasNext, isLoading, error} = useItems();
   const {isAuthenticated, tokens, _hasHydrated} = useAuthStore();
+  const setSelectedItem = useAuthStore(itemSelectors.setSelectedItem);
 
   const [filters, setFilters] = useState<ItemFilterState>({
     statuses: [],
@@ -187,6 +189,27 @@ export function useItemsManager() {
     performSearchItems,
   ]);
 
+  const selectItem = useCallback(
+    (id: string) => {
+      const listItem = items.find((candidate) => candidate.id === id);
+      if (!listItem) {
+        return;
+      }
+
+      const current = useAuthStore.getState().selectedItem;
+      const next: ItemDetail = {
+        ...listItem,
+        attachments:
+          current && current.id === id ? (current.attachments ?? null) : null,
+        locations:
+          current && current.id === id ? (current.locations ?? null) : null,
+      } as ItemDetail;
+
+      setSelectedItem(next);
+    },
+    [items, setSelectedItem],
+  );
+
   const getItemImageUrl = useCallback((item: Item) => {
     const url = item.thumbnail?.download_url;
     if (!url) return undefined;
@@ -210,5 +233,6 @@ export function useItemsManager() {
     getItemImageUrl,
     filters,
     setFilters,
+    selectItem,
   };
 }

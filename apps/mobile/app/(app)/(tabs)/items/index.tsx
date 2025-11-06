@@ -38,6 +38,7 @@ export default function ItemsScreen() {
     isLoadingMore,
     filters,
     setFilters,
+    selectItem,
   } = useItemsManager();
   const pendingFilters = usePendingFilters();
   const clearPendingFilters = useClearPendingFilters();
@@ -96,6 +97,7 @@ export default function ItemsScreen() {
   }, [loadMore]);
 
   const handleItemPress = (itemId: string) => {
+    selectItem(itemId);
     router.push({
       pathname: '/(app)/(tabs)/items/[id]',
       params: {id: itemId},
