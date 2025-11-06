@@ -7,6 +7,7 @@ interface ItemFormValues {
   name: string;
   code: string;
   serialNumber: string;
+  description: string;
 }
 
 interface UseItemFormProps {
@@ -15,6 +16,7 @@ interface UseItemFormProps {
     name?: string;
     code?: string;
     serialNumber?: string;
+    description?: string | null;
     trackingMode?: TrackingMode;
     isActive?: boolean;
   };
@@ -32,6 +34,7 @@ export function useItemForm({
     name: initialValues.name ?? '',
     code: initialValues.code ?? '',
     serialNumber: initialValues.serialNumber ?? '',
+    description: initialValues.description ?? '',
   }));
 
   const [optimisticStatus, setOptimisticStatus] = useState(
@@ -46,6 +49,7 @@ export function useItemForm({
     name: initialValues.name ?? '',
     code: initialValues.code ?? '',
     serialNumber: initialValues.serialNumber ?? '',
+    description: initialValues.description ?? '',
   });
 
   // Initialize with initial values
@@ -54,18 +58,25 @@ export function useItemForm({
       name: initialValues.name ?? '',
       code: initialValues.code ?? '',
       serialNumber: initialValues.serialNumber ?? '',
+      description: initialValues.description ?? '',
     };
 
     // Only update if values actually changed
     if (
       newValues.name !== originalValues.current.name ||
       newValues.code !== originalValues.current.code ||
-      newValues.serialNumber !== originalValues.current.serialNumber
+      newValues.serialNumber !== originalValues.current.serialNumber ||
+      newValues.description !== originalValues.current.description
     ) {
       originalValues.current = newValues;
       setFormValues(newValues);
     }
-  }, [initialValues.name, initialValues.code, initialValues.serialNumber]);
+  }, [
+    initialValues.name,
+    initialValues.code,
+    initialValues.serialNumber,
+    initialValues.description,
+  ]);
 
   useEffect(() => {
     setOptimisticStatus(initialValues.isActive);
@@ -79,7 +90,8 @@ export function useItemForm({
     return (
       formValues.name !== originalValues.current.name ||
       formValues.code !== originalValues.current.code ||
-      formValues.serialNumber !== originalValues.current.serialNumber
+      formValues.serialNumber !== originalValues.current.serialNumber ||
+      formValues.description !== originalValues.current.description
     );
   }, [formValues]);
 
@@ -141,6 +153,9 @@ export function useItemForm({
     }
     if (formValues.serialNumber !== originalValues.current.serialNumber) {
       updates.serial_number = formValues.serialNumber;
+    }
+    if (formValues.description !== originalValues.current.description) {
+      updates.description = formValues.description;
     }
 
     if (Object.keys(updates).length === 0) {

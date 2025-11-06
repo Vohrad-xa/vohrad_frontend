@@ -3,6 +3,7 @@ import {View} from 'react-native';
 import {Card} from '@/components/cards/card';
 import {useTheme} from '@/providers';
 import {BasicInfo} from './basic-info';
+import {DescriptionField} from './description-field';
 import {Locations} from './locations/location-field';
 import {QuantityField} from './quantity-field';
 import {Specifications} from './specifications/specifications-field';
@@ -44,6 +45,13 @@ export function ItemDetails({
     [handleFieldChange],
   );
 
+  const handleDescriptionChange = useCallback(
+    (value: string) => {
+      handleFieldChange('description', value);
+    },
+    [handleFieldChange],
+  );
+
   return (
     <View style={{gap: ds.spacing.xl}}>
       {/* Basic Info */}
@@ -52,6 +60,13 @@ export function ItemDetails({
         code={formValues.code}
         serialNumber={formValues.serialNumber}
         onFieldChange={handleBasicInfoChange}
+        isEditing={isEditing}
+      />
+
+      {/* Description */}
+      <DescriptionField
+        value={formValues.description}
+        onChange={handleDescriptionChange}
         isEditing={isEditing}
       />
 

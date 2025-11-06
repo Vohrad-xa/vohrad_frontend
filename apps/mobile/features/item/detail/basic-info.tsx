@@ -94,7 +94,7 @@ export function BasicInfo({
                 style={styles.displayText}
                 numberOfLines={1}
               >
-                {value ?? placeholder}
+                {(value ?? '') ? value : placeholder}
               </ThemedText>
             )}
           </Pressable>

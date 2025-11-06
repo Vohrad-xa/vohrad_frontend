@@ -22,6 +22,7 @@ export default function ItemDetailScreen() {
       name: item?.name ?? '',
       code: item?.code ?? '',
       serialNumber: item?.serial_number ?? '',
+      description: item?.description ?? '',
       trackingMode: item?.tracking_mode,
       isActive: item?.is_active,
     },

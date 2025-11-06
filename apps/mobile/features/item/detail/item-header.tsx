@@ -19,7 +19,7 @@ export function ItemHeader({item, imageUrl}: ItemHeaderProps) {
 
   return (
     <Card style={styles.card}>
-      {/* Status Badge at Top Right */}
+      {/* Status Badge */}
       <View style={styles.cardContent}>
         <View style={styles.badgeContainer}>
           <ThemedView
@@ -47,22 +47,15 @@ export function ItemHeader({item, imageUrl}: ItemHeaderProps) {
           </View>
         </View>
 
-        {/* Name and Code in one line */}
-        <View style={styles.titleRow}>
-          <ThemedText style={styles.itemName} numberOfLines={1}>
+        {/* Name and Code*/}
+        <View style={styles.titleContainer}>
+          <ThemedText style={styles.itemName} numberOfLines={2}>
             {item.name}
           </ThemedText>
-          <ThemedText style={styles.itemCode}>
+          <ThemedText style={styles.itemCode} numberOfLines={1}>
             {item.code.toUpperCase()}
           </ThemedText>
         </View>
-
-        {/* Description */}
-        {item.description && (
-          <ThemedText variant="caption" style={styles.description}>
-            {item.description}
-          </ThemedText>
-        )}
       </View>
     </Card>
   );
@@ -97,13 +90,9 @@ const createStyles = makeStyleFactory(
         width: '100%',
         height: '100%',
       },
-      titleRow: {
-        flexDirection: 'row',
-        alignItems: 'baseline',
-        justifyContent: 'center',
-        gap: ds.spacing.sm,
-        marginBottom: ds.spacing.sm,
-        flexWrap: 'wrap',
+      titleContainer: {
+        alignItems: 'center',
+        gap: ds.spacing.xs,
       },
       itemName: {
         ...ds.typography.heading,
@@ -114,10 +103,6 @@ const createStyles = makeStyleFactory(
         ...ds.typography.caption,
         color: theme.muted,
         flexShrink: 0,
-      },
-      description: {
-        textAlign: 'center',
-        color: theme.muted,
       },
     }),
   (ds, theme) => themeKey(theme, ds),
