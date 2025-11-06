@@ -1,3 +1,5 @@
+import type {ValidationResult, ValidationState} from './types';
+
 // RFC 5322 compliant email regex with practical limitations
 const EMAIL_REGEX =
   /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/i;
@@ -24,23 +26,19 @@ const DISPOSABLE_DOMAINS = new Set([
   'temp-mail.org',
 ]);
 
-export type ValidationState = 'empty' | 'invalid' | 'valid';
+export type EmailValidationState = ValidationState;
 
-export type ValidationResult = {
-  isValid: boolean;
-  state: ValidationState;
-  error: string | null;
+export type EmailValidationResult = ValidationResult<string> & {
   suggestion?: string;
 };
 
-export function validateEmail(value: string): ValidationResult {
+export function validateEmail(value: string): EmailValidationResult {
   const trimmed = value.trim().toLowerCase();
 
   if (trimmed.length === 0) {
     return {isValid: false, state: 'empty', error: null};
   }
 
-  // Basic format check
   if (!trimmed.includes('@')) {
     return {isValid: false, state: 'invalid', error: 'Invalid email'};
   }
@@ -56,7 +54,6 @@ export function validateEmail(value: string): ValidationResult {
     return {isValid: false, state: 'invalid', error: 'Invalid email'};
   }
 
-  // Check for typos - offer suggestion without error
   const suggestion = COMMON_TYPOS[domain];
   if (suggestion) {
     return {
@@ -67,12 +64,10 @@ export function validateEmail(value: string): ValidationResult {
     };
   }
 
-  // Check for disposable email
   if (DISPOSABLE_DOMAINS.has(domain)) {
     return {isValid: false, state: 'invalid', error: 'Invalid email'};
   }
 
-  // Check domain extension
   if (!domain.includes('.')) {
     return {isValid: false, state: 'invalid', error: 'Invalid email'};
   }
@@ -84,15 +79,13 @@ export function validateEmail(value: string): ValidationResult {
     return {isValid: false, state: 'invalid', error: 'Invalid email'};
   }
 
-  // Final validation
   if (!EMAIL_REGEX.test(trimmed)) {
     return {isValid: false, state: 'invalid', error: 'Invalid email'};
   }
 
-  return {isValid: true, state: 'valid', error: null};
+  return {isValid: true, state: 'valid', error: null, value: trimmed};
 }
 
 export function isEmail(value: string): boolean {
-  const result = validateEmail(value);
-  return result.isValid;
+  return validateEmail(value).isValid;
 }

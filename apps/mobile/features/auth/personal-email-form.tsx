@@ -7,9 +7,9 @@ import {FormCard} from '@/components/ui/form-card';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import * as biometricService from '@/modules/security/biometric-service';
 import {useAuth, useTheme} from '@/providers';
+import {validateEmail} from '@/utils';
 import * as AppStorage from '@/utils/storage';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {validateEmail} from '@/utils/validation';
 
 type PersonalEmailFormProps = {
   onSuccess: () => void;

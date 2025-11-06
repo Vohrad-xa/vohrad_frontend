@@ -1,7 +1,8 @@
 import {useState, useCallback, useEffect, useRef} from 'react';
-import {useItemDetailManager} from '@vohrad/store';
+import {useItemDetailManager, useAuthStore} from '@vohrad/store';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {useSettingsHeader} from '@/hooks';
+import {validators} from '@/utils';
 
 interface LocationQuantity {
   id: string;
@@ -16,6 +17,7 @@ export function useItemLocation() {
   const {id: itemId} = useLocalSearchParams<{id: string}>();
   const {item, updateLocation, isLoading, refresh} =
     useItemDetailManager(itemId);
+  const setError = useAuthStore((state) => state.setError);
   const [hasChanges, setHasChanges] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -82,8 +84,21 @@ export function useItemLocation() {
 
     try {
       for (const loc of changedLocations) {
+        const result = validators.validateNumeric(loc.quantity, {
+          min: 1,
+          max: 10_000_000,
+          allowZero: false,
+          precision: {mode: 'decimal', maxFractionDigits: 2},
+        });
+
+        if (!result.isValid || typeof result.value !== 'number') {
+          const message = result.error ?? 'Quantity must be a valid number';
+          setError(message);
+          throw new Error(message);
+        }
+
         await updateLocation(loc.id, {
-          quantity: parseFloat(loc.quantity),
+          quantity: result.value,
         });
       }
 
@@ -97,7 +112,7 @@ export function useItemLocation() {
     } catch (err) {
       throw err;
     }
-  }, [locations, updateLocation, triggerSuccess, refresh]);
+  }, [locations, updateLocation, triggerSuccess, refresh, setError]);
 
   performSaveRef.current = performSave;
 

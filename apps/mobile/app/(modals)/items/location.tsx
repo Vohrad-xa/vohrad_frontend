@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useRef, useEffect} from 'react';
+import type {TextInput} from 'react-native';
 import {StyleSheet, View} from 'react-native';
 import {
   ModalScrollView,
@@ -17,6 +18,17 @@ export default function LocationModal() {
   const styles = createStyles(ds, theme);
   const {locations, isEditMode, item, isLoading, handleQuantityChange} =
     useItemLocation();
+  const firstInputRef = useRef<TextInput>(null);
+
+  // Focus first input
+  useEffect(() => {
+    if (isEditMode && firstInputRef.current) {
+      const timeoutId = setTimeout(() => {
+        firstInputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isEditMode]);
 
   if (!item || isLoading) {
     return null;
@@ -34,7 +46,7 @@ export default function LocationModal() {
   return (
     <ModalScrollView>
       <View>
-        {locations.map((location) => (
+        {locations.map((location, index) => (
           <View key={location.id} style={{gap: ds.spacing.sm}}>
             <ThemedText variant="value" style={styles.locationTitle}>
               {location.name}
@@ -52,6 +64,7 @@ export default function LocationModal() {
                   Quantity
                 </ThemedText>
                 <ThemedInput
+                  ref={index === 0 ? firstInputRef : undefined}
                   variant="value"
                   textAlign="right"
                   borderless
