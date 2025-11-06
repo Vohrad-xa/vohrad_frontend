@@ -1,15 +1,57 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
+import {useNavigation, useRouter} from 'expo-router';
 import {ModalScrollView} from '@/components/ui';
-import {AttachmentAddOptions} from '@/features/item/detail/attachments/attachment-add-options';
+import {
+  AttachmentAddOptions,
+  AttachmentUploadPreviewCard,
+} from '@/features/attachments/components';
+import {useItemAttachmentUpload} from '@/features/item/detail/attachments/use-item-attachment-upload';
+import {useSettingsHeader} from '@/hooks';
 
 export default function ItemAttachmentAddModal() {
+  const navigation = useNavigation();
+  const router = useRouter();
+
+  const {
+    selectFromDevice,
+    capturePhoto,
+    savePendingAttachment,
+    pendingMetadata,
+    hasPending,
+  } = useItemAttachmentUpload();
+  const saveHandlerRef = useRef<() => Promise<void>>(async () => {});
+
+  const handleClose = useCallback(() => {
+    router.dismiss();
+  }, [router]);
+
+  const {triggerSuccess} = useSettingsHeader({
+    navigation,
+    isEditing: false,
+    hasChanges: hasPending,
+    onSave: () => {
+      void saveHandlerRef.current();
+    },
+    onClose: handleClose,
+    idleAction: 'none',
+  });
+
+  useEffect(() => {
+    saveHandlerRef.current = async () => {
+      const saved = await savePendingAttachment();
+      if (saved) {
+        triggerSuccess();
+      }
+    };
+  }, [savePendingAttachment, triggerSuccess]);
+
   const handleTakePicture = useCallback(() => {
-    // Camera flow will be handled in a future iteration.
-  }, []);
+    void capturePhoto();
+  }, [capturePhoto]);
 
   const handleUploadFiles = useCallback(() => {
-    // File upload flow will be handled in a future iteration.
-  }, []);
+    void selectFromDevice();
+  }, [selectFromDevice]);
 
   return (
     <ModalScrollView>
@@ -17,6 +59,13 @@ export default function ItemAttachmentAddModal() {
         onTakePicture={handleTakePicture}
         onUploadFiles={handleUploadFiles}
       />
+      {pendingMetadata && (
+        <AttachmentUploadPreviewCard
+          name={pendingMetadata.name}
+          mimeType={pendingMetadata.mimeType}
+          size={pendingMetadata.size}
+        />
+      )}
     </ModalScrollView>
   );
 }

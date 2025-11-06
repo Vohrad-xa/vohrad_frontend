@@ -37,6 +37,7 @@ export type {
   ItemFilterState,
   ItemLocationUpdate,
 } from './item';
+export type {AttachmentTargetType, AttachmentKind} from './attachment';
 
 export {ApiError} from './api';
 export type {TrackingMode} from './item';

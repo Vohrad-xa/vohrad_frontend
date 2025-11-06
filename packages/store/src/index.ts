@@ -40,10 +40,15 @@ export {
   useItemFiltersManager,
 } from './slices/item';
 export {
+  attachmentSelectors,
   useAttachmentLoading,
   useAttachmentError,
   useAttachmentUrls,
+  useAttachmentsByTarget,
+  useAttachmentFetchState,
   useFetchAttachmentUrls,
+  useAttachmentManager,
+  createAttachmentTargetKey,
 } from './slices/attachment';
 export {
   usePendingFilters,
@@ -69,7 +74,8 @@ export type {
 } from './slices/system';
 export {defaultDashboardVisibility} from './slices/system';
 export type {ItemSlice} from './slices/item';
-export type {AttachmentSlice} from './slices/attachment';
+export type {AttachmentSlice, AttachmentTargetKey} from './slices/attachment';
+export type {AttachmentTargetType, AttachmentKind} from '@vohrad/types';
 export {
   buildODataFilter,
   hasActiveFilters,

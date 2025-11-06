@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useRouter} from 'expo-router';
-import {EmptyState, ModalFlatList} from '@/components/ui';
+import {ModalFlatList} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AttachmentImageTile,
@@ -27,7 +27,7 @@ export default function ItemImageAttachmentsModal() {
       }
 
       router.push({
-        pathname: '/items/attachments/image-preview',
+        pathname: '/(modals)/items/attachments/image-preview',
         params: {
           id: item.id,
           attachmentId: attachment.id,
@@ -50,35 +50,25 @@ export default function ItemImageAttachmentsModal() {
             onPress={handleImagePress}
           />
         )}
-        ListEmptyComponent={
-          <View style={styles.emptyStateContainer}>
-            <EmptyState
-              icon="image-outline"
-              message="No images available for this item yet."
-            />
-          </View>
-        }
+        contentContainerStyle={styles.listContent}
       />
     </View>
   );
 }
 
 const useStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
       },
       columnWrapper: {
         width: '100%',
-        gap: 0,
       },
-      emptyStateContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: ds.spacing.xl,
-        paddingVertical: ds.spacing.xl,
+      listContent: {
+        paddingHorizontal: 0,
+        paddingTop: 0,
+        paddingBottom: 0,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

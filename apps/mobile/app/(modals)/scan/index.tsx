@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {StyleSheet, View, Alert, Platform, Linking} from 'react-native';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import {Stack, useRouter} from 'expo-router';
@@ -16,6 +16,7 @@ export default function ScanModal() {
   const router = useRouter();
   const styles = createStyles(ds, theme);
   const [permission, requestPermission] = useCameraPermissions();
+  const [enableTorch, setEnableTorch] = useState(false);
   const hasRequestedPermission = useRef(false);
 
   useEffect(() => {
@@ -62,6 +63,10 @@ export default function ScanModal() {
     router.back();
   }, [router]);
 
+  const handleToggleTorch = useCallback(() => {
+    setEnableTorch((prev) => !prev);
+  }, []);
+
   const CloseButton = useCallback(
     () => (
       <HeaderButton
@@ -71,6 +76,17 @@ export default function ScanModal() {
       />
     ),
     [handleClose],
+  );
+
+  const TorchButton = useCallback(
+    () => (
+      <HeaderButton
+        icon="flash-outline"
+        onPress={handleToggleTorch}
+        accessibilityLabel={enableTorch ? 'Turn off flash' : 'Turn on flash'}
+      />
+    ),
+    [enableTorch, handleToggleTorch],
   );
 
   const headerLeftConfig =
@@ -114,12 +130,14 @@ export default function ScanModal() {
           },
           headerBackTitle: 'Back ',
           headerLeft: headerLeftConfig,
+          headerRight: TorchButton,
         }}
       />
       <View style={styles.cameraContainer}>
         <CameraView
           style={styles.camera}
           facing="back"
+          enableTorch={enableTorch}
           barcodeScannerSettings={{
             barcodeTypes: [
               'qr',

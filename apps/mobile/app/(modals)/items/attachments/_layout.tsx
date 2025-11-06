@@ -1,5 +1,5 @@
 import {Platform, StyleSheet} from 'react-native';
-import {Stack, useRouter} from 'expo-router';
+import {Stack, useRouter, useLocalSearchParams} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
@@ -12,21 +12,25 @@ export const unstable_settings = {
 export default function ItemAttachmentsLayout() {
   const {theme, ds} = useTheme();
   const router = useRouter();
+  const {id: itemId} = useLocalSearchParams<{id?: string}>();
   const styles = createStyles(theme, ds);
 
   const handleClose = () => {
     router.dismiss();
   };
   const handleAdd = () => {
-    router.push('/items/attachments/add');
+    if (!itemId) return;
+
+    router.push({
+      pathname: '/items/attachments/add',
+      params: {id: itemId},
+    });
   };
 
   return (
     <ScreenLoadingWrapper>
       <Stack
         screenOptions={{
-          headerShown: true,
-          headerShadowVisible: false,
           headerTransparent: Platform.OS === 'ios',
           headerTitleAlign: 'center',
           contentStyle: styles.container,
@@ -68,21 +72,13 @@ export default function ItemAttachmentsLayout() {
           name="add"
           options={{
             title: 'Add Attachment',
-            presentation: 'modal',
-            headerLeft: () => (
-              <HeaderButton
-                variant="close"
-                onPress={handleClose}
-                accessibilityLabel="Close add attachment modal"
-              />
-            ),
+            presentation: Platform.OS === 'web' ? 'card' : 'modal',
           }}
         />
         <Stack.Screen
           name="image-preview"
           options={{
             title: 'Preview',
-            presentation: Platform.OS === 'web' ? 'card' : 'modal',
           }}
         />
       </Stack>

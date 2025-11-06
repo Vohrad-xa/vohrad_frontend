@@ -1,31 +1,14 @@
 import React, {useCallback, useMemo} from 'react';
-import {Image, Pressable, StyleSheet} from 'react-native';
+import {Pressable, StyleSheet} from 'react-native';
 import {resolveAttachmentUrl} from '@vohrad/api-client';
+import {Image} from 'expo-image';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {filterAttachmentsByKind} from './use-item-attachments';
 import type {ItemAttachment} from '@vohrad/types';
 
-export const IMAGE_GRID_COLUMNS = 4;
-
-const useStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
-    StyleSheet.create({
-      tile: {
-        flexBasis: `${100 / IMAGE_GRID_COLUMNS}%`,
-        maxWidth: `${100 / IMAGE_GRID_COLUMNS}%`,
-        flexShrink: 0,
-        aspectRatio: 1,
-      },
-      image: {
-        width: '100%',
-        height: '100%',
-        backgroundColor: theme.surface,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);
+export const IMAGE_GRID_COLUMNS = 3;
 
 export interface ImageAttachmentItem extends ItemAttachment {
   resolvedUrl: string;
@@ -37,7 +20,11 @@ export function useImageAttachments(
   return useMemo(() => {
     return filterAttachmentsByKind(attachments, 'image')
       .map((attachment) => {
-        const rawUrl = attachment.download_url ?? attachment.file_path ?? null;
+        const rawUrl =
+          attachment.download_url ??
+          (attachment.file_path
+            ? `/attachments/${attachment.file_path.replace(/^\/+/, '')}`
+            : null);
         if (!rawUrl) {
           return null;
         }
@@ -87,3 +74,21 @@ export function AttachmentImageTile({
     </Pressable>
   );
 }
+
+const useStyles = makeStyleFactory(
+  (_ds: DSShape, _theme: ThemeShape) =>
+    StyleSheet.create({
+      tile: {
+        flexBasis: `${100 / IMAGE_GRID_COLUMNS}%`,
+        maxWidth: `${100 / IMAGE_GRID_COLUMNS}%`,
+        flexShrink: 0,
+        aspectRatio: 1,
+      },
+      image: {
+        width: '100%',
+        height: '100%',
+        backgroundColor: 'transparent',
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);

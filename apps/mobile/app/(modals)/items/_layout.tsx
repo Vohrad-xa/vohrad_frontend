@@ -57,12 +57,6 @@ export default function ItemsModalsLayout() {
           }}
         />
         <Stack.Screen
-          name="quantity"
-          options={{
-            title: 'Quantity',
-          }}
-        />
-        <Stack.Screen
           name="specifications"
           options={{
             title: 'Specifications',
@@ -72,7 +66,6 @@ export default function ItemsModalsLayout() {
           name="attachments"
           options={{
             headerShown: false,
-            presentation: 'modal',
           }}
         />
       </Stack>

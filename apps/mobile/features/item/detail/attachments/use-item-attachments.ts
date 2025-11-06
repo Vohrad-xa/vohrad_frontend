@@ -2,17 +2,7 @@ import {useMemo} from 'react';
 import {useItemDetailManager} from '@vohrad/store';
 import {useLocalSearchParams} from 'expo-router';
 import type {AttachmentKindCount} from '@/features/attachments/screens/attachments-overview';
-import type {ItemAttachment} from '@vohrad/types';
-
-const ATTACHMENT_KIND_KEYS = [
-  'image',
-  'document',
-  'video',
-  'archive',
-  'other',
-] as const;
-
-export type AttachmentKindKey = (typeof ATTACHMENT_KIND_KEYS)[number];
+import type {AttachmentKind, ItemAttachment} from '@vohrad/types';
 
 const ZERO_COUNTS: AttachmentKindCount = {
   image: 0,
@@ -20,16 +10,20 @@ const ZERO_COUNTS: AttachmentKindCount = {
   video: 0,
   archive: 0,
   other: 0,
-};
+} as const;
 
-function isAttachmentKindKey(value: string): value is AttachmentKindKey {
-  return (ATTACHMENT_KIND_KEYS as readonly string[]).includes(value);
-}
+const ATTACHMENT_KIND_KEYS: readonly AttachmentKind[] = [
+  'image',
+  'document',
+  'video',
+  'archive',
+  'other',
+];
 
-function resolveAttachmentKind(attachment: ItemAttachment): AttachmentKindKey {
+function resolveAttachmentKind(attachment: ItemAttachment): AttachmentKind {
   const normalizedKind = attachment.kind?.toLowerCase() ?? '';
-  if (isAttachmentKindKey(normalizedKind)) {
-    return normalizedKind;
+  if (ATTACHMENT_KIND_KEYS.includes(normalizedKind as AttachmentKind)) {
+    return normalizedKind as AttachmentKind;
   }
 
   return 'other';
@@ -58,7 +52,7 @@ export function computeAttachmentCounts(
 
 export function filterAttachmentsByKind(
   attachments: ItemAttachment[] | null | undefined,
-  kind: AttachmentKindKey,
+  kind: AttachmentKind,
 ): ItemAttachment[] {
   if (!attachments) {
     return [];
@@ -74,9 +68,14 @@ export function useItemAttachments() {
   const {id: itemId} = useLocalSearchParams<{id?: string}>();
   const {item, isLoading} = useItemDetailManager(itemId);
 
-  const counts = useMemo(
-    () => computeAttachmentCounts(item?.attachments),
+  const attachments = useMemo(
+    () => item?.attachments ?? [],
     [item?.attachments],
+  );
+
+  const counts = useMemo(
+    () => computeAttachmentCounts(attachments),
+    [attachments],
   );
 
   const total = useMemo(
@@ -87,7 +86,7 @@ export function useItemAttachments() {
   return {
     counts,
     total,
-    attachments: item?.attachments ?? null,
+    attachments,
     item,
     isLoading,
   };

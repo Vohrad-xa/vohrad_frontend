@@ -38,6 +38,12 @@ export const API_ENDPOINTS = {
       `/items/${itemId}/locations/${locationId}`,
   },
   ATTACHMENTS: {
+    LIST: '/attachments/',
+    CREATE: '/attachments/',
+    DETAIL: (id: string) => `/attachments/${id}`,
+    DELETE: (id: string) => `/attachments/${id}`,
+    LINK: (id: string) => `/attachments/${id}/link`,
+    UNLINK: (id: string) => `/attachments/${id}/link`,
     GET_URL: (id: string) => `/attachments/${id}/url`,
   },
   SYSTEM: {

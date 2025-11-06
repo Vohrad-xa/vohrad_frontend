@@ -2,20 +2,13 @@ import React from 'react';
 import {Platform, Pressable, StyleSheet, View} from 'react-native';
 import {SymbolView} from 'expo-symbols';
 import {ThemedText} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
-import {Icon, AppIcons, SFSymbols} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
-
-export type AttachmentKindKey =
-  | 'image'
-  | 'document'
-  | 'video'
-  | 'archive'
-  | 'other';
+import {Icon, AppIcons, SFSymbols, makeStyleFactory} from '@/utils';
+import type {AttachmentKind} from '@vohrad/types';
 
 export interface AttachmentKindTile {
-  kind: AttachmentKindKey;
+  kind: AttachmentKind;
   label: string;
   count: number;
   onPress?: () => void;

@@ -1,5 +1,5 @@
 import type {StateCreator} from 'zustand';
-import type {Item, ItemDetail} from '@vohrad/types';
+import type {Item, ItemDetail, ItemAttachment} from '@vohrad/types';
 import type {AsyncState, PaginatedState} from '../../utils/state';
 
 type UpdatePagePayload = PaginatedState & {
@@ -16,6 +16,8 @@ export interface ItemSlice extends PaginatedState, AsyncState {
   updateItemInList: (id: string, updates: Partial<Item>) => void;
   updateItemLocation: (locationId: string, quantity: number) => void;
   removeItem: (id: string) => void;
+  upsertItemAttachment: (attachment: ItemAttachment) => void;
+  removeItemAttachment: (attachmentId: string) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null, retryCallback?: () => void) => void;
   clearError: () => void;
@@ -106,6 +108,51 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
       total: state.total - 1,
       selectedItem: state.selectedItem?.id === id ? null : state.selectedItem,
     })),
+
+  upsertItemAttachment: (attachment: ItemAttachment) =>
+    set((state) => {
+      const selected = state.selectedItem;
+      if (!selected) {
+        return state;
+      }
+
+      const existingAttachments = selected.attachments ?? [];
+      const index = existingAttachments.findIndex(
+        (a) => a.id === attachment.id,
+      );
+      const updatedAttachments =
+        index >= 0
+          ? [
+              ...existingAttachments.slice(0, index),
+              attachment,
+              ...existingAttachments.slice(index + 1),
+            ]
+          : [attachment, ...existingAttachments];
+
+      return {
+        selectedItem: {
+          ...selected,
+          attachments: updatedAttachments,
+        },
+      };
+    }),
+
+  removeItemAttachment: (attachmentId: string) =>
+    set((state) => {
+      const selected = state.selectedItem;
+      if (!selected?.attachments) {
+        return state;
+      }
+
+      return {
+        selectedItem: {
+          ...selected,
+          attachments: selected.attachments.filter(
+            (a) => a.id !== attachmentId,
+          ),
+        },
+      };
+    }),
 
   setLoading: (loading: boolean) => set({isLoading: loading}),
 

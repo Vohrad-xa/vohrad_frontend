@@ -24,10 +24,17 @@ export class HttpClient {
     const url = resolveApiUrl(endpoint);
     const apiConfig = getApiConfig();
 
+    const incomingHeaders = (options.headers as Record<string, string>) || {};
+    const isFormDataBody =
+      typeof FormData !== 'undefined' && options.body instanceof FormData;
+
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      ...((options.headers as Record<string, string>) || {}),
+      ...incomingHeaders,
     };
+
+    if (!isFormDataBody && !headers['Content-Type']) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     const isBrowser =
       typeof window !== 'undefined' && typeof document !== 'undefined';
@@ -140,6 +147,16 @@ export class HttpClient {
     return this.makeRequest<T>(endpoint, {
       method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
+    });
+  }
+
+  async postFormData<T>(
+    endpoint: string,
+    formData: FormData,
+  ): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(endpoint, {
+      method: 'POST',
+      body: formData,
     });
   }
 

@@ -39,10 +39,8 @@ export function ItemDetails({
     handleTrackingModeChange,
   } = formState;
 
-  // Map form field changes to correct field names
   const handleBasicInfoChange = useCallback(
     (field: 'name' | 'code' | 'serial_number', value: string) => {
-      // Map serial_number to serialNumber for form state
       const formField = field === 'serial_number' ? 'serialNumber' : field;
       handleFieldChange(formField as keyof typeof formValues, value);
     },
@@ -82,7 +80,6 @@ export function ItemDetails({
         />
       </Card>
 
-      {/* Tracking Mode, Specifications, Attachments, and Locations */}
       <Card withDivider>
         {/* Tracking mode field */}
         <TrackingModeField
@@ -95,11 +92,7 @@ export function ItemDetails({
         <Specifications key="specifications" itemId={itemId} />
 
         {/* Attachments field */}
-        <AttachmentField
-          key="attachments"
-          itemId={itemId}
-          attachments={item?.attachments}
-        />
+        <AttachmentField key="attachments" itemId={itemId} />
 
         {/* Locations field */}
         <Locations key="locations" itemId={itemId} item={item ?? undefined} />

@@ -17,6 +17,7 @@ type UseSettingsHeaderOptions = {
   onCancel?: () => void;
   showCancel?: boolean;
   onClose?: () => void;
+  idleAction?: 'edit' | 'none';
 };
 
 export function useSettingsHeader({
@@ -27,6 +28,7 @@ export function useSettingsHeader({
   onCancel,
   showCancel = false,
   onClose,
+  idleAction = 'edit',
 }: UseSettingsHeaderOptions) {
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
@@ -96,7 +98,7 @@ export function useSettingsHeader({
           accessibilityLabel="Save changes"
         />
       );
-    } else {
+    } else if (idleAction === 'edit') {
       headerRight = () => (
         <HeaderButton
           variant="edit"
@@ -105,6 +107,8 @@ export function useSettingsHeader({
           accessibilityLabel="Edit"
         />
       );
+    } else {
+      headerRight = undefined;
     }
 
     navigation.setOptions({
@@ -123,6 +127,7 @@ export function useSettingsHeader({
     canShowCancel,
     onCancel,
     onClose,
+    idleAction,
   ]);
 
   return {triggerSuccess};
