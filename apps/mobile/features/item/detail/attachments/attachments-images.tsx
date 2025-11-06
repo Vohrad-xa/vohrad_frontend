@@ -7,7 +7,7 @@ import {makeStyleFactory} from '@/utils/style-factory';
 import {filterAttachmentsByKind} from './use-item-attachments';
 import type {ItemAttachment} from '@vohrad/types';
 
-export const IMAGE_GRID_COLUMNS = 3;
+export const IMAGE_GRID_COLUMNS = 4;
 
 const useStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>

@@ -17,6 +17,9 @@ export default function ItemAttachmentsLayout() {
   const handleClose = () => {
     router.dismiss();
   };
+  const handleAdd = () => {
+    router.push('/items/attachments/add');
+  };
 
   return (
     <ScreenLoadingWrapper>
@@ -46,6 +49,13 @@ export default function ItemAttachmentsLayout() {
                 accessibilityLabel="Close attachments"
               />
             ),
+            headerRight: () => (
+              <HeaderButton
+                variant="add"
+                onPress={handleAdd}
+                accessibilityLabel="Add attachment"
+              />
+            ),
           }}
         />
         <Stack.Screen
@@ -55,17 +65,24 @@ export default function ItemAttachmentsLayout() {
           }}
         />
         <Stack.Screen
-          name="image-preview"
+          name="add"
           options={{
-            title: 'Preview',
+            title: 'Add Attachment',
             presentation: 'modal',
             headerLeft: () => (
               <HeaderButton
                 variant="close"
                 onPress={handleClose}
-                accessibilityLabel="Close image preview"
+                accessibilityLabel="Close add attachment modal"
               />
             ),
+          }}
+        />
+        <Stack.Screen
+          name="image-preview"
+          options={{
+            title: 'Preview',
+            presentation: Platform.OS === 'web' ? 'card' : 'modal',
           }}
         />
       </Stack>

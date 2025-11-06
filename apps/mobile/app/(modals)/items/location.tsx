@@ -16,8 +16,7 @@ import {makeStyleFactory} from '@/utils/style-factory';
 export default function LocationModal() {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
-  const {locations, isEditMode, item, isLoading, handleQuantityChange} =
-    useItemLocation();
+  const {locations, isEditMode, item, handleQuantityChange} = useItemLocation();
   const firstInputRef = useRef<TextInput>(null);
 
   // Focus first input
@@ -30,7 +29,7 @@ export default function LocationModal() {
     }
   }, [isEditMode]);
 
-  if (!item || isLoading) {
+  if (!item) {
     return null;
   }
 

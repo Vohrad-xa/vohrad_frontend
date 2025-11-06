@@ -1,16 +1,10 @@
 import React, {useCallback} from 'react';
-import {StyleSheet} from 'react-native';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {ModalScrollView} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {AttachmentsOverview} from '@/features/attachments/screens/attachments-overview';
 import {useItemAttachments} from '@/features/item/detail/attachments/use-item-attachments';
-import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
 
 export default function ItemAttachmentsModal() {
-  const {ds, theme} = useTheme();
-  const styles = useStyles(ds, theme);
   const router = useRouter();
   const params = useLocalSearchParams<{id?: string}>();
   const {counts, item} = useItemAttachments();
@@ -30,7 +24,7 @@ export default function ItemAttachmentsModal() {
   }, [itemId, router]);
 
   return (
-    <ModalScrollView contentContainerStyle={styles.container}>
+    <ModalScrollView>
       <AttachmentsOverview
         counts={counts}
         onTilePress={{
@@ -40,13 +34,3 @@ export default function ItemAttachmentsModal() {
     </ModalScrollView>
   );
 }
-
-const useStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);

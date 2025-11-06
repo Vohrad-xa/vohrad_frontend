@@ -12,6 +12,7 @@ export type HeaderButtonVariant =
   | 'cancel' // "Cancel" text, destructive color
   | 'save' // "Save" text, accent green when has changes
   | 'edit' // "Edit" text, accent blue
+  | 'add' // Plus icon, accent blue
   | 'success' // Check icon, accent green
   | 'action' // Any custom icon/text with accent blue
   | 'back'; // Back arrow icon
@@ -80,6 +81,12 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
         return {
           text: 'Edit',
           color: theme.accentBlue,
+        };
+      case 'add':
+        return {
+          icon: AppIcons.actions.add,
+          color: theme.accentBlue,
+          iconSize: 'lg' as const,
         };
       case 'back':
         return {

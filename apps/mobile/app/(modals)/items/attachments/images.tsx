@@ -43,7 +43,6 @@ export default function ItemImageAttachmentsModal() {
         data={imageAttachments}
         keyExtractor={(attachment) => attachment.id}
         numColumns={IMAGE_GRID_COLUMNS}
-        contentContainerStyle={styles.listContent}
         columnWrapperStyle={styles.columnWrapper}
         renderItem={({item: attachment}) => (
           <AttachmentImageTile
@@ -69,11 +68,6 @@ const useStyles = makeStyleFactory(
     StyleSheet.create({
       container: {
         flex: 1,
-      },
-      listContent: {
-        paddingTop: 0,
-        paddingHorizontal: 0,
-        paddingBottom: ds.spacing.xxl,
       },
       columnWrapper: {
         width: '100%',

@@ -67,34 +67,28 @@ export function ItemDetails({
         isEditing={isEditing}
       />
 
-      {/* Description */}
-      <DescriptionField
-        value={formValues.description}
-        onChange={handleDescriptionChange}
-        isEditing={isEditing}
-      />
-
-      {/* Status, Tracking Mode, and Quantity */}
+      {/* Status and Quantity */}
       <Card withDivider>
-        {/* Status field */}
         <StatusField
           key="status"
           isActive={optimisticStatus}
           onValueChange={handleStatusChange}
         />
 
+        <QuantityField
+          key="quantity"
+          field={{key: 'quantity', label: 'Quantity', value: quantity ?? '0'}}
+          value={quantity}
+        />
+      </Card>
+
+      {/* Tracking Mode, Specifications, Attachments, and Locations */}
+      <Card withDivider>
         {/* Tracking mode field */}
         <TrackingModeField
           key="tracking-mode"
           trackingMode={optimisticTrackingMode}
           onValueChange={handleTrackingModeChange}
-        />
-
-        {/* Quantity field */}
-        <QuantityField
-          key="quantity"
-          field={{key: 'quantity', label: 'Quantity', value: quantity ?? '0'}}
-          value={quantity}
         />
 
         {/* Specifications field */}
@@ -110,6 +104,13 @@ export function ItemDetails({
         {/* Locations field */}
         <Locations key="locations" itemId={itemId} item={item ?? undefined} />
       </Card>
+
+      {/* Description */}
+      <DescriptionField
+        value={formValues.description}
+        onChange={handleDescriptionChange}
+        isEditing={isEditing}
+      />
     </View>
   );
 }

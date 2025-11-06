@@ -11,7 +11,7 @@ export default function ItemAttachmentImagePreviewModal() {
   const params = useLocalSearchParams<{attachmentId?: string}>();
   const {ds, theme} = useTheme();
   const styles = useStyles(ds, theme);
-  const {attachments, item, isLoading} = useItemAttachments();
+  const {attachments, item} = useItemAttachments();
   const imageAttachments = useImageAttachments(attachments);
 
   const attachment = useMemo(
@@ -24,7 +24,7 @@ export default function ItemAttachmentImagePreviewModal() {
     [imageAttachments, params.attachmentId],
   );
 
-  if (isLoading || !item || !attachment) {
+  if (!item || !attachment) {
     return null;
   }
 

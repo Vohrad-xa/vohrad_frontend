@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, Image} from 'react-native';
-import {ThemedText, ThemedView, Card} from '@/components/ui';
+import {ThemedText, ThemedView} from '@/components/ui';
 import {Tokens} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
@@ -18,54 +18,51 @@ export function ItemHeader({item, imageUrl}: ItemHeaderProps) {
   const styles = createStyles(ds, theme);
 
   return (
-    <Card style={styles.card}>
+    <View style={styles.container}>
       {/* Status Badge */}
-      <View style={styles.cardContent}>
-        <View style={styles.badgeContainer}>
-          <ThemedView
-            variant="statusBadge"
-            badgeStatus={item.is_active ? 'active' : 'inactive'}
-          >
-            <ThemedText variant="caption" style={{color: Tokens.dark.text}}>
-              {item.is_active ? 'Active' : 'Inactive'}
-            </ThemedText>
-          </ThemedView>
-        </View>
-
-        {/* Thumbnail */}
-        <View style={styles.imageSection}>
-          <View style={styles.imageContainer}>
-            {imageUrl ? (
-              <Image
-                source={imageUrl}
-                style={styles.thumbnail}
-                resizeMode="cover"
-              />
-            ) : (
-              <Icon name="image-outline" size="xxl" />
-            )}
-          </View>
-        </View>
-
-        {/* Name and Code*/}
-        <View style={styles.titleContainer}>
-          <ThemedText style={styles.itemName} numberOfLines={2}>
-            {item.name}
+      <View style={styles.badgeContainer}>
+        <ThemedView
+          variant="statusBadge"
+          badgeStatus={item.is_active ? 'active' : 'inactive'}
+        >
+          <ThemedText variant="caption" style={{color: Tokens.dark.text}}>
+            {item.is_active ? 'Active' : 'Inactive'}
           </ThemedText>
-          <ThemedText style={styles.itemCode} numberOfLines={1}>
-            {item.code.toUpperCase()}
-          </ThemedText>
+        </ThemedView>
+      </View>
+
+      {/* Thumbnail */}
+      <View style={styles.imageSection}>
+        <View style={styles.imageContainer}>
+          {imageUrl ? (
+            <Image
+              source={imageUrl}
+              style={styles.thumbnail}
+              resizeMode="cover"
+            />
+          ) : (
+            <Icon name="image-outline" size="xxl" />
+          )}
         </View>
       </View>
-    </Card>
+
+      {/* Name and Code*/}
+      <View style={styles.titleContainer}>
+        <ThemedText style={styles.itemName} numberOfLines={2}>
+          {item.name}
+        </ThemedText>
+        <ThemedText style={styles.itemCode} numberOfLines={1}>
+          {item.code.toUpperCase()}
+        </ThemedText>
+      </View>
+    </View>
   );
 }
 
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      card: {},
-      cardContent: {
+      container: {
         alignItems: 'center',
         position: 'relative',
       },
