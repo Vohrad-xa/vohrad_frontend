@@ -7,6 +7,8 @@ import {makeStyleFactory} from '@/utils';
 import {AttachmentKindGrid} from '../components/attachment-kind-grid';
 import type {AttachmentKindTile} from '../components/attachment-kind-grid';
 
+type AttachmentKindKey = AttachmentKindTile['kind'];
+
 export interface AttachmentKindCount {
   image: number;
   document: number;
@@ -17,9 +19,13 @@ export interface AttachmentKindCount {
 
 interface AttachmentsOverviewProps {
   counts: AttachmentKindCount;
+  onTilePress?: Partial<Record<AttachmentKindKey, () => void>>;
 }
 
-export function AttachmentsOverview({counts}: AttachmentsOverviewProps) {
+export function AttachmentsOverview({
+  counts,
+  onTilePress,
+}: AttachmentsOverviewProps) {
   const {ds, theme} = useTheme();
   const styles = useStyles(ds, theme);
 
@@ -29,29 +35,34 @@ export function AttachmentsOverview({counts}: AttachmentsOverviewProps) {
         kind: 'image' as const,
         label: 'Images',
         count: counts.image,
+        onPress: onTilePress?.image,
       },
       {
         kind: 'document' as const,
         label: 'Documents',
         count: counts.document,
+        onPress: onTilePress?.document,
       },
       {
         kind: 'video' as const,
         label: 'Videos',
         count: counts.video,
+        onPress: onTilePress?.video,
       },
       {
         kind: 'archive' as const,
         label: 'Archives',
         count: counts.archive,
+        onPress: onTilePress?.archive,
       },
       {
         kind: 'other' as const,
         label: 'Other',
         count: counts.other,
+        onPress: onTilePress?.other,
       },
     ],
-    [counts],
+    [counts, onTilePress],
   );
 
   return (

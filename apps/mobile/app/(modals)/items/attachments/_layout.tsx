@@ -1,4 +1,3 @@
-import {useCallback} from 'react';
 import {Platform, StyleSheet} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
@@ -6,25 +5,18 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
-export default function ItemsModalsLayout() {
-  const {ds, theme} = useTheme();
+export const unstable_settings = {
+  initialRouteName: 'index',
+};
+
+export default function ItemAttachmentsLayout() {
+  const {theme, ds} = useTheme();
   const router = useRouter();
-  const styles = createStyles(ds, theme);
+  const styles = createStyles(theme, ds);
 
-  const handleClose = useCallback(() => {
+  const handleClose = () => {
     router.dismiss();
-  }, [router]);
-
-  const CloseButton = useCallback(
-    () => (
-      <HeaderButton
-        variant="close"
-        onPress={handleClose}
-        accessibilityLabel="Close"
-      />
-    ),
-    [handleClose],
-  );
+  };
 
   return (
     <ScreenLoadingWrapper>
@@ -33,46 +25,47 @@ export default function ItemsModalsLayout() {
           headerShown: true,
           headerShadowVisible: false,
           headerTransparent: Platform.OS === 'ios',
-          headerLeft: CloseButton,
+          headerTitleAlign: 'center',
+          contentStyle: styles.container,
           headerBackButtonDisplayMode: 'minimal',
           headerStyle:
             Platform.OS === 'android'
               ? {backgroundColor: theme.navigationBar}
               : undefined,
-          headerTitleAlign: 'center',
-          contentStyle: styles.container,
         }}
       >
         <Stack.Screen
-          name="filters"
+          name="index"
           options={{
-            title: 'Item Filters',
-            headerBackButtonDisplayMode: 'minimal',
+            title: 'Attachments',
+            headerBackVisible: false,
+            headerLeft: () => (
+              <HeaderButton
+                variant="close"
+                onPress={handleClose}
+                accessibilityLabel="Close attachments"
+              />
+            ),
           }}
         />
         <Stack.Screen
-          name="location"
+          name="images"
           options={{
-            title: 'Locations',
+            title: 'Images',
           }}
         />
         <Stack.Screen
-          name="quantity"
+          name="image-preview"
           options={{
-            title: 'Quantity',
-          }}
-        />
-        <Stack.Screen
-          name="specifications"
-          options={{
-            title: 'Specifications',
-          }}
-        />
-        <Stack.Screen
-          name="attachments"
-          options={{
-            headerShown: false,
+            title: 'Preview',
             presentation: 'modal',
+            headerLeft: () => (
+              <HeaderButton
+                variant="close"
+                onPress={handleClose}
+                accessibilityLabel="Close image preview"
+              />
+            ),
           }}
         />
       </Stack>
@@ -81,7 +74,7 @@ export default function ItemsModalsLayout() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (theme: ThemeShape, _ds: DSShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
@@ -89,5 +82,5 @@ const createStyles = makeStyleFactory(
           Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
       },
     }),
-  (ds, theme) => themeKey(theme, ds),
+  (theme, ds) => themeKey(theme, ds),
 );

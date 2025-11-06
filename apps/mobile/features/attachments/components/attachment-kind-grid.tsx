@@ -7,7 +7,12 @@ import {useTheme} from '@/providers';
 import {Icon, AppIcons, SFSymbols} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
-type AttachmentKindKey = 'image' | 'document' | 'video' | 'archive' | 'other';
+export type AttachmentKindKey =
+  | 'image'
+  | 'document'
+  | 'video'
+  | 'archive'
+  | 'other';
 
 export interface AttachmentKindTile {
   kind: AttachmentKindKey;

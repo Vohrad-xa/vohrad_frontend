@@ -12,7 +12,7 @@ const ATTACHMENT_KIND_KEYS = [
   'other',
 ] as const;
 
-type AttachmentKindKey = (typeof ATTACHMENT_KIND_KEYS)[number];
+export type AttachmentKindKey = (typeof ATTACHMENT_KIND_KEYS)[number];
 
 const ZERO_COUNTS: AttachmentKindCount = {
   image: 0,
@@ -56,6 +56,20 @@ export function computeAttachmentCounts(
   );
 }
 
+export function filterAttachmentsByKind(
+  attachments: ItemAttachment[] | null | undefined,
+  kind: AttachmentKindKey,
+): ItemAttachment[] {
+  if (!attachments) {
+    return [];
+  }
+
+  return attachments.filter(
+    (attachment) =>
+      !attachment.deleted_at && resolveAttachmentKind(attachment) === kind,
+  );
+}
+
 export function useItemAttachments() {
   const {id: itemId} = useLocalSearchParams<{id?: string}>();
   const {item, isLoading} = useItemDetailManager(itemId);
@@ -73,6 +87,7 @@ export function useItemAttachments() {
   return {
     counts,
     total,
+    attachments: item?.attachments ?? null,
     item,
     isLoading,
   };
