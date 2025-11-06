@@ -32,7 +32,7 @@ export function ItemHeader({item, imageUrl}: ItemHeaderProps) {
           </ThemedView>
         </View>
 
-        {/* Centered Image */}
+        {/* Thumbnail */}
         <View style={styles.imageSection}>
           <View style={styles.imageContainer}>
             {imageUrl ? (
@@ -80,7 +80,7 @@ const createStyles = makeStyleFactory(
       imageContainer: {
         width: ds.spacing.xxl * 2,
         height: ds.spacing.xxl * 2,
-        borderRadius: 50,
+        borderRadius: ds.borderRadius.full,
         backgroundColor: theme.border,
         justifyContent: 'center',
         alignItems: 'center',

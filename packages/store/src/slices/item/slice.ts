@@ -1,28 +1,16 @@
 import type {StateCreator} from 'zustand';
 import type {Item, ItemDetail} from '@vohrad/types';
+import type {AsyncState, PaginatedState} from '../../utils/state';
 
-export interface ItemSlice {
+type UpdatePagePayload = PaginatedState & {
+  items: Item[];
+  strategy?: 'replace' | 'append';
+};
+
+export interface ItemSlice extends PaginatedState, AsyncState {
   items: Item[];
   selectedItem: ItemDetail | null;
-  total: number;
-  page: number;
-  size: number;
-  totalPages: number;
-  hasNext: boolean;
-  hasPrevious: boolean;
-  isLoading: boolean;
-  error: string | null;
-  retryCallback: (() => void) | null;
-  updatePage: (payload: {
-    items: Item[];
-    total: number;
-    page: number;
-    size: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrevious: boolean;
-    strategy?: 'replace' | 'append';
-  }) => void;
+  updatePage: (payload: UpdatePagePayload) => void;
   setSelectedItem: (item: ItemDetail | null) => void;
   addItem: (item: Item) => void;
   updateItemInList: (id: string, updates: Partial<Item>) => void;
@@ -49,25 +37,15 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
 
   updatePage: ({
     items,
-    total,
-    page,
-    size,
-    totalPages,
-    hasNext,
-    hasPrevious,
     strategy = 'replace',
-  }) =>
+    ...pagination
+  }: UpdatePagePayload) =>
     set((state) => ({
       items:
         strategy === 'append' && state.items.length > 0
           ? [...state.items, ...items]
           : items,
-      total,
-      page,
-      size,
-      totalPages,
-      hasNext,
-      hasPrevious,
+      ...pagination,
     })),
 
   setSelectedItem: (item: ItemDetail | null) => set({selectedItem: item}),
@@ -91,17 +69,34 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
 
   updateItemLocation: (locationId: string, quantity: number) =>
     set((state) => {
-      if (!state.selectedItem?.locations) return state;
+      const selected = state.selectedItem;
+      if (!selected?.locations) {
+        return state;
+      }
 
-      const updatedLocations = state.selectedItem.locations.map((loc) =>
+      const updatedLocations = selected.locations.map((loc) =>
         loc.id === locationId ? {...loc, quantity} : loc,
       );
 
+      const totalQuantity = updatedLocations.reduce((sum, loc) => {
+        const value = Number(loc.quantity ?? 0);
+        return sum + (Number.isFinite(value) ? value : 0);
+      }, 0);
+
       return {
         selectedItem: {
-          ...state.selectedItem,
+          ...selected,
           locations: updatedLocations,
+          total_quantity: totalQuantity,
         },
+        items: state.items.map((item) =>
+          item.id === selected.id
+            ? {
+                ...item,
+                total_quantity: totalQuantity,
+              }
+            : item,
+        ),
       };
     }),
 

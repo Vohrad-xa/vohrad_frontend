@@ -75,3 +75,4 @@ export {
   hasActiveFilters,
   clearAllFilters,
 } from './utils/odata-filter-builder';
+export type {AsyncState, PaginatedState} from './utils/state';

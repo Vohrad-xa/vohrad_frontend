@@ -4,34 +4,30 @@ import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {useSettingsHeader} from '@/hooks';
 import {validators} from '@/utils';
 
-interface LocationQuantity {
-  id: string;
-  name: string;
-  code: string;
+import type {ItemLocationData} from '@vohrad/types';
+
+type EditableLocation = Omit<ItemLocationData, 'quantity'> & {
   quantity: string;
-}
+};
 
 export function useItemLocation() {
   const router = useRouter();
   const navigation = useNavigation();
   const {id: itemId} = useLocalSearchParams<{id: string}>();
-  const {item, updateLocation, isLoading, refresh} =
-    useItemDetailManager(itemId);
+  const {item, updateLocation, isLoading} = useItemDetailManager(itemId);
   const setError = useAuthStore((state) => state.setError);
   const [hasChanges, setHasChanges] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const [locations, setLocations] = useState<LocationQuantity[]>([]);
-  const originalLocations = useRef<LocationQuantity[]>([]);
+  const [locations, setLocations] = useState<EditableLocation[]>([]);
+  const originalLocations = useRef<EditableLocation[]>([]);
 
   // Sync locations when item changes
   useEffect(() => {
     if (item?.locations && item.locations.length > 0) {
       const newLocations = item.locations.map((loc) => ({
-        id: loc.id,
-        name: loc.name,
-        code: loc.code,
-        quantity: String(loc.quantity),
+        ...loc,
+        quantity: String(loc.quantity ?? ''),
       }));
       setLocations(newLocations);
       if (!isEditMode) {
@@ -102,9 +98,6 @@ export function useItemLocation() {
         });
       }
 
-      // Refresh item to update total_quantity
-      await refresh();
-
       originalLocations.current = [...locations];
       setHasChanges(false);
       setIsEditMode(false);
@@ -112,7 +105,7 @@ export function useItemLocation() {
     } catch (err) {
       throw err;
     }
-  }, [locations, updateLocation, triggerSuccess, refresh, setError]);
+  }, [locations, updateLocation, triggerSuccess, setError]);
 
   performSaveRef.current = performSave;
 
