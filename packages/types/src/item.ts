@@ -40,6 +40,12 @@ export interface ItemAttachment {
   file_path: string;
   download_url?: string | null;
   created_at?: string;
+  updated_at?: string;
+  description?: string | null;
+  category?: string | null;
+  user_id?: string | null;
+  deleted_at?: string | null;
+  kind?: string | null;
 }
 
 type ItemRelationIdentifiers = {

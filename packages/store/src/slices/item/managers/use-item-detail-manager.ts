@@ -15,10 +15,13 @@ export function useItemDetailManager(itemId: string | null | undefined) {
     useUpdateItemLocation();
 
   useEffect(() => {
-    if (normalizedItemId) {
-      fetchItemDetail(normalizedItemId).catch(() => {});
-    }
-  }, [normalizedItemId, fetchItemDetail]);
+    if (!normalizedItemId) return;
+
+    const hasFullAttachments = item?.attachments && item.attachments.length > 0;
+    fetchItemDetail(normalizedItemId, {force: !hasFullAttachments}).catch(
+      () => {},
+    );
+  }, [normalizedItemId, item?.attachments, fetchItemDetail]);
 
   const getItemImageUrl = useCallback(() => {
     const url = item?.thumbnail?.download_url;

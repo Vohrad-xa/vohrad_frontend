@@ -67,6 +67,7 @@ export default function ItemDetailScreen() {
         formState={formState}
         itemId={itemId}
         isEditing={isEditing}
+        item={item}
       />
     </ModalScrollView>
   );

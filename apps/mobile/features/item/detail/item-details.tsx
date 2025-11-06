@@ -2,6 +2,7 @@ import React, {useCallback} from 'react';
 import {View} from 'react-native';
 import {Card} from '@/components/cards/card';
 import {useTheme} from '@/providers';
+import {AttachmentField} from './attachments/attachment-field';
 import {BasicInfo} from './basic-info';
 import {DescriptionField} from './description-field';
 import {Locations} from './locations/location-field';
@@ -10,12 +11,14 @@ import {Specifications} from './specifications/specifications-field';
 import {StatusField} from './status-field';
 import {TrackingModeField} from './tracking-mode-field';
 import type {UseItemFormReturn} from './use-item-form';
+import type {ItemDetail} from '@vohrad/types';
 
 interface ItemDetailsProps {
   quantity?: string;
   formState: UseItemFormReturn;
   itemId?: string;
   isEditing: boolean;
+  item?: ItemDetail | null;
 }
 
 export function ItemDetails({
@@ -23,6 +26,7 @@ export function ItemDetails({
   formState,
   itemId,
   isEditing,
+  item,
 }: ItemDetailsProps): React.JSX.Element {
   const {ds} = useTheme();
 
@@ -96,8 +100,15 @@ export function ItemDetails({
         {/* Specifications field */}
         <Specifications key="specifications" itemId={itemId} />
 
+        {/* Attachments field */}
+        <AttachmentField
+          key="attachments"
+          itemId={itemId}
+          attachments={item?.attachments}
+        />
+
         {/* Locations field */}
-        <Locations key="locations" itemId={itemId} />
+        <Locations key="locations" itemId={itemId} item={item ?? undefined} />
       </Card>
     </View>
   );
