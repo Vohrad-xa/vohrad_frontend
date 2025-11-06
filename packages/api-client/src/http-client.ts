@@ -1,6 +1,7 @@
 import type {ApiResponse} from '@vohrad/types';
 import {ApiError} from '@vohrad/types';
 import {resolveApiUrl, getApiConfig} from './config';
+import {loadingManager} from './loading-manager';
 
 export class HttpClient {
   private accessToken: string | null = null;
@@ -19,6 +20,7 @@ export class HttpClient {
     options: RequestInit = {},
     isRetry = false,
   ): Promise<ApiResponse<T>> {
+    const loadingToken = loadingManager.startRequest();
     const url = resolveApiUrl(endpoint);
     const apiConfig = getApiConfig();
 
@@ -121,9 +123,11 @@ export class HttpClient {
       }
 
       throw new ApiError(
-        error instanceof Error ? error.message : 'Network error occurred',
+        error instanceof Error ? error.message : 'Unable to connect',
         0,
       );
+    } finally {
+      loadingManager.finishRequest(loadingToken);
     }
   }
 
@@ -150,36 +154,39 @@ export class HttpClient {
     return this.makeRequest<T>(endpoint, {method: 'DELETE'});
   }
 
-  // Exponential-backoff retry for transient fetch failures (network layer only).
+  // Single fetch attempt with timeout to prevent infinite hanging
   private async fetchWithRetry(
     url: string,
     config: RequestInit,
-    maxRetries = 3,
   ): Promise<Response> {
-    let lastError: unknown;
+    const controller = new AbortController();
+    const timeoutMs = 15000; // 15 second timeout
 
-    for (let attempt = 0; attempt < maxRetries; attempt += 1) {
-      try {
-        return await fetch(url, config);
-      } catch (error) {
-        lastError = error;
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, timeoutMs);
 
-        if (error instanceof ApiError) {
-          throw error;
-        }
+    try {
+      const response = await fetch(url, {
+        ...config,
+        signal: controller.signal,
+      });
 
-        const isLastAttempt = attempt === maxRetries - 1;
-        if (!isLastAttempt) {
-          const delayMs = 1000 * 2 ** attempt;
-          await new Promise((resolve) => setTimeout(resolve, delayMs));
-          continue;
-        }
+      clearTimeout(timeoutId);
+      return response;
+    } catch (error) {
+      clearTimeout(timeoutId);
+
+      // Distinguish timeout from other network errors
+      if (
+        error instanceof Error &&
+        (error.name === 'AbortError' || error.name === 'TimeoutError')
+      ) {
+        throw new Error('Connection timeout, please try again');
       }
-    }
 
-    throw lastError instanceof Error
-      ? lastError
-      : new Error('Network request failed');
+      throw error instanceof Error ? error : new Error('Unable to connect');
+    }
   }
 }
 
