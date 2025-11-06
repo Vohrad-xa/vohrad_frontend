@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {ThemedText} from '@/components/ui';
@@ -6,6 +6,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
+import {computeAttachmentCounts} from './use-item-attachments';
 import type {ItemAttachment} from '@vohrad/types';
 
 interface AttachmentFieldProps {
@@ -21,8 +22,14 @@ export function AttachmentField({
   const router = useRouter();
   const styles = createStyles(ds, theme);
 
-  const attachmentCount =
-    attachments?.filter((attachment) => !attachment.deleted_at)?.length ?? 0;
+  const counts = useMemo(
+    () => computeAttachmentCounts(attachments),
+    [attachments],
+  );
+  const attachmentCount = useMemo(
+    () => Object.values(counts).reduce((sum, value) => sum + value, 0),
+    [counts],
+  );
 
   const handlePress = () => {
     router.push({
