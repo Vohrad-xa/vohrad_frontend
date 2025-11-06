@@ -16,6 +16,7 @@ export const Palette = {
   },
   brand: {
     blue: '#0A84FF',
+    lightBlue: '#6AC7F1',
     green: '#34C759',
     yellow: '#FFD60A',
     orange: '#FF9500',
@@ -62,6 +63,7 @@ const _Tokens = {
     primary: Palette.terracotta,
     primaryForeground: Palette.white,
     accentBlue: Palette.brand.blue,
+    accentLightBlue: Palette.brand.lightBlue,
     accentGreen: Palette.brand.green,
     accentYellow: Palette.brand.yellow,
     accentOrange: Palette.brand.orange,
@@ -117,6 +119,7 @@ const _Tokens = {
     primary: Palette.Greige,
     primaryForeground: Palette.gray[900],
     accentBlue: Palette.brand.blue,
+    accentLightBlue: Palette.brand.lightBlue,
     accentGreen: Palette.brand.green,
     accentYellow: Palette.brand.yellow,
     accentOrange: Palette.brand.orange,

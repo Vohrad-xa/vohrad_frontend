@@ -63,6 +63,7 @@ export type IconName =
   // Content & Files
   | 'document-text-outline'
   | 'folder-outline'
+  | 'folder'
   | 'image-outline'
   | 'download-outline'
   | 'cloud-upload-outline'
@@ -210,6 +211,7 @@ export const AppIcons = {
   content: {
     document: 'document-text-outline' as IconName,
     folder: 'folder-outline' as IconName,
+    folderFilled: 'folder' as IconName,
     image: 'image-outline' as IconName,
     imageFallback: 'image-outline' as IconName,
     download: 'cloud-download-outline' as IconName,

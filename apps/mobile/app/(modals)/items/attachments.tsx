@@ -1,7 +1,8 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
-import {ModalScrollView, ThemedText} from '@/components/ui';
+import {StyleSheet} from 'react-native';
+import {ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {AttachmentsOverview} from '@/features/attachments/screens/attachments-overview';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -11,31 +12,18 @@ export default function ItemAttachmentsModal() {
 
   return (
     <ModalScrollView contentContainerStyle={styles.container}>
-      <View style={styles.placeholder}>
-        <ThemedText variant="heading">Attachments</ThemedText>
-        <ThemedText variant="secondary" style={styles.message}>
-          Attachment details will appear here.
-        </ThemedText>
-      </View>
+      <AttachmentsOverview
+        counts={{image: 0, document: 0, video: 0, archive: 0, other: 0}}
+      />
     </ModalScrollView>
   );
 }
 
 const useStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
-        flexGrow: 1,
-        padding: ds.spacing.xl,
-        justifyContent: 'center',
-      },
-      placeholder: {
-        alignItems: 'center',
-        gap: ds.spacing.md,
-      },
-      message: {
-        textAlign: 'center',
-        color: theme.muted,
+        flex: 1,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

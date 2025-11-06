@@ -5,7 +5,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NativeTabsComponent, ReactTabs} from '@/components/navigation';
 import {useHaptic, useTheme} from '@/providers';
 import type {TabItem} from '@/types/ui';
-import {AppIcons} from '@/utils';
+import {AppIcons, SFSymbols} from '@/utils';
 
 const TAB_ITEMS: TabItem[] = [
   {name: 'dashboard', label: 'Dashboard', icon: AppIcons.navigation.home},
@@ -14,9 +14,9 @@ const TAB_ITEMS: TabItem[] = [
 ];
 
 const iOS_SF_SYMBOLS = {
-  dashboard: 'house.fill',
-  items: 'folder.fill',
-  events: 'bell.fill',
+  dashboard: SFSymbols.houseFill,
+  items: SFSymbols.folderFill,
+  events: SFSymbols.bellFill,
 } as const;
 
 export const unstable_settings = {
