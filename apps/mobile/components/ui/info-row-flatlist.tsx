@@ -2,10 +2,10 @@ import React from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
-  Image,
   View,
   type ImageSourcePropType,
 } from 'react-native';
+import {Image as ExpoImage} from 'expo-image';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {AppIcons, Icon} from '@/utils/icons';
@@ -61,10 +61,12 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
           >
             <View style={styles.imageContainer}>
               {item.image ? (
-                <Image
+                <ExpoImage
                   source={item.image}
                   style={styles.image}
-                  resizeMode="cover"
+                  contentFit="cover"
+                  cachePolicy="memory-disk"
+                  transition={150}
                 />
               ) : (
                 <Icon name={AppIcons.content.imageFallback} size="xl" />

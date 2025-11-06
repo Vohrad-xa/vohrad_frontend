@@ -1,7 +1,6 @@
 import React from 'react';
 import {Platform, FlatList, StyleSheet} from 'react-native';
 import type {FlatListProps} from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 import {type DSShape} from '@/constants/theme';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
@@ -22,24 +21,16 @@ export function ModalFlatList<T>({
   const {refreshControl} = usePullToRefresh({onRefresh});
 
   return (
-    <KeyboardAwareScrollView
+    <FlatList
+      {...props}
       contentContainerStyle={[styles.defaultContent, contentContainerStyle]}
-      showsVerticalScrollIndicator={Platform.OS === 'web'}
-      keyboardShouldPersistTaps="handled"
-      contentInsetAdjustmentBehavior="automatic"
-      bottomOffset={0}
-      enabled
-      extraKeyboardSpace={0}
       refreshControl={refreshControl}
-    >
-      <FlatList
-        {...props}
-        refreshControl={undefined}
-        contentContainerStyle={undefined}
-        scrollEnabled={false}
-        showsVerticalScrollIndicator={false}
-      />
-    </KeyboardAwareScrollView>
+      showsVerticalScrollIndicator={Platform.OS === 'web'}
+      keyboardDismissMode={Platform.select({
+        ios: 'interactive',
+        default: 'on-drag',
+      })}
+    />
   );
 }
 

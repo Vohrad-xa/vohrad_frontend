@@ -1,5 +1,6 @@
 import React from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet} from 'react-native';
+import {Image} from 'expo-image';
 import {ThemedText, ThemedView} from '@/components/ui';
 import {Tokens} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -38,7 +39,9 @@ export function ItemHeader({item, imageUrl}: ItemHeaderProps) {
             <Image
               source={imageUrl}
               style={styles.thumbnail}
-              resizeMode="cover"
+              contentFit="cover"
+              cachePolicy="memory-disk"
+              transition={200}
             />
           ) : (
             <Icon name="image-outline" size="xxl" />
