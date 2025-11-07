@@ -64,6 +64,8 @@ type ItemDescriptiveFields = ItemRelationIdentifiers & {
   notes?: string | null;
   specifications?: ItemSpecifications;
   tracking_change_reason?: string | null;
+  category_id?: string | null;
+  category?: string | null;
 };
 
 type ItemMutableFields = ItemDescriptiveFields & {
