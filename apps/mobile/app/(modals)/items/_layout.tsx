@@ -4,7 +4,7 @@ import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function ItemsModalsLayout() {
   const {ds, theme} = useTheme();

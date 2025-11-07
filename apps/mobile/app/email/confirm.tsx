@@ -6,8 +6,7 @@ import {useLocalSearchParams, useRouter} from 'expo-router';
 import {ThemedText, ThemedButton, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useAuth, useTheme} from '@/providers';
-import {showAlert, formatDate} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {showAlert, formatDate, makeStyleFactory} from '@/utils';
 
 export default function EmailConfirmScreen() {
   const params = useLocalSearchParams<{

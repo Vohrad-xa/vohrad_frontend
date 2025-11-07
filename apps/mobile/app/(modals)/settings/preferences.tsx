@@ -7,10 +7,10 @@ import {
   PreferencesContent,
   type PreferencesContentHandle,
   type SavePreferencesOptions,
-} from '@/features/settings/preferences';
+} from '@/features/settings';
 import {useSettingsHeader, useUnsavedChangesGuard} from '@/hooks';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function PreferencesScreen() {
   const {ds, theme} = useTheme();

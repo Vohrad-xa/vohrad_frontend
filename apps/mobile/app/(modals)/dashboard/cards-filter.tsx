@@ -3,9 +3,9 @@ import {StyleSheet, Platform} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ModalScrollView, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {FilterContent} from '@/features/home/overview/filter';
+import {FilterContent} from '@/features/home';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function FilterModal() {
   const {ds, theme} = useTheme();

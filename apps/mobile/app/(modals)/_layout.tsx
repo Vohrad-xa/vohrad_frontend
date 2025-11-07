@@ -2,7 +2,7 @@ import {Platform, StyleSheet} from 'react-native';
 import {Stack} from 'expo-router';
 import {type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function ModalsLayout() {
   const {theme} = useTheme();
@@ -19,6 +19,7 @@ export default function ModalsLayout() {
       <Stack.Screen name="dashboard/cards-filter" options={{title: 'Filter'}} />
       <Stack.Screen name="scan/index" options={{title: 'Scan'}} />
       <Stack.Screen name="items" options={{title: 'Items'}} />
+      <Stack.Screen name="attachments" options={{title: 'Attachments'}} />
     </Stack>
   );
 }

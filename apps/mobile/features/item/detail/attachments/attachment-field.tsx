@@ -20,8 +20,8 @@ export function AttachmentField({
 
   const handlePress = () => {
     router.push({
-      pathname: '/items/attachments',
-      params: {id: itemId},
+      pathname: '/attachments',
+      params: {targetType: 'item', targetId: itemId},
     });
   };
 

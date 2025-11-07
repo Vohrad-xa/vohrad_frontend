@@ -3,12 +3,12 @@ import {Pressable, StyleSheet} from 'react-native';
 import {resolveAttachmentUrl} from '@vohrad/api-client';
 import {Image} from 'expo-image';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {filterAttachmentsByKind} from '@/features/attachments/utils/attachment-counts';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {filterAttachmentsByKind} from './use-item-attachments';
 import type {ItemAttachment} from '@vohrad/types';
 
-export const IMAGE_GRID_COLUMNS = 3;
+export const IMAGE_GRID_COLUMNS = 4;
 
 export interface ImageAttachmentItem extends ItemAttachment {
   resolvedUrl: string;
@@ -79,8 +79,8 @@ const useStyles = makeStyleFactory(
   (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       tile: {
-        flexBasis: `${100 / IMAGE_GRID_COLUMNS}%`,
-        maxWidth: `${100 / IMAGE_GRID_COLUMNS}%`,
+        flexBasis: '25%',
+        maxWidth: '25%',
         flexShrink: 0,
         aspectRatio: 1,
       },

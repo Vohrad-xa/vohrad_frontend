@@ -2,14 +2,12 @@ import React, {useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
+import type {AttachmentKindCount} from '@/features/attachments/utils/attachment-counts';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 import {AttachmentKindGrid, type AttachmentKindTile} from '../components';
-import type {AttachmentKind} from '@vohrad/types';
 
 type AttachmentKindKey = AttachmentKindTile['kind'];
-
-export type AttachmentKindCount = Record<AttachmentKind, number>;
 
 interface AttachmentsOverviewProps {
   counts: AttachmentKindCount;

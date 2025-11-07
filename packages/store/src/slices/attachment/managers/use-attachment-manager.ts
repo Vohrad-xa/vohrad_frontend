@@ -116,17 +116,39 @@ export function useAttachmentManager(
   const deleteAttachment = useCallback(
     async (attachmentId: string, options?: {hardDelete?: boolean}) => {
       if (!targetKey) {
-        return;
+        throw new Error('Attachment target is not available');
       }
-      await attachmentApi.deleteAttachment(attachmentId, options);
-      removeAttachmentForTarget(targetKey, attachmentId);
 
-      // Also update item store if this is an item attachment
-      if (targetType === 'item') {
-        removeItemAttachment(attachmentId);
+      setTargetLoading(targetKey, true);
+      setTargetError(targetKey, null);
+
+      try {
+        await attachmentApi.deleteAttachment(attachmentId, options);
+        removeAttachmentForTarget(targetKey, attachmentId);
+
+        // Also update item store if this is an item attachment
+        if (targetType === 'item') {
+          removeItemAttachment(attachmentId);
+        }
+      } catch (err) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : 'Unable to delete attachment right now.';
+        setTargetError(targetKey, message);
+        throw err;
+      } finally {
+        setTargetLoading(targetKey, false);
       }
     },
-    [removeAttachmentForTarget, targetKey, targetType, removeItemAttachment],
+    [
+      removeAttachmentForTarget,
+      targetKey,
+      targetType,
+      removeItemAttachment,
+      setTargetError,
+      setTargetLoading,
+    ],
   );
 
   const replaceAttachments = useCallback(

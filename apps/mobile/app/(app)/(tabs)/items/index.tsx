@@ -9,7 +9,7 @@ import {type ItemFilterState} from '@vohrad/types';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
-import {useSearch} from '@/features/home/search-context';
+import {useSearch} from '@/features/home';
 import {ItemsList} from '@/features/item';
 import {useTheme} from '@/providers';
 import {AppIcons, makeStyleFactory} from '@/utils';

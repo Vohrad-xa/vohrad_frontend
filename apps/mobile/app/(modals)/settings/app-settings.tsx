@@ -4,10 +4,10 @@ import {useNavigation} from 'expo-router';
 import {ThemedView, ModalScrollView, InfoRowCard} from '@/components/ui';
 import type {InfoField} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {BiometricToggle, HapticToggle} from '@/features/settings/app-settings';
+import {BiometricToggle, HapticToggle} from '@/features/settings';
 import {useSettingsHeader} from '@/hooks';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function AppSettingsScreen() {
   const {ds, theme} = useTheme();

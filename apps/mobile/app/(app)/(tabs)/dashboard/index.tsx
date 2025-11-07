@@ -10,10 +10,9 @@ import {useDashboardOverview, useFetchUserProfile} from '@vohrad/store';
 import {router} from 'expo-router';
 import {RefreshableScrollView, ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {OverviewCards} from '@/features/home/overview/overview-cards';
-import {QuickActions} from '@/features/home/quick-actions';
+import {OverviewCards, QuickActions} from '@/features/home';
 import {useHaptic, useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function HomeScreen() {
   const {ds, theme} = useTheme();

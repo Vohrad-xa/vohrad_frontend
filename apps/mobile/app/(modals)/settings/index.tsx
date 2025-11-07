@@ -11,18 +11,17 @@ import {
   ModalFlatList,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {BiometricToggle} from '@/features/settings/app-settings';
-import {AppearanceMenu} from '@/features/settings/appearance-menu';
-import {useSettingsItems} from '@/features/settings/hooks/use-settings-items';
 import {
+  BiometricToggle,
+  AppearanceMenu,
+  useSettingsItems,
   isDividerItem,
   type ListItem as SettingsListItem,
   type SettingsItem,
   type ToggleSettingsItem,
-} from '@/features/settings/types';
+} from '@/features/settings';
 import {useTheme, useAuth} from '@/providers';
-import {Icon, AppIcons, showConfirmAlert} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {Icon, AppIcons, showConfirmAlert, makeStyleFactory} from '@/utils';
 
 export default function SettingsModal() {
   const {ds, theme, preference} = useTheme();

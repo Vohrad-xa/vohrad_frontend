@@ -3,8 +3,7 @@ import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {AppIcons} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {AppIcons, makeStyleFactory} from '@/utils';
 
 export const unstable_settings = {
   initialRouteName: 'index',

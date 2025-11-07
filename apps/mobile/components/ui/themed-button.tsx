@@ -7,10 +7,9 @@ import {
 } from 'react-native';
 import {Palette, type ColorScheme} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useTheme} from '@/providers/theme-provider';
+import {useTheme} from '@/providers';
 import type {IconProps, ButtonBaseProps} from '@/types';
-import {Icon} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {Icon, makeStyleFactory} from '@/utils';
 import {ThemedText} from './themed-text';
 
 export interface ThemedButtonProps

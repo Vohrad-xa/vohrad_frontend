@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native';
 import {ThemedView, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function TermsScreen() {
   const {ds, theme} = useTheme();

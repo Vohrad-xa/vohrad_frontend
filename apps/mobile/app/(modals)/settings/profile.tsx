@@ -7,10 +7,10 @@ import {
   ProfileContent,
   type ProfileContentHandle,
   type SaveProfileOptions,
-} from '@/features/settings/profile';
+} from '@/features/settings';
 import {useSettingsHeader, useUnsavedChangesGuard} from '@/hooks';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function ProfileScreen() {
   const {ds, theme} = useTheme();

@@ -4,12 +4,13 @@ import {type ItemFilterState} from '@vohrad/types';
 import {Stack, useRouter, useLocalSearchParams} from 'expo-router';
 import {HeaderButton, ThemedView, ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {PriceRangeFilter} from '@/features/item/filter/price-range-filter';
-import {StatusFilter} from '@/features/item/filter/status-filter';
-import {TrackingModeFilter} from '@/features/item/filter/tracking-mode-filter';
+import {
+  PriceRangeFilter,
+  StatusFilter,
+  TrackingModeFilter,
+} from '@/features/item';
 import {useTheme} from '@/providers';
-import {triggerHaptic} from '@/utils/haptics';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {triggerHaptic, makeStyleFactory} from '@/utils';
 
 export default function ItemFiltersModal() {
   const router = useRouter();

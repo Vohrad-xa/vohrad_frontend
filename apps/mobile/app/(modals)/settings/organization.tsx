@@ -7,10 +7,10 @@ import {
   OrganizationContent,
   type OrganizationContentHandle,
   type SaveOrganizationOptions,
-} from '@/features/settings/organization';
+} from '@/features/settings';
 import {useSettingsHeader, useUnsavedChangesGuard} from '@/hooks';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function OrganizationScreen() {
   const {ds, theme} = useTheme();

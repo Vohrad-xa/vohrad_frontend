@@ -9,15 +9,14 @@ import Animated, {
 import {ThemedStatusBar} from '@/components/ui';
 import {SIDEBAR_CONFIG} from '@/constants/sidebar';
 import {type ThemeShape} from '@/constants/theme';
-import {SideMenu} from '@/features/side-bar/side-menu';
-import {SidebarBackdrop} from '@/features/side-bar/sidebar-backdrop';
+import {SideMenu, SidebarBackdrop} from '@/features/side-bar';
 import {
   HeaderVisibilityProvider,
   SidebarProvider,
   useSidebar,
   useTheme,
 } from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 function AppStack() {
   const {theme} = useTheme();

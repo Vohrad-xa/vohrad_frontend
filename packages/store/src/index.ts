@@ -48,6 +48,7 @@ export {
   useAttachmentFetchState,
   useFetchAttachmentUrls,
   useAttachmentManager,
+  useAttachmentsListManager,
   createAttachmentTargetKey,
 } from './slices/attachment';
 export {

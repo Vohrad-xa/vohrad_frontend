@@ -9,9 +9,9 @@ import {
   ThemedInput,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useItemLocation} from '@/features/item/detail/locations/use-item-location';
+import {useItemLocation} from '@/features/item';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function LocationModal() {
   const {ds, theme} = useTheme();

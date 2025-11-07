@@ -1,6 +1,5 @@
 export {GlassSurface} from './glass-surface';
 export {GlassCard} from '../cards/glass-card';
-export {Collapsible} from './collapsible';
 export {RefreshableScrollView} from './refreshable-scroll-view';
 export {Toggle} from './toggle';
 export {Slider} from './slider';
@@ -27,4 +26,5 @@ export {
 } from './info-row-flatlist';
 export {type BadgeStatus} from './themed-view';
 export {Card} from '../cards/card';
+export {SelectionOverlay} from './selection-overlay';
 export {ThemedStatusBar} from './themed-status-bar';

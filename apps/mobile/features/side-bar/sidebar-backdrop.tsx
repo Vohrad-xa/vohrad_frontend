@@ -8,9 +8,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import {SIDEBAR_CONFIG, BACKDROP_CONFIG} from '@/constants/sidebar';
 import {type ThemeShape} from '@/constants/theme';
-import {useTheme} from '@/providers';
-import {useSidebar} from '@/providers/sidebar-provider';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {useTheme, useSidebar} from '@/providers';
+import {makeStyleFactory} from '@/utils';
 import type {SharedValue} from 'react-native-reanimated';
 
 interface SidebarBackdropProps {

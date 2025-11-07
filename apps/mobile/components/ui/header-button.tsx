@@ -15,7 +15,9 @@ export type HeaderButtonVariant =
   | 'add' // Plus icon, accent blue
   | 'success' // Check icon, accent green
   | 'action' // Any custom icon/text with accent blue
-  | 'back'; // Back arrow icon
+  | 'back' // Back arrow icon
+  | 'secondary' // Secondary text button
+  | 'destructive'; // Destructive text button
 
 export interface HeaderButtonProps
   extends Omit<RequiredIconProps, 'icon'>,
@@ -97,6 +99,14 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
       case 'action':
         return {
           color: theme.accentBlue,
+        };
+      case 'secondary':
+        return {
+          color: theme.accentBlue,
+        };
+      case 'destructive':
+        return {
+          color: theme.destructive,
         };
       default:
         return {

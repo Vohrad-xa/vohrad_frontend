@@ -17,7 +17,10 @@ type UseSettingsHeaderOptions = {
   onCancel?: () => void;
   showCancel?: boolean;
   onClose?: () => void;
-  idleAction?: 'edit' | 'none';
+  idleAction?: 'edit' | 'none' | 'select';
+  onSelect?: () => void;
+  selectedCount?: number;
+  onDeleteSelected?: () => void;
 };
 
 export function useSettingsHeader({
@@ -29,6 +32,9 @@ export function useSettingsHeader({
   showCancel = false,
   onClose,
   idleAction = 'edit',
+  onSelect,
+  selectedCount = 0,
+  onDeleteSelected,
 }: UseSettingsHeaderOptions) {
   const router = useRouter();
   const [showSuccess, setShowSuccess] = useState(false);
@@ -89,7 +95,31 @@ export function useSettingsHeader({
       headerRight = () => (
         <HeaderButton variant="success" accessibilityLabel="Saved" />
       );
-    } else if (hasChanges || isEditing) {
+    } else if (isEditing && idleAction === 'select') {
+      // Selection mode
+      if (selectedCount > 0 && onDeleteSelected) {
+        headerRight = () => (
+          <HeaderButton
+            variant="destructive"
+            text="Delete"
+            onPress={onDeleteSelected}
+            accessibilityLabel={`Delete ${selectedCount} items`}
+          />
+        );
+      } else {
+        headerRight = undefined;
+      }
+    } else if (idleAction === 'select' && onSelect && !isEditing) {
+      // Normal mode with select option
+      headerRight = () => (
+        <HeaderButton
+          variant="secondary"
+          text="Select"
+          onPress={onSelect}
+          accessibilityLabel="Select items"
+        />
+      );
+    } else if (hasChanges || (isEditing && idleAction !== 'select')) {
       headerRight = () => (
         <HeaderButton
           variant="save"
@@ -128,6 +158,9 @@ export function useSettingsHeader({
     onCancel,
     onClose,
     idleAction,
+    onSelect,
+    selectedCount,
+    onDeleteSelected,
   ]);
 
   return {triggerSuccess};

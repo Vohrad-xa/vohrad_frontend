@@ -1,26 +1,17 @@
 import {Platform, StyleSheet} from 'react-native';
-import {Stack, useRouter, useLocalSearchParams} from 'expo-router';
+import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
-export default function ItemAttachmentsLayout() {
-  const {theme, ds} = useTheme();
+export default function AttachmentsModalLayout() {
   const router = useRouter();
-  const {id: itemId} = useLocalSearchParams<{id?: string}>();
-  const styles = createStyles(theme, ds);
+  const {theme, ds} = useTheme();
+  const styles = useStyles(theme, ds);
 
   const handleClose = () => {
     router.dismiss();
-  };
-  const handleAdd = () => {
-    if (!itemId) return;
-
-    router.push({
-      pathname: '/items/attachments/add',
-      params: {id: itemId},
-    });
   };
 
   return (
@@ -38,10 +29,9 @@ export default function ItemAttachmentsLayout() {
         }}
       >
         <Stack.Screen
-          name="add"
+          name="index"
           options={{
-            title: 'Add Attachment',
-            presentation: Platform.OS === 'web' ? 'card' : 'modal',
+            title: 'Attachments',
             headerLeft: () => (
               <HeaderButton
                 variant="close"
@@ -49,11 +39,23 @@ export default function ItemAttachmentsLayout() {
                 accessibilityLabel="Close attachments"
               />
             ),
-            headerRight: () => (
+          }}
+        />
+        <Stack.Screen
+          name="images"
+          options={{
+            title: 'Images',
+          }}
+        />
+        <Stack.Screen
+          name="image-preview"
+          options={{
+            title: 'Preview',
+            headerLeft: () => (
               <HeaderButton
-                variant="add"
-                onPress={handleAdd}
-                accessibilityLabel="Add attachment"
+                variant="close"
+                onPress={handleClose}
+                accessibilityLabel="Close preview"
               />
             ),
           }}
@@ -63,7 +65,7 @@ export default function ItemAttachmentsLayout() {
   );
 }
 
-const createStyles = makeStyleFactory(
+const useStyles = makeStyleFactory(
   (theme: ThemeShape, _ds: DSShape) =>
     StyleSheet.create({
       container: {

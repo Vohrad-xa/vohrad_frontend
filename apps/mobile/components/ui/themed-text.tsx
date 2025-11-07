@@ -3,8 +3,8 @@ import {Text, type TextProps, StyleSheet} from 'react-native';
 import type {TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import type {Typography} from '@/constants/typography';
-import {useTheme} from '@/providers/theme-provider';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils';
 
 // Text variants based on typography system
 export type TextVariant = Typography | 'badgeText';

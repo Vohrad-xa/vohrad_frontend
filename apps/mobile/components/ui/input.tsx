@@ -9,9 +9,8 @@ import {
 } from 'react-native';
 
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useTheme} from '@/providers/theme-provider';
-import {Icon, type IconName} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {useTheme} from '@/providers';
+import {Icon, type IconName, makeStyleFactory} from '@/utils';
 import {GlassCard} from '../cards/glass-card';
 
 export type InputStatus = 'none' | 'error' | 'success';

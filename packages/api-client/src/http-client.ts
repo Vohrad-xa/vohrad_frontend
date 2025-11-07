@@ -86,17 +86,56 @@ export class HttpClient {
         }
       }
 
-      const data = await response.json();
+      const rawBody = await response.text();
+      const hasBody = !!rawBody && rawBody.trim().length > 0;
+
+      let parsedBody: unknown = null;
+      if (hasBody) {
+        try {
+          parsedBody = JSON.parse(rawBody);
+        } catch (parseError) {
+          if (response.ok) {
+            // Successful response with non-JSON payload
+            return {
+              success: true,
+              data: undefined as T,
+              message: '',
+              metadata: undefined,
+            };
+          }
+
+          throw new ApiError(
+            parseError instanceof Error
+              ? parseError.message
+              : 'Unable to parse server response',
+            response.status,
+          );
+        }
+      }
 
       if (!response.ok) {
+        const errorPayload = parsedBody as
+          | {
+              error?: string;
+              message?: string;
+              detail?: Array<{
+                loc?: unknown[];
+                msg?: string;
+                message?: string;
+              }>;
+            }
+          | undefined;
+
         let errorMessage =
-          data?.error?.message ||
-          data?.error ||
-          data?.message ||
+          errorPayload?.error ||
+          errorPayload?.message ||
           `HTTP ${response.status}`;
 
-        if (Array.isArray(data?.detail) && data.detail.length > 0) {
-          const firstDetail = data.detail[0];
+        if (
+          Array.isArray(errorPayload?.detail) &&
+          errorPayload.detail.length > 0
+        ) {
+          const firstDetail = errorPayload.detail[0];
           let message = firstDetail.msg || firstDetail.message || errorMessage;
           message = message.replace(/^Value error,\s*/i, '');
 
@@ -111,19 +150,21 @@ export class HttpClient {
           }
 
           errorMessage = message;
-        } else if (data?.error?.details?.validation_errors?.length > 0) {
-          const firstError = data.error.details.validation_errors[0];
-          let message = firstError.message || errorMessage;
-          message = message.replace(/^Value error,\s*/i, '');
-          errorMessage = message;
-        } else if (data?.error?.details?.reason) {
-          errorMessage = data.error.details.reason;
         }
-
         throw new ApiError(errorMessage, response.status);
       }
 
-      return data;
+      if (parsedBody && typeof parsedBody === 'object') {
+        return parsedBody as ApiResponse<T>;
+      }
+
+      // Successful response with no body (e.g., 204 No Content)
+      return {
+        success: true,
+        data: undefined as T,
+        message: '',
+        metadata: undefined,
+      };
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;

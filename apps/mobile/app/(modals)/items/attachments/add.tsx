@@ -6,11 +6,11 @@ import {type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AttachmentAddOptions,
   AttachmentUploadPreviewCard,
-} from '@/features/attachments/components';
-import {useItemAttachmentUpload} from '@/features/item/detail/attachments/use-item-attachment-upload';
+} from '@/features/attachments';
+import {useItemAttachmentUpload} from '@/features/item';
 import {useSettingsHeader} from '@/hooks';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function ItemAttachmentAddModal() {
   const navigation = useNavigation();

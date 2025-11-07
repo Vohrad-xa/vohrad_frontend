@@ -6,9 +6,7 @@ import {HeaderButton, ThemedView, EmptyState} from '@/components/ui';
 import {Palette} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
-import {AppIcons} from '@/utils';
-import {Icon} from '@/utils/icons';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {AppIcons, Icon, makeStyleFactory} from '@/utils';
 
 export default function ScanModal() {
   const {ds, theme} = useTheme();

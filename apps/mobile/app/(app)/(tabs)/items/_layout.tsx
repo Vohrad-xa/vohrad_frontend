@@ -4,10 +4,9 @@ import {Platform, View, StyleSheet} from 'react-native';
 import {Stack} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {SearchProvider, useSearch} from '@/features/home/search-context';
+import {SearchProvider, useSearch} from '@/features/home';
 import {useTheme, useSidebar} from '@/providers';
-import {AppIcons} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {AppIcons, makeStyleFactory} from '@/utils';
 
 interface SearchChangeEvent {
   nativeEvent: {
