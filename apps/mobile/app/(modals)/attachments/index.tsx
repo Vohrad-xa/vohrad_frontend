@@ -36,13 +36,6 @@ export default function AttachmentsOverviewModal() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () => (
-        <HeaderButton
-          variant="close"
-          onPress={() => router.dismiss()}
-          accessibilityLabel="Close attachments"
-        />
-      ),
       headerRight: canAdd
         ? () => (
             <HeaderButton
@@ -57,10 +50,6 @@ export default function AttachmentsOverviewModal() {
             />
           )
         : undefined,
-      headerStyle:
-        Platform.OS === 'android'
-          ? {backgroundColor: theme.navigationBar}
-          : undefined,
     });
   }, [navigation, router, canAdd, targetId, theme.navigationBar]);
 

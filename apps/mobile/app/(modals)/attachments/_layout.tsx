@@ -10,18 +10,14 @@ export default function AttachmentsModalLayout() {
   const {theme, ds} = useTheme();
   const styles = useStyles(theme, ds);
 
-  const handleClose = () => {
-    router.dismiss();
-  };
-
   return (
     <ScreenLoadingWrapper>
       <Stack
         screenOptions={{
           headerTransparent: Platform.OS === 'ios',
           headerTitleAlign: 'center',
-          contentStyle: styles.container,
           headerBackButtonDisplayMode: 'minimal',
+          contentStyle: styles.container,
           headerStyle:
             Platform.OS === 'android'
               ? {backgroundColor: theme.navigationBar}
@@ -35,7 +31,7 @@ export default function AttachmentsModalLayout() {
             headerLeft: () => (
               <HeaderButton
                 variant="close"
-                onPress={handleClose}
+                onPress={() => router.dismiss()}
                 accessibilityLabel="Close attachments"
               />
             ),
@@ -51,13 +47,6 @@ export default function AttachmentsModalLayout() {
           name="image-preview"
           options={{
             title: 'Preview',
-            headerLeft: () => (
-              <HeaderButton
-                variant="close"
-                onPress={handleClose}
-                accessibilityLabel="Close preview"
-              />
-            ),
           }}
         />
       </Stack>

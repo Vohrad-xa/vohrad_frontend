@@ -75,13 +75,13 @@ const createStyles = makeStyleFactory(
         right: ds.spacing.xs,
       },
       imageSection: {
-        marginBottom: ds.spacing.lg,
+        marginBottom: ds.spacing.md,
       },
       imageContainer: {
-        width: ds.spacing.xxl * 2,
-        height: ds.spacing.xxl * 2,
+        width: ds.spacing.xxxl * 2,
+        height: ds.spacing.xxxl * 2,
         borderRadius: ds.borderRadius.full,
-        backgroundColor: theme.border,
+        backgroundColor: theme.secondbackground,
         justifyContent: 'center',
         alignItems: 'center',
         overflow: 'hidden',
