@@ -38,6 +38,12 @@ export default function AttachmentsModalLayout() {
           }}
         />
         <Stack.Screen
+          name="add"
+          options={{
+            title: 'Add Attachment',
+          }}
+        />
+        <Stack.Screen
           name="images"
           options={{
             title: 'Images',

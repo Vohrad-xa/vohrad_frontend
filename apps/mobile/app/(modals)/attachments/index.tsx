@@ -41,8 +41,8 @@ export default function AttachmentsOverviewModal() {
               variant="add"
               onPress={() =>
                 router.push({
-                  pathname: '/items/attachments/add',
-                  params: {id: targetId},
+                  pathname: '/attachments/add',
+                  params: {targetType, targetId},
                 })
               }
               accessibilityLabel="Add attachment"
@@ -50,7 +50,7 @@ export default function AttachmentsOverviewModal() {
           )
         : undefined,
     });
-  }, [navigation, router, canAdd, targetId, theme.navigationBar]);
+  }, [navigation, router, canAdd, targetType, targetId, theme.navigationBar]);
 
   return (
     <ModalScrollView>

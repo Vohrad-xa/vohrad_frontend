@@ -1,22 +1,30 @@
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useNavigation, useRouter} from 'expo-router';
+import {useNavigation, useLocalSearchParams} from 'expo-router';
 import {ModalScrollView} from '@/components/ui';
 import {type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AttachmentAddOptions,
   AttachmentUploadPreviewCard,
 } from '@/features/attachments';
-import {useItemAttachmentUpload} from '@/features/item';
+import {useAttachmentUpload} from '@/features/attachments/hooks';
 import {useSettingsHeader} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
+import type {AttachmentTargetType} from '@vohrad/store';
 
-export default function ItemAttachmentAddModal() {
+export default function AttachmentAddModal() {
   const navigation = useNavigation();
-  const router = useRouter();
   const {ds, theme} = useTheme();
   const styles = useStyles(ds, theme);
+
+  const params = useLocalSearchParams<{
+    targetType?: AttachmentTargetType;
+    targetId?: string;
+  }>();
+
+  const targetType = (params.targetType as AttachmentTargetType) ?? 'item';
+  const targetId = params.targetId;
 
   const {
     selectFromDevice,
@@ -24,12 +32,8 @@ export default function ItemAttachmentAddModal() {
     savePendingAttachment,
     pendingMetadata,
     hasPending,
-  } = useItemAttachmentUpload();
+  } = useAttachmentUpload(targetType, targetId);
   const saveHandlerRef = useRef<() => Promise<void>>(async () => {});
-
-  const handleClose = useCallback(() => {
-    router.dismiss();
-  }, [router]);
 
   const {triggerSuccess} = useSettingsHeader({
     navigation,
@@ -38,7 +42,6 @@ export default function ItemAttachmentAddModal() {
     onSave: () => {
       void saveHandlerRef.current();
     },
-    onClose: handleClose,
     idleAction: 'none',
   });
 
@@ -51,13 +54,13 @@ export default function ItemAttachmentAddModal() {
     };
   }, [savePendingAttachment, triggerSuccess]);
 
-  const handleTakePicture = useCallback(() => {
+  const handleTakePicture = () => {
     void capturePhoto();
-  }, [capturePhoto]);
+  };
 
-  const handleUploadFiles = useCallback(() => {
+  const handleUploadFiles = () => {
     void selectFromDevice();
-  }, [selectFromDevice]);
+  };
 
   return (
     <ModalScrollView>
