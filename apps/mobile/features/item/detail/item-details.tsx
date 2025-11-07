@@ -5,6 +5,7 @@ import {Card} from '@/components/cards/card';
 import {useTheme} from '@/providers';
 import {AttachmentField} from './attachments/attachment-field';
 import {BasicInfo} from './basic-info';
+import {CategoryField} from './category-field';
 import {DescriptionField} from './description-field';
 import {Locations} from './locations/location-field';
 import {QuantityField} from './quantity-field';
@@ -88,6 +89,12 @@ export function ItemDetails({
       </Card>
 
       <Card>
+        {/* Category field */}
+        <Card.Row onPress={() => {}} accessibilityLabel="View category">
+          <CategoryField key="category" category={item?.category} />
+        </Card.Row>
+        <Card.Divider />
+
         {/* Tracking mode field */}
         <Card.Row
           onPress={handleTrackingModePress}
@@ -100,6 +107,7 @@ export function ItemDetails({
           />
         </Card.Row>
         <Card.Divider />
+
         {/* Specifications field */}
         <Card.Row
           onPress={() => {
