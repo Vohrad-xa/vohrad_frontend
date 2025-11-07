@@ -66,39 +66,42 @@ export function BasicInfo({
   ];
 
   return (
-    <Card withDivider>
-      {fields.map(({label, value, field, placeholder}) => (
-        <View key={field} style={styles.fieldRow}>
-          <ThemedText variant="label" style={styles.fieldLabel}>
-            {label}
-          </ThemedText>
-          <Pressable
-            style={styles.inputContainer}
-            onPress={() => handlePress(field)}
-            disabled={editingField === field || !isEditing}
-          >
-            {editingField === field ? (
-              <ThemedInput
-                variant="value"
-                textAlign="right"
-                borderless
-                value={value ?? ''}
-                autoFocus
-                onBlur={() => setEditingField(null)}
-                onChangeText={(val) => onFieldChange?.(field, val)}
-                placeholder={placeholder}
-              />
-            ) : (
-              <ThemedText
-                variant="value"
-                style={styles.displayText}
-                numberOfLines={1}
-              >
-                {(value ?? '') ? value : placeholder}
-              </ThemedText>
-            )}
-          </Pressable>
-        </View>
+    <Card>
+      {fields.map(({label, value, field, placeholder}, index) => (
+        <React.Fragment key={field}>
+          <View style={styles.fieldRow}>
+            <ThemedText variant="label" style={styles.fieldLabel}>
+              {label}
+            </ThemedText>
+            <Pressable
+              style={styles.inputContainer}
+              onPress={() => handlePress(field)}
+              disabled={editingField === field || !isEditing}
+            >
+              {editingField === field ? (
+                <ThemedInput
+                  variant="value"
+                  textAlign="right"
+                  borderless
+                  value={value ?? ''}
+                  autoFocus
+                  onBlur={() => setEditingField(null)}
+                  onChangeText={(val) => onFieldChange?.(field, val)}
+                  placeholder={placeholder}
+                />
+              ) : (
+                <ThemedText
+                  variant="value"
+                  style={styles.displayText}
+                  numberOfLines={1}
+                >
+                  {(value ?? '') ? value : placeholder}
+                </ThemedText>
+              )}
+            </Pressable>
+          </View>
+          {index < fields.length - 1 && <Card.Divider />}
+        </React.Fragment>
       ))}
     </Card>
   );

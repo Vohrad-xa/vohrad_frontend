@@ -1,123 +1,109 @@
 import React from 'react';
-import {StyleSheet, View, type ViewStyle} from 'react-native';
+import {Pressable, StyleSheet, View, type ViewStyle} from 'react-native';
 import {type DSShape, themeKey, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
+import {Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {Divider} from '../ui/divider';
-import {Icon} from '@/utils/icons';
 
 interface CardProps {
   children: React.ReactNode;
   style?: ViewStyle;
-  withDivider?: boolean;
-  icon?: React.ComponentProps<typeof Icon>['name'];
-  iconSize?: React.ComponentProps<typeof Icon>['size'];
-  iconColorToken?: React.ComponentProps<typeof Icon>['colorToken'];
-  hideChevron?: boolean;
 }
 
-export function Card({
-  children,
-  style,
-  withDivider,
-  icon,
-  iconSize = 'lg',
-  iconColorToken = 'muted',
-  hideChevron = false,
-}: CardProps) {
+interface CardRowProps {
+  children: React.ReactNode;
+  icon?: React.ComponentProps<typeof Icon>['name'];
+  onPress?: () => void;
+  hideChevron?: boolean;
+  accessibilityLabel?: string;
+}
+
+interface CardDividerProps {
+  withIconOffset?: boolean;
+}
+
+export function Card({children, style}: CardProps) {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
 
-  if (withDivider) {
-    const childArray = React.Children.toArray(children);
-    return (
-      <View style={[styles.card, style]}>
-        {icon && (
-          <View style={styles.iconContainer}>
-            <Icon name={icon} size={iconSize} colorToken={iconColorToken} />
-          </View>
-        )}
-        <View style={styles.childContainer}>
-          {childArray.map((child, index) => (
-            <View key={index}>
-              <View>
-                {React.isValidElement(child) &&
-                child.props &&
-                (child.props as any).icon ? (
-                  <View style={styles.rowWithIcon}>
-                    <View style={styles.iconWrapper}>
-                      <Icon
-                        name={(child.props as any).icon}
-                        size="md"
-                        color={theme.secondary}
-                      />
-                    </View>
-                    <View style={styles.content}>{child}</View>
-                    {!hideChevron &&
-                      !(
-                        React.isValidElement(child) &&
-                        child.props &&
-                        (child.props as any).hideChevron
-                      ) && (
-                        <Icon
-                          name="chevron-forward-outline"
-                          colorToken="muted"
-                          style={styles.chevron}
-                        />
-                      )}
-                  </View>
-                ) : (
-                  child
-                )}
-              </View>
-              {index < childArray.length - 1 && (
-                <View style={styles.dividerWrapper}>
-                  <View
-                    style={
-                      icon ||
-                      (React.isValidElement(child) &&
-                        child.props &&
-                        (child.props as any).icon)
-                        ? styles.dividerWithIconOffset
-                        : undefined
-                    }
-                  >
-                    <Divider />
-                  </View>
-                </View>
-              )}
-            </View>
-          ))}
-        </View>
-      </View>
-    );
-  }
-
   return (
     <View style={[styles.card, style]}>
-      {icon && (
-        <View style={styles.iconContainer}>
-          <Icon name={icon} size={iconSize} colorToken={iconColorToken} />
-        </View>
-      )}
       <View style={styles.childContainer}>{children}</View>
     </View>
   );
 }
 
+function CardRow({
+  children,
+  icon,
+  onPress,
+  hideChevron = false,
+  accessibilityLabel,
+}: CardRowProps) {
+  const {ds, theme} = useTheme();
+  const styles = createStyles(ds, theme);
+
+  const content = (
+    <View style={styles.rowWithIcon}>
+      {icon && (
+        <View style={styles.iconWrapper}>
+          <Icon name={icon} size="md" color={theme.secondary} />
+        </View>
+      )}
+      <View style={styles.content}>{children}</View>
+      {!hideChevron && (
+        <Icon
+          name="chevron-forward-outline"
+          colorToken="muted"
+          style={styles.chevron}
+        />
+      )}
+    </View>
+  );
+
+  if (onPress) {
+    return (
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel}
+      >
+        {content}
+      </Pressable>
+    );
+  }
+
+  return content;
+}
+
+function CardDivider({withIconOffset = false}: CardDividerProps) {
+  const {ds, theme} = useTheme();
+  const styles = createStyles(ds, theme);
+
+  return (
+    <View style={styles.dividerWrapper}>
+      <View style={withIconOffset ? styles.dividerWithIconOffset : undefined}>
+        <Divider />
+      </View>
+    </View>
+  );
+}
+
+Card.Row = CardRow;
+Card.Divider = CardDivider;
+
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
-    StyleSheet.create({
+  (ds: DSShape, theme: ThemeShape) => {
+    const iconColumnWidth = 30 + ds.spacing.lg;
+
+    return StyleSheet.create({
       card: {
         backgroundColor: theme.input,
         borderRadius: ds.components.card.borderRadius,
       },
-      iconContainer: {
-        alignItems: 'center',
-        paddingBottom: ds.spacing.md,
-      },
       childContainer: {
-        paddingHorizontal: ds.spacing.xl,
+        paddingHorizontal: ds.spacing.lg,
         paddingVertical: ds.spacing.lg,
       },
       rowWithIcon: {
@@ -125,10 +111,13 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
       },
       iconWrapper: {
+        width: 28,
+        height: 28,
         marginRight: ds.spacing.lg,
         backgroundColor: theme.card,
-        padding: 6,
         borderRadius: ds.spacing.md,
+        justifyContent: 'center',
+        alignItems: 'center',
       },
       content: {
         flex: 1,
@@ -140,8 +129,9 @@ const createStyles = makeStyleFactory(
         paddingVertical: ds.spacing.lg,
       },
       dividerWithIconOffset: {
-        paddingLeft: ds.spacing.xxxl + 2,
+        marginLeft: iconColumnWidth,
       },
-    }),
+    });
+  },
   (ds, theme) => themeKey(theme, ds),
 );

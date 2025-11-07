@@ -1,5 +1,4 @@
 import React, {useCallback, useLayoutEffect} from 'react';
-import {Platform} from 'react-native';
 import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
 import {ModalScrollView, HeaderButton} from '@/components/ui';
 import {

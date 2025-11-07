@@ -162,57 +162,60 @@ export const SpecificationsForm = forwardRef<
   return (
     <View style={{gap: ds.spacing.lg}}>
       {fields.length > 0 && (
-        <Card withDivider>
-          {fields.map((field) => (
-            <View key={field.id} style={styles.row}>
-              {isEditMode && (
-                <Pressable
-                  onPress={() => handleRemoveField(field.id)}
-                  style={styles.minusButton}
-                  hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
+        <Card>
+          {fields.map((field, index) => (
+            <React.Fragment key={field.id}>
+              <View style={styles.row}>
+                {isEditMode && (
+                  <Pressable
+                    onPress={() => handleRemoveField(field.id)}
+                    style={styles.minusButton}
+                    hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
+                  >
+                    <View style={styles.minusCircle}>
+                      <Icon
+                        name="remove-outline"
+                        size="sm"
+                        colorToken="destructiveForeground"
+                      />
+                    </View>
+                  </Pressable>
+                )}
+
+                <View
+                  style={[
+                    styles.inputsContainer,
+                    isEditMode && styles.inputsContainerWithMinus,
+                  ]}
                 >
-                  <View style={styles.minusCircle}>
-                    <Icon
-                      name="remove-outline"
-                      size="sm"
-                      colorToken="destructiveForeground"
-                    />
-                  </View>
-                </Pressable>
-              )}
+                  <ThemedInput
+                    ref={(ref) => {
+                      if (ref) inputRefs.current[field.id] = ref;
+                    }}
+                    variant="label"
+                    textAlign="left"
+                    borderless
+                    value={field.label}
+                    onChangeText={(text) => handleLabelChange(field.id, text)}
+                    placeholder="label"
+                    editable={isEditMode}
+                    // style={styles.labelInput}
+                  />
 
-              <View
-                style={[
-                  styles.inputsContainer,
-                  isEditMode && styles.inputsContainerWithMinus,
-                ]}
-              >
-                <ThemedInput
-                  ref={(ref) => {
-                    if (ref) inputRefs.current[field.id] = ref;
-                  }}
-                  variant="label"
-                  textAlign="left"
-                  borderless
-                  value={field.label}
-                  onChangeText={(text) => handleLabelChange(field.id, text)}
-                  placeholder="label"
-                  editable={isEditMode}
-                  // style={styles.labelInput}
-                />
-
-                <ThemedInput
-                  variant="value"
-                  textAlign="right"
-                  borderless
-                  value={field.value}
-                  onChangeText={(text) => handleValueChange(field.id, text)}
-                  placeholder="value"
-                  editable={isEditMode}
-                  style={styles.valueInput}
-                />
+                  <ThemedInput
+                    variant="value"
+                    textAlign="right"
+                    borderless
+                    value={field.value}
+                    onChangeText={(text) => handleValueChange(field.id, text)}
+                    placeholder="value"
+                    editable={isEditMode}
+                    style={styles.valueInput}
+                  />
+                </View>
               </View>
-            </View>
+              {index < fields.length - 1 && <Card.Divider />}
+            </React.Fragment>
           ))}
         </Card>
       )}

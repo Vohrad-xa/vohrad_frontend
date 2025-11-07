@@ -50,14 +50,14 @@ export default function LocationModal() {
             <ThemedText variant="value" style={styles.locationTitle}>
               {location.name}
             </ThemedText>
-            <Card withDivider>
+            <Card>
               <View style={styles.fieldRow}>
                 <ThemedText variant="label" style={styles.fieldLabel}>
                   Code
                 </ThemedText>
                 <ThemedText variant="value">{location.code}</ThemedText>
               </View>
-
+              <Card.Divider />
               <View style={styles.fieldRow}>
                 <ThemedText variant="label" style={styles.fieldLabel}>
                   Quantity

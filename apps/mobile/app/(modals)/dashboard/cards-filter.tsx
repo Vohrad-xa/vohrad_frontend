@@ -3,7 +3,7 @@ import {StyleSheet, Platform} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ModalScrollView, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {FilterContent} from '@/features/home';
+import {FilterContent} from '@/features/dashboard';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 

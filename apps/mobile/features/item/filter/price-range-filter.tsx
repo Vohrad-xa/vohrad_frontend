@@ -28,16 +28,14 @@ export function PriceRangeFilter({
 
   return (
     <View style={styles.section}>
-      <ThemedText variant="heading" style={styles.sectionTitle}>
+      <ThemedText variant="value" style={styles.sectionTitle}>
         Pice Range
       </ThemedText>
       <Card>
         <View style={styles.sliderContainer}>
           <View style={styles.labelRow}>
-            <ThemedText variant="secondary" style={styles.label}>
-              Min
-            </ThemedText>
-            <ThemedText variant="secondary" style={styles.value}>
+            <ThemedText variant="label">Min</ThemedText>
+            <ThemedText variant="label">
               €{priceMin?.toFixed(2) ?? minLimit.toFixed(2)}
             </ThemedText>
           </View>
@@ -52,10 +50,8 @@ export function PriceRangeFilter({
 
         <View style={styles.sliderContainer}>
           <View style={styles.labelRow}>
-            <ThemedText variant="label" style={styles.label}>
-              Max
-            </ThemedText>
-            <ThemedText variant="secondary" style={styles.value}>
+            <ThemedText variant="label">Max</ThemedText>
+            <ThemedText variant="label">
               €{priceMax?.toFixed(2) ?? maxLimit.toFixed(2)}
             </ThemedText>
           </View>
@@ -73,7 +69,7 @@ export function PriceRangeFilter({
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       section: {
         gap: ds.spacing.sm,
@@ -88,12 +84,6 @@ const createStyles = makeStyleFactory(
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-      },
-      label: {
-        color: theme.muted,
-      },
-      value: {
-        color: theme.text,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

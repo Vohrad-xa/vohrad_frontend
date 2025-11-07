@@ -1,5 +1,6 @@
 import React, {useCallback} from 'react';
 import {View} from 'react-native';
+import {useRouter} from 'expo-router';
 import {Card} from '@/components/cards/card';
 import {useTheme} from '@/providers';
 import {AttachmentField} from './attachments/attachment-field';
@@ -9,7 +10,7 @@ import {Locations} from './locations/location-field';
 import {QuantityField} from './quantity-field';
 import {Specifications} from './specifications/specifications-field';
 import {StatusField} from './status-field';
-import {TrackingModeField} from './tracking-mode-field';
+import {TrackingModeField, useTrackingModePress} from './tracking-mode-field';
 import type {UseItemFormReturn} from './use-item-form';
 import type {ItemDetail} from '@vohrad/types';
 
@@ -29,6 +30,7 @@ export function ItemDetails({
   item,
 }: ItemDetailsProps): React.JSX.Element {
   const {ds} = useTheme();
+  const router = useRouter();
 
   const {
     formValues,
@@ -38,6 +40,11 @@ export function ItemDetails({
     handleStatusChange,
     handleTrackingModeChange,
   } = formState;
+
+  const handleTrackingModePress = useTrackingModePress(
+    optimisticTrackingMode,
+    handleTrackingModeChange,
+  );
 
   const handleBasicInfoChange = useCallback(
     (field: 'name' | 'code' | 'serial_number', value: string) => {
@@ -66,13 +73,13 @@ export function ItemDetails({
       />
 
       {/* Status and Quantity */}
-      <Card withDivider>
+      <Card>
         <StatusField
           key="status"
           isActive={optimisticStatus}
           onValueChange={handleStatusChange}
         />
-
+        <Card.Divider />
         <QuantityField
           key="quantity"
           field={{key: 'quantity', label: 'Quantity', value: quantity ?? '0'}}
@@ -80,22 +87,54 @@ export function ItemDetails({
         />
       </Card>
 
-      <Card withDivider>
+      <Card>
         {/* Tracking mode field */}
-        <TrackingModeField
-          key="tracking-mode"
-          trackingMode={optimisticTrackingMode}
-          onValueChange={handleTrackingModeChange}
-        />
-
+        <Card.Row
+          onPress={handleTrackingModePress}
+          accessibilityLabel="Select tracking mode"
+        >
+          <TrackingModeField
+            key="tracking-mode"
+            trackingMode={optimisticTrackingMode}
+            onValueChange={handleTrackingModeChange}
+          />
+        </Card.Row>
+        <Card.Divider />
         {/* Specifications field */}
-        <Specifications key="specifications" itemId={itemId} />
-
+        <Card.Row
+          onPress={() => {
+            router.push('/items/specifications');
+          }}
+          accessibilityLabel="View specifications"
+        >
+          <Specifications key="specifications" itemId={itemId} />
+        </Card.Row>
+        <Card.Divider />
         {/* Attachments field */}
-        <AttachmentField key="attachments" itemId={itemId} />
-
+        <Card.Row
+          onPress={() => {
+            router.push({
+              pathname: '/attachments',
+              params: {targetType: 'item', targetId: itemId},
+            });
+          }}
+          accessibilityLabel="View attachments"
+        >
+          <AttachmentField key="attachments" itemId={itemId} />
+        </Card.Row>
+        <Card.Divider />
         {/* Locations field */}
-        <Locations key="locations" itemId={itemId} item={item ?? undefined} />
+        <Card.Row
+          onPress={() => {
+            router.push({
+              pathname: '/items/location',
+              params: {id: itemId, itemData: JSON.stringify(item)},
+            });
+          }}
+          accessibilityLabel="View locations"
+        >
+          <Locations key="locations" itemId={itemId} item={item ?? undefined} />
+        </Card.Row>
       </Card>
 
       {/* Description */}

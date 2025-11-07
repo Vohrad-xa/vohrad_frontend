@@ -1,10 +1,9 @@
 import React from 'react';
-import {Keyboard, Platform, Pressable, StyleSheet, View} from 'react-native';
+import {Keyboard, Platform, StyleSheet, View} from 'react-native';
 import {useActionSheet} from '@expo/react-native-action-sheet';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
-import {Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import type {TrackingMode} from '@vohrad/types';
 
@@ -25,18 +24,18 @@ const TRACKING_MODE_LABEL_LOOKUP = TRACKING_MODE_OPTIONS.reduce(
 interface TrackingModeFieldProps {
   trackingMode?: TrackingMode;
   onValueChange?: (value: TrackingMode) => void;
+  onPressHandler?: (handler: () => void) => void;
 }
 
-const TrackingModeFieldComponent = ({
-  trackingMode,
-  onValueChange,
-}: TrackingModeFieldProps) => {
-  const {ds, theme, scheme: _scheme} = useTheme();
+export function useTrackingModePress(
+  trackingMode?: TrackingMode,
+  onValueChange?: (value: TrackingMode) => void,
+) {
+  const {ds, theme} = useTheme();
   const {triggerHaptic} = useHaptic();
   const {showActionSheetWithOptions} = useActionSheet();
-  const styles = createStyles(ds, theme);
 
-  const handleSelectTrackingMode = () => {
+  return () => {
     Keyboard.dismiss();
 
     const options = TRACKING_MODE_OPTIONS.map((option) => option.label);
@@ -80,29 +79,25 @@ const TrackingModeFieldComponent = ({
       },
     );
   };
+}
+
+const TrackingModeFieldComponent = ({
+  trackingMode,
+  onValueChange: _onValueChange,
+  onPressHandler: _onPressHandler,
+}: TrackingModeFieldProps) => {
+  const {ds, theme: _theme} = useTheme();
+  const styles = createStyles(ds, _theme);
 
   return (
-    <Pressable
-      style={styles.fieldRow}
-      onPress={handleSelectTrackingMode}
-      accessibilityRole="button"
-      accessibilityLabel="Select tracking mode"
-    >
+    <View style={styles.fieldRow}>
       <ThemedText variant="label" style={styles.fieldLabel}>
         Tracking Mode
       </ThemedText>
-      <View style={styles.trackingModeValue}>
-        <ThemedText variant="value">
-          {TRACKING_MODE_LABEL_LOOKUP[trackingMode ?? 'abstract'] ?? 'Abstract'}
-        </ThemedText>
-        <Icon
-          name="chevron-forward-outline"
-          size="md"
-          colorToken="muted"
-          style={styles.chevron}
-        />
-      </View>
-    </Pressable>
+      <ThemedText variant="value">
+        {TRACKING_MODE_LABEL_LOOKUP[trackingMode ?? 'abstract'] ?? 'Abstract'}
+      </ThemedText>
+    </View>
   );
 };
 
@@ -111,22 +106,17 @@ TrackingModeFieldComponent.displayName = 'TrackingModeField';
 export const TrackingModeField = React.memo(TrackingModeFieldComponent);
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       fieldRow: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        flex: 1,
       },
       fieldLabel: {
         flex: 1,
       },
-      trackingModeValue: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: ds.spacing.sm,
-      },
-      chevron: {},
     }),
   (ds, theme) => themeKey(theme, ds),
 );

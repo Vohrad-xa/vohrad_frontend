@@ -17,10 +17,10 @@ export function StatusFilter({statuses, toggleStatus}: StatusFilterProps) {
 
   return (
     <View style={styles.section}>
-      <ThemedText variant="heading" style={styles.sectionTitle}>
+      <ThemedText variant="value" style={styles.sectionTitle}>
         Status
       </ThemedText>
-      <Card withDivider>
+      <Card>
         <View style={styles.filterRow}>
           <ThemedText variant="label">Active</ThemedText>
           <Toggle
@@ -29,7 +29,7 @@ export function StatusFilter({statuses, toggleStatus}: StatusFilterProps) {
             accessibilityLabel="Filter active items"
           />
         </View>
-
+        <Card.Divider />
         <View style={styles.filterRow}>
           <ThemedText variant="label">Inactive</ThemedText>
           <Toggle

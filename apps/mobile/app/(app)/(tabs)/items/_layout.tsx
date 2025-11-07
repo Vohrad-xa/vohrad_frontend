@@ -4,7 +4,7 @@ import {Platform, View, StyleSheet} from 'react-native';
 import {Stack} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {SearchProvider, useSearch} from '@/features/home';
+import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme, useSidebar} from '@/providers';
 import {AppIcons, makeStyleFactory} from '@/utils';
 

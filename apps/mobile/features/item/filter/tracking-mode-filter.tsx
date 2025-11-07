@@ -21,10 +21,10 @@ export function TrackingModeFilter({
 
   return (
     <View style={styles.section}>
-      <ThemedText variant="heading" style={styles.sectionTitle}>
+      <ThemedText variant="value" style={styles.sectionTitle}>
         Tracking Mode
       </ThemedText>
-      <Card withDivider>
+      <Card>
         <View style={styles.filterRow}>
           <ThemedText variant="label">Abstract</ThemedText>
           <Toggle
@@ -33,7 +33,7 @@ export function TrackingModeFilter({
             accessibilityLabel="Filter abstract tracking mode"
           />
         </View>
-
+        <Card.Divider />
         <View style={styles.filterRow}>
           <ThemedText variant="label">Standard</ThemedText>
           <Toggle
@@ -42,7 +42,7 @@ export function TrackingModeFilter({
             accessibilityLabel="Filter standard tracking mode"
           />
         </View>
-
+        <Card.Divider />
         <View style={styles.filterRow}>
           <ThemedText variant="label">Serialized</ThemedText>
           <Toggle
