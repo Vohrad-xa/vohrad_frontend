@@ -12,10 +12,17 @@ import {API_ENDPOINTS} from './endpoints';
 
 export class ItemApi {
   async getItems(
-    page: number,
-    size: number,
+    urlOrPage: string | number,
+    size?: number,
     odataFilter?: string,
   ): Promise<ApiResponse<PaginatedResponse<Item>>> {
+    // If it's a URL string, use it directly
+    if (typeof urlOrPage === 'string') {
+      return httpClient.get<PaginatedResponse<Item>>(urlOrPage);
+    }
+
+    // Otherwise, build the URL from page/size/filter
+    const page = urlOrPage;
     const filterParam = odataFilter
       ? `&odata_filter=${encodeURIComponent(odataFilter)}`
       : '';
@@ -25,19 +32,33 @@ export class ItemApi {
   }
 
   async searchItems(
-    query: string,
-    page: number,
-    size: number,
+    urlOrQuery: string,
+    page?: number,
+    size?: number,
   ): Promise<ApiResponse<PaginatedResponse<Item>>> {
+    // If it's a URL string, use it directly
+    if (urlOrQuery.startsWith('http') || urlOrQuery.startsWith('/items')) {
+      return httpClient.get<PaginatedResponse<Item>>(urlOrQuery);
+    }
+
+    // Otherwise, build the URL from query/page/size
+    const query = urlOrQuery;
     return httpClient.get<PaginatedResponse<Item>>(
       `${API_ENDPOINTS.ITEMS.SEARCH}?q=${encodeURIComponent(query)}&page=${page}&size=${size}`,
     );
   }
 
   async getActiveItems(
-    page: number,
-    size: number,
+    urlOrPage: string | number,
+    size?: number,
   ): Promise<ApiResponse<PaginatedResponse<Item>>> {
+    // If it's a URL string, use it directly
+    if (typeof urlOrPage === 'string') {
+      return httpClient.get<PaginatedResponse<Item>>(urlOrPage);
+    }
+
+    // Otherwise, build the URL from page/size
+    const page = urlOrPage;
     return httpClient.get<PaginatedResponse<Item>>(
       `${API_ENDPOINTS.ITEMS.ACTIVE}?page=${page}&size=${size}`,
     );

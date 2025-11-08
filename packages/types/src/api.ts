@@ -20,9 +20,19 @@ export interface TokenResponse {
   refresh_expires_in: number;
 }
 
+export interface PaginationLinks {
+  self: string | null;
+  first: string | null;
+  prev: string | null;
+  next: string | null;
+  last: string | null;
+}
+
 export interface ApiResponseMetadata {
   timestamp?: string;
   correlation_id?: string;
+  request_id?: string;
+  api_version?: string;
   method?: string;
   url?: string;
   client_ip?: string | null;
@@ -33,6 +43,7 @@ export interface ApiResponseMetadata {
   total_pages?: number;
   has_next?: boolean;
   has_previous?: boolean;
+  links?: PaginationLinks;
   [key: string]: unknown;
 }
 

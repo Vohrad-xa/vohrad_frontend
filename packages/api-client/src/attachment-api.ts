@@ -6,6 +6,7 @@ import type {
   PaginatedResponse,
   AttachmentTargetType,
   AttachmentKind,
+  ApiResponse,
 } from '@vohrad/types';
 
 export type ListAttachmentsParams = {
@@ -27,8 +28,15 @@ export class AttachmentApi {
   }
 
   async listAttachments(
-    params: ListAttachmentsParams = {},
-  ): Promise<PaginatedResponse<ItemAttachment>> {
+    urlOrParams: string | ListAttachmentsParams = {},
+  ): Promise<ApiResponse<PaginatedResponse<ItemAttachment>>> {
+    // If it's a URL string, use it directly
+    if (typeof urlOrParams === 'string') {
+      return httpClient.get<PaginatedResponse<ItemAttachment>>(urlOrParams);
+    }
+
+    // Otherwise, build the URL from params
+    const params = urlOrParams;
     const search = new URLSearchParams();
     if (params.targetType) {
       search.set('target_type', params.targetType);
@@ -53,9 +61,7 @@ export class AttachmentApi {
     const endpoint = queryString
       ? `${API_ENDPOINTS.ATTACHMENTS.LIST}?${queryString}`
       : API_ENDPOINTS.ATTACHMENTS.LIST;
-    const response =
-      await httpClient.get<PaginatedResponse<ItemAttachment>>(endpoint);
-    return response.data;
+    return httpClient.get<PaginatedResponse<ItemAttachment>>(endpoint);
   }
 
   async deleteAttachment(

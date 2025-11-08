@@ -16,12 +16,17 @@ export class HttpClient {
   }
 
   async makeRequest<T>(
-    endpoint: string,
+    urlOrEndpoint: string,
     options: RequestInit = {},
     isRetry = false,
   ): Promise<ApiResponse<T>> {
     const loadingToken = loadingManager.startRequest();
-    const url = resolveApiUrl(endpoint);
+
+    // Detect if it's a full URL or relative endpoint
+    const isFullUrl =
+      urlOrEndpoint.startsWith('http://') ||
+      urlOrEndpoint.startsWith('https://');
+    const url = isFullUrl ? urlOrEndpoint : resolveApiUrl(urlOrEndpoint);
     const apiConfig = getApiConfig();
 
     const incomingHeaders = (options.headers as Record<string, string>) || {};
@@ -70,15 +75,15 @@ export class HttpClient {
       // Intercept 401 responses and attempt token refresh
       if (response.status === 401 && !isRetry && this.onTokenRefresh) {
         const isAuthEndpoint =
-          endpoint.includes('/auth/login') ||
-          endpoint.includes('/auth/refresh');
+          urlOrEndpoint.includes('/auth/login') ||
+          urlOrEndpoint.includes('/auth/refresh');
 
         if (!isAuthEndpoint) {
           try {
             await this.onTokenRefresh();
 
             // Retry original request with new token
-            return this.makeRequest(endpoint, options, true);
+            return this.makeRequest(urlOrEndpoint, options, true);
           } catch (_refreshError) {
             // Refresh failed, let original 401 error propagate
             // The refresh handler should already handle logout
@@ -180,8 +185,8 @@ export class HttpClient {
   }
 
   // Convenience methods for common HTTP verbs
-  async get<T>(endpoint: string): Promise<ApiResponse<T>> {
-    return this.makeRequest<T>(endpoint, {method: 'GET'});
+  async get<T>(urlOrEndpoint: string): Promise<ApiResponse<T>> {
+    return this.makeRequest<T>(urlOrEndpoint, {method: 'GET'});
   }
 
   async post<T>(endpoint: string, body?: unknown): Promise<ApiResponse<T>> {
@@ -217,12 +222,20 @@ export class HttpClient {
     url: string,
     config: RequestInit,
   ): Promise<Response> {
+    // If external signal provided, use it; otherwise create internal timeout controller
+    const externalSignal = config.signal;
     const controller = new AbortController();
     const timeoutMs = 15000; // 15 second timeout
 
+    // Combine external signal with timeout
     const timeoutId = setTimeout(() => {
       controller.abort();
     }, timeoutMs);
+
+    // If external signal aborts, abort internal controller too
+    if (externalSignal) {
+      externalSignal.addEventListener('abort', () => controller.abort());
+    }
 
     try {
       const response = await fetch(url, {
@@ -234,6 +247,11 @@ export class HttpClient {
       return response;
     } catch (error) {
       clearTimeout(timeoutId);
+
+      // Check if external abort (component unmount)
+      if (externalSignal?.aborted) {
+        throw new Error('Request cancelled');
+      }
 
       // Distinguish timeout from other network errors
       if (

@@ -17,6 +17,7 @@ export type {
   ApiResponse,
   ApiResponseMetadata,
   PaginatedResponse,
+  PaginationLinks,
 } from './api';
 export type {
   Tenant,
