@@ -3,7 +3,7 @@ import type {OpaqueColorValue, StyleProp, TextStyle} from 'react-native';
 import {Platform} from 'react-native';
 import {Ionicons, FontAwesome} from '@expo/vector-icons';
 import {type TokenName} from '@/constants/colors';
-import {useTheme} from '@/providers';
+import {useTheme} from '@/providers/theme-provider';
 
 export type IconName =
   // Navigation & UI
