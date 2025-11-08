@@ -10,12 +10,14 @@ import {AppIcons, SFSymbols} from '@/utils';
 const TAB_ITEMS: TabItem[] = [
   {name: 'dashboard', label: 'Dashboard', icon: AppIcons.navigation.home},
   {name: 'items', label: 'Items', icon: AppIcons.inventory.itemsSecondary},
+  {name: 'vault', label: 'Vault', icon: AppIcons.navigation.vault},
   {name: 'events', label: 'Events', icon: AppIcons.navigation.events},
 ];
 
 const iOS_SF_SYMBOLS = {
   dashboard: SFSymbols.houseFill,
   items: SFSymbols.folderFill,
+  vault: SFSymbols.lockFill,
   events: SFSymbols.bellFill,
 } as const;
 

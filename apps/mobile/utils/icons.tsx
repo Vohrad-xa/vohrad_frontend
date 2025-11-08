@@ -173,6 +173,7 @@ export const AppIcons = {
     scan: 'barcode-outline' as IconName,
     profile: 'person-outline' as IconName,
     events: 'notifications' as IconName,
+    vault: 'lock-closed' as IconName,
     filter: 'filter-outline' as IconName,
     back: Platform.select({
       ios: 'chevron-back-outline',

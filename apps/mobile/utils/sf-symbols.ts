@@ -8,6 +8,8 @@ export const SFSymbols = {
   folder: 'folder',
   folderFill: 'folder.fill',
   folderBadge: 'folder.badge',
+  lock: 'lock',
+  lockFill: 'lock.fill',
 } as const;
 
 export type SFSymbolName = (typeof SFSymbols)[keyof typeof SFSymbols];
