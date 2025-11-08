@@ -126,7 +126,11 @@ export function ItemDetails({
           onPress={() => {
             router.push({
               pathname: '/(app)/(tabs)/vault',
-              params: {targetType: 'item', targetId: itemId},
+              params: {
+                filterTargetType: 'item',
+                filterTargetId: itemId,
+                filterItemName: item?.name,
+              },
             });
           }}
           accessibilityLabel="View attachments"

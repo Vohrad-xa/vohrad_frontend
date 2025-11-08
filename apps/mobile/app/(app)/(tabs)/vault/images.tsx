@@ -1,6 +1,6 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {StyleSheet, View, FlatList} from 'react-native';
-import {useAttachmentManager, useAttachmentsByTarget} from '@vohrad/store';
+import {useAttachmentsListManager, useAttachmentManager} from '@vohrad/store';
 import {useLocalSearchParams, useRouter, useNavigation} from 'expo-router';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {SelectableImageTile, useImageSelection} from '@/features/attachments';
@@ -20,16 +20,30 @@ export default function VaultImagesScreen() {
   const router = useRouter();
   const navigation = useNavigation();
   const params = useLocalSearchParams<{
-    targetType?: AttachmentTargetType;
-    targetId?: string;
+    filterTargetType?: AttachmentTargetType;
+    filterTargetId?: string;
+    filterItemName?: string;
   }>();
 
-  const targetType = (params.targetType as AttachmentTargetType) ?? 'item';
-  const targetId = typeof params.targetId === 'string' ? params.targetId : null;
+  const filterTargetType = params.filterTargetType as AttachmentTargetType | undefined;
+  const filterTargetId = params.filterTargetId;
 
-  const attachments = useAttachmentsByTarget(targetType, targetId);
+  const {attachments, setFilters} = useAttachmentsListManager();
+
+  // Sync filters with URL params (backend OData filtering), always filter for images
+  useEffect(() => {
+    const newFilters: {
+      targetType?: AttachmentTargetType;
+      targetId?: string;
+      kind: 'image';
+    } = {kind: 'image'};
+    if (filterTargetType) newFilters.targetType = filterTargetType;
+    if (filterTargetId) newFilters.targetId = filterTargetId;
+    setFilters(newFilters);
+  }, [filterTargetType, filterTargetId, setFilters]);
+
   const imageAttachments = useImageAttachments(attachments);
-  const {deleteAttachment} = useAttachmentManager(targetType, targetId);
+  const {deleteAttachment} = useAttachmentManager(filterTargetType, filterTargetId);
 
   const {
     isSelectionMode,
@@ -43,24 +57,26 @@ export default function VaultImagesScreen() {
 
   const handleImagePress = useCallback(
     async (attachment: ImageAttachmentItem) => {
-      if (!targetId) {
-        return;
-      }
-
       if (isSelectionMode) {
         toggleSelection(attachment);
       } else {
+        const previewParams: {
+          attachmentId: string;
+          filterTargetType?: AttachmentTargetType;
+          filterTargetId?: string;
+        } = {
+          attachmentId: attachment.id,
+        };
+        if (filterTargetType) previewParams.filterTargetType = filterTargetType;
+        if (filterTargetId) previewParams.filterTargetId = filterTargetId;
+
         router.push({
           pathname: '/(modals)/preview',
-          params: {
-            targetType,
-            targetId,
-            attachmentId: attachment.id,
-          },
+          params: previewParams,
         });
       }
     },
-    [targetId, targetType, router, isSelectionMode, toggleSelection],
+    [filterTargetId, filterTargetType, router, isSelectionMode, toggleSelection],
   );
 
   const handleSelect = useCallback(() => {
