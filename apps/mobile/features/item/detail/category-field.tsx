@@ -4,9 +4,10 @@ import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
+import type {Category} from '@vohrad/types';
 
 interface CategoryFieldProps {
-  category?: string | null;
+  category?: Category | null;
 }
 
 const CategoryFieldComponent = ({category}: CategoryFieldProps) => {
@@ -18,7 +19,7 @@ const CategoryFieldComponent = ({category}: CategoryFieldProps) => {
       <ThemedText variant="label" style={styles.fieldLabel}>
         Category
       </ThemedText>
-      <ThemedText variant="value">{category ?? 'No Category'}</ThemedText>
+      <ThemedText variant="value">{category?.name ?? 'No Category'}</ThemedText>
     </View>
   );
 };

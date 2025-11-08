@@ -42,10 +42,16 @@ export interface ItemAttachment {
   created_at?: string;
   updated_at?: string;
   description?: string | null;
-  category?: string | null;
+  category?: string | null; // Note: This is for attachment categorization, not item category
   user_id?: string | null;
   deleted_at?: string | null;
   kind?: string | null;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  path?: string | null;
 }
 
 type ItemRelationIdentifiers = {
@@ -65,7 +71,7 @@ type ItemDescriptiveFields = ItemRelationIdentifiers & {
   specifications?: ItemSpecifications;
   tracking_change_reason?: string | null;
   category_id?: string | null;
-  category?: string | null;
+  category?: Category | null;
 };
 
 type ItemMutableFields = ItemDescriptiveFields & {
