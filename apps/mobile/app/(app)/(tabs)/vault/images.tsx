@@ -1,8 +1,7 @@
 import React, {useCallback} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, FlatList} from 'react-native';
 import {useAttachmentManager, useAttachmentsByTarget} from '@vohrad/store';
 import {useLocalSearchParams, useRouter, useNavigation} from 'expo-router';
-import {ModalFlatList} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {SelectableImageTile, useImageSelection} from '@/features/attachments';
 import {
@@ -15,7 +14,7 @@ import {useTheme} from '@/providers';
 import {showConfirmAlert, makeStyleFactory} from '@/utils';
 import type {AttachmentTargetType} from '@vohrad/store';
 
-export default function AttachmentImagesModal() {
+export default function VaultImagesScreen() {
   const {ds, theme} = useTheme();
   const styles = useStyles(ds, theme);
   const router = useRouter();
@@ -52,7 +51,7 @@ export default function AttachmentImagesModal() {
         toggleSelection(attachment);
       } else {
         router.push({
-          pathname: '/(modals)/attachments/image-preview',
+          pathname: '/(modals)/preview',
           params: {
             targetType,
             targetId,
@@ -112,7 +111,7 @@ export default function AttachmentImagesModal() {
 
   return (
     <View style={styles.container}>
-      <ModalFlatList
+      <FlatList
         data={imageAttachments}
         keyExtractor={(attachment) => attachment.id}
         numColumns={IMAGE_GRID_COLUMNS}
@@ -133,7 +132,7 @@ export default function AttachmentImagesModal() {
 }
 
 const useStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
@@ -143,7 +142,7 @@ const useStyles = makeStyleFactory(
       },
       listContent: {
         paddingHorizontal: 0,
-        paddingTop: 0,
+        paddingTop: ds.spacing.lg,
         paddingBottom: 0,
       },
     }),

@@ -19,7 +19,7 @@ export default function ModalsLayout() {
       <Stack.Screen name="dashboard/cards-filter" options={{title: 'Filter'}} />
       <Stack.Screen name="scan/index" options={{title: 'Scan'}} />
       <Stack.Screen name="items" options={{title: 'Items'}} />
-      <Stack.Screen name="attachments" options={{title: 'Attachments'}} />
+      <Stack.Screen name="preview" options={{title: 'Preview'}} />
     </Stack>
   );
 }

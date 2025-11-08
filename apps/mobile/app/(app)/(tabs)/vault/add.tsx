@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useNavigation, useLocalSearchParams} from 'expo-router';
-import {ModalScrollView} from '@/components/ui';
+import {RefreshableScrollView} from '@/components/ui';
 import {type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AttachmentAddOptions,
@@ -13,7 +13,7 @@ import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 import type {AttachmentTargetType} from '@vohrad/store';
 
-export default function AttachmentAddModal() {
+export default function VaultAddScreen() {
   const navigation = useNavigation();
   const {ds, theme} = useTheme();
   const styles = useStyles(ds, theme);
@@ -63,7 +63,11 @@ export default function AttachmentAddModal() {
   };
 
   return (
-    <ModalScrollView>
+    <RefreshableScrollView
+      bounces
+      showsVerticalScrollIndicator={false}
+      contentInsetAdjustmentBehavior="automatic"
+    >
       <View style={styles.contentContainer}>
         <AttachmentAddOptions
           onTakePicture={handleTakePicture}
@@ -77,7 +81,7 @@ export default function AttachmentAddModal() {
           />
         )}
       </View>
-    </ModalScrollView>
+    </RefreshableScrollView>
   );
 }
 
@@ -85,6 +89,8 @@ const useStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       contentContainer: {
+        flex: 1,
+        padding: ds.spacing.lg,
         gap: ds.spacing.xl,
       },
     }),

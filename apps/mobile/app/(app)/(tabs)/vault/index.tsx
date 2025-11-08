@@ -1,48 +1,69 @@
 import React, {useCallback, useLayoutEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants';
-import {useRouter, useNavigation} from 'expo-router';
-import {HeaderButton} from '@/components/ui';
-import {useSearch} from '@/features/dashboard';
+import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
+import {RefreshableScrollView, HeaderButton} from '@/components/ui';
+import {
+  AttachmentsOverview,
+  useAttachmentsOverview,
+} from '@/features/attachments';
 import {useTheme} from '@/providers';
-import {AppIcons, makeStyleFactory} from '@/utils';
-import {ThemedText} from '@/components/ui';
+import type {AttachmentTargetType} from '@vohrad/store';
 
 export default function VaultScreen() {
-  const {ds, theme} = useTheme();
   const router = useRouter();
   const navigation = useNavigation();
-  const styles = createStyles(ds, theme);
-  const {searchQuery} = useSearch();
+  const {theme} = useTheme();
+  const params = useLocalSearchParams<{
+    targetType?: AttachmentTargetType;
+    targetId?: string;
+  }>();
+
+  const targetType = (params.targetType as AttachmentTargetType) ?? 'item';
+  const targetId =
+    typeof params.targetId === 'string' ? params.targetId : undefined;
+
+  const {counts} = useAttachmentsOverview(targetType, targetId);
+
+  const handleImagesPress = useCallback(() => {
+    if (!targetId) return;
+    router.push({
+      pathname: '/(app)/(tabs)/vault/images',
+      params: {targetType, targetId},
+    });
+  }, [router, targetType, targetId]);
+
+  const canAdd = targetType === 'item' && targetId;
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <HeaderButton
-          icon={AppIcons.navigation.filter}
-          accessibilityLabel="Filter vault"
-          iconSize="xl"
-          onPress={() => {
-            // Filter functionality placeholder
-          }}
-        />
-      ),
+      headerRight: canAdd
+        ? () => (
+            <HeaderButton
+              variant="add"
+              onPress={() =>
+                router.push({
+                  pathname: '/(app)/(tabs)/vault/add',
+                  params: {targetType, targetId},
+                })
+              }
+              accessibilityLabel="Add attachment"
+            />
+          )
+        : undefined,
     });
-  }, [navigation, router]);
+  }, [navigation, router, canAdd, targetType, targetId, theme.navigationBar]);
 
   return (
-    <View style={styles.container}>
-      <ThemedText variant="body">Vault content coming soon...</ThemedText>
-    </View>
+    <RefreshableScrollView
+      bounces
+      showsVerticalScrollIndicator={false}
+      contentInsetAdjustmentBehavior="automatic"
+    >
+      <AttachmentsOverview
+        counts={counts}
+        onTilePress={{
+          image: handleImagesPress,
+        }}
+      />
+    </RefreshableScrollView>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-      },
-    }),
-  (ds, theme) => `${themeKey(theme, ds)}`,
-);

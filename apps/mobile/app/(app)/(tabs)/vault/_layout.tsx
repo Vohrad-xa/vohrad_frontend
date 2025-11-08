@@ -49,7 +49,6 @@ function VaultStack() {
         <Stack.Screen
           name="index"
           options={{
-            headerBackButtonDisplayMode: 'minimal',
             headerTitle: 'Vault',
             headerLeft: () => (
               <HeaderButton
@@ -63,8 +62,23 @@ function VaultStack() {
               headerIconColor: theme.text,
               placement: 'automatic',
               placeholder: 'Search...',
+              allowToolbarIntegration: true,
               onChangeText: handleSearchChange,
             },
+          }}
+        />
+        <Stack.Screen
+          name="add"
+          options={{
+            headerTitle: 'Add Attachment',
+            headerBackButtonDisplayMode: 'minimal',
+          }}
+        />
+        <Stack.Screen
+          name="images"
+          options={{
+            headerTitle: 'Images',
+            headerBackButtonDisplayMode: 'minimal',
           }}
         />
       </Stack>

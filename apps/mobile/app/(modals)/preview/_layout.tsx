@@ -1,3 +1,4 @@
+import {useCallback} from 'react';
 import {Platform, StyleSheet} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
@@ -5,52 +6,43 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
-export default function AttachmentsModalLayout() {
+export default function PreviewModalLayout() {
+  const {ds, theme} = useTheme();
   const router = useRouter();
-  const {theme, ds} = useTheme();
-  const styles = useStyles(theme, ds);
+  const styles = createStyles(ds, theme);
+
+  const handleClose = useCallback(() => {
+    router.dismiss();
+  }, [router]);
+
+  const CloseButton = useCallback(
+    () => (
+      <HeaderButton
+        variant="close"
+        onPress={handleClose}
+        accessibilityLabel="Close preview"
+      />
+    ),
+    [handleClose],
+  );
 
   return (
     <ScreenLoadingWrapper>
       <Stack
         screenOptions={{
+          headerShadowVisible: false,
           headerTransparent: Platform.OS === 'ios',
-          headerTitleAlign: 'center',
-          headerBackButtonDisplayMode: 'minimal',
-          contentStyle: styles.container,
+          headerLeft: CloseButton,
           headerStyle:
             Platform.OS === 'android'
               ? {backgroundColor: theme.navigationBar}
               : undefined,
+          headerTitleAlign: 'center',
+          contentStyle: styles.container,
         }}
       >
         <Stack.Screen
           name="index"
-          options={{
-            title: 'Attachments',
-            headerLeft: () => (
-              <HeaderButton
-                variant="close"
-                onPress={() => router.dismiss()}
-                accessibilityLabel="Close attachments"
-              />
-            ),
-          }}
-        />
-        <Stack.Screen
-          name="add"
-          options={{
-            title: 'Add Attachment',
-          }}
-        />
-        <Stack.Screen
-          name="images"
-          options={{
-            title: 'Images',
-          }}
-        />
-        <Stack.Screen
-          name="image-preview"
           options={{
             title: 'Preview',
           }}
@@ -60,8 +52,8 @@ export default function AttachmentsModalLayout() {
   );
 }
 
-const useStyles = makeStyleFactory(
-  (theme: ThemeShape, _ds: DSShape) =>
+const createStyles = makeStyleFactory(
+  (_ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
@@ -69,5 +61,5 @@ const useStyles = makeStyleFactory(
           Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
       },
     }),
-  (theme, ds) => themeKey(theme, ds),
+  (ds, theme) => themeKey(theme, ds),
 );

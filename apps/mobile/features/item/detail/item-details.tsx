@@ -125,7 +125,7 @@ export function ItemDetails({
         <Card.Row
           onPress={() => {
             router.push({
-              pathname: '/attachments',
+              pathname: '/(app)/(tabs)/vault',
               params: {targetType: 'item', targetId: itemId},
             });
           }}
