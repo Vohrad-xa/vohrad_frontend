@@ -9,6 +9,7 @@ export const itemSelectors = {
   totalPages: (state: ItemSlice) => state.totalPages,
   hasNext: (state: ItemSlice) => state.hasNext,
   hasPrevious: (state: ItemSlice) => state.hasPrevious,
+  links: (state: ItemSlice) => state.links,
   isLoading: (state: ItemSlice) => state.isLoading,
   error: (state: ItemSlice) => state.error,
   updatePage: (state: ItemSlice) => state.updatePage,

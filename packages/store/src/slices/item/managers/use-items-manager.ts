@@ -10,7 +10,7 @@ const DEFAULT_SEARCH_QUERY = '';
 const MIN_SEARCH_LENGTH = 3;
 
 export function useItemsManager() {
-  const {items, total, page, size, hasNext, isLoading, error} = useItems();
+  const {items, total, hasNext, isLoading, error, links} = useItems();
   const {isAuthenticated, tokens, _hasHydrated} = useAuthStore();
   const setSelectedItem = useAuthStore(itemSelectors.setSelectedItem);
 
@@ -31,38 +31,23 @@ export function useItemsManager() {
   const [isAppending, setIsAppending] = useState(false);
 
   const performFetchItems = useCallback(
-    async (targetPage: number, pageSize: number, append: boolean) => {
-      if (append) setIsAppending(true);
-
-      try {
-        const odataFilter = filters ? buildODataFilter(filters) : undefined;
-        await fetchItems(targetPage, pageSize, {append, odataFilter});
-      } finally {
-        if (append) setIsAppending(false);
-      }
+    async (targetPage: number, pageSize: number) => {
+      const odataFilter = filters ? buildODataFilter(filters) : undefined;
+      await fetchItems(targetPage, pageSize, {odataFilter});
     },
     [fetchItems, filters],
   );
 
   const performSearchItems = useCallback(
-    async (
-      queryValue: string,
-      targetPage: number,
-      pageSize: number,
-      append: boolean,
-    ) => {
-      if (append) setIsAppending(true);
-
-      try {
-        await searchItems(queryValue, targetPage, pageSize, {append});
-      } finally {
-        if (append) setIsAppending(false);
-      }
+    async (queryValue: string, targetPage: number, pageSize: number) => {
+      await searchItems(queryValue, targetPage, pageSize);
     },
     [searchItems],
   );
 
   useEffect(() => {
+    const controller = new AbortController();
+
     if (
       _hasHydrated &&
       isAuthenticated &&
@@ -72,7 +57,11 @@ export function useItemsManager() {
       !hasAttemptedFetch.current
     ) {
       hasAttemptedFetch.current = true;
-      performFetchItems(1, size, false).catch(() => {});
+      const size = 20;
+      const odataFilter = filters ? buildODataFilter(filters) : undefined;
+      fetchItems(1, size, {odataFilter, signal: controller.signal}).catch(
+        () => {},
+      );
     }
 
     if (!isAuthenticated) {
@@ -80,14 +69,16 @@ export function useItemsManager() {
       activeQueryRef.current = DEFAULT_SEARCH_QUERY;
       setIsAppending(false);
     }
+
+    return () => {
+      controller.abort();
+    };
   }, [
     _hasHydrated,
     isAuthenticated,
     tokens?.access_token,
-    isLoading,
     items.length,
-    size,
-    performFetchItems,
+    fetchItems,
   ]);
 
   useEffect(() => {
@@ -103,12 +94,11 @@ export function useItemsManager() {
     previousFiltersRef.current = currentFilterString;
 
     if (hasAttemptedFetch.current) {
+      const size = 20;
       if (activeQueryRef.current) {
-        performSearchItems(activeQueryRef.current, 1, size, false).catch(
-          () => {},
-        );
+        performSearchItems(activeQueryRef.current, 1, size).catch(() => {});
       } else {
-        performFetchItems(1, size, false).catch(() => {});
+        performFetchItems(1, size).catch(() => {});
       }
     }
   }, [
@@ -118,7 +108,6 @@ export function useItemsManager() {
     _hasHydrated,
     performFetchItems,
     performSearchItems,
-    size,
   ]);
 
   const search = useCallback(
@@ -126,18 +115,19 @@ export function useItemsManager() {
       if (!isAuthenticated || !tokens?.access_token) return;
 
       const trimmed = query.trim();
+      const size = 20;
 
       if (trimmed.length >= MIN_SEARCH_LENGTH) {
         if (trimmed === activeQueryRef.current) return;
 
         activeQueryRef.current = trimmed;
-        performSearchItems(trimmed, 1, size, false).catch(() => {});
+        performSearchItems(trimmed, 1, size).catch(() => {});
         return;
       }
 
       if (activeQueryRef.current) {
         activeQueryRef.current = DEFAULT_SEARCH_QUERY;
-        performFetchItems(1, size, false).catch(() => {});
+        performFetchItems(1, size).catch(() => {});
       }
     },
     [
@@ -145,7 +135,6 @@ export function useItemsManager() {
       performFetchItems,
       isAuthenticated,
       tokens?.access_token,
-      size,
     ],
   );
 
@@ -154,40 +143,39 @@ export function useItemsManager() {
       return Promise.resolve();
     }
 
-    if (activeQueryRef.current) {
-      return performSearchItems(activeQueryRef.current, 1, size, false);
+    // Use links.first if available, otherwise fetch page 1
+    if (links?.first) {
+      return fetchItems(links.first);
     }
 
-    return performFetchItems(1, size, false);
+    const size = 20;
+    if (activeQueryRef.current) {
+      return performSearchItems(activeQueryRef.current, 1, size);
+    }
+
+    return performFetchItems(1, size);
   }, [
     performFetchItems,
     performSearchItems,
+    fetchItems,
     isAuthenticated,
     tokens?.access_token,
-    size,
+    links,
   ]);
 
   const loadMore = useCallback(() => {
-    if (!hasNext || isLoading || isAppending) {
+    if (!hasNext || isLoading || isAppending || !links?.next) {
       return Promise.resolve();
     }
 
-    const nextPage = page + 1;
+    setIsAppending(true);
 
-    if (activeQueryRef.current) {
-      return performSearchItems(activeQueryRef.current, nextPage, size, true);
-    }
+    const loadPromise = fetchItems(links.next, {append: true}).finally(() => {
+      setIsAppending(false);
+    });
 
-    return performFetchItems(nextPage, size, true);
-  }, [
-    hasNext,
-    isLoading,
-    isAppending,
-    page,
-    size,
-    performFetchItems,
-    performSearchItems,
-  ]);
+    return loadPromise;
+  }, [hasNext, isLoading, isAppending, links, fetchItems]);
 
   const selectItem = useCallback(
     (id: string) => {

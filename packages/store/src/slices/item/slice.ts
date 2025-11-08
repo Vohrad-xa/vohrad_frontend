@@ -33,6 +33,7 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
   totalPages: 0,
   hasNext: false,
   hasPrevious: false,
+  links: null,
   isLoading: false,
   error: null,
   retryCallback: null,
@@ -171,6 +172,7 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
       totalPages: 0,
       hasNext: false,
       hasPrevious: false,
+      links: null,
       error: null,
     }),
 });
