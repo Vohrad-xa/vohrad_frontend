@@ -28,6 +28,7 @@ export function useAttachmentsListManager(
   const totalPages = useAuthStore(attachmentSelectors.totalPages);
   const hasNext = useAuthStore(attachmentSelectors.hasNext);
   const hasPrevious = useAuthStore(attachmentSelectors.hasPrevious);
+  const links = useAuthStore(attachmentSelectors.links);
 
   const updateAttachmentsPage = useAuthStore(
     attachmentSelectors.updateAttachmentsPage,
@@ -38,8 +39,41 @@ export function useAttachmentsListManager(
   const setLoading = useAuthStore(attachmentSelectors.setLoading);
   const setError = useAuthStore(attachmentSelectors.setError);
 
+  const fetchByUrl = useCallback(
+    async (url: string, strategy: 'replace' | 'append') => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await attachmentApi.listAttachments(url);
+        const data = response.data;
+        updateAttachmentsPage({
+          attachments: data.items ?? [],
+          total: data.total,
+          page: data.page,
+          size: data.size,
+          totalPages: data.total_pages,
+          hasNext: data.has_next,
+          hasPrevious: data.has_previous,
+          links: response.metadata?.links ?? null,
+          strategy,
+        });
+      } catch (err) {
+        const message =
+          err instanceof Error
+            ? err.message
+            : 'Unable to load attachments right now.';
+        setError(message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setLoading, setError, updateAttachmentsPage],
+  );
+
   const fetchPage = useCallback(
-    async (targetPage: number, append = false) => {
+    async (targetPage: number, append = false, signal?: AbortSignal) => {
       setLoading(true);
       setError(null);
 
@@ -50,17 +84,29 @@ export function useAttachmentsListManager(
           size: pageSize,
         });
 
+        // Don't update state if request was aborted
+        if (signal?.aborted) {
+          return;
+        }
+
+        const data = response.data;
         updateAttachmentsPage({
-          attachments: response.items ?? [],
-          total: response.total,
-          page: response.page,
-          size: response.size,
-          totalPages: response.total_pages,
-          hasNext: response.has_next,
-          hasPrevious: response.has_previous,
+          attachments: data.items ?? [],
+          total: data.total,
+          page: data.page,
+          size: data.size,
+          totalPages: data.total_pages,
+          hasNext: data.has_next,
+          hasPrevious: data.has_previous,
+          links: response.metadata?.links ?? null,
           strategy: append ? 'append' : 'replace',
         });
       } catch (err) {
+        // Don't set error if request was cancelled
+        if (err instanceof Error && err.message === 'Request cancelled') {
+          return;
+        }
+
         const message =
           err instanceof Error
             ? err.message
@@ -77,19 +123,29 @@ export function useAttachmentsListManager(
   );
 
   useEffect(() => {
-    fetchPage(1, false).catch(() => {});
+    const controller = new AbortController();
+    fetchPage(1, false, controller.signal).catch(() => {});
+
+    return () => {
+      controller.abort();
+    };
   }, [fetchPage]);
 
   const refresh = useCallback(async () => {
-    await fetchPage(1, false);
-  }, [fetchPage]);
+    if (links?.first) {
+      await fetchByUrl(links.first, 'replace');
+    } else {
+      await fetchPage(1, false);
+    }
+  }, [fetchPage, fetchByUrl, links]);
 
   const loadMore = useCallback(async () => {
-    if (!hasNext || isLoading) {
+    if (!hasNext || isLoading || !links?.next) {
       return;
     }
-    await fetchPage(page + 1, true);
-  }, [fetchPage, hasNext, isLoading, page]);
+
+    await fetchByUrl(links.next, 'append');
+  }, [hasNext, isLoading, links, fetchByUrl]);
 
   const reset = useCallback(() => {
     clearAttachmentList();

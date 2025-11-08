@@ -69,7 +69,7 @@ export function useAttachmentManager(
           page,
           size,
         });
-        const items = response.items ?? [];
+        const items = response.data.items ?? [];
         setAttachmentsForTarget(targetKey, items);
         return items;
       } catch (err) {

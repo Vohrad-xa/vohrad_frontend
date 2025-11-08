@@ -44,4 +44,5 @@ export const attachmentSelectors = {
   totalPages: (state: AttachmentSlice) => state.totalPages,
   hasNext: (state: AttachmentSlice) => state.hasNext,
   hasPrevious: (state: AttachmentSlice) => state.hasPrevious,
+  links: (state: AttachmentSlice) => state.links,
 };
