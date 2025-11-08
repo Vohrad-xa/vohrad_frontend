@@ -54,6 +54,13 @@ export interface Category {
   path?: string | null;
 }
 
+export interface Status {
+  id: string;
+  name: string;
+  color: string;
+  icon: string;
+}
+
 type ItemRelationIdentifiers = {
   user_id?: string | null;
   parent_item_id?: string | null;
@@ -72,6 +79,7 @@ type ItemDescriptiveFields = ItemRelationIdentifiers & {
   tracking_change_reason?: string | null;
   category_id?: string | null;
   category?: Category | null;
+  status?: Status | null;
 };
 
 type ItemMutableFields = ItemDescriptiveFields & {

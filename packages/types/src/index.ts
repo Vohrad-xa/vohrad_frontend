@@ -38,6 +38,7 @@ export type {
   ItemFilterState,
   ItemLocationUpdate,
   Category,
+  Status,
 } from './item';
 export type {AttachmentTargetType, AttachmentKind} from './attachment';
 

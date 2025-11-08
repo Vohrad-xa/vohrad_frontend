@@ -3,7 +3,7 @@ export {ItemHeader} from './item-header';
 export {BasicInfo} from './basic-info';
 export {DescriptionField} from './description-field';
 export {QuantityField} from './quantity-field';
-export {StatusField} from './status-field';
+export {ActiveField} from './active-field';
 export {TrackingModeField} from './tracking-mode-field';
 export {useItemForm} from './use-item-form';
 export type {UseItemFormReturn} from './use-item-form';

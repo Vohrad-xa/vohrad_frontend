@@ -6,7 +6,7 @@ export {ItemHeader} from './detail/item-header';
 export {BasicInfo} from './detail/basic-info';
 export {DescriptionField} from './detail/description-field';
 export {QuantityField} from './detail/quantity-field';
-export {StatusField} from './detail/status-field';
+export {ActiveField} from './detail/active-field';
 export {TrackingModeField} from './detail/tracking-mode-field';
 export {AttachmentField} from './detail/attachments/attachment-field';
 export {ItemSpecifications} from './detail/specifications/item-specifications';

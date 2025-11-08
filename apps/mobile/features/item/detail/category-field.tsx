@@ -19,7 +19,7 @@ const CategoryFieldComponent = ({category}: CategoryFieldProps) => {
       <ThemedText variant="label" style={styles.fieldLabel}>
         Category
       </ThemedText>
-      <ThemedText variant="value">{category?.name ?? 'No Category'}</ThemedText>
+      <ThemedText variant="value">{category?.name ?? 'None'}</ThemedText>
     </View>
   );
 };

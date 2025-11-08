@@ -3,6 +3,7 @@ import {View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Card} from '@/components/cards/card';
 import {useTheme} from '@/providers';
+import {ActiveField} from './active-field';
 import {AttachmentField} from './attachments/attachment-field';
 import {BasicInfo} from './basic-info';
 import {CategoryField} from './category-field';
@@ -10,7 +11,7 @@ import {DescriptionField} from './description-field';
 import {Locations} from './locations/location-field';
 import {QuantityField} from './quantity-field';
 import {Specifications} from './specifications/specifications-field';
-import {StatusField} from './status-field';
+import {ItemStatusField} from './status-field';
 import {TrackingModeField, useTrackingModePress} from './tracking-mode-field';
 import type {UseItemFormReturn} from './use-item-form';
 import type {ItemDetail} from '@vohrad/types';
@@ -75,8 +76,8 @@ export function ItemDetails({
 
       {/* Status and Quantity */}
       <Card>
-        <StatusField
-          key="status"
+        <ActiveField
+          key="active"
           isActive={optimisticStatus}
           onValueChange={handleStatusChange}
         />
@@ -86,6 +87,8 @@ export function ItemDetails({
           field={{key: 'quantity', label: 'Quantity', value: quantity ?? '0'}}
           value={quantity}
         />
+        <Card.Divider />
+        <ItemStatusField key="status" status={item?.status} />
       </Card>
 
       <Card>
