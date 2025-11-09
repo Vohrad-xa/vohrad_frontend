@@ -57,12 +57,9 @@ export function useImageSelection(images: ImageAttachmentItem[]) {
   }, [images, selectedIds]);
 
   return {
-    // State
     isSelectionMode,
     selectedIds,
     selectedCount,
-
-    // Actions
     toggleSelection,
     isSelected,
     selectAll,

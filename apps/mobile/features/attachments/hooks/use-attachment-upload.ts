@@ -33,10 +33,6 @@ type PendingAttachment = {
   size?: number;
 };
 
-/**
- * Extracts a filename from a URI, falling back to a timestamped default.
- * Removes query parameters and takes the last path segment.
- */
 function inferFileName(uri: string): string {
   const sanitized = uri.split('?')[0] ?? uri;
   const segments = sanitized.split('/');
@@ -46,10 +42,6 @@ function inferFileName(uri: string): string {
     : `attachment-${Date.now()}`;
 }
 
-/**
- * Extracts the file extension from a filename.
- * Returns undefined if no valid extension is found.
- */
 function inferExtension(name: string): string | undefined {
   const lastDot = name.lastIndexOf('.');
   if (lastDot === -1 || lastDot === name.length - 1) {
@@ -58,10 +50,6 @@ function inferExtension(name: string): string | undefined {
   return name.slice(lastDot + 1).toLowerCase();
 }
 
-/**
- * Normalizes file metadata from different picker sources into a consistent format.
- * Handles various null/undefined combinations and provides sensible defaults.
- */
 function normalizePendingData(params: {
   uri?: string;
   name?: string | null;
@@ -108,9 +96,6 @@ function normalizePendingData(params: {
   };
 }
 
-/**
- * Builds a pending attachment from a document picker result.
- */
 function buildPendingFromDocument(
   asset: DocumentAsset,
 ): PendingAttachment | null {
@@ -131,9 +116,6 @@ function buildPendingFromDocument(
   };
 }
 
-/**
- * Builds a pending attachment from a camera capture result.
- */
 function buildPendingFromCamera(asset: CameraAsset): PendingAttachment | null {
   const normalized = normalizePendingData({
     uri: asset.uri,
@@ -154,14 +136,6 @@ function buildPendingFromCamera(asset: CameraAsset): PendingAttachment | null {
   };
 }
 
-/**
- * Custom hook for managing file and photo attachment uploads.
- * Handles both device file picker and camera capture workflows.
- *
- * @param targetType - The type of entity this attachment will be linked to
- * @param targetId - The ID of the target entity (optional until save)
- * @returns Upload state and methods for selecting, capturing, and saving attachments
- */
 export function useAttachmentUpload(
   targetType: AttachmentTargetType,
   targetId?: string | null,
@@ -175,10 +149,6 @@ export function useAttachmentUpload(
   const [isPicking, setIsPicking] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  /**
-   * Opens the device file picker to select a document.
-   * Validates picker availability and handles the selected file.
-   */
   const selectFromDevice = useCallback(async () => {
     if (isPicking || isSaving) {
       return;
@@ -233,10 +203,6 @@ export function useAttachmentUpload(
     }
   }, [isPicking, isSaving, setError]);
 
-  /**
-   * Opens the camera to capture a photo.
-   * Requests permissions if needed and handles the captured image.
-   */
   const capturePhoto = useCallback(async () => {
     if (isPicking || isSaving) {
       return;
@@ -280,19 +246,10 @@ export function useAttachmentUpload(
     }
   }, [isPicking, isSaving, setError]);
 
-  /**
-   * Clears the current pending attachment.
-   */
   const resetPending = useCallback(() => {
     setPendingAttachment(null);
   }, []);
 
-  /**
-   * Uploads the pending attachment to the backend and links it to the target entity.
-   * Returns true on success, false on failure.
-   *
-   * @returns Promise resolving to success boolean
-   */
   const savePendingAttachment = useCallback(async () => {
     if (isSaving || !pendingAttachment) {
       return false;
@@ -331,8 +288,6 @@ export function useAttachmentUpload(
       }
 
       const uploaded = await uploadAttachmentForTarget(formData);
-
-      // UI can construct URL from file_path, no need to fetch immediately
       patchAttachment(uploaded);
       setPendingAttachment(null);
       return true;
@@ -358,10 +313,6 @@ export function useAttachmentUpload(
 
   const hasPending = !!pendingAttachment;
 
-  /**
-   * Memoized metadata about the pending attachment.
-   * Returns null if no attachment is pending.
-   */
   const pendingMetadata = useMemo(() => {
     if (!pendingAttachment) {
       return null;
@@ -387,16 +338,6 @@ export function useAttachmentUpload(
   };
 }
 
-/**
- * Resolves a web file from either a DocumentAsset with a file property
- * or by fetching and converting a URI to a File object.
- *
- * @param assetRef - Reference to the original asset
- * @param uri - URI to fetch if no file is available
- * @param filename - Name for the resulting file
- * @param mimeType - MIME type for the file
- * @returns File object suitable for FormData upload
- */
 async function resolveWebFile(
   assetRef: AssetRef,
   uri: string,

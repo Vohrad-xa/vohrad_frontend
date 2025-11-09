@@ -1,6 +1,5 @@
 import React, {useCallback} from 'react';
 import {View} from 'react-native';
-import {useSetAttachmentFilter} from '@vohrad/store';
 import {useRouter} from 'expo-router';
 import {Card} from '@/components/cards/card';
 import {useTheme} from '@/providers';
@@ -34,7 +33,6 @@ export function ItemDetails({
 }: ItemDetailsProps): React.JSX.Element {
   const {ds} = useTheme();
   const router = useRouter();
-  const setAttachmentFilter = useSetAttachmentFilter();
 
   const {
     formValues,
@@ -123,17 +121,22 @@ export function ItemDetails({
           <Specifications key="specifications" itemId={itemId} />
         </Card.Row>
         <Card.Divider />
+
         {/* Attachments field */}
         <Card.Row
           onPress={() => {
             if (itemId && item?.name) {
-              setAttachmentFilter({
-                targetType: 'item',
-                targetId: itemId,
-                itemName: item.name,
+              router.push({
+                pathname: '/(app)/(tabs)/vault',
+                params: {
+                  targetType: 'item',
+                  targetId: itemId,
+                  itemName: item.name,
+                },
               });
+            } else {
+              router.push('/(app)/(tabs)/vault');
             }
-            router.push('/(app)/(tabs)/vault');
           }}
           accessibilityLabel="View attachments"
         >

@@ -1,6 +1,7 @@
-import React, {useCallback, useLayoutEffect} from 'react';
+import React, {useCallback, useLayoutEffect, useMemo} from 'react';
 import {View, StyleSheet, Pressable} from 'react-native';
-import {useNavigation, useRouter} from 'expo-router';
+import {useNavigation, useRouter, useLocalSearchParams} from 'expo-router';
+import {useAuthStore} from '@vohrad/store';
 import {RefreshableScrollView, HeaderButton, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
@@ -13,8 +14,24 @@ import {Icon, AppIcons, makeStyleFactory} from '@/utils';
 export default function VaultScreen() {
   const router = useRouter();
   const navigation = useNavigation();
+  const params = useLocalSearchParams<{
+    targetType?: string;
+    targetId?: string;
+    itemName?: string;
+  }>();
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
+
+  // Set filter from URL params before hooks initialize
+  useMemo(() => {
+    if (params.targetType && params.targetId) {
+      useAuthStore.getState().setAttachmentFilter({
+        targetType: params.targetType as 'item',
+        targetId: params.targetId,
+        itemName: params.itemName,
+      });
+    }
+  }, [params.targetType, params.targetId, params.itemName]);
 
   const {counts, hasActiveFilter, filterInfo, clearFilter} =
     useAttachmentsOverview();
