@@ -1,42 +1,55 @@
-import {useEffect, useMemo} from 'react';
-import {useAttachmentManager, useAttachmentsByTarget} from '@vohrad/store';
-import {
-  computeAttachmentCounts,
-  type AttachmentKindCount,
-} from '@/features/attachments/utils/attachment-counts';
-import type {AttachmentTargetType} from '@vohrad/store';
+import {useMemo} from 'react';
+import {useAttachmentFilter, useClearAttachmentFilter} from '@vohrad/store';
+import {computeAttachmentCounts} from '../utils/attachment-counts';
+import {useFilteredAttachments} from './use-filtered-attachments';
+import type {AttachmentKind} from '@vohrad/types';
 
+interface UseAttachmentsOverviewOptions {
+  kind?: AttachmentKind;
+}
+
+/**
+ * Comprehensive hook for attachments overview functionality.
+ * Encapsulates all attachments-related state and logic.
+ *
+ * @param options - Optional configuration
+ * @param options.kind - Filter attachments by kind (e.g., 'image')
+ * @returns Complete attachments overview state and actions
+ */
 export function useAttachmentsOverview(
-  targetType: AttachmentTargetType,
-  targetId?: string | null,
+  options?: UseAttachmentsOverviewOptions,
 ) {
-  const attachments = useAttachmentsByTarget(targetType, targetId);
-  const {fetchAttachments, isLoading, error} = useAttachmentManager(
-    targetType,
-    targetId,
-  );
+  const attachmentFilter = useAttachmentFilter();
+  const clearAttachmentFilter = useClearAttachmentFilter();
+  const {attachments, ...managerRest} = useFilteredAttachments(options);
 
-  useEffect(() => {
-    if (!targetId) {
-      return;
-    }
-
-    if (attachments.length > 0) {
-      return;
-    }
-
-    fetchAttachments().catch(() => {});
-  }, [attachments.length, fetchAttachments, targetId]);
-
-  const counts: AttachmentKindCount = useMemo(
+  // Compute attachment counts for overview tiles
+  const counts = useMemo(
     () => computeAttachmentCounts(attachments),
     [attachments],
   );
 
+  // Filter state for UI
+  const hasActiveFilter = Boolean(attachmentFilter);
+  const filterInfo = attachmentFilter
+    ? {
+        targetType: attachmentFilter.targetType,
+        targetId: attachmentFilter.targetId,
+        itemName: attachmentFilter.itemName,
+      }
+    : null;
+
   return {
+    // Attachments data
     attachments,
     counts,
-    isLoading,
-    error,
+
+    // Filter state
+    hasActiveFilter,
+    filterInfo,
+    clearFilter: clearAttachmentFilter,
+
+    // Manager utilities
+    ...managerRest,
   };
 }

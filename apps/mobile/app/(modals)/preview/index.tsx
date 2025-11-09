@@ -2,7 +2,7 @@ import React from 'react';
 import {useLocalSearchParams} from 'expo-router';
 import {
   AttachmentImagePreview,
-  useVaultFilteredAttachments,
+  useFilteredAttachments,
 } from '@/features/attachments';
 import {useImageAttachments} from '@/features/item';
 
@@ -14,7 +14,7 @@ export default function AttachmentImagePreviewModal() {
   const initialId =
     typeof params.attachmentId === 'string' ? params.attachmentId : undefined;
 
-  const {attachments} = useVaultFilteredAttachments({kind: 'image'});
+  const {attachments} = useFilteredAttachments({kind: 'image'});
 
   const imageAttachments = useImageAttachments(attachments);
 

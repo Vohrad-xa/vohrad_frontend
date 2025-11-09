@@ -58,11 +58,11 @@ export {
   usePendingFilters,
   useSetPendingFilters,
   useClearPendingFilters,
-  useVaultFilter,
-  useSetVaultFilter,
-  useClearVaultFilter,
+  useAttachmentFilter,
+  useSetAttachmentFilter,
+  useClearAttachmentFilter,
 } from './slices/filter/hooks';
-export type {FilterSlice, VaultFilter} from './slices/filter';
+export type {FilterSlice, AttachmentFilter} from './slices/filter';
 export type {
   User,
   AuthTokens,

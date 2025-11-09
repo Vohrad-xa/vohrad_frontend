@@ -2,7 +2,7 @@ import React, {useCallback} from 'react';
 import {StyleSheet, View, FlatList} from 'react-native';
 import {useRouter, useNavigation} from 'expo-router';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {SelectableImageTile, useVaultImages} from '@/features/attachments';
+import {SelectableImageTile, useAttachmentImages} from '@/features/attachments';
 import {IMAGE_GRID_COLUMNS, type ImageAttachmentItem} from '@/features/item';
 import {useSettingsHeader} from '@/hooks';
 import {useTheme} from '@/providers';
@@ -23,7 +23,7 @@ export default function VaultImagesScreen() {
     enableSelectionMode,
     disableSelectionMode,
     handleDeleteSelected,
-  } = useVaultImages();
+  } = useAttachmentImages();
 
   const handleImagePress = useCallback(
     async (attachment: ImageAttachmentItem) => {

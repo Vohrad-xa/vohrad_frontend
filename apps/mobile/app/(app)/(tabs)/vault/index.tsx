@@ -3,7 +3,10 @@ import {View, StyleSheet, Pressable} from 'react-native';
 import {useNavigation, useRouter} from 'expo-router';
 import {RefreshableScrollView, HeaderButton, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {AttachmentsOverview, useVault} from '@/features/attachments';
+import {
+  AttachmentsOverview,
+  useAttachmentsOverview,
+} from '@/features/attachments';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, makeStyleFactory} from '@/utils';
 
@@ -13,7 +16,8 @@ export default function VaultScreen() {
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
 
-  const {counts, hasActiveFilter, filterInfo, clearFilter} = useVault();
+  const {counts, hasActiveFilter, filterInfo, clearFilter} =
+    useAttachmentsOverview();
 
   const handleImagesPress = useCallback(() => {
     router.push('/(app)/(tabs)/vault/images');

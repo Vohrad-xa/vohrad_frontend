@@ -14,10 +14,9 @@ export type {AttachmentKindCount} from './utils/attachment-counts';
 // Hooks
 export {useAttachmentUpload} from './hooks/use-attachment-upload';
 export {useImageSelection} from './hooks/use-image-selection';
+export {useFilteredAttachments} from './hooks/use-filtered-attachments';
 export {useAttachmentsOverview} from './hooks/use-attachments-overview';
-export {useVaultFilteredAttachments} from './hooks/use-vault-filtered-attachments';
-export {useVault} from './hooks/use-vault';
-export {useVaultImages} from './hooks/use-vault-images';
+export {useAttachmentImages} from './hooks/use-attachment-images';
 
 // Screens
 export {AttachmentsOverview} from './screens/attachments-overview';

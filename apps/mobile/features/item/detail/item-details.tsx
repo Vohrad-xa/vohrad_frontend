@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 import {View} from 'react-native';
-import {useSetVaultFilter} from '@vohrad/store';
+import {useSetAttachmentFilter} from '@vohrad/store';
 import {useRouter} from 'expo-router';
 import {Card} from '@/components/cards/card';
 import {useTheme} from '@/providers';
@@ -34,7 +34,7 @@ export function ItemDetails({
 }: ItemDetailsProps): React.JSX.Element {
   const {ds} = useTheme();
   const router = useRouter();
-  const setVaultFilter = useSetVaultFilter();
+  const setAttachmentFilter = useSetAttachmentFilter();
 
   const {
     formValues,
@@ -127,7 +127,7 @@ export function ItemDetails({
         <Card.Row
           onPress={() => {
             if (itemId && item?.name) {
-              setVaultFilter({
+              setAttachmentFilter({
                 targetType: 'item',
                 targetId: itemId,
                 itemName: item.name,

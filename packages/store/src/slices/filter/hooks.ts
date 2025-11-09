@@ -12,14 +12,14 @@ export function useClearPendingFilters() {
   return useAuthStore((state) => state.clearPendingFilters);
 }
 
-export function useVaultFilter() {
-  return useAuthStore((state) => state.vaultFilter);
+export function useAttachmentFilter() {
+  return useAuthStore((state) => state.attachmentFilter);
 }
 
-export function useSetVaultFilter() {
-  return useAuthStore((state) => state.setVaultFilter);
+export function useSetAttachmentFilter() {
+  return useAuthStore((state) => state.setAttachmentFilter);
 }
 
-export function useClearVaultFilter() {
-  return useAuthStore((state) => state.clearVaultFilter);
+export function useClearAttachmentFilter() {
+  return useAuthStore((state) => state.clearAttachmentFilter);
 }

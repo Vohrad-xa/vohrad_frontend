@@ -1,23 +1,23 @@
 import {useCallback} from 'react';
-import {useAttachmentManager, useVaultFilter} from '@vohrad/store';
+import {useAttachmentManager, useAttachmentFilter} from '@vohrad/store';
 import {useImageAttachments} from '@/features/item';
 import {showConfirmAlert} from '@/utils';
+import {useFilteredAttachments} from './use-filtered-attachments';
 import {useImageSelection} from './use-image-selection';
-import {useVaultFilteredAttachments} from './use-vault-filtered-attachments';
 
 /**
- * Comprehensive hook for vault images screen functionality.
+ * Comprehensive hook for attachment images screen functionality.
  * Encapsulates all images-related state and logic.
  *
- * @returns Complete vault images state and actions
+ * @returns Complete attachment images state and actions
  */
-export function useVaultImages() {
-  const vaultFilter = useVaultFilter();
-  const filterTargetType = vaultFilter?.targetType ?? 'item';
-  const filterTargetId = vaultFilter?.targetId;
+export function useAttachmentImages() {
+  const attachmentFilter = useAttachmentFilter();
+  const filterTargetType = attachmentFilter?.targetType ?? 'item';
+  const filterTargetId = attachmentFilter?.targetId;
 
   // Fetch images with smart caching
-  const {attachments} = useVaultFilteredAttachments({kind: 'image'});
+  const {attachments} = useFilteredAttachments({kind: 'image'});
 
   // Convert to image attachments format
   const imageAttachments = useImageAttachments(attachments);
