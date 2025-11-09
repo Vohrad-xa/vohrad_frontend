@@ -1,74 +1,73 @@
-import React, {useCallback, useLayoutEffect, useMemo, useEffect} from 'react';
-import {useLocalSearchParams, useNavigation, useRouter} from 'expo-router';
+import React, {
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useEffect,
+  useRef,
+} from 'react';
+import {useNavigation, useRouter} from 'expo-router';
 import {View, StyleSheet, Pressable} from 'react-native';
 import {RefreshableScrollView, HeaderButton, ThemedText} from '@/components/ui';
 import {AttachmentsOverview} from '@/features/attachments';
-import {useAttachmentsListManager} from '@vohrad/store';
+import {
+  useAttachmentsListManager,
+  useVaultFilter,
+  useClearVaultFilter,
+} from '@vohrad/store';
 import {computeAttachmentCounts} from '@/features/attachments/utils/attachment-counts';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, makeStyleFactory} from '@/utils';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import type {AttachmentTargetType} from '@vohrad/store';
 
 export default function VaultScreen() {
   const router = useRouter();
   const navigation = useNavigation();
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
-  const params = useLocalSearchParams<{
-    filterTargetType?: AttachmentTargetType;
-    filterTargetId?: string;
-    filterItemName?: string;
-  }>();
 
-  const filterTargetType = params.filterTargetType as
-    | AttachmentTargetType
-    | undefined;
-  const filterTargetId = params.filterTargetId;
-  const filterItemName = params.filterItemName;
-
+  const vaultFilter = useVaultFilter();
+  const clearVaultFilter = useClearVaultFilter();
   const {attachments, setFilters} = useAttachmentsListManager();
+  const isInitialMount = useRef(true);
 
-  // Sync filters with URL params (backend OData filtering)
+  // Sync filters with vault filter state (backend filtering)
   useEffect(() => {
-    const newFilters: {targetType?: AttachmentTargetType; targetId?: string} =
-      {};
-    if (filterTargetType) newFilters.targetType = filterTargetType;
-    if (filterTargetId) newFilters.targetId = filterTargetId;
-    setFilters(newFilters);
-  }, [filterTargetType, filterTargetId, setFilters]);
+    // Skip initial mount - manager already initializes with empty filters
+    if (isInitialMount.current && !vaultFilter) {
+      isInitialMount.current = false;
+      return;
+    }
+    isInitialMount.current = false;
+
+    if (vaultFilter) {
+      setFilters({
+        targetType: vaultFilter.targetType,
+        targetId: vaultFilter.targetId,
+      });
+    } else {
+      setFilters({});
+    }
+  }, [vaultFilter, setFilters]);
 
   const counts = useMemo(
     () => computeAttachmentCounts(attachments),
     [attachments],
   );
 
-  const hasActiveFilter = Boolean(filterTargetType && filterTargetId);
+  const hasActiveFilter = Boolean(vaultFilter);
+  const filterTargetType = vaultFilter?.targetType;
+  const filterTargetId = vaultFilter?.targetId;
+  const filterItemName = vaultFilter?.itemName;
 
   const handleClearFilter = useCallback(() => {
-    router.push('/(app)/(tabs)/vault');
-  }, [router]);
+    clearVaultFilter();
+  }, [clearVaultFilter]);
 
   const handleImagesPress = useCallback(() => {
-    router.push({
-      pathname: '/(app)/(tabs)/vault/images',
-      params: hasActiveFilter
-        ? {
-            filterTargetType,
-            filterTargetId,
-            filterItemName,
-          }
-        : {},
-    });
-  }, [
-    router,
-    hasActiveFilter,
-    filterTargetType,
-    filterTargetId,
-    filterItemName,
-  ]);
+    router.push('/(app)/(tabs)/vault/images');
+  }, [router]);
 
-  const canAdd = filterTargetType === 'item' && filterTargetId;
+  const canAdd = vaultFilter?.targetType === 'item' && vaultFilter?.targetId;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -90,14 +89,7 @@ export default function VaultScreen() {
           )
         : undefined,
     });
-  }, [
-    navigation,
-    router,
-    canAdd,
-    filterTargetType,
-    filterTargetId,
-    theme.navigationBar,
-  ]);
+  }, [navigation, router, canAdd, filterTargetType, filterTargetId]);
 
   return (
     <RefreshableScrollView

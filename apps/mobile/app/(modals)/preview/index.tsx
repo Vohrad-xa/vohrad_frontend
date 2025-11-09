@@ -1,35 +1,32 @@
 import React, {useEffect} from 'react';
-import {useAttachmentsListManager} from '@vohrad/store';
+import {useAttachmentsListManager, useVaultFilter} from '@vohrad/store';
 import {useLocalSearchParams} from 'expo-router';
 import {AttachmentImagePreview} from '@/features/attachments';
 import {useImageAttachments} from '@/features/item';
-import type {AttachmentTargetType} from '@vohrad/store';
 
 export default function AttachmentImagePreviewModal() {
   const params = useLocalSearchParams<{
-    filterTargetType?: AttachmentTargetType;
-    filterTargetId?: string;
     attachmentId?: string;
   }>();
 
-  const filterTargetType = params.filterTargetType as AttachmentTargetType | undefined;
-  const filterTargetId = params.filterTargetId;
   const initialId =
     typeof params.attachmentId === 'string' ? params.attachmentId : undefined;
 
+  const vaultFilter = useVaultFilter();
   const {attachments, setFilters} = useAttachmentsListManager();
 
-  // Sync filters with URL params (backend OData filtering), always filter for images
+  // Sync filters with vault filter state (backend filtering), always filter for images
   useEffect(() => {
-    const newFilters: {
-      targetType?: AttachmentTargetType;
-      targetId?: string;
-      kind: 'image';
-    } = {kind: 'image'};
-    if (filterTargetType) newFilters.targetType = filterTargetType;
-    if (filterTargetId) newFilters.targetId = filterTargetId;
-    setFilters(newFilters);
-  }, [filterTargetType, filterTargetId, setFilters]);
+    if (vaultFilter) {
+      setFilters({
+        targetType: vaultFilter.targetType,
+        targetId: vaultFilter.targetId,
+        kind: 'image',
+      });
+    } else {
+      setFilters({kind: 'image'});
+    }
+  }, [vaultFilter, setFilters]);
 
   const imageAttachments = useImageAttachments(attachments);
 

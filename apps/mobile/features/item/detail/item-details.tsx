@@ -3,6 +3,7 @@ import {View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Card} from '@/components/cards/card';
 import {useTheme} from '@/providers';
+import {useSetVaultFilter} from '@vohrad/store';
 import {ActiveField} from './active-field';
 import {AttachmentField} from './attachments/attachment-field';
 import {BasicInfo} from './basic-info';
@@ -33,6 +34,7 @@ export function ItemDetails({
 }: ItemDetailsProps): React.JSX.Element {
   const {ds} = useTheme();
   const router = useRouter();
+  const setVaultFilter = useSetVaultFilter();
 
   const {
     formValues,
@@ -124,14 +126,14 @@ export function ItemDetails({
         {/* Attachments field */}
         <Card.Row
           onPress={() => {
-            router.push({
-              pathname: '/(app)/(tabs)/vault',
-              params: {
-                filterTargetType: 'item',
-                filterTargetId: itemId,
-                filterItemName: item?.name,
-              },
-            });
+            if (itemId && item?.name) {
+              setVaultFilter({
+                targetType: 'item',
+                targetId: itemId,
+                itemName: item.name,
+              });
+            }
+            router.push('/(app)/(tabs)/vault');
           }}
           accessibilityLabel="View attachments"
         >

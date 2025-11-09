@@ -11,3 +11,15 @@ export function useSetPendingFilters() {
 export function useClearPendingFilters() {
   return useAuthStore((state) => state.clearPendingFilters);
 }
+
+export function useVaultFilter() {
+  return useAuthStore((state) => state.vaultFilter);
+}
+
+export function useSetVaultFilter() {
+  return useAuthStore((state) => state.setVaultFilter);
+}
+
+export function useClearVaultFilter() {
+  return useAuthStore((state) => state.clearVaultFilter);
+}

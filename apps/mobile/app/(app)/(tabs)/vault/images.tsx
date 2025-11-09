@@ -1,7 +1,11 @@
 import React, {useCallback, useEffect} from 'react';
 import {StyleSheet, View, FlatList} from 'react-native';
-import {useAttachmentsListManager, useAttachmentManager} from '@vohrad/store';
-import {useLocalSearchParams, useRouter, useNavigation} from 'expo-router';
+import {
+  useAttachmentsListManager,
+  useAttachmentManager,
+  useVaultFilter,
+} from '@vohrad/store';
+import {useRouter, useNavigation} from 'expo-router';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {SelectableImageTile, useImageSelection} from '@/features/attachments';
 import {
@@ -12,35 +16,31 @@ import {
 import {useSettingsHeader} from '@/hooks';
 import {useTheme} from '@/providers';
 import {showConfirmAlert, makeStyleFactory} from '@/utils';
-import type {AttachmentTargetType} from '@vohrad/store';
 
 export default function VaultImagesScreen() {
   const {ds, theme} = useTheme();
   const styles = useStyles(ds, theme);
   const router = useRouter();
   const navigation = useNavigation();
-  const params = useLocalSearchParams<{
-    filterTargetType?: AttachmentTargetType;
-    filterTargetId?: string;
-    filterItemName?: string;
-  }>();
 
-  const filterTargetType = params.filterTargetType as AttachmentTargetType | undefined;
-  const filterTargetId = params.filterTargetId;
+  const vaultFilter = useVaultFilter();
+  const filterTargetType = vaultFilter?.targetType;
+  const filterTargetId = vaultFilter?.targetId;
 
   const {attachments, setFilters} = useAttachmentsListManager();
 
-  // Sync filters with URL params (backend OData filtering), always filter for images
+  // Sync filters with vault filter state (backend filtering), always filter for images
   useEffect(() => {
-    const newFilters: {
-      targetType?: AttachmentTargetType;
-      targetId?: string;
-      kind: 'image';
-    } = {kind: 'image'};
-    if (filterTargetType) newFilters.targetType = filterTargetType;
-    if (filterTargetId) newFilters.targetId = filterTargetId;
-    setFilters(newFilters);
-  }, [filterTargetType, filterTargetId, setFilters]);
+    if (vaultFilter) {
+      setFilters({
+        targetType: vaultFilter.targetType,
+        targetId: vaultFilter.targetId,
+        kind: 'image',
+      });
+    } else {
+      setFilters({kind: 'image'});
+    }
+  }, [vaultFilter, setFilters]);
 
   const imageAttachments = useImageAttachments(attachments);
   const {deleteAttachment} = useAttachmentManager(filterTargetType, filterTargetId);
@@ -60,23 +60,15 @@ export default function VaultImagesScreen() {
       if (isSelectionMode) {
         toggleSelection(attachment);
       } else {
-        const previewParams: {
-          attachmentId: string;
-          filterTargetType?: AttachmentTargetType;
-          filterTargetId?: string;
-        } = {
-          attachmentId: attachment.id,
-        };
-        if (filterTargetType) previewParams.filterTargetType = filterTargetType;
-        if (filterTargetId) previewParams.filterTargetId = filterTargetId;
-
         router.push({
           pathname: '/(modals)/preview',
-          params: previewParams,
+          params: {
+            attachmentId: attachment.id,
+          },
         });
       }
     },
-    [filterTargetId, filterTargetType, router, isSelectionMode, toggleSelection],
+    [router, isSelectionMode, toggleSelection],
   );
 
   const handleSelect = useCallback(() => {
