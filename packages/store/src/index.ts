@@ -51,6 +51,9 @@ export {
   useAttachmentsListManager,
   createAttachmentTargetKey,
 } from './slices/attachment';
+export {createAttachmentCacheKey} from './slices/attachment/utils/cache-key';
+export type {AttachmentCacheFilters} from './slices/attachment/utils/cache-key';
+export type {AttachmentCacheEntry} from './slices/attachment/slice';
 export {
   usePendingFilters,
   useSetPendingFilters,

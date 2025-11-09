@@ -1,9 +1,9 @@
 import React, {useCallback} from 'react';
 import {View} from 'react-native';
+import {useSetVaultFilter} from '@vohrad/store';
 import {useRouter} from 'expo-router';
 import {Card} from '@/components/cards/card';
 import {useTheme} from '@/providers';
-import {useSetVaultFilter} from '@vohrad/store';
 import {ActiveField} from './active-field';
 import {AttachmentField} from './attachments/attachment-field';
 import {BasicInfo} from './basic-info';

@@ -46,6 +46,8 @@ export interface ItemAttachment {
   user_id?: string | null;
   deleted_at?: string | null;
   kind?: string | null;
+  attachable_type?: string; // Target type (item, location, etc.)
+  attachable_id?: string; // Target ID
 }
 
 export interface Category {

@@ -2,17 +2,32 @@ import type {ItemAttachment} from '@vohrad/types';
 import type {AttachmentSlice, AttachmentTargetKey} from './slice';
 
 export const attachmentSelectors = {
+  // State
   attachments: (state: AttachmentSlice) => state.attachments,
+  isAttachmentLoading: (state: AttachmentSlice) => state.isLoading,
+  attachmentError: (state: AttachmentSlice) => state.error,
+  retryCallback: (state: AttachmentSlice) => state.retryCallback,
+  total: (state: AttachmentSlice) => state.total,
+  page: (state: AttachmentSlice) => state.page,
+  size: (state: AttachmentSlice) => state.size,
+  totalPages: (state: AttachmentSlice) => state.totalPages,
+  hasNext: (state: AttachmentSlice) => state.hasNext,
+  hasPrevious: (state: AttachmentSlice) => state.hasPrevious,
+  links: (state: AttachmentSlice) => state.links,
+
+  // Image URLs
   imageUrls: (state: AttachmentSlice) => state.imageUrls,
   setImageUrls: (state: AttachmentSlice) => state.setImageUrls,
-  isAttachmentLoading: (state: AttachmentSlice) => state.isLoading,
-  setAttachmentLoading: (state: AttachmentSlice) => state.setAttachmentLoading,
-  attachmentError: (state: AttachmentSlice) => state.error,
-  setAttachmentError: (state: AttachmentSlice) => state.setAttachmentError,
+
+  // Actions
   setLoading: (state: AttachmentSlice) => state.setLoading,
   setError: (state: AttachmentSlice) => state.setError,
   clearError: (state: AttachmentSlice) => state.clearError,
-  retryCallback: (state: AttachmentSlice) => state.retryCallback,
+  updateAttachmentsPage: (state: AttachmentSlice) =>
+    state.updateAttachmentsPage,
+  clearAttachmentList: (state: AttachmentSlice) => state.clearAttachmentList,
+
+  // Target-specific selectors
   attachmentsForTarget:
     (state: AttachmentSlice) =>
     (targetKey: AttachmentTargetKey): ItemAttachment[] =>
@@ -35,14 +50,14 @@ export const attachmentSelectors = {
   setTargetError: (state: AttachmentSlice) => state.setTargetError,
   clearAttachmentsForTarget: (state: AttachmentSlice) =>
     state.clearAttachmentsForTarget,
-  updateAttachmentsPage: (state: AttachmentSlice) =>
-    state.updateAttachmentsPage,
-  clearAttachmentList: (state: AttachmentSlice) => state.clearAttachmentList,
-  total: (state: AttachmentSlice) => state.total,
-  page: (state: AttachmentSlice) => state.page,
-  size: (state: AttachmentSlice) => state.size,
-  totalPages: (state: AttachmentSlice) => state.totalPages,
-  hasNext: (state: AttachmentSlice) => state.hasNext,
-  hasPrevious: (state: AttachmentSlice) => state.hasPrevious,
-  links: (state: AttachmentSlice) => state.links,
+
+  // Cache management
+  getCacheEntry: (state: AttachmentSlice) => state.getCacheEntry,
+  setCacheEntry: (state: AttachmentSlice) => state.setCacheEntry,
+  clearCache: (state: AttachmentSlice) => state.clearCache,
+  addAttachmentToCache: (state: AttachmentSlice) => state.addAttachmentToCache,
+  removeAttachmentFromCache: (state: AttachmentSlice) =>
+    state.removeAttachmentFromCache,
+  updateAttachmentInCache: (state: AttachmentSlice) =>
+    state.updateAttachmentInCache,
 };

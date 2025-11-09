@@ -40,6 +40,12 @@ export function useAttachmentManager(
   const setTargetError = useAuthStore(
     (state: StoreState) => state.setTargetError,
   );
+  const addAttachmentToCache = useAuthStore(
+    (state: StoreState) => state.addAttachmentToCache,
+  );
+  const removeAttachmentFromCache = useAuthStore(
+    (state: StoreState) => state.removeAttachmentFromCache,
+  );
   const clearAttachmentsForTarget = useAuthStore(
     (state: StoreState) => state.clearAttachmentsForTarget,
   );
@@ -103,6 +109,9 @@ export function useAttachmentManager(
       const attachment = await attachmentApi.uploadAttachment(formData);
       upsertAttachmentForTarget(targetKey, attachment);
 
+      // Update cache with new attachment (optimistic update)
+      addAttachmentToCache(attachment);
+
       // Also update item store if this is an item attachment
       if (targetType === 'item') {
         upsertItemAttachment(attachment);
@@ -110,7 +119,13 @@ export function useAttachmentManager(
 
       return attachment;
     },
-    [targetKey, targetType, upsertAttachmentForTarget, upsertItemAttachment],
+    [
+      targetKey,
+      targetType,
+      upsertAttachmentForTarget,
+      upsertItemAttachment,
+      addAttachmentToCache,
+    ],
   );
 
   const deleteAttachment = useCallback(
@@ -125,6 +140,9 @@ export function useAttachmentManager(
       try {
         await attachmentApi.deleteAttachment(attachmentId, options);
         removeAttachmentForTarget(targetKey, attachmentId);
+
+        // Update cache to remove attachment (optimistic update)
+        removeAttachmentFromCache(attachmentId);
 
         // Also update item store if this is an item attachment
         if (targetType === 'item') {
@@ -148,6 +166,7 @@ export function useAttachmentManager(
       removeItemAttachment,
       setTargetError,
       setTargetLoading,
+      removeAttachmentFromCache,
     ],
   );
 

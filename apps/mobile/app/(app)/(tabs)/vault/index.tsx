@@ -1,23 +1,11 @@
-import React, {
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useEffect,
-  useRef,
-} from 'react';
-import {useNavigation, useRouter} from 'expo-router';
+import React, {useCallback, useLayoutEffect} from 'react';
 import {View, StyleSheet, Pressable} from 'react-native';
+import {useNavigation, useRouter} from 'expo-router';
 import {RefreshableScrollView, HeaderButton, ThemedText} from '@/components/ui';
-import {AttachmentsOverview} from '@/features/attachments';
-import {
-  useAttachmentsListManager,
-  useVaultFilter,
-  useClearVaultFilter,
-} from '@vohrad/store';
-import {computeAttachmentCounts} from '@/features/attachments/utils/attachment-counts';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {AttachmentsOverview, useVault} from '@/features/attachments';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, makeStyleFactory} from '@/utils';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export default function VaultScreen() {
   const router = useRouter();
@@ -25,71 +13,38 @@ export default function VaultScreen() {
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
 
-  const vaultFilter = useVaultFilter();
-  const clearVaultFilter = useClearVaultFilter();
-  const {attachments, setFilters} = useAttachmentsListManager();
-  const isInitialMount = useRef(true);
-
-  // Sync filters with vault filter state (backend filtering)
-  useEffect(() => {
-    // Skip initial mount - manager already initializes with empty filters
-    if (isInitialMount.current && !vaultFilter) {
-      isInitialMount.current = false;
-      return;
-    }
-    isInitialMount.current = false;
-
-    if (vaultFilter) {
-      setFilters({
-        targetType: vaultFilter.targetType,
-        targetId: vaultFilter.targetId,
-      });
-    } else {
-      setFilters({});
-    }
-  }, [vaultFilter, setFilters]);
-
-  const counts = useMemo(
-    () => computeAttachmentCounts(attachments),
-    [attachments],
-  );
-
-  const hasActiveFilter = Boolean(vaultFilter);
-  const filterTargetType = vaultFilter?.targetType;
-  const filterTargetId = vaultFilter?.targetId;
-  const filterItemName = vaultFilter?.itemName;
-
-  const handleClearFilter = useCallback(() => {
-    clearVaultFilter();
-  }, [clearVaultFilter]);
+  const {counts, hasActiveFilter, filterInfo, clearFilter} = useVault();
 
   const handleImagesPress = useCallback(() => {
     router.push('/(app)/(tabs)/vault/images');
   }, [router]);
 
-  const canAdd = vaultFilter?.targetType === 'item' && vaultFilter?.targetId;
+  const handleAddPress = useCallback(() => {
+    // If there's a filter, pass params; otherwise navigate without params (item selection handled in add screen)
+    if (filterInfo) {
+      router.push({
+        pathname: '/(app)/(tabs)/vault/add',
+        params: {
+          targetType: filterInfo.targetType,
+          targetId: filterInfo.targetId,
+        },
+      });
+    } else {
+      router.push('/(app)/(tabs)/vault/add');
+    }
+  }, [router, filterInfo]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: canAdd
-        ? () => (
-            <HeaderButton
-              variant="add"
-              onPress={() =>
-                router.push({
-                  pathname: '/(app)/(tabs)/vault/add',
-                  params: {
-                    targetType: filterTargetType,
-                    targetId: filterTargetId,
-                  },
-                })
-              }
-              accessibilityLabel="Add attachment"
-            />
-          )
-        : undefined,
+      headerRight: () => (
+        <HeaderButton
+          variant="add"
+          onPress={handleAddPress}
+          accessibilityLabel="Add attachment"
+        />
+      ),
     });
-  }, [navigation, router, canAdd, filterTargetType, filterTargetId]);
+  }, [navigation, handleAddPress]);
 
   return (
     <RefreshableScrollView
@@ -97,16 +52,16 @@ export default function VaultScreen() {
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior="automatic"
     >
-      {hasActiveFilter && (
+      {hasActiveFilter && filterInfo && (
         <View style={styles.filterContainer}>
           <Pressable
             style={styles.filterChip}
-            onPress={handleClearFilter}
+            onPress={clearFilter}
             accessibilityRole="button"
-            accessibilityLabel={`Clear filter for ${filterItemName || 'item'}`}
+            accessibilityLabel={`Clear filter for ${filterInfo.itemName ?? 'item'}`}
           >
             <ThemedText variant="caption" style={styles.filterText}>
-              Filtered: {filterItemName || `Item ${filterTargetId}`}
+              Filtered: {filterInfo.itemName ?? `Item ${filterInfo.targetId}`}
             </ThemedText>
             <Icon name={AppIcons.actions.close} size="sm" colorToken="text" />
           </Pressable>

@@ -61,8 +61,9 @@ function VaultStack() {
             headerSearchBarOptions: {
               headerIconColor: theme.text,
               placement: 'automatic',
-              placeholder: 'Search...',
               allowToolbarIntegration: true,
+              hideWhenScrolling: false,
+              placeholder: 'Search...',
               onChangeText: handleSearchChange,
             },
           }}

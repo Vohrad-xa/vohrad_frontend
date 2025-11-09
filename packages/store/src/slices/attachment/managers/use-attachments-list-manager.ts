@@ -2,6 +2,7 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import {attachmentApi, type ListAttachmentsParams} from '@vohrad/api-client';
 import {useAuthStore} from '../../../store';
 import {attachmentSelectors} from '../selectors';
+import {createAttachmentCacheKey} from '../utils/cache-key';
 
 type AttachmentListFilters = Omit<ListAttachmentsParams, 'page' | 'size'>;
 
@@ -38,6 +39,8 @@ export function useAttachmentsListManager(
   );
   const setLoading = useAuthStore(attachmentSelectors.setLoading);
   const setError = useAuthStore(attachmentSelectors.setError);
+  const getCacheEntry = useAuthStore(attachmentSelectors.getCacheEntry);
+  const setCacheEntry = useAuthStore(attachmentSelectors.setCacheEntry);
 
   const fetchByUrl = useCallback(
     async (url: string, strategy: 'replace' | 'append') => {
@@ -73,7 +76,71 @@ export function useAttachmentsListManager(
   );
 
   const fetchPage = useCallback(
-    async (targetPage: number, append = false, signal?: AbortSignal) => {
+    async (
+      targetPage: number,
+      append = false,
+      signal?: AbortSignal,
+      skipCache = false,
+    ) => {
+      // Generate cache key from current filters (page 1 only for cache)
+      const cacheKey = createAttachmentCacheKey(filters);
+
+      // Check cache first (only for page 1, not for pagination/append)
+      if (!skipCache && targetPage === 1 && !append) {
+        const cached = getCacheEntry(cacheKey);
+        if (cached) {
+          // Load from cache immediately
+          updateAttachmentsPage({
+            attachments: cached.attachments,
+            total: cached.total,
+            page: cached.page,
+            size: cached.size,
+            totalPages: cached.totalPages,
+            hasNext: cached.hasNext,
+            hasPrevious: cached.hasPrevious,
+            links: cached.links,
+            strategy: 'replace',
+          });
+          return; // Skip fetch, use cache
+        }
+
+        // Smart cache fallback: If kind filter exists, check broader cache and filter client-side
+        if (filters.kind) {
+          // Build broader cache key without kind filter
+          const broaderFilters: {
+            targetType?: typeof filters.targetType;
+            targetId?: typeof filters.targetId;
+          } = {};
+
+          if (filters.targetType)
+            broaderFilters.targetType = filters.targetType;
+          if (filters.targetId) broaderFilters.targetId = filters.targetId;
+
+          const broaderKey = createAttachmentCacheKey(broaderFilters);
+          const broaderCache = getCacheEntry(broaderKey);
+
+          if (broaderCache) {
+            // Filter client-side from broader cache (instant, no API call)
+            const filteredAttachments = broaderCache.attachments.filter(
+              (a) => a.kind === filters.kind,
+            );
+
+            updateAttachmentsPage({
+              attachments: filteredAttachments,
+              total: filteredAttachments.length,
+              page: 1,
+              size: pageSize,
+              totalPages: Math.ceil(filteredAttachments.length / pageSize),
+              hasNext: filteredAttachments.length > pageSize,
+              hasPrevious: false,
+              links: null,
+              strategy: 'replace',
+            });
+            return; // Skip fetch, use filtered cache
+          }
+        }
+      }
+
       setLoading(true);
       setError(null);
 
@@ -90,7 +157,7 @@ export function useAttachmentsListManager(
         }
 
         const data = response.data;
-        updateAttachmentsPage({
+        const pageData = {
           attachments: data.items ?? [],
           total: data.total,
           page: data.page,
@@ -99,8 +166,20 @@ export function useAttachmentsListManager(
           hasNext: data.has_next,
           hasPrevious: data.has_previous,
           links: response.metadata?.links ?? null,
+        };
+
+        updateAttachmentsPage({
+          ...pageData,
           strategy: append ? 'append' : 'replace',
         });
+
+        // Cache page 1 results
+        if (targetPage === 1 && !append) {
+          setCacheEntry(cacheKey, {
+            ...pageData,
+            fetchedAt: Date.now(),
+          });
+        }
       } catch (err) {
         // Don't set error if request was cancelled
         if (err instanceof Error && err.message === 'Request cancelled') {
@@ -112,14 +191,22 @@ export function useAttachmentsListManager(
             ? err.message
             : 'Unable to load attachments right now.';
         setError(message, () => {
-          void fetchPage(targetPage, append);
+          void fetchPage(targetPage, append, undefined, skipCache);
         });
         throw err;
       } finally {
         setLoading(false);
       }
     },
-    [filters, pageSize, setError, setLoading, updateAttachmentsPage],
+    [
+      filters,
+      pageSize,
+      setError,
+      setLoading,
+      updateAttachmentsPage,
+      getCacheEntry,
+      setCacheEntry,
+    ],
   );
 
   useEffect(() => {
@@ -131,13 +218,16 @@ export function useAttachmentsListManager(
     };
   }, [fetchPage]);
 
-  const refresh = useCallback(async () => {
-    if (links?.first) {
-      await fetchByUrl(links.first, 'replace');
-    } else {
-      await fetchPage(1, false);
-    }
-  }, [fetchPage, fetchByUrl, links]);
+  const refresh = useCallback(
+    async (skipCache = true) => {
+      if (links?.first) {
+        await fetchByUrl(links.first, 'replace');
+      } else {
+        await fetchPage(1, false, undefined, skipCache);
+      }
+    },
+    [fetchPage, fetchByUrl, links],
+  );
 
   const loadMore = useCallback(async () => {
     if (!hasNext || isLoading || !links?.next) {

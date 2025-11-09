@@ -6,19 +6,15 @@ import {attachmentSelectors} from '../selectors';
 import type {AttachmentImageUrlEntry} from '../slice';
 
 export const useFetchAttachmentUrls = () => {
-  const setAttachmentLoading = useAuthStore(
-    attachmentSelectors.setAttachmentLoading,
-  );
-  const setAttachmentError = useAuthStore(
-    attachmentSelectors.setAttachmentError,
-  );
+  const setLoading = useAuthStore(attachmentSelectors.setLoading);
+  const setError = useAuthStore(attachmentSelectors.setError);
   const setImageUrls = useAuthStore(attachmentSelectors.setImageUrls);
   const imageUrls = useAuthStore(attachmentSelectors.imageUrls);
 
   const fetchAttachmentUrls = useCallback(
     async (items: Item[]) => {
-      setAttachmentLoading(true);
-      setAttachmentError(null);
+      setLoading(true);
+      setError(null);
       try {
         const staleCacheIds: string[] = [];
         const urlsToFetch = items.filter((item) => {
@@ -36,7 +32,7 @@ export const useFetchAttachmentUrls = () => {
         });
 
         if (urlsToFetch.length === 0 && staleCacheIds.length === 0) {
-          setAttachmentLoading(false);
+          setLoading(false);
           return;
         }
 
@@ -69,12 +65,12 @@ export const useFetchAttachmentUrls = () => {
       } catch (err: unknown) {
         const errorMessage =
           err instanceof Error ? err.message : 'An unknown error occurred';
-        setAttachmentError(errorMessage);
+        setError(errorMessage);
       } finally {
-        setAttachmentLoading(false);
+        setLoading(false);
       }
     },
-    [imageUrls, setAttachmentLoading, setAttachmentError, setImageUrls],
+    [imageUrls, setLoading, setError, setImageUrls],
   );
 
   return {fetchAttachmentUrls};
