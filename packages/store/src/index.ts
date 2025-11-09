@@ -1,6 +1,7 @@
 export {useAuthStore} from './store';
 export type {StoreState} from './store';
 export {setAuthPersistStorage} from './utils/storage';
+export {shallow} from 'zustand/shallow';
 export {
   authSelectors,
   useProfileDetails,

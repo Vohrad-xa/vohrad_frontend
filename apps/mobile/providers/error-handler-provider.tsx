@@ -1,5 +1,5 @@
 import {useEffect, useRef, type ReactNode} from 'react';
-import {useAuthStore} from '@vohrad/store';
+import {useAuthStore, shallow} from '@vohrad/store';
 import {showAlert, showConfirmAlert} from '@/utils';
 
 interface ErrorHandlerProviderProps {
@@ -25,9 +25,14 @@ export function ErrorHandlerProvider({
 }: ErrorHandlerProviderProps) {
   const lastAlertRef = useRef(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const error = useAuthStore((state) => state.error);
-  const clearError = useAuthStore((state) => state.clearError);
-  const retryCallback = useAuthStore((state) => state.retryCallback);
+  const {error, clearError, retryCallback} = useAuthStore(
+    (state) => ({
+      error: state.error,
+      clearError: state.clearError,
+      retryCallback: state.retryCallback,
+    }),
+    shallow,
+  );
 
   useEffect(() => {
     if (timeoutRef.current) {

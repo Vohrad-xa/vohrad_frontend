@@ -2,6 +2,7 @@ import {useCallback, useMemo} from 'react';
 import {attachmentApi} from '@vohrad/api-client';
 import type {ItemAttachment} from '@vohrad/types';
 import {useAuthStore, type StoreState} from '../../../store';
+import {shallow} from 'zustand/shallow';
 import {createAttachmentTargetKey, type AttachmentTargetKey} from '../slice';
 import type {AttachmentTargetType} from '@vohrad/types';
 import {useAttachmentFetchState, useAttachmentsByTarget} from '../hooks';
@@ -25,29 +26,27 @@ export function useAttachmentManager(
   const attachments = useAttachmentsByTarget(targetType, targetId);
   const {isLoading, error} = useAttachmentFetchState(targetType, targetId);
 
-  const setAttachmentsForTarget = useAuthStore(
-    (state: StoreState) => state.setAttachmentsForTarget,
-  );
-  const upsertAttachmentForTarget = useAuthStore(
-    (state: StoreState) => state.upsertAttachmentForTarget,
-  );
-  const removeAttachmentForTarget = useAuthStore(
-    (state: StoreState) => state.removeAttachmentForTarget,
-  );
-  const setTargetLoading = useAuthStore(
-    (state: StoreState) => state.setTargetLoading,
-  );
-  const setTargetError = useAuthStore(
-    (state: StoreState) => state.setTargetError,
-  );
-  const addAttachmentToCache = useAuthStore(
-    (state: StoreState) => state.addAttachmentToCache,
-  );
-  const removeAttachmentFromCache = useAuthStore(
-    (state: StoreState) => state.removeAttachmentFromCache,
-  );
-  const clearAttachmentsForTarget = useAuthStore(
-    (state: StoreState) => state.clearAttachmentsForTarget,
+  const {
+    setAttachmentsForTarget,
+    upsertAttachmentForTarget,
+    removeAttachmentForTarget,
+    setTargetLoading,
+    setTargetError,
+    addAttachmentToCache,
+    removeAttachmentFromCache,
+    clearAttachmentsForTarget,
+  } = useAuthStore(
+    (state: StoreState) => ({
+      setAttachmentsForTarget: state.setAttachmentsForTarget,
+      upsertAttachmentForTarget: state.upsertAttachmentForTarget,
+      removeAttachmentForTarget: state.removeAttachmentForTarget,
+      setTargetLoading: state.setTargetLoading,
+      setTargetError: state.setTargetError,
+      addAttachmentToCache: state.addAttachmentToCache,
+      removeAttachmentFromCache: state.removeAttachmentFromCache,
+      clearAttachmentsForTarget: state.clearAttachmentsForTarget,
+    }),
+    shallow
   );
   const upsertItemAttachment = useAuthStore((state: StoreState) =>
     itemSelectors.upsertItemAttachment(state),

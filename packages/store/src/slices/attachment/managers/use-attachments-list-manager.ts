@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {attachmentApi, type ListAttachmentsParams} from '@vohrad/api-client';
 import {useAuthStore} from '../../../store';
+import {shallow} from 'zustand/shallow';
 import {attachmentSelectors} from '../selectors';
 import {createAttachmentCacheKey} from '../utils/cache-key';
 
@@ -19,17 +20,34 @@ export function useAttachmentsListManager(
     options?.initialFilters ?? {},
   );
 
-  const attachments = useAuthStore(attachmentSelectors.attachments);
-  const isLoading = useAuthStore(attachmentSelectors.isAttachmentLoading);
-  const error = useAuthStore(attachmentSelectors.attachmentError);
-  const retryCallback = useAuthStore(attachmentSelectors.retryCallback);
-  const total = useAuthStore(attachmentSelectors.total);
-  const page = useAuthStore(attachmentSelectors.page);
-  const size = useAuthStore(attachmentSelectors.size);
-  const totalPages = useAuthStore(attachmentSelectors.totalPages);
-  const hasNext = useAuthStore(attachmentSelectors.hasNext);
-  const hasPrevious = useAuthStore(attachmentSelectors.hasPrevious);
-  const links = useAuthStore(attachmentSelectors.links);
+  const {
+    attachments,
+    isLoading,
+    error,
+    retryCallback,
+    total,
+    page,
+    size,
+    totalPages,
+    hasNext,
+    hasPrevious,
+    links,
+  } = useAuthStore(
+    (state) => ({
+      attachments: attachmentSelectors.attachments(state),
+      isLoading: attachmentSelectors.isAttachmentLoading(state),
+      error: attachmentSelectors.attachmentError(state),
+      retryCallback: attachmentSelectors.retryCallback(state),
+      total: attachmentSelectors.total(state),
+      page: attachmentSelectors.page(state),
+      size: attachmentSelectors.size(state),
+      totalPages: attachmentSelectors.totalPages(state),
+      hasNext: attachmentSelectors.hasNext(state),
+      hasPrevious: attachmentSelectors.hasPrevious(state),
+      links: attachmentSelectors.links(state),
+    }),
+    shallow
+  );
 
   const updateAttachmentsPage = useAuthStore(
     attachmentSelectors.updateAttachmentsPage,
