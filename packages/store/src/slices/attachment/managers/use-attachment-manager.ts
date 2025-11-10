@@ -1,11 +1,16 @@
 import {useCallback, useMemo} from 'react';
-import {attachmentApi} from '@vohrad/api-client';
 import type {ItemAttachment} from '@vohrad/types';
 import {useAuthStore, type StoreState} from '../../../store';
 import {shallow} from 'zustand/shallow';
 import {createAttachmentTargetKey, type AttachmentTargetKey} from '../slice';
 import type {AttachmentTargetType} from '@vohrad/types';
-import {useAttachmentFetchState, useAttachmentsByTarget} from '../hooks';
+import {
+  useAttachmentFetchState,
+  useAttachmentsByTarget,
+  useFetchTargetAttachments,
+  useUploadAttachment,
+  useDeleteAttachment,
+} from '../hooks';
 import {itemSelectors} from '../../item/selectors';
 
 type UseAttachmentManagerOptions = {
@@ -31,6 +36,10 @@ export function useAttachmentManager(
 
   const attachments = useAttachmentsByTarget(targetType, targetId);
   const {isLoading, error} = useAttachmentFetchState(targetType, targetId);
+
+  const {fetchTargetAttachments} = useFetchTargetAttachments();
+  const {uploadAttachment: uploadAttachmentHook} = useUploadAttachment();
+  const {deleteAttachment: deleteAttachmentHook} = useDeleteAttachment();
 
   const {
     setAttachmentsForTarget,
@@ -70,39 +79,12 @@ export function useAttachmentManager(
       const page = params?.page ?? 1;
       const size = params?.size ?? pageSize;
 
-      setTargetLoading(targetKey, true);
-      setTargetError(targetKey, null);
-
-      try {
-        const response = await attachmentApi.listAttachments({
-          targetType,
-          targetId,
-          page,
-          size,
-        });
-        const items = response.data.items ?? [];
-        setAttachmentsForTarget(targetKey, items);
-        return items;
-      } catch (err) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : 'Unable to load attachments right now.';
-        setTargetError(targetKey, message);
-        throw err;
-      } finally {
-        setTargetLoading(targetKey, false);
-      }
+      return await fetchTargetAttachments(targetType, targetId, targetKey, {
+        page,
+        size,
+      });
     },
-    [
-      pageSize,
-      setAttachmentsForTarget,
-      setTargetError,
-      setTargetLoading,
-      targetId,
-      targetKey,
-      targetType,
-    ],
+    [pageSize, targetId, targetKey, targetType, fetchTargetAttachments],
   );
 
   const uploadAttachment = useCallback(
@@ -111,7 +93,7 @@ export function useAttachmentManager(
         throw new Error('Attachment target is not available');
       }
 
-      const attachment = await attachmentApi.uploadAttachment(formData);
+      const attachment = await uploadAttachmentHook(formData);
       upsertAttachmentForTarget(targetKey, attachment);
 
       // Update cache with new attachment (optimistic update)
@@ -130,6 +112,8 @@ export function useAttachmentManager(
     [
       targetKey,
       targetType,
+      targetId,
+      uploadAttachmentHook,
       upsertAttachmentForTarget,
       upsertItemAttachment,
       addAttachmentToCache,
@@ -151,7 +135,7 @@ export function useAttachmentManager(
       }
 
       try {
-        await attachmentApi.deleteAttachment(attachmentId, {
+        await deleteAttachmentHook(attachmentId, {
           hardDelete: options?.hardDelete,
         });
 
@@ -185,6 +169,7 @@ export function useAttachmentManager(
       removeAttachmentForTarget,
       targetType,
       targetId,
+      deleteAttachmentHook,
       removeItemAttachment,
       setTargetError,
       setTargetLoading,

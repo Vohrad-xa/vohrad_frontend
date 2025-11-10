@@ -1,9 +1,10 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {attachmentApi, type ListAttachmentsParams} from '@vohrad/api-client';
+import {type ListAttachmentsParams} from '@vohrad/api-client';
 import {useAuthStore} from '../../../store';
 import {shallow} from 'zustand/shallow';
 import {attachmentSelectors} from '../selectors';
 import {createAttachmentCacheKey} from '../utils/cache-key';
+import {useFetchAttachments} from '../hooks';
 
 type AttachmentListFilters = Omit<ListAttachmentsParams, 'page' | 'size'>;
 
@@ -55,42 +56,17 @@ export function useAttachmentsListManager(
   const clearAttachmentList = useAuthStore(
     attachmentSelectors.clearAttachmentList,
   );
-  const setLoading = useAuthStore(attachmentSelectors.setLoading);
-  const setError = useAuthStore(attachmentSelectors.setError);
   const getCacheEntry = useAuthStore(attachmentSelectors.getCacheEntry);
   const setCacheEntry = useAuthStore(attachmentSelectors.setCacheEntry);
+  const setError = useAuthStore(attachmentSelectors.setError);
+
+  const {fetchAttachments} = useFetchAttachments();
 
   const fetchByUrl = useCallback(
     async (url: string, strategy: 'replace' | 'append') => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await attachmentApi.listAttachments(url);
-        const data = response.data;
-        updateAttachmentsPage({
-          attachments: data.items ?? [],
-          total: data.total,
-          page: data.page,
-          size: data.size,
-          totalPages: data.total_pages,
-          hasNext: data.has_next,
-          hasPrevious: data.has_previous,
-          links: response.metadata?.links ?? null,
-          strategy,
-        });
-      } catch (err) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : 'Unable to load attachments right now.';
-        setError(message);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
+      await fetchAttachments(url, {append: strategy === 'append'});
     },
-    [setLoading, setError, updateAttachmentsPage],
+    [fetchAttachments],
   );
 
   const fetchPage = useCallback(
@@ -159,40 +135,30 @@ export function useAttachmentsListManager(
         }
       }
 
-      setLoading(true);
-      setError(null);
-
       try {
-        const response = await attachmentApi.listAttachments({
-          ...filters,
-          page: targetPage,
-          size: pageSize,
-        });
+        await fetchAttachments(
+          {
+            ...filters,
+            page: targetPage,
+            size: pageSize,
+          },
+          {append, signal},
+        );
 
-        // Don't update state if request was aborted
-        if (signal?.aborted) {
-          return;
-        }
-
-        const data = response.data;
-        const pageData = {
-          attachments: data.items ?? [],
-          total: data.total,
-          page: data.page,
-          size: data.size,
-          totalPages: data.total_pages,
-          hasNext: data.has_next,
-          hasPrevious: data.has_previous,
-          links: response.metadata?.links ?? null,
-        };
-
-        updateAttachmentsPage({
-          ...pageData,
-          strategy: append ? 'append' : 'replace',
-        });
-
-        // Cache page 1 results
+        // Cache page 1 results (hook already updated state)
         if (targetPage === 1 && !append) {
+          const state = useAuthStore.getState();
+          const pageData = {
+            attachments: attachmentSelectors.attachments(state),
+            total: attachmentSelectors.total(state),
+            page: attachmentSelectors.page(state),
+            size: attachmentSelectors.size(state),
+            totalPages: attachmentSelectors.totalPages(state),
+            hasNext: attachmentSelectors.hasNext(state),
+            hasPrevious: attachmentSelectors.hasPrevious(state),
+            links: attachmentSelectors.links(state),
+          };
+
           setCacheEntry(cacheKey, {
             ...pageData,
             fetchedAt: Date.now(),
@@ -204,24 +170,24 @@ export function useAttachmentsListManager(
           return;
         }
 
-        const message =
+        // Set retry callback on local state
+        setError(
           err instanceof Error
             ? err.message
-            : 'Unable to load attachments right now.';
-        setError(message, () => {
-          void fetchPage(targetPage, append, undefined, skipCache);
-        });
+            : 'Unable to load attachments right now.',
+          () => {
+            void fetchPage(targetPage, append, undefined, skipCache);
+          },
+        );
+
         throw err;
-      } finally {
-        setLoading(false);
       }
     },
     [
       filters,
       pageSize,
       setError,
-      setLoading,
-      updateAttachmentsPage,
+      fetchAttachments,
       getCacheEntry,
       setCacheEntry,
     ],

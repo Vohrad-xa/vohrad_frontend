@@ -15,7 +15,6 @@ export function useOrganizationDetails(): Tenant | null {
 export function useUpdateTenant() {
   const [isLoading, setIsLoading] = useState(false);
   const updateTenant = useAuthStore(tenantSelectors.updateTenant);
-  const setError = useAuthStore((state) => state.setError);
 
   const updateTenantProfile = useCallback(
     async (data: TenantProfileUpdate): Promise<void> => {
@@ -27,13 +26,17 @@ export function useUpdateTenant() {
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to update organization';
-        setError(message, () => updateTenantProfile(data));
+        const retry = () => updateTenantProfile(data);
+
+        // Set error on global auth slice for ErrorHandlerProvider
+        useAuthStore.setState({error: message, retryCallback: retry});
+
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [updateTenant, setError],
+    [updateTenant],
   );
 
   return {
@@ -45,7 +48,6 @@ export function useUpdateTenant() {
 export function useUpdateTenantSettings() {
   const [isLoading, setIsLoading] = useState(false);
   const updateTenant = useAuthStore(tenantSelectors.updateTenant);
-  const setError = useAuthStore((state) => state.setError);
 
   const updateTenantSettings = useCallback(
     async (data: TenantSettingsUpdate): Promise<void> => {
@@ -57,13 +59,17 @@ export function useUpdateTenantSettings() {
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to update preferences';
-        setError(message, () => updateTenantSettings(data));
+        const retry = () => updateTenantSettings(data);
+
+        // Set error on global auth slice for ErrorHandlerProvider
+        useAuthStore.setState({error: message, retryCallback: retry});
+
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [updateTenant, setError],
+    [updateTenant],
   );
 
   return {

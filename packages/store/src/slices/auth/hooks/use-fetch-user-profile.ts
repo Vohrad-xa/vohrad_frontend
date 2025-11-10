@@ -4,7 +4,6 @@ import {useAuthStore} from '../../../store';
 
 export function useFetchUserProfile() {
   const setUser = useAuthStore((state) => state.setUser);
-  const setError = useAuthStore((state) => state.setError);
 
   const fetchUserProfile = useCallback(async (): Promise<void> => {
     try {
@@ -13,9 +12,11 @@ export function useFetchUserProfile() {
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Failed to refresh profile';
-      setError(message, fetchUserProfile);
+
+      // Set error on global auth slice for ErrorHandlerProvider
+      useAuthStore.setState({error: message, retryCallback: fetchUserProfile});
     }
-  }, [setUser, setError]);
+  }, [setUser]);
 
   return {
     fetchUserProfile,

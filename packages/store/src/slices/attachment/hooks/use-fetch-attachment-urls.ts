@@ -65,7 +65,12 @@ export const useFetchAttachmentUrls = () => {
       } catch (err: unknown) {
         const errorMessage =
           err instanceof Error ? err.message : 'An unknown error occurred';
+
+        // Set error on local attachment slice
         setError(errorMessage);
+
+        // Set error on global auth slice for ErrorHandlerProvider
+        useAuthStore.setState({error: errorMessage, retryCallback: null});
       } finally {
         setLoading(false);
       }

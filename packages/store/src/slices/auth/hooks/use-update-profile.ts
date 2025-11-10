@@ -7,7 +7,6 @@ import type {UserUpdateData} from '@vohrad/types';
 export function useUpdateProfile() {
   const [isLoading, setIsLoading] = useState(false);
   const updateUser = useAuthStore(authSelectors.updateUser);
-  const setError = useAuthStore((state) => state.setError);
 
   const updateProfile = useCallback(
     async (data: UserUpdateData): Promise<void> => {
@@ -19,13 +18,17 @@ export function useUpdateProfile() {
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to update profile';
-        setError(message, () => updateProfile(data));
+        const retry = () => updateProfile(data);
+
+        // Set error on global auth slice for ErrorHandlerProvider
+        useAuthStore.setState({error: message, retryCallback: retry});
+
         throw err;
       } finally {
         setIsLoading(false);
       }
     },
-    [updateUser, setError],
+    [updateUser],
   );
 
   return {
