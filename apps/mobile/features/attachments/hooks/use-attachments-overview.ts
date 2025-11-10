@@ -29,7 +29,6 @@ export function useAttachmentsOverview(
     if (filters.targetId) {
       next.targetId = filters.targetId;
     }
-    // DON'T include kind - we need ALL types for accurate counts!
     return next;
   }, [filters.targetId, filters.targetType]);
 
