@@ -37,19 +37,17 @@ export function AttachmentKindGrid({tiles}: AttachmentKindGridProps) {
           {Platform.OS === 'ios' ? (
             <SymbolView
               name={SFSymbols.folderFill}
-              size={80}
+              size={90}
               tintColor={theme.accentLightBlue}
             />
           ) : (
             <Icon
               name={AppIcons.content.folderFilled}
-              size={80}
+              size={70}
               color={theme.accentLightBlue}
             />
           )}
-          <ThemedText variant="label" style={styles.label}>
-            {tile.label}
-          </ThemedText>
+          <ThemedText variant="label">{tile.label}</ThemedText>
           <ThemedText variant="caption" style={styles.count}>
             {tile.count} {tile.count === 1 ? 'file' : 'files'}
           </ThemedText>
@@ -69,14 +67,11 @@ const useStyles = makeStyleFactory(
       folder: {
         width: `${100 / COLUMNS}%`,
         alignItems: 'center',
-        paddingVertical: ds.spacing.md,
+        paddingVertical: Platform.OS === 'ios' ? 0 : ds.spacing.lg,
       },
-      label: {
-        marginTop: ds.spacing.sm,
-      },
+
       count: {
         color: theme.muted,
-        marginTop: ds.spacing.xs,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

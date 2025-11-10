@@ -1,12 +1,13 @@
-import React, {useCallback, useLayoutEffect, useMemo} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useMemo} from 'react';
 import {View, StyleSheet, Pressable} from 'react-native';
+import {useSetAttachmentFilter} from '@vohrad/store';
 import {useNavigation, useRouter, useLocalSearchParams} from 'expo-router';
-import {useAuthStore} from '@vohrad/store';
 import {RefreshableScrollView, HeaderButton, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AttachmentsOverview,
   useAttachmentsOverview,
+  useAttachmentNavigation,
 } from '@/features/attachments';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, makeStyleFactory} from '@/utils';
@@ -19,41 +20,56 @@ export default function VaultScreen() {
     targetId?: string;
     itemName?: string;
   }>();
+  const setAttachmentFilter = useSetAttachmentFilter();
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
+  const {openVaultImages, openVaultAdd, clearVaultParams} =
+    useAttachmentNavigation();
 
-  // Set filter from URL params before hooks initialize
-  useMemo(() => {
-    if (params.targetType && params.targetId) {
-      useAuthStore.getState().setAttachmentFilter({
-        targetType: params.targetType as 'item',
+  const initialFilter = useMemo(() => {
+    if (params.targetType === 'item' && typeof params.targetId === 'string') {
+      return {
+        targetType: 'item' as const,
         targetId: params.targetId,
+      };
+    }
+    return undefined;
+  }, [params.targetType, params.targetId]);
+
+  useEffect(() => {
+    if (initialFilter) {
+      setAttachmentFilter({
+        targetType: initialFilter.targetType,
+        targetId: initialFilter.targetId,
         itemName: params.itemName,
       });
     }
-  }, [params.targetType, params.targetId, params.itemName]);
+  }, [initialFilter, params.itemName, setAttachmentFilter]);
 
   const {counts, hasActiveFilter, filterInfo, clearFilter} =
-    useAttachmentsOverview();
+    useAttachmentsOverview({initialFilter});
+
+  const handleClearFilter = useCallback(() => {
+    clearFilter();
+    clearVaultParams();
+  }, [clearFilter, clearVaultParams]);
 
   const handleImagesPress = useCallback(() => {
-    router.push('/(app)/(tabs)/vault/images');
-  }, [router]);
+    openVaultImages();
+  }, [openVaultImages]);
 
   const handleAddPress = useCallback(() => {
     // If there's a filter, pass params; otherwise navigate without params (item selection handled in add screen)
     if (filterInfo) {
-      router.push({
-        pathname: '/(app)/(tabs)/vault/add',
-        params: {
-          targetType: filterInfo.targetType,
-          targetId: filterInfo.targetId,
-        },
+      openVaultAdd({
+        targetType: filterInfo.targetType,
+        targetId: filterInfo.targetId,
+        itemName: filterInfo.itemName,
       });
     } else {
       router.push('/(app)/(tabs)/vault/add');
     }
-  }, [router, filterInfo]);
+  }, [router, filterInfo, openVaultAdd]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -77,7 +93,7 @@ export default function VaultScreen() {
         <View style={styles.filterContainer}>
           <Pressable
             style={styles.filterChip}
-            onPress={clearFilter}
+            onPress={handleClearFilter}
             accessibilityRole="button"
             accessibilityLabel={`Clear filter for ${filterInfo.itemName ?? 'item'}`}
           >

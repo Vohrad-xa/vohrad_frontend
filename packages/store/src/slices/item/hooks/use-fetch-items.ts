@@ -76,9 +76,9 @@ export function useFetchItems() {
 
         const message =
           err instanceof Error ? err.message : 'Failed to fetch items';
-        setError(message, () =>
-          fetchItems(urlOrPage, sizeOrOptions, filterOptions),
-        );
+        const retry = () => fetchItems(urlOrPage, sizeOrOptions, filterOptions);
+        setError(message, retry);
+        useAuthStore.setState({error: message, retryCallback: retry});
         throw err;
       } finally {
         setLoading(false);

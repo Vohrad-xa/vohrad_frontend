@@ -46,7 +46,7 @@ export function useAttachmentsListManager(
       hasPrevious: attachmentSelectors.hasPrevious(state),
       links: attachmentSelectors.links(state),
     }),
-    shallow
+    shallow,
   );
 
   const updateAttachmentsPage = useAuthStore(

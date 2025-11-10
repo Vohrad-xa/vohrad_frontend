@@ -1,19 +1,21 @@
 import type {ItemAttachment} from '@vohrad/types';
+import type {AttachmentCacheFilters} from './utils/cache-key';
+import {collectAttachmentsForFilters} from './utils/cache-selectors';
 import type {AttachmentSlice, AttachmentTargetKey} from './slice';
 
 export const attachmentSelectors = {
   // State
   attachments: (state: AttachmentSlice) => state.attachments,
-  isAttachmentLoading: (state: AttachmentSlice) => state.isLoading,
-  attachmentError: (state: AttachmentSlice) => state.error,
-  retryCallback: (state: AttachmentSlice) => state.retryCallback,
-  total: (state: AttachmentSlice) => state.total,
-  page: (state: AttachmentSlice) => state.page,
-  size: (state: AttachmentSlice) => state.size,
-  totalPages: (state: AttachmentSlice) => state.totalPages,
-  hasNext: (state: AttachmentSlice) => state.hasNext,
-  hasPrevious: (state: AttachmentSlice) => state.hasPrevious,
-  links: (state: AttachmentSlice) => state.links,
+  isAttachmentLoading: (state: AttachmentSlice) => state.attachmentIsLoading,
+  attachmentError: (state: AttachmentSlice) => state.attachmentError,
+  retryCallback: (state: AttachmentSlice) => state.attachmentRetryCallback,
+  total: (state: AttachmentSlice) => state.attachmentTotal,
+  page: (state: AttachmentSlice) => state.attachmentPage,
+  size: (state: AttachmentSlice) => state.attachmentSize,
+  totalPages: (state: AttachmentSlice) => state.attachmentTotalPages,
+  hasNext: (state: AttachmentSlice) => state.attachmentHasNext,
+  hasPrevious: (state: AttachmentSlice) => state.attachmentHasPrevious,
+  links: (state: AttachmentSlice) => state.attachmentLinks,
 
   // Image URLs
   imageUrls: (state: AttachmentSlice) => state.imageUrls,
@@ -50,6 +52,9 @@ export const attachmentSelectors = {
   setTargetError: (state: AttachmentSlice) => state.setTargetError,
   clearAttachmentsForTarget: (state: AttachmentSlice) =>
     state.clearAttachmentsForTarget,
+  attachmentsFromCache:
+    (state: AttachmentSlice) => (filters: AttachmentCacheFilters) =>
+      collectAttachmentsForFilters(state.attachmentCache, filters),
 
   // Cache management
   getCacheEntry: (state: AttachmentSlice) => state.getCacheEntry,

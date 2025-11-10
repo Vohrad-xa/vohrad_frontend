@@ -62,12 +62,6 @@ export default function ItemsModalsLayout() {
             title: 'Specifications',
           }}
         />
-        <Stack.Screen
-          name="attachments"
-          options={{
-            headerShown: false,
-          }}
-        />
       </Stack>
     </ScreenLoadingWrapper>
   );

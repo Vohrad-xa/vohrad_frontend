@@ -9,4 +9,6 @@ export const authSelectors = {
   error: (state: AuthSlice) => state.error,
   intendedRoute: (state: AuthSlice) => state.intendedRoute,
   updateUser: (state: AuthSlice) => state.updateUser,
+  setError: (state: AuthSlice) => state.setError,
+  clearError: (state: AuthSlice) => state.clearError,
 };

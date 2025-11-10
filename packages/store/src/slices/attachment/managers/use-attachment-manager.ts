@@ -12,6 +12,12 @@ type UseAttachmentManagerOptions = {
   pageSize?: number;
 };
 
+type DeleteAttachmentOptions = {
+  hardDelete?: boolean;
+  targetType?: AttachmentTargetType;
+  targetId?: string | null;
+};
+
 export function useAttachmentManager(
   targetType: AttachmentTargetType,
   targetId?: string | null,
@@ -46,7 +52,7 @@ export function useAttachmentManager(
       removeAttachmentFromCache: state.removeAttachmentFromCache,
       clearAttachmentsForTarget: state.clearAttachmentsForTarget,
     }),
-    shallow
+    shallow,
   );
   const upsertItemAttachment = useAuthStore((state: StoreState) =>
     itemSelectors.upsertItemAttachment(state),
@@ -109,7 +115,10 @@ export function useAttachmentManager(
       upsertAttachmentForTarget(targetKey, attachment);
 
       // Update cache with new attachment (optimistic update)
-      addAttachmentToCache(attachment);
+      addAttachmentToCache(attachment, {
+        targetType,
+        targetId: targetId ?? null,
+      });
 
       // Also update item store if this is an item attachment
       if (targetType === 'item') {
@@ -128,40 +137,54 @@ export function useAttachmentManager(
   );
 
   const deleteAttachment = useCallback(
-    async (attachmentId: string, options?: {hardDelete?: boolean}) => {
-      if (!targetKey) {
-        throw new Error('Attachment target is not available');
+    async (attachmentId: string, options?: DeleteAttachmentOptions) => {
+      const effectiveTargetType = options?.targetType ?? targetType;
+      const effectiveTargetId = options?.targetId ?? targetId ?? undefined;
+      const effectiveTargetKey =
+        effectiveTargetId != null && effectiveTargetId !== ''
+          ? createAttachmentTargetKey(effectiveTargetType, effectiveTargetId)
+          : null;
+
+      if (effectiveTargetKey) {
+        setTargetLoading(effectiveTargetKey, true);
+        setTargetError(effectiveTargetKey, null);
       }
 
-      setTargetLoading(targetKey, true);
-      setTargetError(targetKey, null);
-
       try {
-        await attachmentApi.deleteAttachment(attachmentId, options);
-        removeAttachmentForTarget(targetKey, attachmentId);
+        await attachmentApi.deleteAttachment(attachmentId, {
+          hardDelete: options?.hardDelete,
+        });
+
+        if (effectiveTargetKey) {
+          removeAttachmentForTarget(effectiveTargetKey, attachmentId);
+        }
 
         // Update cache to remove attachment (optimistic update)
         removeAttachmentFromCache(attachmentId);
 
         // Also update item store if this is an item attachment
-        if (targetType === 'item') {
+        if (effectiveTargetType === 'item' && effectiveTargetId) {
           removeItemAttachment(attachmentId);
         }
       } catch (err) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : 'Unable to delete attachment right now.';
-        setTargetError(targetKey, message);
+        if (effectiveTargetKey) {
+          const message =
+            err instanceof Error
+              ? err.message
+              : 'Unable to delete attachment right now.';
+          setTargetError(effectiveTargetKey, message);
+        }
         throw err;
       } finally {
-        setTargetLoading(targetKey, false);
+        if (effectiveTargetKey) {
+          setTargetLoading(effectiveTargetKey, false);
+        }
       }
     },
     [
       removeAttachmentForTarget,
-      targetKey,
       targetType,
+      targetId,
       removeItemAttachment,
       setTargetError,
       setTargetLoading,

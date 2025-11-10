@@ -33,17 +33,18 @@ function VaultStack() {
         screenOptions={{
           headerShown: true,
           headerShadowVisible: false,
+          headerLargeTitle: true,
+          headerLargeTitleShadowVisible: true,
           headerTransparent: Platform.OS === 'ios',
-          headerStyle: {
-            backgroundColor:
-              Platform.OS === 'android' ? theme.navigationBar : undefined,
-          },
-          headerTitleStyle: {color: theme.text},
-          headerTitleAlign: 'center',
           contentStyle: {
             backgroundColor:
               Platform.OS === 'web' ? theme.webbackground : theme.background,
           },
+          headerStyle: {
+            backgroundColor:
+              Platform.OS === 'android' ? theme.navigationBar : undefined,
+          },
+          headerTitleAlign: 'center',
         }}
       >
         <Stack.Screen
@@ -60,8 +61,9 @@ function VaultStack() {
             ),
             headerSearchBarOptions: {
               headerIconColor: theme.text,
-              placement: 'automatic',
-              allowToolbarIntegration: true,
+              placement: 'stacked',
+              shouldShowHintSearchIcon: true,
+              allowToolbarIntegration: false,
               hideWhenScrolling: false,
               placeholder: 'Search...',
               onChangeText: handleSearchChange,
@@ -78,7 +80,7 @@ function VaultStack() {
         <Stack.Screen
           name="images"
           options={{
-            headerTitle: 'Images',
+            headerTitle: 'Library',
             headerBackButtonDisplayMode: 'minimal',
           }}
         />

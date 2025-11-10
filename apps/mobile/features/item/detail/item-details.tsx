@@ -2,6 +2,7 @@ import React, {useCallback} from 'react';
 import {View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Card} from '@/components/cards/card';
+import {useAttachmentNavigation} from '@/features/attachments';
 import {useTheme} from '@/providers';
 import {ActiveField} from './active-field';
 import {AttachmentField} from './attachments/attachment-field';
@@ -33,6 +34,7 @@ export function ItemDetails({
 }: ItemDetailsProps): React.JSX.Element {
   const {ds} = useTheme();
   const router = useRouter();
+  const {openVault, openVaultRoot} = useAttachmentNavigation();
 
   const {
     formValues,
@@ -125,18 +127,16 @@ export function ItemDetails({
         {/* Attachments field */}
         <Card.Row
           onPress={() => {
-            if (itemId && item?.name) {
-              router.push({
-                pathname: '/(app)/(tabs)/vault',
-                params: {
-                  targetType: 'item',
-                  targetId: itemId,
-                  itemName: item.name,
-                },
+            if (itemId) {
+              openVault({
+                targetType: 'item',
+                targetId: itemId,
+                itemName: item?.name,
               });
-            } else {
-              router.push('/(app)/(tabs)/vault');
+              return;
             }
+
+            openVaultRoot();
           }}
           accessibilityLabel="View attachments"
         >

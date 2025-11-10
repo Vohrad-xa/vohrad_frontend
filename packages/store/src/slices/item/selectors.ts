@@ -1,17 +1,25 @@
 import type {ItemSlice} from './slice';
 
 export const itemSelectors = {
+  // Item data
   items: (state: ItemSlice) => state.items,
   selectedItem: (state: ItemSlice) => state.selectedItem,
-  total: (state: ItemSlice) => state.total,
-  page: (state: ItemSlice) => state.page,
-  size: (state: ItemSlice) => state.size,
-  totalPages: (state: ItemSlice) => state.totalPages,
-  hasNext: (state: ItemSlice) => state.hasNext,
-  hasPrevious: (state: ItemSlice) => state.hasPrevious,
-  links: (state: ItemSlice) => state.links,
-  isLoading: (state: ItemSlice) => state.isLoading,
-  error: (state: ItemSlice) => state.error,
+
+  // Namespaced pagination
+  total: (state: ItemSlice) => state.itemsTotal,
+  page: (state: ItemSlice) => state.itemsPage,
+  size: (state: ItemSlice) => state.itemsSize,
+  totalPages: (state: ItemSlice) => state.itemsTotalPages,
+  hasNext: (state: ItemSlice) => state.itemsHasNext,
+  hasPrevious: (state: ItemSlice) => state.itemsHasPrevious,
+  links: (state: ItemSlice) => state.itemsLinks,
+
+  // Namespaced async state
+  isLoading: (state: ItemSlice) => state.itemsIsLoading,
+  error: (state: ItemSlice) => state.itemsError,
+  retryCallback: (state: ItemSlice) => state.itemsRetryCallback,
+
+  // Actions
   updatePage: (state: ItemSlice) => state.updatePage,
   setSelectedItem: (state: ItemSlice) => state.setSelectedItem,
   addItem: (state: ItemSlice) => state.addItem,

@@ -1,6 +1,6 @@
 import {useCallback} from 'react';
 import {useAttachmentManager, useAttachmentFilter} from '@vohrad/store';
-import {useImageAttachments} from '@/features/item';
+import {useImageAttachments} from '@/features/item/detail/attachments/attachments-images';
 import {showConfirmAlert} from '@/utils';
 import {useFilteredAttachments} from './use-filtered-attachments';
 import {useImageSelection} from './use-image-selection';

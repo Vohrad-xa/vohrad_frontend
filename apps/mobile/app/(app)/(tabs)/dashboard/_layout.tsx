@@ -18,6 +18,7 @@ export default function HomeLayout() {
         <Stack.Screen
           name="index"
           options={{
+            headerLargeTitle: true,
             headerTitle: 'Dashboard',
             headerLeft: () => (
               <HeaderButton

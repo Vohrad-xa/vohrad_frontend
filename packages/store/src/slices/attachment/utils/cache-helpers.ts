@@ -59,6 +59,11 @@ export function addAttachmentToCacheEntry(
     return null;
   }
 
+  const exists = entry.attachments.some((item) => item.id === attachment.id);
+  if (exists) {
+    return null;
+  }
+
   return {
     ...entry,
     attachments: [attachment, ...entry.attachments],

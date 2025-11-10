@@ -26,7 +26,13 @@ export function useCreateItem() {
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to create item';
+
+        // Set error on local item slice
         setError(message);
+
+        // Set error on global auth slice for ErrorHandlerProvider
+        useAuthStore.setState({error: message, retryCallback: null});
+
         throw err;
       } finally {
         setIsLoading(false);
@@ -58,7 +64,13 @@ export function useUpdateItem() {
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to update item';
+
+        // Set error on local item slice
         setError(message);
+
+        // Set error on global auth slice for ErrorHandlerProvider
+        useAuthStore.setState({error: message, retryCallback: null});
+
         throw err;
       } finally {
         setIsLoading(false);
@@ -89,7 +101,13 @@ export function useDeleteItem() {
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to delete item';
+
+        // Set error on local item slice
         setError(message);
+
+        // Set error on global auth slice for ErrorHandlerProvider
+        useAuthStore.setState({error: message, retryCallback: null});
+
         throw err;
       } finally {
         setIsLoading(false);
@@ -127,6 +145,7 @@ export function useUpdateItemLocation() {
         const message =
           err instanceof Error ? err.message : 'Failed to update item location';
         setError(message);
+        useAuthStore.setState({error: message, retryCallback: null});
         throw err;
       } finally {
         setIsLoading(false);

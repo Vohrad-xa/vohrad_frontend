@@ -76,7 +76,7 @@ export default function VaultImagesScreen() {
 }
 
 const useStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
@@ -86,7 +86,6 @@ const useStyles = makeStyleFactory(
       },
       listContent: {
         paddingHorizontal: 0,
-        paddingTop: ds.spacing.lg,
         paddingBottom: 0,
       },
     }),

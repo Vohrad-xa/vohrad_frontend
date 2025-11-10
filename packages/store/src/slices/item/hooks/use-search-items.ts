@@ -56,7 +56,9 @@ export function useSearchItems() {
       } catch (err) {
         const message =
           err instanceof Error ? err.message : 'Failed to search items';
-        setError(message, () => searchItems(urlOrQuery, pageOrOptions, size));
+        const retry = () => searchItems(urlOrQuery, pageOrOptions, size);
+        setError(message, retry);
+        useAuthStore.setState({error: message, retryCallback: retry});
         throw err;
       } finally {
         setLoading(false);

@@ -1,12 +1,16 @@
 import type {StateCreator} from 'zustand';
-import type {ItemAttachment, AttachmentTargetType} from '@vohrad/types';
-import type {AsyncState, PaginatedState} from '../../utils/state';
+import type {
+  ItemAttachment,
+  AttachmentTargetType,
+  PaginationLinks,
+} from '@vohrad/types';
 import {
   updateAllCacheEntries,
   addAttachmentToCacheEntry,
   removeAttachmentFromCacheEntry,
   updateAttachmentInCacheEntry,
 } from './utils/cache-helpers';
+import {createAttachmentCacheKey} from './utils/cache-key';
 
 export type AttachmentTargetKey = `${AttachmentTargetType}:${string}`;
 
@@ -15,17 +19,46 @@ export type AttachmentImageUrlEntry = {
   url: string;
 };
 
-type UpdateAttachmentsPagePayload = PaginatedState & {
+type UpdateAttachmentsPagePayload = {
   attachments: ItemAttachment[];
+  total: number;
+  page: number;
+  size: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+  links: PaginationLinks | null;
   strategy?: 'replace' | 'append';
 };
 
-export type AttachmentCacheEntry = PaginatedState & {
+export type AttachmentCacheEntry = {
   attachments: ItemAttachment[];
+  total: number;
+  page: number;
+  size: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+  links: PaginationLinks | null;
   fetchedAt: number;
 };
 
-export interface AttachmentSlice extends AsyncState, PaginatedState {
+export interface AttachmentSlice {
+  // Namespaced pagination properties to avoid collision with ItemSlice
+  attachmentTotal: number;
+  attachmentPage: number;
+  attachmentSize: number;
+  attachmentTotalPages: number;
+  attachmentHasNext: boolean;
+  attachmentHasPrevious: boolean;
+  attachmentLinks: PaginationLinks | null;
+
+  // Namespaced async properties
+  attachmentIsLoading: boolean;
+  attachmentError: string | null;
+  attachmentRetryCallback: (() => void) | null;
+
+  // Attachment-specific properties
   attachments: ItemAttachment[];
   imageUrls: Record<string, AttachmentImageUrlEntry>;
   attachmentsByTarget: Record<AttachmentTargetKey, ItemAttachment[]>;
@@ -65,7 +98,13 @@ export interface AttachmentSlice extends AsyncState, PaginatedState {
   getCacheEntry: (cacheKey: string) => AttachmentCacheEntry | null;
   setCacheEntry: (cacheKey: string, entry: AttachmentCacheEntry) => void;
   clearCache: () => void;
-  addAttachmentToCache: (attachment: ItemAttachment) => void;
+  addAttachmentToCache: (
+    attachment: ItemAttachment,
+    hint?: {
+      targetType?: AttachmentTargetType;
+      targetId?: string | null;
+    },
+  ) => void;
   removeAttachmentFromCache: (attachmentId: string) => void;
   updateAttachmentInCache: (attachment: ItemAttachment) => void;
 }
@@ -76,16 +115,16 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
 ) => ({
   attachments: [],
   imageUrls: {},
-  isLoading: false,
-  error: null,
-  retryCallback: null,
-  total: 0,
-  page: 1,
-  size: 20,
-  totalPages: 0,
-  hasNext: false,
-  hasPrevious: false,
-  links: null,
+  attachmentIsLoading: false,
+  attachmentError: null,
+  attachmentRetryCallback: null,
+  attachmentTotal: 0,
+  attachmentPage: 1,
+  attachmentSize: 20,
+  attachmentTotalPages: 0,
+  attachmentHasNext: false,
+  attachmentHasPrevious: false,
+  attachmentLinks: null,
   attachmentsByTarget: {},
   attachmentsLoadingByTarget: {},
   attachmentsErrorByTarget: {},
@@ -104,25 +143,34 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
         strategy === 'append' && state.attachments.length > 0
           ? [...state.attachments, ...attachments]
           : attachments,
-      ...pagination,
+      attachmentTotal: pagination.total,
+      attachmentPage: pagination.page,
+      attachmentSize: pagination.size,
+      attachmentTotalPages: pagination.totalPages,
+      attachmentHasNext: pagination.hasNext,
+      attachmentHasPrevious: pagination.hasPrevious,
+      attachmentLinks: pagination.links,
     })),
   clearAttachmentList: () =>
     set({
       attachments: [],
-      total: 0,
-      page: 1,
-      size: 20,
-      totalPages: 0,
-      hasNext: false,
-      hasPrevious: false,
-      links: null,
-      error: null,
-      retryCallback: null,
+      attachmentTotal: 0,
+      attachmentPage: 1,
+      attachmentSize: 20,
+      attachmentTotalPages: 0,
+      attachmentHasNext: false,
+      attachmentHasPrevious: false,
+      attachmentLinks: null,
+      attachmentError: null,
+      attachmentRetryCallback: null,
     }),
-  setLoading: (loading: boolean) => set({isLoading: loading}),
+  setLoading: (loading: boolean) => set({attachmentIsLoading: loading}),
   setError: (error: string | null, retryCallback?: () => void) =>
-    set({error, retryCallback: retryCallback ?? null}),
-  clearError: () => set({error: null, retryCallback: null}),
+    set({
+      attachmentError: error,
+      attachmentRetryCallback: retryCallback ?? null,
+    }),
+  clearError: () => set({attachmentError: null, attachmentRetryCallback: null}),
   setAttachmentsForTarget: (targetKey, attachments) =>
     set((state) => ({
       attachmentsByTarget: {
@@ -206,15 +254,67 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
       },
     })),
   clearCache: () => set({attachmentCache: {}}),
-  addAttachmentToCache: (attachment) =>
-    set((state) => ({
-      attachmentCache: updateAllCacheEntries(
-        state.attachmentCache,
-        (key, entry) => addAttachmentToCacheEntry(key, entry, attachment),
-      ),
-      attachments: [attachment, ...state.attachments],
-      total: state.total + 1,
-    })),
+  addAttachmentToCache: (attachment, hint) =>
+    set((state) => {
+      const resolvedTargetType =
+        hint?.targetType ??
+        (attachment.attachable_type as AttachmentTargetType | undefined);
+      const resolvedTargetId =
+        hint?.targetId ??
+        (attachment.attachable_id
+          ? String(attachment.attachable_id)
+          : undefined);
+
+      const baseCache = {...state.attachmentCache};
+
+      if (resolvedTargetType && resolvedTargetId) {
+        const cacheKey = createAttachmentCacheKey({
+          targetType: resolvedTargetType,
+          targetId: resolvedTargetId,
+        });
+        const existingEntry = baseCache[cacheKey];
+
+        if (existingEntry) {
+          const alreadyPresent = existingEntry.attachments.some(
+            (item) => item.id === attachment.id,
+          );
+          if (!alreadyPresent) {
+            baseCache[cacheKey] = {
+              ...existingEntry,
+              attachments: [attachment, ...existingEntry.attachments],
+              total: existingEntry.total + 1,
+            };
+          }
+        } else {
+          baseCache[cacheKey] = {
+            attachments: [attachment],
+            total: 1,
+            page: 1,
+            size: state.attachmentSize,
+            totalPages: 1,
+            hasNext: false,
+            hasPrevious: false,
+            links: null,
+            fetchedAt: Date.now(),
+          };
+        }
+      }
+
+      const attachmentCache = updateAllCacheEntries(baseCache, (key, entry) =>
+        addAttachmentToCacheEntry(key, entry, attachment),
+      );
+
+      const attachments = [
+        attachment,
+        ...state.attachments.filter((a) => a.id !== attachment.id),
+      ];
+
+      return {
+        attachmentCache,
+        attachments,
+        attachmentTotal: state.attachmentTotal + 1,
+      };
+    }),
   removeAttachmentFromCache: (attachmentId) =>
     set((state) => ({
       attachmentCache: updateAllCacheEntries(
@@ -222,7 +322,7 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
         (_, entry) => removeAttachmentFromCacheEntry(entry, attachmentId),
       ),
       attachments: state.attachments.filter((a) => a.id !== attachmentId),
-      total: Math.max(0, state.total - 1),
+      attachmentTotal: Math.max(0, state.attachmentTotal - 1),
     })),
   updateAttachmentInCache: (attachment) =>
     set((state) => {

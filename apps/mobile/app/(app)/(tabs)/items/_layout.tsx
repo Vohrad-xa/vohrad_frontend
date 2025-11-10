@@ -65,14 +65,12 @@ function ItemsStack() {
     <View style={styles.container}>
       <Stack
         screenOptions={{
-          headerShown: true,
           headerShadowVisible: false,
           headerTransparent: Platform.OS === 'ios',
           headerStyle: {
             backgroundColor:
               Platform.OS === 'android' ? theme.navigationBar : undefined,
           },
-          headerTitleStyle: {color: theme.text},
           headerTitleAlign: 'center',
           contentStyle: {
             backgroundColor:
@@ -83,6 +81,7 @@ function ItemsStack() {
         <Stack.Screen
           name="index"
           options={{
+            headerLargeTitle: true,
             headerBackButtonDisplayMode: 'minimal',
             headerTitle: 'Items',
             headerLeft: () => (
@@ -95,7 +94,9 @@ function ItemsStack() {
             ),
             headerSearchBarOptions: {
               headerIconColor: theme.text,
-              placement: 'integrated',
+              placement: 'stacked',
+              allowToolbarIntegration: false,
+              hideWhenScrolling: false,
               placeholder: 'Search...',
               onChangeText: handleSearchChange,
             },

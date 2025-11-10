@@ -100,7 +100,7 @@ export function useSettingsHeader({
       if (selectedCount > 0 && onDeleteSelected) {
         headerRight = () => (
           <HeaderButton
-            variant="destructive"
+            variant="cancel"
             text="Delete"
             onPress={onDeleteSelected}
             accessibilityLabel={`Delete ${selectedCount} items`}
@@ -113,7 +113,7 @@ export function useSettingsHeader({
       // Normal mode with select option
       headerRight = () => (
         <HeaderButton
-          variant="secondary"
+          variant="save"
           text="Select"
           onPress={onSelect}
           accessibilityLabel="Select items"

@@ -180,7 +180,7 @@ const createStyles = makeStyleFactory(
       actionButton: {
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: ds.spacing.md,
+        // paddingVertical: ds.spacing.md,
         gap: ds.spacing.xs,
         minWidth: 78.5,
       } as ViewStyle,

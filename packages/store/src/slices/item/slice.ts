@@ -1,15 +1,39 @@
 import type {StateCreator} from 'zustand';
 import type {Item, ItemDetail, ItemAttachment} from '@vohrad/types';
-import type {AsyncState, PaginatedState} from '../../utils/state';
+import type {PaginationLinks} from '@vohrad/types';
 
-type UpdatePagePayload = PaginatedState & {
+type UpdatePagePayload = {
   items: Item[];
+  total: number;
+  page: number;
+  size: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+  links: PaginationLinks | null;
   strategy?: 'replace' | 'append';
 };
 
-export interface ItemSlice extends PaginatedState, AsyncState {
+export interface ItemSlice {
+  // Item-specific properties
   items: Item[];
   selectedItem: ItemDetail | null;
+
+  // Namespaced pagination properties to avoid collision with AttachmentSlice
+  itemsTotal: number;
+  itemsPage: number;
+  itemsSize: number;
+  itemsTotalPages: number;
+  itemsHasNext: boolean;
+  itemsHasPrevious: boolean;
+  itemsLinks: PaginationLinks | null;
+
+  // Namespaced async properties
+  itemsIsLoading: boolean;
+  itemsError: string | null;
+  itemsRetryCallback: (() => void) | null;
+
+  // Actions
   updatePage: (payload: UpdatePagePayload) => void;
   setSelectedItem: (item: ItemDetail | null) => void;
   addItem: (item: Item) => void;
@@ -27,16 +51,16 @@ export interface ItemSlice extends PaginatedState, AsyncState {
 export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
   items: [],
   selectedItem: null,
-  total: 0,
-  page: 1,
-  size: 20,
-  totalPages: 0,
-  hasNext: false,
-  hasPrevious: false,
-  links: null,
-  isLoading: false,
-  error: null,
-  retryCallback: null,
+  itemsTotal: 0,
+  itemsPage: 1,
+  itemsSize: 20,
+  itemsTotalPages: 0,
+  itemsHasNext: false,
+  itemsHasPrevious: false,
+  itemsLinks: null,
+  itemsIsLoading: false,
+  itemsError: null,
+  itemsRetryCallback: null,
 
   updatePage: ({
     items,
@@ -56,7 +80,7 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
   addItem: (item: Item) =>
     set((state) => ({
       items: [item, ...state.items],
-      total: state.total + 1,
+      itemsTotal: state.itemsTotal + 1,
     })),
 
   updateItemInList: (id: string, updates: Partial<Item>) =>
@@ -106,7 +130,7 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
   removeItem: (id: string) =>
     set((state) => ({
       items: state.items.filter((item) => item.id !== id),
-      total: state.total - 1,
+      itemsTotal: state.itemsTotal - 1,
       selectedItem: state.selectedItem?.id === id ? null : state.selectedItem,
     })),
 
@@ -155,24 +179,24 @@ export const createItemSlice: StateCreator<ItemSlice> = (set) => ({
       };
     }),
 
-  setLoading: (loading: boolean) => set({isLoading: loading}),
+  setLoading: (loading: boolean) => set({itemsIsLoading: loading}),
 
   setError: (error: string | null, retryCallback?: () => void) =>
-    set({error, retryCallback: retryCallback ?? null}),
+    set({itemsError: error, itemsRetryCallback: retryCallback ?? null}),
 
-  clearError: () => set({error: null, retryCallback: null}),
+  clearError: () => set({itemsError: null, itemsRetryCallback: null}),
 
   clearItems: () =>
     set({
       items: [],
       selectedItem: null,
-      total: 0,
-      page: 1,
-      size: 20,
-      totalPages: 0,
-      hasNext: false,
-      hasPrevious: false,
-      links: null,
-      error: null,
+      itemsTotal: 0,
+      itemsPage: 1,
+      itemsSize: 20,
+      itemsTotalPages: 0,
+      itemsHasNext: false,
+      itemsHasPrevious: false,
+      itemsLinks: null,
+      itemsError: null,
     }),
 });

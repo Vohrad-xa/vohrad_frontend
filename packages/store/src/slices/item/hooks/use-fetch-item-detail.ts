@@ -79,7 +79,9 @@ export function useFetchItemDetail() {
         } catch (err) {
           const message =
             err instanceof Error ? err.message : 'Failed to fetch item details';
-          setError(message, () => fetchItemDetail(id, {force: true}));
+          const retry = () => fetchItemDetail(id, {force: true});
+          setError(message, retry);
+          useAuthStore.setState({error: message, retryCallback: retry});
           setTargetError(targetKey, message);
           throw err;
         } finally {
