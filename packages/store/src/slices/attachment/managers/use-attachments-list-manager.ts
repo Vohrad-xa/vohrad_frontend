@@ -224,7 +224,7 @@ export function useAttachmentsListManager(
     const controller = new AbortController();
     fetchPage(1, false, controller.signal).catch(() => {});
     return () => controller.abort();
-  }, [filters]);
+  }, [filters, fetchPage]);
 
   const refresh = useCallback(
     async (skipCache = true) => {

@@ -23,7 +23,14 @@ export default function VaultImagesScreen() {
     enableSelectionMode,
     disableSelectionMode,
     handleDeleteSelected,
+    loadMore,
+    hasNext,
   } = useAttachmentImages();
+
+  const handleLoadMore = useCallback(() => {
+    if (!hasNext) return;
+    loadMore();
+  }, [hasNext, loadMore]);
 
   const handleImagePress = useCallback(
     async (attachment: ImageAttachmentItem) => {
@@ -70,6 +77,8 @@ export default function VaultImagesScreen() {
           />
         )}
         contentContainerStyle={styles.listContent}
+        onEndReached={hasNext ? handleLoadMore : undefined}
+        onEndReachedThreshold={0.4}
       />
     </View>
   );

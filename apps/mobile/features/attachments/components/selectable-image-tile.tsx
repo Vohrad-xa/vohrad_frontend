@@ -3,7 +3,7 @@ import {Platform, Pressable, StyleSheet} from 'react-native';
 import {Image} from 'expo-image';
 import {SelectionOverlay} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import type {ImageAttachmentItem} from '@/features/item/detail/attachments/attachments-images';
+import type {ImageAttachmentItem} from '@/features/attachments/screens/attachments-images';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 

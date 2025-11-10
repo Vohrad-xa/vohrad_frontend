@@ -13,5 +13,5 @@ export {
   useImageAttachments,
   AttachmentImageTile,
   IMAGE_GRID_COLUMNS,
-} from './attachments/attachments-images';
-export type {ImageAttachmentItem} from './attachments/attachments-images';
+} from '../../attachments/screens/attachments-images';
+export type {ImageAttachmentItem} from '../../attachments/screens/attachments-images';

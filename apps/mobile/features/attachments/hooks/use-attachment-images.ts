@@ -1,6 +1,6 @@
 import {useCallback} from 'react';
 import {useAttachmentManager, useAttachmentFilter} from '@vohrad/store';
-import {useImageAttachments} from '@/features/item/detail/attachments/attachments-images';
+import {useImageAttachments} from '@/features/attachments/screens/attachments-images';
 import {showConfirmAlert} from '@/utils';
 import {useFilteredAttachments} from './use-filtered-attachments';
 import {useImageSelection} from './use-image-selection';
@@ -10,7 +10,9 @@ export function useAttachmentImages() {
   const filterTargetType = attachmentFilter?.targetType ?? 'item';
   const filterTargetId = attachmentFilter?.targetId;
 
-  const {attachments} = useFilteredAttachments({kind: 'image'});
+  const {attachments, loadMore, hasNext, isLoading} = useFilteredAttachments({
+    kind: 'image',
+  });
   const imageAttachments = useImageAttachments(attachments);
   const {deleteAttachment} = useAttachmentManager(
     filterTargetType,
@@ -66,5 +68,8 @@ export function useAttachmentImages() {
     enableSelectionMode,
     disableSelectionMode,
     handleDeleteSelected,
+    loadMore,
+    hasNext,
+    isLoading,
   };
 }
