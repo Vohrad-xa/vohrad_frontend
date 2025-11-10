@@ -141,8 +141,10 @@ export function useAttachmentUpload(
   targetId?: string | null,
 ) {
   const setError = useAuthStore((state) => state.setError);
-  const {uploadAttachment: uploadAttachmentForTarget} =
-    useAttachmentManager(targetType, targetId);
+  const {uploadAttachment: uploadAttachmentForTarget} = useAttachmentManager(
+    targetType,
+    targetId,
+  );
 
   const [pendingAttachment, setPendingAttachment] =
     useState<PendingAttachment | null>(null);

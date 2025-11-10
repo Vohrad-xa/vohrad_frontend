@@ -24,6 +24,7 @@ export {
   useDashboardVisibility,
   useSetDashboardVisibility,
   useResetDashboardVisibility,
+  useUpdateAttachmentCount,
 } from './slices/system';
 export {
   itemSelectors,
@@ -51,7 +52,7 @@ export {
   createAttachmentTargetKey,
 } from './slices/attachment';
 export {createAttachmentCacheKey} from './slices/attachment/utils/cache-key';
-export type {AttachmentCacheFilters} from './slices/attachment/utils/cache-key';
+
 export type {AttachmentCacheEntry} from './slices/attachment/slice';
 export {
   usePendingFilters,
@@ -61,7 +62,8 @@ export {
   useSetAttachmentFilter,
   useClearAttachmentFilter,
 } from './slices/filter/hooks';
-export type {FilterSlice, AttachmentFilter} from './slices/filter';
+export type {FilterSlice} from './slices/filter';
+export type {AttachmentFilter} from '@vohrad/types';
 export type {
   User,
   AuthTokens,

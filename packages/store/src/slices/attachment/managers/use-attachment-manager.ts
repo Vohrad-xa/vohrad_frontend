@@ -123,7 +123,7 @@ export function useAttachmentManager(
         removeAttachmentForTarget(targetKey, tempId);
         upsertAttachmentForTarget(targetKey, attachment);
 
-        // Update main cache for instant UI updates
+        // Update main cache
         addAttachmentToCache(attachment, {
           targetType,
           targetId,
@@ -160,13 +160,13 @@ export function useAttachmentManager(
           ? createAttachmentTargetKey(effectiveTargetType, effectiveTargetId)
           : null;
 
-      if (!effectiveTargetKey) return;
-
       const originalAttachments =
         entry?.attachments.find((a) => a.id === attachmentId) ?? null;
 
-      // Optimistically remove from both caches
-      removeAttachmentForTarget(effectiveTargetKey, attachmentId);
+      // Optimistically remove from caches
+      if (effectiveTargetKey) {
+        removeAttachmentForTarget(effectiveTargetKey, attachmentId);
+      }
       removeAttachmentFromCache(attachmentId);
 
       try {
@@ -178,20 +178,20 @@ export function useAttachmentManager(
           removeItemAttachment(attachmentId);
         }
       } catch (err) {
-        // Rollback both caches on error
-        if (originalAttachments) {
+        // Rollback caches on error
+        if (effectiveTargetKey && originalAttachments) {
           upsertAttachmentForTarget(effectiveTargetKey, originalAttachments);
           addAttachmentToCache(originalAttachments, {
             targetType: effectiveTargetType,
             targetId: effectiveTargetId,
           });
         }
-        setTargetError(
-          effectiveTargetKey,
-          err instanceof Error
-            ? err.message
-            : 'Unable to delete attachment.',
-        );
+        if (effectiveTargetKey) {
+          setTargetError(
+            effectiveTargetKey,
+            err instanceof Error ? err.message : 'Unable to delete attachment.',
+          );
+        }
         throw err;
       }
     },
@@ -228,7 +228,13 @@ export function useAttachmentManager(
         targetId,
       });
     },
-    [targetKey, targetType, targetId, upsertAttachmentForTarget, addAttachmentToCache],
+    [
+      targetKey,
+      targetType,
+      targetId,
+      upsertAttachmentForTarget,
+      addAttachmentToCache,
+    ],
   );
 
   const reset = useCallback(() => {

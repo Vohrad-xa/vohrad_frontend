@@ -5,10 +5,18 @@ import {httpClient} from './http-client';
 export interface DashboardOverview {
   items_total: number;
   locations_total: number;
+  attachments_total: number;
   maintenance_total: number;
   suppliers_total: number;
   check_in_out_total: number;
   documents_total: number;
+  attachment_counts: {
+    image: number;
+    document: number;
+    video: number;
+    archive: number;
+    other: number;
+  };
 }
 
 export class DashboardApi {

@@ -50,8 +50,8 @@ const CARD_CONFIG: DashboardCardConfig[] = [
     colorToken: 'destructive',
   },
   {
-    key: 'documents',
-    title: 'Documents',
+    key: 'attachments',
+    title: 'Attachments',
     icon: AppIcons.content.document,
     colorToken: 'accentIndigo',
   },
@@ -64,7 +64,7 @@ const OVERVIEW_FIELD_BY_KEY: Record<DashboardCardKey, keyof DashboardOverview> =
     maintenance: 'maintenance_total',
     suppliers: 'suppliers_total',
     checkInOut: 'check_in_out_total',
-    documents: 'documents_total',
+    attachments: 'attachments_total',
   };
 
 export function useDashboardCardVisibility(): DashboardVisibilityState {
@@ -105,7 +105,7 @@ export function useFilteredDashboardCards(): MenuCard[] {
         title,
         icon,
         colorToken,
-        count: overview ? overview[OVERVIEW_FIELD_BY_KEY[key]] : 0,
+        count: overview ? (overview[OVERVIEW_FIELD_BY_KEY[key]] as number) : 0,
       }),
     );
   }, [overview, visibility]);

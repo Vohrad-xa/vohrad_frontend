@@ -40,7 +40,11 @@ export type {
   Category,
   Status,
 } from './item';
-export type {AttachmentTargetType, AttachmentKind} from './attachment';
+export type {
+  AttachmentTargetType,
+  AttachmentKind,
+  AttachmentFilter,
+} from './attachment';
 
 export {ApiError} from './api';
 export type {TrackingMode} from './item';

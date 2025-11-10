@@ -5,6 +5,7 @@ export {
   useDashboardVisibility,
   useSetDashboardVisibility,
   useResetDashboardVisibility,
+  useUpdateAttachmentCount,
 } from './hooks';
 export type {
   SystemSlice,

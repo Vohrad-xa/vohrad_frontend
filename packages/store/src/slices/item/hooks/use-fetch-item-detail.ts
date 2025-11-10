@@ -89,12 +89,7 @@ export function useFetchItemDetail() {
 
       return request;
     },
-    [
-      setSelectedItem,
-      setLoading,
-      setError,
-      setAttachmentsForTarget,
-    ],
+    [setSelectedItem, setLoading, setError, setAttachmentsForTarget],
   );
 
   return {fetchItemDetail};

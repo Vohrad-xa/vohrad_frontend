@@ -32,36 +32,27 @@ type UpdateAttachmentsPagePayload = {
   strategy?: 'replace' | 'append';
 };
 
-/**
- * Cache entry following TanStack Query infinite query pattern
- * Stores all pages for a given filter combination
- */
 export type AttachmentCacheEntry = {
-  pages: ItemAttachment[][]; // Array of pages (each page is array of attachments)
-  pageParams: number[]; // Track which pages are loaded [1, 2, 3, ...]
-  total: number; // Total count across all pages
-  size: number; // Items per page
-  totalPages: number; // Total available pages
-  hasNext: boolean; // Can load more pages
-  links: PaginationLinks | null; // Pagination links
-  fetchedAt: number; // Timestamp for staleness check (applies to entire query)
-  version?: number; // Version number for cache invalidation
+  pages: ItemAttachment[][];
+  pageParams: number[];
+  total: number;
+  size: number;
+  totalPages: number;
+  hasNext: boolean;
+  links: PaginationLinks | null;
+  fetchedAt: number;
+  version?: number;
 };
 
-/**
- * Entry for attachments organized by a specific target (e.g., "item:123").
- * This is a simplified cache for per-entity attachment lists.
- */
 export type AttachmentsByTargetEntry = {
   attachments: ItemAttachment[];
   isLoading: boolean;
   error: string | null;
-  fetchedAt: number; // Timestamp for garbage collection
-  version: number; // For optimistic updates and invalidation
+  fetchedAt: number;
+  version: number;
 };
 
 export interface AttachmentSlice {
-  // Namespaced pagination properties to avoid collision with ItemSlice
   attachmentTotal: number;
   attachmentPage: number;
   attachmentSize: number;
@@ -69,26 +60,15 @@ export interface AttachmentSlice {
   attachmentHasNext: boolean;
   attachmentHasPrevious: boolean;
   attachmentLinks: PaginationLinks | null;
-
-  // Namespaced async properties
   attachmentIsLoading: boolean;
   attachmentError: string | null;
   attachmentRetryCallback: (() => void) | null;
-
-  // Attachment-specific properties
   attachments: ItemAttachment[];
   imageUrls: Record<string, AttachmentImageUrlEntry>;
-
-  // New centralized cache for attachments by target
   attachmentsByTarget: Record<AttachmentTargetKey, AttachmentsByTargetEntry>;
-
-  // Multi-page list-view cache
   attachmentCache: Record<string, AttachmentCacheEntry>;
-
-  // GC timer (use ReturnType for cross-platform compatibility)
   gcTimer: ReturnType<typeof setInterval> | null;
 
-  // Methods
   setImageUrls: (
     urls:
       | Record<string, AttachmentImageUrlEntry>
@@ -131,8 +111,6 @@ export interface AttachmentSlice {
   ) => void;
   removeAttachmentFromCache: (attachmentId: string) => void;
   updateAttachmentInCache: (attachment: ItemAttachment) => void;
-
-  // GC methods
   startGarbageCollector: () => void;
   stopGarbageCollector: () => void;
 }
@@ -272,8 +250,8 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
           [targetKey]: {
             ...entry,
             isLoading: loading,
-            ...(loading && {error: null}), // Clear error on new load
-            fetchedAt: Date.now(), // Keep it fresh while loading
+            ...(loading && {error: null}),
+            fetchedAt: Date.now(),
           },
         },
       };
@@ -306,7 +284,7 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
     set((state) => {
       let currentCache = state.attachmentCache;
 
-      // LRU eviction: Check if cache is full before adding new entry
+      // LRU eviction
       if (shouldEvictCache(currentCache) && !currentCache[cacheKey]) {
         currentCache = evictOldestEntry(currentCache);
       }
@@ -351,6 +329,14 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
         ...state.attachments.filter((a) => a.id !== attachment.id),
       ];
 
+      // Update dashboard counts
+      const fullState = get() as AttachmentSlice & {
+        updateAttachmentCount?: (kind: string, delta: number) => void;
+      };
+      if (fullState.updateAttachmentCount) {
+        fullState.updateAttachmentCount(attachment.kind, 1);
+      }
+
       return {
         attachmentCache: updatedCache,
         attachments,
@@ -359,6 +345,9 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
     }),
   removeAttachmentFromCache: (attachmentId) =>
     set((state) => {
+      // Find the attachment to get its kind before removing
+      const attachment = state.attachments.find((a) => a.id === attachmentId);
+
       const updatedCache = {...state.attachmentCache};
 
       Object.keys(updatedCache).forEach((cacheKey) => {
@@ -367,6 +356,16 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
           attachmentId,
         );
       });
+
+      // Update dashboard counts
+      if (attachment) {
+        const fullState = get() as AttachmentSlice & {
+          updateAttachmentCount?: (kind: string, delta: number) => void;
+        };
+        if (fullState.updateAttachmentCount) {
+          fullState.updateAttachmentCount(attachment.kind, -1);
+        }
+      }
 
       return {
         attachmentCache: updatedCache,
@@ -404,7 +403,7 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
     // Prevent multiple GC timers
     const existingTimer = get().gcTimer;
     if (existingTimer) {
-      return; // Already running
+      return;
     }
 
     const timer = setInterval(() => {

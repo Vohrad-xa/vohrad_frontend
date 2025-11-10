@@ -2,49 +2,39 @@ import {useMemo} from 'react';
 import {
   useAttachmentFilter,
   useClearAttachmentFilter,
-  useAuthStore,
-  attachmentSelectors,
-  shallow,
+  useDashboardOverview,
 } from '@vohrad/store';
 import {computeAttachmentCounts} from '../utils/attachment-counts';
 import {
   useFilteredAttachments,
   type UseFilteredAttachmentsOptions,
 } from './use-filtered-attachments';
-import type {AttachmentCacheFilters} from '@vohrad/store';
 
 export function useAttachmentsOverview(
   options?: UseFilteredAttachmentsOptions,
 ) {
   const attachmentFilter = useAttachmentFilter();
   const clearAttachmentFilter = useClearAttachmentFilter();
-  const {attachments, filters, ...managerRest} =
-    useFilteredAttachments(options);
+  const {data: dashboardData} = useDashboardOverview();
 
-  const cacheFilters = useMemo<AttachmentCacheFilters>(() => {
-    const next: AttachmentCacheFilters = {};
-    if (filters.targetType) {
-      next.targetType = filters.targetType;
+  const {attachments, ...managerRest} = useFilteredAttachments({
+    ...options,
+  });
+
+  const counts = useMemo(() => {
+    if (attachmentFilter) {
+      return computeAttachmentCounts(attachments);
     }
-    if (filters.targetId) {
-      next.targetId = filters.targetId;
-    }
-    return next;
-  }, [filters.targetId, filters.targetType]);
-
-  const cachedAttachments = useAuthStore(
-    useMemo(
-      () => (state) =>
-        attachmentSelectors.attachmentsFromCache(state)(cacheFilters),
-      [cacheFilters],
-    ),
-    shallow,
-  );
-
-  const counts = useMemo(
-    () => computeAttachmentCounts(cachedAttachments ?? attachments),
-    [attachments, cachedAttachments],
-  );
+    return (
+      dashboardData?.attachment_counts ?? {
+        image: 0,
+        document: 0,
+        video: 0,
+        archive: 0,
+        other: 0,
+      }
+    );
+  }, [attachmentFilter, attachments, dashboardData]);
 
   const hasActiveFilter = Boolean(attachmentFilter);
   const filterInfo = attachmentFilter

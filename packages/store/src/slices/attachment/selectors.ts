@@ -1,6 +1,4 @@
 import type {ItemAttachment} from '@vohrad/types';
-import type {AttachmentCacheFilters} from './utils/cache-key';
-import {collectAttachmentsForFilters} from './utils/cache-selectors';
 import type {AttachmentSlice, AttachmentTargetKey} from './slice';
 
 const EMPTY_ATTACHMENTS: ItemAttachment[] = [];
@@ -44,11 +42,6 @@ export const attachmentSelectors = {
     (state: AttachmentSlice) =>
     (targetKey: AttachmentTargetKey): string | null =>
       state.attachmentsByTarget[targetKey]?.error ?? null,
-
-  // Cache-based selectors
-  attachmentsFromCache:
-    (state: AttachmentSlice) => (filters: AttachmentCacheFilters) =>
-      collectAttachmentsForFilters(state.attachmentCache, filters),
 
   // Cache management
   getCacheEntry: (state: AttachmentSlice) => state.getCacheEntry,

@@ -6,7 +6,10 @@ import type {AttachmentTargetKey} from '../slice';
 
 type FetchTargetAttachmentsDeps = {
   setTargetLoading: (targetKey: AttachmentTargetKey, loading: boolean) => void;
-  setTargetError: (targetKey: AttachmentTargetKey, error: string | null) => void;
+  setTargetError: (
+    targetKey: AttachmentTargetKey,
+    error: string | null,
+  ) => void;
   setAttachmentsForTarget: (
     targetKey: AttachmentTargetKey,
     attachments: ItemAttachment[],

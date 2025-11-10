@@ -10,6 +10,7 @@ type AttachmentFilterShape = {
 
 export interface UseFilteredAttachmentsOptions {
   kind?: AttachmentKind;
+  pageSize?: number;
   initialFilter?: {
     targetType?: AttachmentTargetType;
     targetId?: string;
@@ -20,7 +21,7 @@ export function useFilteredAttachments(
   options?: UseFilteredAttachmentsOptions,
 ) {
   const attachmentFilter = useAttachmentFilter();
-  const {kind, initialFilter} = options ?? {};
+  const {kind, pageSize, initialFilter} = options ?? {};
 
   const buildFilterShape = useCallback(
     (
@@ -28,7 +29,7 @@ export function useFilteredAttachments(
         targetType?: AttachmentTargetType;
         targetId?: string;
       } | null,
-    ): AttachmentFilterShape | undefined => {
+    ): AttachmentFilterShape => {
       const shape: AttachmentFilterShape = {};
 
       if (source?.targetType) {
@@ -43,25 +44,24 @@ export function useFilteredAttachments(
         shape.kind = kind;
       }
 
-      return Object.keys(shape).length > 0 ? shape : undefined;
+      return shape;
     },
     [kind],
   );
 
-  const initialFiltersRef = useRef<AttachmentFilterShape | undefined>(
-    undefined,
+  const initialFiltersRef = useRef<AttachmentFilterShape>(
+    buildFilterShape(attachmentFilter ?? initialFilter),
   );
-
-  if (!initialFiltersRef.current) {
-    const source = attachmentFilter ?? initialFilter;
-    initialFiltersRef.current = buildFilterShape(source);
-  }
 
   const manager = useAttachmentsListManager({
     initialFilters: initialFiltersRef.current,
+    pageSize,
   });
+
+  const {setFilters} = manager;
+
   const lastAppliedFiltersRef = useRef<string>(
-    JSON.stringify(initialFiltersRef.current ?? {}),
+    JSON.stringify(initialFiltersRef.current),
   );
   const isInitialMount = useRef(true);
 
@@ -72,15 +72,15 @@ export function useFilteredAttachments(
     }
 
     const filters = buildFilterShape(attachmentFilter);
-    const key = JSON.stringify(filters ?? {});
+    const key = JSON.stringify(filters);
 
     if (key === lastAppliedFiltersRef.current) {
       return;
     }
 
-    manager.setFilters(filters ?? {});
+    setFilters(filters);
     lastAppliedFiltersRef.current = key;
-  }, [attachmentFilter, buildFilterShape, manager.setFilters]);
+  }, [attachmentFilter, buildFilterShape, setFilters]);
 
   return manager;
 }

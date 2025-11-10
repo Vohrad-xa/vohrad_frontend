@@ -94,12 +94,12 @@ export function useAttachmentsListManager(
       const cacheKey = createAttachmentCacheKey(filters);
 
       if (!skipCache) {
-        // 1. Check exact cache match first
+        // Check exact cache match first
         const cached = getCacheEntry(cacheKey);
         if (cached && !isStaleEntry(cached, staleTime)) {
           const pageIndex = cached.pageParams.indexOf(targetPage);
           if (pageIndex >= 0) {
-            // Page already cached - return all accumulated pages instantly
+            // Page already cached return all
             const allAttachments = getAllAttachmentsFromPages(cached.pages);
             updateAttachmentsPage({
               attachments: allAttachments,
@@ -116,8 +116,7 @@ export function useAttachmentsListManager(
           }
         }
 
-        // 2. Smart cache fallback: Filter from broader cache if available
-        // This prevents unnecessary API calls when switching filters (e.g., All → Images)
+        // Smart cache fallback: Filter from broader cache if available
         if (filters.kind) {
           const broaderFilters: {
             targetType?: typeof filters.targetType;
@@ -132,7 +131,7 @@ export function useAttachmentsListManager(
           const broaderCache = getCacheEntry(broaderKey);
 
           if (broaderCache && !isStaleEntry(broaderCache, staleTime)) {
-            // ALL data is already cached! Just filter client-side (zero latency)
+            // ALL data is already cached so we filter client-side (zero latency)
             const allBroaderAttachments = getAllAttachmentsFromPages(
               broaderCache.pages,
             );
@@ -151,7 +150,7 @@ export function useAttachmentsListManager(
               links: null,
               strategy: 'replace',
             });
-            return; // Skip fetch, data already in cache
+            return;
           }
         }
       }
@@ -195,9 +194,7 @@ export function useAttachmentsListManager(
           return;
         }
         setError(
-          err instanceof Error
-            ? err.message
-            : 'Unable to load attachments.',
+          err instanceof Error ? err.message : 'Unable to load attachments.',
           () => {
             void fetchPage(targetPage, append, undefined, skipCache);
           },
@@ -218,10 +215,16 @@ export function useAttachmentsListManager(
   );
 
   useEffect(() => {
+    // Only fetch if there's an actual filter
+    const hasFilter = Boolean(
+      filters.kind || filters.targetType || filters.targetId,
+    );
+    if (!hasFilter) return;
+
     const controller = new AbortController();
     fetchPage(1, false, controller.signal).catch(() => {});
     return () => controller.abort();
-  }, [fetchPage]);
+  }, [filters]);
 
   const refresh = useCallback(
     async (skipCache = true) => {
@@ -251,7 +254,7 @@ export function useAttachmentsListManager(
     page,
     size,
     totalPages,
-hasNext,
+    hasNext,
     hasPrevious,
     isLoading,
     error,

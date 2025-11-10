@@ -6,3 +6,9 @@ export type AttachmentKind =
   | 'video'
   | 'archive'
   | 'other';
+
+export interface AttachmentFilter {
+  targetType: AttachmentTargetType;
+  targetId: string;
+  itemName?: string;
+}

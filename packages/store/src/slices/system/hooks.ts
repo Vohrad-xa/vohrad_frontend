@@ -74,7 +74,6 @@ export function useDashboardOverview() {
       setDashboardOverviewError(message);
       setDashboardOverviewStatus('error');
 
-      // Use global error handling with retry callback
       const {setError} = useAuthStore.getState();
       setError(message, fetchOverview);
     }
@@ -114,4 +113,11 @@ export function useSetDashboardVisibility(): (
 
 export function useResetDashboardVisibility(): () => void {
   return useAuthStore(systemSelectors.resetDashboardVisibility);
+}
+
+export function useUpdateAttachmentCount(): (
+  kind: string,
+  delta: number,
+) => void {
+  return useAuthStore(systemSelectors.updateAttachmentCount);
 }

@@ -1,11 +1,5 @@
 import type {StateCreator} from 'zustand';
-import type {ItemFilterState, AttachmentTargetType} from '@vohrad/types';
-
-export interface AttachmentFilter {
-  targetType: AttachmentTargetType;
-  targetId: string;
-  itemName?: string;
-}
+import type {ItemFilterState, AttachmentFilter} from '@vohrad/types';
 
 export interface FilterSlice {
   pendingFilters: ItemFilterState | null;
