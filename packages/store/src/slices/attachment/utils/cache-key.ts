@@ -6,16 +6,7 @@ export interface AttachmentCacheFilters {
   kind?: AttachmentKind;
 }
 
-/**
- * Creates a unique cache key from attachment filters.
- * This enables multi-key caching similar to React Query's query keys.
- *
- * @example
- * createAttachmentCacheKey({}) // "all"
- * createAttachmentCacheKey({kind: 'image'}) // "kind:image"
- * createAttachmentCacheKey({targetType: 'item', targetId: '123'}) // "id:123|type:item"
- * createAttachmentCacheKey({targetType: 'item', targetId: '123', kind: 'image'}) // "id:123|kind:image|type:item"
- */
+// creates a unique cache key based on attachment filters
 export function createAttachmentCacheKey(
   filters: AttachmentCacheFilters,
 ): string {
@@ -26,7 +17,7 @@ export function createAttachmentCacheKey(
     return 'all';
   }
 
-  // Sort keys alphabetically for consistent cache keys regardless of filter order
+  // Sort keys alphabetically
   const parts: string[] = [];
   if (targetId) parts.push(`id:${targetId}`);
   if (kind) parts.push(`kind:${kind}`);

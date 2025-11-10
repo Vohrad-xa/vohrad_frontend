@@ -3,6 +3,8 @@ import type {AttachmentCacheFilters} from './utils/cache-key';
 import {collectAttachmentsForFilters} from './utils/cache-selectors';
 import type {AttachmentSlice, AttachmentTargetKey} from './slice';
 
+const EMPTY_ATTACHMENTS: ItemAttachment[] = [];
+
 export const attachmentSelectors = {
   // State
   attachments: (state: AttachmentSlice) => state.attachments,
@@ -33,25 +35,17 @@ export const attachmentSelectors = {
   attachmentsForTarget:
     (state: AttachmentSlice) =>
     (targetKey: AttachmentTargetKey): ItemAttachment[] =>
-      state.attachmentsByTarget[targetKey] ?? [],
+      state.attachmentsByTarget[targetKey]?.attachments ?? EMPTY_ATTACHMENTS,
   isTargetLoading:
     (state: AttachmentSlice) =>
     (targetKey: AttachmentTargetKey): boolean =>
-      !!state.attachmentsLoadingByTarget[targetKey],
+      state.attachmentsByTarget[targetKey]?.isLoading ?? false,
   targetError:
     (state: AttachmentSlice) =>
     (targetKey: AttachmentTargetKey): string | null =>
-      state.attachmentsErrorByTarget[targetKey] ?? null,
-  setAttachmentsForTarget: (state: AttachmentSlice) =>
-    state.setAttachmentsForTarget,
-  upsertAttachmentForTarget: (state: AttachmentSlice) =>
-    state.upsertAttachmentForTarget,
-  removeAttachmentForTarget: (state: AttachmentSlice) =>
-    state.removeAttachmentForTarget,
-  setTargetLoading: (state: AttachmentSlice) => state.setTargetLoading,
-  setTargetError: (state: AttachmentSlice) => state.setTargetError,
-  clearAttachmentsForTarget: (state: AttachmentSlice) =>
-    state.clearAttachmentsForTarget,
+      state.attachmentsByTarget[targetKey]?.error ?? null,
+
+  // Cache-based selectors
   attachmentsFromCache:
     (state: AttachmentSlice) => (filters: AttachmentCacheFilters) =>
       collectAttachmentsForFilters(state.attachmentCache, filters),
@@ -65,4 +59,9 @@ export const attachmentSelectors = {
     state.removeAttachmentFromCache,
   updateAttachmentInCache: (state: AttachmentSlice) =>
     state.updateAttachmentInCache,
+
+  // Garbage collection
+  startGarbageCollector: (state: AttachmentSlice) =>
+    state.startGarbageCollector,
+  stopGarbageCollector: (state: AttachmentSlice) => state.stopGarbageCollector,
 };

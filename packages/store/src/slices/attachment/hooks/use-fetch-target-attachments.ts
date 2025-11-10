@@ -4,12 +4,26 @@ import {useAuthStore} from '../../../store';
 import type {ItemAttachment, AttachmentTargetType} from '@vohrad/types';
 import type {AttachmentTargetKey} from '../slice';
 
-export function useFetchTargetAttachments() {
-  const setTargetLoading = useAuthStore((state) => state.setTargetLoading);
-  const setTargetError = useAuthStore((state) => state.setTargetError);
-  const setAttachmentsForTarget = useAuthStore(
-    (state) => state.setAttachmentsForTarget,
-  );
+type FetchTargetAttachmentsDeps = {
+  setTargetLoading: (targetKey: AttachmentTargetKey, loading: boolean) => void;
+  setTargetError: (targetKey: AttachmentTargetKey, error: string | null) => void;
+  setAttachmentsForTarget: (
+    targetKey: AttachmentTargetKey,
+    attachments: ItemAttachment[],
+  ) => void;
+  removeAttachmentForTarget: (
+    targetKey: AttachmentTargetKey,
+    attachmentId: string,
+  ) => void;
+};
+
+export function useFetchTargetAttachments(deps: FetchTargetAttachmentsDeps) {
+  const {
+    setTargetLoading,
+    setTargetError,
+    setAttachmentsForTarget,
+    removeAttachmentForTarget,
+  } = deps;
 
   const fetchTargetAttachments = useCallback(
     async (
@@ -22,7 +36,6 @@ export function useFetchTargetAttachments() {
       const size = params?.size ?? 50;
 
       setTargetLoading(targetKey, true);
-      setTargetError(targetKey, null);
 
       try {
         const response = await attachmentApi.listAttachments({
@@ -42,14 +55,18 @@ export function useFetchTargetAttachments() {
 
         setTargetError(targetKey, message);
 
+        // Still propagate error to global state for top-level error handlers
         useAuthStore.setState({error: message, retryCallback: null});
 
         throw err;
-      } finally {
-        setTargetLoading(targetKey, false);
       }
     },
-    [setTargetLoading, setTargetError, setAttachmentsForTarget],
+    [
+      setTargetLoading,
+      setTargetError,
+      setAttachmentsForTarget,
+      removeAttachmentForTarget,
+    ],
   );
 
   return {fetchTargetAttachments};

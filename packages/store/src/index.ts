@@ -45,8 +45,6 @@ export {
   useAttachmentLoading,
   useAttachmentError,
   useAttachmentUrls,
-  useAttachmentsByTarget,
-  useAttachmentFetchState,
   useFetchAttachmentUrls,
   useAttachmentManager,
   useAttachmentsListManager,

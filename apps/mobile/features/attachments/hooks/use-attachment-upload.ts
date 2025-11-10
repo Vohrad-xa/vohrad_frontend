@@ -141,7 +141,7 @@ export function useAttachmentUpload(
   targetId?: string | null,
 ) {
   const setError = useAuthStore((state) => state.setError);
-  const {uploadAttachment: uploadAttachmentForTarget, patchAttachment} =
+  const {uploadAttachment: uploadAttachmentForTarget} =
     useAttachmentManager(targetType, targetId);
 
   const [pendingAttachment, setPendingAttachment] =
@@ -287,8 +287,8 @@ export function useAttachmentUpload(
         formData.append('size', String(size));
       }
 
-      const uploaded = await uploadAttachmentForTarget(formData);
-      patchAttachment(uploaded);
+      await uploadAttachmentForTarget(formData);
+      // uploadAttachmentForTarget already updates both caches
       setPendingAttachment(null);
       return true;
     } catch (error) {
@@ -308,7 +308,6 @@ export function useAttachmentUpload(
     targetType,
     setError,
     uploadAttachmentForTarget,
-    patchAttachment,
   ]);
 
   const hasPending = !!pendingAttachment;

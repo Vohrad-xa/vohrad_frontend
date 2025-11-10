@@ -42,14 +42,20 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
         removeItem: (key: string) => getPersistBackend().removeItem(key),
       })),
       onRehydrateStorage: () => (state) => {
-        // Sync tokens to httpClient after rehydration
-        if (state?.tokens?.access_token) {
-          httpClient.setAccessToken(state.tokens.access_token);
+        if (state) {
+          // Sync tokens to httpClient after rehydration
+          if (state.tokens?.access_token) {
+            httpClient.setAccessToken(state.tokens.access_token);
+          }
+
+          // Start attachment cache garbage collection
+          state.startGarbageCollector();
+
+          // Set hydrated flag
+          useAuthStore.setState({
+            _hasHydrated: true,
+          });
         }
-        // Set hydrated flag
-        useAuthStore.setState({
-          _hasHydrated: true,
-        });
       },
       partialize: (state) => ({
         user: sanitizeUser(state.user),

@@ -1,116 +1,163 @@
 import type {ItemAttachment} from '@vohrad/types';
 import type {AttachmentCacheEntry} from '../slice';
+import {CACHE_CONFIG} from './cache-config';
 
-/**
- * Checks if an attachment should be included in a specific cache entry
- * based on the cache key pattern.
- */
-export function shouldIncludeInCache(
-  cacheKey: string,
+export function appendPageToCacheEntry(
+  entry: AttachmentCacheEntry,
+  newPage: ItemAttachment[],
+  pageParam: number,
+): AttachmentCacheEntry {
+  const updatedPages = [...entry.pages, newPage];
+  const updatedPageParams = [...entry.pageParams, pageParam];
+
+  // Enforce MAX_PAGES limit (drop oldest pages)
+  const pagesToKeep =
+    updatedPages.length > CACHE_CONFIG.MAX_PAGES
+      ? updatedPages.slice(-CACHE_CONFIG.MAX_PAGES)
+      : updatedPages;
+  const paramsToKeep =
+    updatedPageParams.length > CACHE_CONFIG.MAX_PAGES
+      ? updatedPageParams.slice(-CACHE_CONFIG.MAX_PAGES)
+      : updatedPageParams;
+
+  return {
+    ...entry,
+    pages: pagesToKeep,
+    pageParams: paramsToKeep,
+    fetchedAt: Date.now(),
+  };
+}
+
+// flatten all pages
+export function getAllAttachmentsFromPages(
+  pages: ItemAttachment[][],
+): ItemAttachment[] {
+  return pages.flat();
+}
+
+// Adds an attachment to the page
+export function addAttachmentToPages(
+  entry: AttachmentCacheEntry,
   attachment: ItemAttachment,
+): AttachmentCacheEntry {
+  const updatedPages = entry.pages.map((page) => {
+    const exists = page.some((item) => item.id === attachment.id);
+    if (exists) return page;
+    return page;
+  });
+
+  const firstPageUpdated = [attachment, ...updatedPages[0]];
+  const finalPages = [firstPageUpdated, ...updatedPages.slice(1)];
+
+  return {
+    ...entry,
+    pages: finalPages,
+    total: entry.total + 1,
+    fetchedAt: Date.now(),
+  };
+}
+
+// removes an attachment from all pages
+export function removeAttachmentFromPages(
+  entry: AttachmentCacheEntry,
+  attachmentId: string,
+): AttachmentCacheEntry {
+  let found = false;
+  const updatedPages = entry.pages.map((page) => {
+    const filtered = page.filter((a) => a.id !== attachmentId);
+    if (filtered.length !== page.length) found = true;
+    return filtered;
+  });
+
+  if (!found) return entry;
+
+  return {
+    ...entry,
+    pages: updatedPages,
+    total: Math.max(0, entry.total - 1),
+    fetchedAt: Date.now(),
+  };
+}
+
+// updates an attachment across all pages
+export function updateAttachmentInPages(
+  entry: AttachmentCacheEntry,
+  attachment: ItemAttachment,
+): AttachmentCacheEntry {
+  let found = false;
+  const updatedPages = entry.pages.map((page) => {
+    const index = page.findIndex((a) => a.id === attachment.id);
+    if (index < 0) return page;
+
+    found = true;
+    const updated = [...page];
+    updated[index] = attachment;
+    return updated;
+  });
+
+  if (!found) return entry;
+
+  return {
+    ...entry,
+    pages: updatedPages,
+    fetchedAt: Date.now(),
+  };
+}
+
+// cache staleness and eviction helpers
+export function isStaleEntry(
+  entry: AttachmentCacheEntry,
+  staleTime: number = CACHE_CONFIG.STALE_TIME,
 ): boolean {
-  if (cacheKey === 'all') {
+  if (!entry.fetchedAt) {
     return true;
   }
 
-  if (!attachment.attachable_id || !attachment.attachable_type) {
-    return false;
-  }
-
-  return (
-    cacheKey.includes(`id:${attachment.attachable_id}`) &&
-    cacheKey.includes(`type:${attachment.attachable_type}`)
-  );
+  const age = Date.now() - entry.fetchedAt;
+  return age > staleTime;
 }
 
-/**
- * Updates all cache entries by applying a transformation function.
- * Returns the updated cache object.
- */
-export function updateAllCacheEntries(
+// checks if cache has exceeded MAX_ENTRIES
+export function shouldEvictCache(
   cache: Record<string, AttachmentCacheEntry>,
-  updateFn: (
-    cacheKey: string,
-    entry: AttachmentCacheEntry,
-  ) => AttachmentCacheEntry | null,
-): Record<string, AttachmentCacheEntry> {
-  const updatedCache = {...cache};
+): boolean {
+  return Object.keys(cache).length >= CACHE_CONFIG.MAX_ENTRIES;
+}
 
-  Object.keys(updatedCache).forEach((cacheKey) => {
-    const entry = updatedCache[cacheKey];
-    const updated = updateFn(cacheKey, entry);
-    if (updated) {
-      updatedCache[cacheKey] = updated;
+// find the oldest cache key
+export function getOldestCacheKey(
+  cache: Record<string, AttachmentCacheEntry>,
+): string | null {
+  const entries = Object.entries(cache);
+
+  if (entries.length === 0) {
+    return null;
+  }
+
+  let oldestKey: string | null = null;
+  let oldestTime = Infinity;
+
+  entries.forEach(([key, entry]) => {
+    const fetchedAt = entry.fetchedAt ?? 0;
+    if (fetchedAt < oldestTime) {
+      oldestTime = fetchedAt;
+      oldestKey = key;
     }
   });
 
-  return updatedCache;
+  return oldestKey;
 }
 
-/**
- * Adds an attachment to a cache entry if it should be included.
- */
-export function addAttachmentToCacheEntry(
-  cacheKey: string,
-  entry: AttachmentCacheEntry,
-  attachment: ItemAttachment,
-): AttachmentCacheEntry | null {
-  if (!shouldIncludeInCache(cacheKey, attachment)) {
-    return null;
+// removes the oldest cache entry (LRU eviction strategy)
+export function evictOldestEntry(
+  cache: Record<string, AttachmentCacheEntry>,
+): Record<string, AttachmentCacheEntry> {
+  const oldestKey = getOldestCacheKey(cache);
+
+  if (!oldestKey) {
+    return cache;
   }
 
-  const exists = entry.attachments.some((item) => item.id === attachment.id);
-  if (exists) {
-    return null;
-  }
-
-  return {
-    ...entry,
-    attachments: [attachment, ...entry.attachments],
-    total: entry.total + 1,
-  };
-}
-
-/**
- * Removes an attachment from a cache entry by ID.
- */
-export function removeAttachmentFromCacheEntry(
-  entry: AttachmentCacheEntry,
-  attachmentId: string,
-): AttachmentCacheEntry | null {
-  const filteredAttachments = entry.attachments.filter(
-    (a) => a.id !== attachmentId,
-  );
-
-  if (filteredAttachments.length === entry.attachments.length) {
-    return null; // No change
-  }
-
-  return {
-    ...entry,
-    attachments: filteredAttachments,
-    total: Math.max(0, entry.total - 1),
-  };
-}
-
-/**
- * Updates an attachment in a cache entry if it exists.
- */
-export function updateAttachmentInCacheEntry(
-  entry: AttachmentCacheEntry,
-  attachment: ItemAttachment,
-): AttachmentCacheEntry | null {
-  const index = entry.attachments.findIndex((a) => a.id === attachment.id);
-
-  if (index < 0) {
-    return null; // Not found
-  }
-
-  const updatedAttachments = [...entry.attachments];
-  updatedAttachments[index] = attachment;
-
-  return {
-    ...entry,
-    attachments: updatedAttachments,
-  };
+  const {[oldestKey]: _removed, ...remainingCache} = cache;
+  return remainingCache;
 }

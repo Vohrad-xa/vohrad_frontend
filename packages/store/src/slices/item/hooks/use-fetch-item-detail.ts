@@ -3,7 +3,7 @@ import {itemApi} from '@vohrad/api-client';
 import {useAuthStore} from '../../../store';
 import {itemSelectors} from '../selectors';
 import type {ItemDetail} from '@vohrad/types';
-import {attachmentSelectors, createAttachmentTargetKey} from '../../attachment';
+import {createAttachmentTargetKey} from '../../attachment';
 
 const inFlightItemDetailRequests: Record<string, Promise<void>> = {};
 const lastItemDetailFetchAt: Record<string, number> = {};
@@ -16,10 +16,8 @@ export function useFetchItemDetail() {
   const setLoading = useAuthStore(itemSelectors.setLoading);
   const setError = useAuthStore(itemSelectors.setError);
   const setAttachmentsForTarget = useAuthStore(
-    attachmentSelectors.setAttachmentsForTarget,
+    (state) => state.setAttachmentsForTarget,
   );
-  const setTargetLoading = useAuthStore(attachmentSelectors.setTargetLoading);
-  const setTargetError = useAuthStore(attachmentSelectors.setTargetError);
 
   const fetchItemDetail = useCallback(
     async (
@@ -66,8 +64,6 @@ export function useFetchItemDetail() {
       setLoading(true);
       setError(null);
       const targetKey = createAttachmentTargetKey('item', id);
-      setTargetLoading(targetKey, true);
-      setTargetError(targetKey, null);
 
       const request = (async () => {
         try {
@@ -82,12 +78,10 @@ export function useFetchItemDetail() {
           const retry = () => fetchItemDetail(id, {force: true});
           setError(message, retry);
           useAuthStore.setState({error: message, retryCallback: retry});
-          setTargetError(targetKey, message);
           throw err;
         } finally {
           delete inFlightItemDetailRequests[id];
           setLoading(false);
-          setTargetLoading(targetKey, false);
         }
       })();
 
@@ -100,8 +94,6 @@ export function useFetchItemDetail() {
       setLoading,
       setError,
       setAttachmentsForTarget,
-      setTargetLoading,
-      setTargetError,
     ],
   );
 

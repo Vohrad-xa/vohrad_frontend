@@ -1,12 +1,10 @@
-import {useCallback, useMemo} from 'react';
+import {useCallback, useMemo, useEffect} from 'react';
 import type {ItemAttachment} from '@vohrad/types';
 import {useAuthStore, type StoreState} from '../../../store';
 import {shallow} from 'zustand/shallow';
 import {createAttachmentTargetKey, type AttachmentTargetKey} from '../slice';
 import type {AttachmentTargetType} from '@vohrad/types';
 import {
-  useAttachmentFetchState,
-  useAttachmentsByTarget,
   useFetchTargetAttachments,
   useUploadAttachment,
   useDeleteAttachment,
@@ -23,6 +21,8 @@ type DeleteAttachmentOptions = {
   targetId?: string | null;
 };
 
+const EMPTY_ATTACHMENTS: ItemAttachment[] = [];
+
 export function useAttachmentManager(
   targetType: AttachmentTargetType,
   targetId?: string | null,
@@ -34,35 +34,51 @@ export function useAttachmentManager(
     return createAttachmentTargetKey(targetType, targetId);
   }, [targetType, targetId]);
 
-  const attachments = useAttachmentsByTarget(targetType, targetId);
-  const {isLoading, error} = useAttachmentFetchState(targetType, targetId);
-
-  const {fetchTargetAttachments} = useFetchTargetAttachments();
-  const {uploadAttachment: uploadAttachmentHook} = useUploadAttachment();
-  const {deleteAttachment: deleteAttachmentHook} = useDeleteAttachment();
-
   const {
+    entry,
     setAttachmentsForTarget,
     upsertAttachmentForTarget,
     removeAttachmentForTarget,
     setTargetLoading,
     setTargetError,
+    clearAttachmentsForTarget,
+    startGarbageCollector,
+    stopGarbageCollector,
     addAttachmentToCache,
     removeAttachmentFromCache,
-    clearAttachmentsForTarget,
   } = useAuthStore(
     (state: StoreState) => ({
+      entry: targetKey ? state.attachmentsByTarget[targetKey] : null,
       setAttachmentsForTarget: state.setAttachmentsForTarget,
       upsertAttachmentForTarget: state.upsertAttachmentForTarget,
       removeAttachmentForTarget: state.removeAttachmentForTarget,
       setTargetLoading: state.setTargetLoading,
       setTargetError: state.setTargetError,
+      clearAttachmentsForTarget: state.clearAttachmentsForTarget,
+      startGarbageCollector: state.startGarbageCollector,
+      stopGarbageCollector: state.stopGarbageCollector,
       addAttachmentToCache: state.addAttachmentToCache,
       removeAttachmentFromCache: state.removeAttachmentFromCache,
-      clearAttachmentsForTarget: state.clearAttachmentsForTarget,
     }),
     shallow,
   );
+
+  useEffect(() => {
+    startGarbageCollector();
+    return () => {
+      stopGarbageCollector();
+    };
+  }, [startGarbageCollector, stopGarbageCollector]);
+
+  const {fetchTargetAttachments} = useFetchTargetAttachments({
+    setAttachmentsForTarget,
+    setTargetLoading,
+    setTargetError,
+    removeAttachmentForTarget,
+  });
+  const {uploadAttachment: uploadAttachmentHook} = useUploadAttachment();
+  const {deleteAttachment: deleteAttachmentHook} = useDeleteAttachment();
+
   const upsertItemAttachment = useAuthStore((state: StoreState) =>
     itemSelectors.upsertItemAttachment(state),
   );
@@ -93,21 +109,35 @@ export function useAttachmentManager(
         throw new Error('Attachment target is not available');
       }
 
-      const attachment = await uploadAttachmentHook(formData);
-      upsertAttachmentForTarget(targetKey, attachment);
+      const tempId = `temp-${Date.now()}`;
+      const optimisticAttachment: ItemAttachment = {
+        id: tempId,
+      } as ItemAttachment;
 
-      // Update cache with new attachment (optimistic update)
-      addAttachmentToCache(attachment, {
-        targetType,
-        targetId: targetId ?? null,
-      });
+      upsertAttachmentForTarget(targetKey, optimisticAttachment);
 
-      // Also update item store if this is an item attachment
-      if (targetType === 'item') {
-        upsertItemAttachment(attachment);
+      try {
+        const attachment = await uploadAttachmentHook(formData);
+
+        // Remove temp and add real attachment
+        removeAttachmentForTarget(targetKey, tempId);
+        upsertAttachmentForTarget(targetKey, attachment);
+
+        // Update main cache for instant UI updates
+        addAttachmentToCache(attachment, {
+          targetType,
+          targetId,
+        });
+
+        if (targetType === 'item') {
+          upsertItemAttachment(attachment);
+        }
+
+        return attachment;
+      } catch (error) {
+        removeAttachmentForTarget(targetKey, tempId);
+        throw error;
       }
-
-      return attachment;
     },
     [
       targetKey,
@@ -115,8 +145,9 @@ export function useAttachmentManager(
       targetId,
       uploadAttachmentHook,
       upsertAttachmentForTarget,
-      upsertItemAttachment,
+      removeAttachmentForTarget,
       addAttachmentToCache,
+      upsertItemAttachment,
     ],
   );
 
@@ -129,51 +160,52 @@ export function useAttachmentManager(
           ? createAttachmentTargetKey(effectiveTargetType, effectiveTargetId)
           : null;
 
-      if (effectiveTargetKey) {
-        setTargetLoading(effectiveTargetKey, true);
-        setTargetError(effectiveTargetKey, null);
-      }
+      if (!effectiveTargetKey) return;
+
+      const originalAttachments =
+        entry?.attachments.find((a) => a.id === attachmentId) ?? null;
+
+      // Optimistically remove from both caches
+      removeAttachmentForTarget(effectiveTargetKey, attachmentId);
+      removeAttachmentFromCache(attachmentId);
 
       try {
         await deleteAttachmentHook(attachmentId, {
           hardDelete: options?.hardDelete,
         });
 
-        if (effectiveTargetKey) {
-          removeAttachmentForTarget(effectiveTargetKey, attachmentId);
-        }
-
-        // Update cache to remove attachment (optimistic update)
-        removeAttachmentFromCache(attachmentId);
-
-        // Also update item store if this is an item attachment
         if (effectiveTargetType === 'item' && effectiveTargetId) {
           removeItemAttachment(attachmentId);
         }
       } catch (err) {
-        if (effectiveTargetKey) {
-          const message =
-            err instanceof Error
-              ? err.message
-              : 'Unable to delete attachment right now.';
-          setTargetError(effectiveTargetKey, message);
+        // Rollback both caches on error
+        if (originalAttachments) {
+          upsertAttachmentForTarget(effectiveTargetKey, originalAttachments);
+          addAttachmentToCache(originalAttachments, {
+            targetType: effectiveTargetType,
+            targetId: effectiveTargetId,
+          });
         }
+        setTargetError(
+          effectiveTargetKey,
+          err instanceof Error
+            ? err.message
+            : 'Unable to delete attachment.',
+        );
         throw err;
-      } finally {
-        if (effectiveTargetKey) {
-          setTargetLoading(effectiveTargetKey, false);
-        }
       }
     },
     [
-      removeAttachmentForTarget,
+      entry,
       targetType,
       targetId,
       deleteAttachmentHook,
+      removeAttachmentForTarget,
+      removeAttachmentFromCache,
+      upsertAttachmentForTarget,
+      addAttachmentToCache,
       removeItemAttachment,
       setTargetError,
-      setTargetLoading,
-      removeAttachmentFromCache,
     ],
   );
 
@@ -188,9 +220,15 @@ export function useAttachmentManager(
   const patchAttachment = useCallback(
     (attachment: ItemAttachment) => {
       if (!targetKey) return;
+
+      // Update both caches for consistency
       upsertAttachmentForTarget(targetKey, attachment);
+      addAttachmentToCache(attachment, {
+        targetType,
+        targetId,
+      });
     },
-    [targetKey, upsertAttachmentForTarget],
+    [targetKey, targetType, targetId, upsertAttachmentForTarget, addAttachmentToCache],
   );
 
   const reset = useCallback(() => {
@@ -201,9 +239,9 @@ export function useAttachmentManager(
   }, [clearAttachmentsForTarget, targetKey]);
 
   return {
-    attachments,
-    isLoading,
-    error,
+    attachments: entry?.attachments ?? EMPTY_ATTACHMENTS,
+    isLoading: entry?.isLoading ?? false,
+    error: entry?.error ?? null,
     isReady: !!targetKey,
     fetchAttachments,
     uploadAttachment,

@@ -5,12 +5,13 @@ import type {
   PaginationLinks,
 } from '@vohrad/types';
 import {
-  updateAllCacheEntries,
-  addAttachmentToCacheEntry,
-  removeAttachmentFromCacheEntry,
-  updateAttachmentInCacheEntry,
+  shouldEvictCache,
+  evictOldestEntry,
+  addAttachmentToPages,
+  removeAttachmentFromPages,
+  updateAttachmentInPages,
 } from './utils/cache-helpers';
-import {createAttachmentCacheKey} from './utils/cache-key';
+import {CACHE_CONFIG} from './utils/cache-config';
 
 export type AttachmentTargetKey = `${AttachmentTargetType}:${string}`;
 
@@ -31,16 +32,32 @@ type UpdateAttachmentsPagePayload = {
   strategy?: 'replace' | 'append';
 };
 
+/**
+ * Cache entry following TanStack Query infinite query pattern
+ * Stores all pages for a given filter combination
+ */
 export type AttachmentCacheEntry = {
+  pages: ItemAttachment[][]; // Array of pages (each page is array of attachments)
+  pageParams: number[]; // Track which pages are loaded [1, 2, 3, ...]
+  total: number; // Total count across all pages
+  size: number; // Items per page
+  totalPages: number; // Total available pages
+  hasNext: boolean; // Can load more pages
+  links: PaginationLinks | null; // Pagination links
+  fetchedAt: number; // Timestamp for staleness check (applies to entire query)
+  version?: number; // Version number for cache invalidation
+};
+
+/**
+ * Entry for attachments organized by a specific target (e.g., "item:123").
+ * This is a simplified cache for per-entity attachment lists.
+ */
+export type AttachmentsByTargetEntry = {
   attachments: ItemAttachment[];
-  total: number;
-  page: number;
-  size: number;
-  totalPages: number;
-  hasNext: boolean;
-  hasPrevious: boolean;
-  links: PaginationLinks | null;
-  fetchedAt: number;
+  isLoading: boolean;
+  error: string | null;
+  fetchedAt: number; // Timestamp for garbage collection
+  version: number; // For optimistic updates and invalidation
 };
 
 export interface AttachmentSlice {
@@ -61,10 +78,17 @@ export interface AttachmentSlice {
   // Attachment-specific properties
   attachments: ItemAttachment[];
   imageUrls: Record<string, AttachmentImageUrlEntry>;
-  attachmentsByTarget: Record<AttachmentTargetKey, ItemAttachment[]>;
-  attachmentsLoadingByTarget: Record<AttachmentTargetKey, boolean>;
-  attachmentsErrorByTarget: Record<AttachmentTargetKey, string | null>;
+
+  // New centralized cache for attachments by target
+  attachmentsByTarget: Record<AttachmentTargetKey, AttachmentsByTargetEntry>;
+
+  // Multi-page list-view cache
   attachmentCache: Record<string, AttachmentCacheEntry>;
+
+  // GC timer (use ReturnType for cross-platform compatibility)
+  gcTimer: ReturnType<typeof setInterval> | null;
+
+  // Methods
   setImageUrls: (
     urls:
       | Record<string, AttachmentImageUrlEntry>
@@ -107,6 +131,10 @@ export interface AttachmentSlice {
   ) => void;
   removeAttachmentFromCache: (attachmentId: string) => void;
   updateAttachmentInCache: (attachment: ItemAttachment) => void;
+
+  // GC methods
+  startGarbageCollector: () => void;
+  stopGarbageCollector: () => void;
 }
 
 export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
@@ -126,9 +154,8 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
   attachmentHasPrevious: false,
   attachmentLinks: null,
   attachmentsByTarget: {},
-  attachmentsLoadingByTarget: {},
-  attachmentsErrorByTarget: {},
   attachmentCache: {},
+  gcTimer: null,
   setImageUrls: (urls) =>
     set((state) => ({
       imageUrls: typeof urls === 'function' ? urls(state.imageUrls) : urls,
@@ -172,15 +199,31 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
     }),
   clearError: () => set({attachmentError: null, attachmentRetryCallback: null}),
   setAttachmentsForTarget: (targetKey, attachments) =>
-    set((state) => ({
-      attachmentsByTarget: {
-        ...state.attachmentsByTarget,
-        [targetKey]: attachments,
-      },
-    })),
+    set((state) => {
+      const entry = state.attachmentsByTarget[targetKey] ?? {
+        attachments: [],
+        version: 0,
+      };
+      return {
+        attachmentsByTarget: {
+          ...state.attachmentsByTarget,
+          [targetKey]: {
+            ...entry,
+            attachments,
+            isLoading: false,
+            error: null,
+            fetchedAt: Date.now(),
+            version: entry.version + 1,
+          },
+        },
+      };
+    }),
   upsertAttachmentForTarget: (targetKey, attachment) =>
     set((state) => {
-      const existingList = state.attachmentsByTarget[targetKey] ?? [];
+      const entry = state.attachmentsByTarget[targetKey];
+      if (!entry) return {};
+
+      const existingList = entry.attachments ?? [];
       const index = existingList.findIndex((item) => item.id === attachment.id);
       const nextList =
         index >= 0
@@ -194,65 +237,87 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
       return {
         attachmentsByTarget: {
           ...state.attachmentsByTarget,
-          [targetKey]: nextList,
+          [targetKey]: {
+            ...entry,
+            attachments: nextList,
+            version: entry.version + 1,
+          },
         },
       };
     }),
   removeAttachmentForTarget: (targetKey, attachmentId) =>
     set((state) => {
-      const existingList = state.attachmentsByTarget[targetKey];
-      if (!existingList) {
-        return {};
-      }
+      const entry = state.attachmentsByTarget[targetKey];
+      if (!entry) return {};
 
       return {
         attachmentsByTarget: {
           ...state.attachmentsByTarget,
-          [targetKey]: existingList.filter(
-            (attachment) => attachment.id !== attachmentId,
-          ),
+          [targetKey]: {
+            ...entry,
+            attachments: entry.attachments.filter(
+              (attachment) => attachment.id !== attachmentId,
+            ),
+            version: entry.version + 1,
+          },
         },
       };
     }),
   setTargetLoading: (targetKey, loading) =>
-    set((state) => ({
-      attachmentsLoadingByTarget: {
-        ...state.attachmentsLoadingByTarget,
-        [targetKey]: loading,
-      },
-    })),
-  setTargetError: (targetKey, error) =>
-    set((state) => ({
-      attachmentsErrorByTarget: {
-        ...state.attachmentsErrorByTarget,
-        [targetKey]: error,
-      },
-    })),
-  clearAttachmentsForTarget: (targetKey) =>
     set((state) => {
-      const {[targetKey]: _omittedAttachments, ...restAttachments} =
-        state.attachmentsByTarget;
-      const {[targetKey]: _omittedLoading, ...restLoading} =
-        state.attachmentsLoadingByTarget;
-      const {[targetKey]: _omittedErrors, ...restErrors} =
-        state.attachmentsErrorByTarget;
+      const entry = state.attachmentsByTarget[targetKey];
+      return {
+        attachmentsByTarget: {
+          ...state.attachmentsByTarget,
+          [targetKey]: {
+            ...entry,
+            isLoading: loading,
+            ...(loading && {error: null}), // Clear error on new load
+            fetchedAt: Date.now(), // Keep it fresh while loading
+          },
+        },
+      };
+    }),
+  setTargetError: (targetKey, error) =>
+    set((state) => {
+      const entry = state.attachmentsByTarget[targetKey];
+      if (!entry) return {};
 
       return {
-        attachmentsByTarget: restAttachments,
-        attachmentsLoadingByTarget: restLoading,
-        attachmentsErrorByTarget: restErrors,
+        attachmentsByTarget: {
+          ...state.attachmentsByTarget,
+          [targetKey]: {
+            ...entry,
+            isLoading: false,
+            error,
+          },
+        },
       };
+    }),
+  clearAttachmentsForTarget: (targetKey: AttachmentTargetKey) =>
+    set((state) => {
+      const {[targetKey]: _omitted, ...rest} = state.attachmentsByTarget;
+      return {attachmentsByTarget: rest};
     }),
   getCacheEntry: (cacheKey) => {
     return get().attachmentCache[cacheKey] ?? null;
   },
   setCacheEntry: (cacheKey, entry) =>
-    set((state) => ({
-      attachmentCache: {
-        ...state.attachmentCache,
-        [cacheKey]: entry,
-      },
-    })),
+    set((state) => {
+      let currentCache = state.attachmentCache;
+
+      // LRU eviction: Check if cache is full before adding new entry
+      if (shouldEvictCache(currentCache) && !currentCache[cacheKey]) {
+        currentCache = evictOldestEntry(currentCache);
+      }
+
+      return {
+        attachmentCache: {
+          ...currentCache,
+          [cacheKey]: {...entry, version: (entry.version ?? 0) + 1},
+        },
+      };
+    }),
   clearCache: () => set({attachmentCache: {}}),
   addAttachmentToCache: (attachment, hint) =>
     set((state) => {
@@ -265,44 +330,21 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
           ? String(attachment.attachable_id)
           : undefined);
 
-      const baseCache = {...state.attachmentCache};
+      const updatedCache = {...state.attachmentCache};
 
-      if (resolvedTargetType && resolvedTargetId) {
-        const cacheKey = createAttachmentCacheKey({
-          targetType: resolvedTargetType,
-          targetId: resolvedTargetId,
-        });
-        const existingEntry = baseCache[cacheKey];
+      Object.keys(updatedCache).forEach((cacheKey) => {
+        const entry = updatedCache[cacheKey];
 
-        if (existingEntry) {
-          const alreadyPresent = existingEntry.attachments.some(
-            (item) => item.id === attachment.id,
-          );
-          if (!alreadyPresent) {
-            baseCache[cacheKey] = {
-              ...existingEntry,
-              attachments: [attachment, ...existingEntry.attachments],
-              total: existingEntry.total + 1,
-            };
-          }
-        } else {
-          baseCache[cacheKey] = {
-            attachments: [attachment],
-            total: 1,
-            page: 1,
-            size: state.attachmentSize,
-            totalPages: 1,
-            hasNext: false,
-            hasPrevious: false,
-            links: null,
-            fetchedAt: Date.now(),
-          };
+        const shouldInclude =
+          resolvedTargetType &&
+          resolvedTargetId &&
+          cacheKey.includes(`type:${resolvedTargetType}`) &&
+          cacheKey.includes(`id:${resolvedTargetId}`);
+
+        if (shouldInclude || cacheKey === 'all') {
+          updatedCache[cacheKey] = addAttachmentToPages(entry, attachment);
         }
-      }
-
-      const attachmentCache = updateAllCacheEntries(baseCache, (key, entry) =>
-        addAttachmentToCacheEntry(key, entry, attachment),
-      );
+      });
 
       const attachments = [
         attachment,
@@ -310,31 +352,44 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
       ];
 
       return {
-        attachmentCache,
+        attachmentCache: updatedCache,
         attachments,
         attachmentTotal: state.attachmentTotal + 1,
       };
     }),
   removeAttachmentFromCache: (attachmentId) =>
-    set((state) => ({
-      attachmentCache: updateAllCacheEntries(
-        state.attachmentCache,
-        (_, entry) => removeAttachmentFromCacheEntry(entry, attachmentId),
-      ),
-      attachments: state.attachments.filter((a) => a.id !== attachmentId),
-      attachmentTotal: Math.max(0, state.attachmentTotal - 1),
-    })),
+    set((state) => {
+      const updatedCache = {...state.attachmentCache};
+
+      Object.keys(updatedCache).forEach((cacheKey) => {
+        updatedCache[cacheKey] = removeAttachmentFromPages(
+          updatedCache[cacheKey],
+          attachmentId,
+        );
+      });
+
+      return {
+        attachmentCache: updatedCache,
+        attachments: state.attachments.filter((a) => a.id !== attachmentId),
+        attachmentTotal: Math.max(0, state.attachmentTotal - 1),
+      };
+    }),
   updateAttachmentInCache: (attachment) =>
     set((state) => {
       const currentIndex = state.attachments.findIndex(
         (a) => a.id === attachment.id,
       );
+      const updatedCache = {...state.attachmentCache};
+
+      Object.keys(updatedCache).forEach((cacheKey) => {
+        updatedCache[cacheKey] = updateAttachmentInPages(
+          updatedCache[cacheKey],
+          attachment,
+        );
+      });
 
       return {
-        attachmentCache: updateAllCacheEntries(
-          state.attachmentCache,
-          (_, entry) => updateAttachmentInCacheEntry(entry, attachment),
-        ),
+        attachmentCache: updatedCache,
         attachments:
           currentIndex >= 0
             ? [
@@ -345,6 +400,44 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
             : state.attachments,
       };
     }),
+  startGarbageCollector: () => {
+    // Prevent multiple GC timers
+    const existingTimer = get().gcTimer;
+    if (existingTimer) {
+      return; // Already running
+    }
+
+    const timer = setInterval(() => {
+      const now = Date.now();
+      const currentCache = get().attachmentsByTarget;
+      const keysToEvict: AttachmentTargetKey[] = [];
+
+      for (const key in currentCache) {
+        const entry = currentCache[key as AttachmentTargetKey];
+        // Evict entries that haven't been accessed in GC_INTERVAL
+        if (now - entry.fetchedAt > CACHE_CONFIG.GC_INTERVAL) {
+          keysToEvict.push(key as AttachmentTargetKey);
+        }
+      }
+
+      if (keysToEvict.length > 0) {
+        set((state) => {
+          const nextCache = {...state.attachmentsByTarget};
+          keysToEvict.forEach((key) => delete nextCache[key]);
+          return {attachmentsByTarget: nextCache};
+        });
+      }
+    }, CACHE_CONFIG.GC_INTERVAL);
+
+    set({gcTimer: timer});
+  },
+  stopGarbageCollector: () => {
+    const timer = get().gcTimer;
+    if (timer) {
+      clearInterval(timer);
+      set({gcTimer: null});
+    }
+  },
 });
 
 export function createAttachmentTargetKey(
