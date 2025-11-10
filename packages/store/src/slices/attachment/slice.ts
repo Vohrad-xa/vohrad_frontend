@@ -333,7 +333,7 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
       const fullState = get() as AttachmentSlice & {
         updateAttachmentCount?: (kind: string, delta: number) => void;
       };
-      if (fullState.updateAttachmentCount) {
+      if (fullState.updateAttachmentCount && attachment.kind) {
         fullState.updateAttachmentCount(attachment.kind, 1);
       }
 
@@ -362,7 +362,7 @@ export const createAttachmentSlice: StateCreator<AttachmentSlice> = (
         const fullState = get() as AttachmentSlice & {
           updateAttachmentCount?: (kind: string, delta: number) => void;
         };
-        if (fullState.updateAttachmentCount) {
+        if (fullState.updateAttachmentCount && attachment.kind) {
           fullState.updateAttachmentCount(attachment.kind, -1);
         }
       }

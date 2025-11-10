@@ -102,7 +102,6 @@ export interface Item extends ItemDescriptiveFields {
 
 export interface ItemDetail extends Item {
   locations?: ItemLocationData[] | null;
-  attachments?: ItemAttachment[] | null;
 }
 
 export type ItemCreate = ItemMutableFields & {

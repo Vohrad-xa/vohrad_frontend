@@ -56,8 +56,7 @@ export function OverviewCards({
     !visibility.locations ||
     !visibility.maintenance ||
     !visibility.suppliers ||
-    !visibility.checkInOut ||
-    !visibility.documents;
+    !visibility.checkInOut;
 
   return (
     <>

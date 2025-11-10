@@ -16,7 +16,6 @@ export {ItemsList} from './list/items-list';
 
 // Hooks
 export {useItemForm} from './detail/use-item-form';
-export {useItemAttachments} from './detail/attachments/use-item-attachments';
 export {useItemAttachmentUpload} from './detail/attachments/use-item-attachment-upload';
 export {useImageAttachments} from './detail/attachments/attachments-images';
 export {useItemLocation} from './detail/locations/use-item-location';

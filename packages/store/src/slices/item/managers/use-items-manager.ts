@@ -187,8 +187,6 @@ export function useItemsManager() {
       const current = useAuthStore.getState().selectedItem;
       const next: ItemDetail = {
         ...listItem,
-        attachments:
-          current && current.id === id ? (current.attachments ?? null) : null,
         locations:
           current && current.id === id ? (current.locations ?? null) : null,
       } as ItemDetail;

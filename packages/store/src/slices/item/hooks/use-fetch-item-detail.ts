@@ -3,7 +3,6 @@ import {itemApi} from '@vohrad/api-client';
 import {useAuthStore} from '../../../store';
 import {itemSelectors} from '../selectors';
 import type {ItemDetail} from '@vohrad/types';
-import {createAttachmentTargetKey} from '../../attachment';
 
 const inFlightItemDetailRequests: Record<string, Promise<void>> = {};
 const lastItemDetailFetchAt: Record<string, number> = {};
@@ -15,9 +14,6 @@ export function useFetchItemDetail() {
   const setSelectedItem = useAuthStore(itemSelectors.setSelectedItem);
   const setLoading = useAuthStore(itemSelectors.setLoading);
   const setError = useAuthStore(itemSelectors.setError);
-  const setAttachmentsForTarget = useAuthStore(
-    (state) => state.setAttachmentsForTarget,
-  );
 
   const fetchItemDetail = useCallback(
     async (
@@ -63,13 +59,11 @@ export function useFetchItemDetail() {
       console.warn(`[API] Fetching item details from server: ${id}`);
       setLoading(true);
       setError(null);
-      const targetKey = createAttachmentTargetKey('item', id);
 
       const request = (async () => {
         try {
           const item = await itemApi.getItemById(id);
           setSelectedItem(item);
-          setAttachmentsForTarget(targetKey, item.attachments ?? []);
           lastItemDetailFetchAt[id] = Date.now();
           itemHasFullDetails[id] = true;
         } catch (err) {
@@ -89,7 +83,7 @@ export function useFetchItemDetail() {
 
       return request;
     },
-    [setSelectedItem, setLoading, setError, setAttachmentsForTarget],
+    [setSelectedItem, setLoading, setError],
   );
 
   return {fetchItemDetail};

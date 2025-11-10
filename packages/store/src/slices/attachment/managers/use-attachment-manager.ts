@@ -9,7 +9,6 @@ import {
   useUploadAttachment,
   useDeleteAttachment,
 } from '../hooks';
-import {itemSelectors} from '../../item/selectors';
 
 type UseAttachmentManagerOptions = {
   pageSize?: number;
@@ -79,13 +78,6 @@ export function useAttachmentManager(
   const {uploadAttachment: uploadAttachmentHook} = useUploadAttachment();
   const {deleteAttachment: deleteAttachmentHook} = useDeleteAttachment();
 
-  const upsertItemAttachment = useAuthStore((state: StoreState) =>
-    itemSelectors.upsertItemAttachment(state),
-  );
-  const removeItemAttachment = useAuthStore((state: StoreState) =>
-    itemSelectors.removeItemAttachment(state),
-  );
-
   const fetchAttachments = useCallback(
     async (params?: {page?: number; size?: number}) => {
       if (!targetKey || !targetId) {
@@ -129,10 +121,6 @@ export function useAttachmentManager(
           targetId,
         });
 
-        if (targetType === 'item') {
-          upsertItemAttachment(attachment);
-        }
-
         return attachment;
       } catch (error) {
         removeAttachmentForTarget(targetKey, tempId);
@@ -147,7 +135,6 @@ export function useAttachmentManager(
       upsertAttachmentForTarget,
       removeAttachmentForTarget,
       addAttachmentToCache,
-      upsertItemAttachment,
     ],
   );
 
@@ -173,10 +160,6 @@ export function useAttachmentManager(
         await deleteAttachmentHook(attachmentId, {
           hardDelete: options?.hardDelete,
         });
-
-        if (effectiveTargetType === 'item' && effectiveTargetId) {
-          removeItemAttachment(attachmentId);
-        }
       } catch (err) {
         // Rollback caches on error
         if (effectiveTargetKey && originalAttachments) {
@@ -204,7 +187,6 @@ export function useAttachmentManager(
       removeAttachmentFromCache,
       upsertAttachmentForTarget,
       addAttachmentToCache,
-      removeItemAttachment,
       setTargetError,
     ],
   );
