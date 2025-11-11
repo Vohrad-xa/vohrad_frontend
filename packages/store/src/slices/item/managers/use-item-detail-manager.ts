@@ -1,36 +1,39 @@
 import {useCallback, useEffect} from 'react';
 import {resolveAttachmentUrl} from '@vohrad/api-client';
-import {
-  useItemDetails,
-  useFetchItemDetail,
-  useUpdateItemLocation,
-} from '../hooks';
+import type {ItemLocationUpdate} from '@vohrad/types';
 import {useAuthStore} from '../../../store';
-import type {ItemDetail, ItemLocationUpdate} from '@vohrad/types';
+import {useFetchItem, useUpdateItemLocation} from '../hooks';
 
-type UseItemDetailManagerOptions = {
-  fetchOnMount?: boolean;
-};
+/**
+ * A manager hook that provides a clean interface for fetching and mutating
+ * a single item's details, powered by TanStack Query.
+ */
+export function useItemDetailManager(itemId: string | null | undefined) {
+  const {
+    data: item,
+    isLoading,
+    isError,
+    isSuccess,
+    error,
+    refetch,
+  } = useFetchItem(itemId);
 
-export function useItemDetailManager(
-  itemId: string | null | undefined,
-  options?: UseItemDetailManagerOptions,
-) {
-  const normalizedItemId = typeof itemId === 'string' ? itemId.trim() : '';
-  const {fetchItemDetail} = useFetchItemDetail();
-  const {item, isLoading, error} = useItemDetails();
-  const {updateLocation, isLoading: isUpdatingLocation} =
-    useUpdateItemLocation();
-  const fetchOnMount = options?.fetchOnMount ?? true;
+  const updateLocationMutation = useUpdateItemLocation();
 
+  // Bridge TanStack Query state to global Zustand error store
   useEffect(() => {
-    if (!normalizedItemId) return;
-
-    const current = useAuthStore.getState().selectedItem;
-    if (fetchOnMount || !current || current.id !== normalizedItemId) {
-      fetchItemDetail(normalizedItemId).catch(() => {});
+    if (isError && error) {
+      useAuthStore.setState({
+        error: error.message,
+        retryCallback: () => refetch(),
+      });
+    } else if (isSuccess) {
+      const currentError = useAuthStore.getState().error;
+      if (currentError) {
+        useAuthStore.setState({error: null, retryCallback: null});
+      }
     }
-  }, [normalizedItemId, fetchItemDetail, fetchOnMount]);
+  }, [isError, isSuccess, error, refetch]);
 
   const getItemImageUrl = useCallback(() => {
     const url = item?.thumbnail?.download_url;
@@ -41,28 +44,26 @@ export function useItemDetailManager(
   }, [item]);
 
   const refresh = useCallback(async () => {
-    if (normalizedItemId) {
-      await fetchItemDetail(normalizedItemId, {force: true});
-    }
-  }, [normalizedItemId, fetchItemDetail]);
+    await refetch();
+  }, [refetch]);
 
-  const handleUpdateLocation = useCallback(
+  const updateLocation = useCallback(
     async (locationId: string, data: ItemLocationUpdate) => {
-      if (!normalizedItemId) {
-        throw new Error('Item ID is required');
+      if (!itemId) {
+        throw new Error('Item ID is required to update a location.');
       }
-      await updateLocation(normalizedItemId, locationId, data);
+      return updateLocationMutation.mutateAsync({itemId, locationId, data});
     },
-    [normalizedItemId, updateLocation],
+    [itemId, updateLocationMutation],
   );
 
   return {
-    item: item as ItemDetail | null,
+    item: item ?? null,
     getItemImageUrl,
     isLoading,
     error,
     refresh,
-    updateLocation: handleUpdateLocation,
-    isUpdatingLocation,
+    updateLocation,
+    isUpdatingLocation: updateLocationMutation.isPending,
   };
 }

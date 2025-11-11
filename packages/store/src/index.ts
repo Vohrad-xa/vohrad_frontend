@@ -26,12 +26,7 @@ export {
   useResetDashboardVisibility,
 } from './slices/system';
 export {
-  itemSelectors,
-  useItems,
-  useItemDetails,
-  useFetchItems,
-  useSearchItems,
-  useFetchItemDetail,
+  useFetchItem,
   useCreateItem,
   useUpdateItem,
   useDeleteItem,
@@ -74,7 +69,6 @@ export type {
   DashboardVisibilityState,
 } from './slices/system';
 export {defaultDashboardVisibility} from './slices/system';
-export type {ItemSlice} from './slices/item';
 export type {AttachmentTargetType, AttachmentKind} from '@vohrad/types';
 export {
   buildODataFilter,

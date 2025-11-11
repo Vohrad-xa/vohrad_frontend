@@ -24,7 +24,7 @@ export function ErrorHandlerProvider({
   onNetworkError,
 }: ErrorHandlerProviderProps) {
   const lastAlertRef = useRef(0);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<number | null>(null);
   const {error, clearError, retryCallback} = useAuthStore(
     (state) => ({
       error: state.error,

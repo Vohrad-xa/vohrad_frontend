@@ -1,7 +1,12 @@
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {useItemDetailManager} from '@vohrad/store';
 import {useLocalSearchParams, useNavigation} from 'expo-router';
-import {ModalScrollView, ThemedView} from '@/components/ui';
+import {
+  ModalScrollView,
+  ThemedView,
+  ThemedText,
+  ThemedButton,
+} from '@/components/ui';
 import {ItemDetails, ItemHeader, useItemForm} from '@/features/item';
 import {useSettingsHeader} from '@/hooks/use-settings-header';
 import {useTheme, useHaptic} from '@/providers';
@@ -14,9 +19,9 @@ export default function ItemDetailScreen() {
   const {hasChanges, setHasChanges} = useItemChanges();
   const {triggerHaptic} = useHaptic();
   const [isEditing, setIsEditing] = useState(false);
-  const {item, getItemImageUrl} = useItemDetailManager(itemId, {
-    fetchOnMount: false,
-  });
+
+  const {item, getItemImageUrl, isLoading, error} =
+    useItemDetailManager(itemId);
 
   const formState = useItemForm({
     itemId: itemId!,
@@ -47,7 +52,7 @@ export default function ItemDetailScreen() {
         setIsEditing(false);
         triggerSuccess();
       } catch {
-        // Ignored
+        // Ignored, error is handled by mutation hook
       }
     },
     onCancel: () => {
@@ -57,8 +62,33 @@ export default function ItemDetailScreen() {
     },
   });
 
-  if (!item) {
+  if (isLoading && !item) {
     return <ThemedView style={{flex: 1}} />;
+  }
+
+  if (error) {
+    return (
+      <ThemedView
+        style={{flex: 1, justifyContent: 'center', padding: ds.spacing.lg}}
+      >
+        <ThemedText style={{textAlign: 'center', marginBottom: ds.spacing.md}}>
+          {error.message}
+        </ThemedText>
+      </ThemedView>
+    );
+  }
+
+  if (!item) {
+    return (
+      <ThemedView
+        style={{flex: 1, justifyContent: 'center', padding: ds.spacing.lg}}
+      >
+        <ThemedText style={{textAlign: 'center', marginBottom: ds.spacing.md}}>
+          Item not found.
+        </ThemedText>
+        <ThemedButton onPress={() => navigation.goBack()}>Go Back</ThemedButton>
+      </ThemedView>
+    );
   }
 
   return (

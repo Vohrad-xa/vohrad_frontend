@@ -1,11 +1,6 @@
-// Selectors
-export {useItems} from './use-items';
-export {useItemDetails} from './use-item-details';
-
 // Queries
-export {useFetchItems} from './use-fetch-items';
-export {useSearchItems} from './use-search-items';
-export {useFetchItemDetail} from './use-fetch-item-detail';
+export {useInfiniteItems} from './use-infinite-items';
+export {useFetchItem} from './use-fetch-item';
 
 // Mutations
 export {

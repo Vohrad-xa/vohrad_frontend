@@ -39,7 +39,7 @@ export const SpecificationsForm = forwardRef<
 >(({item, onSave, onHasChangesChange, isEditMode}, ref) => {
   const {ds, theme} = useTheme();
   const {triggerHaptic} = useHaptic();
-  const {updateItem} = useUpdateItem();
+  const {mutateAsync: updateItem} = useUpdateItem();
   const styles = createStyles(ds, theme);
 
   // Parse specifications into editable fields with unique IDs
@@ -136,7 +136,7 @@ export const SpecificationsForm = forwardRef<
     });
 
     try {
-      await updateItem(item.id, {specifications});
+      await updateItem({id: item.id, data: {specifications}});
       originalFields.current = [...fields];
       onHasChangesChange?.(false);
       triggerHaptic('success');

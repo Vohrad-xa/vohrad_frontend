@@ -1,161 +1,74 @@
-import {useState, useCallback} from 'react';
+import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {itemApi} from '@vohrad/api-client';
-import {useAuthStore} from '../../../store';
-import {itemSelectors} from '../selectors';
-import type {
-  Item,
-  ItemCreate,
-  ItemUpdate,
-  ItemLocationUpdate,
-} from '@vohrad/types';
+import type {ItemCreate, ItemUpdate, ItemLocationUpdate} from '@vohrad/types';
 
+/**
+ * Mutation to create a new item.
+ * Invalidates the item list query on success.
+ */
 export function useCreateItem() {
-  const [isLoading, setIsLoading] = useState(false);
-  const addItem = useAuthStore(itemSelectors.addItem);
-  const setError = useAuthStore(itemSelectors.setError);
-
-  const createItem = useCallback(
-    async (data: ItemCreate): Promise<Item> => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const newItem = await itemApi.createItem(data);
-        addItem(newItem);
-        return newItem;
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Failed to create item';
-
-        // Set error on local item slice
-        setError(message);
-
-        // Set error on global auth slice for ErrorHandlerProvider
-        useAuthStore.setState({error: message, retryCallback: null});
-
-        throw err;
-      } finally {
-        setIsLoading(false);
-      }
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: ItemCreate) => itemApi.createItem(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['items', 'list']});
     },
-    [addItem, setError],
-  );
-
-  return {
-    createItem,
-    isLoading,
-  };
+  });
 }
 
+/**
+ * Mutation to update an existing item.
+ * Invalidates both the item list and the specific item's detail query.
+ */
 export function useUpdateItem() {
-  const [isLoading, setIsLoading] = useState(false);
-  const updateItemInList = useAuthStore(itemSelectors.updateItemInList);
-  const setError = useAuthStore(itemSelectors.setError);
-
-  const updateItem = useCallback(
-    async (id: string, data: ItemUpdate): Promise<Item> => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const updatedItem = await itemApi.updateItem(id, data);
-        updateItemInList(id, updatedItem);
-        return updatedItem;
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Failed to update item';
-
-        // Set error on local item slice
-        setError(message);
-
-        // Set error on global auth slice for ErrorHandlerProvider
-        useAuthStore.setState({error: message, retryCallback: null});
-
-        throw err;
-      } finally {
-        setIsLoading(false);
-      }
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({id, data}: {id: string; data: ItemUpdate}) =>
+      itemApi.updateItem(id, data),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({queryKey: ['items', 'list']});
+      queryClient.invalidateQueries({
+        queryKey: ['items', 'detail', variables.id],
+      });
     },
-    [updateItemInList, setError],
-  );
-
-  return {
-    updateItem,
-    isLoading,
-  };
+  });
 }
 
+/**
+ * Mutation to delete an item.
+ * Invalidates the item list query on success.
+ */
 export function useDeleteItem() {
-  const [isLoading, setIsLoading] = useState(false);
-  const removeItem = useAuthStore(itemSelectors.removeItem);
-  const setError = useAuthStore(itemSelectors.setError);
-
-  const deleteItem = useCallback(
-    async (id: string): Promise<void> => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        await itemApi.deleteItem(id);
-        removeItem(id);
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Failed to delete item';
-
-        // Set error on local item slice
-        setError(message);
-
-        // Set error on global auth slice for ErrorHandlerProvider
-        useAuthStore.setState({error: message, retryCallback: null});
-
-        throw err;
-      } finally {
-        setIsLoading(false);
-      }
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => itemApi.deleteItem(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['items', 'list']});
     },
-    [removeItem, setError],
-  );
-
-  return {
-    deleteItem,
-    isLoading,
-  };
+  });
 }
 
+/**
+ * Mutation to update a specific location for an item.
+ * Invalidates both the item list and the specific item's detail query.
+ */
 export function useUpdateItemLocation() {
-  const [isLoading, setIsLoading] = useState(false);
-  const updateItemLocation = useAuthStore(itemSelectors.updateItemLocation);
-  const setError = useAuthStore(itemSelectors.setError);
-
-  const updateLocation = useCallback(
-    async (
-      itemId: string,
-      locationId: string,
-      data: ItemLocationUpdate,
-    ): Promise<void> => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        await itemApi.updateItemLocation(itemId, locationId, data);
-        if (data.quantity !== undefined) {
-          updateItemLocation(locationId, data.quantity);
-        }
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'Failed to update item location';
-        setError(message);
-        useAuthStore.setState({error: message, retryCallback: null});
-        throw err;
-      } finally {
-        setIsLoading(false);
-      }
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      itemId,
+      locationId,
+      data,
+    }: {
+      itemId: string;
+      locationId: string;
+      data: ItemLocationUpdate;
+    }) => itemApi.updateItemLocation(itemId, locationId, data),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({queryKey: ['items', 'list']});
+      queryClient.invalidateQueries({
+        queryKey: ['items', 'detail', variables.itemId],
+      });
     },
-    [updateItemLocation, setError],
-  );
-
-  return {
-    updateLocation,
-    isLoading,
-  };
+  });
 }

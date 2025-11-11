@@ -28,7 +28,7 @@ export function useItemForm({
   initialValues,
   onHasChangesChange,
 }: UseItemFormProps) {
-  const {updateItem} = useUpdateItem();
+  const {mutateAsync: updateItem} = useUpdateItem();
 
   const [formValues, setFormValues] = useState<ItemFormValues>(() => ({
     name: initialValues.name ?? '',
@@ -113,8 +113,11 @@ export function useItemForm({
       setOptimisticStatus(value);
 
       try {
-        await updateItem(itemId, {
-          is_active: value,
+        await updateItem({
+          id: itemId,
+          data: {
+            is_active: value,
+          },
         });
       } catch (error) {
         setOptimisticStatus(initialValues.isActive);
@@ -130,8 +133,11 @@ export function useItemForm({
       setOptimisticTrackingMode(value);
 
       try {
-        await updateItem(itemId, {
-          tracking_mode: value,
+        await updateItem({
+          id: itemId,
+          data: {
+            tracking_mode: value,
+          },
         });
       } catch (error) {
         setOptimisticTrackingMode(initialValues.trackingMode);
@@ -164,7 +170,7 @@ export function useItemForm({
     }
 
     try {
-      await updateItem(itemId, updates);
+      await updateItem({id: itemId, data: updates});
       originalValues.current = {...formValues};
       onHasChangesChange?.(false);
       Keyboard.dismiss();

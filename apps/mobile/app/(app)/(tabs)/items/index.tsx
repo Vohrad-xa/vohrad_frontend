@@ -1,4 +1,4 @@
-import React, {useCallback, useLayoutEffect, useEffect} from 'react';
+import React, {useLayoutEffect, useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {
   usePendingFilters,
@@ -19,29 +19,32 @@ export default function ItemsScreen() {
   const router = useRouter();
   const navigation = useNavigation();
   const styles = createStyles(ds, theme);
-  const {searchQuery} = useSearch();
+  const {searchQuery: globalSearchQuery} = useSearch();
 
-  // Read filters
+  // Read filters from URL params
   const params = useLocalSearchParams<{filters?: string}>();
 
   const {
     items,
     isLoading,
     error,
-    hasItems,
-    isEmpty,
-    search,
     refresh,
     getItemImageUrl,
-    canLoadMore,
-    loadMore,
-    isLoadingMore,
+    hasNext,
+    onEndReached,
+    isFetchingNextPage,
     filters,
     setFilters,
-    selectItem,
+    setSearchQuery,
   } = useItemsManager();
+
   const pendingFilters = usePendingFilters();
   const clearPendingFilters = useClearPendingFilters();
+
+  // Sync global search query with the item manager's state
+  useEffect(() => {
+    setSearchQuery(globalSearchQuery);
+  }, [globalSearchQuery, setSearchQuery]);
 
   // Apply filters from URL params
   useEffect(() => {
@@ -84,42 +87,32 @@ export default function ItemsScreen() {
     });
   }, [navigation, filters, router]);
 
-  const handleRefresh = useCallback(async () => {
-    try {
-      await refresh();
-    } catch {
-      // Ignored
-    }
-  }, [refresh]);
-
-  const handleLoadMore = useCallback(() => {
-    loadMore();
-  }, [loadMore]);
-
   const handleItemPress = (itemId: string) => {
-    selectItem(itemId);
     router.push({
       pathname: '/(app)/(tabs)/items/[id]',
       params: {id: itemId},
     });
   };
 
+  const hasItems = items.length > 0;
+  const isEmpty = !isLoading && !hasItems && !error;
+
   return (
     <View style={styles.container}>
       <ItemsList
-        searchQuery={searchQuery}
+        // Pass down the global search query to the list for display
+        searchQuery={globalSearchQuery}
         onItemPress={handleItemPress}
-        onRefresh={handleRefresh}
+        onRefresh={refresh}
         items={items}
         isLoading={isLoading}
-        error={error}
+        error={error?.message ?? null}
         hasItems={hasItems}
         isEmpty={isEmpty}
-        search={search}
         getItemImageUrl={getItemImageUrl}
-        onLoadMore={handleLoadMore}
-        canLoadMore={canLoadMore}
-        isLoadingMore={isLoadingMore}
+        onLoadMore={onEndReached}
+        canLoadMore={hasNext}
+        isLoadingMore={isFetchingNextPage}
       />
     </View>
   );

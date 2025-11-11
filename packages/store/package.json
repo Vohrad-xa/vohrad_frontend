@@ -30,6 +30,7 @@
     "@vohrad/api-client": "workspace:*",
     "@vohrad/types": "workspace:*",
     "shallow": "link:zustand/react/shallow",
+    "use-debounce": "^10.0.6",
     "zustand": "^4.3.9"
   },
   "peerDependencies": {

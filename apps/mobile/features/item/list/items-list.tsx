@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {
   ThemedText,
@@ -14,8 +14,6 @@ import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 import type {Item} from '@vohrad/store';
 
-const SEARCH_DEBOUNCE_MS = 500;
-
 type ItemsListProps = {
   searchQuery?: string;
   onItemPress: (itemId: string) => void;
@@ -25,7 +23,6 @@ type ItemsListProps = {
   error: string | null;
   hasItems: boolean;
   isEmpty: boolean;
-  search: (query: string) => void;
   getItemImageUrl: (item: Item) => {uri: string} | undefined;
   onLoadMore?: () => void;
   canLoadMore?: boolean;
@@ -38,7 +35,6 @@ export function ItemsList({
   onRefresh,
   items,
   isEmpty,
-  search,
   getItemImageUrl,
   onLoadMore,
   canLoadMore,
@@ -46,15 +42,6 @@ export function ItemsList({
 }: ItemsListProps) {
   const {ds} = useTheme();
   const styles = createStyles(ds);
-
-  // Debounced search
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      search(searchQuery ?? '');
-    }, SEARCH_DEBOUNCE_MS);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery, search]);
 
   const transformItemToListRow = useCallback(
     (item: Item): ListRowData => ({
