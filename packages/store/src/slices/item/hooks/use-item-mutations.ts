@@ -18,9 +18,7 @@ export function useUpdateItem() {
     mutationFn: ({id, data}: {id: string; data: ItemUpdate}) =>
       itemApi.updateItem(id, data),
     onSuccess: (updatedItem, variables) => {
-      // Update the specific item detail in the cache
       queryClient.setQueryData(['items', 'detail', variables.id], updatedItem);
-      // Invalidate the item list to ensure it reflects any changes
       queryClient.invalidateQueries({queryKey: ['items', 'list']});
     },
   });
@@ -48,11 +46,28 @@ export function useUpdateItemLocation() {
       locationId: string;
       data: ItemLocationUpdate;
     }) => itemApi.updateItemLocation(itemId, locationId, data),
-    onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({queryKey: ['items', 'list']});
-      queryClient.invalidateQueries({
-        queryKey: ['items', 'detail', variables.itemId],
+    onSuccess: (_, {itemId, locationId, data}) => {
+      queryClient.setQueryData(['items', 'detail', itemId], (old: any) => {
+        if (!old) return old;
+        // Update the specific location
+        const updatedLocations = old.locations?.map((loc: any) =>
+          loc.id === locationId ? {...loc, quantity: data.quantity} : loc,
+        );
+        // Recalculate total quantity
+        const totalQuantity = updatedLocations
+          ?.reduce(
+            (sum: number, loc: any) => sum + Number(loc.quantity || 0),
+            0,
+          )
+          ?.toString();
+
+        return {
+          ...old,
+          locations: updatedLocations,
+          total_quantity: totalQuantity,
+        };
       });
+      queryClient.invalidateQueries({queryKey: ['items', 'list']});
     },
   });
 }
