@@ -24,7 +24,6 @@ export {
   useDashboardVisibility,
   useSetDashboardVisibility,
   useResetDashboardVisibility,
-  useUpdateAttachmentCount,
 } from './slices/system';
 export {
   itemSelectors,
@@ -42,18 +41,13 @@ export {
   useItemFiltersManager,
 } from './slices/item';
 export {
-  attachmentSelectors,
-  useAttachmentLoading,
-  useAttachmentError,
-  useAttachmentUrls,
-  useFetchAttachmentUrls,
   useAttachmentManager,
   useAttachmentsListManager,
-  createAttachmentTargetKey,
+  useDeleteAttachment,
+  useFetchTargetAttachments,
+  useInfiniteAttachments,
+  useUploadAttachment,
 } from './slices/attachment';
-export {createAttachmentCacheKey} from './slices/attachment/utils/cache-key';
-
-export type {AttachmentCacheEntry} from './slices/attachment/slice';
 export {
   usePendingFilters,
   useSetPendingFilters,
@@ -78,11 +72,9 @@ export type {
   SystemSlice,
   DashboardCardKey,
   DashboardVisibilityState,
-  DashboardOverviewStatus,
 } from './slices/system';
 export {defaultDashboardVisibility} from './slices/system';
 export type {ItemSlice} from './slices/item';
-export type {AttachmentSlice, AttachmentTargetKey} from './slices/attachment';
 export type {AttachmentTargetType, AttachmentKind} from '@vohrad/types';
 export {
   buildODataFilter,

@@ -1,10 +1,12 @@
 import {useEffect} from 'react';
 import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {Stack, useRootNavigationState} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
+
 import {LoadingOverlay} from '@/components/ui';
 import {useBootstrap} from '@/hooks/use-bootstrap';
 import {
@@ -14,6 +16,8 @@ import {
   LoadingProvider,
   HapticProvider,
 } from '@/providers';
+
+const queryClient = new QueryClient();
 
 SplashScreen.preventAutoHideAsync();
 
@@ -56,17 +60,19 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <KeyboardProvider>
-        <AppThemeProvider>
-          <HapticProvider>
-            <ActionSheetProvider>
-              <LoadingProvider>
-                <AuthProvider>
-                  <RootNavigation isBootstrapComplete={useBootstrap()} />
-                </AuthProvider>
-              </LoadingProvider>
-            </ActionSheetProvider>
-          </HapticProvider>
-        </AppThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <AppThemeProvider>
+            <HapticProvider>
+              <ActionSheetProvider>
+                <LoadingProvider>
+                  <AuthProvider>
+                    <RootNavigation isBootstrapComplete={useBootstrap()} />
+                  </AuthProvider>
+                </LoadingProvider>
+              </ActionSheetProvider>
+            </HapticProvider>
+          </AppThemeProvider>
+        </QueryClientProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>
   );

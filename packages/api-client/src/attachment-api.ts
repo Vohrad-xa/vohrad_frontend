@@ -9,6 +9,22 @@ import type {
   ApiResponse,
 } from '@vohrad/types';
 
+export type AttachmentCounts = {
+  attachments_total: number;
+  attachment_counts: {
+    image: number;
+    document: number;
+    video: number;
+    archive: number;
+    other: number;
+  };
+};
+
+export type AttachmentWithCounts = {
+  attachment: ItemAttachment;
+  counts: AttachmentCounts;
+};
+
 export type ListAttachmentsParams = {
   targetType?: AttachmentTargetType;
   targetId?: string;
@@ -19,8 +35,8 @@ export type ListAttachmentsParams = {
 };
 
 export class AttachmentApi {
-  async uploadAttachment(formData: FormData): Promise<ItemAttachment> {
-    const response = await httpClient.postFormData<ItemAttachment>(
+  async uploadAttachment(formData: FormData): Promise<AttachmentWithCounts> {
+    const response = await httpClient.postFormData<AttachmentWithCounts>(
       API_ENDPOINTS.ATTACHMENTS.CREATE,
       formData,
     );
@@ -67,11 +83,12 @@ export class AttachmentApi {
   async deleteAttachment(
     id: string,
     options?: {hardDelete?: boolean},
-  ): Promise<void> {
+  ): Promise<AttachmentCounts> {
     const endpoint = options?.hardDelete
       ? `${API_ENDPOINTS.ATTACHMENTS.DELETE(id)}?hard_delete=true`
       : API_ENDPOINTS.ATTACHMENTS.DELETE(id);
-    await httpClient.delete(endpoint);
+    const response = await httpClient.delete<AttachmentCounts>(endpoint);
+    return response.data;
   }
 
   async getAttachmentUrl(id: string): Promise<string> {

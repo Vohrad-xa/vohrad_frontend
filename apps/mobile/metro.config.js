@@ -4,6 +4,7 @@ const path = require('path');
 const projectRoot = __dirname;
 const monorepoRoot = path.resolve(projectRoot, '..', '..');
 const rootNodeModules = path.join(monorepoRoot, 'node_modules');
+const mobileNodeModules = path.join(projectRoot, 'node_modules');
 
 // Expo default + targeted alias to force Zustand CJS on web to avoid import.meta
 const config = getDefaultConfig(projectRoot);
@@ -29,6 +30,10 @@ try {
       react: path.join(rootNodeModules, 'react'),
       'react-dom': path.join(rootNodeModules, 'react-dom'),
       'react-native': path.join(rootNodeModules, 'react-native'),
+      '@tanstack/react-query': path.join(
+        mobileNodeModules,
+        '@tanstack/react-query',
+      ),
     },
     alias: {
       ...(config.resolver?.alias || {}),

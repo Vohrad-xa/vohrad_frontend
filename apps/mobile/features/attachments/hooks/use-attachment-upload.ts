@@ -1,10 +1,6 @@
 import {useCallback, useMemo, useState} from 'react';
 import {Platform} from 'react-native';
-import {
-  useAuthStore,
-  useAttachmentManager,
-  type AttachmentTargetType,
-} from '@vohrad/store';
+import {useUploadAttachment, type AttachmentTargetType} from '@vohrad/store';
 import * as ImagePicker from 'expo-image-picker';
 import type * as DocumentPickerTypes from 'expo-document-picker';
 
@@ -140,16 +136,12 @@ export function useAttachmentUpload(
   targetType: AttachmentTargetType,
   targetId?: string | null,
 ) {
-  const setError = useAuthStore((state) => state.setError);
-  const {uploadAttachment: uploadAttachmentForTarget} = useAttachmentManager(
-    targetType,
-    targetId,
-  );
+  const {mutateAsync: uploadAttachment, isPending: isSaving} =
+    useUploadAttachment();
 
   const [pendingAttachment, setPendingAttachment] =
     useState<PendingAttachment | null>(null);
   const [isPicking, setIsPicking] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
   const selectFromDevice = useCallback(async () => {
     if (isPicking || isSaving) {
@@ -163,7 +155,6 @@ export function useAttachmentUpload(
       )) as DocumentPickerModule | null;
 
       if (!DocumentPicker) {
-        setError('Document picker is not available on this device.');
         return;
       }
 
@@ -171,7 +162,6 @@ export function useAttachmentUpload(
         DocumentPicker.isAvailableAsync &&
         !(await DocumentPicker.isAvailableAsync())
       ) {
-        setError('Document picker is not available on this device.');
         return;
       }
 
@@ -189,21 +179,16 @@ export function useAttachmentUpload(
       const pending = buildPendingFromDocument(asset);
 
       if (!pending) {
-        setError('Unable to read the selected file.');
         return;
       }
 
       setPendingAttachment(pending);
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Unable to pick a file right now.';
-      setError(message);
+    } catch (_error) {
+      // Silently handle error
     } finally {
       setIsPicking(false);
     }
-  }, [isPicking, isSaving, setError]);
+  }, [isPicking, isSaving]);
 
   const capturePhoto = useCallback(async () => {
     if (isPicking || isSaving) {
@@ -215,7 +200,6 @@ export function useAttachmentUpload(
       const permission = await ImagePicker.requestCameraPermissionsAsync();
 
       if (!permission.granted) {
-        setError('Camera permission is required to take a photo.');
         return;
       }
 
@@ -232,21 +216,16 @@ export function useAttachmentUpload(
       const pending = buildPendingFromCamera(asset);
 
       if (!pending) {
-        setError('Unable to capture photo.');
         return;
       }
 
       setPendingAttachment(pending);
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Unable to open the camera right now.';
-      setError(message);
+    } catch (_error) {
+      // Silently handle error
     } finally {
       setIsPicking(false);
     }
-  }, [isPicking, isSaving, setError]);
+  }, [isPicking, isSaving]);
 
   const resetPending = useCallback(() => {
     setPendingAttachment(null);
@@ -258,11 +237,9 @@ export function useAttachmentUpload(
     }
 
     if (!targetId) {
-      setError('Missing attachment target reference.');
       return false;
     }
 
-    setIsSaving(true);
     try {
       const {assetRef, uri, name, mimeType, extension, size} =
         pendingAttachment;
@@ -289,28 +266,14 @@ export function useAttachmentUpload(
         formData.append('size', String(size));
       }
 
-      await uploadAttachmentForTarget(formData);
-      // uploadAttachmentForTarget already updates both caches
+      await uploadAttachment(formData);
       setPendingAttachment(null);
       return true;
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Unable to upload attachment right now.';
-      setError(message);
+    } catch (_error) {
+      // Silently handle error
       return false;
-    } finally {
-      setIsSaving(false);
     }
-  }, [
-    isSaving,
-    pendingAttachment,
-    targetId,
-    targetType,
-    setError,
-    uploadAttachmentForTarget,
-  ]);
+  }, [isSaving, pendingAttachment, targetId, targetType, uploadAttachment]);
 
   const hasPending = !!pendingAttachment;
 

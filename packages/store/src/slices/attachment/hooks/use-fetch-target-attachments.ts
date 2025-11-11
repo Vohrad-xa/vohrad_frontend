@@ -1,76 +1,30 @@
-import {useCallback} from 'react';
+import {useQuery} from '@tanstack/react-query';
 import {attachmentApi} from '@vohrad/api-client';
-import {useAuthStore} from '../../../store';
-import type {ItemAttachment, AttachmentTargetType} from '@vohrad/types';
-import type {AttachmentTargetKey} from '../slice';
+import type {AttachmentTargetType} from '@vohrad/types';
 
-type FetchTargetAttachmentsDeps = {
-  setTargetLoading: (targetKey: AttachmentTargetKey, loading: boolean) => void;
-  setTargetError: (
-    targetKey: AttachmentTargetKey,
-    error: string | null,
-  ) => void;
-  setAttachmentsForTarget: (
-    targetKey: AttachmentTargetKey,
-    attachments: ItemAttachment[],
-  ) => void;
-  removeAttachmentForTarget: (
-    targetKey: AttachmentTargetKey,
-    attachmentId: string,
-  ) => void;
-};
+const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
-export function useFetchTargetAttachments(deps: FetchTargetAttachmentsDeps) {
-  const {
-    setTargetLoading,
-    setTargetError,
-    setAttachmentsForTarget,
-    removeAttachmentForTarget,
-  } = deps;
+export function useFetchTargetAttachments(
+  targetType: AttachmentTargetType,
+  targetId: string | null,
+  enabled = true,
+) {
+  const queryKey = ['attachments', targetType, targetId];
 
-  const fetchTargetAttachments = useCallback(
-    async (
-      targetType: AttachmentTargetType,
-      targetId: string,
-      targetKey: AttachmentTargetKey,
-      params?: {page?: number; size?: number},
-    ): Promise<ItemAttachment[]> => {
-      const page = params?.page ?? 1;
-      const size = params?.size ?? 50;
-
-      setTargetLoading(targetKey, true);
-
-      try {
-        const response = await attachmentApi.listAttachments({
-          targetType,
-          targetId,
-          page,
-          size,
-        });
-        const items = response.data.items ?? [];
-        setAttachmentsForTarget(targetKey, items);
-        return items;
-      } catch (err) {
-        const message =
-          err instanceof Error
-            ? err.message
-            : 'Unable to load attachments right now.';
-
-        setTargetError(targetKey, message);
-
-        // Still propagate error to global state for top-level error handlers
-        useAuthStore.setState({error: message, retryCallback: null});
-
-        throw err;
+  return useQuery({
+    queryKey,
+    queryFn: async () => {
+      if (!targetId) {
+        return [];
       }
+      const response = await attachmentApi.listAttachments({
+        targetType,
+        targetId,
+        size: 50, // Note: Default size. We can makethis configurable if needed.
+      });
+      return response.data.items ?? [];
     },
-    [
-      setTargetLoading,
-      setTargetError,
-      setAttachmentsForTarget,
-      removeAttachmentForTarget,
-    ],
-  );
-
-  return {fetchTargetAttachments};
+    enabled: enabled && !!targetId,
+    staleTime: STALE_TIME,
+  });
 }

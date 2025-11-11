@@ -11,6 +11,9 @@ export {SelectableImageTile} from './components/selectable-image-tile';
 export type {AttachmentKindTile} from './components/attachment-kind-grid';
 export type {AttachmentKindCount} from './utils/attachment-counts';
 
+// Utils
+export {computeAttachmentCounts} from './utils/attachment-counts';
+
 // Hooks
 export {useAttachmentUpload} from './hooks/use-attachment-upload';
 export {useImageSelection} from './hooks/use-image-selection';

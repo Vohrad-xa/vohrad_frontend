@@ -1,14 +1,20 @@
 import React, {useCallback, useEffect, useLayoutEffect, useMemo} from 'react';
 import {View, StyleSheet, Pressable} from 'react-native';
-import {useSetAttachmentFilter} from '@vohrad/store';
+import {
+  useSetAttachmentFilter,
+  useClearAttachmentFilter,
+  useAttachmentFilter,
+  useDashboardOverview,
+} from '@vohrad/store';
 import {useNavigation, useRouter, useLocalSearchParams} from 'expo-router';
 import {RefreshableScrollView, HeaderButton, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AttachmentsOverview,
-  useAttachmentsOverview,
   useAttachmentNavigation,
+  computeAttachmentCounts,
 } from '@/features/attachments';
+import {useAttachmentContext} from '@/features/attachments/providers/attachment-provider';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, makeStyleFactory} from '@/utils';
 
@@ -21,10 +27,15 @@ export default function VaultScreen() {
     itemName?: string;
   }>();
   const setAttachmentFilter = useSetAttachmentFilter();
+  const clearAttachmentFilter = useClearAttachmentFilter();
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
   const {openVaultImages, openVaultAdd, clearVaultParams} =
     useAttachmentNavigation();
+
+  const {attachments} = useAttachmentContext();
+  const {data: dashboardData} = useDashboardOverview();
+  const attachmentFilter = useAttachmentFilter();
 
   const initialFilter = useMemo(() => {
     if (params.targetType === 'item' && typeof params.targetId === 'string') {
@@ -43,16 +54,48 @@ export default function VaultScreen() {
         targetId: initialFilter.targetId,
         itemName: params.itemName,
       });
+    } else {
+      // Clear the filter when there's no initialFilter
+      clearAttachmentFilter();
     }
-  }, [initialFilter, params.itemName, setAttachmentFilter]);
+  }, [
+    initialFilter,
+    params.itemName,
+    setAttachmentFilter,
+    clearAttachmentFilter,
+  ]);
 
-  const {counts, hasActiveFilter, filterInfo, clearFilter} =
-    useAttachmentsOverview({initialFilter});
+  // Compute counts locally from context data or use dashboard data
+  const counts = useMemo(() => {
+    if (attachmentFilter) {
+      // Item-specific: compute from fetched attachments
+      return computeAttachmentCounts(attachments);
+    }
+    // Global vault: use dashboard counts
+    return (
+      dashboardData?.attachment_counts ?? {
+        image: 0,
+        document: 0,
+        video: 0,
+        archive: 0,
+        other: 0,
+      }
+    );
+  }, [attachmentFilter, attachments, dashboardData]);
+
+  const hasActiveFilter = Boolean(attachmentFilter);
+  const filterInfo = attachmentFilter
+    ? {
+        targetType: attachmentFilter.targetType,
+        targetId: attachmentFilter.targetId,
+        itemName: attachmentFilter.itemName,
+      }
+    : null;
 
   const handleClearFilter = useCallback(() => {
-    clearFilter();
+    clearAttachmentFilter();
     clearVaultParams();
-  }, [clearFilter, clearVaultParams]);
+  }, [clearAttachmentFilter, clearVaultParams]);
 
   const handleImagesPress = useCallback(() => {
     openVaultImages();

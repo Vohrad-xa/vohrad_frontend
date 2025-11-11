@@ -26,6 +26,7 @@
     "lint": "eslint --config ../../eslint.packages.config.js \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.7",
     "@vohrad/api-client": "workspace:*",
     "@vohrad/types": "workspace:*",
     "shallow": "link:zustand/react/shallow",

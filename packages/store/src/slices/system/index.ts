@@ -5,12 +5,10 @@ export {
   useDashboardVisibility,
   useSetDashboardVisibility,
   useResetDashboardVisibility,
-  useUpdateAttachmentCount,
 } from './hooks';
 export type {
   SystemSlice,
   DashboardCardKey,
   DashboardVisibilityState,
-  DashboardOverviewStatus,
 } from './slice';
 export {defaultDashboardVisibility} from './slice';

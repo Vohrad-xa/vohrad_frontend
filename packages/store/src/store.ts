@@ -4,10 +4,6 @@ import {createAuthSlice, type AuthSlice} from './slices/auth/slice';
 import {createTenantSlice, type TenantSlice} from './slices/tenant/slice';
 import {createSystemSlice, type SystemSlice} from './slices/system/slice';
 import {createItemSlice, type ItemSlice} from './slices/item/slice';
-import {
-  createAttachmentSlice,
-  type AttachmentSlice,
-} from './slices/attachment/slice';
 import {createFilterSlice, type FilterSlice} from './slices/filter/slice';
 import {sanitizeUser, redactTokens} from './utils/sanitizers';
 import {getPersistBackend} from './utils/storage';
@@ -17,7 +13,6 @@ export type StoreState = AuthSlice &
   TenantSlice &
   SystemSlice &
   ItemSlice &
-  AttachmentSlice &
   FilterSlice & {
     _hasHydrated: boolean;
   };
@@ -29,7 +24,6 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
       ...createTenantSlice(set, get, store),
       ...createSystemSlice(set, get, store),
       ...createItemSlice(set, get, store),
-      ...createAttachmentSlice(set, get, store),
       ...createFilterSlice(set, get, store),
       _hasHydrated: false,
     }),
@@ -48,9 +42,6 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
             httpClient.setAccessToken(state.tokens.access_token);
           }
 
-          // Start attachment cache garbage collection
-          state.startGarbageCollector();
-
           // Set hydrated flag
           useAuthStore.setState({
             _hasHydrated: true,
@@ -62,7 +53,6 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
         tenant: state.tenant,
         tokens: redactTokens(state.tokens),
         isAuthenticated: state.isAuthenticated,
-        imageUrls: state.imageUrls,
         dashboardVisibility: state.dashboardVisibility,
       }),
     },

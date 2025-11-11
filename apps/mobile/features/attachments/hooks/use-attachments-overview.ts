@@ -17,7 +17,7 @@ export function useAttachmentsOverview(
   const clearAttachmentFilter = useClearAttachmentFilter();
   const {data: dashboardData} = useDashboardOverview();
 
-  const {attachments, ...managerRest} = useFilteredAttachments({
+  const {attachments, ...rest} = useFilteredAttachments({
     ...options,
   });
 
@@ -51,6 +51,6 @@ export function useAttachmentsOverview(
     hasActiveFilter,
     filterInfo,
     clearFilter: clearAttachmentFilter,
-    ...managerRest,
+    ...rest,
   };
 }

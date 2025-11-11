@@ -17,6 +17,7 @@ export default defineConfig((options) => ({
     'expo',
     '@vohrad/types',
     '@vohrad/api-client',
+    '@tanstack/react-query',
   ],
   outExtension: ({format}) => ({js: format === 'cjs' ? '.cjs' : '.mjs'}),
 }));

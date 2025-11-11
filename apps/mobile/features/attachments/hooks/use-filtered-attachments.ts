@@ -1,5 +1,5 @@
-import {useCallback, useEffect, useRef} from 'react';
-import {useAttachmentsListManager, useAttachmentFilter} from '@vohrad/store';
+import {useMemo} from 'react';
+import {useInfiniteAttachments, useAttachmentFilter} from '@vohrad/store';
 import type {AttachmentKind, AttachmentTargetType} from '@vohrad/types';
 
 type AttachmentFilterShape = {
@@ -15,72 +15,47 @@ export interface UseFilteredAttachmentsOptions {
     targetType?: AttachmentTargetType;
     targetId?: string;
   };
+  enabled?: boolean;
 }
 
 export function useFilteredAttachments(
   options?: UseFilteredAttachmentsOptions,
 ) {
-  const attachmentFilter = useAttachmentFilter();
-  const {kind, pageSize, initialFilter} = options ?? {};
+  const globalFilter = useAttachmentFilter();
+  const {kind, pageSize, initialFilter, enabled = true} = options ?? {};
 
-  const buildFilterShape = useCallback(
-    (
-      source?: {
-        targetType?: AttachmentTargetType;
-        targetId?: string;
-      } | null,
-    ): AttachmentFilterShape => {
-      const shape: AttachmentFilterShape = {};
+  // Combine global and local filters. The global filter takes precedence.
+  const filters = useMemo((): AttachmentFilterShape => {
+    const source = globalFilter ?? initialFilter;
+    const shape: AttachmentFilterShape = {};
 
-      if (source?.targetType) {
-        shape.targetType = source.targetType;
-      }
-
-      if (source?.targetId) {
-        shape.targetId = source.targetId;
-      }
-
-      if (kind) {
-        shape.kind = kind;
-      }
-
-      return shape;
-    },
-    [kind],
-  );
-
-  const initialFiltersRef = useRef<AttachmentFilterShape>(
-    buildFilterShape(attachmentFilter ?? initialFilter),
-  );
-
-  const manager = useAttachmentsListManager({
-    initialFilters: initialFiltersRef.current,
-    pageSize,
-  });
-
-  const {setFilters} = manager;
-
-  const lastAppliedFiltersRef = useRef<string>(
-    JSON.stringify(initialFiltersRef.current),
-  );
-  const isInitialMount = useRef(true);
-
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
+    if (source?.targetType) {
+      shape.targetType = source.targetType;
     }
-
-    const filters = buildFilterShape(attachmentFilter);
-    const key = JSON.stringify(filters);
-
-    if (key === lastAppliedFiltersRef.current) {
-      return;
+    if (source?.targetId) {
+      shape.targetId = source.targetId;
     }
+    if (kind) {
+      shape.kind = kind;
+    }
+    return shape;
+  }, [globalFilter, initialFilter, kind]);
 
-    setFilters(filters);
-    lastAppliedFiltersRef.current = key;
-  }, [attachmentFilter, buildFilterShape, setFilters]);
+  const {data, error, fetchNextPage, hasNextPage, isFetching, refetch} =
+    useInfiniteAttachments(filters, pageSize, enabled);
 
-  return manager;
+  const attachments = useMemo(
+    () => data?.pages.flatMap((page) => page.items) ?? [],
+    [data],
+  );
+
+  return {
+    attachments,
+    total: data?.pages[0]?.total ?? 0,
+    isLoading: isFetching,
+    error,
+    hasNext: hasNextPage,
+    loadMore: fetchNextPage,
+    refresh: refetch,
+  };
 }

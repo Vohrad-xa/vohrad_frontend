@@ -1,23 +1,30 @@
 import {useCallback} from 'react';
-import {useAttachmentManager, useAttachmentFilter} from '@vohrad/store';
+import {useDeleteAttachment} from '@vohrad/store';
+import {useAttachmentContext} from '@/features/attachments/providers/attachment-provider';
 import {useImageAttachments} from '@/features/attachments/screens/attachments-images';
 import {showConfirmAlert} from '@/utils';
 import {useFilteredAttachments} from './use-filtered-attachments';
 import {useImageSelection} from './use-image-selection';
 
 export function useAttachmentImages() {
-  const attachmentFilter = useAttachmentFilter();
-  const filterTargetType = attachmentFilter?.targetType ?? 'item';
-  const filterTargetId = attachmentFilter?.targetId;
+  const {attachments: contextAttachments, targetId} = useAttachmentContext();
 
-  const {attachments, loadMore, hasNext, isLoading} = useFilteredAttachments({
+  // If we have a targetId, we're in item-specific mode and should use context data
+  // Otherwise, fetch images from the server
+  const {
+    attachments: fetchedAttachments,
+    loadMore,
+    hasNext,
+    isLoading,
+  } = useFilteredAttachments({
     kind: 'image',
+    enabled: !targetId,
   });
+
+  // Use context attachments if available, otherwise use fetched attachments
+  const attachments = targetId ? contextAttachments : fetchedAttachments;
   const imageAttachments = useImageAttachments(attachments);
-  const {deleteAttachment} = useAttachmentManager(
-    filterTargetType,
-    filterTargetId,
-  );
+  const {mutateAsync: deleteAttachment} = useDeleteAttachment();
 
   const {
     isSelectionMode,
@@ -49,7 +56,11 @@ export function useAttachmentImages() {
       onConfirm: async () => {
         try {
           await Promise.all(
-            selectedImages.map((image) => deleteAttachment(image.id)),
+            selectedImages.map((image) =>
+              deleteAttachment({
+                attachmentId: image.id,
+              }),
+            ),
           );
           disableSelectionMode();
         } catch (error) {
@@ -68,8 +79,8 @@ export function useAttachmentImages() {
     enableSelectionMode,
     disableSelectionMode,
     handleDeleteSelected,
-    loadMore,
-    hasNext,
-    isLoading,
+    loadMore: targetId ? () => {} : loadMore,
+    hasNext: targetId ? false : hasNext,
+    isLoading: targetId ? false : isLoading,
   };
 }

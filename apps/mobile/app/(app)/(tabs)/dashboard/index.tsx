@@ -19,7 +19,7 @@ export default function HomeScreen() {
   const {width: screenWidth} = useWindowDimensions();
   const styles = createStyles(ds, theme);
   const {triggerHaptic} = useHaptic();
-  const {fetchOverview} = useDashboardOverview();
+  const {refetch: refetchOverview} = useDashboardOverview();
   const {fetchUserProfile} = useFetchUserProfile();
 
   const handlePresentModal = useCallback(() => {
@@ -33,8 +33,8 @@ export default function HomeScreen() {
   }, [triggerHaptic]);
 
   const handleRefresh = useCallback(async () => {
-    await Promise.all([fetchUserProfile(), fetchOverview()]);
-  }, [fetchUserProfile, fetchOverview]);
+    await Promise.all([fetchUserProfile(), refetchOverview()]);
+  }, [fetchUserProfile, refetchOverview]);
 
   const ScrollComponent =
     Platform.OS === 'web' ? ScrollView : RefreshableScrollView;
