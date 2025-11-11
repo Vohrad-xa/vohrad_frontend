@@ -39,6 +39,7 @@ export interface ItemAttachment {
   size: number;
   file_path: string;
   download_url?: string | null;
+  thumbnail_url?: string | null;
   created_at?: string;
   updated_at?: string;
   description?: string | null;

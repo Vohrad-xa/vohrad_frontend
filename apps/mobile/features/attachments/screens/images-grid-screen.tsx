@@ -1,10 +1,10 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback} from 'react';
 import {
   ActivityIndicator,
   Platform,
   StyleSheet,
-  ScrollView,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import {FlatList} from 'react-native';
 import {SelectableImageTile, useAttachmentImages} from '@/features/attachments';
@@ -19,6 +19,7 @@ interface ImagesGridScreenProps {
 }
 
 const keyExtractor = (item: ImageAttachmentItem) => item.id;
+const getItemHeight = (screenWidth: number) => screenWidth / IMAGE_GRID_COLUMNS;
 
 export function ImagesGridScreen({
   onImagePress,
@@ -26,29 +27,13 @@ export function ImagesGridScreen({
 }: ImagesGridScreenProps) {
   const {theme, ds} = useTheme();
   const styles = useStyles(ds, theme);
+  const {width} = useWindowDimensions();
   const {imageAttachments, loadMore, hasNext, isLoading} =
     useAttachmentImages();
 
-  const [showInitialLoading, setShowInitialLoading] = useState(true);
-  const [displayData, setDisplayData] = useState<ImageAttachmentItem[]>([]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowInitialLoading(false);
-      setDisplayData(imageAttachments);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!showInitialLoading) {
-      setDisplayData(imageAttachments);
-    }
-  }, [imageAttachments, showInitialLoading]);
-
   const handleLoadMore = useCallback(() => {
-    if (hasNext) loadMore();
-  }, [hasNext, loadMore]);
+    if (hasNext && !isLoading) loadMore();
+  }, [hasNext, isLoading, loadMore]);
 
   const renderItem = useCallback(
     ({item}: {item: ImageAttachmentItem}) => (
@@ -61,22 +46,46 @@ export function ImagesGridScreen({
     [onImagePress, isSelected],
   );
 
+  // tells FlatList exact item dimensions
+  const getItemLayout = useCallback(
+    (
+      _data: ArrayLike<ImageAttachmentItem> | null | undefined,
+      index: number,
+    ) => {
+      const itemHeight = getItemHeight(width);
+      const rowIndex = Math.floor(index / IMAGE_GRID_COLUMNS);
+      return {
+        length: itemHeight,
+        offset: itemHeight * rowIndex,
+        index,
+      };
+    },
+    [width],
+  );
+
   if (Platform.OS === 'web') {
     return (
       <View style={styles.container}>
-        <ScrollView
-          style={styles.scrollView}
+        <FlatList
+          data={imageAttachments}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          style={styles.flatList}
           contentContainerStyle={styles.webGrid}
-        >
-          {displayData.map((attachment) => (
-            <SelectableImageTile
-              key={attachment.id}
-              attachment={attachment}
-              onPress={onImagePress}
-              isSelected={isSelected(attachment)}
-            />
-          ))}
-        </ScrollView>
+          initialNumToRender={40}
+          maxToRenderPerBatch={20}
+          windowSize={5}
+          removeClippedSubviews={false}
+          ListFooterComponent={
+            isLoading ? (
+              <View style={styles.footerLoader}>
+                <ActivityIndicator size="small" />
+              </View>
+            ) : null
+          }
+        />
       </View>
     );
   }
@@ -84,7 +93,7 @@ export function ImagesGridScreen({
   return (
     <View style={styles.container}>
       <FlatList
-        data={displayData}
+        data={imageAttachments}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         numColumns={IMAGE_GRID_COLUMNS}
@@ -92,15 +101,18 @@ export function ImagesGridScreen({
         onEndReachedThreshold={0.5}
         style={styles.flatList}
         columnWrapperStyle={styles.columnWrapper}
-        initialNumToRender={16}
-        maxToRenderPerBatch={8}
-        windowSize={21}
+        getItemLayout={getItemLayout}
+        initialNumToRender={20}
+        maxToRenderPerBatch={10}
+        windowSize={11}
         removeClippedSubviews={true}
         updateCellsBatchingPeriod={50}
         ListFooterComponent={
-          <View style={styles.footerLoader}>
-            {showInitialLoading && <ActivityIndicator size="small" />}
-          </View>
+          isLoading ? (
+            <View style={styles.footerLoader}>
+              <ActivityIndicator size="small" />
+            </View>
+          ) : null
         }
       />
     </View>

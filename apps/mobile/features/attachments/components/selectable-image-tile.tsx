@@ -35,12 +35,13 @@ export const SelectableImageTile = memo(function SelectableImageTile({
       accessibilityState={{selected: isSelected}}
     >
       <Image
-        source={{uri: attachment.resolvedUrl}}
+        source={{uri: attachment.thumbnailUrl || attachment.resolvedUrl}}
         style={styles.image}
         contentFit="cover"
         cachePolicy="memory-disk"
         recyclingKey={attachment.id}
-        transition={50}
+        transition={200}
+        priority="normal"
       />
       {isSelected && <View style={styles.overlay} />}
     </Pressable>

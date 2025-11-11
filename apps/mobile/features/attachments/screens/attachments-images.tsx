@@ -6,6 +6,7 @@ export const IMAGE_GRID_COLUMNS = 4;
 
 export interface ImageAttachmentItem extends ItemAttachment {
   resolvedUrl: string;
+  thumbnailUrl?: string;
 }
 
 function resolveImageUrl(attachment: ItemAttachment): string | null {
@@ -20,6 +21,12 @@ function resolveImageUrl(attachment: ItemAttachment): string | null {
   return rawUrl.startsWith('http') ? rawUrl : resolveAttachmentUrl(rawUrl);
 }
 
+function resolveThumbnailUrl(attachment: ItemAttachment): string | null {
+  const rawUrl = attachment.thumbnail_url;
+  if (!rawUrl) return null;
+  return rawUrl.startsWith('http') ? rawUrl : resolveAttachmentUrl(rawUrl);
+}
+
 export function useImageAttachments(
   attachments?: ItemAttachment[] | null,
 ): ImageAttachmentItem[] {
@@ -30,8 +37,9 @@ export function useImageAttachments(
     for (const attachment of attachments) {
       if (attachment.kind === 'image') {
         const resolvedUrl = resolveImageUrl(attachment);
+        const thumbnailUrl = resolveThumbnailUrl(attachment) || undefined;
         if (resolvedUrl) {
-          images.push({...attachment, resolvedUrl});
+          images.push({...attachment, resolvedUrl, thumbnailUrl});
         }
       }
     }

@@ -11,7 +11,6 @@ export {AttachmentField} from './attachments/attachment-field';
 export {useItemAttachmentUpload} from './attachments/use-item-attachment-upload';
 export {
   useImageAttachments,
-  AttachmentImageTile,
   IMAGE_GRID_COLUMNS,
 } from '../../attachments/screens/attachments-images';
 export type {ImageAttachmentItem} from '../../attachments/screens/attachments-images';
