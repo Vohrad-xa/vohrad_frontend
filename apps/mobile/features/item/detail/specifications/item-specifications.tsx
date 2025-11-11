@@ -1,5 +1,4 @@
 import React, {useState, useRef, useCallback} from 'react';
-import {useItemDetailManager} from '@vohrad/store';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {useSettingsHeader} from '@/hooks';
 import {SpecificationsForm} from './specifications-form';
@@ -7,10 +6,12 @@ import {SpecificationsForm} from './specifications-form';
 export function ItemSpecifications() {
   const router = useRouter();
   const navigation = useNavigation();
-  const {id: itemId} = useLocalSearchParams<{id: string}>();
-  const {item} = useItemDetailManager(itemId);
+  const {itemData} = useLocalSearchParams<{itemData?: string}>();
+  const item = JSON.parse(itemData!);
   const [hasChanges, setHasChanges] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(
+    !item.specifications || Object.keys(item.specifications).length === 0,
+  );
   const specificationsFormRef = useRef<{
     performSave: () => Promise<void>;
   }>(null);

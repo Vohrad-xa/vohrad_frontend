@@ -116,11 +116,14 @@ export function ItemDetails({
         {/* Specifications field */}
         <Card.Row
           onPress={() => {
-            router.push('/items/specifications');
+            router.push({
+              pathname: '/items/specifications',
+              params: {itemData: JSON.stringify(item)},
+            });
           }}
           accessibilityLabel="View specifications"
         >
-          <Specifications key="specifications" itemId={itemId} />
+          <Specifications key="specifications" />
         </Card.Row>
         <Card.Divider />
 
