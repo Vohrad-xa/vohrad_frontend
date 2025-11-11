@@ -1,111 +1,78 @@
-import React, {useCallback} from 'react';
-import {Platform, Pressable, StyleSheet} from 'react-native';
+import React, {memo} from 'react';
+import {Platform, Pressable, View, useWindowDimensions} from 'react-native';
 import {Image} from 'expo-image';
-import {SelectionOverlay} from '@/components/ui';
+import {
+  IMAGE_GRID_COLUMNS,
+  type ImageAttachmentItem,
+} from '@/features/attachments/screens/attachments-images';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import type {ImageAttachmentItem} from '@/features/attachments/screens/attachments-images';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 interface SelectableImageTileProps {
   attachment: ImageAttachmentItem;
   onPress: (attachment: ImageAttachmentItem) => void;
   isSelected: boolean;
-  selectionMode: boolean;
-  onToggleSelection?: (attachment: ImageAttachmentItem) => void;
 }
 
-export function SelectableImageTile({
+export const SelectableImageTile = memo(function SelectableImageTile({
   attachment,
   onPress,
   isSelected,
-  selectionMode,
-  onToggleSelection,
 }: SelectableImageTileProps) {
-  const {ds, theme} = useTheme();
-  const styles = useStyles(ds, theme);
-
-  const handlePress = useCallback(() => {
-    if (Platform.OS === 'web') {
-      onPress(attachment);
-    } else if (selectionMode && onToggleSelection) {
-      onToggleSelection(attachment);
-    } else {
-      onPress(attachment);
-    }
-  }, [attachment, onPress, selectionMode, onToggleSelection]);
-
-  if (Platform.OS === 'web') {
-    return (
-      <Pressable
-        onPress={handlePress}
-        style={[
-          styles.tile,
-          isSelected ? styles.webSelected : styles.webNormal,
-        ]}
-        accessibilityRole="button"
-        accessibilityLabel={
-          attachment.original_filename ?? 'View image attachment'
-        }
-        accessibilityState={{selected: isSelected}}
-      >
-        <Image
-          source={{uri: attachment.resolvedUrl}}
-          style={styles.image}
-          contentFit="cover"
-        />
-      </Pressable>
-    );
-  }
+  const {theme, ds} = useTheme();
+  const {width} = useWindowDimensions();
+  const styles = useStyles(ds, theme, width);
 
   return (
     <Pressable
-      onPress={handlePress}
-      style={[styles.tile, selectionMode && styles.selectionTile]}
+      onPress={() => onPress(attachment)}
+      style={styles.tile}
       accessibilityRole="button"
       accessibilityLabel={
         attachment.original_filename ?? 'View image attachment'
       }
+      accessibilityState={{selected: isSelected}}
     >
-      <SelectionOverlay isSelected={isSelected} selectionMode={selectionMode}>
-        <Image
-          source={{uri: attachment.resolvedUrl}}
-          style={styles.image}
-          contentFit="cover"
-        />
-      </SelectionOverlay>
+      <Image
+        source={{uri: attachment.resolvedUrl}}
+        style={styles.image}
+        contentFit="cover"
+        cachePolicy="memory-disk"
+        recyclingKey={attachment.id}
+        transition={50}
+      />
+      {isSelected && <View style={styles.overlay} />}
     </Pressable>
   );
-}
+});
 
 const useStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
-    StyleSheet.create({
-      tile: {
-        flexBasis: `${100 / 4}%`,
-        maxWidth: `${100 / 4}%`,
-        flexShrink: 0,
-        aspectRatio: 1,
-        borderRadius: ds.borderRadius.sm,
-      },
-      selectionTile: {
-        transform: [{scale: 0.98}],
-      },
-      image: {
+  (ds: DSShape, theme: ThemeShape, width: number) => ({
+    tile: Platform.select({
+      web: {
         width: '100%',
-        height: '100%',
-        backgroundColor: 'transparent',
+        aspectRatio: 1,
       },
-      webSelected: {
-        borderWidth: ds.borderRadius.sm,
-        borderColor: theme.accentOrange,
-        opacity: 0.8,
-      },
-      webNormal: {
-        borderWidth: ds.borderRadius.sm,
-        borderColor: 'transparent',
-        opacity: 1,
+      default: {
+        width: width / IMAGE_GRID_COLUMNS,
+        height: width / IMAGE_GRID_COLUMNS,
       },
     }),
-  (ds, theme) => themeKey(theme, ds),
+    image: {
+      width: '100%',
+      height: '100%',
+    },
+    overlay: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      opacity: 0.5,
+      backgroundColor: theme.accentBlue,
+      pointerEvents: 'none',
+    },
+  }),
+  (ds, theme, width) => `${themeKey(theme, ds)}|${width}`,
 );

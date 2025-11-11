@@ -42,7 +42,7 @@ export default function PreviewModalLayout() {
         }}
       >
         <Stack.Screen
-          name="index"
+          name="[attachmentId]"
           options={{
             title: 'Preview',
           }}

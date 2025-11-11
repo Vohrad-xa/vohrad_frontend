@@ -7,7 +7,7 @@ const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
 export function useInfiniteAttachments(
   filters: AttachmentListFilters,
-  pageSize = 20,
+  pageSize = 50,
   enabled = true,
 ) {
   const queryKey = ['attachments', 'list', filters];

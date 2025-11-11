@@ -1,21 +1,15 @@
 import React, {useCallback} from 'react';
-import {StyleSheet, View, FlatList} from 'react-native';
 import {useRouter, useNavigation} from 'expo-router';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {SelectableImageTile, useAttachmentImages} from '@/features/attachments';
-import {IMAGE_GRID_COLUMNS, type ImageAttachmentItem} from '@/features/item';
+import {ImagesGridScreen} from '@/features/attachments/screens/images-grid-screen';
+import {useAttachmentImages} from '@/features/attachments';
+import {type ImageAttachmentItem} from '@/features/item';
 import {useSettingsHeader} from '@/hooks';
-import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils';
 
 export default function VaultImagesScreen() {
-  const {ds, theme} = useTheme();
-  const styles = useStyles(ds, theme);
   const router = useRouter();
   const navigation = useNavigation();
 
   const {
-    imageAttachments,
     isSelectionMode,
     selectedCount,
     isSelected,
@@ -23,14 +17,7 @@ export default function VaultImagesScreen() {
     enableSelectionMode,
     disableSelectionMode,
     handleDeleteSelected,
-    loadMore,
-    hasNext,
   } = useAttachmentImages();
-
-  const handleLoadMore = useCallback(() => {
-    if (!hasNext) return;
-    loadMore();
-  }, [hasNext, loadMore]);
 
   const handleImagePress = useCallback(
     async (attachment: ImageAttachmentItem) => {
@@ -38,7 +25,7 @@ export default function VaultImagesScreen() {
         toggleSelection(attachment);
       } else {
         router.push({
-          pathname: '/(modals)/preview',
+          pathname: '/(modals)/preview/[attachmentId]',
           params: {
             attachmentId: attachment.id,
           },
@@ -61,42 +48,6 @@ export default function VaultImagesScreen() {
   });
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={imageAttachments}
-        keyExtractor={(attachment) => attachment.id}
-        numColumns={IMAGE_GRID_COLUMNS}
-        columnWrapperStyle={styles.columnWrapper}
-        renderItem={({item: attachment}) => (
-          <SelectableImageTile
-            attachment={attachment}
-            onPress={handleImagePress}
-            isSelected={isSelected(attachment)}
-            selectionMode={isSelectionMode}
-            onToggleSelection={toggleSelection}
-          />
-        )}
-        contentContainerStyle={styles.listContent}
-        onEndReached={hasNext ? handleLoadMore : undefined}
-        onEndReachedThreshold={0.4}
-      />
-    </View>
+    <ImagesGridScreen onImagePress={handleImagePress} isSelected={isSelected} />
   );
 }
-
-const useStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-      },
-      columnWrapper: {
-        width: '100%',
-      },
-      listContent: {
-        paddingHorizontal: 0,
-        paddingBottom: 0,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);
