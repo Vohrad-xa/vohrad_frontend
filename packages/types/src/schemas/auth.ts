@@ -1,0 +1,60 @@
+import {z} from 'zod';
+import {emailSchema} from './email';
+
+const baseCredentialsSchema = z.object({
+  email: emailSchema,
+  password: z.string().min(1, 'Password is required'),
+});
+
+export const userCredentialsSchema = baseCredentialsSchema.extend({
+  tenant_id: z.string().optional(),
+});
+
+export const adminCredentialsSchema = baseCredentialsSchema;
+
+export const refreshTokenRequestSchema = z.object({
+  refresh_token: z.string().optional(),
+});
+
+export const tokenResponseSchema = z.object({
+  access_token: z.string(),
+  refresh_token: z.string(),
+  token_type: z.string(),
+  expires_in: z.number(),
+  refresh_expires_in: z.number(),
+});
+
+export const authTokensSchema = tokenResponseSchema.extend({
+  issued_at: z.number().optional(),
+});
+
+export const userSchema = z.object({
+  id: z.string(),
+  email: z.string(),
+  role: z.string(),
+  role_description: z.string().nullable().optional(),
+  tenant_id: z.string().optional(),
+  first_name: z.string().nullable().optional(),
+  last_name: z.string().nullable().optional(),
+  phone_number: z.string().nullable().optional(),
+  date_of_birth: z.string().nullable().optional(),
+  address: z.string().nullable().optional(),
+  city: z.string().nullable().optional(),
+  province: z.string().nullable().optional(),
+  postal_code: z.string().nullable().optional(),
+  country: z.string().nullable().optional(),
+  email_verified_at: z.string().nullable().optional(),
+  created_at: z.string().optional(),
+  updated_at: z.string(),
+  pending_email: z.string().nullable().optional(),
+  pending_email_requested_at: z.string().nullable().optional(),
+  pending_email_expires_at: z.string().nullable().optional(),
+});
+
+export type BaseCredentials = z.infer<typeof baseCredentialsSchema>;
+export type UserCredentials = z.infer<typeof userCredentialsSchema>;
+export type AdminCredentials = z.infer<typeof adminCredentialsSchema>;
+export type RefreshTokenRequest = z.infer<typeof refreshTokenRequestSchema>;
+export type TokenResponse = z.infer<typeof tokenResponseSchema>;
+export type AuthTokens = z.infer<typeof authTokensSchema>;
+export type User = z.infer<typeof userSchema>;
