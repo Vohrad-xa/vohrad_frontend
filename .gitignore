@@ -33,6 +33,7 @@ apps/mobile/.idea/
 apps/mobile/*.iml
 **/android/local.properties
 /docs
+packages/types/coverage
 
 # sensitive files
 *.keystore
