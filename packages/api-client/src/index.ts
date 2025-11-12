@@ -1,6 +1,6 @@
 export type {
-  UserLoginRequest,
-  AdminLoginRequest,
+  UserCredentials,
+  AdminCredentials,
   TokenResponse,
   ApiResponse,
 } from '@vohrad/types';
@@ -15,6 +15,8 @@ export * from './dashboard-api';
 export {API_ENDPOINTS} from './endpoints';
 export {loadingManager} from './loading-manager';
 export type {LoadingState, LoadingError} from './loading-manager';
+export {errorManager} from './error-manager';
+export type {ErrorCategory, ErrorInfo, AppError} from './error-manager';
 export {
   initApiConfig,
   setApiTenant,

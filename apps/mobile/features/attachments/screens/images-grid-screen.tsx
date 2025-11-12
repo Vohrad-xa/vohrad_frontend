@@ -5,11 +5,12 @@ import {
   StyleSheet,
   View,
   useWindowDimensions,
+  FlatList,
+  type ViewStyle,
 } from 'react-native';
-import {FlatList} from 'react-native';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {SelectableImageTile, useAttachmentImages} from '@/features/attachments';
 import {IMAGE_GRID_COLUMNS, type ImageAttachmentItem} from '@/features/item';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
@@ -105,7 +106,7 @@ export function ImagesGridScreen({
         initialNumToRender={20}
         maxToRenderPerBatch={10}
         windowSize={11}
-        removeClippedSubviews={true}
+        removeClippedSubviews
         updateCellsBatchingPeriod={50}
         ListFooterComponent={
           isLoading ? (
@@ -120,7 +121,7 @@ export function ImagesGridScreen({
 }
 
 const useStyles = makeStyleFactory(
-  (_ds: DSShape, theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
@@ -144,7 +145,7 @@ const useStyles = makeStyleFactory(
         gap: 0,
         padding: 0,
         width: '100%',
-      } as any,
+      } as ViewStyle,
     }),
   (ds, theme) => themeKey(theme, ds),
 );

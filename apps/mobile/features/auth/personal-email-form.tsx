@@ -1,13 +1,13 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import type {TextInput} from 'react-native';
 import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {validateEmail} from '@vohrad/types';
 import {ThemedButton, ThemedText, Input} from '@/components/ui';
 import type {InputStatus} from '@/components/ui';
 import {FormCard} from '@/components/ui/form-card';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import * as biometricService from '@/modules/security/biometric-service';
 import {useAuth, useTheme} from '@/providers';
-import {validateEmail} from '@/utils';
 import * as AppStorage from '@/utils/storage';
 import {makeStyleFactory} from '@/utils/style-factory';
 
@@ -41,7 +41,7 @@ export function PersonalEmailForm({
   });
   const [showEmailValidation, setShowEmailValidation] = useState(false);
 
-  const {loginUser, isLoading, error, clearError} = useAuth();
+  const {loginUser, isLoading} = useAuth();
   const {ds, theme} = useTheme();
 
   const subdomainInputRef = useRef<TextInput>(null);
@@ -67,10 +67,6 @@ export function PersonalEmailForm({
   }, []);
 
   useEffect(() => {
-    clearError();
-  }, [clearError]);
-
-  useEffect(() => {
     if (emailValidationTimerRef.current)
       clearTimeout(emailValidationTimerRef.current);
     setShowEmailValidation(false);
@@ -91,17 +87,11 @@ export function PersonalEmailForm({
     [form.email],
   );
 
-  const hasBackendError = !!error;
-  const showSubdomainSuccess =
-    form.subdomain.trim().length > 0 && !hasBackendError;
-  const showEmailError =
-    !hasBackendError && showEmailValidation && !emailValidation.isValid;
+  const showSubdomainSuccess = form.subdomain.trim().length > 0;
+  const showEmailError = showEmailValidation && !emailValidation.isValid;
   const showEmailSuccess =
-    !hasBackendError &&
-    showEmailValidation &&
-    emailValidation.isValid &&
-    form.email.length > 0;
-  const showPasswordSuccess = !hasBackendError && form.password.length > 0;
+    showEmailValidation && emailValidation.isValid && form.email.length > 0;
+  const showPasswordSuccess = form.password.length > 0;
 
   const isFormValid =
     form.subdomain.trim().length > 0 &&
@@ -110,7 +100,6 @@ export function PersonalEmailForm({
 
   const setField = (key: FieldKey, value: string) => {
     setForm((prev) => ({...prev, [key]: value}));
-    clearError();
   };
 
   const handleApplySuggestion = () => {
@@ -164,7 +153,6 @@ export function PersonalEmailForm({
   const handleLogin = async () => {
     if (!isFormValid) return;
     try {
-      clearError();
       await loginUser(form.email.trim(), form.password, form.subdomain.trim());
       setField('password', '');
       await AppStorage.setTenantSubdomain(form.subdomain.trim());
@@ -193,7 +181,7 @@ export function PersonalEmailForm({
 
   const statusFor = (key: FieldKey): InputStatus => {
     if (key === 'email') {
-      if (hasBackendError || showEmailError) return 'error';
+      if (showEmailError) return 'error';
       if (showEmailSuccess) return 'success';
       return 'none';
     }
@@ -257,18 +245,6 @@ export function PersonalEmailForm({
           );
         }}
       />
-
-      {error && (
-        <View style={styles.section}>
-          <ThemedText
-            variant="secondary"
-            colorToken="destructive"
-            style={styles.errorText}
-          >
-            {error}
-          </ThemedText>
-        </View>
-      )}
 
       <View style={styles.section}>
         <TouchableOpacity onPress={handleForgotPassword} disabled={isLoading}>

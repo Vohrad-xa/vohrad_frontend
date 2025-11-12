@@ -8,7 +8,7 @@ type ItemListFilters = {
   odataFilter?: string;
 };
 
-const STALE_TIME = 5 * 60 * 1000; // 5 minutes
+const STALE_TIME = 5 * 60 * 1000;
 
 export function useInfiniteItems(
   filters: ItemListFilters,
@@ -32,7 +32,6 @@ export function useInfiniteItems(
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
-      // The API response includes a `has_next` boolean and the current page number
       if (lastPage.data.has_next) {
         return lastPage.data.page + 1;
       }

@@ -16,10 +16,6 @@ type UseItemsListManagerOptions = {
   enabled?: boolean;
 };
 
-/**
- * A manager hook that provides a clean interface for fetching and managing
- * a paginated list of items, powered by TanStack Query's useInfiniteQuery.
- */
 export function useItemsListManager(options?: UseItemsListManagerOptions) {
   const [searchQuery, setSearchQuery] = useState(
     options?.initialSearchQuery ?? '',
@@ -100,23 +96,18 @@ export function useItemsListManager(options?: UseItemsListManagerOptions) {
   }, []);
 
   return {
-    // Data
     items,
     total: data?.pages[0]?.data.total ?? 0,
-    // State
     isLoading: isFetching,
     isFetchingNextPage,
     error,
-    // Pagination
     hasNext: hasNextPage,
     loadMore,
     onEndReached: loadMore,
-    // Filtering & Searching
     filters,
     setFilters,
     searchQuery,
     setSearchQuery,
-    // Actions
     refresh,
     getItemImageUrl,
   };

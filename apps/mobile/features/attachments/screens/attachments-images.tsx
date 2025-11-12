@@ -37,7 +37,7 @@ export function useImageAttachments(
     for (const attachment of attachments) {
       if (attachment.kind === 'image') {
         const resolvedUrl = resolveImageUrl(attachment);
-        const thumbnailUrl = resolveThumbnailUrl(attachment) || undefined;
+        const thumbnailUrl = resolveThumbnailUrl(attachment) ?? undefined;
         if (resolvedUrl) {
           images.push({...attachment, resolvedUrl, thumbnailUrl});
         }

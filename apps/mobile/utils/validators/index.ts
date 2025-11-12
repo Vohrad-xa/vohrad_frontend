@@ -1,3 +1,3 @@
 export * from './types';
 export * from './numeric';
-export * from './email';
+// Email validator moved to @vohrad/types - use validateEmail from there

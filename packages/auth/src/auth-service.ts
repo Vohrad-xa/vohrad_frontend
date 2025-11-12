@@ -1,11 +1,7 @@
 import {useAuthStore} from '@vohrad/store';
-import type {
-  UserLoginRequest,
-  AdminLoginRequest,
-  AuthTokens,
-} from '@vohrad/types';
-import {ApiError} from '@vohrad/types';
-import {authApi, tenantApi} from '@vohrad/api-client';
+import type {AuthTokens} from '@vohrad/types';
+import {ApiError, validation} from '@vohrad/types';
+import {authApi, tenantApi, errorManager} from '@vohrad/api-client';
 import {httpClient, setApiTenant} from '@vohrad/api-client';
 
 export class AuthService {
@@ -32,21 +28,41 @@ export class AuthService {
     password: string,
     subdomain: string,
   ): Promise<void> {
-    const {setLoading, setError, login} = useAuthStore.getState();
+    const {setLoading, login} = useAuthStore.getState();
 
     try {
       setLoading(true);
-      setError(null);
 
       // Set tenant subdomain before making API call
       setApiTenant(subdomain);
 
-      const credentials: UserLoginRequest = {email, password};
-      const {tokens, user} = await authApi.loginUser(credentials);
+      // Validate credentials with validation function
+      const credentialsResult = validation.validateUserLogin({email, password});
+      if (!credentialsResult.success) {
+        const errorMessage =
+          validation.getValidationErrorMessage(credentialsResult);
+        errorManager.reportError(errorMessage, 400);
+        throw new Error(errorMessage);
+      }
+
+      const {tokens, user} = await authApi.loginUser(credentialsResult.data);
+
+      // Validate API response data
+      const tokensResult = validation.validateAuthTokens(tokens);
+      if (!tokensResult.success) {
+        console.error('Invalid token response from API:', tokensResult.error);
+        throw new Error('Invalid authentication response');
+      }
+
+      const userResult = validation.validateUser(user);
+      if (!userResult.success) {
+        console.error('Invalid user data from API:', userResult.error);
+        throw new Error('Invalid user data received');
+      }
 
       // login() automatically syncs token to httpClient
-      login(user, tokens);
-      this.scheduleTokenRefresh(tokens);
+      login(userResult.data, tokensResult.data);
+      this.scheduleTokenRefresh(tokensResult.data);
 
       // Fetch tenant data after successful login
       try {
@@ -61,7 +77,8 @@ export class AuthService {
         error instanceof ApiError
           ? error.message
           : 'Login failed. Please check your credentials.';
-      setError(errorMessage);
+      const statusCode = error instanceof ApiError ? error.status : undefined;
+      errorManager.reportError(errorMessage, statusCode);
       throw error;
     } finally {
       setLoading(false);
@@ -69,18 +86,41 @@ export class AuthService {
   }
 
   async loginAdmin(email: string, password: string): Promise<void> {
-    const {setLoading, setError, login} = useAuthStore.getState();
+    const {setLoading, login} = useAuthStore.getState();
 
     try {
       setLoading(true);
-      setError(null);
 
-      const credentials: AdminLoginRequest = {email, password};
-      const {tokens, user} = await authApi.loginAdmin(credentials);
+      // Validate credentials with validation function
+      const credentialsResult = validation.validateAdminLogin({
+        email,
+        password,
+      });
+      if (!credentialsResult.success) {
+        const errorMessage =
+          validation.getValidationErrorMessage(credentialsResult);
+        errorManager.reportError(errorMessage, 400);
+        throw new Error(errorMessage);
+      }
+
+      const {tokens, user} = await authApi.loginAdmin(credentialsResult.data);
+
+      // Validate API response data
+      const tokensResult = validation.validateAuthTokens(tokens);
+      if (!tokensResult.success) {
+        console.error('Invalid token response from API:', tokensResult.error);
+        throw new Error('Invalid authentication response');
+      }
+
+      const userResult = validation.validateUser(user);
+      if (!userResult.success) {
+        console.error('Invalid user data from API:', userResult.error);
+        throw new Error('Invalid user data received');
+      }
 
       // login() automatically syncs token to httpClient
-      login(user, tokens);
-      this.scheduleTokenRefresh(tokens);
+      login(userResult.data, tokensResult.data);
+      this.scheduleTokenRefresh(tokensResult.data);
 
       // Fetch tenant data after successful login
       try {
@@ -95,7 +135,8 @@ export class AuthService {
         error instanceof ApiError
           ? error.message
           : 'Admin login failed. Please check your credentials.';
-      setError(errorMessage);
+      const statusCode = error instanceof ApiError ? error.status : undefined;
+      errorManager.reportError(errorMessage, statusCode);
       throw error;
     } finally {
       setLoading(false);
@@ -103,11 +144,10 @@ export class AuthService {
   }
 
   async logout(): Promise<void> {
-    const {logout, setLoading, setError} = useAuthStore.getState();
+    const {logout, setLoading} = useAuthStore.getState();
 
     try {
       setLoading(true);
-      setError(null);
 
       try {
         await authApi.logout();
@@ -119,7 +159,8 @@ export class AuthService {
       // logout() automatically clears token from httpClient
       logout();
     } catch (error) {
-      setError('Logout failed');
+      const errorMessage = 'Logout failed';
+      errorManager.reportError(errorMessage);
       throw error;
     } finally {
       setLoading(false);
@@ -127,11 +168,10 @@ export class AuthService {
   }
 
   async logoutAllDevices(): Promise<void> {
-    const {logout, setLoading, setError} = useAuthStore.getState();
+    const {logout, setLoading} = useAuthStore.getState();
 
     try {
       setLoading(true);
-      setError(null);
 
       await authApi.logoutAllDevices();
       this.clearRefreshTimer();
@@ -142,7 +182,8 @@ export class AuthService {
         error instanceof ApiError
           ? error.message
           : 'Failed to logout from all devices';
-      setError(errorMessage);
+      const statusCode = error instanceof ApiError ? error.status : undefined;
+      errorManager.reportError(errorMessage, statusCode);
       throw error;
     } finally {
       setLoading(false);
@@ -155,7 +196,7 @@ export class AuthService {
       return this.refreshPromise;
     }
 
-    const {tokens, setTokens, logout, setError} = useAuthStore.getState();
+    const {tokens, setTokens, logout} = useAuthStore.getState();
     // Native apps persist the refresh token; the web build relies on cookies.
     const refreshSource = tokens?.refresh_token;
     if (!refreshSource && typeof window === 'undefined') {
@@ -166,16 +207,28 @@ export class AuthService {
     this.refreshPromise = (async () => {
       try {
         const newTokens = await authApi.refreshToken(refreshSource);
+
+        // Validate refreshed tokens
+        const tokensResult = validation.validateAuthTokens(newTokens);
+        if (!tokensResult.success) {
+          console.error(
+            'Invalid token response from refresh API:',
+            tokensResult.error,
+          );
+          throw new Error('Invalid token response');
+        }
+
         // setTokens() automatically syncs to httpClient
-        setTokens(newTokens);
-        this.scheduleTokenRefresh(newTokens);
+        setTokens(tokensResult.data);
+        this.scheduleTokenRefresh(tokensResult.data);
       } catch (error) {
         const isNetworkError = error instanceof ApiError && error.status === 0;
         if (isNetworkError) {
           this.scheduleNetworkRetry();
           throw error;
         }
-        setError('Session expired. Please login again.');
+        const errorMessage = 'Session expired. Please login again.';
+        errorManager.reportError(errorMessage, 401);
         this.clearRefreshTimer();
         // logout() automatically clears token from httpClient
         logout();
@@ -201,6 +254,25 @@ export class AuthService {
       const tokens = await authApi.refreshToken();
       const user = await authApi.getCurrentUser();
 
+      // Validate API response data
+      const tokensResult = validation.validateAuthTokens(tokens);
+      if (!tokensResult.success) {
+        console.error(
+          'Invalid token response from API during session restore:',
+          tokensResult.error,
+        );
+        return false;
+      }
+
+      const userResult = validation.validateUser(user);
+      if (!userResult.success) {
+        console.error(
+          'Invalid user data from API during session restore:',
+          userResult.error,
+        );
+        return false;
+      }
+
       // Fetch tenant data during session restore
       try {
         const tenant = await tenantApi.getTenantInfo();
@@ -214,8 +286,8 @@ export class AuthService {
       }
 
       // login() automatically syncs token to httpClient
-      login(user, tokens);
-      this.scheduleTokenRefresh(tokens);
+      login(userResult.data, tokensResult.data);
+      this.scheduleTokenRefresh(tokensResult.data);
       return true;
     } catch (_error) {
       // Cookie missing or invalid: leave the store in a signed-out state.

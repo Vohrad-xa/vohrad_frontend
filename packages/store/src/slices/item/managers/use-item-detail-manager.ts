@@ -4,10 +4,6 @@ import type {ItemLocationUpdate} from '@vohrad/types';
 import {useAuthStore} from '../../../store';
 import {useFetchItem, useUpdateItemLocation} from '../hooks';
 
-/**
- * A manager hook that provides a clean interface for fetching and mutating
- * a single item's details, powered by TanStack Query.
- */
 export function useItemDetailManager(itemId: string | null | undefined) {
   const {
     data: item,

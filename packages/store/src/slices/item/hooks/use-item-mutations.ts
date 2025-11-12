@@ -1,6 +1,12 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
 import {itemApi} from '@vohrad/api-client';
-import type {ItemCreate, ItemUpdate, ItemLocationUpdate} from '@vohrad/types';
+import type {
+  ItemCreate,
+  ItemUpdate,
+  ItemLocationUpdate,
+  ItemDetail,
+  ItemLocationData,
+} from '@vohrad/types';
 
 export function useCreateItem() {
   const queryClient = useQueryClient();
@@ -47,26 +53,33 @@ export function useUpdateItemLocation() {
       data: ItemLocationUpdate;
     }) => itemApi.updateItemLocation(itemId, locationId, data),
     onSuccess: (_, {itemId, locationId, data}) => {
-      queryClient.setQueryData(['items', 'detail', itemId], (old: any) => {
-        if (!old) return old;
-        // Update the specific location
-        const updatedLocations = old.locations?.map((loc: any) =>
-          loc.id === locationId ? {...loc, quantity: data.quantity} : loc,
-        );
-        // Recalculate total quantity
-        const totalQuantity = updatedLocations
-          ?.reduce(
-            (sum: number, loc: any) => sum + Number(loc.quantity || 0),
-            0,
-          )
-          ?.toString();
+      queryClient.setQueryData(
+        ['items', 'detail', itemId],
+        (old: ItemDetail | undefined) => {
+          if (!old) return old;
+          // Update the specific location
+          const updatedLocations = old.locations?.map(
+            (loc: ItemLocationData) =>
+              loc.id === locationId
+                ? {...loc, quantity: data.quantity ?? loc.quantity}
+                : loc,
+          );
+          // Recalculate total quantity
+          const totalQuantity = updatedLocations
+            ?.reduce(
+              (sum: number, loc: ItemLocationData) =>
+                sum + Number(loc.quantity || 0),
+              0,
+            )
+            ?.toString();
 
-        return {
-          ...old,
-          locations: updatedLocations,
-          total_quantity: totalQuantity,
-        };
-      });
+          return {
+            ...old,
+            locations: updatedLocations,
+            total_quantity: totalQuantity,
+          };
+        },
+      );
       queryClient.invalidateQueries({queryKey: ['items', 'list']});
     },
   });

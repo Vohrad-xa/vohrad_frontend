@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import {useRouter, useNavigation} from 'expo-router';
-import {ImagesGridScreen} from '@/features/attachments/screens/images-grid-screen';
 import {useAttachmentImages} from '@/features/attachments';
+import {ImagesGridScreen} from '@/features/attachments/screens/images-grid-screen';
 import {type ImageAttachmentItem} from '@/features/item';
 import {useSettingsHeader} from '@/hooks';
 

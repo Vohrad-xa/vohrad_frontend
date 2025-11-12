@@ -1,8 +1,8 @@
 import type {
   AuthTokens,
   User,
-  UserLoginRequest,
-  AdminLoginRequest,
+  UserCredentials,
+  AdminCredentials,
   TokenResponse,
 } from '@vohrad/types';
 import {httpClient} from './http-client';
@@ -10,20 +10,20 @@ import {API_ENDPOINTS} from './endpoints';
 
 export class AuthApi {
   async loginUser(
-    credentials: UserLoginRequest,
+    credentials: UserCredentials,
   ): Promise<{tokens: AuthTokens; user: User}> {
     return this.login(API_ENDPOINTS.AUTH.LOGIN_USER, credentials);
   }
 
   async loginAdmin(
-    credentials: AdminLoginRequest,
+    credentials: AdminCredentials,
   ): Promise<{tokens: AuthTokens; user: User}> {
     return this.login(API_ENDPOINTS.AUTH.LOGIN_ADMIN, credentials);
   }
 
   private async login(
     endpoint: string,
-    credentials: UserLoginRequest | AdminLoginRequest,
+    credentials: UserCredentials | AdminCredentials,
   ): Promise<{tokens: AuthTokens; user: User}> {
     const response = await httpClient.post<TokenResponse>(
       endpoint,

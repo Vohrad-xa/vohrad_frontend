@@ -1,52 +1,12 @@
-import type {TokenResponse, UserLoginRequest, AdminLoginRequest} from './api';
 import type {Tenant} from './tenant';
-export interface User {
-  id: string;
-  email: string;
-  role: string;
-  role_description?: string | null;
-  tenant_id?: string;
-  first_name?: string | null;
-  last_name?: string | null;
-  phone_number?: string | null;
-  date_of_birth?: string | null;
-  address?: string | null;
-  city?: string | null;
-  province?: string | null;
-  postal_code?: string | null;
-  country?: string | null;
-  email_verified_at?: string | null;
-  created_at?: string;
-  updated_at?: string;
-  pending_email?: string | null;
-  pending_email_requested_at?: string | null;
-  pending_email_expires_at?: string | null;
-}
-export type UserCredentials = UserLoginRequest;
-export type AdminCredentials = AdminLoginRequest;
-export type UserUpdateData = Partial<
-  Pick<
-    User,
-    | 'first_name'
-    | 'last_name'
-    | 'email'
-    | 'phone_number'
-    | 'date_of_birth'
-    | 'address'
-    | 'city'
-    | 'province'
-    | 'postal_code'
-    | 'country'
-  >
->;
-export interface AuthTokens extends TokenResponse {
-  issued_at?: number;
-}
+import type {User, AuthTokens} from './schemas';
+
 export interface AsyncState<TData = unknown, TError = string | null> {
   data: TData;
   isLoading: boolean;
   error: TError;
 }
+
 export interface AuthState {
   user: User | null;
   tenant: Tenant | null;
@@ -67,6 +27,7 @@ export interface AuthState {
   logout: () => void;
   clearError: () => void;
 }
+
 export interface AuthContextValue {
   isAuthenticated: boolean;
   user: User | null;

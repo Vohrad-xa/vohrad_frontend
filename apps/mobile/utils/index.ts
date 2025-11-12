@@ -20,7 +20,8 @@ export {SFSymbols, type SFSymbolName} from './sf-symbols';
 
 // Validation
 export * as validators from './validators';
-export {validateEmail, isEmail} from './validators';
+// Note: validateEmail and isEmail are now imported from @vohrad/types
+// export {validateEmail, isEmail} from './validators';
 
 // Alerts
 export {showAlert, showConfirmAlert} from './alert';

@@ -121,7 +121,13 @@ export class HttpClient {
       if (!response.ok) {
         const errorPayload = parsedBody as
           | {
-              error?: string;
+              error?:
+                | string
+                | {
+                    message?: string;
+                    code?: string;
+                    type?: string;
+                  };
               message?: string;
               detail?: Array<{
                 loc?: unknown[];
@@ -131,10 +137,21 @@ export class HttpClient {
             }
           | undefined;
 
-        let errorMessage =
-          errorPayload?.error ||
-          errorPayload?.message ||
-          `HTTP ${response.status}`;
+        let errorMessage = `HTTP ${response.status}`;
+
+        // Handle nested error object structure (e.g., { error: { message: "..." } })
+        if (errorPayload?.error) {
+          if (typeof errorPayload.error === 'string') {
+            errorMessage = errorPayload.error;
+          } else if (typeof errorPayload.error === 'object') {
+            errorMessage =
+              errorPayload.error.message ||
+              errorPayload.error.code ||
+              `HTTP ${response.status}`;
+          }
+        } else if (errorPayload?.message) {
+          errorMessage = errorPayload.message;
+        }
 
         if (
           Array.isArray(errorPayload?.detail) &&
