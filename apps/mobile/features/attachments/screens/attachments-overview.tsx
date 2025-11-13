@@ -73,7 +73,7 @@ const useStyles = makeStyleFactory(
         paddingTop: 0,
       },
       gridContainer: {
-        marginHorizontal: -ds.spacing.xxl,
+        // No special margins needed for list layout
       },
     }),
   (ds, theme) => themeKey(theme, ds),

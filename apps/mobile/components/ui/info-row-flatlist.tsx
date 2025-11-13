@@ -32,6 +32,7 @@ type ListRowProps = {
   showBadge?: boolean;
   imageContainerSize?: number;
   position?: ListPosition;
+  customLeftIcon?: React.ReactNode;
 };
 
 export const ListRow: React.FC<ListRowProps> = React.memo(
@@ -41,6 +42,7 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
     showBadge = true,
     imageContainerSize = 35,
     position = 'single',
+    customLeftIcon,
   }) => {
     const {ds, theme} = useTheme();
     const styles = createStyles(theme, ds, position);
@@ -52,34 +54,38 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
 
     const content = (
       <>
-        {showImage && (
-          <View
-            style={[
-              styles.imageWrapper,
-              {width: imageContainerSize, height: imageContainerSize},
-            ]}
-          >
-            <View style={styles.imageContainer}>
-              {item.image ? (
-                <ExpoImage
-                  source={item.image}
-                  style={styles.image}
-                  contentFit="cover"
-                  cachePolicy="memory-disk"
-                  transition={150}
+        {customLeftIcon ? (
+          <View>{customLeftIcon}</View>
+        ) : (
+          showImage && (
+            <View
+              style={[
+                styles.imageWrapper,
+                {width: imageContainerSize, height: imageContainerSize},
+              ]}
+            >
+              <View style={styles.imageContainer}>
+                {item.image ? (
+                  <ExpoImage
+                    source={item.image}
+                    style={styles.image}
+                    contentFit="cover"
+                    cachePolicy="memory-disk"
+                    transition={150}
+                  />
+                ) : (
+                  <Icon name={AppIcons.content.imageFallback} size="xl" />
+                )}
+              </View>
+              {showBadge && item.badge && (
+                <ThemedView
+                  variant="statusBadge"
+                  badgeStatus={item.badgeType}
+                  style={styles.imageBadge}
                 />
-              ) : (
-                <Icon name={AppIcons.content.imageFallback} size="xl" />
               )}
             </View>
-            {showBadge && item.badge && (
-              <ThemedView
-                variant="statusBadge"
-                badgeStatus={item.badgeType}
-                style={styles.imageBadge}
-              />
-            )}
-          </View>
+          )
         )}
 
         <View style={styles.contentContainer}>
@@ -90,7 +96,7 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
             <View style={styles.secondaryRow}>
               {item.code && (
                 <ThemedText
-                  variant="caption"
+                  variant="footnote"
                   colorToken="muted"
                   style={styles.secondaryItem}
                 >

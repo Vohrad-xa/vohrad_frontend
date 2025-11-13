@@ -1,7 +1,7 @@
 import React from 'react';
-import {Platform, Pressable, StyleSheet, View} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 import {SymbolView} from 'expo-symbols';
-import {ThemedText} from '@/components/ui';
+import {ThemedText, ListRow, Divider, type ListRowData} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, SFSymbols, makeStyleFactory} from '@/utils';
@@ -18,61 +18,72 @@ interface AttachmentKindGridProps {
   tiles: AttachmentKindTile[];
 }
 
-const COLUMNS = 3;
-
 export function AttachmentKindGrid({tiles}: AttachmentKindGridProps) {
   const {ds, theme} = useTheme();
   const styles = useStyles(ds, theme);
 
   return (
-    <View style={styles.grid}>
-      {tiles.map((tile) => (
-        <Pressable
-          key={tile.kind}
-          style={styles.folder}
-          onPress={tile.onPress}
-          accessibilityRole="button"
-          accessibilityLabel={`${tile.label} attachments`}
-        >
-          {Platform.OS === 'ios' ? (
-            <SymbolView
-              name={SFSymbols.folderFill}
-              size={90}
-              tintColor={theme.accentLightBlue}
-            />
-          ) : (
-            <Icon
-              name={AppIcons.content.folderFilled}
-              size={70}
-              color={theme.accentLightBlue}
-            />
+    <View style={styles.listContainer}>
+      {tiles.map((tile, index) => (
+        <View key={tile.kind}>
+          <ListRow
+            item={{
+              id: tile.kind,
+              name: tile.label,
+              code:
+                tile.count > 0
+                  ? `${tile.count} ${tile.count === 1 ? 'file' : 'files'}`
+                  : undefined,
+              onPress: tile.onPress,
+            }}
+            showImage={false}
+            showBadge={false}
+            position={
+              tiles.length === 1
+                ? 'single'
+                : index === 0
+                  ? 'first'
+                  : index === tiles.length - 1
+                    ? 'last'
+                    : 'middle'
+            }
+            customLeftIcon={
+              Platform.OS === 'ios' ? (
+                <SymbolView
+                  name={SFSymbols.folderFill}
+                  size={55}
+                  tintColor={theme.accentLightBlue}
+                />
+              ) : (
+                <Icon
+                  name={AppIcons.content.folderFilled}
+                  size={55}
+                  color={theme.accentLightBlue}
+                />
+              )
+            }
+          />
+          {index < tiles.length - 1 && (
+            <View style={styles.dividerContainer}>
+              <Divider />
+            </View>
           )}
-          <ThemedText variant="label">{tile.label}</ThemedText>
-          <ThemedText variant="caption" style={styles.count}>
-            {tile.count} {tile.count === 1 ? 'file' : 'files'}
-          </ThemedText>
-        </Pressable>
+        </View>
       ))}
     </View>
   );
 }
 
 const useStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
-      grid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
+      listContainer: {
+        // Remove negative margin to use default screen padding
       },
-      folder: {
-        width: `${100 / COLUMNS}%`,
-        alignItems: 'center',
-        paddingVertical: Platform.OS === 'ios' ? 0 : ds.spacing.lg,
-      },
-
-      count: {
-        color: theme.muted,
+      dividerContainer: {
+        paddingLeft: ds.spacing.xxl + ds.spacing.xxl + 3,
+        paddingRight: ds.spacing.xs,
       },
     }),
-  (ds, theme) => themeKey(theme, ds),
+  (ds, _theme) => themeKey(_theme, ds),
 );
