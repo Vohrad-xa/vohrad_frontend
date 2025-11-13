@@ -24,6 +24,7 @@ export interface AppError {
   isRetryable: boolean;
   timestamp: number;
   statusCode?: number;
+  retryCallback?: () => Promise<void> | void;
 }
 
 type ConfigOptions = {
@@ -32,20 +33,17 @@ type ConfigOptions = {
 };
 
 class GlobalErrorManager {
-  // Observable pattern: UI components subscribe to errors
   private listeners = new Set<ErrorListener>();
-
-  // Error history for debugging
   private history: AppError[] = [];
-
   private maxHistorySize = 50;
-
   private enableLogging = false;
 
-  /**
-   * Report an error to all subscribers
-   */
-  reportError(message: string, statusCode?: number): AppError {
+  // Report a new error
+  reportError(
+    message: string,
+    statusCode?: number,
+    retryCallback?: () => Promise<void> | void,
+  ): AppError {
     const info = this.categorize(message);
     const error: AppError = {
       id: `err-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
@@ -55,6 +53,7 @@ class GlobalErrorManager {
       isRetryable: info.isRetryable,
       timestamp: Date.now(),
       statusCode,
+      retryCallback,
     };
 
     // Add to history
@@ -79,9 +78,7 @@ class GlobalErrorManager {
     return error;
   }
 
-  /**
-   * Subscribe to error events
-   */
+  // subscribe to error events
   subscribe(listener: ErrorListener): () => void {
     this.listeners.add(listener);
     return () => {
@@ -89,23 +86,17 @@ class GlobalErrorManager {
     };
   }
 
-  /**
-   * Get error history
-   */
+  // Get error history
   getHistory(limit?: number): AppError[] {
     return limit ? this.history.slice(0, limit) : [...this.history];
   }
 
-  /**
-   * Clear error history
-   */
+  // Clear error history
   clearHistory(): void {
     this.history = [];
   }
 
-  /**
-   * Configure error manager
-   */
+  // Configure error manager settings
   configure(options: ConfigOptions): void {
     if (typeof options.maxHistorySize === 'number') {
       this.maxHistorySize = Math.max(1, options.maxHistorySize);
@@ -115,9 +106,7 @@ class GlobalErrorManager {
     }
   }
 
-  /**
-   * Categorizes an error message and returns appropriate title and metadata
-   */
+  // Categorizes an error message and returns appropriate title and metadata
   categorize(message: string): ErrorInfo {
     const lowerMessage = message.toLowerCase();
 
@@ -184,23 +173,17 @@ class GlobalErrorManager {
     };
   }
 
-  /**
-   * Gets a user-friendly title for an error message
-   */
+  // Gets a user-friendly title for an error message
   getTitle(message: string): string {
     return this.categorize(message).title;
   }
 
-  /**
-   * Determines if an error is retryable
-   */
+  // Determines if an error is retryable
   isRetryable(message: string): boolean {
     return this.categorize(message).isRetryable;
   }
 
-  /**
-   * Checks if error is related to authentication
-   */
+  // Checks if error is related to authentication
   isAuthenticationError(message: string): boolean {
     const lower = message.toLowerCase();
     return (
@@ -213,9 +196,7 @@ class GlobalErrorManager {
     );
   }
 
-  /**
-   * Checks if error is related to authorization/permissions
-   */
+  // Checks if error is related to authorization/permissions
   isAuthorizationError(message: string): boolean {
     const lower = message.toLowerCase();
     return (
@@ -226,9 +207,7 @@ class GlobalErrorManager {
     );
   }
 
-  /**
-   * Checks if error is related to validation
-   */
+  // Checks if error is related to validation
   isValidationError(message: string): boolean {
     const lower = message.toLowerCase();
     return (
@@ -240,25 +219,20 @@ class GlobalErrorManager {
     );
   }
 
-  /**
-   * Checks if error is a not found error
-   */
+  // Checks if error is a not found error
   isNotFoundError(message: string): boolean {
     const lower = message.toLowerCase();
     return lower.includes('not found') || lower.includes('404');
   }
 
-  /**
-   * Checks if error is a timeout error
-   */
+  // Checks if error is a timeout error
   isTimeoutError(message: string): boolean {
     const lower = message.toLowerCase();
     return lower.includes('timeout') || lower.includes('timed out');
   }
 
-  /**
-   * Checks if error is a network error
-   */
+  // Checks if error is a network error
+
   isNetworkError(message: string): boolean {
     const lower = message.toLowerCase();
     return (
@@ -269,9 +243,7 @@ class GlobalErrorManager {
     );
   }
 
-  /**
-   * Checks if error is a server error
-   */
+  // Checks if error is a server error
   isServerError(message: string): boolean {
     const lower = message.toLowerCase();
     return (

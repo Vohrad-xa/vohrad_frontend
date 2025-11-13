@@ -18,7 +18,6 @@ export function ErrorHandlerProvider({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    // Subscribe to error manager
     const unsubscribe = errorManager.subscribe((error: AppError) => {
       // Clear any pending network error timeout
       if (timeoutRef.current) {
@@ -46,8 +45,15 @@ export function ErrorHandlerProvider({
               message: error.message,
               confirmText: 'Retry',
               cancelText: 'Cancel',
-              onConfirm: () => {
-                // Could implement retry logic here if needed
+              onConfirm: async () => {
+                if (error.retryCallback) {
+                  try {
+                    await error.retryCallback();
+                  } catch (retryError) {
+                    // Retry failed, error will be reported again automatically
+                    console.error('Retry failed:', retryError);
+                  }
+                }
               },
               cancelIsDestructive: true,
             });

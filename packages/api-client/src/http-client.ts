@@ -2,10 +2,12 @@ import type {ApiResponse} from '@vohrad/types';
 import {ApiError} from '@vohrad/types';
 import {resolveApiUrl, getApiConfig} from './config';
 import {loadingManager} from './loading-manager';
+import {errorManager} from './error-manager';
 
 export class HttpClient {
   private accessToken: string | null = null;
   private onTokenRefresh: (() => Promise<void>) | null = null;
+  private retryCallbacks = new Map<string, () => Promise<void>>();
 
   setAccessToken(token: string | null) {
     this.accessToken = token;
@@ -153,6 +155,26 @@ export class HttpClient {
           errorMessage = errorPayload.message;
         }
 
+        // Handle backend validation errors format
+        const errorObj = errorPayload?.error;
+        if (
+          errorObj &&
+          typeof errorObj === 'object' &&
+          'details' in errorObj &&
+          errorObj.details &&
+          typeof errorObj.details === 'object' &&
+          'validation_errors' in errorObj.details &&
+          Array.isArray(errorObj.details.validation_errors) &&
+          errorObj.details.validation_errors.length > 0
+        ) {
+          const validationError = errorObj.details.validation_errors[0] as {
+            message?: string;
+            field?: string;
+          };
+          errorMessage = validationError.message || errorMessage;
+          errorMessage = errorMessage.replace(/^Value error,\s*/i, '');
+        }
+
         if (
           Array.isArray(errorPayload?.detail) &&
           errorPayload.detail.length > 0
@@ -173,7 +195,10 @@ export class HttpClient {
 
           errorMessage = message;
         }
-        throw new ApiError(errorMessage, response.status);
+
+        const apiError = new ApiError(errorMessage, response.status);
+        errorManager.reportError(apiError.message, apiError.status);
+        throw apiError;
       }
 
       if (parsedBody && typeof parsedBody === 'object') {
@@ -192,10 +217,29 @@ export class HttpClient {
         throw error;
       }
 
-      throw new ApiError(
+      const networkError = new ApiError(
         error instanceof Error ? error.message : 'Unable to connect',
         0,
       );
+
+      // Store retry callback for this request
+      const requestId = `retry-${Date.now()}-${Math.random()}`;
+      this.retryCallbacks.set(requestId, async () => {
+        await this.makeRequest<T>(urlOrEndpoint, options, false);
+      });
+
+      errorManager.reportError(
+        networkError.message,
+        networkError.status,
+        async () => {
+          const retryCallback = this.retryCallbacks.get(requestId);
+          if (retryCallback) {
+            await retryCallback();
+            this.retryCallbacks.delete(requestId);
+          }
+        },
+      );
+      throw networkError;
     } finally {
       loadingManager.finishRequest(loadingToken);
     }
@@ -242,7 +286,7 @@ export class HttpClient {
     // If external signal provided, use it; otherwise create internal timeout controller
     const externalSignal = config.signal;
     const controller = new AbortController();
-    const timeoutMs = 15000; // 15 second timeout
+    const timeoutMs = 10000;
 
     // Combine external signal with timeout
     const timeoutId = setTimeout(() => {

@@ -77,5 +77,4 @@ export class AuthApi {
   }
 }
 
-// Create singleton instance
 export const authApi = new AuthApi();
