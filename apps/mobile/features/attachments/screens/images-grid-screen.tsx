@@ -145,7 +145,7 @@ const useStyles = makeStyleFactory(
         gap: 0,
         padding: 0,
         width: '100%',
-      } as ViewStyle,
+      } as unknown as ViewStyle,
     }),
   (ds, theme) => themeKey(theme, ds),
 );
