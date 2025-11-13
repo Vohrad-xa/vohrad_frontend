@@ -23,7 +23,7 @@ export function AttachmentKindGrid({tiles}: AttachmentKindGridProps) {
   const styles = useStyles(ds, theme);
 
   return (
-    <View style={styles.listContainer}>
+    <View>
       {tiles.map((tile, index) => (
         <View key={tile.kind}>
           <ListRow
@@ -77,9 +77,6 @@ export function AttachmentKindGrid({tiles}: AttachmentKindGridProps) {
 const useStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
-      listContainer: {
-        // Remove negative margin to use default screen padding
-      },
       dividerContainer: {
         paddingLeft: ds.spacing.xxl + ds.spacing.xxl + 3,
         paddingRight: ds.spacing.xs,

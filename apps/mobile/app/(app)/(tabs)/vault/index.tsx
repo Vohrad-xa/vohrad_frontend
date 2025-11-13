@@ -105,6 +105,10 @@ export default function VaultScreen() {
     openVaultImages();
   }, [openVaultImages]);
 
+  const handleDocumentsPress = useCallback(() => {
+    router.push('/(app)/(tabs)/vault/documents');
+  }, [router]);
+
   const handleAddPress = useCallback(() => {
     // If there's a filter, pass params; otherwise navigate without params (item selection handled in add screen)
     if (filterInfo) {
@@ -155,6 +159,7 @@ export default function VaultScreen() {
         counts={counts}
         onTilePress={{
           image: handleImagesPress,
+          document: handleDocumentsPress,
         }}
       />
     </RefreshableScrollView>

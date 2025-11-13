@@ -75,14 +75,18 @@ function VaultStack() {
           name="add"
           options={{
             headerTitle: 'Add Attachment',
-            headerBackButtonDisplayMode: 'minimal',
           }}
         />
         <Stack.Screen
           name="images"
           options={{
             headerTitle: 'Library',
-            headerBackButtonDisplayMode: 'minimal',
+          }}
+        />
+        <Stack.Screen
+          name="documents"
+          options={{
+            headerTitle: 'Documents',
           }}
         />
       </Stack>
