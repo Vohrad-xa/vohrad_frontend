@@ -12,5 +12,5 @@ export {useItemAttachmentUpload} from './attachments/use-item-attachment-upload'
 export {
   useImageAttachments,
   IMAGE_GRID_COLUMNS,
-} from '../../attachments/screens/attachment-images';
-export type {ImageAttachmentItem} from '../../attachments/screens/attachment-images';
+} from '../../attachments/hooks/attachment-images';
+export type {ImageAttachmentItem} from '../../attachments/hooks/attachment-images';

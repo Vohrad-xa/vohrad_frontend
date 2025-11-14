@@ -1,7 +1,7 @@
 import {useCallback} from 'react';
 import {attachmentApi, resolveAttachmentUrl} from '@vohrad/api-client';
 import {useOptionalAttachmentContext} from '@/features/attachments/providers/attachment-provider';
-import {useDocumentAttachments} from '@/features/attachments/screens/attachment-images';
+import {useDocumentAttachments} from '@/features/attachments/hooks/attachment-images';
 import {useFilteredAttachments} from './use-filtered-attachments';
 import type {ItemAttachment} from '@vohrad/types';
 

@@ -5,7 +5,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   IMAGE_GRID_COLUMNS,
   type ImageAttachmentItem,
-} from '@/features/attachments/screens/attachment-images';
+} from '@/features/attachments/hooks/attachment-images';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
