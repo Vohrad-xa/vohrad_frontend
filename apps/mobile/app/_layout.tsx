@@ -15,6 +15,7 @@ import {
   useAuth,
   LoadingProvider,
   HapticProvider,
+  NetworkProvider,
 } from '@/providers';
 
 const queryClient = new QueryClient();
@@ -64,11 +65,13 @@ export default function RootLayout() {
           <AppThemeProvider>
             <HapticProvider>
               <ActionSheetProvider>
-                <LoadingProvider>
-                  <AuthProvider>
-                    <RootNavigation isBootstrapComplete={useBootstrap()} />
-                  </AuthProvider>
-                </LoadingProvider>
+                <NetworkProvider>
+                  <LoadingProvider>
+                    <AuthProvider>
+                      <RootNavigation isBootstrapComplete={useBootstrap()} />
+                    </AuthProvider>
+                  </LoadingProvider>
+                </NetworkProvider>
               </ActionSheetProvider>
             </HapticProvider>
           </AppThemeProvider>

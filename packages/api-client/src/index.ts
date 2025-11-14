@@ -16,7 +16,12 @@ export {API_ENDPOINTS} from './endpoints';
 export {loadingManager} from './loading-manager';
 export type {LoadingState, LoadingError} from './loading-manager';
 export {errorManager} from './error-manager';
-export type {ErrorCategory, ErrorInfo, AppError} from './error-manager';
+export type {
+  ErrorCategory,
+  ErrorInfo,
+  AppError,
+  ErrorScope,
+} from './error-manager';
 export {
   initApiConfig,
   setApiTenant,
@@ -25,3 +30,8 @@ export {
   resolveApiUrl,
   resolveAttachmentUrl,
 } from './config';
+export {
+  verifyNetworkReachability,
+  DEFAULT_REACHABILITY_TIMEOUT_MS,
+  DEFAULT_REACHABILITY_FALLBACK_URLS,
+} from './network-utils';

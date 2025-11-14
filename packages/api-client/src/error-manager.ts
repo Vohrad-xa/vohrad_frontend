@@ -1,5 +1,14 @@
 type ErrorListener = (error: AppError) => void;
 
+export type ErrorScope = 'global' | 'local';
+
+type ReportErrorOptions = {
+  category?: ErrorCategory;
+  title?: string;
+  isRetryable?: boolean;
+  scope?: ErrorScope;
+};
+
 export type ErrorCategory =
   | 'authentication'
   | 'authorization'
@@ -25,6 +34,7 @@ export interface AppError {
   timestamp: number;
   statusCode?: number;
   retryCallback?: () => Promise<void> | void;
+  scope: ErrorScope;
 }
 
 type ConfigOptions = {
@@ -43,17 +53,24 @@ class GlobalErrorManager {
     message: string,
     statusCode?: number,
     retryCallback?: () => Promise<void> | void,
+    options?: ReportErrorOptions,
   ): AppError {
     const info = this.categorize(message);
+    const category = options?.category ?? info.category;
+    const title = options?.title ?? info.title;
+    const isRetryable = options?.isRetryable ?? info.isRetryable;
+    const scope = options?.scope ?? 'global';
+
     const error: AppError = {
       id: `err-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
       message,
-      category: info.category,
-      title: info.title,
-      isRetryable: info.isRetryable,
+      category,
+      title,
+      isRetryable,
       timestamp: Date.now(),
       statusCode,
       retryCallback,
+      scope,
     };
 
     // Add to history

@@ -1,17 +1,35 @@
 import React, {useCallback} from 'react';
 import {Linking, Platform} from 'react-native';
+import {errorManager} from '@vohrad/api-client';
 import {useRouter} from 'expo-router';
 import {useAttachmentDocuments} from '@/features/attachments';
 import {DocumentsList} from '@/features/attachments/screens/documents';
+import {useNetworkConnectivity} from '@/providers';
 import {showAlert} from '@/utils';
 
 export default function VaultDocumentsScreen() {
   const router = useRouter();
+  const {checkBackendReachability} = useNetworkConnectivity();
   const {documentAttachments, getDocumentById, resolveDocumentUrlById} =
     useAttachmentDocuments();
 
   const handleDocumentPress = useCallback(
     async (documentId: string) => {
+      const hasConnectivity = await checkBackendReachability();
+      if (!hasConnectivity) {
+        errorManager.reportError(
+          'Document preview requires an internet connection. Please reconnect and try again.',
+          undefined,
+          undefined,
+          {
+            category: 'network',
+            isRetryable: false,
+            scope: 'local',
+          },
+        );
+        return;
+      }
+
       if (Platform.OS === 'web' || Platform.OS === 'android') {
         // For web/android, open directly with linking
         try {
@@ -57,7 +75,7 @@ export default function VaultDocumentsScreen() {
         });
       }
     },
-    [getDocumentById, resolveDocumentUrlById, router],
+    [checkBackendReachability, getDocumentById, resolveDocumentUrlById, router],
   );
 
   return (

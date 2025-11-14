@@ -31,8 +31,13 @@ export function ErrorHandlerProvider({
         return;
       }
 
+      const shouldHandleGlobalNetwork =
+        error.category === 'network' &&
+        error.scope !== 'local' &&
+        Boolean(onNetworkError);
+
       // Handle network errors with delay and retry option
-      if (error.category === 'network' && onNetworkError) {
+      if (shouldHandleGlobalNetwork && onNetworkError) {
         onNetworkError(true);
 
         timeoutRef.current = setTimeout(() => {
