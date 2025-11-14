@@ -8,6 +8,7 @@ import React, {
   type ReactNode,
 } from 'react';
 import {Platform} from 'react-native';
+import {onlineManager} from '@tanstack/react-query';
 import {verifyNetworkReachability} from '@vohrad/api-client';
 import * as Network from 'expo-network';
 
@@ -39,6 +40,9 @@ type NetworkContextValue = {
   isCheckingReachability: boolean;
   lastReachabilityResult: boolean | null;
   lastReachabilityCheckAt: number | null;
+  isNetworkReady: boolean;
+  isOffline: boolean;
+  refreshBackendReachability: () => Promise<boolean>;
   checkBackendReachability: (options?: ReachabilityOptions) => Promise<boolean>;
 };
 
@@ -59,6 +63,29 @@ export function NetworkProvider({children}: {children: ReactNode}) {
   });
 
   useEffect(() => {
+    if (Platform.OS === 'web') {
+      const syncFromNavigator = () => {
+        const online = getNavigatorOnlineStatus();
+        setStatus({
+          type: Network.NetworkStateType.UNKNOWN,
+          isConnected: online,
+          isInternetReachable: online,
+        });
+      };
+
+      syncFromNavigator();
+      const globalTarget = globalThis as typeof globalThis & {
+        addEventListener?: (type: string, listener: () => void) => void;
+        removeEventListener?: (type: string, listener: () => void) => void;
+      };
+      globalTarget.addEventListener?.('online', syncFromNavigator);
+      globalTarget.addEventListener?.('offline', syncFromNavigator);
+      return () => {
+        globalTarget.removeEventListener?.('online', syncFromNavigator);
+        globalTarget.removeEventListener?.('offline', syncFromNavigator);
+      };
+    }
+
     let isMounted = true;
 
     const syncState = (state: Network.NetworkState | null) => {
@@ -164,12 +191,66 @@ export function NetworkProvider({children}: {children: ReactNode}) {
     ],
   );
 
+  const refreshBackendReachability = useCallback(() => {
+    return checkBackendReachability({force: true});
+  }, [checkBackendReachability]);
+
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      const online = getNavigatorOnlineStatus();
+      setReachability({
+        lastCheckAt: Date.now(),
+        lastResult: online,
+        isChecking: false,
+      });
+      return;
+    }
+
+    const shouldCheckBackend =
+      status.isConnected === true && status.isInternetReachable !== false;
+
+    if (shouldCheckBackend) {
+      void refreshBackendReachability();
+      return;
+    }
+
+    const shouldMarkOffline =
+      status.isConnected === false || status.isInternetReachable === false;
+
+    if (shouldMarkOffline) {
+      setReachability((prev) => {
+        if (prev.lastResult === false && prev.isChecking === false) {
+          return prev;
+        }
+        return {
+          lastCheckAt: Date.now(),
+          lastResult: false,
+          isChecking: false,
+        };
+      });
+    }
+  }, [
+    refreshBackendReachability,
+    status.isConnected,
+    status.isInternetReachable,
+  ]);
+
   const normalizedConnection =
-    typeof status.isConnected === 'boolean' ? status.isConnected : false;
+    typeof status.isConnected === 'boolean' ? status.isConnected : true;
   const normalizedInternet =
     typeof status.isInternetReachable === 'boolean'
       ? status.isInternetReachable
       : normalizedConnection;
+  const backendReachability =
+    typeof reachability.lastResult === 'boolean'
+      ? reachability.lastResult
+      : true;
+  const isNetworkReady = normalizedInternet && backendReachability;
+  const isOffline = !isNetworkReady;
+
+  useEffect(() => {
+    onlineManager.setOnline(isNetworkReady);
+  }, [isNetworkReady]);
 
   const value = useMemo<NetworkContextValue>(
     () => ({
@@ -180,6 +261,9 @@ export function NetworkProvider({children}: {children: ReactNode}) {
       isCheckingReachability: reachability.isChecking,
       lastReachabilityResult: reachability.lastResult,
       lastReachabilityCheckAt: reachability.lastCheckAt,
+      isNetworkReady,
+      isOffline,
+      refreshBackendReachability,
       checkBackendReachability,
     }),
     [
@@ -189,6 +273,9 @@ export function NetworkProvider({children}: {children: ReactNode}) {
       reachability.isChecking,
       reachability.lastResult,
       reachability.lastCheckAt,
+      isNetworkReady,
+      isOffline,
+      refreshBackendReachability,
       checkBackendReachability,
     ],
   );
