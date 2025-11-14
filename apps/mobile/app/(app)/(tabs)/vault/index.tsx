@@ -30,7 +30,7 @@ export default function VaultScreen() {
   const clearAttachmentFilter = useClearAttachmentFilter();
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
-  const {openVaultImages, openVaultAdd, clearVaultParams} =
+  const {openVaultImages, openVaultDocuments, openVaultAdd, clearVaultParams} =
     useAttachmentNavigation();
 
   const {attachments} = useAttachmentContext();
@@ -106,8 +106,8 @@ export default function VaultScreen() {
   }, [openVaultImages]);
 
   const handleDocumentsPress = useCallback(() => {
-    router.push('/(app)/(tabs)/vault/documents');
-  }, [router]);
+    openVaultDocuments();
+  }, [openVaultDocuments]);
 
   const handleAddPress = useCallback(() => {
     // If there's a filter, pass params; otherwise navigate without params (item selection handled in add screen)
