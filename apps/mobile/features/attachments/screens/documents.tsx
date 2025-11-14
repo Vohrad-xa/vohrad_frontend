@@ -22,7 +22,9 @@ export function DocumentsList({
 }: DocumentsListProps) {
   const {ds} = useTheme();
   const styles = createStyles(ds);
-  const [loadingDocumentId, setLoadingDocumentId] = useState<string | null>(null);
+  const [loadingDocumentId, setLoadingDocumentId] = useState<string | null>(
+    null,
+  );
 
   const handleDocumentPress = useCallback(
     async (documentId: string) => {
@@ -31,7 +33,7 @@ export function DocumentsList({
         // Show loading for at least 500ms to ensure visibility
         const results = await Promise.all([
           onDocumentPress(documentId),
-          new Promise(resolve => setTimeout(resolve, 500)),
+          new Promise((resolve) => setTimeout(resolve, 500)),
         ]);
         return results[0];
       } finally {

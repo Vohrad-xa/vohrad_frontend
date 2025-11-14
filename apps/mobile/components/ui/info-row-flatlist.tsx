@@ -120,8 +120,12 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
           )}
         </View>
 
-        {item.onPress && showChevron && !item.loading && <Icon name={AppIcons.navigation.chevron} />}
-        {item.onPress && item.loading && <ActivityIndicator size="small" color={theme.accentBlue} />}
+        {item.onPress && showChevron && !item.loading && (
+          <Icon name={AppIcons.navigation.chevron} />
+        )}
+        {item.onPress && item.loading && (
+          <ActivityIndicator size="small" color={theme.accentBlue} />
+        )}
       </>
     );
 
