@@ -47,7 +47,7 @@ export default function FilterModal() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (_ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,

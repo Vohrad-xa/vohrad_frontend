@@ -180,9 +180,10 @@ const createStyles = makeStyleFactory(
       actionButton: {
         alignItems: 'center',
         justifyContent: 'center',
-        // paddingVertical: ds.spacing.md,
-        gap: ds.spacing.xs,
-        minWidth: 78.5,
+        paddingHorizontal: ds.spacing.sm,
+        paddingVertical: Platform.OS === 'ios' ? ds.spacing.xs : ds.spacing.md,
+        gap: ds.spacing.sm,
+        minWidth: 77,
       } as ViewStyle,
       iconContainer: {
         width: 48,

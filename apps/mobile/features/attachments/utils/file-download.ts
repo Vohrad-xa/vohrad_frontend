@@ -1,4 +1,4 @@
-import {Share} from 'react-native';
+import {Share, Platform} from 'react-native';
 import * as FileSystem from 'expo-file-system/legacy';
 
 export type DocumentDownloadParams = {
@@ -16,6 +16,11 @@ export async function downloadDocumentFile(
     >
   >,
 ): Promise<string> {
+  if (Platform.OS === 'web') {
+    // For web, just return the URL - we'll handle downloading directly in share function
+    return options.sourceUrl;
+  }
+
   const baseDir = FileSystem.documentDirectory ?? FileSystem.cacheDirectory;
   if (!baseDir) {
     throw new Error('File system unavailable');
@@ -35,6 +40,25 @@ export async function shareDownloadedFile(
   displayName: string,
   _mimeType?: string,
 ): Promise<void> {
+  if (Platform.OS === 'web') {
+    try {
+      const response = await fetch(localPath);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = displayName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+    } catch (error) {
+      console.error('Failed to download file on web:', error);
+      window.open(localPath, '_blank');
+    }
+    return;
+  }
+
   await Share.share({
     url: localPath,
     message: displayName,

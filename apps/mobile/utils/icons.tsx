@@ -101,7 +101,8 @@ export type IconName =
   | 'sunny-outline'
   | 'moon-outline'
   | 'sparkles-outline'
-  | 'pencil-square-o';
+  | 'pencil-square-o'
+  | 'file';
 
 type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -125,7 +126,7 @@ export function getIconGlyph(name: IconName): string | undefined {
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 'md',
+  size = 'lg',
   color,
   colorToken,
   style,
@@ -173,7 +174,7 @@ export const AppIcons = {
     scan: 'barcode-outline' as IconName,
     profile: 'person-outline' as IconName,
     events: 'notifications' as IconName,
-    vault: 'lock-closed' as IconName,
+    vault: 'folder-open-sharp' as IconName,
     filter: 'filter-outline' as IconName,
     back: Platform.select({
       ios: 'chevron-back-outline',
@@ -212,7 +213,8 @@ export const AppIcons = {
   content: {
     document: 'document-text-outline' as IconName,
     folder: 'folder-outline' as IconName,
-    folderFilled: 'folder' as IconName,
+    folderOpen: 'folder-open-sharp' as IconName,
+    file: 'file' as IconName,
     image: 'image-outline' as IconName,
     imageFallback: 'image-outline' as IconName,
     download: 'cloud-download-outline' as IconName,

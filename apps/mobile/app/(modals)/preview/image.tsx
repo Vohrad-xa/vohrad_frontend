@@ -29,7 +29,7 @@ export default function AttachmentImagePreviewModal() {
 
   const currentAttachment = useMemo(() => {
     return (
-      imageAttachments.find((img) => img.id === initialId) ||
+      imageAttachments.find((img) => img.id === initialId) ??
       imageAttachments[0]
     );
   }, [imageAttachments, initialId]);
@@ -54,7 +54,7 @@ export default function AttachmentImagePreviewModal() {
 
       await shareDownloadedFile(
         localPath,
-        currentAttachment.original_filename || 'image',
+        currentAttachment.original_filename ?? 'image',
         currentAttachment.file_type,
       );
     } catch (error) {

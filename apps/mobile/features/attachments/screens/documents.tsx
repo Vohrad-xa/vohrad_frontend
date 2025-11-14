@@ -1,14 +1,17 @@
 import React, {useCallback, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 import {type ItemAttachment} from '@vohrad/types';
+import {SymbolView} from 'expo-symbols';
 import {
   ModalFlatList,
   ListRow,
   Divider,
   type ListRowData,
 } from '@/components/ui';
-import {type DSShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
+import {Icon, AppIcons} from '@/utils/icons';
+import {SFSymbols} from '@/utils/sf-symbols';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 type DocumentsListProps = {
@@ -20,8 +23,8 @@ export function DocumentsList({
   onDocumentPress,
   documents,
 }: DocumentsListProps) {
-  const {ds} = useTheme();
-  const styles = createStyles(ds);
+  const {ds, theme} = useTheme();
+  const styles = createStyles(ds, theme);
   const [loadingDocumentId, setLoadingDocumentId] = useState<string | null>(
     null,
   );
@@ -30,7 +33,6 @@ export function DocumentsList({
     async (documentId: string) => {
       setLoadingDocumentId(documentId);
       try {
-        // Show loading for at least 500ms to ensure visibility
         const results = await Promise.all([
           onDocumentPress(documentId),
           new Promise((resolve) => setTimeout(resolve, 500)),
@@ -55,10 +57,36 @@ export function DocumentsList({
 
   const listData = documents.map(transformDocumentToListRow);
 
+  const renderDocumentIcon = useCallback(() => {
+    if (Platform.OS === 'ios') {
+      return (
+        <SymbolView
+          name={SFSymbols.docTextFill}
+          type="hierarchical"
+          size={30}
+          tintColor={theme.secondary}
+        />
+      );
+    } else {
+      return (
+        <Icon
+          name={AppIcons.content.document}
+          colorToken="secondary"
+          size="xxl"
+        />
+      );
+    }
+  }, [theme]);
+
   const renderItem = useCallback(
     ({item, index}: {item: ListRowData; index: number}) => (
       <View>
-        <ListRow item={item} showImage showChevron={false} />
+        <ListRow
+          item={item}
+          showImage={false}
+          showChevron={false}
+          customLeftIcon={renderDocumentIcon()}
+        />
         {index < listData.length - 1 && (
           <View style={styles.dividerContainer}>
             <Divider />
@@ -66,7 +94,7 @@ export function DocumentsList({
         )}
       </View>
     ),
-    [listData.length, styles],
+    [listData.length, styles, renderDocumentIcon],
   );
 
   return (
@@ -81,15 +109,15 @@ export function DocumentsList({
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
       },
       dividerContainer: {
-        paddingLeft: ds.spacing.xl + ds.spacing.xl + 8,
+        paddingLeft: ds.spacing.xxl + ds.spacing.md + 2,
         paddingRight: ds.spacing.xs,
       },
     }),
-  (ds) => `${ds.version}`,
+  (ds, theme) => themeKey(theme, ds),
 );

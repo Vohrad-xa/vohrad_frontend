@@ -56,7 +56,7 @@ export function AttachmentKindGrid({tiles}: AttachmentKindGridProps) {
                 />
               ) : (
                 <Icon
-                  name={AppIcons.content.folderFilled}
+                  name={AppIcons.content.folderOpen}
                   size={55}
                   color={theme.accentLightBlue}
                 />
@@ -78,7 +78,7 @@ const useStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       dividerContainer: {
-        paddingLeft: ds.spacing.xxl + ds.spacing.xxl + 3,
+        paddingLeft: ds.spacing.xxl * 2 + ds.spacing.sm,
         paddingRight: ds.spacing.xs,
       },
     }),

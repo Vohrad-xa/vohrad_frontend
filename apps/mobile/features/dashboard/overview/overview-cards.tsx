@@ -43,6 +43,9 @@ export function OverviewCards({
         case 'Items':
           router.push('/(app)/(tabs)/items');
           break;
+        case 'Attachments':
+          router.push('/(app)/(tabs)/vault');
+          break;
         // Other navigation cases
         default:
           break;

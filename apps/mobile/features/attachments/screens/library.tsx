@@ -121,7 +121,7 @@ export function ImagesGridScreen({
 }
 
 const useStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
@@ -136,7 +136,7 @@ const useStyles = makeStyleFactory(
         width: '100%',
       },
       footerLoader: {
-        padding: 16,
+        padding: ds.spacing.lg,
         alignItems: 'center',
       },
       webGrid: {

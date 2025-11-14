@@ -16,8 +16,8 @@ const TAB_ITEMS: TabItem[] = [
 
 const iOS_SF_SYMBOLS = {
   dashboard: SFSymbols.houseFill,
-  items: SFSymbols.folderFill,
-  vault: SFSymbols.lockFill,
+  items: SFSymbols.rectangleStackFill,
+  vault: SFSymbols.folderFill,
   events: SFSymbols.bellFill,
 } as const;
 

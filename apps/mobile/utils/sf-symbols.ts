@@ -7,9 +7,10 @@ export const SFSymbols = {
   bellFill: 'bell.fill',
   folder: 'folder',
   folderFill: 'folder.fill',
-  folderBadge: 'folder.badge',
   lock: 'lock',
   lockFill: 'lock.fill',
+  rectangleStackFill: 'rectangle.stack.fill',
+  docTextFill: 'doc.text',
 } as const;
 
 export type SFSymbolName = (typeof SFSymbols)[keyof typeof SFSymbols];
