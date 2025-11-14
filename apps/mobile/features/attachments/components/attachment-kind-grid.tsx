@@ -1,7 +1,7 @@
 import React from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
 import {SymbolView} from 'expo-symbols';
-import {ThemedText, ListRow, Divider, type ListRowData} from '@/components/ui';
+import {ListRow, Divider} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, SFSymbols, makeStyleFactory} from '@/utils';

@@ -1,30 +1,16 @@
 import {useCallback} from 'react';
-import {Platform, StyleSheet} from 'react-native';
+import {Platform} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils';
 
 export default function PreviewModalLayout() {
-  const {ds, theme} = useTheme();
+  const {theme} = useTheme();
   const router = useRouter();
-  const styles = createStyles(ds, theme);
 
   const handleClose = useCallback(() => {
     router.dismiss();
   }, [router]);
-
-  const CloseButton = useCallback(
-    () => (
-      <HeaderButton
-        variant="close"
-        onPress={handleClose}
-        accessibilityLabel="Close preview"
-      />
-    ),
-    [handleClose],
-  );
 
   return (
     <ScreenLoadingWrapper>
@@ -32,34 +18,34 @@ export default function PreviewModalLayout() {
         screenOptions={{
           headerShadowVisible: false,
           headerTransparent: Platform.OS === 'ios',
-          headerLeft: CloseButton,
-          headerStyle:
-            Platform.OS === 'android'
-              ? {backgroundColor: theme.navigationBar}
-              : undefined,
-          headerTitleAlign: 'center',
-          contentStyle: styles.container,
+          headerBlurEffect:
+            Platform.OS === 'ios' ? 'systemUltraThinMaterial' : undefined,
+          headerLeft: () => (
+            <HeaderButton
+              variant="close"
+              onPress={handleClose}
+              accessibilityLabel="Close preview"
+            />
+          ),
+          contentStyle: {
+            backgroundColor:
+              Platform.OS === 'web' ? theme.webbackground : theme.background,
+          },
         }}
       >
         <Stack.Screen
-          name="[attachmentId]"
+          name="image"
           options={{
             title: 'Preview',
+          }}
+        />
+        <Stack.Screen
+          name="document"
+          options={{
+            title: 'Document',
           }}
         />
       </Stack>
     </ScreenLoadingWrapper>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (_ds: DSShape, theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-        backgroundColor:
-          Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);

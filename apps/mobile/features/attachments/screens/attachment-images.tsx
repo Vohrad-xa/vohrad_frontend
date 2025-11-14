@@ -46,3 +46,19 @@ export function useImageAttachments(
     return images;
   }, [attachments]);
 }
+
+export function useDocumentAttachments(
+  attachments?: ItemAttachment[] | null,
+): ItemAttachment[] {
+  return useMemo(() => {
+    if (!attachments || attachments.length === 0) return [];
+
+    const documents: ItemAttachment[] = [];
+    for (const attachment of attachments) {
+      if (attachment.kind === 'document') {
+        documents.push(attachment);
+      }
+    }
+    return documents;
+  }, [attachments]);
+}

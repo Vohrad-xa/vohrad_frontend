@@ -5,6 +5,7 @@ export {AttachmentKindGrid} from './components/attachment-kind-grid';
 export {AttachmentAddOptions} from './components/attachment-add-options';
 export {AttachmentUploadPreviewCard} from './components/attachment-upload-preview-card';
 export {AttachmentImagePreview} from './components/attachment-image-preview';
+export {AttachmentDocumentPreview} from './components/attachment-document-preview';
 export {SelectableImageTile} from './components/selectable-image-tile';
 
 // Types
@@ -20,7 +21,9 @@ export {useImageSelection} from './hooks/use-image-selection';
 export {useFilteredAttachments} from './hooks/use-filtered-attachments';
 export {useAttachmentsOverview} from './hooks/use-attachments-overview';
 export {useAttachmentImages} from './hooks/use-attachment-images';
+export {useAttachmentDocuments} from './hooks/use-attachment-documents';
 export {useAttachmentNavigation} from './hooks/use-attachment-navigation';
 
 // Screens
 export {AttachmentsOverview} from './screens/attachments-overview';
+export {DocumentsList} from './screens/documents';

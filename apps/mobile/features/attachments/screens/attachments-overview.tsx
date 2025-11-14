@@ -59,7 +59,7 @@ export function AttachmentsOverview({
 
   return (
     <ModalScrollView contentContainerStyle={styles.scrollContent}>
-      <View style={styles.gridContainer}>
+      <View>
         <AttachmentKindGrid tiles={tiles} />
       </View>
     </ModalScrollView>
@@ -67,13 +67,10 @@ export function AttachmentsOverview({
 }
 
 const useStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       scrollContent: {
         paddingTop: 0,
-      },
-      gridContainer: {
-        // No special margins needed for list layout
       },
     }),
   (ds, theme) => themeKey(theme, ds),

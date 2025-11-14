@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  ActivityIndicator,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -21,6 +22,7 @@ export type ListRowData = {
   badge?: string;
   badgeType?: BadgeStatus;
   count?: number;
+  loading?: boolean;
   onPress?: () => void;
 };
 
@@ -33,6 +35,7 @@ type ListRowProps = {
   imageContainerSize?: number;
   position?: ListPosition;
   customLeftIcon?: React.ReactNode;
+  showChevron?: boolean;
 };
 
 export const ListRow: React.FC<ListRowProps> = React.memo(
@@ -43,6 +46,7 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
     imageContainerSize = 35,
     position = 'single',
     customLeftIcon,
+    showChevron = true,
   }) => {
     const {ds, theme} = useTheme();
     const styles = createStyles(theme, ds, position);
@@ -116,7 +120,8 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
           )}
         </View>
 
-        {item.onPress && <Icon name={AppIcons.navigation.chevron} />}
+        {item.onPress && showChevron && !item.loading && <Icon name={AppIcons.navigation.chevron} />}
+        {item.onPress && item.loading && <ActivityIndicator size="small" color={theme.accentBlue} />}
       </>
     );
 

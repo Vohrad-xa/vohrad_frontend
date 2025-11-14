@@ -17,15 +17,15 @@ export {ItemsList} from './list/items-list';
 // Hooks
 export {useItemForm} from './detail/use-item-form';
 export {useItemAttachmentUpload} from './detail/attachments/use-item-attachment-upload';
-export {useImageAttachments} from '../attachments/screens/attachments-images';
+export {useImageAttachments} from '../attachments/screens/attachment-images';
 export {useItemLocation} from './detail/locations/use-item-location';
 
 // Types
 export type {UseItemFormReturn} from './detail/use-item-form';
-export type {ImageAttachmentItem} from '../attachments/screens/attachments-images';
+export type {ImageAttachmentItem} from '../attachments/screens/attachment-images';
 
 // Constants
-export {IMAGE_GRID_COLUMNS} from '../attachments/screens/attachments-images';
+export {IMAGE_GRID_COLUMNS} from '../attachments/screens/attachment-images';
 
 // Filters
 export {StatusFilter} from './filter/status-filter';

@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import {useRouter, useNavigation} from 'expo-router';
 import {useAttachmentImages} from '@/features/attachments';
-import {ImagesGridScreen} from '@/features/attachments/screens/images-grid-screen';
+import {ImagesGridScreen} from '@/features/attachments/screens/library';
 import {type ImageAttachmentItem} from '@/features/item';
 import {useSettingsHeader} from '@/hooks';
 
@@ -25,7 +25,7 @@ export default function VaultImagesScreen() {
         toggleSelection(attachment);
       } else {
         router.push({
-          pathname: '/(modals)/preview/[attachmentId]',
+          pathname: '/(modals)/preview/image',
           params: {
             attachmentId: attachment.id,
           },

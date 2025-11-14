@@ -63,3 +63,7 @@ export function useAttachmentContext() {
   }
   return context;
 }
+
+export function useOptionalAttachmentContext() {
+  return useContext(AttachmentContext);
+}

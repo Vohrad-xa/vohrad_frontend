@@ -2,7 +2,7 @@ import React, {useCallback, useMemo, useState} from 'react';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {Image} from 'expo-image';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import type {ImageAttachmentItem} from '@/features/attachments/screens/attachments-images';
+import type {ImageAttachmentItem} from '@/features/attachments/screens/attachment-images';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
