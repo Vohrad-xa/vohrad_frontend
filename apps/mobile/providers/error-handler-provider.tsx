@@ -1,7 +1,7 @@
 import {useEffect, useRef, type ReactNode} from 'react';
 import {errorManager, type AppError} from '@vohrad/api-client';
+import {useNetworkConnectivity} from '@/modules/network';
 import {showAlert, showConfirmAlert} from '@/utils';
-import {useNetworkConnectivity} from './network-provider';
 
 interface ErrorHandlerProviderProps {
   children: ReactNode;

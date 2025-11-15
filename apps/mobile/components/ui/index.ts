@@ -10,7 +10,7 @@ export {AnimatedBlurView} from './animated-blur-view';
 export * from './themed-components';
 export {default as ListItem} from './list-item';
 export {LoadingOverlay} from './loading-overlay';
-export {OfflineBanner} from './offline-banner';
+export {BannerTop, type Banner} from './banner';
 export {ScreenLoadingWrapper} from './screen-loading-wrapper';
 export {ModalScrollView} from './modal-scroll-view';
 export {ModalFlatList} from './modal-flat-list';

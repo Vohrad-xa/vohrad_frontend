@@ -13,7 +13,7 @@ export {SidebarProvider, useSidebar} from './sidebar-provider';
 // UI Providers
 export {LoadingProvider, useLoading} from './loading-provider';
 export {HapticProvider, useHaptic} from './haptic-provider';
-export {NetworkProvider, useNetworkConnectivity} from './network-provider';
+export {NetworkProvider, useNetworkConnectivity} from '@/modules/network';
 
 // System Providers
 export {ErrorHandlerProvider} from './error-handler-provider';
