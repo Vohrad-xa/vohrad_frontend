@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -37,6 +38,8 @@ type NetworkContextValue = {
   networkType: Network.NetworkStateType;
   isConnected: boolean;
   isInternetReachable: boolean;
+  hasDeviceConnectivity: boolean;
+  isDeviceOffline: boolean;
   isCheckingReachability: boolean;
   lastReachabilityResult: boolean | null;
   lastReachabilityCheckAt: number | null;
@@ -195,6 +198,11 @@ export function NetworkProvider({children}: {children: ReactNode}) {
     return checkBackendReachability({force: true});
   }, [checkBackendReachability]);
 
+  const refreshBackendReachabilityRef = useRef(refreshBackendReachability);
+  useEffect(() => {
+    refreshBackendReachabilityRef.current = refreshBackendReachability;
+  }, [refreshBackendReachability]);
+
   useEffect(() => {
     if (Platform.OS === 'web') {
       const online = getNavigatorOnlineStatus();
@@ -210,7 +218,7 @@ export function NetworkProvider({children}: {children: ReactNode}) {
       status.isConnected === true && status.isInternetReachable !== false;
 
     if (shouldCheckBackend) {
-      void refreshBackendReachability();
+      refreshBackendReachabilityRef.current?.();
       return;
     }
 
@@ -229,11 +237,7 @@ export function NetworkProvider({children}: {children: ReactNode}) {
         };
       });
     }
-  }, [
-    refreshBackendReachability,
-    status.isConnected,
-    status.isInternetReachable,
-  ]);
+  }, [status.isConnected, status.isInternetReachable]);
 
   const normalizedConnection =
     typeof status.isConnected === 'boolean' ? status.isConnected : true;
@@ -241,11 +245,13 @@ export function NetworkProvider({children}: {children: ReactNode}) {
     typeof status.isInternetReachable === 'boolean'
       ? status.isInternetReachable
       : normalizedConnection;
+  const hasDeviceConnectivity = normalizedInternet;
+  const isDeviceOffline = !hasDeviceConnectivity;
   const backendReachability =
     typeof reachability.lastResult === 'boolean'
       ? reachability.lastResult
       : true;
-  const isNetworkReady = normalizedInternet && backendReachability;
+  const isNetworkReady = hasDeviceConnectivity && backendReachability;
   const isOffline = !isNetworkReady;
 
   useEffect(() => {
@@ -258,6 +264,8 @@ export function NetworkProvider({children}: {children: ReactNode}) {
       networkType: status.type,
       isConnected: normalizedConnection,
       isInternetReachable: normalizedInternet,
+      hasDeviceConnectivity,
+      isDeviceOffline,
       isCheckingReachability: reachability.isChecking,
       lastReachabilityResult: reachability.lastResult,
       lastReachabilityCheckAt: reachability.lastCheckAt,
@@ -273,6 +281,8 @@ export function NetworkProvider({children}: {children: ReactNode}) {
       reachability.isChecking,
       reachability.lastResult,
       reachability.lastCheckAt,
+      hasDeviceConnectivity,
+      isDeviceOffline,
       isNetworkReady,
       isOffline,
       refreshBackendReachability,

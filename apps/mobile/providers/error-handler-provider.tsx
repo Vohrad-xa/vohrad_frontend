@@ -4,16 +4,12 @@ import {showAlert, showConfirmAlert} from '@/utils';
 
 interface ErrorHandlerProviderProps {
   children: ReactNode;
-  onNetworkError?: (isActive: boolean) => void;
 }
 
 const ALERT_DEBOUNCE_MS = 1000;
 const NETWORK_ERROR_DELAY_MS = 5000;
 
-export function ErrorHandlerProvider({
-  children,
-  onNetworkError,
-}: ErrorHandlerProviderProps) {
+export function ErrorHandlerProvider({children}: ErrorHandlerProviderProps) {
   const lastAlertRef = useRef(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -32,16 +28,11 @@ export function ErrorHandlerProvider({
       }
 
       const shouldHandleGlobalNetwork =
-        error.category === 'network' &&
-        error.scope !== 'local' &&
-        Boolean(onNetworkError);
+        error.category === 'network' && error.scope !== 'local';
 
       // Handle network errors with delay and retry option
-      if (shouldHandleGlobalNetwork && onNetworkError) {
-        onNetworkError(true);
-
+      if (shouldHandleGlobalNetwork) {
         timeoutRef.current = setTimeout(() => {
-          onNetworkError(false);
           lastAlertRef.current = Date.now();
 
           if (error.isRetryable) {
@@ -88,7 +79,7 @@ export function ErrorHandlerProvider({
         timeoutRef.current = null;
       }
     };
-  }, [onNetworkError]);
+  }, []);
 
   return <>{children}</>;
 }

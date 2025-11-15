@@ -75,6 +75,9 @@ importers:
       '@react-native-community/datetimepicker':
         specifier: ^8.4.5
         version: 8.4.5(expo@54.0.10)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+      '@react-native-community/netinfo':
+        specifier: ^11.4.1
+        version: 11.4.1(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))
       '@react-native-community/slider':
         specifier: ^5.1.0
         version: 5.1.0
@@ -1861,6 +1864,11 @@ packages:
         optional: true
       react-native-windows:
         optional: true
+
+  '@react-native-community/netinfo@11.4.1':
+    resolution: {integrity: sha512-B0BYAkghz3Q2V09BF88RA601XursIEA111tnc2JOaN7axJWmNefmfjZqw/KdSxKZp7CZUuPpjBmz/WCR9uaHYg==}
+    peerDependencies:
+      react-native: '>=0.59'
 
   '@react-native-community/slider@5.1.0':
     resolution: {integrity: sha512-79nzA7eXPgM6UMo5ZZ/rrJu8Gai0aRctN6stBHneQYh5Qst98hYD3piY+RQHJhDuCCrpQL85YwGVU4FdDOE3cA==}
@@ -7794,6 +7802,10 @@ snapshots:
       react-native: 0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0)
     optionalDependencies:
       expo: 54.0.10(@babel/core@7.28.4)(@expo/metro-runtime@6.1.2)(expo-router@6.0.8)(react-native-webview@13.16.0(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+
+  '@react-native-community/netinfo@11.4.1(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))':
+    dependencies:
+      react-native: 0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0)
 
   '@react-native-community/slider@5.1.0': {}
 

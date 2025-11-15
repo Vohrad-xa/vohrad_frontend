@@ -7,7 +7,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
 
-import {LoadingOverlay} from '@/components/ui';
+import {LoadingOverlay, OfflineBanner} from '@/components/ui';
 import {useBootstrap} from '@/hooks/use-bootstrap';
 import {
   AppThemeProvider,
@@ -69,6 +69,7 @@ export default function RootLayout() {
                   <LoadingProvider>
                     <AuthProvider>
                       <RootNavigation isBootstrapComplete={useBootstrap()} />
+                      <OfflineBanner />
                     </AuthProvider>
                   </LoadingProvider>
                 </NetworkProvider>

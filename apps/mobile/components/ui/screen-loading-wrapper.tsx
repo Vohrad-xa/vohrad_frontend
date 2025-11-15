@@ -10,8 +10,8 @@ type ScreenLoadingWrapperProps = {
 // Wraps a screen/modal and shows loading overlay when active.
 
 export function ScreenLoadingWrapper({children}: ScreenLoadingWrapperProps) {
-  const {isLoading, forceLoading} = useLoading();
-  const isActive = isLoading || forceLoading;
+  const {isLoading} = useLoading();
+  const isActive = isLoading;
 
   return (
     <View style={styles.container}>

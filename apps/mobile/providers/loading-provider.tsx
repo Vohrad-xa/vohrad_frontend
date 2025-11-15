@@ -7,11 +7,9 @@ import React, {
 } from 'react';
 import {loadingManager} from '@vohrad/api-client';
 import {ErrorHandlerProvider} from './error-handler-provider';
-import {useNetworkConnectivity} from './network-provider';
 
 type LoadingContextValue = {
   isLoading: boolean;
-  forceLoading: boolean;
 };
 
 const LoadingContext = createContext<LoadingContextValue | undefined>(
@@ -32,10 +30,6 @@ type LoadingProviderProps = {
 
 export function LoadingProvider({children}: LoadingProviderProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [errorForceLoading, setErrorForceLoading] = useState(false);
-  const {isOffline} = useNetworkConnectivity();
-  const networkForceLoading = isOffline;
-  const forceLoading = errorForceLoading || networkForceLoading;
 
   useEffect(() => {
     return loadingManager.subscribe((state) => {
@@ -44,8 +38,8 @@ export function LoadingProvider({children}: LoadingProviderProps) {
   }, []);
 
   return (
-    <ErrorHandlerProvider onNetworkError={setErrorForceLoading}>
-      <LoadingContext.Provider value={{isLoading, forceLoading}}>
+    <ErrorHandlerProvider>
+      <LoadingContext.Provider value={{isLoading}}>
         {children}
       </LoadingContext.Provider>
     </ErrorHandlerProvider>

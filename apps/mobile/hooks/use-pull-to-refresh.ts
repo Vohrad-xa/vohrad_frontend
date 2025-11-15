@@ -1,10 +1,11 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {Platform, RefreshControl, type RefreshControlProps} from 'react-native';
-import {useHaptic, useLoading} from '@/providers';
+import {useHaptic, useNetworkConnectivity} from '@/providers';
 
 interface PullToRefreshOptions {
   onRefresh?: () => void | Promise<void>;
   minDelayMs?: number;
+  requireNetwork?: boolean;
 }
 
 interface PullToRefreshResult {
@@ -20,15 +21,18 @@ export function usePullToRefresh(
   options: PullToRefreshOptions = {},
 ): PullToRefreshResult {
   const {triggerHaptic} = useHaptic();
-  const {forceLoading} = useLoading();
-  const {onRefresh, minDelayMs = 300} = options;
+  const {isDeviceOffline} = useNetworkConnectivity();
+  const {onRefresh, minDelayMs = 300, requireNetwork = true} = options;
   const [refreshing, setRefreshing] = useState(false);
-
-  // Keep spinner active while forceLoading is true
-  const isActivelyRefreshing = refreshing || forceLoading;
+  const shouldEnableRefreshControl = !requireNetwork || !isDeviceOffline;
 
   const handleRefresh = useCallback(async () => {
     if (refreshing) {
+      return;
+    }
+
+    if (!shouldEnableRefreshControl) {
+      triggerHaptic('warning');
       return;
     }
 
@@ -54,21 +58,27 @@ export function usePullToRefresh(
       triggerHaptic(didError ? 'warning' : 'success');
       setRefreshing(false);
     }
-  }, [refreshing, onRefresh, minDelayMs, triggerHaptic]);
+  }, [
+    refreshing,
+    shouldEnableRefreshControl,
+    onRefresh,
+    minDelayMs,
+    triggerHaptic,
+  ]);
 
   const refreshControl = useMemo(() => {
-    if (Platform.OS === 'web') {
+    if (Platform.OS === 'web' || !shouldEnableRefreshControl) {
       return undefined;
     }
 
     return React.createElement(RefreshControl, {
-      refreshing: isActivelyRefreshing,
+      refreshing,
       onRefresh: handleRefresh,
     }) as React.ReactElement<RefreshControlProps>;
-  }, [handleRefresh, isActivelyRefreshing]);
+  }, [handleRefresh, refreshing, shouldEnableRefreshControl]);
 
   return {
-    refreshing: isActivelyRefreshing,
+    refreshing,
     onRefresh: handleRefresh,
     refreshControl,
   };
