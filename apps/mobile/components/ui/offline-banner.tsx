@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, Animated, Platform, StatusBar} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
 import {useNetworkConnectivity, useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {ThemedText, ThemedView} from './themed-components';
@@ -17,13 +17,10 @@ export function OfflineBanner() {
   const insets = useSafeAreaInsets();
   const [showOnlineMessage, setShowOnlineMessage] = useState(false);
   const shouldDisplayBanner = isDeviceOffline || showOnlineMessage;
-  const [visible, setVisible] = useState(shouldDisplayBanner);
-  const [progress] = useState(new Animated.Value(shouldDisplayBanner ? 1 : 0));
+  const [visible, setVisible] = useState(false);
+  const [progress] = useState(new Animated.Value(0));
   const latestShouldDisplayRef = useRef(shouldDisplayBanner);
   const previousIsOfflineRef = useRef(isDeviceOffline);
-  const [activeTone, setActiveTone] = useState<BannerTone | null>(
-    shouldDisplayBanner ? (isDeviceOffline ? 'offline' : 'online') : null,
-  );
   const refreshReachabilityRef = useRef(refreshBackendReachability);
 
   const topPadding =
@@ -34,6 +31,12 @@ export function OfflineBanner() {
         : Math.max(insets.top, ds.spacing.xl);
 
   const styles = useStyles(theme, ds, topPadding);
+
+  const activeTone: BannerTone | null = !visible
+    ? null
+    : isDeviceOffline
+      ? 'offline'
+      : 'online';
 
   useEffect(() => {
     refreshReachabilityRef.current = refreshBackendReachability;
@@ -91,23 +94,6 @@ export function OfflineBanner() {
     });
   }, [progress, shouldDisplayBanner]);
 
-  useEffect(() => {
-    if (isDeviceOffline) {
-      setActiveTone('offline');
-      return;
-    }
-
-    if (showOnlineMessage) {
-      setActiveTone('online');
-    }
-  }, [isDeviceOffline, showOnlineMessage]);
-
-  useEffect(() => {
-    if (!shouldDisplayBanner && !visible) {
-      setActiveTone(null);
-    }
-  }, [shouldDisplayBanner, visible]);
-
   if (!visible) {
     return null;
   }
@@ -142,11 +128,13 @@ export function OfflineBanner() {
         {showOfflineSpinner && (
           <ActivityIndicator
             size="small"
-            color={theme.background}
+            color={Palette.white}
             style={styles.spinner}
           />
         )}
-        <ThemedText variant="body">{message}</ThemedText>
+        <ThemedText variant="body" style={styles.text}>
+          {message}
+        </ThemedText>
       </ThemedView>
     </Animated.View>
   );
@@ -164,6 +152,7 @@ const useStyles = makeStyleFactory(
     banner: {
       paddingTop: topPadding,
       paddingBottom: ds.spacing.sm,
+      minHeight: topPadding + ds.spacing.xxxl + ds.spacing.xs,
     },
     bannerOnline: {
       backgroundColor: theme.accentGreen,
@@ -175,9 +164,14 @@ const useStyles = makeStyleFactory(
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
+      minHeight: ds.spacing.xxl,
     },
     spinner: {
       marginRight: ds.spacing.sm,
+    },
+    text: {
+      color: Palette.white,
+      fontWeight: ds.fontWeight.medium,
     },
   }),
   (theme, ds, topPadding) => `${themeKey(theme, ds)}|${topPadding}`,

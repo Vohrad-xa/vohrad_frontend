@@ -86,7 +86,7 @@ export default function ItemDetailScreen() {
         <ThemedText style={{textAlign: 'center', marginBottom: ds.spacing.md}}>
           Item not found.
         </ThemedText>
-        <ThemedButton onPress={() => navigation.goBack()}>Go Back</ThemedButton>
+        <ThemedButton title="Go Back" onPress={() => navigation.goBack()} />
       </ThemedView>
     );
   }

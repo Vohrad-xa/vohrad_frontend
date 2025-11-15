@@ -9,18 +9,15 @@ import React, {
   type ReactNode,
 } from 'react';
 import {Platform} from 'react-native';
+import NetInfo, {
+  type NetInfoState,
+  NetInfoStateType,
+} from '@react-native-community/netinfo';
 import {onlineManager} from '@tanstack/react-query';
 import {verifyNetworkReachability} from '@vohrad/api-client';
-import * as Network from 'expo-network';
 
 const BACKEND_REACHABILITY_TIMEOUT_MS = 3000;
 const REACHABILITY_CACHE_WINDOW_MS = 10000;
-
-type ConnectivitySnapshot = {
-  type: Network.NetworkStateType;
-  isConnected: boolean | null;
-  isInternetReachable: boolean | null;
-};
 
 type ReachabilityState = {
   lastCheckAt: number | null;
@@ -34,8 +31,8 @@ type ReachabilityOptions = {
 };
 
 type NetworkContextValue = {
-  status: ConnectivitySnapshot;
-  networkType: Network.NetworkStateType;
+  status: NetInfoState | null;
+  networkType: string;
   isConnected: boolean;
   isInternetReachable: boolean;
   hasDeviceConnectivity: boolean;
@@ -54,11 +51,7 @@ const NetworkContext = createContext<NetworkContextValue | undefined>(
 );
 
 export function NetworkProvider({children}: {children: ReactNode}) {
-  const [status, setStatus] = useState<ConnectivitySnapshot>({
-    type: Network.NetworkStateType.UNKNOWN,
-    isConnected: null,
-    isInternetReachable: null,
-  });
+  const [status, setStatus] = useState<NetInfoState | null>(null);
   const [reachability, setReachability] = useState<ReachabilityState>({
     lastCheckAt: null,
     lastResult: null,
@@ -70,10 +63,11 @@ export function NetworkProvider({children}: {children: ReactNode}) {
       const syncFromNavigator = () => {
         const online = getNavigatorOnlineStatus();
         setStatus({
-          type: Network.NetworkStateType.UNKNOWN,
+          type: NetInfoStateType.unknown,
           isConnected: online,
-          isInternetReachable: online,
-        });
+          isInternetReachable: null,
+          details: null,
+        } as NetInfoState);
       };
 
       syncFromNavigator();
@@ -89,41 +83,20 @@ export function NetworkProvider({children}: {children: ReactNode}) {
       };
     }
 
-    let isMounted = true;
-
-    const syncState = (state: Network.NetworkState | null) => {
-      if (!state || !isMounted) {
-        return;
-      }
-      setStatus({
-        type: state.type ?? Network.NetworkStateType.UNKNOWN,
-        isConnected:
-          typeof state.isConnected === 'boolean' ? state.isConnected : null,
-        isInternetReachable:
-          typeof state.isInternetReachable === 'boolean'
-            ? state.isInternetReachable
-            : null,
-      });
-    };
-
-    Network.getNetworkStateAsync()
-      .then((initialState) => {
-        syncState(initialState);
+    NetInfo.fetch()
+      .then((state) => {
+        setStatus(state);
       })
       .catch((error) => {
         console.warn('NetworkProvider: failed to fetch initial state', error);
       });
 
-    const subscription =
-      typeof Network.addNetworkStateListener === 'function'
-        ? Network.addNetworkStateListener(
-            (networkState: Network.NetworkState) => syncState(networkState),
-          )
-        : null;
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setStatus(state);
+    });
 
     return () => {
-      isMounted = false;
-      subscription?.remove();
+      unsubscribe();
     };
   }, []);
 
@@ -142,7 +115,7 @@ export function NetworkProvider({children}: {children: ReactNode}) {
       }
 
       const lacksConnectivity =
-        status.isConnected === false || status.isInternetReachable === false;
+        status?.isConnected === false || status?.isInternetReachable === false;
 
       if (lacksConnectivity) {
         setReachability({
@@ -186,12 +159,7 @@ export function NetworkProvider({children}: {children: ReactNode}) {
         return false;
       }
     },
-    [
-      status.isConnected,
-      status.isInternetReachable,
-      reachability.lastCheckAt,
-      reachability.lastResult,
-    ],
+    [status, reachability.lastCheckAt, reachability.lastResult],
   );
 
   const refreshBackendReachability = useCallback(() => {
@@ -211,6 +179,10 @@ export function NetworkProvider({children}: {children: ReactNode}) {
         lastResult: online,
         isChecking: false,
       });
+      return;
+    }
+
+    if (!status) {
       return;
     }
 
@@ -237,20 +209,19 @@ export function NetworkProvider({children}: {children: ReactNode}) {
         };
       });
     }
-  }, [status.isConnected, status.isInternetReachable]);
+  }, [status]);
 
-  const normalizedConnection =
-    typeof status.isConnected === 'boolean' ? status.isConnected : true;
+  const isInitializing = status === null;
+  const normalizedConnection = status?.isConnected === true;
   const normalizedInternet =
-    typeof status.isInternetReachable === 'boolean'
-      ? status.isInternetReachable
-      : normalizedConnection;
-  const hasDeviceConnectivity = normalizedInternet;
-  const isDeviceOffline = !hasDeviceConnectivity;
+    status?.isInternetReachable === true ||
+    (status?.isInternetReachable === null && normalizedConnection);
+  const hasDeviceConnectivity = isInitializing ? true : normalizedInternet;
+  const isDeviceOffline = isInitializing ? false : !hasDeviceConnectivity;
   const backendReachability =
     typeof reachability.lastResult === 'boolean'
       ? reachability.lastResult
-      : true;
+      : hasDeviceConnectivity;
   const isNetworkReady = hasDeviceConnectivity && backendReachability;
   const isOffline = !isNetworkReady;
 
@@ -261,7 +232,7 @@ export function NetworkProvider({children}: {children: ReactNode}) {
   const value = useMemo<NetworkContextValue>(
     () => ({
       status,
-      networkType: status.type,
+      networkType: status?.type ?? 'unknown',
       isConnected: normalizedConnection,
       isInternetReachable: normalizedInternet,
       hasDeviceConnectivity,

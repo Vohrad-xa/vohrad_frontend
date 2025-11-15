@@ -6,22 +6,9 @@ export const DEFAULT_REACHABILITY_FALLBACK_URLS = [
 ];
 
 type ReachabilityOptions = {
-  /**
-   * Additional URLs to probe after the configured API base URL.
-   */
   urls?: string[];
-  /**
-   * Whether to include the configured API base URL as the first probe target.
-   * Defaults to true.
-   */
   includeBaseUrl?: boolean;
-  /**
-   * Request method to use for the probe (HEAD by default).
-   */
   method?: 'HEAD' | 'GET';
-  /**
-   * Timeout in milliseconds for each probe attempt.
-   */
   timeoutMs?: number;
 };
 
@@ -30,7 +17,6 @@ export async function verifyNetworkReachability(
 ): Promise<boolean> {
   const fetchImpl = getFetchImplementation();
   if (!fetchImpl) {
-    // Environments without fetch shouldn't block the action.
     return true;
   }
 
@@ -106,7 +92,7 @@ async function probeUrl(
       signal: controller?.signal,
     });
 
-    // Any successful fetch (regardless of status) indicates the host is reachable.
+    // Any successful fetch indicates the host is reachable.
     return true;
   } catch {
     return false;
