@@ -8,14 +8,14 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
 import {LoadingOverlay} from '@/components/ui';
 import {useBootstrap} from '@/hooks/use-bootstrap';
-import {NetworkBanner} from '@/modules/network';
+import {NetworkProvider} from '@/modules/network';
+import {NetworkBanner} from '@/modules/network/components/network-banner';
 import {
   AppThemeProvider,
   AuthProvider,
   useAuth,
   LoadingProvider,
   HapticProvider,
-  NetworkProvider,
 } from '@/providers';
 
 SplashScreen.preventAutoHideAsync();

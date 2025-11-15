@@ -1,6 +1,7 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {Platform, RefreshControl, type RefreshControlProps} from 'react-native';
-import {useHaptic, useNetworkConnectivity} from '@/providers';
+import {useNetworkConnectivity} from '@/modules/network';
+import {useHaptic} from '@/providers';
 
 interface PullToRefreshOptions {
   onRefresh?: () => void | Promise<void>;

@@ -4,7 +4,7 @@ import {errorManager} from '@vohrad/api-client';
 import {useRouter} from 'expo-router';
 import {useAttachmentDocuments} from '@/features/attachments';
 import {DocumentsList} from '@/features/attachments/screens/documents';
-import {useNetworkConnectivity} from '@/providers';
+import {useNetworkConnectivity} from '@/modules/network';
 import {showAlert} from '@/utils';
 
 export default function VaultDocumentsScreen() {
