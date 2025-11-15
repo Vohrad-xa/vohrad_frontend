@@ -1,6 +1,6 @@
-import {httpClient} from './http-client';
+import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';
-import {resolveAttachmentUrl} from './config';
+import {resolveAttachmentUrl} from '../config';
 import type {
   ItemAttachment,
   PaginatedResponse,

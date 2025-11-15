@@ -1,6 +1,6 @@
 import type {ApiResponse} from '@vohrad/types';
 import {API_ENDPOINTS} from './endpoints';
-import {httpClient} from './http-client';
+import {httpClient} from '../http-client';
 
 export interface DashboardOverview {
   items_total: number;

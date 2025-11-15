@@ -1,5 +1,5 @@
 import type {User, UserUpdateData} from '@vohrad/types';
-import {httpClient} from './http-client';
+import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';
 
 export class UserApi {
