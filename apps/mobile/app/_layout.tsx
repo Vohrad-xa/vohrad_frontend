@@ -6,9 +6,9 @@ import {Stack, useRootNavigationState} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
-
-import {LoadingOverlay, OfflineBanner} from '@/components/ui';
+import {LoadingOverlay} from '@/components/ui';
 import {useBootstrap} from '@/hooks/use-bootstrap';
+import {NetworkBanner} from '@/modules/network';
 import {
   AppThemeProvider,
   AuthProvider,
@@ -17,8 +17,6 @@ import {
   HapticProvider,
   NetworkProvider,
 } from '@/providers';
-
-const queryClient = new QueryClient();
 
 SplashScreen.preventAutoHideAsync();
 
@@ -61,7 +59,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <KeyboardProvider>
-        <QueryClientProvider client={queryClient}>
+        <QueryClientProvider client={new QueryClient()}>
           <AppThemeProvider>
             <HapticProvider>
               <ActionSheetProvider>
@@ -69,7 +67,7 @@ export default function RootLayout() {
                   <LoadingProvider>
                     <AuthProvider>
                       <RootNavigation isBootstrapComplete={useBootstrap()} />
-                      <OfflineBanner />
+                      <NetworkBanner />
                     </AuthProvider>
                   </LoadingProvider>
                 </NetworkProvider>
