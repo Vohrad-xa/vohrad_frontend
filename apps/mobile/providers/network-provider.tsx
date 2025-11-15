@@ -28,6 +28,7 @@ type ReachabilityState = {
 type ReachabilityOptions = {
   force?: boolean;
   timeoutMs?: number;
+  remindOffline?: boolean;
 };
 
 type NetworkContextValue = {
@@ -44,6 +45,8 @@ type NetworkContextValue = {
   isOffline: boolean;
   refreshBackendReachability: () => Promise<boolean>;
   checkBackendReachability: (options?: ReachabilityOptions) => Promise<boolean>;
+  offlineReminderSignal: number;
+  triggerOfflineReminder: () => void;
 };
 
 const NetworkContext = createContext<NetworkContextValue | undefined>(
@@ -57,6 +60,11 @@ export function NetworkProvider({children}: {children: ReactNode}) {
     lastResult: null,
     isChecking: false,
   });
+  const [offlineReminderSignal, setOfflineReminderSignal] = useState(0);
+
+  const triggerOfflineReminder = useCallback(() => {
+    setOfflineReminderSignal((prev) => prev + 1);
+  }, []);
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -111,6 +119,9 @@ export function NetworkProvider({children}: {children: ReactNode}) {
           lastResult: isOnline,
           isChecking: false,
         });
+        if (!isOnline && options?.remindOffline) {
+          triggerOfflineReminder();
+        }
         return isOnline;
       }
 
@@ -123,6 +134,9 @@ export function NetworkProvider({children}: {children: ReactNode}) {
           lastResult: false,
           isChecking: false,
         });
+        if (options?.remindOffline) {
+          triggerOfflineReminder();
+        }
         return false;
       }
 
@@ -148,6 +162,9 @@ export function NetworkProvider({children}: {children: ReactNode}) {
           lastResult: reachable,
           isChecking: false,
         });
+        if (!reachable && options?.remindOffline) {
+          triggerOfflineReminder();
+        }
         return reachable;
       } catch (error) {
         console.warn('NetworkProvider: reachability check failed', error);
@@ -156,10 +173,18 @@ export function NetworkProvider({children}: {children: ReactNode}) {
           lastResult: false,
           isChecking: false,
         });
+        if (options?.remindOffline) {
+          triggerOfflineReminder();
+        }
         return false;
       }
     },
-    [status, reachability.lastCheckAt, reachability.lastResult],
+    [
+      status,
+      reachability.lastCheckAt,
+      reachability.lastResult,
+      triggerOfflineReminder,
+    ],
   );
 
   const refreshBackendReachability = useCallback(() => {
@@ -229,6 +254,16 @@ export function NetworkProvider({children}: {children: ReactNode}) {
     onlineManager.setOnline(isNetworkReady);
   }, [isNetworkReady]);
 
+  const wasDeviceOfflineRef = useRef(isDeviceOffline);
+  useEffect(() => {
+    const wasOffline = wasDeviceOfflineRef.current;
+    wasDeviceOfflineRef.current = isDeviceOffline;
+
+    if (isDeviceOffline && !wasOffline) {
+      triggerOfflineReminder();
+    }
+  }, [isDeviceOffline, triggerOfflineReminder]);
+
   const value = useMemo<NetworkContextValue>(
     () => ({
       status,
@@ -244,6 +279,8 @@ export function NetworkProvider({children}: {children: ReactNode}) {
       isOffline,
       refreshBackendReachability,
       checkBackendReachability,
+      offlineReminderSignal,
+      triggerOfflineReminder,
     }),
     [
       status,
@@ -258,6 +295,8 @@ export function NetworkProvider({children}: {children: ReactNode}) {
       isOffline,
       refreshBackendReachability,
       checkBackendReachability,
+      offlineReminderSignal,
+      triggerOfflineReminder,
     ],
   );
 

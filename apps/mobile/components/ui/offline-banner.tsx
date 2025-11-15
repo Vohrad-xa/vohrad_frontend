@@ -1,5 +1,6 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, Animated, Platform, StatusBar} from 'react-native';
+import {useSegments} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
 import {useNetworkConnectivity, useTheme} from '@/providers';
@@ -8,20 +9,32 @@ import {ThemedText, ThemedView} from './themed-components';
 
 const ANIMATION_DURATION = 200;
 const ONLINE_MESSAGE_DURATION_MS = 3000;
+const OFFLINE_MESSAGE_DURATION_MS = 4000;
 type BannerTone = 'offline' | 'online';
 
 export function OfflineBanner() {
-  const {isDeviceOffline, refreshBackendReachability} =
+  const {isDeviceOffline, refreshBackendReachability, offlineReminderSignal} =
     useNetworkConnectivity();
   const {theme, ds} = useTheme();
   const insets = useSafeAreaInsets();
+  const [showOfflineMessage, setShowOfflineMessage] = useState(false);
   const [showOnlineMessage, setShowOnlineMessage] = useState(false);
-  const shouldDisplayBanner = isDeviceOffline || showOnlineMessage;
+  const shouldDisplayBanner = showOfflineMessage || showOnlineMessage;
   const [visible, setVisible] = useState(false);
   const [progress] = useState(new Animated.Value(0));
   const latestShouldDisplayRef = useRef(shouldDisplayBanner);
   const previousIsOfflineRef = useRef(isDeviceOffline);
   const refreshReachabilityRef = useRef(refreshBackendReachability);
+  const offlineReminderRef = useRef(offlineReminderSignal);
+  const offlineMessageTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const onlineMessageTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const segments = useSegments();
+  const routeFingerprint = segments.join('/');
+  const lastRouteFingerprintRef = useRef(routeFingerprint);
 
   const topPadding =
     Platform.OS === 'web'
@@ -34,9 +47,18 @@ export function OfflineBanner() {
 
   const activeTone: BannerTone | null = !visible
     ? null
-    : isDeviceOffline
+    : showOfflineMessage && isDeviceOffline
       ? 'offline'
-      : 'online';
+      : showOnlineMessage
+        ? 'online'
+        : null;
+  const [displayTone, setDisplayTone] = useState<BannerTone>('offline');
+
+  useEffect(() => {
+    if (activeTone) {
+      setDisplayTone(activeTone);
+    }
+  }, [activeTone]);
 
   useEffect(() => {
     refreshReachabilityRef.current = refreshBackendReachability;
@@ -46,16 +68,62 @@ export function OfflineBanner() {
     latestShouldDisplayRef.current = shouldDisplayBanner;
   }, [shouldDisplayBanner]);
 
+  const showOfflineReminder = useCallback(() => {
+    if (!isDeviceOffline) {
+      return;
+    }
+
+    setShowOfflineMessage(true);
+    if (offlineMessageTimeoutRef.current) {
+      clearTimeout(offlineMessageTimeoutRef.current);
+    }
+    offlineMessageTimeoutRef.current = setTimeout(() => {
+      setShowOfflineMessage(false);
+      offlineMessageTimeoutRef.current = null;
+    }, OFFLINE_MESSAGE_DURATION_MS);
+  }, [isDeviceOffline]);
+
+  useEffect(() => {
+    if (routeFingerprint === lastRouteFingerprintRef.current) {
+      return;
+    }
+
+    lastRouteFingerprintRef.current = routeFingerprint;
+
+    if (isDeviceOffline) {
+      showOfflineReminder();
+    }
+  }, [isDeviceOffline, routeFingerprint, showOfflineReminder]);
+
+  useEffect(() => {
+    if (offlineReminderSignal === offlineReminderRef.current) {
+      return;
+    }
+
+    offlineReminderRef.current = offlineReminderSignal;
+
+    showOfflineReminder();
+  }, [offlineReminderSignal, showOfflineReminder]);
+
   useEffect(() => {
     const wasOffline = previousIsOfflineRef.current;
     previousIsOfflineRef.current = isDeviceOffline;
 
     if (wasOffline && !isDeviceOffline) {
+      if (offlineMessageTimeoutRef.current) {
+        clearTimeout(offlineMessageTimeoutRef.current);
+        offlineMessageTimeoutRef.current = null;
+      }
+      setShowOfflineMessage(false);
       setShowOnlineMessage(true);
-      const timeout = setTimeout(() => {
+      if (onlineMessageTimeoutRef.current) {
+        clearTimeout(onlineMessageTimeoutRef.current);
+      }
+      onlineMessageTimeoutRef.current = setTimeout(() => {
         setShowOnlineMessage(false);
+        onlineMessageTimeoutRef.current = null;
       }, ONLINE_MESSAGE_DURATION_MS);
-      return () => clearTimeout(timeout);
+      return undefined;
     }
 
     if (isDeviceOffline) {
@@ -77,6 +145,17 @@ export function OfflineBanner() {
     const interval = setInterval(checkReachability, 5000);
     return () => clearInterval(interval);
   }, [isDeviceOffline]);
+
+  useEffect(() => {
+    return () => {
+      if (offlineMessageTimeoutRef.current) {
+        clearTimeout(offlineMessageTimeoutRef.current);
+      }
+      if (onlineMessageTimeoutRef.current) {
+        clearTimeout(onlineMessageTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (shouldDisplayBanner) {
@@ -105,12 +184,12 @@ export function OfflineBanner() {
 
   const opacity = progress;
   const message =
-    activeTone === 'online' ? "You're back online" : 'You seem to be offline.';
+    displayTone === 'online' ? "You're back online" : 'You seem to be offline.';
 
-  const showOfflineSpinner = isDeviceOffline && !showOnlineMessage;
+  const showOfflineSpinner = displayTone === 'offline';
 
   const bannerToneStyle =
-    activeTone === 'online' ? styles.bannerOnline : styles.bannerOffline;
+    displayTone === 'online' ? styles.bannerOnline : styles.bannerOffline;
 
   return (
     <Animated.View
@@ -151,8 +230,8 @@ const useStyles = makeStyleFactory(
     },
     banner: {
       paddingTop: topPadding,
-      paddingBottom: ds.spacing.sm,
-      minHeight: topPadding + ds.spacing.xxxl + ds.spacing.xs,
+      paddingBottom: ds.spacing.md,
+      minHeight: topPadding,
     },
     bannerOnline: {
       backgroundColor: theme.accentGreen,

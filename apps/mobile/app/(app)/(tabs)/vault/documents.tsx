@@ -15,10 +15,12 @@ export default function VaultDocumentsScreen() {
 
   const handleDocumentPress = useCallback(
     async (documentId: string) => {
-      const hasConnectivity = await checkBackendReachability();
+      const hasConnectivity = await checkBackendReachability({
+        remindOffline: true,
+      });
       if (!hasConnectivity) {
         errorManager.reportError(
-          'Document preview requires an internet connection. Please reconnect and try again.',
+          'Connection failed. Please reconnect and try again.',
           undefined,
           undefined,
           {

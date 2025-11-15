@@ -1,6 +1,7 @@
 import {useEffect, useRef, type ReactNode} from 'react';
 import {errorManager, type AppError} from '@vohrad/api-client';
 import {showAlert, showConfirmAlert} from '@/utils';
+import {useNetworkConnectivity} from './network-provider';
 
 interface ErrorHandlerProviderProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ const NETWORK_ERROR_DELAY_MS = 5000;
 export function ErrorHandlerProvider({children}: ErrorHandlerProviderProps) {
   const lastAlertRef = useRef(0);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const {triggerOfflineReminder} = useNetworkConnectivity();
 
   useEffect(() => {
     const unsubscribe = errorManager.subscribe((error: AppError) => {
@@ -27,8 +29,13 @@ export function ErrorHandlerProvider({children}: ErrorHandlerProviderProps) {
         return;
       }
 
+      const isNetworkError = error.category === 'network';
       const shouldHandleGlobalNetwork =
-        error.category === 'network' && error.scope !== 'local';
+        isNetworkError && error.scope !== 'local';
+
+      if (isNetworkError) {
+        triggerOfflineReminder();
+      }
 
       // Handle network errors with delay and retry option
       if (shouldHandleGlobalNetwork) {
@@ -79,7 +86,7 @@ export function ErrorHandlerProvider({children}: ErrorHandlerProviderProps) {
         timeoutRef.current = null;
       }
     };
-  }, []);
+  }, [triggerOfflineReminder]);
 
   return <>{children}</>;
 }
