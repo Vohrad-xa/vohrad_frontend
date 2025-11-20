@@ -74,5 +74,6 @@ export {
   buildODataFilter,
   hasActiveFilters,
   clearAllFilters,
+  buildAttachmentSearchFilter,
 } from './utils/odata-filter-builder';
 export type {AsyncState, PaginatedState} from './utils/state';

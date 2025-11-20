@@ -4,3 +4,5 @@ export {useFilteredAttachments} from './use-filtered-attachments';
 export {useAttachmentsOverview} from './use-attachments-overview';
 export {useAttachmentImages} from './use-attachment-images';
 export {useAttachmentNavigation} from './use-attachment-navigation';
+export {useAttachmentSearch} from './use-attachment-search';
+export {useAttachmentPress} from './use-attachment-press';

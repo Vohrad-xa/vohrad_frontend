@@ -28,6 +28,8 @@ export {
   useAttachmentOther,
 } from './hooks/use-attachments-by-kind';
 export {useAttachmentNavigation} from './hooks/use-attachment-navigation';
+export {useAttachmentSearch} from './hooks/use-attachment-search';
+export {useAttachmentPress} from './hooks/use-attachment-press';
 
 // Screens
 export {AttachmentsOverview} from './screens/attachments-overview';

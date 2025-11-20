@@ -32,6 +32,7 @@ export type ListAttachmentsParams = {
   size?: number;
   kind?: AttachmentKind;
   includeDeleted?: boolean;
+  odataFilter?: string;
 };
 
 export class AttachmentApi {
@@ -71,6 +72,9 @@ export class AttachmentApi {
     }
     if (params.includeDeleted) {
       search.set('include_deleted', 'true');
+    }
+    if (params.odataFilter) {
+      search.set('$filter', params.odataFilter);
     }
 
     const queryString = search.toString();

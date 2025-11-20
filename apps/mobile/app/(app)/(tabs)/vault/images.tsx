@@ -1,13 +1,13 @@
 import React, {useCallback} from 'react';
-import {useRouter, useNavigation} from 'expo-router';
-import {useAttachmentImages} from '@/features/attachments';
+import {useNavigation} from 'expo-router';
+import {useAttachmentImages, useAttachmentPress} from '@/features/attachments';
 import {ImagesGridScreen} from '@/features/attachments/screens/library';
 import {type ImageAttachmentItem} from '@/features/item';
 import {useSettingsHeader} from '@/hooks';
 
 export default function VaultImagesScreen() {
-  const router = useRouter();
   const navigation = useNavigation();
+  const handleAttachmentPress = useAttachmentPress();
 
   const {
     isSelectionMode,
@@ -24,15 +24,11 @@ export default function VaultImagesScreen() {
       if (isSelectionMode) {
         toggleSelection(attachment);
       } else {
-        router.push({
-          pathname: '/(modals)/preview/image',
-          params: {
-            attachmentId: attachment.id,
-          },
-        });
+        // ImageAttachmentItem extends ItemAttachment, so it's safe to pass
+        await handleAttachmentPress(attachment);
       }
     },
-    [router, isSelectionMode, toggleSelection],
+    [isSelectionMode, toggleSelection, handleAttachmentPress],
   );
 
   useSettingsHeader({

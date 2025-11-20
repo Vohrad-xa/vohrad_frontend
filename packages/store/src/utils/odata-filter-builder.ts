@@ -45,9 +45,7 @@ export function buildODataFilter(filters: ItemFilterState): string | undefined {
   return conditions.length > 0 ? conditions.join(' and ') : undefined;
 }
 
-/**
- * Formats a value for OData filter expression
- */
+// Formats a value for OData filter expression
 function formatODataValue(value: JsonValue): string {
   if (typeof value === 'string') {
     return `'${value}'`;
@@ -62,9 +60,7 @@ function formatODataValue(value: JsonValue): string {
   return `'${JSON.stringify(value)}'`;
 }
 
-/**
- * Checks if any filters are active
- */
+// checks if any filter is active
 export function hasActiveFilters(filters: ItemFilterState): boolean {
   if (filters.statuses && filters.statuses.length > 0) {
     return true;
@@ -87,9 +83,7 @@ export function hasActiveFilters(filters: ItemFilterState): boolean {
   return false;
 }
 
-/**
- * Clears all filters
- */
+// clear all filters
 export function clearAllFilters(): ItemFilterState {
   return {
     statuses: [],
@@ -98,4 +92,20 @@ export function clearAllFilters(): ItemFilterState {
     priceMax: null,
     specifications: null,
   };
+}
+
+/**
+ * Builds an OData filter for attachment search
+ * Searches across filename, original_filename, and description fields
+ * Returns undefined if search term is empty
+ */
+export function buildAttachmentSearchFilter(
+  searchTerm: string,
+): string | undefined {
+  if (!searchTerm || searchTerm.trim().length === 0) {
+    return undefined;
+  }
+
+  const term = searchTerm.trim();
+  return `contains(filename,'${term}') or contains(original_filename,'${term}') or contains(description,'${term}')`;
 }

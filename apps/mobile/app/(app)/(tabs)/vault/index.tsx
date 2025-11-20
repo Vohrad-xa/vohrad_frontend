@@ -13,10 +13,15 @@ import {
   AttachmentsOverview,
   useAttachmentNavigation,
   computeAttachmentCounts,
+  useAttachmentSearch,
+  useAttachmentPress,
 } from '@/features/attachments';
 import {useAttachmentContext} from '@/features/attachments/providers/attachment-provider';
+import {AllAttachmentsList} from '@/features/attachments/screens/all-attachments-list';
+import {useSearch} from '@/features/dashboard';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, makeStyleFactory} from '@/utils';
+import type {ItemAttachment} from '@vohrad/types';
 
 export default function VaultScreen() {
   const router = useRouter();
@@ -30,6 +35,8 @@ export default function VaultScreen() {
   const clearAttachmentFilter = useClearAttachmentFilter();
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
+  const {searchQuery} = useSearch();
+  const handleAttachmentPress = useAttachmentPress();
   const {
     openVaultImages,
     openVaultDocuments,
@@ -42,6 +49,12 @@ export default function VaultScreen() {
   const {attachments} = useAttachmentContext();
   const {data: dashboardData} = useDashboardOverview();
   const attachmentFilter = useAttachmentFilter();
+
+  // Search functionality
+  const {attachments: searchResults, isSearchActive} = useAttachmentSearch({
+    searchQuery,
+    enabled: !attachmentFilter,
+  });
 
   const initialFilter = useMemo(() => {
     if (params.targetType === 'item' && typeof params.targetId === 'string') {
@@ -61,7 +74,6 @@ export default function VaultScreen() {
         itemName: params.itemName,
       });
     } else {
-      // Clear the filter when there's no initialFilter
       clearAttachmentFilter();
     }
   }, [
@@ -136,6 +148,19 @@ export default function VaultScreen() {
     }
   }, [router, filterInfo, openVaultAdd]);
 
+  const handleSearchResultPress = useCallback(
+    async (attachmentId: string) => {
+      const attachment = searchResults.find(
+        (a: ItemAttachment) => a.id === attachmentId,
+      );
+      if (!attachment) {
+        return;
+      }
+      await handleAttachmentPress(attachment);
+    },
+    [searchResults, handleAttachmentPress],
+  );
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -147,6 +172,18 @@ export default function VaultScreen() {
       ),
     });
   }, [navigation, handleAddPress]);
+
+  // Show search results when user is typing
+  if (isSearchActive && !hasActiveFilter) {
+    return (
+      <View style={styles.container}>
+        <AllAttachmentsList
+          attachments={searchResults}
+          onAttachmentPress={handleSearchResultPress}
+        />
+      </View>
+    );
+  }
 
   return (
     <RefreshableScrollView
@@ -185,6 +222,9 @@ export default function VaultScreen() {
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
+      container: {
+        flex: 1,
+      },
       filterContainer: {
         paddingHorizontal: ds.spacing.lg,
         paddingTop: ds.spacing.md,
