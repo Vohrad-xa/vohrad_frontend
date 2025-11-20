@@ -20,6 +20,7 @@ export default function ModalsLayout() {
       <Stack.Screen name="scan/index" options={{title: 'Scan'}} />
       <Stack.Screen name="items" options={{title: 'Items'}} />
       <Stack.Screen name="preview" options={{title: 'Preview'}} />
+      <Stack.Screen name="attachments" options={{title: 'Attachments'}} />
     </Stack>
   );
 }

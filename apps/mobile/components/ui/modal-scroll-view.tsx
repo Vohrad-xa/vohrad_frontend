@@ -40,7 +40,7 @@ const createStyles = makeStyleFactory(
       defaultContent: {
         paddingTop: ds.spacing.lg,
         paddingHorizontal: ds.spacing.md,
-        paddingBottom: ds.spacing.xxl,
+        paddingBottom: ds.spacing.xl,
       },
     }),
   (ds) => ds.version.toString(),

@@ -6,6 +6,7 @@ import {type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AttachmentAddOptions,
   AttachmentUploadPreviewCard,
+  AttachmentDestinationCard,
 } from '@/features/attachments';
 import {useAttachmentUpload} from '@/features/attachments/hooks';
 import {useSettingsHeader} from '@/hooks';
@@ -69,6 +70,7 @@ export default function VaultAddScreen() {
       contentInsetAdjustmentBehavior="automatic"
     >
       <View style={styles.contentContainer}>
+        {!targetId && <AttachmentDestinationCard />}
         <AttachmentAddOptions
           onTakePicture={handleTakePicture}
           onUploadFiles={handleUploadFiles}
@@ -91,7 +93,7 @@ const useStyles = makeStyleFactory(
       contentContainer: {
         flex: 1,
         padding: ds.spacing.lg,
-        gap: ds.spacing.xl,
+        gap: ds.spacing.lg,
       },
     }),
   (ds, theme) => `${ds.version}-${theme.background}`,

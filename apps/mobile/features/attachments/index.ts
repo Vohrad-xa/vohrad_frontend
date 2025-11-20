@@ -4,6 +4,7 @@
 export {AttachmentKindGrid} from './components/attachment-kind-grid';
 export {AttachmentAddOptions} from './components/attachment-add-options';
 export {AttachmentUploadPreviewCard} from './components/attachment-upload-preview-card';
+export {AttachmentDestinationCard} from './components/attachment-destination-card';
 export {AttachmentImagePreview} from './components/attachment-image-preview';
 export {AttachmentDocumentPreview} from './components/attachment-document-preview';
 export {SelectableImageTile} from './components/selectable-image-tile';
