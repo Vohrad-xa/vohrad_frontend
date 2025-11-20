@@ -25,14 +25,9 @@
         "foregroundImage": "./assets/icons/android/playstore-512.png",
         "backgroundColor": "#00000000"
       },
-      "notification": {
-        "icon": "./assets/icons/android/mipmap-hdpi/ic_launcher.png",
-        "color": "#E6F4FE"
-      },
       "playStoreUrl": "https://play.google.com/store/apps/details?id=vohrad.mobile",
       "predictiveBackGestureEnabled": true,
       "edgeToEdgeEnabled": true,
-      "windowSoftInputMode": "adjustPan",
       "package": "vohrad.mobile",
       "permissions": ["CAMERA"]
     },

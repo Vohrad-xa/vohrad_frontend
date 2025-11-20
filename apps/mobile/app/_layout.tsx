@@ -7,6 +7,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
 import {LoadingOverlay} from '@/components/ui';
+import {AttachmentProvider} from '@/features/attachments/providers/attachment-provider';
 import {useBootstrap} from '@/hooks/use-bootstrap';
 import {NetworkProvider} from '@/modules/network';
 import {NetworkBanner} from '@/modules/network/components/network-banner';
@@ -66,8 +67,10 @@ export default function RootLayout() {
                 <NetworkProvider>
                   <LoadingProvider>
                     <AuthProvider>
-                      <RootNavigation isBootstrapComplete={useBootstrap()} />
-                      <NetworkBanner />
+                      <AttachmentProvider>
+                        <RootNavigation isBootstrapComplete={useBootstrap()} />
+                        <NetworkBanner />
+                      </AttachmentProvider>
                     </AuthProvider>
                   </LoadingProvider>
                 </NetworkProvider>

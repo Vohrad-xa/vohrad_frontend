@@ -5,6 +5,7 @@ import {
   AttachmentImagePreview,
   useFilteredAttachments,
 } from '@/features/attachments';
+import {useOptionalAttachmentContext} from '@/features/attachments/providers/attachment-provider';
 import {
   downloadDocumentFile,
   shareDownloadedFile,
@@ -23,7 +24,17 @@ export default function AttachmentImagePreviewModal() {
   const initialId =
     typeof params.attachmentId === 'string' ? params.attachmentId : undefined;
 
-  const {attachments} = useFilteredAttachments({kind: 'image'});
+  // Try to use context attachments first
+  const context = useOptionalAttachmentContext();
+  const hasContext = !!context?.attachments?.length;
+
+  // Only fetch if we don't have context
+  const {attachments: fetchedAttachments} = useFilteredAttachments({
+    kind: 'image',
+    enabled: !hasContext,
+  });
+
+  const attachments = hasContext ? context.attachments : fetchedAttachments;
 
   const imageAttachments = useImageAttachments(attachments);
 

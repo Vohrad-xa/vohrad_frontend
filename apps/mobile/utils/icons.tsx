@@ -65,6 +65,7 @@ export type IconName =
   | 'folder-outline'
   | 'folder'
   | 'image-outline'
+  | 'archive-outline'
   | 'download-outline'
   | 'cloud-upload-outline'
   | 'save-outline'
@@ -216,6 +217,7 @@ export const AppIcons = {
     folderOpen: 'folder-open-sharp' as IconName,
     file: 'file' as IconName,
     image: 'image-outline' as IconName,
+    archive: 'archive-outline' as IconName,
     imageFallback: 'image-outline' as IconName,
     download: 'cloud-download-outline' as IconName,
     export: 'share-outline' as IconName,

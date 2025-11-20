@@ -100,7 +100,6 @@ export default function ItemsScreen() {
   return (
     <View style={styles.container}>
       <ItemsList
-        // Pass down the global search query to the list for display
         searchQuery={globalSearchQuery}
         onItemPress={handleItemPress}
         onRefresh={refresh}

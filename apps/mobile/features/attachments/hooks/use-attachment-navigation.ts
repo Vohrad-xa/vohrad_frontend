@@ -6,6 +6,8 @@ import {
   buildAttachmentVaultAddRoute,
   buildAttachmentVaultImagesRoute,
   buildAttachmentVaultDocumentsRoute,
+  buildAttachmentVaultArchivesRoute,
+  buildAttachmentVaultOtherRoute,
 } from '../utils/navigation';
 import type {AttachmentNavigationTarget} from '../utils/navigation';
 
@@ -51,6 +53,16 @@ export function useAttachmentNavigation() {
     router.push(route);
   }, [router]);
 
+  const openVaultArchives = useCallback(() => {
+    const route = buildAttachmentVaultArchivesRoute();
+    router.push(route);
+  }, [router]);
+
+  const openVaultOther = useCallback(() => {
+    const route = buildAttachmentVaultOtherRoute();
+    router.push(route);
+  }, [router]);
+
   return {
     openVaultRoot,
     clearVaultParams,
@@ -58,5 +70,7 @@ export function useAttachmentNavigation() {
     openVaultAdd,
     openVaultImages,
     openVaultDocuments,
+    openVaultArchives,
+    openVaultOther,
   };
 }

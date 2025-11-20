@@ -11,6 +11,7 @@ export const SFSymbols = {
   lockFill: 'lock.fill',
   rectangleStackFill: 'rectangle.stack.fill',
   docTextFill: 'doc.text',
+  archiveBoxFill: 'archivebox.fill',
 } as const;
 
 export type SFSymbolName = (typeof SFSymbols)[keyof typeof SFSymbols];

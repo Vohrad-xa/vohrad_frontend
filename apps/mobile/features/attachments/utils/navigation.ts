@@ -10,6 +10,8 @@ type VaultPath = '/(app)/(tabs)/vault';
 type VaultAddPath = '/(app)/(tabs)/vault/add';
 type VaultImagesPath = '/(app)/(tabs)/vault/images';
 type VaultDocumentsPath = '/(app)/(tabs)/vault/documents';
+type VaultArchivesPath = '/(app)/(tabs)/vault/archives';
+type VaultOtherPath = '/(app)/(tabs)/vault/other';
 
 export interface AttachmentRoute<Path extends string> {
   pathname: Path;
@@ -63,6 +65,20 @@ export function buildAttachmentVaultImagesRoute(): AttachmentRoute<VaultImagesPa
 export function buildAttachmentVaultDocumentsRoute(): AttachmentRoute<VaultDocumentsPath> {
   return {
     pathname: `${BASE_VAULT_PATH}/documents`,
+    params: {},
+  };
+}
+
+export function buildAttachmentVaultArchivesRoute(): AttachmentRoute<VaultArchivesPath> {
+  return {
+    pathname: `${BASE_VAULT_PATH}/archives`,
+    params: {},
+  };
+}
+
+export function buildAttachmentVaultOtherRoute(): AttachmentRoute<VaultOtherPath> {
+  return {
+    pathname: `${BASE_VAULT_PATH}/other`,
     params: {},
   };
 }

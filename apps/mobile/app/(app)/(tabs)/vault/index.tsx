@@ -30,8 +30,14 @@ export default function VaultScreen() {
   const clearAttachmentFilter = useClearAttachmentFilter();
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
-  const {openVaultImages, openVaultDocuments, openVaultAdd, clearVaultParams} =
-    useAttachmentNavigation();
+  const {
+    openVaultImages,
+    openVaultDocuments,
+    openVaultArchives,
+    openVaultOther,
+    openVaultAdd,
+    clearVaultParams,
+  } = useAttachmentNavigation();
 
   const {attachments} = useAttachmentContext();
   const {data: dashboardData} = useDashboardOverview();
@@ -109,6 +115,14 @@ export default function VaultScreen() {
     openVaultDocuments();
   }, [openVaultDocuments]);
 
+  const handleArchivesPress = useCallback(() => {
+    openVaultArchives();
+  }, [openVaultArchives]);
+
+  const handleOtherPress = useCallback(() => {
+    openVaultOther();
+  }, [openVaultOther]);
+
   const handleAddPress = useCallback(() => {
     // If there's a filter, pass params; otherwise navigate without params (item selection handled in add screen)
     if (filterInfo) {
@@ -160,6 +174,8 @@ export default function VaultScreen() {
         onTilePress={{
           image: handleImagesPress,
           document: handleDocumentsPress,
+          archive: handleArchivesPress,
+          other: handleOtherPress,
         }}
       />
     </RefreshableScrollView>

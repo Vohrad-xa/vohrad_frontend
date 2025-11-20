@@ -21,7 +21,12 @@ export {useImageSelection} from './hooks/use-image-selection';
 export {useFilteredAttachments} from './hooks/use-filtered-attachments';
 export {useAttachmentsOverview} from './hooks/use-attachments-overview';
 export {useAttachmentImages} from './hooks/use-attachment-images';
-export {useAttachmentDocuments} from './hooks/use-attachment-documents';
+export {
+  useAttachmentsByKind,
+  useAttachmentDocuments,
+  useAttachmentArchives,
+  useAttachmentOther,
+} from './hooks/use-attachments-by-kind';
 export {useAttachmentNavigation} from './hooks/use-attachment-navigation';
 
 // Screens

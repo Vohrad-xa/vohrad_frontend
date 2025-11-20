@@ -62,3 +62,35 @@ export function useDocumentAttachments(
     return documents;
   }, [attachments]);
 }
+
+export function useArchiveAttachments(
+  attachments?: ItemAttachment[] | null,
+): ItemAttachment[] {
+  return useMemo(() => {
+    if (!attachments || attachments.length === 0) return [];
+
+    const archives: ItemAttachment[] = [];
+    for (const attachment of attachments) {
+      if (attachment.kind === 'archive') {
+        archives.push(attachment);
+      }
+    }
+    return archives;
+  }, [attachments]);
+}
+
+export function useOtherAttachments(
+  attachments?: ItemAttachment[] | null,
+): ItemAttachment[] {
+  return useMemo(() => {
+    if (!attachments || attachments.length === 0) return [];
+
+    const others: ItemAttachment[] = [];
+    for (const attachment of attachments) {
+      if (attachment.kind === 'other') {
+        others.push(attachment);
+      }
+    }
+    return others;
+  }, [attachments]);
+}
