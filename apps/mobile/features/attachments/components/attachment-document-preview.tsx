@@ -35,7 +35,6 @@ export function AttachmentDocumentPreview({
     return null;
   }
 
-  // For web/android linking will handle the navigation
   if (Platform.OS === 'web' || Platform.OS === 'android') {
     return null;
   }

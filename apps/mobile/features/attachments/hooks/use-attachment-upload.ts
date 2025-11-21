@@ -113,10 +113,14 @@ function buildPendingFromDocument(
 }
 
 function buildPendingFromCamera(asset: CameraAsset): PendingAttachment | null {
+  const now = new Date();
+  const timestamp = now.toISOString().slice(0, 19).replace(/[T:]/g, '');
+  const fileName = `IMG-${timestamp}.jpg`;
+
   const normalized = normalizePendingData({
     uri: asset.uri,
-    name: asset.fileName,
-    fileName: asset.fileName,
+    name: fileName,
+    fileName,
     mimeType: asset.mimeType,
     type: asset.type,
     fileSize: asset.fileSize,
@@ -133,7 +137,7 @@ function buildPendingFromCamera(asset: CameraAsset): PendingAttachment | null {
 }
 
 export function useAttachmentUpload(
-  targetType: AttachmentTargetType,
+  targetType?: AttachmentTargetType | null,
   targetId?: string | null,
 ) {
   const {mutateAsync: uploadAttachment, isPending: isSaving} =
@@ -190,6 +194,45 @@ export function useAttachmentUpload(
     }
   }, [isPicking, isSaving]);
 
+  const selectFromGallery = useCallback(async () => {
+    if (isPicking || isSaving) {
+      return;
+    }
+
+    setIsPicking(true);
+    try {
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (!permission.granted) {
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        quality: 0.85,
+        allowsEditing: false,
+      });
+
+      if (result.canceled || !result.assets || result.assets.length === 0) {
+        return;
+      }
+
+      const [asset] = result.assets;
+      const pending = buildPendingFromCamera(asset);
+
+      if (!pending) {
+        return;
+      }
+
+      setPendingAttachment(pending);
+    } catch (_error) {
+      // Silently handle error
+    } finally {
+      setIsPicking(false);
+    }
+  }, [isPicking, isSaving]);
+
   const capturePhoto = useCallback(async () => {
     if (isPicking || isSaving) {
       return;
@@ -231,12 +274,22 @@ export function useAttachmentUpload(
     setPendingAttachment(null);
   }, []);
 
+  const updatePendingName = useCallback((newName: string) => {
+    setPendingAttachment((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        name: newName,
+      };
+    });
+  }, []);
+
   const savePendingAttachment = useCallback(async () => {
     if (isSaving || !pendingAttachment) {
       return false;
     }
 
-    if (!targetId) {
+    if (!targetId || !targetType) {
       return false;
     }
 
@@ -286,14 +339,17 @@ export function useAttachmentUpload(
       name: pendingAttachment.name,
       mimeType: pendingAttachment.mimeType,
       size: pendingAttachment.size,
+      uri: pendingAttachment.uri,
     };
   }, [pendingAttachment]);
 
   return {
     selectFromDevice,
+    selectFromGallery,
     capturePhoto,
     savePendingAttachment,
     resetPending,
+    updatePendingName,
     pendingAttachment,
     pendingMetadata,
     hasPending,

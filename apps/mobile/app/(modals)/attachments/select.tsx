@@ -20,41 +20,41 @@ export default function ResourceSelectorModal() {
   const styles = createStyles(ds, theme);
   const params = useLocalSearchParams<{type?: string; selectedIds?: string}>();
 
-  const initialSelectedIds = params.selectedIds
-    ? new Set(params.selectedIds.split(','))
-    : new Set<string>();
+  const initialSelectedId = params.selectedIds?.split(',')[0] ?? null;
 
-  const [selectedIds, setSelectedIds] =
-    useState<Set<string>>(initialSelectedIds);
+  const [selectedId, setSelectedId] = useState<string | null>(
+    initialSelectedId,
+  );
 
   const {items, getItemImageUrl, hasNext, onEndReached} = useItemsManager();
 
-  const toggleSelection = useCallback((itemId: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(itemId)) {
-        next.delete(itemId);
-      } else {
-        next.add(itemId);
-      }
-      return next;
-    });
+  const handleSelect = useCallback((itemId: string) => {
+    setSelectedId(itemId);
   }, []);
 
   const handleDone = useCallback(() => {
-    const selectedItems = items.filter((item) => selectedIds.has(item.id));
-    const itemNames = selectedItems.map((item) => item.name).join(', ');
-    const itemIds = Array.from(selectedIds).join(',');
+    if (!selectedId) {
+      router.dismissTo({
+        pathname: '/(app)/(tabs)/vault/add',
+        params: {},
+      });
+      return;
+    }
+
+    const selectedItem = items.find((item) => item.id === selectedId);
+    if (!selectedItem) {
+      return;
+    }
 
     router.dismissTo({
       pathname: '/(app)/(tabs)/vault/add',
       params: {
         targetType: 'item',
-        targetId: itemIds,
-        itemName: itemNames,
+        targetId: selectedItem.id,
+        itemName: selectedItem.name,
       },
     });
-  }, [selectedIds, items]);
+  }, [selectedId, items]);
 
   useSettingsHeader({
     navigation,
@@ -73,9 +73,9 @@ export default function ResourceSelectorModal() {
       badge: item.is_active ? 'ACTIVE' : 'INACTIVE',
       badgeType: item.is_active ? 'active' : 'inactive',
       count: item.total_quantity,
-      onPress: () => toggleSelection(item.id),
+      onPress: () => handleSelect(item.id),
     }),
-    [getItemImageUrl, toggleSelection],
+    [getItemImageUrl, handleSelect],
   );
 
   const listData = useMemo(
@@ -87,6 +87,7 @@ export default function ResourceSelectorModal() {
     ({item, index}: {item: ListRowData; index: number}) => {
       const itemData = items.find((i) => i.id === item.id);
       if (!itemData) return null;
+      const isSelected = selectedId === item.id;
 
       return (
         <View>
@@ -94,9 +95,7 @@ export default function ResourceSelectorModal() {
             item={item}
             showImage
             showChevron={false}
-            customLeftIcon={
-              <SelectionCircle selected={selectedIds.has(item.id)} />
-            }
+            customLeftIcon={<SelectionCircle selected={isSelected} />}
           />
           {index < listData.length - 1 && (
             <View style={styles.dividerContainer}>
@@ -106,7 +105,7 @@ export default function ResourceSelectorModal() {
         </View>
       );
     },
-    [items, selectedIds, listData.length, styles],
+    [items, selectedId, listData.length, styles],
   );
 
   const handleEndReached = useCallback(() => {

@@ -34,6 +34,7 @@ function VaultStack() {
           headerShown: true,
           headerShadowVisible: false,
           headerLargeTitle: true,
+          headerBackButtonDisplayMode: 'minimal',
           headerLargeTitleShadowVisible: true,
           headerTransparent: Platform.OS === 'ios',
           contentStyle: {
@@ -74,6 +75,7 @@ function VaultStack() {
           name="add"
           options={{
             headerTitle: 'Add Attachment',
+            headerLargeTitle: false,
           }}
         />
         <Stack.Screen

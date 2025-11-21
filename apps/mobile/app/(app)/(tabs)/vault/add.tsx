@@ -1,8 +1,8 @@
 import React, {useEffect, useRef} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {useNavigation, useLocalSearchParams} from 'expo-router';
-import {RefreshableScrollView} from '@/components/ui';
-import {type DSShape, type ThemeShape} from '@/constants/theme';
+import {StyleSheet} from 'react-native';
+import {useNavigation, useLocalSearchParams, useRouter} from 'expo-router';
+import {ModalScrollView} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AttachmentAddOptions,
   AttachmentUploadPreviewCard,
@@ -16,6 +16,7 @@ import type {AttachmentTargetType} from '@vohrad/store';
 
 export default function VaultAddScreen() {
   const navigation = useNavigation();
+  const router = useRouter();
   const {ds, theme} = useTheme();
   const styles = useStyles(ds, theme);
 
@@ -25,14 +26,19 @@ export default function VaultAddScreen() {
     itemName?: string;
   }>();
 
-  const targetType = params.targetType as AttachmentTargetType;
-  const targetId = params.targetId;
-  const itemName = params.itemName;
+  const targetType = (params.targetType ?? undefined) as
+    | AttachmentTargetType
+    | undefined;
+  const targetId = params.targetId ?? undefined;
+  const itemName = params.itemName ?? undefined;
 
   const {
     selectFromDevice,
+    selectFromGallery,
     capturePhoto,
     savePendingAttachment,
+    resetPending,
+    updatePendingName,
     pendingMetadata,
     hasPending,
   } = useAttachmentUpload(targetType, targetId);
@@ -53,43 +59,69 @@ export default function VaultAddScreen() {
       const saved = await savePendingAttachment();
       if (saved) {
         triggerSuccess();
+        router.setParams({
+          targetType: undefined,
+          targetId: undefined,
+          itemName: undefined,
+        });
       }
     };
-  }, [savePendingAttachment, triggerSuccess]);
+  }, [savePendingAttachment, triggerSuccess, router]);
+
+  useEffect(() => {
+    if (!targetType || !targetId) {
+      resetPending();
+    }
+  }, [targetType, targetId, resetPending]);
 
   const handleTakePicture = () => {
     void capturePhoto();
+  };
+
+  const handleChooseFromGallery = () => {
+    void selectFromGallery();
   };
 
   const handleUploadFiles = () => {
     void selectFromDevice();
   };
 
+  const handleClearDestination = () => {
+    router.setParams({
+      targetType: undefined,
+      targetId: undefined,
+      itemName: undefined,
+    });
+  };
+
   return (
-    <RefreshableScrollView
-      bounces
-      showsVerticalScrollIndicator={false}
-      contentInsetAdjustmentBehavior="automatic"
-    >
-      <View style={styles.contentContainer}>
-        <AttachmentDestinationCard
-          targetName={itemName}
-          targetType={targetType}
-          targetId={targetId}
-        />
-        <AttachmentAddOptions
-          onTakePicture={handleTakePicture}
-          onUploadFiles={handleUploadFiles}
-        />
-        {pendingMetadata && (
-          <AttachmentUploadPreviewCard
-            name={pendingMetadata.name}
-            mimeType={pendingMetadata.mimeType}
-            size={pendingMetadata.size}
+    <ModalScrollView contentContainerStyle={styles.contentContainer}>
+      <AttachmentDestinationCard
+        targetName={itemName}
+        targetType={targetType}
+        targetId={targetId}
+        onClear={handleClearDestination}
+      />
+      {targetType && targetId && (
+        <>
+          <AttachmentAddOptions
+            onTakePicture={handleTakePicture}
+            onChooseFromGallery={handleChooseFromGallery}
+            onUploadFiles={handleUploadFiles}
           />
-        )}
-      </View>
-    </RefreshableScrollView>
+          {pendingMetadata && (
+            <AttachmentUploadPreviewCard
+              name={pendingMetadata.name}
+              mimeType={pendingMetadata.mimeType}
+              size={pendingMetadata.size}
+              uri={pendingMetadata.uri}
+              onNameChange={updatePendingName}
+              onClear={resetPending}
+            />
+          )}
+        </>
+      )}
+    </ModalScrollView>
   );
 }
 
@@ -97,10 +129,8 @@ const useStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       contentContainer: {
-        flex: 1,
-        padding: ds.spacing.lg,
         gap: ds.spacing.lg,
       },
     }),
-  (ds, theme) => `${ds.version}-${theme.background}`,
+  (ds, theme) => themeKey(theme, ds),
 );
