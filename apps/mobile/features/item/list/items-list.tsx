@@ -49,8 +49,8 @@ export function ItemsList({
       name: item.name,
       code: item.code,
       image: getItemImageUrl(item),
-      badge: item.is_active ? 'ACTIVE' : 'INACTIVE',
-      badgeType: item.is_active ? 'active' : 'inactive',
+      // badge: item.is_active ? 'ACTIVE' : 'INACTIVE',
+      // badgeType: item.is_active ? 'active' : 'inactive',
       count: item.total_quantity,
       onPress: () => onItemPress(item.id),
     }),
@@ -140,8 +140,7 @@ const createStyles = makeStyleFactory(
         padding: ds.spacing.xl,
       },
       dividerContainer: {
-        paddingLeft: ds.spacing.xl + ds.spacing.xl + 8,
-        paddingRight: ds.spacing.xs,
+        paddingLeft: ds.spacing.xl * 3 + ds.spacing.xs,
       },
       errorText: {
         fontSize: ds.typography.body.fontSize,

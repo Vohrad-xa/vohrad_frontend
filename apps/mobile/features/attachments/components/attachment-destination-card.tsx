@@ -10,19 +10,30 @@ import {makeStyleFactory} from '@/utils';
 type AttachmentDestinationCardProps = {
   targetName?: string;
   targetType?: string;
+  targetId?: string;
 };
 
 export function AttachmentDestinationCard({
   targetName,
   targetType,
+  targetId,
 }: AttachmentDestinationCardProps) {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
 
   return (
-    <Link href="/(modals)/attachments">
+    <Link
+      href={
+        targetId
+          ? {
+              pathname: '/(modals)/attachments',
+              params: {selectedIds: targetId},
+            }
+          : '/(modals)/attachments'
+      }
+    >
       <Link.Trigger>
-        <View>
+        <View style={styles.container}>
           <Card>
             <Card.Row
               icon="folder-outline"
@@ -50,6 +61,9 @@ export function AttachmentDestinationCard({
 const createStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
+      container: {
+        width: '100%',
+      },
       helperText: {
         marginTop: ds.spacing.sm,
         marginHorizontal: ds.spacing.lg,

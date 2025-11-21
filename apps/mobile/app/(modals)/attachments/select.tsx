@@ -1,0 +1,142 @@
+import React, {useState, useCallback, useMemo} from 'react';
+import {StyleSheet, Platform, View} from 'react-native';
+import {useItemsManager, type Item} from '@vohrad/store';
+import {useLocalSearchParams, router, useNavigation} from 'expo-router';
+import {
+  ModalFlatList,
+  ListRow,
+  Divider,
+  SelectionCircle,
+  type ListRowData,
+} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {useSettingsHeader} from '@/hooks';
+import {useTheme} from '@/providers';
+import {makeStyleFactory} from '@/utils';
+
+export default function ResourceSelectorModal() {
+  const navigation = useNavigation();
+  const {ds, theme} = useTheme();
+  const styles = createStyles(ds, theme);
+  const params = useLocalSearchParams<{type?: string; selectedIds?: string}>();
+
+  const initialSelectedIds = params.selectedIds
+    ? new Set(params.selectedIds.split(','))
+    : new Set<string>();
+
+  const [selectedIds, setSelectedIds] =
+    useState<Set<string>>(initialSelectedIds);
+
+  const {items, getItemImageUrl, hasNext, onEndReached} = useItemsManager();
+
+  const toggleSelection = useCallback((itemId: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(itemId)) {
+        next.delete(itemId);
+      } else {
+        next.add(itemId);
+      }
+      return next;
+    });
+  }, []);
+
+  const handleDone = useCallback(() => {
+    const selectedItems = items.filter((item) => selectedIds.has(item.id));
+    const itemNames = selectedItems.map((item) => item.name).join(', ');
+    const itemIds = Array.from(selectedIds).join(',');
+
+    router.dismissTo({
+      pathname: '/(app)/(tabs)/vault/add',
+      params: {
+        targetType: 'item',
+        targetId: itemIds,
+        itemName: itemNames,
+      },
+    });
+  }, [selectedIds, items]);
+
+  useSettingsHeader({
+    navigation,
+    isEditing: false,
+    hasChanges: true,
+    onSave: handleDone,
+    idleAction: 'none',
+  });
+
+  const transformItemToListRow = useCallback(
+    (item: Item): ListRowData => ({
+      id: item.id,
+      name: item.name,
+      code: item.code,
+      image: getItemImageUrl(item),
+      badge: item.is_active ? 'ACTIVE' : 'INACTIVE',
+      badgeType: item.is_active ? 'active' : 'inactive',
+      count: item.total_quantity,
+      onPress: () => toggleSelection(item.id),
+    }),
+    [getItemImageUrl, toggleSelection],
+  );
+
+  const listData = useMemo(
+    () => items.map(transformItemToListRow),
+    [items, transformItemToListRow],
+  );
+
+  const renderItem = useCallback(
+    ({item, index}: {item: ListRowData; index: number}) => {
+      const itemData = items.find((i) => i.id === item.id);
+      if (!itemData) return null;
+
+      return (
+        <View>
+          <ListRow
+            item={item}
+            showImage
+            showChevron={false}
+            customLeftIcon={
+              <SelectionCircle selected={selectedIds.has(item.id)} />
+            }
+          />
+          {index < listData.length - 1 && (
+            <View style={styles.dividerContainer}>
+              <Divider />
+            </View>
+          )}
+        </View>
+      );
+    },
+    [items, selectedIds, listData.length, styles],
+  );
+
+  const handleEndReached = useCallback(() => {
+    if (!hasNext) return;
+    onEndReached();
+  }, [hasNext, onEndReached]);
+
+  return (
+    <ModalFlatList
+      data={listData}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.5}
+      style={styles.container}
+    />
+  );
+}
+
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      container: {
+        backgroundColor:
+          Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
+      },
+      dividerContainer: {
+        paddingLeft: ds.spacing.xxl + ds.spacing.sm,
+        paddingRight: ds.spacing.xs,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);

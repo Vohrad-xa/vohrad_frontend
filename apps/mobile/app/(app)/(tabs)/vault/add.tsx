@@ -22,10 +22,12 @@ export default function VaultAddScreen() {
   const params = useLocalSearchParams<{
     targetType?: AttachmentTargetType;
     targetId?: string;
+    itemName?: string;
   }>();
 
-  const targetType = (params.targetType as AttachmentTargetType) ?? 'item';
+  const targetType = params.targetType as AttachmentTargetType;
   const targetId = params.targetId;
+  const itemName = params.itemName;
 
   const {
     selectFromDevice,
@@ -70,7 +72,11 @@ export default function VaultAddScreen() {
       contentInsetAdjustmentBehavior="automatic"
     >
       <View style={styles.contentContainer}>
-        {!targetId && <AttachmentDestinationCard />}
+        <AttachmentDestinationCard
+          targetName={itemName}
+          targetType={targetType}
+          targetId={targetId}
+        />
         <AttachmentAddOptions
           onTakePicture={handleTakePicture}
           onUploadFiles={handleUploadFiles}

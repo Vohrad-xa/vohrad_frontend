@@ -71,6 +71,8 @@ const useStyles = makeStyleFactory(
     StyleSheet.create({
       scrollContent: {
         paddingTop: 0,
+        marginTop: -5,
+        marginHorizontal: 3,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

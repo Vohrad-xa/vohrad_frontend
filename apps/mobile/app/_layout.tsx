@@ -21,6 +21,8 @@ import {
 
 SplashScreen.preventAutoHideAsync();
 
+const queryClient = new QueryClient();
+
 function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
   const {isAuthenticated} = useAuth();
   const navigationState = useRootNavigationState();
@@ -60,7 +62,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <KeyboardProvider>
-        <QueryClientProvider client={new QueryClient()}>
+        <QueryClientProvider client={queryClient}>
           <AppThemeProvider>
             <HapticProvider>
               <ActionSheetProvider>

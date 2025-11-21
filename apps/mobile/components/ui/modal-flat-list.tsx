@@ -42,8 +42,7 @@ const createStyles = makeStyleFactory(
   (ds: DSShape) =>
     StyleSheet.create({
       defaultContent: {
-        // paddingTop: ds.spacing.lg,
-        paddingHorizontal: ds.spacing.xl,
+        paddingHorizontal: ds.spacing.lg,
         paddingBottom: ds.spacing.lg,
       },
     }),

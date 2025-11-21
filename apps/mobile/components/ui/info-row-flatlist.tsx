@@ -43,7 +43,7 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
     item,
     showImage = true,
     showBadge = true,
-    imageContainerSize = 35,
+    imageContainerSize = 40,
     position = 'single',
     customLeftIcon,
     showChevron = true,
@@ -121,7 +121,7 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
         </View>
 
         {item.onPress && showChevron && !item.loading && (
-          <Icon name={AppIcons.navigation.chevron} />
+          <Icon name={AppIcons.navigation.chevron} size="md" />
         )}
         {item.onPress && item.loading && (
           <ActivityIndicator size="small" color={theme.accentBlue} />
@@ -159,21 +159,21 @@ const createStyles = makeStyleFactory(
       touchableContent: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingVertical: ds.spacing.lg,
-        // paddingHorizontal: ds.spacing.md,
-        gap: ds.spacing.lg,
+        paddingVertical: ds.spacing.md,
+        gap: ds.spacing.md,
         minHeight: ds.components.tapTarget.minSize,
       },
       imageWrapper: {
         position: 'relative',
         alignItems: 'center',
+        marginRight: ds.spacing.md,
       },
       imageContainer: {
         width: '100%',
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: ds.borderRadius.lg,
+        borderRadius: ds.borderRadius.full,
         backgroundColor: theme.surface,
       },
       imageBadge: {
@@ -184,7 +184,7 @@ const createStyles = makeStyleFactory(
       image: {
         width: '100%',
         height: '100%',
-        borderRadius: ds.borderRadius.md,
+        borderRadius: ds.borderRadius.full,
       },
       contentContainer: {
         flex: 1,

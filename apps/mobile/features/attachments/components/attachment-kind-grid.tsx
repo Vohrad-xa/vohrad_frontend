@@ -51,7 +51,7 @@ export function AttachmentKindGrid({tiles}: AttachmentKindGridProps) {
               Platform.OS === 'ios' ? (
                 <SymbolView
                   name={SFSymbols.folderFill}
-                  size={55}
+                  size={50}
                   tintColor={theme.accentLightBlue}
                 />
               ) : (
@@ -78,7 +78,7 @@ const useStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       dividerContainer: {
-        paddingLeft: ds.spacing.xxl * 2 + ds.spacing.sm,
+        paddingLeft: ds.spacing.xxl * 2,
         paddingRight: ds.spacing.xs,
       },
     }),

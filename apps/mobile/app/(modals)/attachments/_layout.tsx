@@ -49,6 +49,13 @@ export default function AttachmentsModalsLayout() {
             title: 'Select Destination',
           }}
         />
+        <Stack.Screen
+          name="select"
+          options={{
+            title: 'Select',
+            headerLeft: undefined,
+          }}
+        />
       </Stack>
     </ScreenLoadingWrapper>
   );
