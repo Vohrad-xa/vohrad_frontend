@@ -49,13 +49,13 @@ export function ItemHeader({item, imageUrl}: ItemHeaderProps) {
         </View>
       </View>
 
-      {/* Name and Code*/}
+      {/* Name and SKU*/}
       <View style={styles.titleContainer}>
         <ThemedText style={styles.itemName} numberOfLines={2}>
           {item.name}
         </ThemedText>
         <ThemedText style={styles.itemCode} numberOfLines={1}>
-          {item.code.toUpperCase()}
+          {item.sku.toUpperCase()}
         </ThemedText>
       </View>
     </View>

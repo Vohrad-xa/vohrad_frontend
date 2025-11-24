@@ -27,7 +27,7 @@ export const API_ENDPOINTS = {
     SEARCH: '/items/search',
     ACTIVE: '/items/active',
     DETAIL: (id: string) => `/items/${id}`,
-    BY_CODE: (code: string) => `/items/code/${code}`,
+    BY_SKU: (sku: string) => `/items/sku/${sku}`,
     BY_BARCODE: (barcode: string) => `/items/barcode/${barcode}`,
     BY_SERIAL: (serial: string) => `/items/serial/${serial}`,
     UPDATE: (id: string) => `/items/${id}`,

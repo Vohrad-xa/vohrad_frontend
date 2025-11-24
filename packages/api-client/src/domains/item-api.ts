@@ -71,9 +71,9 @@ export class ItemApi {
     return response.data;
   }
 
-  async getItemByCode(code: string): Promise<ItemDetail> {
+  async getItemBySku(sku: string): Promise<ItemDetail> {
     const response = await httpClient.get<ItemDetail>(
-      `${API_ENDPOINTS.ITEMS.BY_CODE(code)}`,
+      `${API_ENDPOINTS.ITEMS.BY_SKU(sku)}`,
     );
     return response.data;
   }

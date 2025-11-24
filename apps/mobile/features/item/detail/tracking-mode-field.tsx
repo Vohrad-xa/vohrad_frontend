@@ -9,7 +9,7 @@ import type {TrackingMode} from '@vohrad/types';
 
 const TRACKING_MODE_OPTIONS = [
   {label: 'Abstract', value: 'abstract' as const},
-  {label: 'Standard', value: 'standard' as const},
+  {label: 'Lot', value: 'lot' as const},
   {label: 'Serialized', value: 'serialized' as const},
 ];
 

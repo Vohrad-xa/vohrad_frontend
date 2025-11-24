@@ -27,7 +27,7 @@ export default function ItemDetailScreen() {
     itemId: itemId!,
     initialValues: {
       name: item?.name ?? '',
-      code: item?.code ?? '',
+      sku: item?.sku ?? '',
       serialNumber: item?.serial_number ?? '',
       description: item?.description ?? '',
       trackingMode: item?.tracking_mode,

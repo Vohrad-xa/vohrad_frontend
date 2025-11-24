@@ -5,7 +5,7 @@ import type {TrackingMode, ItemUpdate} from '@vohrad/types';
 
 interface ItemFormValues {
   name: string;
-  code: string;
+  sku: string;
   serialNumber: string;
   description: string;
 }
@@ -14,7 +14,7 @@ interface UseItemFormProps {
   itemId: string;
   initialValues: {
     name?: string;
-    code?: string;
+    sku?: string;
     serialNumber?: string;
     description?: string | null;
     trackingMode?: TrackingMode;
@@ -32,7 +32,7 @@ export function useItemForm({
 
   const [formValues, setFormValues] = useState<ItemFormValues>(() => ({
     name: initialValues.name ?? '',
-    code: initialValues.code ?? '',
+    sku: initialValues.sku ?? '',
     serialNumber: initialValues.serialNumber ?? '',
     description: initialValues.description ?? '',
   }));
@@ -47,7 +47,7 @@ export function useItemForm({
   // Track original values
   const originalValues = useRef<ItemFormValues>({
     name: initialValues.name ?? '',
-    code: initialValues.code ?? '',
+    sku: initialValues.sku ?? '',
     serialNumber: initialValues.serialNumber ?? '',
     description: initialValues.description ?? '',
   });
@@ -56,7 +56,7 @@ export function useItemForm({
   useEffect(() => {
     const newValues: ItemFormValues = {
       name: initialValues.name ?? '',
-      code: initialValues.code ?? '',
+      sku: initialValues.sku ?? '',
       serialNumber: initialValues.serialNumber ?? '',
       description: initialValues.description ?? '',
     };
@@ -64,7 +64,7 @@ export function useItemForm({
     // Only update if values actually changed
     if (
       newValues.name !== originalValues.current.name ||
-      newValues.code !== originalValues.current.code ||
+      newValues.sku !== originalValues.current.sku ||
       newValues.serialNumber !== originalValues.current.serialNumber ||
       newValues.description !== originalValues.current.description
     ) {
@@ -73,7 +73,7 @@ export function useItemForm({
     }
   }, [
     initialValues.name,
-    initialValues.code,
+    initialValues.sku,
     initialValues.serialNumber,
     initialValues.description,
   ]);
@@ -89,7 +89,7 @@ export function useItemForm({
   const checkForChanges = useCallback((): boolean => {
     return (
       formValues.name !== originalValues.current.name ||
-      formValues.code !== originalValues.current.code ||
+      formValues.sku !== originalValues.current.sku ||
       formValues.serialNumber !== originalValues.current.serialNumber ||
       formValues.description !== originalValues.current.description
     );
@@ -154,8 +154,8 @@ export function useItemForm({
     if (formValues.name !== originalValues.current.name) {
       updates.name = formValues.name;
     }
-    if (formValues.code !== originalValues.current.code) {
-      updates.code = formValues.code;
+    if (formValues.sku !== originalValues.current.sku) {
+      updates.sku = formValues.sku;
     }
     if (formValues.serialNumber !== originalValues.current.serialNumber) {
       updates.serial_number = formValues.serialNumber;

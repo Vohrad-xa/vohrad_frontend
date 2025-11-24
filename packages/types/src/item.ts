@@ -1,6 +1,6 @@
 import type {JsonValue} from './tenant';
 
-export type TrackingMode = 'abstract' | 'standard' | 'serialized';
+export type TrackingMode = 'abstract' | 'lot' | 'serialized';
 
 export type ItemSpecifications = Record<string, JsonValue> | null;
 
@@ -22,6 +22,7 @@ export interface ItemLocationData {
 export interface ItemLocationInput {
   location_id: string;
   quantity: number;
+  item_lot_id?: string | null;
 }
 
 export interface ItemLocationUpdate {
@@ -64,6 +65,24 @@ export interface Status {
   icon: string;
 }
 
+export interface UnitOfMeasure {
+  id: string;
+  name: string;
+  code: string;
+  symbol?: string | null;
+}
+
+export interface Supplier {
+  id: string;
+  name: string;
+}
+
+export interface ItemLotData {
+  id: string;
+  lot_type: string;
+  lot_number: string;
+}
+
 type ItemRelationIdentifiers = {
   user_id?: string | null;
   parent_item_id?: string | null;
@@ -72,7 +91,7 @@ type ItemRelationIdentifiers = {
 
 type ItemDescriptiveFields = ItemRelationIdentifiers & {
   name: string;
-  code: string;
+  sku: string;
   barcode?: string | null;
   description?: string | null;
   price?: number | null;
@@ -81,8 +100,13 @@ type ItemDescriptiveFields = ItemRelationIdentifiers & {
   specifications?: ItemSpecifications;
   tracking_change_reason?: string | null;
   category_id?: string | null;
+  status_id?: string | null;
+  unit_id?: string | null;
+  supplier_id?: string | null;
   category?: Category | null;
   status?: Status | null;
+  unit?: UnitOfMeasure | null;
+  supplier?: Supplier | null;
 };
 
 type ItemMutableFields = ItemDescriptiveFields & {
@@ -103,6 +127,8 @@ export interface Item extends ItemDescriptiveFields {
 
 export interface ItemDetail extends Item {
   locations?: ItemLocationData[] | null;
+  lots?: ItemLotData[] | null;
+  attachments?: ItemAttachment[] | null;
 }
 
 export type ItemCreate = ItemMutableFields & {

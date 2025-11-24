@@ -35,11 +35,11 @@ export function TrackingModeFilter({
         </View>
         <Card.Divider />
         <View style={styles.filterRow}>
-          <ThemedText variant="label">Standard</ThemedText>
+          <ThemedText variant="label">Lot</ThemedText>
           <Toggle
-            value={trackingModes.includes('standard')}
-            onValueChange={() => toggleTrackingMode('standard')}
-            accessibilityLabel="Filter standard tracking mode"
+            value={trackingModes.includes('lot')}
+            onValueChange={() => toggleTrackingMode('lot')}
+            accessibilityLabel="Filter lot tracking mode"
           />
         </View>
         <Card.Divider />

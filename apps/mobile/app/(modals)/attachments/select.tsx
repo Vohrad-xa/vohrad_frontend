@@ -68,7 +68,7 @@ export default function ResourceSelectorModal() {
     (item: Item): ListRowData => ({
       id: item.id,
       name: item.name,
-      code: item.code,
+      code: item.sku,
       image: getItemImageUrl(item),
       badge: item.is_active ? 'ACTIVE' : 'INACTIVE',
       badgeType: item.is_active ? 'active' : 'inactive',
