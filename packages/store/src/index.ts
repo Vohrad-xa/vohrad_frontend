@@ -76,4 +76,5 @@ export {
   clearAllFilters,
   buildAttachmentSearchFilter,
 } from './utils/odata-filter-builder';
+export {searchItemsLocally} from './utils/local-search';
 export type {AsyncState, PaginatedState} from './utils/state';

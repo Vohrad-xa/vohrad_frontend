@@ -1,17 +1,16 @@
-import React, {useLayoutEffect, useEffect, useState, useMemo} from 'react';
+import React, {useLayoutEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {
-  usePendingFilters,
-  useClearPendingFilters,
-  useItemsManager,
-  buildODataFilter,
-} from '@vohrad/store';
-import {type ItemFilterState} from '@vohrad/types';
+import {useItemsManager} from '@vohrad/store';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useSearch} from '@/features/dashboard';
-import {ItemsList} from '@/features/item';
+import {
+  ItemsList,
+  useHybridItemSearch,
+  useServerSearchState,
+  useItemFilters,
+} from '@/features/item';
 import {useTheme} from '@/providers';
 import {AppIcons, makeStyleFactory} from '@/utils';
 
@@ -21,52 +20,21 @@ export default function ItemsScreen() {
   const navigation = useNavigation();
   const styles = createStyles(ds, theme);
   const {searchQuery: globalSearchQuery} = useSearch();
-
-  // Read filters from URL params
   const params = useLocalSearchParams<{filters?: string}>();
 
-  // Local state for filters
-  const [filters, setFilters] = useState<ItemFilterState>({
-    statuses: undefined,
-    trackingModes: undefined,
-    priceMin: null,
-    priceMax: null,
-    specifications: undefined,
+  // Manage server search state
+  const {shouldUseServerSearch, enableServerSearch} =
+    useServerSearchState(globalSearchQuery);
+
+  // Manage filters
+  const {filters, odataFilter} = useItemFilters({
+    urlParams: params.filters,
+    searchQuery: shouldUseServerSearch ? globalSearchQuery : undefined,
   });
-
-  const pendingFilters = usePendingFilters();
-  const clearPendingFilters = useClearPendingFilters();
-
-  // Apply filters from URL params
-  useEffect(() => {
-    if (params.filters) {
-      try {
-        const parsedFilters = JSON.parse(
-          decodeURIComponent(params.filters),
-        ) as ItemFilterState;
-        setFilters(parsedFilters);
-      } catch (error) {
-        console.error('Failed to parse filters from params:', error);
-      }
-    }
-  }, [params.filters]);
-
-  // Apply filters from modal when available
-  useEffect(() => {
-    if (pendingFilters) {
-      setFilters(pendingFilters);
-      clearPendingFilters();
-    }
-  }, [pendingFilters, clearPendingFilters]);
-
-  // Build OData filter from filters and search
-  const odataFilter = useMemo(() => {
-    return buildODataFilter(filters, globalSearchQuery);
-  }, [filters, globalSearchQuery]);
 
   // Use items manager with OData filter
   const {
-    items,
+    items: rawItems,
     isLoading,
     error,
     refresh,
@@ -76,6 +44,14 @@ export default function ItemsScreen() {
     isFetchingNextPage,
   } = useItemsManager({
     odataFilter,
+  });
+
+  // Hybrid search: local first, server fallback
+  const items = useHybridItemSearch({
+    items: rawItems,
+    searchQuery: globalSearchQuery,
+    onServerSearchNeeded: enableServerSearch,
+    isUsingServerSearch: shouldUseServerSearch,
   });
 
   useLayoutEffect(() => {

@@ -19,6 +19,11 @@ export {useItemForm} from './detail/use-item-form';
 export {useItemAttachmentUpload} from './detail/attachments/use-item-attachment-upload';
 export {useImageAttachments} from '../attachments/hooks/attachment-images';
 export {useItemLocation} from './detail/locations/use-item-location';
+export {
+  useHybridItemSearch,
+  useServerSearchState,
+} from './list/use-item-search';
+export {useItemFilters} from './list/use-item-filters';
 
 // Types
 export type {UseItemFormReturn} from './detail/use-item-form';
