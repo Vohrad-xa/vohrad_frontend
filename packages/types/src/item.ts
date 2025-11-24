@@ -95,7 +95,6 @@ type ItemDescriptiveFields = ItemRelationIdentifiers & {
   barcode?: string | null;
   description?: string | null;
   price?: number | null;
-  serial_number?: string | null;
   notes?: string | null;
   specifications?: ItemSpecifications;
   tracking_change_reason?: string | null;

@@ -51,9 +51,8 @@ export function ItemDetails({
   );
 
   const handleBasicInfoChange = useCallback(
-    (field: 'name' | 'sku' | 'serial_number', value: string) => {
-      const formField = field === 'serial_number' ? 'serialNumber' : field;
-      handleFieldChange(formField as keyof typeof formValues, value);
+    (field: 'name' | 'sku', value: string) => {
+      handleFieldChange(field, value);
     },
     [handleFieldChange],
   );
@@ -71,7 +70,6 @@ export function ItemDetails({
       <BasicInfo
         name={formValues.name}
         sku={formValues.sku}
-        serialNumber={formValues.serialNumber}
         onFieldChange={handleBasicInfoChange}
         isEditing={isEditing}
       />

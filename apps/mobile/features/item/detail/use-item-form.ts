@@ -6,7 +6,6 @@ import type {TrackingMode, ItemUpdate} from '@vohrad/types';
 interface ItemFormValues {
   name: string;
   sku: string;
-  serialNumber: string;
   description: string;
 }
 
@@ -15,7 +14,6 @@ interface UseItemFormProps {
   initialValues: {
     name?: string;
     sku?: string;
-    serialNumber?: string;
     description?: string | null;
     trackingMode?: TrackingMode;
     isActive?: boolean;
@@ -33,7 +31,6 @@ export function useItemForm({
   const [formValues, setFormValues] = useState<ItemFormValues>(() => ({
     name: initialValues.name ?? '',
     sku: initialValues.sku ?? '',
-    serialNumber: initialValues.serialNumber ?? '',
     description: initialValues.description ?? '',
   }));
 
@@ -48,7 +45,6 @@ export function useItemForm({
   const originalValues = useRef<ItemFormValues>({
     name: initialValues.name ?? '',
     sku: initialValues.sku ?? '',
-    serialNumber: initialValues.serialNumber ?? '',
     description: initialValues.description ?? '',
   });
 
@@ -57,7 +53,6 @@ export function useItemForm({
     const newValues: ItemFormValues = {
       name: initialValues.name ?? '',
       sku: initialValues.sku ?? '',
-      serialNumber: initialValues.serialNumber ?? '',
       description: initialValues.description ?? '',
     };
 
@@ -65,7 +60,6 @@ export function useItemForm({
     if (
       newValues.name !== originalValues.current.name ||
       newValues.sku !== originalValues.current.sku ||
-      newValues.serialNumber !== originalValues.current.serialNumber ||
       newValues.description !== originalValues.current.description
     ) {
       originalValues.current = newValues;
@@ -74,7 +68,6 @@ export function useItemForm({
   }, [
     initialValues.name,
     initialValues.sku,
-    initialValues.serialNumber,
     initialValues.description,
   ]);
 
@@ -90,7 +83,6 @@ export function useItemForm({
     return (
       formValues.name !== originalValues.current.name ||
       formValues.sku !== originalValues.current.sku ||
-      formValues.serialNumber !== originalValues.current.serialNumber ||
       formValues.description !== originalValues.current.description
     );
   }, [formValues]);
@@ -156,9 +148,6 @@ export function useItemForm({
     }
     if (formValues.sku !== originalValues.current.sku) {
       updates.sku = formValues.sku;
-    }
-    if (formValues.serialNumber !== originalValues.current.serialNumber) {
-      updates.serial_number = formValues.serialNumber;
     }
     if (formValues.description !== originalValues.current.description) {
       updates.description = formValues.description;

@@ -9,9 +9,8 @@ import {makeStyleFactory} from '@/utils/style-factory';
 interface BasicInfoProps {
   name?: string;
   sku?: string;
-  serialNumber?: string;
   onFieldChange?: (
-    field: 'name' | 'sku' | 'serial_number',
+    field: 'name' | 'sku',
     value: string,
   ) => void;
   isEditing: boolean;
@@ -20,7 +19,6 @@ interface BasicInfoProps {
 export function BasicInfo({
   name,
   sku,
-  serialNumber,
   onFieldChange,
   isEditing,
 }: BasicInfoProps) {
@@ -42,7 +40,7 @@ export function BasicInfo({
   const fields: Array<{
     label: string;
     value?: string;
-    field: 'name' | 'sku' | 'serial_number';
+    field: 'name' | 'sku';
     placeholder: string;
   }> = [
     {
@@ -56,12 +54,6 @@ export function BasicInfo({
       value: sku,
       field: 'sku',
       placeholder: 'Item SKU',
-    },
-    {
-      label: 'S/N',
-      value: serialNumber,
-      field: 'serial_number',
-      placeholder: 'Serial number',
     },
   ];
 
