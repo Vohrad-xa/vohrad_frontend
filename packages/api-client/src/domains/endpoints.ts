@@ -24,7 +24,6 @@ export const API_ENDPOINTS = {
   ITEMS: {
     LIST: '/items/',
     CREATE: '/items/',
-    SEARCH: '/items/search',
     ACTIVE: '/items/active',
     DETAIL: (id: string) => `/items/${id}`,
     BY_SKU: (sku: string) => `/items/sku/${sku}`,

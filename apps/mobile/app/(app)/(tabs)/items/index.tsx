@@ -1,9 +1,10 @@
-import React, {useLayoutEffect, useEffect} from 'react';
+import React, {useLayoutEffect, useEffect, useState, useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {
   usePendingFilters,
   useClearPendingFilters,
   useItemsManager,
+  buildODataFilter,
 } from '@vohrad/store';
 import {type ItemFilterState} from '@vohrad/types';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
@@ -24,27 +25,17 @@ export default function ItemsScreen() {
   // Read filters from URL params
   const params = useLocalSearchParams<{filters?: string}>();
 
-  const {
-    items,
-    isLoading,
-    error,
-    refresh,
-    getItemImageUrl,
-    hasNext,
-    onEndReached,
-    isFetchingNextPage,
-    filters,
-    setFilters,
-    setSearchQuery,
-  } = useItemsManager();
+  // Local state for filters
+  const [filters, setFilters] = useState<ItemFilterState>({
+    statuses: undefined,
+    trackingModes: undefined,
+    priceMin: null,
+    priceMax: null,
+    specifications: undefined,
+  });
 
   const pendingFilters = usePendingFilters();
   const clearPendingFilters = useClearPendingFilters();
-
-  // Sync global search query with the item manager's state
-  useEffect(() => {
-    setSearchQuery(globalSearchQuery);
-  }, [globalSearchQuery, setSearchQuery]);
 
   // Apply filters from URL params
   useEffect(() => {
@@ -58,7 +49,7 @@ export default function ItemsScreen() {
         console.error('Failed to parse filters from params:', error);
       }
     }
-  }, [params.filters, setFilters]);
+  }, [params.filters]);
 
   // Apply filters from modal when available
   useEffect(() => {
@@ -66,7 +57,26 @@ export default function ItemsScreen() {
       setFilters(pendingFilters);
       clearPendingFilters();
     }
-  }, [pendingFilters, setFilters, clearPendingFilters]);
+  }, [pendingFilters, clearPendingFilters]);
+
+  // Build OData filter from filters and search
+  const odataFilter = useMemo(() => {
+    return buildODataFilter(filters, globalSearchQuery);
+  }, [filters, globalSearchQuery]);
+
+  // Use items manager with OData filter
+  const {
+    items,
+    isLoading,
+    error,
+    refresh,
+    getItemImageUrl,
+    hasNext,
+    onEndReached,
+    isFetchingNextPage,
+  } = useItemsManager({
+    odataFilter,
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({

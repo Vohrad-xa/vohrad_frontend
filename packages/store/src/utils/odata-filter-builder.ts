@@ -4,7 +4,10 @@ import type {JsonValue, ItemFilterState} from '@vohrad/types';
  * Builds an OData filter string from filter state
  * Returns undefined if no filters are active
  */
-export function buildODataFilter(filters: ItemFilterState): string | undefined {
+export function buildODataFilter(
+  filters: ItemFilterState,
+  searchTerm?: string,
+): string | undefined {
   const conditions: string[] = [];
 
   // Status filter
@@ -40,6 +43,18 @@ export function buildODataFilter(filters: ItemFilterState): string | undefined {
         conditions.push(`specifications/${key} eq ${formattedValue}`);
       }
     });
+  }
+
+  // Search filter
+  if (searchTerm && searchTerm.trim().length > 0) {
+    const term = searchTerm.trim();
+    const searchConditions = [
+      `contains(name,'${term}')`,
+      `contains(sku,'${term}')`,
+      `contains(description,'${term}')`,
+      `contains(barcode,'${term}')`,
+    ];
+    conditions.push(`(${searchConditions.join(' or ')})`);
   }
 
   return conditions.length > 0 ? conditions.join(' and ') : undefined;

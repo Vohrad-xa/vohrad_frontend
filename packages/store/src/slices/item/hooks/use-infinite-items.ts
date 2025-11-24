@@ -1,33 +1,18 @@
 import {useInfiniteQuery} from '@tanstack/react-query';
 import {itemApi} from '@vohrad/api-client';
 
-// Note: OData filter logic will be handled by the manager
-// This hook just needs the final string.
-type ItemListFilters = {
-  searchQuery?: string;
-  odataFilter?: string;
-};
-
 const STALE_TIME = 5 * 60 * 1000;
 
 export function useInfiniteItems(
-  filters: ItemListFilters,
+  odataFilter?: string,
   pageSize = 20,
   enabled = true,
 ) {
-  const queryKey = ['items', 'list', filters];
+  const queryKey = ['items', 'list', odataFilter];
 
   return useInfiniteQuery({
     queryKey,
     queryFn: async ({pageParam = 1}) => {
-      const {searchQuery, odataFilter} = filters;
-
-      // If there's a search query, use the search API
-      if (searchQuery && searchQuery.trim().length > 0) {
-        return itemApi.searchItems(searchQuery, pageParam, pageSize);
-      }
-
-      // Otherwise, use the regular getItems API with optional filters
       return itemApi.getItems(pageParam, pageSize, odataFilter);
     },
     initialPageParam: 1,

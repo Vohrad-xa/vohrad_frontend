@@ -31,23 +31,6 @@ export class ItemApi {
     );
   }
 
-  async searchItems(
-    urlOrQuery: string,
-    page?: number,
-    size?: number,
-  ): Promise<ApiResponse<PaginatedResponse<Item>>> {
-    // If it's a URL string, use it directly
-    if (urlOrQuery.startsWith('http') || urlOrQuery.startsWith('/items')) {
-      return httpClient.get<PaginatedResponse<Item>>(urlOrQuery);
-    }
-
-    // Otherwise, build the URL from query/page/size
-    const query = urlOrQuery;
-    return httpClient.get<PaginatedResponse<Item>>(
-      `${API_ENDPOINTS.ITEMS.SEARCH}?q=${encodeURIComponent(query)}&page=${page}&size=${size}`,
-    );
-  }
-
   async getActiveItems(
     urlOrPage: string | number,
     size?: number,

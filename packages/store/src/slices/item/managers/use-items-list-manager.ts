@@ -1,33 +1,16 @@
-import {useCallback, useMemo, useState, useEffect} from 'react';
-import {useDebounce} from 'use-debounce';
+import {useCallback, useMemo, useEffect} from 'react';
 import {resolveAttachmentUrl} from '@vohrad/api-client';
-import type {Item, ItemFilterState} from '@vohrad/types';
+import type {Item} from '@vohrad/types';
 import {useAuthStore} from '../../../store';
-import {buildODataFilter} from '../../../utils/odata-filter-builder';
 import {useInfiniteItems} from '../hooks/use-infinite-items';
 
-const MIN_SEARCH_LENGTH = 3;
-const DEBOUNCE_DELAY = 500;
-
 type UseItemsListManagerOptions = {
-  initialFilters?: ItemFilterState;
-  initialSearchQuery?: string;
   pageSize?: number;
+  odataFilter?: string;
   enabled?: boolean;
 };
 
 export function useItemsListManager(options?: UseItemsListManagerOptions) {
-  const [searchQuery, setSearchQuery] = useState(
-    options?.initialSearchQuery ?? '',
-  );
-  const [filters, setFilters] = useState<ItemFilterState>(
-    options?.initialFilters ?? {},
-  );
-
-  const [debouncedSearchQuery] = useDebounce(searchQuery, DEBOUNCE_DELAY);
-
-  const odataFilter = useMemo(() => buildODataFilter(filters), [filters]);
-
   const {
     data,
     error,
@@ -39,13 +22,7 @@ export function useItemsListManager(options?: UseItemsListManagerOptions) {
     isFetchingNextPage,
     refetch,
   } = useInfiniteItems(
-    {
-      searchQuery:
-        debouncedSearchQuery.length >= MIN_SEARCH_LENGTH
-          ? debouncedSearchQuery
-          : '',
-      odataFilter,
-    },
+    options?.odataFilter,
     options?.pageSize,
     options?.enabled,
   );
@@ -64,13 +41,6 @@ export function useItemsListManager(options?: UseItemsListManagerOptions) {
       }
     }
   }, [isError, isSuccess, error, refetch]);
-
-  // When the initial filters change from props, update our internal state
-  useEffect(() => {
-    if (options?.initialFilters) {
-      setFilters(options.initialFilters);
-    }
-  }, [options?.initialFilters]);
 
   const items = useMemo(
     () => data?.pages.flatMap((page) => page.data.items) ?? [],
@@ -104,10 +74,6 @@ export function useItemsListManager(options?: UseItemsListManagerOptions) {
     hasNext: hasNextPage,
     loadMore,
     onEndReached: loadMore,
-    filters,
-    setFilters,
-    searchQuery,
-    setSearchQuery,
     refresh,
     getItemImageUrl,
   };
