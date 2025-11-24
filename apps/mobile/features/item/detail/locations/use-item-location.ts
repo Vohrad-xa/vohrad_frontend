@@ -93,7 +93,13 @@ export function useItemLocation() {
           throw new Error(message);
         }
 
-        await updateLocation(loc.id, {
+        if (!loc.item_location_id) {
+          const message = 'Item location identifier is missing.';
+          setError(message);
+          throw new Error(message);
+        }
+
+        await updateLocation(loc.item_location_id, {
           quantity: result.value,
         });
       }
@@ -109,11 +115,16 @@ export function useItemLocation() {
 
   performSaveRef.current = performSave;
 
-  const handleQuantityChange = useCallback((id: string, quantity: string) => {
-    setLocations((prev) =>
-      prev.map((loc) => (loc.id === id ? {...loc, quantity} : loc)),
-    );
-  }, []);
+  const handleQuantityChange = useCallback(
+    (itemLocationId: string, quantity: string) => {
+      setLocations((prev) =>
+        prev.map((loc) =>
+          loc.item_location_id === itemLocationId ? {...loc, quantity} : loc,
+        ),
+      );
+    },
+    [],
+  );
 
   const checkForChanges = useCallback(() => {
     return (

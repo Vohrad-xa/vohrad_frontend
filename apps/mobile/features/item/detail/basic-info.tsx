@@ -9,10 +9,7 @@ import {makeStyleFactory} from '@/utils/style-factory';
 interface BasicInfoProps {
   name?: string;
   sku?: string;
-  onFieldChange?: (
-    field: 'name' | 'sku',
-    value: string,
-  ) => void;
+  onFieldChange?: (field: 'name' | 'sku', value: string) => void;
   isEditing: boolean;
 }
 

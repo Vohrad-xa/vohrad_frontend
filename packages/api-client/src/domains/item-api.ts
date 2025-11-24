@@ -31,22 +31,6 @@ export class ItemApi {
     );
   }
 
-  async getActiveItems(
-    urlOrPage: string | number,
-    size?: number,
-  ): Promise<ApiResponse<PaginatedResponse<Item>>> {
-    // If it's a URL string, use it directly
-    if (typeof urlOrPage === 'string') {
-      return httpClient.get<PaginatedResponse<Item>>(urlOrPage);
-    }
-
-    // Otherwise, build the URL from page/size
-    const page = urlOrPage;
-    return httpClient.get<PaginatedResponse<Item>>(
-      `${API_ENDPOINTS.ITEMS.ACTIVE}?page=${page}&size=${size}`,
-    );
-  }
-
   async getItemById(id: string): Promise<ItemDetail> {
     const response = await httpClient.get<ItemDetail>(
       `${API_ENDPOINTS.ITEMS.DETAIL(id)}`,
@@ -81,13 +65,12 @@ export class ItemApi {
     await httpClient.delete(API_ENDPOINTS.ITEMS.DELETE(id));
   }
 
-  async updateItemLocation(
-    itemId: string,
-    locationId: string,
+  async updateItemLocationById(
+    itemLocationId: string,
     data: ItemLocationUpdate,
   ): Promise<void> {
     await httpClient.put(
-      API_ENDPOINTS.ITEMS.UPDATE_LOCATION(itemId, locationId),
+      API_ENDPOINTS.ITEM_LOCATIONS.UPDATE(itemLocationId),
       data,
     );
   }

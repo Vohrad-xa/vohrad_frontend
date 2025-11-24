@@ -14,8 +14,10 @@ export type ItemFilterState = {
 
 export interface ItemLocationData {
   id: string;
+  item_location_id: string;
   name: string;
   code: string;
+  item_lot_id?: string | null;
   quantity: number;
 }
 

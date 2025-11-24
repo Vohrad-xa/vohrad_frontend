@@ -44,11 +44,11 @@ export function useItemDetailManager(itemId: string | null | undefined) {
   }, [refetch]);
 
   const updateLocation = useCallback(
-    async (locationId: string, data: ItemLocationUpdate) => {
+    async (itemLocationId: string, data: ItemLocationUpdate) => {
       if (!itemId) {
         throw new Error('Item ID is required to update a location.');
       }
-      return updateLocationMutation.mutateAsync({itemId, locationId, data});
+      return updateLocationMutation.mutateAsync({itemId, itemLocationId, data});
     },
     [itemId, updateLocationMutation],
   );

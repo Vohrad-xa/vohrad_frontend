@@ -24,7 +24,6 @@ export const API_ENDPOINTS = {
   ITEMS: {
     LIST: '/items/',
     CREATE: '/items/',
-    ACTIVE: '/items/active',
     DETAIL: (id: string) => `/items/${id}`,
     BY_SKU: (sku: string) => `/items/sku/${sku}`,
     BY_BARCODE: (barcode: string) => `/items/barcode/${barcode}`,
@@ -35,6 +34,10 @@ export const API_ENDPOINTS = {
       `/items/${itemId}/locations/${locationId}`,
     DELETE_LOCATION: (itemId: string, locationId: string) =>
       `/items/${itemId}/locations/${locationId}`,
+  },
+  ITEM_LOCATIONS: {
+    UPDATE: (itemLocationId: string) => `/item-locations/${itemLocationId}`,
+    DELETE: (itemLocationId: string) => `/item-locations/${itemLocationId}`,
   },
   ATTACHMENTS: {
     LIST: '/attachments/',

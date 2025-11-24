@@ -44,15 +44,14 @@ export function useUpdateItemLocation() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({
-      itemId,
-      locationId,
+      itemLocationId,
       data,
     }: {
       itemId: string;
-      locationId: string;
+      itemLocationId: string;
       data: ItemLocationUpdate;
-    }) => itemApi.updateItemLocation(itemId, locationId, data),
-    onSuccess: (_, {itemId, locationId, data}) => {
+    }) => itemApi.updateItemLocationById(itemLocationId, data),
+    onSuccess: (_, {itemId, itemLocationId, data}) => {
       queryClient.setQueryData(
         ['items', 'detail', itemId],
         (old: ItemDetail | undefined) => {
@@ -60,7 +59,7 @@ export function useUpdateItemLocation() {
           // Update the specific location
           const updatedLocations = old.locations?.map(
             (loc: ItemLocationData) =>
-              loc.id === locationId
+              loc.item_location_id === itemLocationId
                 ? {...loc, quantity: data.quantity ?? loc.quantity}
                 : loc,
           );

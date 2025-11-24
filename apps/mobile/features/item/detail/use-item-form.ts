@@ -65,11 +65,7 @@ export function useItemForm({
       originalValues.current = newValues;
       setFormValues(newValues);
     }
-  }, [
-    initialValues.name,
-    initialValues.sku,
-    initialValues.description,
-  ]);
+  }, [initialValues.name, initialValues.sku, initialValues.description]);
 
   useEffect(() => {
     setOptimisticStatus(initialValues.isActive);

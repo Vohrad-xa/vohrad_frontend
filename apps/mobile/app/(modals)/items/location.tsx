@@ -46,7 +46,10 @@ export default function LocationModal() {
     <ModalScrollView>
       <View>
         {locations.map((location, index) => (
-          <View key={location.id} style={{gap: ds.spacing.sm}}>
+          <View
+            key={location.item_location_id ?? location.id}
+            style={{gap: ds.spacing.sm}}
+          >
             <ThemedText variant="value" style={styles.locationTitle}>
               {location.name}
             </ThemedText>
@@ -69,7 +72,10 @@ export default function LocationModal() {
                   borderless
                   value={location.quantity}
                   onChangeText={(text) =>
-                    handleQuantityChange(location.id, text)
+                    handleQuantityChange(
+                      location.item_location_id ?? location.id,
+                      text,
+                    )
                   }
                   editable={isEditMode}
                   keyboardType="decimal-pad"
