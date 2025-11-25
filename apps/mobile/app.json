@@ -12,6 +12,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "vohrad.mobile",
       "icon": "./assets/icons/ios/playstore-512.png",
+      "deploymentTarget": "15.1",
       "infoPlist": {
         "UIDesignRequiresCompatibility": true,
         "ITSAppUsesNonExemptEncryption": false,
