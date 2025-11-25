@@ -13,7 +13,6 @@
       "bundleIdentifier": "vohrad.mobile",
       "icon": "./assets/icons/ios/playstore-512.png",
       "infoPlist": {
-        "UIDesignRequiresCompatibility": true,
         "ITSAppUsesNonExemptEncryption": false,
         "NSFaceIDUsageDescription": "Face ID lets you unlock the app quickly and securely.",
         "NSCameraUsageDescription": "This app uses the camera to scan barcodes and QR codes for quick data entry."
