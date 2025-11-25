@@ -21,6 +21,11 @@ export {DatePickerWeb} from './date-picker-web';
 export {DatePickerMobile} from './date-picker-mobile';
 export {ContextMenu, type ContextMenuItem} from './context-menu';
 export {
+  NativeMenu,
+  type NativeMenuAction,
+  type NativeMenuProps,
+} from './native-menu';
+export {
   ListRow,
   type ListRowData,
   type ListPosition,
@@ -30,3 +35,4 @@ export {Card} from '../cards/card';
 export {SelectionOverlay} from './selection-overlay';
 export {SelectionCircle} from './selection-circle';
 export {ThemedStatusBar} from './themed-status-bar';
+export {PaperMenu} from './paper-menu';

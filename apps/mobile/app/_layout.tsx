@@ -6,6 +6,7 @@ import {Stack, useRootNavigationState} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
+import {PaperProvider} from 'react-native-paper';
 import {LoadingOverlay} from '@/components/ui';
 import {AttachmentProvider} from '@/features/attachments/providers/attachment-provider';
 import {useBootstrap} from '@/hooks/use-bootstrap';
@@ -64,20 +65,24 @@ export default function RootLayout() {
       <KeyboardProvider>
         <QueryClientProvider client={queryClient}>
           <AppThemeProvider>
-            <HapticProvider>
-              <ActionSheetProvider>
-                <NetworkProvider>
-                  <LoadingProvider>
-                    <AuthProvider>
-                      <AttachmentProvider>
-                        <RootNavigation isBootstrapComplete={useBootstrap()} />
-                        <NetworkBanner />
-                      </AttachmentProvider>
-                    </AuthProvider>
-                  </LoadingProvider>
-                </NetworkProvider>
-              </ActionSheetProvider>
-            </HapticProvider>
+            <PaperProvider>
+              <HapticProvider>
+                <ActionSheetProvider>
+                  <NetworkProvider>
+                    <LoadingProvider>
+                      <AuthProvider>
+                        <AttachmentProvider>
+                          <RootNavigation
+                            isBootstrapComplete={useBootstrap()}
+                          />
+                          <NetworkBanner />
+                        </AttachmentProvider>
+                      </AuthProvider>
+                    </LoadingProvider>
+                  </NetworkProvider>
+                </ActionSheetProvider>
+              </HapticProvider>
+            </PaperProvider>
           </AppThemeProvider>
         </QueryClientProvider>
       </KeyboardProvider>

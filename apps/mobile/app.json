@@ -60,7 +60,10 @@
     },
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": false
+      "reactCompiler": false,
+      "remoteBuildCache": {
+        "provider": "eas"
+      }
     },
     "extra": {
       "router": {},

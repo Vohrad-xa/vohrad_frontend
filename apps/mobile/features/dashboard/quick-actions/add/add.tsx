@@ -1,5 +1,6 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
+  Platform,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -7,7 +8,12 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
-import {ContextMenu, type ContextMenuItem, ThemedText} from '@/components/ui';
+import {
+  NativeMenu,
+  PaperMenu,
+  type NativeMenuAction,
+  ThemedText,
+} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon, type IconName} from '@/utils';
@@ -36,57 +42,48 @@ type AddQuickActionProps = {
 export function AddQuickAction({
   icon,
   label,
-  containerRef,
+  containerRef: _containerRef,
   actionStyles,
 }: AddQuickActionProps) {
   const {ds, theme} = useTheme();
   const componentStyles = useMemo(() => createStyles(ds, theme), [ds, theme]);
 
-  const anchorRef = useRef<View>(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [_activeTemplate, setActiveTemplate] = useState<TemplateKey>('item');
 
-  const [activeTemplate, setActiveTemplate] = useState<TemplateKey>('item');
+  const handleSelect = useCallback((actionId: string) => {
+    setActiveTemplate(actionId as TemplateKey);
+  }, []);
 
-  const openMenu = useCallback(() => setIsMenuOpen(true), []);
-  const closeMenu = useCallback(() => setIsMenuOpen(false), []);
-
-  const menuItems: ContextMenuItem[] = useMemo(
+  const menuActions: NativeMenuAction[] = useMemo(
     () =>
       TEMPLATE_OPTIONS.map(({label, key}) => ({
-        label,
-        isActive: activeTemplate === key,
-        onPress: () => setActiveTemplate(key),
+        id: key,
+        title: label,
       })),
-    [activeTemplate],
+    [],
   );
 
-  return (
-    <View ref={anchorRef} collapsable={false} style={componentStyles.wrapper}>
-      <TouchableOpacity
-        accessibilityHint="Opens quick add options"
-        accessibilityRole="button"
-        activeOpacity={0.7}
-        onPress={openMenu}
-        style={actionStyles.actionButton}
-      >
-        <View style={actionStyles.iconContainer}>
-          <Icon
-            name={icon}
-            size={ds.iconSize.xxl}
-            colorToken="quickActionIcon"
-          />
-        </View>
-        <ThemedText style={actionStyles.actionLabel}>{label}</ThemedText>
-      </TouchableOpacity>
+  const MenuComponent = Platform.OS === 'web' ? PaperMenu : NativeMenu;
 
-      <ContextMenu
-        items={menuItems}
-        isOpen={isMenuOpen}
-        onClose={closeMenu}
-        anchorRef={anchorRef}
-        containerRef={containerRef}
-        variant="compact"
-      />
+  return (
+    <View style={componentStyles.wrapper}>
+      <MenuComponent actions={menuActions} onSelect={handleSelect}>
+        <TouchableOpacity
+          accessibilityHint="Opens quick add options"
+          accessibilityRole="button"
+          activeOpacity={0.7}
+          style={actionStyles.actionButton}
+        >
+          <View style={actionStyles.iconContainer}>
+            <Icon
+              name={icon}
+              size={ds.iconSize.xxl}
+              colorToken="quickActionIcon"
+            />
+          </View>
+          <ThemedText style={actionStyles.actionLabel}>{label}</ThemedText>
+        </TouchableOpacity>
+      </MenuComponent>
     </View>
   );
 }
