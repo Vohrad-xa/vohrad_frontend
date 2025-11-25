@@ -12,7 +12,6 @@
       "supportsTablet": true,
       "bundleIdentifier": "vohrad.mobile",
       "icon": "./assets/icons/ios/playstore-512.png",
-      "deploymentTarget": "15.1",
       "infoPlist": {
         "UIDesignRequiresCompatibility": true,
         "ITSAppUsesNonExemptEncryption": false,
@@ -53,7 +52,9 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font",
+      "expo-web-browser"
     ],
     "assetBundlePatterns": ["**/*"],
     "developmentClient": {
@@ -61,10 +62,7 @@
     },
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": false,
-      "remoteBuildCache": {
-        "provider": "eas"
-      }
+      "reactCompiler": false
     },
     "extra": {
       "router": {},
