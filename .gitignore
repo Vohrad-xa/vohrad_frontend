@@ -22,7 +22,6 @@ out/
 # ---- React Native  ----
 .kotlin/
 **/android/
-**/ios/
 apps/mobile/.expo/
 apps/mobile/expo-env.d.ts
 apps/mobile/.cursor/
