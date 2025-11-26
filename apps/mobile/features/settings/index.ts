@@ -14,11 +14,10 @@ export type {SaveProfileOptions} from './profile/profile-content';
 
 // Organization Management
 export {
-  OrganizationContent,
-  type OrganizationContentHandle,
+  useOrganization,
   type SaveOrganizationOptions,
-} from './organization/organization-content';
-export {useOrganizationForm} from './organization/use-organization-form';
+  OrganizationHeaderInfo,
+} from './organization';
 
 // Preferences
 export {

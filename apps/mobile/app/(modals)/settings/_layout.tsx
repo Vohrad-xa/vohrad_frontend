@@ -60,11 +60,18 @@ export default function SettingsLayout() {
         <Stack.Screen name="preferences" options={{title: 'Preferences'}} />
         <Stack.Screen name="language" options={{title: 'App Language'}} />
         <Stack.Screen name="support" options={{title: 'Report an Issue'}} />
-        <Stack.Screen name="organization" options={{title: 'Organization'}} />
+        <Stack.Screen
+          name="organization/index"
+          options={{title: 'Organization'}}
+        />
         <Stack.Screen name="plan" options={{title: 'Plan'}} />
         <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
         <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
         <Stack.Screen name="about" options={{title: 'About'}} />
+        <Stack.Screen
+          name="organization/business-details"
+          options={{title: 'Business Details'}}
+        />
       </Stack>
     </ScreenLoadingWrapper>
   );
