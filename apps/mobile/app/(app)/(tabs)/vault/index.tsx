@@ -7,7 +7,7 @@ import {
   useDashboardOverview,
 } from '@vohrad/store';
 import {useNavigation, useRouter, useLocalSearchParams} from 'expo-router';
-import {RefreshableScrollView, HeaderButton, ThemedText} from '@/components/ui';
+import {RefreshableScrollView, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AttachmentsOverview,
@@ -15,6 +15,7 @@ import {
   computeAttachmentCounts,
   useAttachmentSearch,
   useAttachmentPress,
+  VaultActionsMenu,
 } from '@/features/attachments';
 import {useAttachmentContext} from '@/features/attachments/providers/attachment-provider';
 import {AllAttachmentsList} from '@/features/attachments/screens/all-attachments-list';
@@ -163,13 +164,7 @@ export default function VaultScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <HeaderButton
-          variant="add"
-          onPress={handleAddPress}
-          accessibilityLabel="Add attachment"
-        />
-      ),
+      headerRight: () => <VaultActionsMenu onAddDocument={handleAddPress} />,
     });
   }, [navigation, handleAddPress]);
 

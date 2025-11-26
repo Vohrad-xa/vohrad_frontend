@@ -10,12 +10,21 @@ export const SFSymbols = {
   lock: 'lock',
   lockFill: 'lock.fill',
   rectangleStackFill: 'rectangle.stack.fill',
+  docText: 'doc.text',
+  doc: 'doc',
   docTextFill: 'doc.text',
   docFill: 'doc.fill',
   archiveBoxFill: 'archivebox.fill',
-  archiveboxFill: 'archivebox.fill',
+  archivebox: 'archivebox',
   photoFill: 'photo.fill',
+  photo: 'photo',
   videoFill: 'video.fill',
+  ellipsis: 'ellipsis',
+  plusCircle: 'plus.circle',
+  camera: 'camera',
+  cameraFill: 'camera.fill',
+  lineHorizontalFilter: 'line.horizontal.3.circle',
+  checkmarkCircleOutline: 'checkmark.circle',
 } as const;
 
 export type SFSymbolName = (typeof SFSymbols)[keyof typeof SFSymbols];

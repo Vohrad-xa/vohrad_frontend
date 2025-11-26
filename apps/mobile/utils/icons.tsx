@@ -28,6 +28,8 @@ export type IconName =
   | 'card-outline'
   | 'business-outline'
   | 'lock-closed-outline'
+  | 'ellipsis-horizontal'
+  | 'ellipsis-vertical'
 
   // Inventory & Management
   | 'albums-outline'
@@ -184,6 +186,7 @@ export const AppIcons = {
     forward: 'chevron-forward-outline' as IconName,
     close: 'close-outline' as IconName,
     chevron: 'chevron-forward-outline' as IconName,
+    more: 'ellipsis-horizontal' as IconName,
   },
 
   inventory: {

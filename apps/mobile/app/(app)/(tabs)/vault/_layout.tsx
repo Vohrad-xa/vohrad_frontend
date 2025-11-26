@@ -3,6 +3,7 @@ import {Platform, View, StyleSheet} from 'react-native';
 import {Stack} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {VaultOptionsMenu} from '@/features/attachments';
 import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme, useSidebar} from '@/providers';
 import {AppIcons, makeStyleFactory} from '@/utils';
@@ -88,6 +89,21 @@ function VaultStack() {
           name="documents"
           options={{
             headerTitle: 'Documents',
+            headerRight: () => <VaultOptionsMenu />,
+          }}
+        />
+        <Stack.Screen
+          name="archives"
+          options={{
+            headerTitle: 'Archives',
+            headerRight: () => <VaultOptionsMenu />,
+          }}
+        />
+        <Stack.Screen
+          name="other"
+          options={{
+            headerTitle: 'Other Attachments',
+            headerRight: () => <VaultOptionsMenu />,
           }}
         />
       </Stack>

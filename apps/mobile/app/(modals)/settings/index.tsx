@@ -1,4 +1,4 @@
-import {useMemo, useCallback, useRef, useState} from 'react';
+import {useMemo, useCallback} from 'react';
 import type {ReactNode} from 'react';
 import {StyleSheet, View} from 'react-native';
 import type {ListRenderItem} from 'react-native';
@@ -29,9 +29,6 @@ export default function SettingsModal() {
   const insets = useSafeAreaInsets();
   const styles = createStyles(ds, theme, insets.bottom);
   const computedSettingsItems = useSettingsItems();
-  const [themeMenuOpen, setThemeMenuOpen] = useState(false);
-  const appearanceAnchorRef = useRef<View>(null);
-  const containerRef = useRef<View>(null);
 
   // Type guard to check for toggle items
   const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem =>
@@ -77,10 +74,6 @@ export default function SettingsModal() {
     return itemsWithDividers;
   }, [computedSettingsItems, logout]);
 
-  const openAppearanceMenu = useCallback(() => {
-    setThemeMenuOpen(true);
-  }, []);
-
   const renderItem: ListRenderItem<SettingsListItem> = useCallback(
     ({item}) => {
       if (isDividerItem(item)) {
@@ -95,16 +88,18 @@ export default function SettingsModal() {
         }
       } else if (item.id === 'appearance') {
         accessory = (
-          <>
-            <ThemedText style={styles.themeStatusText}>
-              {preference === 'system'
-                ? 'System'
-                : preference === 'light'
-                  ? 'Light'
-                  : 'Dark'}
-            </ThemedText>
-            <Icon name={AppIcons.navigation.forward} color={theme.muted} />
-          </>
+          <AppearanceMenu>
+            <View style={styles.appearanceAccessory}>
+              <ThemedText style={styles.themeStatusText}>
+                {preference === 'system'
+                  ? 'System'
+                  : preference === 'light'
+                    ? 'Light'
+                    : 'Dark'}
+              </ThemedText>
+              <Icon name={AppIcons.navigation.forward} color={theme.muted} />
+            </View>
+          </AppearanceMenu>
         );
       } else if (!item.isDestructive) {
         accessory = (
@@ -112,69 +107,45 @@ export default function SettingsModal() {
         );
       }
 
-      const content = (
+      return (
         <ListItem
           label={item.label}
           icon={item.icon}
-          onPress={item.id === 'appearance' ? openAppearanceMenu : item.onPress}
+          onPress={item.onPress}
           isDestructive={item.isDestructive}
         >
           {accessory}
         </ListItem>
       );
-
-      if (item.id === 'appearance') {
-        return (
-          <View ref={appearanceAnchorRef} collapsable={false}>
-            {content}
-          </View>
-        );
-      }
-
-      return content;
     },
-    [openAppearanceMenu, preference, styles, theme],
+    [preference, styles, theme],
   );
 
   return (
-    <View
-      ref={containerRef}
-      collapsable={false}
-      style={styles.containerWrapper}
-    >
-      <ThemedView style={styles.container}>
-        <ModalFlatList
-          data={allSettingsItems}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.modalFlatListContent}
-          showsVerticalScrollIndicator
-        />
-
-        <AppearanceMenu
-          isOpen={themeMenuOpen}
-          onClose={() => {
-            setThemeMenuOpen(false);
-          }}
-          anchorRef={appearanceAnchorRef}
-          containerRef={containerRef}
-        />
-      </ThemedView>
-    </View>
+    <ThemedView style={styles.container}>
+      <ModalFlatList
+        data={allSettingsItems}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.modalFlatListContent}
+        showsVerticalScrollIndicator
+      />
+    </ThemedView>
   );
 }
 
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape, insetsBottom: number) =>
     StyleSheet.create({
-      containerWrapper: {
-        flex: 1,
-      },
       container: {
         flex: 1,
       },
       divider: {
         marginVertical: ds.spacing.sm,
+      },
+      appearanceAccessory: {
+        flexDirection: 'row',
+        alignItems: 'center',
       },
       themeStatusText: {
         ...ds.typography.secondary,

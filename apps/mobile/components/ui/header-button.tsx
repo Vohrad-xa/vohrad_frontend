@@ -1,23 +1,31 @@
 import type {FC} from 'react';
 import {Platform, Pressable, StyleSheet, Text} from 'react-native';
+import {SymbolView} from 'expo-symbols';
 import type {TokenName} from '@/constants/colors';
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {RequiredIconProps, BaseViewProps} from '@/types';
-import {Icon, AppIcons, type IconName} from '@/utils';
+import {
+  Icon,
+  AppIcons,
+  SFSymbols,
+  type IconName,
+  type SFSymbolName,
+} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 export type HeaderButtonVariant =
-  | 'close' // X icon, muted color
-  | 'cancel' // "Cancel" text, destructive color
-  | 'save' // "Save" text, accent green when has changes
-  | 'edit' // "Edit" text, accent blue
-  | 'add' // Plus icon, accent blue
-  | 'success' // Check icon, accent green
-  | 'action' // Any custom icon/text with accent blue
-  | 'back' // Back arrow icon
-  | 'secondary' // Secondary text button
-  | 'destructive'; // Destructive text button
+  | 'close'
+  | 'cancel'
+  | 'save'
+  | 'edit'
+  | 'add'
+  | 'more'
+  | 'success'
+  | 'action'
+  | 'back'
+  | 'secondary'
+  | 'destructive';
 
 export interface HeaderButtonProps
   extends Omit<RequiredIconProps, 'icon'>,
@@ -25,6 +33,7 @@ export interface HeaderButtonProps
   onPress?: () => void;
   variant?: HeaderButtonVariant;
   icon?: IconName;
+  sfSymbol?: SFSymbolName;
   text?: string;
   textColor?: string;
   textColorToken?: TokenName;
@@ -36,6 +45,7 @@ export interface HeaderButtonProps
 export const HeaderButton: FC<HeaderButtonProps> = ({
   variant,
   icon,
+  sfSymbol,
   text,
   onPress,
   iconColor,
@@ -90,6 +100,13 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
           color: theme.accentBlue,
           iconSize: 'lg' as const,
         };
+      case 'more':
+        return {
+          icon: AppIcons.navigation.more,
+          sfSymbol: SFSymbols.ellipsis,
+          color: theme.text,
+          iconSize: 'lg' as const,
+        };
       case 'back':
         return {
           icon: AppIcons.navigation.back,
@@ -117,6 +134,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
 
   // Use variant config as defaults
   const finalIcon = icon ?? variantConfig.icon;
+  const finalSfSymbol = sfSymbol ?? variantConfig.sfSymbol;
   const finalText = text ?? variantConfig.text;
   const finalIconSize = iconSize ?? variantConfig.iconSize ?? 'lg';
   const finalIconColor =
@@ -128,11 +146,19 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
 
   // Determine button content
   const buttonContent = finalIcon ? (
-    <Icon
-      name={finalIcon}
-      color={finalIconColor}
-      size={ds.iconSize[finalIconSize]}
-    />
+    Platform.OS === 'ios' && finalSfSymbol ? (
+      <SymbolView
+        name={finalSfSymbol}
+        size={ds.iconSize[finalIconSize]}
+        tintColor={finalIconColor}
+      />
+    ) : (
+      <Icon
+        name={finalIcon}
+        color={finalIconColor}
+        size={ds.iconSize[finalIconSize]}
+      />
+    )
   ) : finalText ? (
     <Text style={[styles.text, {color: finalTextColor}]}>{finalText}</Text>
   ) : null;

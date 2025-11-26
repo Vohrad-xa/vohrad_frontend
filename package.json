@@ -1,9 +1,9 @@
 {
   "devDependencies": {
     "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.5",
     "@typescript-eslint/eslint-plugin": "^8.43.0",
     "@typescript-eslint/parser": "^8.43.0",
-    "@types/jest": "^29.5.5",
     "eslint": "^9.25.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -40,6 +40,9 @@
     },
     "ignoredBuiltDependencies": [
       "esbuild"
-    ]
+    ],
+    "patchedDependencies": {
+      "@react-native-menu/menu@2.0.0": "patches/@react-native-menu__menu@2.0.0.patch"
+    }
   }
 }

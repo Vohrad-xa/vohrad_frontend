@@ -1,52 +1,42 @@
-import {useMemo, type RefObject} from 'react';
-import type {View} from 'react-native';
-import {ContextMenu, type ContextMenuItem} from '@/components/ui';
+import {useMemo, type ReactNode} from 'react';
+import {NativeMenu, type NativeMenuAction} from '@/components/ui';
 import {useTheme} from '@/providers';
 
 type AppearanceMenuProps = {
-  isOpen: boolean;
-  onClose: () => void;
-  anchorRef?: RefObject<View | null>;
-  containerRef?: RefObject<View | null>;
+  children: ReactNode;
 };
 
-export function AppearanceMenu({
-  isOpen,
-  onClose,
-  anchorRef,
-  containerRef,
-}: AppearanceMenuProps) {
+export function AppearanceMenu({children}: AppearanceMenuProps) {
   const {preference, setScheme} = useTheme();
 
-  const menuItems: ContextMenuItem[] = useMemo(
+  const menuActions: NativeMenuAction[] = useMemo(
     () => [
       {
-        label: 'Light',
-        onPress: () => setScheme('light'),
-        isActive: preference === 'light',
+        id: 'light',
+        title: 'Light',
+        state: preference === 'light' ? 'on' : undefined,
       },
       {
-        label: 'Dark',
-        onPress: () => setScheme('dark'),
-        isActive: preference === 'dark',
+        id: 'dark',
+        title: 'Dark',
+        state: preference === 'dark' ? 'on' : undefined,
       },
       {
-        label: 'System',
-        onPress: () => setScheme('system'),
-        isActive: preference === 'system',
+        id: 'system',
+        title: 'System',
+        state: preference === 'system' ? 'on' : undefined,
       },
     ],
-    [preference, setScheme],
+    [preference],
   );
 
+  const handleSelect = (actionId: string) => {
+    setScheme(actionId as 'light' | 'dark' | 'system');
+  };
+
   return (
-    <ContextMenu
-      items={menuItems}
-      isOpen={isOpen}
-      onClose={onClose}
-      anchorRef={anchorRef}
-      containerRef={containerRef}
-      variant="compact"
-    />
+    <NativeMenu actions={menuActions} onSelect={handleSelect} isAnchoredToRight>
+      {children}
+    </NativeMenu>
   );
 }

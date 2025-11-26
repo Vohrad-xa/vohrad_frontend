@@ -134,7 +134,6 @@ const createStyles = makeStyleFactory(
       },
       mainContent: {
         flex: 1,
-        boxShadow: '2px 0px 10px rgba(0, 0, 0, 0.67)',
       },
       border: {
         position: 'absolute',

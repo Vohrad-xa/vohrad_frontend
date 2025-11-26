@@ -8,6 +8,8 @@ export {AttachmentDestinationCard} from './components/attachment-destination-car
 export {AttachmentImagePreview} from './components/attachment-image-preview';
 export {AttachmentDocumentPreview} from './components/attachment-document-preview';
 export {SelectableImageTile} from './components/selectable-image-tile';
+export {VaultActionsMenu} from './components/vault-actions-menu';
+export {VaultOptionsMenu} from './components/vault-options-menu';
 
 // Types
 export type {AttachmentKindTile} from './components/attachment-kind-grid';

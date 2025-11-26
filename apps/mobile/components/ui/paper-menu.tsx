@@ -61,7 +61,7 @@ export function PaperMenu({
         if (action.hidden) return null;
 
         const items = [];
-        if (action.divider && index > 0) {
+        if (action.displayInline && index > 0) {
           items.push(<Divider key={`divider-${action.id}`} />);
         }
 
