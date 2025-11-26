@@ -62,11 +62,27 @@ export type TenantProfileUpdate = Partial<
   >
 >;
 
+export interface License {
+  created_at: string;
+  updated_at: string;
+  id: string;
+  tenant_id: string;
+  name: string;
+  price: string;
+  seats: number;
+  license_key: string;
+  starts_at: string;
+  ends_at: string;
+  status: 'active' | 'inactive' | 'suspended' | 'expired';
+  features: JsonValue | null;
+  meta: JsonValue | null;
+}
+
 export interface TenantLicenseInfo {
-  license_id?: string | null;
-  seat_usage?: {
-    total_seats: number;
-    used_seats: number;
-    available_seats: number;
-  };
+  has_license: boolean;
+  license: License | null;
+  seats_used: number;
+  seats_available: number;
+  seats_total: number;
+  is_active: boolean;
 }

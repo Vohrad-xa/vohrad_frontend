@@ -17,6 +17,9 @@ export {
   useUpdateTenantSettings,
   usePreferencesManager,
   useOrganizationManager,
+  useTenantLicenseInfo,
+  useFetchTenantLicenseInfo,
+  useLicenseInfoManager,
 } from './slices/tenant';
 export {
   systemSelectors,
@@ -57,6 +60,8 @@ export type {
   User,
   AuthTokens,
   Tenant,
+  TenantLicenseInfo,
+  License,
   Item,
   ItemDetail,
   ItemLocationUpdate,

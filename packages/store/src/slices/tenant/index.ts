@@ -4,6 +4,12 @@ export {
   useOrganizationDetails,
   useUpdateTenant,
   useUpdateTenantSettings,
+  useTenantLicenseInfo,
+  useFetchTenantLicenseInfo,
 } from './hooks';
-export {usePreferencesManager, useOrganizationManager} from './managers';
+export {
+  usePreferencesManager,
+  useOrganizationManager,
+  useLicenseInfoManager,
+} from './managers';
 export type {TenantSlice} from './slice';

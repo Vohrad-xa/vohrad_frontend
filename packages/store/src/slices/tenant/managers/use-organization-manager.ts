@@ -92,8 +92,9 @@ export function useOrganizationManager(isEditing: boolean) {
 
   const submitUpdate = useCallback(async () => {
     const updateData = getUpdateData();
-    await updateTenantProfile(updateData);
+    const updatedTenant = await updateTenantProfile(updateData);
     setStagedValues({});
+    return updatedTenant;
   }, [getUpdateData, updateTenantProfile]);
 
   return {

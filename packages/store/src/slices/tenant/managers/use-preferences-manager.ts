@@ -139,7 +139,7 @@ export function usePreferencesManager() {
       }
     });
 
-    await updateTenantSettings(updateData);
+    const updatedTenant = await updateTenantSettings(updateData);
     setInitialPreferences({...preferences});
     setCachedBusinessHours({
       start: preferences.business_hour_start,
@@ -149,6 +149,7 @@ export function usePreferencesManager() {
       preferences.business_hour_start.length > 0 ||
         preferences.business_hour_end.length > 0,
     );
+    return updatedTenant;
   }, [computeUpdateValue, updateTenantSettings, preferences]);
 
   const toggleBusinessHours = useCallback(
@@ -173,7 +174,7 @@ export function usePreferencesManager() {
         }));
 
         try {
-          await updateTenantSettings({
+          const updatedTenant = await updateTenantSettings({
             business_hour_start: null,
             business_hour_end: null,
           });
@@ -182,6 +183,7 @@ export function usePreferencesManager() {
             business_hour_start: '',
             business_hour_end: '',
           }));
+          return updatedTenant;
         } catch (error) {
           setBusinessHoursEnabled(previousEnabled);
           setCachedBusinessHours(previousCached);
@@ -189,7 +191,6 @@ export function usePreferencesManager() {
           setInitialPreferences(previousInitial);
           throw error;
         }
-        return;
       }
 
       const nextStart =
@@ -209,7 +210,7 @@ export function usePreferencesManager() {
       }));
 
       try {
-        await updateTenantSettings({
+        const updatedTenant = await updateTenantSettings({
           business_hour_start: nextStart,
           business_hour_end: nextEnd,
         });
@@ -219,6 +220,7 @@ export function usePreferencesManager() {
           business_hour_start: nextStart,
           business_hour_end: nextEnd,
         }));
+        return updatedTenant;
       } catch (error) {
         setBusinessHoursEnabled(previousEnabled);
         setCachedBusinessHours(previousCached);
