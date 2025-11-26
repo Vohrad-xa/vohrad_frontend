@@ -3,10 +3,10 @@ export const formatDate = (isoString?: string | null): string => {
 
   try {
     const date = new Date(isoString);
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'long',
       year: 'numeric',
-      month: 'short',
-      day: 'numeric',
     });
   } catch {
     return 'Invalid date';
