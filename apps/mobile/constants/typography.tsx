@@ -197,7 +197,7 @@ export const createDesignSystem = (
       // Label (Settings left side) - iOS Body / Android Body Large
       label: createPlatformTypography(
         {
-          fontSize: 17,
+          fontSize: 16.5,
           lineHeight: 1.294,
           fontWeight: '400',
           letterSpacing: 0,

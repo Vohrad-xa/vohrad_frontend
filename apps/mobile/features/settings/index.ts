@@ -27,9 +27,6 @@ export {
   type SavePreferencesOptions,
 } from './preferences/preferences-content';
 
-// Hooks
-export {useSettingsItems} from './hooks/use-settings-items';
-
 // Types
 export type {
   SettingsItem,

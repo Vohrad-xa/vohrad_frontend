@@ -67,7 +67,7 @@ export function VaultOptionsMenu({
     setResourceSelection(null);
   }, [filterByItems, filterByLocations, filterByMaintenances]);
 
-  const resourceSubtitle =
+  const selectedResourceLabel =
     resourceSelection === 'items'
       ? 'Items'
       : resourceSelection === 'locations'
@@ -75,6 +75,12 @@ export function VaultOptionsMenu({
         : resourceSelection === 'maintenances'
           ? 'Maintenances'
           : undefined;
+
+  const resourceTitle = selectedResourceLabel
+    ? `Resource — ${selectedResourceLabel}`
+    : 'Resource';
+
+  const resourceSubtitle = selectedResourceLabel;
 
   const resourceState: NativeMenuAction['state'] =
     resourceSelection !== null ? 'on' : undefined;
@@ -127,27 +133,30 @@ export function VaultOptionsMenu({
     },
     {
       id: 'resource',
-      title: 'Resource',
+      title: resourceTitle,
       subtitle: resourceSubtitle,
       state: resourceState,
-      menuOptions: {singleSelection: true},
       keepsMenuPresented: true,
       subactions: [
         {
           id: 'resource-items',
           title: 'Items',
+          subtitle: resourceSelection === 'items' ? 'Selected' : undefined,
           state: resourceSelection === 'items' ? 'on' : 'off',
           keepsMenuPresented: true,
         },
         {
           id: 'resource-locations',
           title: 'Locations',
+          subtitle: resourceSelection === 'locations' ? 'Selected' : undefined,
           state: resourceSelection === 'locations' ? 'on' : 'off',
           keepsMenuPresented: true,
         },
         {
           id: 'resource-maintenances',
           title: 'Maintenances',
+          subtitle:
+            resourceSelection === 'maintenances' ? 'Selected' : undefined,
           state: resourceSelection === 'maintenances' ? 'on' : 'off',
           keepsMenuPresented: true,
         },

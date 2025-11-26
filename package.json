@@ -32,7 +32,7 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check"
   },
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@10.23.0",
   "pnpm": {
     "overrides": {
       "glob": "^10.4.5",
@@ -40,9 +40,6 @@
     },
     "ignoredBuiltDependencies": [
       "esbuild"
-    ],
-    "patchedDependencies": {
-      "@react-native-menu/menu@2.0.0": "patches/@react-native-menu__menu@2.0.0.patch"
-    }
+    ]
   }
 }

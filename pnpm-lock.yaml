@@ -8,11 +8,6 @@ overrides:
   glob: ^10.4.5
   rimraf: ^6.0.1
 
-patchedDependencies:
-  '@react-native-menu/menu@2.0.0':
-    hash: 06688efef7717246dbf572fd81eb69e5e34d4c21c139a83d6c87057c151273c1
-    path: patches/@react-native-menu__menu@2.0.0.patch
-
 importers:
 
   .:
@@ -91,7 +86,7 @@ importers:
         version: 5.0.1
       '@react-native-menu/menu':
         specifier: ^2.0.0
-        version: 2.0.0(patch_hash=06688efef7717246dbf572fd81eb69e5e34d4c21c139a83d6c87057c151273c1)(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+        version: 2.0.0(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
       '@react-navigation/bottom-tabs':
         specifier: ^7.4.0
         version: 7.4.7(@react-navigation/native@7.1.17(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.6.1(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native-screens@4.16.0(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
@@ -7749,7 +7744,7 @@ snapshots:
 
   '@react-native-community/slider@5.0.1': {}
 
-  '@react-native-menu/menu@2.0.0(patch_hash=06688efef7717246dbf572fd81eb69e5e34d4c21c139a83d6c87057c151273c1)(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)':
+  '@react-native-menu/menu@2.0.0(react-native@0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)':
     dependencies:
       react: 19.1.0
       react-native: 0.81.5(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0)

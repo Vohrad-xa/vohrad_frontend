@@ -19,7 +19,6 @@ export {InfoRow} from '../cards/info-row';
 export {InfoRowCard, type InfoField} from '../cards/info-row-card';
 export {DatePickerWeb} from './date-picker-web';
 export {DatePickerMobile} from './date-picker-mobile';
-export {ContextMenu, type ContextMenuItem} from './context-menu';
 export {
   NativeMenu,
   type NativeMenuAction,

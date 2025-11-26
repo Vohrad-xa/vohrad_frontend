@@ -1,161 +1,165 @@
-import {useMemo, useCallback} from 'react';
-import type {ReactNode} from 'react';
+import {useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
-import type {ListRenderItem} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {
-  ThemedView,
-  ThemedText,
-  Divider,
-  ListItem,
-  ModalFlatList,
-} from '@/components/ui';
+import {router} from 'expo-router';
+import {Card} from '@/components/cards/card';
+import {ThemedView, ThemedText, ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {
-  BiometricToggle,
-  AppearanceMenu,
-  useSettingsItems,
-  isDividerItem,
-  type ListItem as SettingsListItem,
-  type SettingsItem,
-  type ToggleSettingsItem,
-} from '@/features/settings';
+import {AppearanceMenu} from '@/features/settings';
 import {useTheme, useAuth} from '@/providers';
-import {Icon, AppIcons, showConfirmAlert, makeStyleFactory} from '@/utils';
+import {AppIcons, showConfirmAlert, makeStyleFactory} from '@/utils';
 
 export default function SettingsModal() {
-  const {ds, theme, preference} = useTheme();
+  const {ds, theme, scheme} = useTheme();
   const {logout} = useAuth();
-  const insets = useSafeAreaInsets();
-  const styles = createStyles(ds, theme, insets.bottom);
-  const computedSettingsItems = useSettingsItems();
+  const styles = createStyles(ds, theme);
 
-  // Type guard to check for toggle items
-  const isToggleItem = (item: SettingsListItem): item is ToggleSettingsItem =>
-    'hasToggle' in item;
-
-  const allSettingsItems = useMemo(() => {
-    const itemsWithDividers: SettingsListItem[] = [];
-
-    const destructiveItems: SettingsItem[] = [
-      {
-        id: 'logout',
-        icon: AppIcons.actions.logout,
-        label: 'Logout',
-        isDestructive: true,
-        onPress: () => {
-          showConfirmAlert({
-            title: 'Logout',
-            message: 'Are you sure you want to logout?',
-            confirmText: 'Logout',
-            cancelText: 'Cancel',
-            destructive: true,
-            onConfirm: () => {
-              logout();
-            },
-          });
-        },
+  const handleLogout = useCallback(() => {
+    showConfirmAlert({
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      confirmText: 'Logout',
+      cancelText: 'Cancel',
+      destructive: true,
+      onConfirm: () => {
+        logout();
       },
-    ];
-
-    computedSettingsItems.forEach((item) => {
-      itemsWithDividers.push(item);
-      if (item.showDividerAfter) {
-        itemsWithDividers.push({id: `divider-${item.id}`, isDivider: true});
-      }
     });
-
-    itemsWithDividers.push({id: 'main-divider', isDivider: true});
-
-    destructiveItems.forEach((item) => {
-      itemsWithDividers.push(item);
-    });
-
-    return itemsWithDividers;
-  }, [computedSettingsItems, logout]);
-
-  const renderItem: ListRenderItem<SettingsListItem> = useCallback(
-    ({item}) => {
-      if (isDividerItem(item)) {
-        return <Divider style={styles.divider} />;
-      }
-
-      let accessory: ReactNode = null;
-
-      if (isToggleItem(item)) {
-        if (item.id === 'biometric-unlock') {
-          accessory = <BiometricToggle />;
-        }
-      } else if (item.id === 'appearance') {
-        accessory = (
-          <AppearanceMenu>
-            <View style={styles.appearanceAccessory}>
-              <ThemedText style={styles.themeStatusText}>
-                {preference === 'system'
-                  ? 'System'
-                  : preference === 'light'
-                    ? 'Light'
-                    : 'Dark'}
-              </ThemedText>
-              <Icon name={AppIcons.navigation.forward} color={theme.muted} />
-            </View>
-          </AppearanceMenu>
-        );
-      } else if (!item.isDestructive) {
-        accessory = (
-          <Icon name={AppIcons.navigation.forward} color={theme.muted} />
-        );
-      }
-
-      return (
-        <ListItem
-          label={item.label}
-          icon={item.icon}
-          onPress={item.onPress}
-          isDestructive={item.isDestructive}
-        >
-          {accessory}
-        </ListItem>
-      );
-    },
-    [preference, styles, theme],
-  );
+  }, [logout]);
 
   return (
     <ThemedView style={styles.container}>
-      <ModalFlatList
-        data={allSettingsItems}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.modalFlatListContent}
-        showsVerticalScrollIndicator
-      />
+      <ModalScrollView contentContainerStyle={styles.contentContainer}>
+        <Card>
+          <Card.Row
+            icon={AppIcons.business.profile}
+            onPress={() => router.push('/(modals)/settings/profile')}
+          >
+            <ThemedText variant="label">Profile</ThemedText>
+          </Card.Row>
+          <Card.Divider withIconOffset />
+          <Card.Row
+            icon={AppIcons.business.organization}
+            onPress={() => router.push('/(modals)/settings/organization')}
+          >
+            <ThemedText variant="label">Organization</ThemedText>
+          </Card.Row>
+        </Card>
+
+        <Card>
+          <Card.Row
+            icon={AppIcons.navigation.settings}
+            onPress={() => router.push('/(modals)/settings/app-settings')}
+          >
+            <ThemedText variant="label">App Settings</ThemedText>
+          </Card.Row>
+          <Card.Divider withIconOffset />
+          <Card.Row
+            icon={AppIcons.business.plan}
+            onPress={() => router.push('/(modals)/settings/plan')}
+          >
+            <ThemedText variant="label">Plan</ThemedText>
+          </Card.Row>
+          <Card.Divider withIconOffset />
+          <Card.Row
+            icon={
+              scheme === 'dark' ? AppIcons.theme.light : AppIcons.theme.dark
+            }
+            hideChevron
+          >
+            <View style={styles.rowContent}>
+              <ThemedText variant="label" style={styles.appearanceLabel}>
+                Appearance
+              </ThemedText>
+              <AppearanceMenu style={styles.appearanceMenuStyle} />
+            </View>
+          </Card.Row>
+          <Card.Divider withIconOffset />
+          <Card.Row
+            icon={AppIcons.navigation.settings}
+            onPress={() => router.push('/(modals)/settings/preferences')}
+          >
+            <ThemedText variant="label">Preferences</ThemedText>
+          </Card.Row>
+          <Card.Divider withIconOffset />
+          <Card.Row
+            icon={AppIcons.content.language}
+            onPress={() => router.push('/(modals)/settings/language')}
+          >
+            <ThemedText variant="label">App Language</ThemedText>
+          </Card.Row>
+        </Card>
+
+        <Card>
+          <Card.Row
+            icon={AppIcons.status.help}
+            onPress={() => router.push('/(modals)/settings/support')}
+          >
+            <ThemedText variant="label">Report an Issue</ThemedText>
+          </Card.Row>
+          <Card.Divider withIconOffset />
+          <Card.Row
+            icon={AppIcons.content.privacy}
+            onPress={() => router.push('/(modals)/settings/privacy')}
+          >
+            <ThemedText variant="label">Privacy Policy</ThemedText>
+          </Card.Row>
+          <Card.Divider withIconOffset />
+          <Card.Row
+            icon={AppIcons.content.document}
+            onPress={() => router.push('/(modals)/settings/terms')}
+          >
+            <ThemedText variant="label">Terms of Use</ThemedText>
+          </Card.Row>
+          <Card.Divider withIconOffset />
+          <Card.Row
+            icon={AppIcons.status.info}
+            onPress={() => router.push('/(modals)/settings/about')}
+          >
+            <ThemedText variant="label">About</ThemedText>
+          </Card.Row>
+        </Card>
+
+        <Card>
+          <Card.Row
+            icon={AppIcons.actions.logout}
+            onPress={handleLogout}
+            hideChevron
+          >
+            <ThemedText variant="label" style={{color: theme.destructive}}>
+              Logout
+            </ThemedText>
+          </Card.Row>
+        </Card>
+      </ModalScrollView>
     </ThemedView>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape, insetsBottom: number) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
       },
-      divider: {
-        marginVertical: ds.spacing.sm,
+      contentContainer: {
+        padding: ds.spacing.lg,
+        gap: ds.spacing.lg,
       },
-      appearanceAccessory: {
+
+      rowContent: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
       },
-      themeStatusText: {
-        ...ds.typography.secondary,
-        color: theme.muted,
-        fontWeight: ds.fontWeight.medium,
-        marginRight: ds.spacing.sm,
+      appearanceMenuStyle: {
+        minWidth: '35%',
+        maxHeight: 20,
+        overflow: 'hidden',
       },
-      modalFlatListContent: {
-        paddingBottom: insetsBottom + ds.spacing.xl,
+      appearanceLabel: {
+        flex: 1,
+        minWidth: '70%',
       },
     }),
-  (ds, theme, insetsBottom) => themeKey(theme, ds) + `|${insetsBottom}`,
+  (ds, _theme) => themeKey(_theme, ds),
 );

@@ -48,7 +48,7 @@ function CardRow({
     <View style={styles.rowWithIcon}>
       {icon && (
         <View style={styles.iconWrapper}>
-          <Icon name={icon} size="md" color={theme.secondary} />
+          <Icon name={icon} size={18} color={theme.secondary} />
         </View>
       )}
       <View style={styles.content}>{children}</View>
@@ -56,6 +56,7 @@ function CardRow({
         <Icon
           name="chevron-forward-outline"
           colorToken="muted"
+          size={18}
           style={styles.chevron}
         />
       )}
@@ -95,7 +96,7 @@ Card.Divider = CardDivider;
 
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) => {
-    const iconColumnWidth = 30 + ds.spacing.lg;
+    const iconColumnWidth = 30 + ds.spacing.md;
 
     return StyleSheet.create({
       card: {
@@ -109,10 +110,11 @@ const createStyles = makeStyleFactory(
       rowWithIcon: {
         flexDirection: 'row',
         alignItems: 'center',
+        padding: 0,
       },
       iconWrapper: {
-        width: 28,
-        height: 28,
+        width: 26,
+        height: 26,
         marginRight: ds.spacing.lg,
         backgroundColor: theme.card,
         borderRadius: ds.spacing.md,
@@ -123,10 +125,11 @@ const createStyles = makeStyleFactory(
         flex: 1,
       },
       chevron: {
-        marginLeft: ds.spacing.lg,
+        marginLeft: ds.spacing.md,
+        marginRight: -ds.spacing.xxs,
       },
       dividerWrapper: {
-        paddingVertical: ds.spacing.lg,
+        paddingVertical: ds.spacing.md,
       },
       dividerWithIconOffset: {
         marginLeft: iconColumnWidth,

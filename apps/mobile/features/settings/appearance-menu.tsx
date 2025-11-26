@@ -1,42 +1,31 @@
-import {useMemo, type ReactNode} from 'react';
-import {NativeMenu, type NativeMenuAction} from '@/components/ui';
+import {type ViewStyle} from 'react-native';
+import {Host, Picker} from '@expo/ui/swift-ui';
 import {useTheme} from '@/providers';
 
 type AppearanceMenuProps = {
-  children: ReactNode;
+  style?: ViewStyle;
 };
-
-export function AppearanceMenu({children}: AppearanceMenuProps) {
-  const {preference, setScheme} = useTheme();
-
-  const menuActions: NativeMenuAction[] = useMemo(
-    () => [
-      {
-        id: 'light',
-        title: 'Light',
-        state: preference === 'light' ? 'on' : undefined,
-      },
-      {
-        id: 'dark',
-        title: 'Dark',
-        state: preference === 'dark' ? 'on' : undefined,
-      },
-      {
-        id: 'system',
-        title: 'System',
-        state: preference === 'system' ? 'on' : undefined,
-      },
-    ],
-    [preference],
-  );
-
-  const handleSelect = (actionId: string) => {
-    setScheme(actionId as 'light' | 'dark' | 'system');
-  };
-
+export function AppearanceMenu({style}: AppearanceMenuProps) {
+  const {preference, setScheme, theme} = useTheme();
+  const options = ['Light', 'Dark', 'System'];
+  const values: Array<'light' | 'dark' | 'system'> = [
+    'light',
+    'dark',
+    'system',
+  ];
+  const selectedIndex = values.indexOf(preference);
   return (
-    <NativeMenu actions={menuActions} onSelect={handleSelect} isAnchoredToRight>
-      {children}
-    </NativeMenu>
+    <Host matchContents useViewportSizeMeasurement style={style}>
+      <Picker
+        options={options}
+        selectedIndex={selectedIndex}
+        variant="menu"
+        label="Appearance"
+        color={theme.muted}
+        onOptionSelected={({nativeEvent}) =>
+          setScheme(values[nativeEvent.index])
+        }
+      />
+    </Host>
   );
 }
