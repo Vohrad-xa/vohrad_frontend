@@ -1,7 +1,9 @@
+import React, {useCallback} from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme} from '@/providers';
 import {AppIcons, makeStyleFactory} from '@/utils';
 
@@ -9,10 +11,24 @@ export const unstable_settings = {
   initialRouteName: 'index',
 };
 
-export default function SettingsLayout() {
+interface SearchChangeEvent {
+  nativeEvent: {
+    text: string;
+  };
+}
+
+function SettingsStack() {
   const {theme, ds} = useTheme();
+  const {setSearchQuery} = useSearch();
   const router = useRouter();
   const styles = createStyles(theme, ds);
+
+  const handleSearchChange = useCallback(
+    (event: SearchChangeEvent) => {
+      setSearchQuery(event.nativeEvent.text);
+    },
+    [setSearchQuery],
+  );
 
   return (
     <ScreenLoadingWrapper>
@@ -81,6 +97,7 @@ export default function SettingsLayout() {
               placement: 'automatic',
               hideWhenScrolling: false,
               placeholder: 'Search...',
+              onChangeText: handleSearchChange,
             },
             headerRight: () => (
               <View style={styles.headerButtonGroup}>
@@ -108,6 +125,14 @@ export default function SettingsLayout() {
         />
       </Stack>
     </ScreenLoadingWrapper>
+  );
+}
+
+export default function SettingsLayout() {
+  return (
+    <SearchProvider>
+      <SettingsStack />
+    </SearchProvider>
   );
 }
 
