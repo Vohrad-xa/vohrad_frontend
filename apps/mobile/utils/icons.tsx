@@ -35,18 +35,14 @@ export type IconName =
   | 'albums-outline'
   | 'layers-outline'
   | 'build-outline'
-  | 'hardware-chip-outline'
   | 'log-in-outline'
   | 'log-out-outline'
-  | 'bar-chart-outline'
-  | 'stats-chart-outline'
   | 'album'
 
   // Actions
   | 'camera-outline'
   | 'scan-outline'
   | 'keypad-outline'
-  | 'pencil-outline'
   | 'add-outline'
   | 'add-circle-outline'
   | 'add-circle'
@@ -57,7 +53,6 @@ export type IconName =
   | 'share-outline'
   | 'download-outline'
   | 'cloud-download-outline'
-  | 'sync-outline'
   | 'refresh-outline'
   | 'return-down-forward-outline'
   | 'flash-outline'
@@ -96,15 +91,12 @@ export type IconName =
 
   // System
   | 'wifi-outline'
-  | 'battery-full-outline'
   | 'notifications-outline'
   | 'refresh-outline'
   | 'sync-outline'
   | 'remove-outline'
   | 'sunny-outline'
   | 'moon-outline'
-  | 'sparkles-outline'
-  | 'pencil-square-o'
   | 'file';
 
 type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
@@ -205,9 +197,7 @@ export const AppIcons = {
     add: 'add-outline' as IconName,
     save: 'checkmark-circle-outline' as IconName,
     delete: 'trash-outline' as IconName,
-    duplicate: 'duplicate-outline' as IconName,
     share: 'share-outline' as IconName,
-    sync: 'sync-outline' as IconName,
     refresh: 'refresh-outline' as IconName,
     move: 'return-down-forward-outline' as IconName,
     logout: 'exit-outline' as IconName,

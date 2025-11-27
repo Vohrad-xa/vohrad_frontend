@@ -54,13 +54,6 @@ export default function SettingsModal() {
           </Card.Row>
           <Card.Divider withIconOffset />
           <Card.Row
-            icon={AppIcons.business.plan}
-            onPress={() => router.push('/(modals)/settings/plan')}
-          >
-            <ThemedText variant="label">Plan</ThemedText>
-          </Card.Row>
-          <Card.Divider withIconOffset />
-          <Card.Row
             icon={
               scheme === 'dark' ? AppIcons.theme.light : AppIcons.theme.dark
             }

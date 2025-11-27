@@ -9,4 +9,6 @@ export const tenantSelectors = {
   timezone: (state: TenantSlice) => state.tenant?.timezone ?? null,
   updateTenant: (state: TenantSlice) => state.updateTenant,
   setTenant: (state: TenantSlice) => state.setTenant,
+  licenseInfo: (state: TenantSlice) => state.licenseInfo,
+  setLicenseInfo: (state: TenantSlice) => state.setLicenseInfo,
 };

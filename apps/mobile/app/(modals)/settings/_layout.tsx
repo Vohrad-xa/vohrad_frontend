@@ -64,7 +64,6 @@ export default function SettingsLayout() {
           name="organization/index"
           options={{title: 'Organization'}}
         />
-        <Stack.Screen name="plan" options={{title: 'Plan'}} />
         <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
         <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
         <Stack.Screen name="about" options={{title: 'About'}} />
@@ -72,6 +71,7 @@ export default function SettingsLayout() {
           name="organization/business-details"
           options={{title: 'Business Details'}}
         />
+        <Stack.Screen name="organization/plan" options={{title: 'Plan'}} />
       </Stack>
     </ScreenLoadingWrapper>
   );
