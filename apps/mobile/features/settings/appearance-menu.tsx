@@ -17,6 +17,7 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
   const options = ['Light', 'Dark', 'System'];
 
   if (Platform.OS === 'ios') {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const {Host, Picker} = require('@expo/ui/swift-ui');
     const selectedIndex = values.indexOf(preference);
 

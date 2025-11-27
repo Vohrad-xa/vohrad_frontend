@@ -124,3 +124,16 @@ export function buildAttachmentSearchFilter(
   const term = searchTerm.trim();
   return `contains(filename,'${term}') or contains(original_filename,'${term}') or contains(description,'${term}')`;
 }
+
+/**
+ * Builds an OData filter for user search
+ * Searches across first_name, last_name, email, and role fields
+ */
+export function buildUserSearchFilter(searchTerm: string): string | undefined {
+  if (!searchTerm || searchTerm.trim().length === 0) {
+    return undefined;
+  }
+
+  const term = searchTerm.trim();
+  return `contains(first_name,'${term}') or contains(last_name,'${term}') or contains(email,'${term}') or contains(role,'${term}')`;
+}

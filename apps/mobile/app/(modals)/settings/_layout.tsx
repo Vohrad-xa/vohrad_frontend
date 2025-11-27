@@ -1,4 +1,4 @@
-import {Platform, StyleSheet} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -72,18 +72,57 @@ export default function SettingsLayout() {
           options={{title: 'Business Details'}}
         />
         <Stack.Screen name="organization/plan" options={{title: 'Plan'}} />
+        <Stack.Screen
+          name="organization/users"
+          options={{
+            title: 'Users',
+            headerSearchBarOptions: {
+              headerIconColor: theme.text,
+              placement: 'automatic',
+              hideWhenScrolling: false,
+              placeholder: 'Search...',
+            },
+            headerRight: () => (
+              <View style={styles.headerButtonGroup}>
+                <HeaderButton
+                  icon={AppIcons.navigation.filter}
+                  onPress={() => {
+                    // TODO: Filter logic
+                  }}
+                  iconColorToken="text"
+                  accessibilityLabel="Filter users"
+                  iconSize="xl"
+                />
+                <HeaderButton
+                  icon={AppIcons.actions.add}
+                  onPress={() => {
+                    // TODO: Add user logic
+                  }}
+                  iconColorToken="text"
+                  accessibilityLabel="Add user"
+                  iconSize="xl"
+                />
+              </View>
+            ),
+          }}
+        />
       </Stack>
     </ScreenLoadingWrapper>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (theme: ThemeShape, _ds: DSShape) =>
+  (theme: ThemeShape, ds: DSShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
         backgroundColor:
           Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
+      },
+      headerButtonGroup: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: ds.spacing.xs,
       },
     }),
   (theme, ds) => themeKey(theme, ds),

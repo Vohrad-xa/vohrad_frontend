@@ -27,7 +27,10 @@ export default function OrganizationScreen() {
             <ThemedText variant="label">Business Details</ThemedText>
           </Card.Row>
           <Card.Divider withIconOffset />
-          <Card.Row icon={AppIcons.business.profile}>
+          <Card.Row
+            icon={AppIcons.business.profile}
+            onPress={() => router.push('/(modals)/settings/organization/users')}
+          >
             <ThemedText variant="label">Users</ThemedText>
           </Card.Row>
           <Card.Divider withIconOffset />

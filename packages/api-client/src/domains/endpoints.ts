@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
     LOGOUT_ALL: '/auth/logout-all',
   },
   USERS: {
+    LIST: '/users/',
     ME: '/users/me',
     UPDATE_PROFILE: '/users/me',
   },

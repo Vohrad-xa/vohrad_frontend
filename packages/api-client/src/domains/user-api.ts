@@ -1,8 +1,25 @@
-import type {User, UserUpdateData} from '@vohrad/types';
+import type {
+  User,
+  UserUpdateData,
+  ApiResponse,
+  PaginatedResponse,
+} from '@vohrad/types';
 import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';
 
 export class UserApi {
+  async getUsers(
+    page: number,
+    size: number,
+    odataFilter?: string,
+  ): Promise<ApiResponse<PaginatedResponse<User>>> {
+    const filterParam = odataFilter
+      ? `&$filter=${encodeURIComponent(odataFilter)}`
+      : '';
+    return httpClient.get<PaginatedResponse<User>>(
+      `${API_ENDPOINTS.USERS.LIST}?page=${page}&size=${size}${filterParam}`,
+    );
+  }
   async getUserProfile(): Promise<User> {
     const response = await httpClient.get<User>(API_ENDPOINTS.USERS.ME);
     return response.data;

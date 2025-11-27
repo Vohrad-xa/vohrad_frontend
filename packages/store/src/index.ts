@@ -38,6 +38,7 @@ export {
   useItemDetailManager,
   useItemFiltersManager,
 } from './slices/item';
+export {useInfiniteUsers, useUsersListManager} from './slices/user';
 export {
   useAttachmentManager,
   useAttachmentsListManager,
@@ -80,6 +81,7 @@ export {
   hasActiveFilters,
   clearAllFilters,
   buildAttachmentSearchFilter,
+  buildUserSearchFilter,
 } from './utils/odata-filter-builder';
-export {searchItemsLocally} from './utils/local-search';
+export {searchItemsLocally, searchUsersLocally} from './utils/local-search';
 export type {AsyncState, PaginatedState} from './utils/state';
