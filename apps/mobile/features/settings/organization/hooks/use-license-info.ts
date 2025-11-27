@@ -1,4 +1,3 @@
-import {useEffect} from 'react';
 import {useLicenseInfoManager} from '@vohrad/store';
 
 type UseLicenseInfoOptions = {
@@ -9,12 +8,6 @@ export function useLicenseInfo(options: UseLicenseInfoOptions = {}) {
   const {fetchOnMount = true} = options;
 
   const manager = useLicenseInfoManager({fetchOnMount});
-
-  useEffect(() => {
-    if (fetchOnMount && !manager.licenseInfo && !manager.isLoading) {
-      void manager.refresh();
-    }
-  }, [fetchOnMount, manager]);
 
   return {
     licenseInfo: manager.licenseInfo,
