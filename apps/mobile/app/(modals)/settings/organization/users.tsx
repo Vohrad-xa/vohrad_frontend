@@ -1,6 +1,6 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useLayoutEffect, useState, useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useNavigation} from 'expo-router';
+import {useNavigation, useRouter} from 'expo-router';
 import {HeaderButton, ModalFlatList, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useSearch} from '@/features/dashboard';
@@ -11,9 +11,14 @@ import {AppIcons, makeStyleFactory} from '@/utils';
 export default function UsersScreen() {
   const {ds, theme} = useTheme();
   const navigation = useNavigation();
+  const router = useRouter();
   const styles = createStyles(ds, theme);
   const {searchQuery} = useSearch();
   const [filterControl, setFilterControl] = useState<React.ReactNode>(null);
+
+  const handleAddUser = useCallback(() => {
+    router.push('/(modals)/settings/organization/add-user');
+  }, [router]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -22,9 +27,7 @@ export default function UsersScreen() {
           {filterControl}
           <HeaderButton
             icon={AppIcons.actions.add}
-            onPress={() => {
-              // TODO: Add user logic
-            }}
+            onPress={handleAddUser}
             iconColorToken="text"
             accessibilityLabel="Add user"
             iconSize="xl"
@@ -32,7 +35,7 @@ export default function UsersScreen() {
         </View>
       ),
     });
-  }, [filterControl, navigation, styles.headerButtonGroup]);
+  }, [filterControl, navigation, styles.headerButtonGroup, handleAddUser]);
 
   return (
     <UsersFilterMenu
