@@ -49,7 +49,6 @@ export default function ItemFiltersModal() {
 
   const handleSave = useCallback(() => {
     if (hasChanges) {
-      triggerHaptic('light');
       setPendingFilters(filters);
       router.back();
     } else {
