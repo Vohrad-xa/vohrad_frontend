@@ -26,7 +26,7 @@ export {showAlert, showConfirmAlert} from './alert';
 
 // UI & Styling
 export {makeStyleFactory} from './style-factory';
-export {formatDate} from './format-date';
+export {formatDate, formatDateInput, parseDateInput} from './format-date';
 
 // Sorting
 export {
