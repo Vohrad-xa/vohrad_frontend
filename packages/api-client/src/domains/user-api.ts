@@ -1,5 +1,6 @@
 import type {
   User,
+  UserCreateData,
   UserUpdateData,
   ApiResponse,
   PaginatedResponse,
@@ -20,6 +21,15 @@ export class UserApi {
       `${API_ENDPOINTS.USERS.LIST}?page=${page}&size=${size}${filterParam}`,
     );
   }
+
+  async createUser(data: UserCreateData): Promise<User> {
+    const response = await httpClient.post<User>(
+      API_ENDPOINTS.USERS.CREATE,
+      data,
+    );
+    return response.data;
+  }
+
   async getUserProfile(): Promise<User> {
     const response = await httpClient.get<User>(API_ENDPOINTS.USERS.ME);
     return response.data;

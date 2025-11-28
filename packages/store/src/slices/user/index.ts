@@ -1,2 +1,2 @@
-export {useInfiniteUsers} from './hooks';
+export {useInfiniteUsers, useCreateUser} from './hooks';
 export {useUsersListManager} from './managers';

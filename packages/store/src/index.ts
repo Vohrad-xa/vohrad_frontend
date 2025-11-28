@@ -38,7 +38,11 @@ export {
   useItemDetailManager,
   useItemFiltersManager,
 } from './slices/item';
-export {useInfiniteUsers, useUsersListManager} from './slices/user';
+export {
+  useInfiniteUsers,
+  useUsersListManager,
+  useCreateUser,
+} from './slices/user';
 export {
   useAttachmentManager,
   useAttachmentsListManager,

@@ -20,6 +20,7 @@ export type {
   AdminCredentials,
   RefreshTokenRequest,
   TokenResponse,
+  UserCreateData,
   UserUpdateData,
   Email,
 } from './schemas';

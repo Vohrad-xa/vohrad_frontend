@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
   },
   USERS: {
     LIST: '/users/',
+    CREATE: '/users/',
     ME: '/users/me',
     UPDATE_PROFILE: '/users/me',
   },
