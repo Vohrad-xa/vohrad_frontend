@@ -201,7 +201,7 @@ export const AddUserScreen = forwardRef<
     // Web Date Picker
     if (type === 'date' && Platform.OS === 'web') {
       return (
-        <View style={styles.fieldRow}>
+        <View style={[styles.fieldRow, styles.webDatePicker]}>
           <ThemedText variant="label" style={styles.fieldLabel}>
             {label}
           </ThemedText>
@@ -294,6 +294,10 @@ const createStyles = makeStyleFactory(
         flexDirection: 'row',
         alignItems: 'center',
       },
+      webDatePicker: {
+        position: 'relative',
+        zIndex: 100,
+      },
       fieldLabel: {
         marginRight: ds.spacing.xxl,
         minWidth: '35%',
@@ -303,9 +307,10 @@ const createStyles = makeStyleFactory(
       },
       datePickerInput: {
         ...ds.typography.value,
-        flexShrink: 1,
-        textAlign: 'left',
         color: theme.text,
+        width: '100%',
+        outlineWidth: 0,
+        cursor: 'pointer',
       },
       row: {
         flexDirection: 'row',
