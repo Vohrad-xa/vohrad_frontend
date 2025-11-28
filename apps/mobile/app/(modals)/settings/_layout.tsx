@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {Platform, StyleSheet, View} from 'react-native';
+import {Platform, StyleSheet} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -99,28 +99,6 @@ function SettingsStack() {
               placeholder: 'Search...',
               onChangeText: handleSearchChange,
             },
-            headerRight: () => (
-              <View style={styles.headerButtonGroup}>
-                <HeaderButton
-                  icon={AppIcons.navigation.filter}
-                  onPress={() => {
-                    // TODO: Filter logic
-                  }}
-                  iconColorToken="text"
-                  accessibilityLabel="Filter users"
-                  iconSize="xl"
-                />
-                <HeaderButton
-                  icon={AppIcons.actions.add}
-                  onPress={() => {
-                    // TODO: Add user logic
-                  }}
-                  iconColorToken="text"
-                  accessibilityLabel="Add user"
-                  iconSize="xl"
-                />
-              </View>
-            ),
           }}
         />
       </Stack>
@@ -137,17 +115,12 @@ export default function SettingsLayout() {
 }
 
 const createStyles = makeStyleFactory(
-  (theme: ThemeShape, ds: DSShape) =>
+  (theme: ThemeShape, _ds: DSShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
         backgroundColor:
           Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
-      },
-      headerButtonGroup: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: ds.spacing.xs,
       },
     }),
   (theme, ds) => themeKey(theme, ds),

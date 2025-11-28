@@ -81,7 +81,11 @@ export {
   hasActiveFilters,
   clearAllFilters,
   buildAttachmentSearchFilter,
-  buildUserSearchFilter,
+  buildUserODataFilter,
+  hasActiveUserFilters,
+  clearUserFilters,
+  type UserFilterOptions,
+  type UserFilterState,
 } from './utils/odata-filter-builder';
 export {searchItemsLocally, searchUsersLocally} from './utils/local-search';
 export type {AsyncState, PaginatedState} from './utils/state';

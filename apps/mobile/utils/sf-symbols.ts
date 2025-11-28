@@ -25,6 +25,7 @@ export const SFSymbols = {
   cameraFill: 'camera.fill',
   lineHorizontalFilter: 'line.horizontal.3.circle',
   checkmarkCircleOutline: 'checkmark.circle',
+  addUser: 'person.badge.plus',
 } as const;
 
 export type SFSymbolName = (typeof SFSymbols)[keyof typeof SFSymbols];
