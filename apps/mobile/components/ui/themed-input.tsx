@@ -21,7 +21,7 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
     {
       variant = 'body',
       textAlign = 'left',
-      borderless = false,
+      borderless = true,
       style,
       placeholderTextColor,
       ...props
@@ -35,7 +35,7 @@ export const ThemedInput = forwardRef<TextInput, ThemedInputProps>(
       <TextInput
         ref={ref}
         style={[styles.input, style]}
-        placeholderTextColor={placeholderTextColor ?? theme.muted}
+        placeholderTextColor={placeholderTextColor ?? theme.inputPlaceholder}
         textAlign={textAlign}
         {...props}
       />
@@ -58,7 +58,7 @@ const createStyles = makeStyleFactory(
 
     // Match ThemedText color logic
     const textColor =
-      variant === 'secondary' || variant === 'caption' || variant === 'value'
+      variant === 'secondary' || variant === 'caption'
         ? theme.muted
         : theme.text;
 

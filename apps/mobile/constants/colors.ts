@@ -42,6 +42,7 @@ export const Palette = {
   cardLightGlass: 'rgba(97, 94, 94, 0.16)',
   glassTintLight: 'rgba(255, 255, 255, 0.79)',
   glassTintDark: 'rgba(186, 185, 185, 0.06)',
+  placeholderGray: '#8e8e9385',
 } as const;
 
 const _Tokens = {
@@ -58,6 +59,7 @@ const _Tokens = {
     lightdivider: Palette.gray[100],
     muted: Palette.gray[600],
     navigationBar: Palette.white,
+    inputPlaceholder: Palette.placeholderGray,
 
     // Brand & accents
     primary: Palette.terracotta,
@@ -114,6 +116,7 @@ const _Tokens = {
     divider: Palette.gray[600],
     lightdivider: Palette.gray[750],
     navigationBar: Palette.Obsidian,
+    inputPlaceholder: Palette.placeholderGray,
 
     // Brand & accents
     primary: Palette.Greige,
