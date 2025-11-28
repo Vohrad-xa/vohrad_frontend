@@ -118,11 +118,6 @@ export function UsersFilterMenu({
     // Paper Menu for web
     const paperActions = [
       {
-        id: 'select-user',
-        title: 'Select',
-        icon: AppIcons.content.file,
-      },
-      {
         id: 'all-roles',
         title: 'All Roles',
         state: filters.role === null ? ('on' as const) : undefined,

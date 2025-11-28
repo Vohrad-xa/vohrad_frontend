@@ -34,14 +34,12 @@ export const DatePickerMobile: React.FC<DatePickerMobileProps> = ({
   if (editable) {
     return (
       <View style={styles.row}>
-        <ThemedText variant="label" colorToken="label">
-          {label}
-        </ThemedText>
+        <ThemedText variant="label">{label}</ThemedText>
         <View style={styles.iosDatePicker}>
           <DateTimePicker
             value={selectedDate}
             mode="date"
-            display="compact"
+            display="default"
             onChange={onDateChange}
             maximumDate={new Date()}
             themeVariant={scheme}

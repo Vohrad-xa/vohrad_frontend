@@ -56,7 +56,6 @@ export const BusinessDetailsContent = forwardRef<
   }
 
   const allFields: InfoField[] = [
-    // Business Details
     {
       key: 'telephone',
       label: 'Phone',
@@ -81,7 +80,6 @@ export const BusinessDetailsContent = forwardRef<
       value: organization.tax_id,
       span: 'half' as const,
     },
-    // Address
     {
       key: 'street',
       label: 'Street',
@@ -118,7 +116,6 @@ export const BusinessDetailsContent = forwardRef<
       value: organization.country,
       span: 'half' as const,
     },
-    // Remarks (if exists)
     ...(organization.remarks
       ? [
           {
