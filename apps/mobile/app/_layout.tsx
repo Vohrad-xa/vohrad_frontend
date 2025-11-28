@@ -51,7 +51,6 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
           }}
         />
       </Stack.Protected>
-
       <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
