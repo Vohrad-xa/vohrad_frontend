@@ -1,9 +1,6 @@
 import type {JsonValue, ItemFilterState} from '@vohrad/types';
 
-/**
- * Builds an OData filter string from filter state
- * Returns undefined if no filters are active
- */
+// Builds an OData filter string based on item filter state and optional search term
 export function buildODataFilter(
   filters: ItemFilterState,
   searchTerm?: string,
@@ -109,11 +106,7 @@ export function clearAllFilters(): ItemFilterState {
   };
 }
 
-/**
- * Builds an OData filter for attachment search
- * Searches across filename, original_filename, and description fields
- * Returns undefined if search term is empty
- */
+// Attachment-specific filter utility
 export function buildAttachmentSearchFilter(
   searchTerm: string,
 ): string | undefined {
@@ -125,15 +118,59 @@ export function buildAttachmentSearchFilter(
   return `contains(filename,'${term}') or contains(original_filename,'${term}') or contains(description,'${term}')`;
 }
 
-/**
- * Builds an OData filter for user search
- * Searches across first_name, last_name, email, and role fields
- */
-export function buildUserSearchFilter(searchTerm: string): string | undefined {
-  if (!searchTerm || searchTerm.trim().length === 0) {
-    return undefined;
+// User-specific filter utilities
+export type UserFilterState = {
+  role?: string | null;
+  createdFrom?: string | null;
+  createdTo?: string | null;
+};
+
+export type UserFilterOptions = UserFilterState;
+
+const escapeString = (value: string) => value.replace(/'/g, "''");
+const formatDateLiteral = (value: string) => `'${escapeString(value)}'`;
+
+export function buildUserODataFilter(
+  filters: UserFilterState = {},
+  searchTerm?: string,
+): string | undefined {
+  const conditions: string[] = [];
+
+  if (filters.role) {
+    conditions.push(`role eq '${escapeString(filters.role)}'`);
   }
 
-  const term = searchTerm.trim();
-  return `contains(first_name,'${term}') or contains(last_name,'${term}') or contains(email,'${term}') or contains(role,'${term}')`;
+  if (filters.createdFrom) {
+    conditions.push(`created_at ge ${formatDateLiteral(filters.createdFrom)}`);
+  }
+
+  if (filters.createdTo) {
+    conditions.push(`created_at le ${formatDateLiteral(filters.createdTo)}`);
+  }
+
+  if (searchTerm && searchTerm.trim().length > 0) {
+    const term = escapeString(searchTerm.trim());
+    conditions.push(
+      `contains(first_name,'${term}') or contains(last_name,'${term}') or contains(email,'${term}') or contains(role,'${term}')`,
+    );
+  }
+
+  return conditions.length > 0 ? conditions.join(' and ') : undefined;
+}
+
+export function hasActiveUserFilters(filters: UserFilterState): boolean {
+  if (!filters) return false;
+  return Boolean(
+    (filters.role && filters.role.trim().length > 0) ||
+      (filters.createdFrom && filters.createdFrom.trim().length > 0) ||
+      (filters.createdTo && filters.createdTo.trim().length > 0),
+  );
+}
+
+export function clearUserFilters(): UserFilterState {
+  return {
+    role: null,
+    createdFrom: null,
+    createdTo: null,
+  };
 }
