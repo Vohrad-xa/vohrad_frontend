@@ -200,7 +200,7 @@ export const createDesignSystem = (
           fontSize: 16.5,
           lineHeight: 1.294,
           fontWeight: '400',
-          letterSpacing: 0,
+          letterSpacing: 0.07,
         },
         {
           fontSize: 16,
@@ -217,7 +217,7 @@ export const createDesignSystem = (
           fontSize: 17,
           lineHeight: 1.294,
           fontWeight: '400',
-          letterSpacing: 0,
+          letterSpacing: 0.07,
         },
         {
           fontSize: 14,
@@ -284,10 +284,10 @@ export const createDesignSystem = (
       // Caption - iOS Caption 1 / Android Label Medium
       caption: createPlatformTypography(
         {
-          fontSize: 12,
-          lineHeight: 1.333,
+          fontSize: 12.3,
+          lineHeight: 1.385,
           fontWeight: '400',
-          letterSpacing: 0,
+          letterSpacing: 0.14,
         },
         {
           fontSize: 12,
