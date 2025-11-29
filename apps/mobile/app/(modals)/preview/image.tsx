@@ -80,7 +80,7 @@ export default function AttachmentImagePreviewModal() {
   }, [currentAttachment]);
 
   useEffect(() => {
-    const title = currentAttachment?.original_filename || 'Image';
+    const title = currentAttachment?.original_filename ?? 'Image';
     navigation.setOptions({
       title,
       headerRight: () => (

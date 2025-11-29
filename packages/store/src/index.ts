@@ -39,6 +39,18 @@ export {
   useItemFiltersManager,
 } from './slices/item';
 export {
+  useInfiniteRoles,
+  useFetchRole,
+  useActiveRoles,
+  useCreateRole,
+  useUpdateRole,
+  useDeleteRole,
+  useActivateRole,
+  useDeactivateRole,
+  useRolesListManager,
+  useRoleDetailManager,
+} from './slices/role';
+export {
   useInfiniteUsers,
   useUsersListManager,
   useCreateUser,
@@ -70,6 +82,10 @@ export type {
   Item,
   ItemDetail,
   ItemLocationUpdate,
+  Role,
+  RoleType,
+  RoleScope,
+  RoleStage,
 } from '@vohrad/types';
 export type {AuthSlice} from './slices/auth';
 export type {TenantSlice} from './slices/tenant';
