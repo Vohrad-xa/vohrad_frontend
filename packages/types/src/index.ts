@@ -25,6 +25,16 @@ export type {
   Email,
 } from './schemas';
 
+// Role types
+export type {
+  Role,
+  RoleCreate,
+  RoleUpdate,
+  RoleType,
+  RoleScope,
+  RoleStage,
+} from './schemas';
+
 // Tenant types
 export type {
   Tenant,
@@ -75,6 +85,13 @@ export {
 
 // User validation utilities
 export {userUpdateSchema, validateUserUpdate} from './validation/user';
+
+// Role validation utilities
+export {
+  validateRole,
+  validateRoleCreate,
+  validateRoleUpdate,
+} from './validation/role';
 
 // Validation helpers
 export {

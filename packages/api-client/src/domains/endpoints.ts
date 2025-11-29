@@ -12,6 +12,17 @@ export const API_ENDPOINTS = {
     ME: '/users/me',
     UPDATE_PROFILE: '/users/me',
   },
+  ROLES: {
+    LIST: '/roles/',
+    CREATE: '/roles/',
+    DETAIL: (id: string) => `/roles/${id}`,
+    SEARCH: '/roles/search',
+    ACTIVE: '/roles/active',
+    UPDATE: (id: string) => `/roles/${id}`,
+    DELETE: (id: string) => `/roles/${id}`,
+    ACTIVATE: (id: string) => `/roles/${id}/activate`,
+    DEACTIVATE: (id: string) => `/roles/${id}/deactivate`,
+  },
   EMAIL_VERIFICATION: {
     RESEND: '/email-verification/resend',
     CONFIRM: '/email-verification/confirm',
