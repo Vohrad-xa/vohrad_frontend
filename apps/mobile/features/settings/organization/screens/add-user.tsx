@@ -271,6 +271,13 @@ export const AddUserScreen = forwardRef<
   return (
     <View style={styles.container}>
       <Card>
+        <View style={styles.fieldRow}>
+          <ThemedText variant="label" style={styles.fieldLabel}>
+            Select Role
+          </ThemedText>
+        </View>
+      </Card>
+      <Card>
         {fields.map((field, index) => (
           <React.Fragment key={field.key}>
             {renderField(field, index)}
