@@ -34,7 +34,9 @@ export function useDeleteRole() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({queryKey: ['roles', 'list']});
       queryClient.invalidateQueries({queryKey: ['roles', 'active']});
-      queryClient.invalidateQueries({queryKey: ['roles', 'detail', variables.id]});
+      queryClient.invalidateQueries({
+        queryKey: ['roles', 'detail', variables.id],
+      });
     },
   });
 }

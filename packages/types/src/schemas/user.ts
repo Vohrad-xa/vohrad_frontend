@@ -38,6 +38,7 @@ export const userCreateDataSchema = z.object({
     .optional(),
   postal_code: postalCodeSchema.optional(),
   country: z.string().length(2, 'Country must be 2 characters').optional(),
+  role_id: z.string().optional(),
 });
 
 export const userUpdateDataSchema = z.object({

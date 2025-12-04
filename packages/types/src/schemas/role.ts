@@ -3,7 +3,13 @@ import {transformations} from '../validation/helpers';
 
 export const roleTypes = ['BASIC', 'PREDEFINED', 'CUSTOM'] as const;
 export const roleScopes = ['GLOBAL', 'TENANT'] as const;
-export const roleStages = ['ALPHA', 'BETA', 'GA', 'DEPRECATED', 'DISABLED'] as const;
+export const roleStages = [
+  'ALPHA',
+  'BETA',
+  'GA',
+  'DEPRECATED',
+  'DISABLED',
+] as const;
 
 export const roleTypeSchema = z.enum(roleTypes);
 export const roleScopeSchema = z.enum(roleScopes);

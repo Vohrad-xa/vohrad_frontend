@@ -16,6 +16,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {formatDateInput, parseDateInput, showAlert} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
+import {RolePicker} from '../components';
 import type {UserCreateData} from '@vohrad/types';
 
 export type AddUserScreenHandle = {
@@ -39,6 +40,10 @@ export const AddUserScreen = forwardRef<
   const handleFieldChange = (key: string, value: string) => {
     setFormData((prev: Partial<UserCreateData>) => ({...prev, [key]: value}));
     onFieldChange?.();
+  };
+
+  const handleRoleSelect = (roleId: string) => {
+    handleFieldChange('role_id', roleId);
   };
 
   const hasChanges = () => {
@@ -271,12 +276,18 @@ export const AddUserScreen = forwardRef<
   return (
     <View style={styles.container}>
       <Card>
-        <View style={styles.fieldRow}>
-          <ThemedText variant="label" style={styles.fieldLabel}>
-            Select Role
-          </ThemedText>
+        <View style={styles.roleRow}>
+          <ThemedText variant="label">Role</ThemedText>
+          <RolePicker
+            selectedRoleId={formData.role_id}
+            onRoleSelect={handleRoleSelect}
+          />
         </View>
       </Card>
+      <ThemedText variant="caption" style={styles.helperText}>
+        Select the appropriate role for the new user. Roles determine the
+        permissions and access levels within the organization.
+      </ThemedText>
       <Card>
         {fields.map((field, index) => (
           <React.Fragment key={field.key}>
@@ -300,6 +311,12 @@ const createStyles = makeStyleFactory(
       fieldRow: {
         flexDirection: 'row',
         alignItems: 'center',
+      },
+      roleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        maxHeight: 100,
       },
       webDatePicker: {
         position: 'relative',
@@ -332,6 +349,10 @@ const createStyles = makeStyleFactory(
         justifyContent: 'center',
         marginVertical: -ds.spacing.md,
         transform: [{scale: 0.9}],
+      },
+      helperText: {
+        marginHorizontal: ds.spacing.lg,
+        marginBottom: ds.spacing.md,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

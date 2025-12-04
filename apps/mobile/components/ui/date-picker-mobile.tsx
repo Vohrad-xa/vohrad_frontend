@@ -39,7 +39,7 @@ export const DatePickerMobile: React.FC<DatePickerMobileProps> = ({
           <DateTimePicker
             value={selectedDate}
             mode="date"
-            display="default"
+            display="compact"
             onChange={onDateChange}
             maximumDate={new Date()}
             themeVariant={scheme}
