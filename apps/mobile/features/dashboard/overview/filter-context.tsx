@@ -8,7 +8,7 @@ import {
   type DashboardVisibilityState,
 } from '@vohrad/store';
 import type {MenuCard} from '@/types';
-import {AppIcons} from '@/utils';
+import {AppIcons} from '@/utils/icons';
 import type {DashboardOverview} from '@vohrad/api-client';
 
 type DashboardCardConfig = {
@@ -22,13 +22,13 @@ const CARD_CONFIG: DashboardCardConfig[] = [
   {
     key: 'items',
     title: 'Items',
-    icon: AppIcons.inventory.items,
+    icon: AppIcons.inventory.item,
     colorToken: 'accentBlue',
   },
   {
     key: 'locations',
     title: 'Locations',
-    icon: AppIcons.inventory.locations,
+    icon: AppIcons.inventory.location,
     colorToken: 'accentYellow',
   },
   {
@@ -40,7 +40,7 @@ const CARD_CONFIG: DashboardCardConfig[] = [
   {
     key: 'suppliers',
     title: 'Suppliers',
-    icon: AppIcons.business.suppliers,
+    icon: AppIcons.business.supplier,
     colorToken: 'accentGreen',
   },
   {

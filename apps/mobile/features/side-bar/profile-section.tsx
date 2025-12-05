@@ -4,7 +4,7 @@ import type {ColorScheme} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useAuth} from '@/providers';
 import type {InteractiveProps} from '@/types';
-import {Icon} from '@/utils';
+import {AppIcons, Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import type {User} from '@vohrad/types';
 import type {SharedValue} from 'react-native-reanimated';
@@ -77,8 +77,8 @@ export function ProfileSection({
           onPress={onPressSettings}
         >
           <Icon
-            name="settings-outline"
-            size={ds.iconSize.md}
+            name={AppIcons.navigation.settings}
+            size="lg"
             color={theme.muted}
           />
         </TouchableOpacity>

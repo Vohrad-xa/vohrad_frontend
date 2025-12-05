@@ -89,9 +89,6 @@ export function Toggle({
         value={value}
         onValueChange={handleChange}
         disabled={disabled}
-        trackColor={{false: theme.toggleTrackOff, true: theme.toggleTrackOn}}
-        ios_backgroundColor={theme.toggleTrackOff}
-        style={styles.iosSwitch}
         accessibilityRole="switch"
         accessibilityState={{disabled, checked: value}}
         accessibilityLabel={accessibilityLabel}
@@ -130,10 +127,6 @@ export function Toggle({
 const createStyles = makeStyleFactory(
   (ds: typeof DesignSystem, theme: ReturnType<typeof useTheme>['theme']) =>
     StyleSheet.create({
-      iosSwitch: {
-        transform: [{scaleX: 0.9}, {scaleY: 0.85}],
-        marginVertical: -ds.spacing.xs,
-      },
       track: {
         width: 50,
         height: 25,

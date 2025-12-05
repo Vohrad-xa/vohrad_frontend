@@ -6,6 +6,7 @@ import {
   Pressable,
   type ViewStyle,
 } from 'react-native';
+import {isLiquidGlassAvailable, GlassView} from 'expo-glass-effect';
 import {useRouter} from 'expo-router';
 import {ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -73,11 +74,21 @@ export function OverviewCards({
             </ThemedText>
           )}
           <Pressable onPress={onFilterPress}>
-            <Icon
-              name={AppIcons.navigation.filter}
-              size="lg"
-              colorToken="text"
-            />
+            {isLiquidGlassAvailable() ? (
+              <GlassView
+                style={styles.glassButton}
+                glassEffectStyle="regular"
+                isInteractive
+              >
+                <Icon
+                  name={AppIcons.navigation.more}
+                  colorToken="icon"
+                  size="lg"
+                />
+              </GlassView>
+            ) : (
+              <Icon name={AppIcons.navigation.filter} size="lg" />
+            )}
           </Pressable>
         </View>
       </View>
@@ -227,6 +238,13 @@ const createStyles = makeStyleFactory(
       cardCount: {
         alignSelf: 'flex-start',
         fontWeight: ds.fontWeight.bold,
+      },
+      glassButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: ds.components.card.borderRadius,
+        width: ds.iconSize.md * 2,
+        height: ds.iconSize.md * 2,
       },
     });
   },

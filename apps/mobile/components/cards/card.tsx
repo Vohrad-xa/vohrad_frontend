@@ -1,8 +1,9 @@
 import React from 'react';
 import {Pressable, StyleSheet, View, type ViewStyle} from 'react-native';
+import {isLiquidGlassAvailable, GlassView} from 'expo-glass-effect';
 import {type DSShape, themeKey, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon} from '@/utils/icons';
+import {AppIcons, Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {Divider} from '../ui/divider';
 
@@ -48,15 +49,25 @@ function CardRow({
     <View style={styles.rowWithIcon}>
       {icon && (
         <View style={styles.iconWrapper}>
-          <Icon name={icon} size={18} color={theme.secondary} />
+          {isLiquidGlassAvailable() ? (
+            <GlassView
+              style={styles.iconWrapper}
+              glassEffectStyle="regular"
+              isInteractive={false}
+            >
+              <Icon name={icon} size="lg" />
+            </GlassView>
+          ) : (
+            <Icon name={icon} size="lg" />
+          )}
         </View>
       )}
       <View style={styles.content}>{children}</View>
       {!hideChevron && (
         <Icon
-          name="chevron-forward-outline"
+          name={AppIcons.navigation.chevronRight}
           colorToken="muted"
-          size={18}
+          size={14}
           style={styles.chevron}
         />
       )}
@@ -96,7 +107,7 @@ Card.Divider = CardDivider;
 
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) => {
-    const iconColumnWidth = 30 + ds.spacing.md;
+    const iconColumnWidth = ds.spacing.xl * 2;
 
     return StyleSheet.create({
       card: {
@@ -113,13 +124,13 @@ const createStyles = makeStyleFactory(
         padding: 0,
       },
       iconWrapper: {
-        width: 26,
-        height: 26,
-        marginRight: ds.spacing.lg,
-        backgroundColor: theme.card,
+        width: 32,
+        height: 32,
+        marginRight: ds.spacing.sm,
         borderRadius: ds.spacing.md,
         justifyContent: 'center',
         alignItems: 'center',
+        padding: 0,
       },
       content: {
         flex: 1,

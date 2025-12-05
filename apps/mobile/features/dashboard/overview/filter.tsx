@@ -15,12 +15,6 @@ export function FilterContent() {
 
   return (
     <>
-      <ThemedText variant="heading" style={styles.title}>
-        Overview Cards
-      </ThemedText>
-      <ThemedText variant="caption" style={styles.description}>
-        You can choose your preferred overview cards to be displayed on the home
-      </ThemedText>
       <Card>
         {cardConfig.map((card, index) => {
           const visibilityKey = card.key;
@@ -51,6 +45,9 @@ export function FilterContent() {
           );
         })}
       </Card>
+      <ThemedText variant="footnote" style={styles.description}>
+        You can choose your preferred overview cards to be displayed on the home
+      </ThemedText>
     </>
   );
 }
@@ -58,15 +55,10 @@ export function FilterContent() {
 export default FilterContent;
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
-      title: {
-        marginBottom: ds.spacing.xs,
-        paddingHorizontal: ds.spacing.xl,
-      },
       description: {
-        marginBottom: ds.spacing.lg,
-        color: theme.muted,
+        marginVertical: ds.spacing.lg,
         paddingHorizontal: ds.spacing.xl,
       },
       rowContent: {

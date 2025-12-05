@@ -6,7 +6,8 @@ import {ThemedView, ThemedText, ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {OrganizationHeaderInfo} from '@/features/settings/organization/components';
 import {useTheme} from '@/providers';
-import {AppIcons, makeStyleFactory} from '@/utils';
+import {makeStyleFactory} from '@/utils';
+import {AppIcons} from '@/utils/icons';
 
 export default function OrganizationScreen() {
   const {ds, theme} = useTheme();

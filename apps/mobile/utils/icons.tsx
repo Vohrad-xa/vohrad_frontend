@@ -5,107 +5,17 @@ import {Ionicons, FontAwesome} from '@expo/vector-icons';
 import {type TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers/theme-provider';
 
-export type IconName =
-  // Navigation & UI
-  | 'home-outline'
-  | 'reorder-two-outline'
-  | 'reorder-two'
-  | 'reorder-three-outline'
-  | 'close-outline'
-  | 'chevron-forward-outline'
-  | 'chevron-back-outline'
-  | 'chevron-up-outline'
-  | 'chevron-down-outline'
-  | 'arrow-back'
-  | 'arrow-forward'
-  | 'search-outline'
-  | 'settings-outline'
-  | 'help-circle-outline'
-  | 'information-circle-outline'
-  | 'exit-outline'
-  | 'filter-outline'
-  | 'planet-outline'
-  | 'card-outline'
-  | 'business-outline'
-  | 'lock-closed-outline'
-  | 'ellipsis-horizontal'
-  | 'ellipsis-vertical'
-
-  // Inventory & Management
-  | 'albums-outline'
-  | 'layers-outline'
-  | 'build-outline'
-  | 'log-in-outline'
-  | 'log-out-outline'
-  | 'album'
-
-  // Actions
-  | 'camera-outline'
-  | 'scan-outline'
-  | 'keypad-outline'
-  | 'add-outline'
-  | 'add-circle-outline'
-  | 'add-circle'
-  | 'checkmark-circle-outline'
-  | 'trash-outline'
-  | 'create-outline'
-  | 'duplicate-outline'
-  | 'share-outline'
-  | 'download-outline'
-  | 'cloud-download-outline'
-  | 'refresh-outline'
-  | 'return-down-forward-outline'
-  | 'flash-outline'
-
-  // Content & Files
-  | 'document-text-outline'
-  | 'folder-outline'
-  | 'folder'
-  | 'image-outline'
-  | 'archive-outline'
-  | 'download-outline'
-  | 'cloud-upload-outline'
-  | 'save-outline'
-  | 'print-outline'
-
-  // People & Social
-  | 'person-circle-outline'
-  | 'person-outline'
-  | 'people-outline'
-  | 'mail-outline'
-  | 'call-outline'
-
-  // Business
-  | 'cart-outline'
-  | 'locate-outline'
-  | 'card-outline'
-  | 'cash-outline'
-
-  // Status & Alerts
-  | 'checkmark-circle-outline'
-  | 'close-circle-outline'
-  | 'alert-circle-outline'
-  | 'warning-outline'
-  | 'time-outline'
-  | 'calendar-outline'
-
-  // System
-  | 'wifi-outline'
-  | 'notifications-outline'
-  | 'refresh-outline'
-  | 'sync-outline'
-  | 'remove-outline'
-  | 'sunny-outline'
-  | 'moon-outline'
-  | 'file';
+export type IconName = string;
 
 type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 interface IconProps {
   name: IconName;
+  useSwiftUI?: boolean;
   size?: number | IconSizeKey;
   color?: string | OpaqueColorValue;
   colorToken?: TokenName; // prefer passing a token over raw color
+  tintColor?: string;
   style?: StyleProp<TextStyle>;
 }
 
@@ -124,12 +34,15 @@ export const Icon: React.FC<IconProps> = ({
   size = 'lg',
   color,
   colorToken,
+  tintColor,
   style,
 }) => {
   const {theme, ds} = useTheme();
   const resolvedSize =
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
-  const resolvedColor = color ?? (colorToken ? theme[colorToken] : theme.icon);
+  const resolvedToken = colorToken;
+  const resolvedColor =
+    tintColor ?? color ?? (resolvedToken ? theme[resolvedToken] : theme.icon);
 
   // Check FontAwesome
   if (name in FontAwesome.glyphMap) {
@@ -168,7 +81,7 @@ export const AppIcons = {
     settings: 'settings-outline' as IconName,
     scan: 'barcode-outline' as IconName,
     profile: 'person-outline' as IconName,
-    events: 'notifications' as IconName,
+    event: 'notifications' as IconName,
     vault: 'folder-open-sharp' as IconName,
     filter: 'filter-outline' as IconName,
     back: Platform.select({
@@ -179,13 +92,15 @@ export const AppIcons = {
     close: 'close-outline' as IconName,
     chevron: 'chevron-forward-outline' as IconName,
     more: 'ellipsis-horizontal' as IconName,
+    preferences: 'options-outline' as IconName,
+    chevronRight: 'chevron-forward-outline' as IconName,
   },
 
   inventory: {
-    items: 'albums-outline' as IconName,
+    item: 'albums-outline' as IconName,
     itemsSecondary: 'albums' as IconName,
-    categories: 'layers-outline' as IconName,
-    locations: 'location-outline' as IconName,
+    category: 'layers-outline' as IconName,
+    location: 'location-outline' as IconName,
     search: 'search-outline' as IconName,
   },
 
@@ -219,6 +134,7 @@ export const AppIcons = {
     privacy: 'lock-closed-outline' as IconName,
     search: 'search-outline' as IconName,
     list: 'list-outline' as IconName,
+    terms: 'document-text-outline' as IconName,
   },
 
   status: {
@@ -232,11 +148,10 @@ export const AppIcons = {
   },
 
   business: {
-    suppliers: 'cart-outline' as IconName,
+    supplier: 'cart-outline' as IconName,
     profile: 'person-outline' as IconName,
     plan: 'card-outline' as IconName,
     organization: 'business-outline' as IconName,
-    events: 'notifications-outline' as IconName,
     equipment: 'hardware-chip-outline' as IconName,
     maintenance: 'flash-outline' as IconName,
     reports: 'bar-chart-outline' as IconName,
