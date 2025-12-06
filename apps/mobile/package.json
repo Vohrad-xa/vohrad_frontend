@@ -36,6 +36,7 @@
     "@vohrad/api-client": "workspace:*",
     "@vohrad/auth": "workspace:*",
     "@vohrad/store": "workspace:*",
+    "@vohrad/swift-ui": "workspace:*",
     "@vohrad/types": "workspace:*",
     "expo": "~54.0.25",
     "expo-blur": "~15.0.7",
