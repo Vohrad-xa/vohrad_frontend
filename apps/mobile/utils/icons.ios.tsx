@@ -20,6 +20,7 @@ interface IconProps {
   interactive?: boolean;
   iconColor?: string;
   useSwiftUI?: boolean;
+  noContainer?: boolean;
 }
 
 export const Icon: React.FC<IconProps> = ({
@@ -31,12 +32,13 @@ export const Icon: React.FC<IconProps> = ({
   color,
   iconColor,
   useSwiftUI = false,
+  noContainer = false,
 }) => {
   const {theme, ds} = useTheme();
 
   const resolvedSize =
-    typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
-
+    typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.sm);
+  const sizeNoContainer = typeof size === 'number' ? size : 14;
   const frameSize = resolvedSize * 1.5;
   const resolvedTintToken = tintToken ?? colorToken;
   const resolvedTintColor =
@@ -51,6 +53,16 @@ export const Icon: React.FC<IconProps> = ({
         name={name as SFSymbol}
         size={resolvedSize}
         tintColor={resolvedTintColor ?? theme.muted}
+      />
+    );
+  }
+
+  if (noContainer) {
+    return (
+      <Image
+        systemName={name as SFSymbol}
+        color={resolvedTintColor ?? theme.muted}
+        size={sizeNoContainer}
       />
     );
   }
@@ -166,6 +178,11 @@ export const AppIcons = {
     appearance: 'circle.lefthalf.filled' as IconName,
     light: 'sun.max' as IconName,
     dark: 'moon' as IconName,
+  },
+
+  settings: {
+    biometric: 'touchid' as IconName,
+    haptic: 'iphone.radiowaves.left.and.right' as IconName,
   },
 } as const;
 

@@ -15,8 +15,7 @@ export type BadgeStatus =
   | 'suspended';
 
 export interface ThemedViewProps
-  extends ViewProps,
-    Pick<ContainerStyleProps, 'contentStyle'> {
+  extends ViewProps, Pick<ContainerStyleProps, 'contentStyle'> {
   variant?:
     | 'default'
     | 'card'

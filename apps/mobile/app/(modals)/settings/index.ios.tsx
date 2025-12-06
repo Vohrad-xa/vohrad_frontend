@@ -1,20 +1,12 @@
 import {useCallback} from 'react';
 import {StyleSheet} from 'react-native';
-import {
-  Host,
-  Section,
-  HStack,
-  Image,
-  Label,
-  Spacer,
-  Picker,
-  List,
-} from '@expo/ui/swift-ui';
+import {Host, Picker, List} from '@expo/ui/swift-ui';
 import {router} from 'expo-router';
+import {ListSection} from '@/components/ui/list-section.ios';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useAuth} from '@/providers';
 import {showConfirmAlert, makeStyleFactory} from '@/utils';
-import {Icon, AppIcons} from '@/utils/icons';
+import {AppIcons} from '@/utils/icons';
 
 export default function SettingsModal() {
   const {ds, theme, preference, setScheme} = useTheme();
@@ -39,182 +31,101 @@ export default function SettingsModal() {
 
   return (
     <Host style={styles.host}>
-      <List>
+      <List listStyle="automatic">
         {/* Account Section */}
-        <Section title="Account">
-          <HStack
-            alignment="center"
+        <ListSection title="Account">
+          <ListSection.Row
+            icon={AppIcons.business.profile}
+            iconColorToken="accentBlue"
+            title="Profile"
             onPress={() => router.push('/(modals)/settings/profile')}
-            spacing={10}
-          >
-            <Icon
-              name={AppIcons.business.profile}
-              colorToken="accentBlue"
-              useSwiftUI
-            />
-            <Label title="Profile" fixedSize={false} />
-            <Spacer />
-            <Image systemName="chevron.right" size={14} color="secondary" />
-          </HStack>
-
-          <HStack
-            alignment="center"
+          />
+          <ListSection.Row
+            icon={AppIcons.business.organization}
+            iconColorToken="accentGreen"
+            title="Organization"
             onPress={() => router.push('/(modals)/settings/organization')}
-            spacing={10}
-          >
-            <Icon
-              name={AppIcons.business.organization}
-              colorToken="accentGreen"
-              useSwiftUI
-            />
-            <Label title="Organization" fixedSize={false} />
-            <Spacer />
-            <Image systemName="chevron.right" size={14} color="secondary" />
-          </HStack>
-        </Section>
-
+          />
+        </ListSection>
         {/* Preferences Section */}
-        <Section title="App Settings">
-          <HStack
-            spacing={10}
-            alignment="center"
+        <ListSection title="General">
+          <ListSection.Row
+            icon={AppIcons.navigation.settings}
+            iconColorToken="accentOrange"
+            title="App Settings"
             onPress={() => router.push('/(modals)/settings/app-settings')}
-          >
-            <Icon
-              name={AppIcons.navigation.settings}
-              colorToken="accentOrange"
-              useSwiftUI
-            />
-            <Label title="App Settings" fixedSize={false} />
-            <Spacer />
-            <Image systemName="chevron.right" size={14} color="secondary" />
-          </HStack>
-
-          {/* Appearance Picker Row */}
-          <HStack alignment="center" onPress={() => {}} spacing={10}>
-            <Icon
-              name={AppIcons.theme.appearance}
-              colorToken="accentIndigo"
-              useSwiftUI
-            />
-            <Label title="Appearance" fixedSize={false} />
-            <Picker
-              options={['Light', 'Dark', 'Auto']}
-              selectedIndex={appearanceIndex}
-              onOptionSelected={({nativeEvent: {index}}) => {
-                const preferences = ['light', 'dark', 'system'] as const;
-                setScheme(preferences[index]);
-              }}
-              variant="menu"
-              color={theme.muted}
-            />
-          </HStack>
-
-          <HStack
-            alignment="center"
+          />
+          <ListSection.Row
+            icon={AppIcons.theme.appearance}
+            iconColorToken="accentIndigo"
+            title="Appearance"
+            onPress={() => {}}
+            rightComponent={
+              <Picker
+                options={['Light', 'Dark', 'Auto']}
+                selectedIndex={appearanceIndex}
+                onOptionSelected={({nativeEvent: {index}}) => {
+                  const preferences = ['light', 'dark', 'system'] as const;
+                  setScheme(preferences[index]);
+                }}
+                variant="menu"
+                color={theme.muted}
+              />
+            }
+          />
+          <ListSection.Row
+            icon={AppIcons.navigation.preferences}
+            iconColorToken="accentTeal"
+            title="Preferences"
             onPress={() => router.push('/(modals)/settings/preferences')}
-            spacing={10}
-          >
-            <Icon
-              name={AppIcons.navigation.preferences}
-              colorToken="accentTeal"
-              useSwiftUI
-            />
-            <Label title="Preferences" fixedSize={false} />
-            <Spacer />
-            <Image systemName="chevron.right" size={14} color="secondary" />
-          </HStack>
-
-          <HStack
-            alignment="center"
+          />
+          <ListSection.Row
+            icon={AppIcons.content.language}
+            iconColorToken="accentBlue"
+            title="App Language"
             onPress={() => router.push('/(modals)/settings/language')}
-            spacing={10}
-          >
-            <Icon
-              name={AppIcons.content.language}
-              colorToken="accentBlue"
-              useSwiftUI
-            />
-            <Label title="App Language" fixedSize={false} />
-            <Spacer />
-            <Image systemName="chevron.right" size={14} color="secondary" />
-          </HStack>
-        </Section>
+          />
+        </ListSection>
 
-        {/* Support Section */}
-        <Section title="Support & Legal">
-          <HStack
-            alignment="center"
-            onPress={() => router.push('/(modals)/settings/support')}
-            spacing={10}
-          >
-            <Icon
-              name={AppIcons.status.help}
-              colorToken="iconWarning"
-              useSwiftUI
-            />
-            <Label title="Report an Issue" fixedSize={false} />
-            <Spacer />
-            <Image systemName="chevron.right" size={14} color="secondary" />
-          </HStack>
-
-          <HStack
-            alignment="center"
+        {/* Data & Information */}
+        <ListSection title="Data & Information">
+          <ListSection.Row
+            icon={AppIcons.content.privacy}
+            iconColorToken="accentIndigo"
+            title="Privacy Policy"
             onPress={() => router.push('/(modals)/settings/privacy')}
-            spacing={10}
-          >
-            <Icon
-              name={AppIcons.content.privacy}
-              colorToken="accentIndigo"
-              useSwiftUI
-            />
-            <Label title="Privacy Policy" fixedSize={false} />
-            <Spacer />
-            <Image systemName="chevron.right" size={14} color="secondary" />
-          </HStack>
-
-          <HStack
-            alignment="center"
+          />
+          <ListSection.Row
+            icon={AppIcons.content.terms}
+            iconColorToken="iconInfo"
+            title="Terms of Use"
             onPress={() => router.push('/(modals)/settings/terms')}
-            spacing={10}
-          >
-            <Icon
-              name={AppIcons.content.terms}
-              colorToken="iconInfo"
-              useSwiftUI
-            />
-            <Label title="Terms of Use" fixedSize={false} />
-            <Spacer />
-            <Image systemName="chevron.right" size={14} color="secondary" />
-          </HStack>
-
-          <HStack
-            alignment="center"
+          />
+          <ListSection.Row
+            icon={AppIcons.status.info}
+            iconColorToken="iconInfo"
+            title="About"
             onPress={() => router.push('/(modals)/settings/about')}
-            spacing={10}
-          >
-            <Icon
-              name={AppIcons.status.info}
-              colorToken="iconInfo"
-              useSwiftUI
-            />
-            <Label title="About" fixedSize={false} />
-            <Spacer />
-            <Image systemName="chevron.right" size={14} color="secondary" />
-          </HStack>
-        </Section>
+          />
+        </ListSection>
+
+        <ListSection.Row
+          icon={AppIcons.status.help}
+          iconColorToken="iconWarning"
+          title="Report an Issue"
+          onPress={() => router.push('/(modals)/settings/support')}
+        />
 
         {/* Logout Section */}
-        <Section>
-          <HStack alignment="center" onPress={handleLogout} spacing={10}>
-            <Icon
-              name={AppIcons.actions.logout}
-              colorToken="destructive"
-              useSwiftUI
-            />
-            <Label title="Logout" fixedSize={false} />
-          </HStack>
-        </Section>
+        <ListSection>
+          <ListSection.Row
+            icon={AppIcons.actions.logout}
+            iconColorToken="destructive"
+            title="Logout"
+            onPress={handleLogout}
+            hideChevron
+          />
+        </ListSection>
       </List>
     </Host>
   );

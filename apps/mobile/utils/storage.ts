@@ -60,9 +60,8 @@ interface AsyncStorageInterface {
 
 async function tryLoadAsyncStorage(): Promise<AsyncStorageInterface | null> {
   try {
-    const mod = (await import(
-      '@react-native-async-storage/async-storage'
-    )) as AsyncStorageModule;
+    const mod =
+      (await import('@react-native-async-storage/async-storage')) as AsyncStorageModule;
     const AsyncStorage = mod?.default ?? mod;
     if (AsyncStorage && typeof AsyncStorage.getItem === 'function') {
       return AsyncStorage as AsyncStorageInterface;

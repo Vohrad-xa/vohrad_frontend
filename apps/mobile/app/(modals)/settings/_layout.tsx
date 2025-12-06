@@ -50,24 +50,17 @@ function SettingsStack() {
           name="index"
           options={{
             title: 'Settings',
-            headerLeft:
-              Platform.OS === 'ios' || Platform.OS === 'web'
-                ? undefined
-                : () => (
-                    <HeaderButton
-                      icon={AppIcons.navigation.back}
-                      onPress={() => router.dismiss()}
-                      iconColorToken="text"
-                      accessibilityLabel="Close settings"
-                      iconSize="lg"
-                    />
-                  ),
-            headerRight: () => (
+            headerLeft: () => (
               <HeaderButton
-                icon={AppIcons.navigation.close}
+                icon={
+                  Platform.OS === 'ios'
+                    ? AppIcons.navigation.close
+                    : AppIcons.navigation.back
+                }
                 onPress={() => router.dismiss()}
                 iconColorToken="text"
                 accessibilityLabel="Close settings"
+                iconSize="lg"
               />
             ),
           }}
@@ -80,6 +73,7 @@ function SettingsStack() {
           name="organization/index"
           options={{title: 'Organization'}}
         />
+        <Stack.Screen name="app-settings" options={{title: 'App Settings'}} />
         <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
         <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
         <Stack.Screen name="about" options={{title: 'About'}} />

@@ -28,7 +28,8 @@ export type HeaderButtonVariant =
   | 'destructive';
 
 export interface HeaderButtonProps
-  extends Omit<RequiredIconProps, 'icon'>,
+  extends
+    Omit<RequiredIconProps, 'icon'>,
     Pick<BaseViewProps, 'style' | 'accessibilityLabel' | 'testID'> {
   onPress?: () => void;
   variant?: HeaderButtonVariant;

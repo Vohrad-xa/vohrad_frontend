@@ -110,13 +110,16 @@ const createStyles = makeStyleFactory(
     const iconColumnWidth = ds.spacing.xl * 2;
 
     return StyleSheet.create({
+      content: {
+        flex: 1,
+      },
       card: {
         backgroundColor: theme.input,
         borderRadius: ds.components.card.borderRadius,
       },
       childContainer: {
         paddingHorizontal: ds.spacing.lg,
-        paddingVertical: ds.spacing.lg,
+        paddingVertical: ds.spacing.md,
       },
       rowWithIcon: {
         flexDirection: 'row',
@@ -131,9 +134,6 @@ const createStyles = makeStyleFactory(
         justifyContent: 'center',
         alignItems: 'center',
         padding: 0,
-      },
-      content: {
-        flex: 1,
       },
       chevron: {
         marginLeft: ds.spacing.md,

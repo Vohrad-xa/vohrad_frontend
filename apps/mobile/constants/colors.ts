@@ -9,6 +9,7 @@ export const Palette = {
     400: '#A1A1AA',
     500: '#8E8E93',
     600: '#636366',
+    650: '#2C2C2E',
     700: '#48484A',
     750: '#30302E',
     800: '#1C1C1E',
@@ -106,7 +107,7 @@ const _Tokens = {
   dark: {
     // Surfaces & text
     background: Palette.black,
-    secondbackground: Palette.gray[900],
+    secondbackground: Palette.gray[800],
     webbackground: Palette.Dbackground,
     surface: Palette.gray[800],
     text: '#ECEDEE',
@@ -137,7 +138,7 @@ const _Tokens = {
     tint: Palette.brand.blue,
     tabIconSelected: Palette.brand.blue,
     card: Palette.cardDarkGlass,
-    input: Palette.gray[800],
+    input: Palette.gray[650],
     purple: Palette.brand.purple,
     iosLightGray: Palette.gray[700],
     iosPlaceholder: Palette.gray[500],

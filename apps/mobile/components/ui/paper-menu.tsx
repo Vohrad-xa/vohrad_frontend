@@ -4,8 +4,10 @@ import {Menu, Divider} from 'react-native-paper';
 import {useTheme} from '@/providers';
 import type {NativeMenuProps} from './native-menu';
 
-export interface PaperMenuProps
-  extends Omit<NativeMenuProps, 'isAnchoredToRight'> {
+export interface PaperMenuProps extends Omit<
+  NativeMenuProps,
+  'isAnchoredToRight'
+> {
   anchorPosition?: 'top' | 'bottom';
   elevation?: 0 | 1 | 2 | 3 | 4 | 5;
   mode?: 'flat' | 'elevated';

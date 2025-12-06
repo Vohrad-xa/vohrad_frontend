@@ -98,10 +98,7 @@ export interface MenuItemProps extends MenuItem, ActionProps {}
 
 // list item with label, icon, and actions
 export interface ListItemBaseProps
-  extends BaseViewProps,
-    LabeledComponentProps,
-    IconProps,
-    ActionProps {}
+  extends BaseViewProps, LabeledComponentProps, IconProps, ActionProps {}
 
 // Button base props
 export interface ButtonBaseProps extends BaseViewProps, ActionProps {}

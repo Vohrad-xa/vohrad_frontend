@@ -9,7 +9,8 @@ import {makeStyleFactory} from '@/utils/style-factory';
 import {Input, type InputProps} from './input';
 
 export interface SearchBarProps
-  extends InputProps,
+  extends
+    InputProps,
     Pick<IconProps, 'icon'>,
     Pick<ContainerStyleProps, 'containerStyle'> {
   showIcon?: boolean;

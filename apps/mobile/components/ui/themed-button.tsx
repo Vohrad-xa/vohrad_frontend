@@ -13,7 +13,8 @@ import {Icon, makeStyleFactory} from '@/utils';
 import {ThemedText} from './themed-text';
 
 export interface ThemedButtonProps
-  extends TouchableOpacityProps,
+  extends
+    TouchableOpacityProps,
     Omit<ButtonBaseProps, 'style' | 'onPress' | 'onLongPress'>,
     Pick<IconProps, 'icon'> {
   title?: string;

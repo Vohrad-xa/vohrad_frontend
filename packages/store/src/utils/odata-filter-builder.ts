@@ -162,8 +162,8 @@ export function hasActiveUserFilters(filters: UserFilterState): boolean {
   if (!filters) return false;
   return Boolean(
     (filters.role && filters.role.trim().length > 0) ||
-      (filters.createdFrom && filters.createdFrom.trim().length > 0) ||
-      (filters.createdTo && filters.createdTo.trim().length > 0),
+    (filters.createdFrom && filters.createdFrom.trim().length > 0) ||
+    (filters.createdTo && filters.createdTo.trim().length > 0),
   );
 }
 

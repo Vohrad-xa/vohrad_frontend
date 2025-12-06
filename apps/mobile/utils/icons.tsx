@@ -17,6 +17,7 @@ interface IconProps {
   colorToken?: TokenName; // prefer passing a token over raw color
   tintColor?: string;
   style?: StyleProp<TextStyle>;
+  noContainer?: boolean;
 }
 
 export const IconFontFamily = 'Ionicons' as const;
@@ -161,6 +162,11 @@ export const AppIcons = {
     appearance: 'sparkles-outline' as IconName,
     light: 'sunny-outline' as IconName,
     dark: 'moon-outline' as IconName,
+  },
+
+  settings: {
+    biometric: 'finger-print' as IconName,
+    haptic: 'phone-portrait-outline' as IconName,
   },
 } as const;
 
