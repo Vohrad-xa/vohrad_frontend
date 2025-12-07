@@ -8,9 +8,6 @@ internal final class TextViewProps: UIBaseViewProps {
   @Field var size: Double?
   @Field var lineLimit: Int?
   @Field var color: Color?
-
-  // Override default frame alignment for text views
-  override var defaultFrameAlignment: Alignment { .leading }
 }
 
 internal struct TextView: ExpoSwiftUI.View {

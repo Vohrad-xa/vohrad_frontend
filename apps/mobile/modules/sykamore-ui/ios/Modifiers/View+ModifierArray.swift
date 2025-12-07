@@ -1,9 +1,6 @@
 import ExpoModulesCore
 import SwiftUI
 
-internal typealias ModifierType = [String: Any]
-internal typealias ModifierArray = [ModifierType]
-
 internal extension View {
   /**
    * Applies an array of modifiers to a view using the ViewModifierRegistry.
