@@ -1,7 +1,0 @@
-{
-  "platforms": ["apple"],
-  "coreFeatures": ["swiftui"],
-  "apple": {
-    "modules": ["ExpoUIModule"]
-  }
-}
