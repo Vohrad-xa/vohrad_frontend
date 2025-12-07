@@ -76,7 +76,7 @@ export type NativeButtonProps = Omit<
 
 // We have to work around the `role` and `onPress` props being reserved by React Native.
 const ButtonNativeView: React.ComponentType<NativeButtonProps> =
-  requireNativeView('ExpoUI', 'Button');
+  requireNativeView('SykamoreUi', 'Button');
 
 /**
  * exposed for ContextMenu

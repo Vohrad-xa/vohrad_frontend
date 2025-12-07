@@ -26,15 +26,15 @@ export type SectionProps = {
 } & CommonViewModifierProps;
 
 const SectionNativeView: React.ComponentType<SectionProps> = requireNativeView(
-  'ExpoUI',
+  'SykamoreUi',
   'SectionView'
 );
 
-const SectionHeader: React.ComponentType<object> = requireNativeView('ExpoUI', 'SectionHeader');
+const SectionHeader: React.ComponentType<object> = requireNativeView('SykamoreUi', 'SectionHeader');
 
-const SectionFooter: React.ComponentType<object> = requireNativeView('ExpoUI', 'SectionFooter');
+const SectionFooter: React.ComponentType<object> = requireNativeView('SykamoreUi', 'SectionFooter');
 
-const SectionContent: React.ComponentType<object> = requireNativeView('ExpoUI', 'SectionContent');
+const SectionContent: React.ComponentType<object> = requireNativeView('SykamoreUi', 'SectionContent');
 
 /**
  * Section component uses the native [Section](https://developer.apple.com/documentation/swiftui/section) component.

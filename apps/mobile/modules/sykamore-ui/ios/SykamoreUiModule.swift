@@ -7,5 +7,10 @@ public final class SykamoreUiModule: Module {
     // MARK: - Views
     View(HostView.self)
     View(ListView.self)
+    View(Button.self)
+    View(SectionView.self)
+    View(SectionHeader.self)
+    View(SectionFooter.self)
+    View(SectionContent.self)
   }
 }
