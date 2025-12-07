@@ -7,7 +7,7 @@ export type SwipeActionRole = 'default' | 'destructive' | 'cancel';
 export type SwipeEdge = 'leading' | 'trailing';
 
 /** Configuration for a single swipe action */
-export interface SwipeAction {
+export interface ModifierSwipeAction {
   /** Unique identifier for the action */
   id: string;
   /** Display label for the action */
@@ -27,7 +27,7 @@ export interface SwipeActionsOptions {
   /** Allow full swipe to trigger first action (default: true) */
   allowsFullSwipe?: boolean;
   /** Array of swipe actions */
-  actions: SwipeAction[];
+  actions: ModifierSwipeAction[];
   /** Callback when action is triggered */
   onAction?: (actionId: string, label: string) => void;
 }
@@ -57,7 +57,12 @@ export interface SwipeActionsOptions {
  * ```
  */
 export function swipeActions(options: SwipeActionsOptions): ModifierConfig {
-  const {edge = 'trailing', allowsFullSwipe = true, actions, onAction} = options;
+  const {
+    edge = 'trailing',
+    allowsFullSwipe = true,
+    actions,
+    onAction,
+  } = options;
 
   return createModifier('swipeActions', {
     edge,

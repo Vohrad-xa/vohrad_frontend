@@ -1,6 +1,45 @@
 import ExpoModulesCore
 import SwiftUI
 
+internal enum SelectionMode: String, Enumerable {
+  case multiple
+  case single
+  case none
+}
+
+internal enum SeparatorVisibility: String, Enumerable {
+  case automatic
+  case visible
+  case hidden
+
+  func toVisibility() -> Visibility? {
+    switch self {
+    case .automatic:
+      return nil
+    case .visible:
+      return .visible
+    case .hidden:
+      return .hidden
+    }
+  }
+}
+
+internal struct RowInsets: Record {
+  @Field var top: Double?
+  @Field var bottom: Double?
+  @Field var leading: Double?
+  @Field var trailing: Double?
+
+  func toEdgeInsets() -> EdgeInsets {
+    EdgeInsets(
+      top: top ?? 0,
+      leading: leading ?? 0,
+      bottom: bottom ?? 0,
+      trailing: trailing ?? 0
+    )
+  }
+}
+
 /** Button role for swipe actions */
 internal enum SwipeActionRole: String, Enumerable {
   case `default`
@@ -39,61 +78,42 @@ final class ListProps: UIBaseViewProps {
   @Field var moveEnabled: Bool = false
   @Field var deleteEnabled: Bool = false
   @Field var selectEnabled: Bool = true
+  @Field var selectionMode: SelectionMode = .multiple
   @Field var scrollEnabled: Bool = true
   @Field var editModeEnabled: Bool = false
+  @Field var refreshEnabled: Bool = false
+  @Field var refreshing: Bool = false
+  @Field var showScrollIndicators: Bool = true
+  @Field var rowSeparatorVisibility: SeparatorVisibility = .automatic
+  @Field var rowInsets: RowInsets?
+  @Field var rowBackground: Color?
+  @Field var sectionSeparatorVisibility: SeparatorVisibility = .automatic
+  @Field var rowSpacing: Double?
+  @Field var sectionSpacing: Double?
   @Field var leadingSwipeActions: SwipeActionsConfig?
   @Field var trailingSwipeActions: SwipeActionsConfig?
   var onDeleteItem = EventDispatcher()
   var onMoveItem = EventDispatcher()
   var onSelectionChange = EventDispatcher()
   var onSwipeAction = EventDispatcher()
+  var onRefresh = EventDispatcher()
 }
 
 struct ListView: ExpoSwiftUI.View {
   @ObservedObject var props: ListProps
-  @State private var selection: Set<Int> = []
+  @State private var multiSelection: Set<Int> = []
+  @State private var singleSelection: Int?
   @State var editModeEnabled: EditMode = .inactive
   @State var search: String = ""
+  @State private var refreshContinuation: CheckedContinuation<Void, Never>?
+  @State private var refreshSeenRefreshingTrue = false
 
   init(props: ListProps) {
     self.props = props
   }
 
   var body: some View {
-    let list = List(selection: props.selectEnabled ? $selection : nil) {
-      Children()
-        .onDelete(perform: handleDelete)
-        .onMove(perform: handleMove)
-        .deleteDisabled(!props.deleteEnabled)
-        .moveDisabled(!props.moveEnabled)
-        .modifier(LeadingSwipeActionsModifier(
-          config: props.leadingSwipeActions,
-          onAction: handleSwipeAction
-        ))
-        .modifier(TrailingSwipeActionsModifier(
-          config: props.trailingSwipeActions,
-          onAction: handleSwipeAction
-        ))
-    }
-      .modifier(ListStyleModifer(style: props.listStyle))
-      .onAppear {
-        editModeEnabled = props.editModeEnabled ? .active : .inactive
-      }
-      .onChange(of: props.editModeEnabled) { newValue in
-        withAnimation {
-          editModeEnabled = newValue ? .active : .inactive
-        }
-      }
-      .onChange(of: selection) { selection in
-        handleSelectionChange(selection: selection)
-      }
-      .modifier(ScrollDisabledModifier(scrollEnabled: props.scrollEnabled))
-      .environment(\.editMode, $editModeEnabled)
-    if #available(iOS 16.0, tvOS 16.0, *) {
-      list.scrollDisabled(!props.scrollEnabled)
-    } else {
-      list
-    }
+    buildList()
   }
   func handleDelete(at offsets: IndexSet) {
     for offset in offsets {
@@ -111,8 +131,8 @@ struct ListView: ExpoSwiftUI.View {
       ])
     }
   }
-  func handleSelectionChange(selection: Set<Int>) {
-    let selectionArray = Array(selection)
+  func handleSelectionChange(selection: [Int]) {
+    let selectionArray = selection
     let jsonDict: [String: Any] = [
       "selection": selectionArray
     ]
@@ -124,6 +144,151 @@ struct ListView: ExpoSwiftUI.View {
       "actionId": actionId,
       "label": label
     ])
+  }
+
+  @ViewBuilder
+  private func buildList() -> some View {
+    switch props.selectionMode {
+    case .single:
+      let list = List(selection: props.selectEnabled && props.selectionMode != .none ? $singleSelection : nil) {
+        listRows
+      }
+      applyBaseModifiers(list: list)
+        .onChange(of: singleSelection) { selection in
+          if let selection {
+            handleSelectionChange(selection: [selection])
+          } else {
+            handleSelectionChange(selection: [])
+          }
+        }
+    case .multiple, .none:
+      let list = List(selection: props.selectEnabled && props.selectionMode != .none ? $multiSelection : nil) {
+        listRows
+      }
+      applyBaseModifiers(list: list)
+        .onChange(of: multiSelection) { selection in
+          handleSelectionChange(selection: Array(selection))
+        }
+    }
+  }
+
+  @ViewBuilder
+  private var listRows: some View {
+    Children()
+      .onDelete(perform: handleDelete)
+      .onMove(perform: handleMove)
+      .deleteDisabled(!props.deleteEnabled)
+      .moveDisabled(!props.moveEnabled)
+      .modifier(LeadingSwipeActionsModifier(
+        config: props.leadingSwipeActions,
+        onAction: handleSwipeAction
+      ))
+      .modifier(TrailingSwipeActionsModifier(
+        config: props.trailingSwipeActions,
+        onAction: handleSwipeAction
+      ))
+  }
+
+  private func applyBaseModifiers<Content: View>(list: Content) -> some View {
+    let styled = list
+      .modifier(ListStyleModifer(style: props.listStyle))
+      .onAppear {
+        editModeEnabled = props.editModeEnabled ? .active : .inactive
+      }
+      .onChange(of: props.editModeEnabled) { newValue in
+        withAnimation {
+          editModeEnabled = newValue ? .active : .inactive
+        }
+      }
+      .onChange(of: props.refreshing) { newValue in
+        handleRefreshingChange(isRefreshing: newValue)
+      }
+      .modifier(ScrollDisabledModifier(scrollEnabled: props.scrollEnabled))
+      .environment(\.editMode, $editModeEnabled)
+
+    let refreshed = applyRefreshable(list: styled)
+    let chromeApplied = applyListChrome(list: refreshed)
+    return applyScrollIndicators(list: chromeApplied)
+  }
+
+  private func applyScrollIndicators<Content: View>(list: Content) -> some View {
+    if #available(iOS 16.0, tvOS 16.0, *) {
+      return AnyView(list.scrollIndicators(props.showScrollIndicators ? .visible : .hidden)
+        .scrollDisabled(!props.scrollEnabled))
+    }
+    return AnyView(list)
+  }
+
+  private func applyListChrome<Content: View>(list: Content) -> some View {
+    var view: AnyView = AnyView(list)
+
+    if #available(iOS 15.0, tvOS 15.0, *) {
+      if let visibility = props.rowSeparatorVisibility.toVisibility() {
+        view = AnyView(view.listRowSeparator(visibility))
+      }
+      if let insets = props.rowInsets?.toEdgeInsets() {
+        view = AnyView(view.listRowInsets(insets))
+      }
+      if let rowBackground = props.rowBackground {
+        view = AnyView(view.listRowBackground(rowBackground))
+      }
+      if let sectionVisibility = props.sectionSeparatorVisibility.toVisibility() {
+        view = AnyView(view.listSectionSeparator(sectionVisibility))
+      }
+    }
+
+    if #available(iOS 16.0, tvOS 16.0, *) {
+      if let spacing = props.rowSpacing {
+        view = AnyView(view.listRowSpacing(spacing))
+      }
+    }
+
+    if #available(iOS 17.0, tvOS 17.0, *) {
+      if let spacing = props.sectionSpacing {
+        view = AnyView(view.listSectionSpacing(spacing))
+      }
+    }
+
+    return view
+  }
+
+  @ViewBuilder
+  private func applyRefreshable(list: some View) -> some View {
+    if #available(iOS 15.0, *), props.refreshEnabled {
+      list.refreshable {
+        await handleRefresh()
+      }
+    } else {
+      list
+    }
+  }
+
+  private func handleRefreshingChange(isRefreshing: Bool) {
+    if isRefreshing {
+      refreshSeenRefreshingTrue = true
+    } else if refreshSeenRefreshingTrue {
+      refreshContinuation?.resume()
+      refreshContinuation = nil
+      refreshSeenRefreshingTrue = false
+    }
+  }
+
+  private func handleRefresh() async {
+    props.onRefresh([:])
+
+    await withCheckedContinuation { continuation in
+      refreshContinuation = continuation
+      // If JS chooses not to toggle `refreshing`, end the refresh after a short delay
+      if !refreshSeenRefreshingTrue && !props.refreshing {
+        Task { @MainActor in
+          try? await Task.sleep(nanoseconds: 50_000_000)
+          if let continuation = refreshContinuation, !refreshSeenRefreshingTrue {
+            continuation.resume()
+            refreshContinuation = nil
+          }
+        }
+      }
+    }
   }
 }
 

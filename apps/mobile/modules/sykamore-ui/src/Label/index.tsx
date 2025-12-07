@@ -14,9 +14,9 @@ export type LabelProps = {
 
 const LabelNativeView: React.ComponentType<
   LabelProps & {children?: React.ReactNode}
-> = requireNativeView('SykamoreUI', 'LabelView');
+> = requireNativeView('SykamoreUi', 'LabelView');
 const LabelIconNativeView: React.ComponentType<{children?: React.ReactNode}> =
-  requireNativeView('SykamoreUI', 'LabelIcon');
+  requireNativeView('SykamoreUi', 'LabelIcon');
 
 export function Label(props: LabelProps) {
   const {modifiers, icon, ...restProps} = props;

@@ -6,22 +6,22 @@ import {type SubmenuProps, type ContextMenuProps} from './types';
 export {type ActivationMethod, type ContextMenuProps} from './types';
 
 const MenuNativeView: ComponentType<NativeMenuProps> = requireNativeView(
-  'ExpoUI',
+  'SykamoreUi',
   'ContextMenu',
 );
 
 const MenuNativeTriggerView: ComponentType<object> = requireNativeView(
-  'SykamoreUI',
+  'SykamoreUi',
   'ContextMenuActivationElement',
 );
 
 const MenuNativePreviewView: ComponentType<object> = requireNativeView(
-  'SykamoreUI',
+  'SykamoreUi',
   'ContextMenuPreview',
 );
 
 const MenuNativeItemsView: ComponentType<object> = requireNativeView(
-  'SykamoreUI',
+  'SykamoreUi',
   'ContextMenuContent',
 );
 

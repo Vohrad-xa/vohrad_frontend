@@ -9,7 +9,7 @@ const ListNativeView: React.ComponentType<NativeListProps> =
 function transformListProps(
   props: Omit<ListProps, 'children'>,
 ): Omit<NativeListProps, 'children'> {
-  const {modifiers, onSwipeAction, ...restProps} = props;
+  const {modifiers, onSwipeAction, onRefresh, ...restProps} = props;
   return {
     modifiers,
     ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
@@ -20,6 +20,7 @@ function transformListProps(
       props?.onSelectionChange?.(selection),
     onSwipeAction: ({nativeEvent: {actionId, label}}) =>
       onSwipeAction?.(actionId, label),
+    onRefresh: () => onRefresh?.(),
   };
 }
 
@@ -33,6 +34,20 @@ export type ListStyle =
 
 /** Button role for swipe action styling */
 export type SwipeActionRole = 'default' | 'destructive' | 'cancel';
+
+/** Selection behavior for the list */
+export type SelectionMode = 'multiple' | 'single' | 'none';
+
+/** Visibility settings for separators */
+export type SeparatorVisibility = 'automatic' | 'visible' | 'hidden';
+
+/** Insets applied to each row */
+export interface RowInsets {
+  top?: number;
+  bottom?: number;
+  leading?: number;
+  trailing?: number;
+}
 
 /** Single swipe action configuration */
 export interface SwipeAction {
@@ -61,6 +76,8 @@ export interface ListProps extends CommonViewModifierProps {
   listStyle?: ListStyle;
   /** Allow selection of list items */
   selectEnabled?: boolean;
+  /** Selection behavior ('multiple' by default) */
+  selectionMode?: SelectionMode;
   /** Enable reordering of list items */
   moveEnabled?: boolean;
   /** Allow deletion of list items */
@@ -69,6 +86,24 @@ export interface ListProps extends CommonViewModifierProps {
   scrollEnabled?: boolean;
   /** Enable SwiftUI edit mode */
   editModeEnabled?: boolean;
+  /** Enable pull-to-refresh (iOS 15.0+) */
+  refreshEnabled?: boolean;
+  /** Control refresh indicator visibility; set to true while fetching and false to end */
+  refreshing?: boolean;
+  /** Show or hide scroll indicators (iOS 16.0+) */
+  showScrollIndicators?: boolean;
+  /** Control row separator visibility (iOS 15.0+) */
+  rowSeparatorVisibility?: SeparatorVisibility;
+  /** Apply consistent insets to all rows (iOS 15.0+) */
+  rowInsets?: RowInsets;
+  /** Apply a background color to all rows (iOS 15.0+) */
+  rowBackground?: string;
+  /** Control section separator visibility (iOS 15.0+) */
+  sectionSeparatorVisibility?: SeparatorVisibility;
+  /** Spacing between rows (iOS 16.0+) */
+  rowSpacing?: number;
+  /** Spacing between sections (iOS 17.0+) */
+  sectionSpacing?: number;
   /** Leading edge swipe actions (iOS 15.0+) */
   leadingSwipeActions?: SwipeActionsConfig;
   /** Trailing edge swipe actions (iOS 15.0+) */
@@ -83,6 +118,8 @@ export interface ListProps extends CommonViewModifierProps {
   onSelectionChange?: (selection: number[]) => void;
   /** Callback when swipe action is triggered */
   onSwipeAction?: (actionId: string, label: string) => void;
+  /** Callback when pull-to-refresh is triggered */
+  onRefresh?: () => void;
 }
 
 type DeleteItemEvent = ViewEvent<'onDeleteItem', {index: number}>;
@@ -92,15 +129,21 @@ type SwipeActionEvent = ViewEvent<
   'onSwipeAction',
   {actionId: string; label: string}
 >;
+type RefreshEvent = ViewEvent<'onRefresh', Record<string, never>>;
 
 type NativeListProps = Omit<
   ListProps,
-  'onDeleteItem' | 'onMoveItem' | 'onSelectionChange' | 'onSwipeAction'
+  | 'onDeleteItem'
+  | 'onMoveItem'
+  | 'onSelectionChange'
+  | 'onSwipeAction'
+  | 'onRefresh'
 > &
   DeleteItemEvent &
   MoveItemEvent &
   SelectItemEvent &
-  SwipeActionEvent & {
+  SwipeActionEvent &
+  RefreshEvent & {
     children: React.ReactNode;
   };
 

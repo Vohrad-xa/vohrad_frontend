@@ -1,8 +1,13 @@
 import ExpoModulesCore
 import SwiftUI
 
+internal typealias ModifierType = [String: Any]
+internal typealias ModifierArray = [ModifierType]
+
 internal extension View {
-  /** Applies an array of modifiers to a view using the ViewModifierRegistry */
+  /**
+   * Applies an array of modifiers to a view using the ViewModifierRegistry.
+   */
   @ViewBuilder
   func applyModifiers(_ modifiers: ModifierArray?, appContext: AppContext?, globalEventDispatcher: EventDispatcher) -> some View {
     if let modifiers, let appContext {

@@ -1,11 +1,18 @@
-/** Base interface for view modifiers */
+/**
+ * Base interface for all view modifiers.
+ * All modifiers must have a type field and can include arbitrary parameters.
+ */
 export interface ModifierConfig {
   $type: string;
   [key: string]: any;
   eventListener?: (args: any) => void;
 }
 
-/** Create a modifier configuration object */
+/**
+ * Factory function to create modifier configuration objects.
+ * This is used internally by all modifier functions.
+ * @hidden
+ */
 export function createModifier(
   type: string,
   params: Record<string, any> = {},

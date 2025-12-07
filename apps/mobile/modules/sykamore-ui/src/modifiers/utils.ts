@@ -1,14 +1,16 @@
-import { type ModifierConfig } from './createModifier';
+import {type ModifierConfig} from './createModifier';
 
 type GlobalEventPayload = {
   [eventName: string]: Record<string, any>;
 };
 type GlobalEvent = {
-  onGlobalEvent: (event: { nativeEvent: GlobalEventPayload }) => void;
+  onGlobalEvent: (event: {nativeEvent: GlobalEventPayload}) => void;
 };
 
 /** Create event listener for view modifiers */
-export function createViewModifierEventListener(modifiers: ModifierConfig[]): GlobalEvent {
+export function createViewModifierEventListener(
+  modifiers: ModifierConfig[],
+): GlobalEvent {
   const eventListeners: Record<string, (args: any) => void> = {};
   for (const modifier of modifiers) {
     if (modifier.eventListener) {
@@ -16,7 +18,7 @@ export function createViewModifierEventListener(modifiers: ModifierConfig[]): Gl
     }
   }
 
-  const onGlobalEvent: GlobalEvent['onGlobalEvent'] = ({ nativeEvent }) => {
+  const onGlobalEvent: GlobalEvent['onGlobalEvent'] = ({nativeEvent}) => {
     for (const [eventName, params] of Object.entries(nativeEvent)) {
       const listener = eventListeners[eventName];
       if (listener) {

@@ -10,11 +10,8 @@ import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 
 export type HostProps = {
-  /** Update size to match SwiftUI content layout */
   matchContents?: boolean | {vertical?: boolean; horizontal?: boolean};
-  /** Use viewport size for SwiftUI layout when no explicit size is provided */
   useViewportSizeMeasurement?: boolean;
-  /** Callback when SwiftUI content completes layout */
   onLayoutContent?: (event: {
     nativeEvent: {width: number; height: number};
   }) => void;
