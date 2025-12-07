@@ -16,6 +16,89 @@ enum KeyboardType: String, Enumerable {
   case asciiCapableNumberPad = "ascii-capable-number-pad"
 }
 
+enum TextContentType: String, Enumerable {
+  case emailAddress = "email-address"
+  case password = "password"
+  case newPassword = "new-password"
+  case oneTimeCode = "one-time-code"
+  case username = "username"
+  case name = "name"
+  case givenName = "given-name"
+  case familyName = "family-name"
+  case telephoneNumber = "telephone-number"
+  case addressCity = "address-city"
+  case addressState = "address-state"
+  case postalCode = "postal-code"
+  case streetAddressLine1 = "street-address-line1"
+  case streetAddressLine2 = "street-address-line2"
+  case creditCardNumber = "credit-card-number"
+
+  func toUITextContentType() -> UITextContentType? {
+    switch self {
+    case .emailAddress: return .emailAddress
+    case .password: return .password
+    case .newPassword: return .newPassword
+    case .oneTimeCode: return .oneTimeCode
+    case .username: return .username
+    case .name: return .name
+    case .givenName: return .givenName
+    case .familyName: return .familyName
+    case .telephoneNumber: return .telephoneNumber
+    case .addressCity: return .addressCity
+    case .addressState: return .addressState
+    case .postalCode: return .postalCode
+    case .streetAddressLine1: return .streetAddressLine1
+    case .streetAddressLine2: return .streetAddressLine2
+    case .creditCardNumber: return .creditCardNumber
+    }
+  }
+}
+
+enum SubmitLabel: String, Enumerable {
+  case done = "done"
+  case go = "go"
+  case send = "send"
+  case search = "search"
+  case next = "next"
+  case `continue` = "continue"
+  case `return` = "return"
+
+  func toSwiftUI() -> SwiftUI.SubmitLabel {
+    switch self {
+    case .done: return .done
+    case .go: return .go
+    case .send: return .send
+    case .search: return .search
+    case .next: return .next
+    case .continue: return .continue
+    case .return: return .return
+    }
+  }
+}
+
+enum TextInputAutocapitalization: String, Enumerable {
+  case never = "never"
+  case words = "words"
+  case sentences = "sentences"
+  case characters = "characters"
+
+  @available(iOS 15.0, *)
+  func toSwiftUI() -> SwiftUI.TextInputAutocapitalization {
+    switch self {
+    case .never: return .never
+    case .words: return .words
+    case .sentences: return .sentences
+    case .characters: return .characters
+    }
+  }
+}
+
+enum TextFieldStyleType: String, Enumerable {
+  case automatic = "automatic"
+  case plain = "plain"
+  case roundedBorder = "rounded-border"
+}
+
 final class TextFieldProps: UIBaseViewProps {
   @Field var defaultValue: String = ""
   @Field var placeholder: String = ""
@@ -25,6 +108,11 @@ final class TextFieldProps: UIBaseViewProps {
   @Field var autocorrection: Bool = true
   @Field var allowNewlines: Bool = true
   @Field var autoFocus: Bool = false
+  @Field var isSecure: Bool = false
+  @Field var textContentType: TextContentType?
+  @Field var submitLabel: SubmitLabel?
+  @Field var autocapitalization: TextInputAutocapitalization?
+  @Field var textFieldStyle: TextFieldStyleType = .automatic
   var onValueChanged = EventDispatcher()
   var onFocusChanged = EventDispatcher()
   var onSelectionChanged = EventDispatcher()
@@ -134,41 +222,67 @@ struct TextFieldView: ExpoSwiftUI.View, ExpoSwiftUI.FocusableView {
   }
 
   var text: some View {
-    let text = if #available(iOS 18.0, macOS 15.0, tvOS 18.0, *) {
-      #if !os(tvOS)
-      TextField(
-        props.placeholder,
-        text: $textManager.text,
-        selection: $textManager.selection,
-        axis: (props.multiline && allowMultiLine()) ? .vertical : .horizontal
-      )
-      #else
-      TextField(
-        props.placeholder,
-        text: $textManager.text,
-        axis: (props.multiline && allowMultiLine()) ? .vertical : .horizontal
-      )
-      #endif
-    } else if #available(iOS 16.0, tvOS 16.0, *) {
-      TextField(
-        props.placeholder,
-        text: $textManager.text,
-        axis: (props.multiline && allowMultiLine()) ? .vertical : .horizontal
-      )
-    } else {
-      TextField(
-        props.placeholder,
-        text: $textManager.text
-      )
+    let baseField = Group {
+      if props.isSecure {
+        // SecureField doesn't support multiline or selection
+        SecureField(props.placeholder, text: $textManager.text)
+      } else if #available(iOS 18.0, macOS 15.0, tvOS 18.0, *) {
+        #if !os(tvOS)
+        TextField(
+          props.placeholder,
+          text: $textManager.text,
+          selection: $textManager.selection,
+          axis: (props.multiline && allowMultiLine()) ? .vertical : .horizontal
+        )
+        #else
+        TextField(
+          props.placeholder,
+          text: $textManager.text,
+          axis: (props.multiline && allowMultiLine()) ? .vertical : .horizontal
+        )
+        #endif
+      } else if #available(iOS 16.0, tvOS 16.0, *) {
+        TextField(
+          props.placeholder,
+          text: $textManager.text,
+          axis: (props.multiline && allowMultiLine()) ? .vertical : .horizontal
+        )
+      } else {
+        TextField(
+          props.placeholder,
+          text: $textManager.text
+        )
+      }
     }
-    return text.lineLimit((props.multiline && allowMultiLine()) ? props.numberOfLines : 1)
+
+    return baseField
+      .lineLimit((props.multiline && allowMultiLine() && !props.isSecure) ? props.numberOfLines : 1)
       .modifier(UIBaseViewModifier(props: props))
       .fixedSize(horizontal: false, vertical: true)
       .keyboardType(getKeyboardType(props.keyboardType))
       .autocorrectionDisabled(!props.autocorrection)
+      .if(props.textContentType != nil) { view in
+        view.textContentType(props.textContentType?.toUITextContentType())
+      }
+      .if(props.submitLabel != nil) { view in
+        view.submitLabel(props.submitLabel!.toSwiftUI())
+      }
+      .if(props.autocapitalization != nil) { view in
+        if #available(iOS 15.0, *) {
+          view.textInputAutocapitalization(props.autocapitalization!.toSwiftUI())
+        } else {
+          view
+        }
+      }
+      .if(props.textFieldStyle == .roundedBorder) { view in
+        view.textFieldStyle(.roundedBorder)
+      }
+      .if(props.textFieldStyle == .plain) { view in
+        view.textFieldStyle(.plain)
+      }
       .focused($isFocused)
       .onSubmit({
-        if props.allowNewlines && props.multiline && allowMultiLine() {
+        if props.allowNewlines && props.multiline && allowMultiLine() && !props.isSecure {
           if textManager.text.filter({ $0 == "\n" }).count < props.numberOfLines ?? Int.max - 1 {
             textManager.text.append("\n")
 

@@ -42,7 +42,7 @@ function transformNativeProps(props: ImageProps): NativeImageProps {
 }
 
 const ImageNativeView: React.ComponentType<NativeImageProps> =
-  requireNativeView('ExpoUI', 'ImageView');
+  requireNativeView('SykamoreUi', 'ImageView');
 
 export function Image(props: ImageProps) {
   return <ImageNativeView {...transformNativeProps(props)} />;

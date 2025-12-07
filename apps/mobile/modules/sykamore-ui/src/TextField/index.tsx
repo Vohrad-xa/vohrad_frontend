@@ -39,6 +39,52 @@ export type TextFieldKeyboardType =
   | 'ascii-capable-number-pad';
 
 /**
+ * Specifies the type of content for autofill and keyboard suggestions.
+ */
+export type TextContentType =
+  | 'email-address'
+  | 'password'
+  | 'new-password'
+  | 'one-time-code'
+  | 'username'
+  | 'name'
+  | 'given-name'
+  | 'family-name'
+  | 'telephone-number'
+  | 'address-city'
+  | 'address-state'
+  | 'postal-code'
+  | 'street-address-line1'
+  | 'street-address-line2'
+  | 'credit-card-number';
+
+/**
+ * Configures the text that appears in the return key on the keyboard.
+ */
+export type SubmitLabel =
+  | 'done'
+  | 'go'
+  | 'send'
+  | 'search'
+  | 'next'
+  | 'continue'
+  | 'return';
+
+/**
+ * Configures automatic capitalization behavior.
+ */
+export type TextInputAutocapitalization =
+  | 'never'
+  | 'words'
+  | 'sentences'
+  | 'characters';
+
+/**
+ * Configures the visual style of the text field.
+ */
+export type TextFieldStyleType = 'automatic' | 'plain' | 'rounded-border';
+
+/**
  * Can be used for imperatively setting text and focus on the `TextField` component.
  */
 export type TextFieldRef = {
@@ -108,6 +154,36 @@ export type TextFieldProps = {
    * @default false
    */
   autoFocus?: boolean;
+
+  /**
+   * If true, renders as a secure text entry (password field).
+   * @default false
+   */
+  isSecure?: boolean;
+
+  /**
+   * Specifies the semantic meaning of the text content for autofill and keyboard suggestions.
+   * Helps iOS provide relevant keyboard and autofill options.
+   */
+  textContentType?: TextContentType;
+
+  /**
+   * Configures the text that appears in the return key on the keyboard.
+   * @default undefined (uses platform default)
+   */
+  submitLabel?: SubmitLabel;
+
+  /**
+   * Configures automatic capitalization behavior.
+   * @default undefined (uses platform default)
+   */
+  autocapitalization?: TextInputAutocapitalization;
+
+  /**
+   * Configures the visual style of the text field.
+   * @default 'automatic'
+   */
+  textFieldStyle?: TextFieldStyleType;
 } & CommonViewModifierProps;
 
 export type NativeTextFieldProps = Omit<

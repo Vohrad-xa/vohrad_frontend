@@ -16,6 +16,7 @@ module.exports = defineConfig([
       '_expo/**',
       '**/*.js',
       '**/*.jsx',
+      'docs/**',
     ],
   },
   ...expoConfig.map((config) => ({

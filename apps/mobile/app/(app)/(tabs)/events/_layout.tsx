@@ -10,6 +10,7 @@ export default function EventsLayout() {
       screenOptions={{
         headerShown: true,
         headerShadowVisible: false,
+        headerLargeTitle: true,
         headerTransparent: Platform.OS === 'ios',
         headerStyle: {
           backgroundColor:

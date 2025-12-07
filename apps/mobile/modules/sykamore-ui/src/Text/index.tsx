@@ -45,6 +45,50 @@ export interface TextProps extends CommonViewModifierProps {
    * The color of the text.
    */
   color?: ColorValue;
+  /**
+   * Transforms the text case (uppercase or lowercase).
+   */
+  textCase?: 'uppercase' | 'lowercase';
+  /**
+   * If true, applies bold font weight to the text.
+   */
+  bold?: boolean;
+  /**
+   * If true, applies italic style to the text.
+   */
+  italic?: boolean;
+  /**
+   * If true, underlines the text.
+   */
+  underline?: boolean;
+  /**
+   * If true, applies strikethrough to the text.
+   */
+  strikethrough?: boolean;
+  /**
+   * If true, uses monospaced font for the text.
+   */
+  monospaced?: boolean;
+  /**
+   * If true, uses monospaced font for digits only (keeps letters proportional).
+   * Useful for displaying numbers that change frequently.
+   */
+  monospacedDigit?: boolean;
+  /**
+   * Adjusts the spacing between characters (letter-spacing).
+   * Positive values increase spacing, negative values decrease it.
+   */
+  kerning?: number;
+  /**
+   * Adjusts the spacing between characters with looser or tighter tracking.
+   * Similar to kerning but uses a different calculation.
+   */
+  tracking?: number;
+  /**
+   * Adjusts the vertical offset of the text from its baseline.
+   * Positive values move text up, negative values move text down.
+   */
+  baselineOffset?: number;
 }
 
 type NativeTextProps = Omit<TextProps, 'children'> & {

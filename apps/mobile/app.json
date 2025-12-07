@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "vohrad",
-    "slug": "vohrad-mobile",
+    "slug": "sykamore",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icons/android/playstore-512.png",
@@ -28,7 +28,11 @@
       "predictiveBackGestureEnabled": true,
       "edgeToEdgeEnabled": true,
       "package": "vohrad.mobile",
-      "permissions": ["CAMERA"]
+      "permissions": [
+        "CAMERA",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "output": "single",
@@ -66,8 +70,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "87c87a1b-17f0-4cb8-8884-80c0dca3cb59"
+        "projectId": "33b26e9a-3917-4ec8-a6ee-d117e8fd80c0"
       }
-    }
+    },
+    "owner": "sykamore"
   }
 }

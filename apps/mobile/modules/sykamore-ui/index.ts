@@ -26,17 +26,15 @@ export {
 } from './src/ContextMenu';
 export {Label, type LabelProps} from './src/Label';
 export {Picker, type PickerProps} from './src/Picker';
-export {Text, type TextProps} from './src/Text';
-export {
-  TextField,
-  type TextFieldProps,
-  type TextFieldRef,
-  type TextFieldKeyboardType,
-} from './src/TextField';
+export * from './src/Text';
+export * from './src/TextField';
 export {Image, type ImageProps} from './src/Image';
 export {Switch, type SwitchProps} from './src/Switch';
 export {Spacer} from './src/Spacer';
 export {Divider} from './src/Divider';
+export {HStack, type HStackProps, type HStackAlignment} from './src/HStack';
+export {VStack, type VStackProps, type VStackAlignment} from './src/VStack';
+export * from './src/Progress';
 
 // Modifiers
 export * from './src/modifiers';
