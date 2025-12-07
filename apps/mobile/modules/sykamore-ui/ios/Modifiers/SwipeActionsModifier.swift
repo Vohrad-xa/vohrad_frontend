@@ -1,33 +1,6 @@
 import ExpoModulesCore
 import SwiftUI
 
-/** Button role for swipe actions */
-internal enum SwipeActionRole: String, Enumerable {
-  case `default`
-  case destructive
-  case cancel
-
-  func toNativeRole() -> SwiftUI.ButtonRole? {
-    switch self {
-    case .default:
-      return nil
-    case .destructive:
-      return SwiftUI.ButtonRole.destructive
-    case .cancel:
-      return SwiftUI.ButtonRole.cancel
-    }
-  }
-}
-
-/** Single swipe action configuration */
-internal struct SwipeActionConfig: Record {
-  @Field var id: String = ""
-  @Field var label: String = ""
-  @Field var systemImage: String?
-  @Field var role: SwipeActionRole = .default
-  @Field var tint: Color?
-}
-
 /** Swipe actions modifier for list rows */
 internal struct SwipeActionsModifier: ViewModifier, Record {
   @Field var edge: String = "trailing"
