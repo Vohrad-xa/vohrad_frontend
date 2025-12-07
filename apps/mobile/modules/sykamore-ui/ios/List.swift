@@ -120,7 +120,10 @@ struct ListView: ExpoSwiftUI.View {
       props.onDeleteItem([
         "index": offset
       ])
-      selection.remove(offset)
+      multiSelection.remove(offset)
+      if singleSelection == offset {
+        singleSelection = nil
+      }
     }
   }
   func handleMove(from sources: IndexSet, to destination: Int) {
