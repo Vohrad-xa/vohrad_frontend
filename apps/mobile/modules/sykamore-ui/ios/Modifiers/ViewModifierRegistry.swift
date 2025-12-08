@@ -925,7 +925,7 @@ internal enum TextCaseTypes: String, Enumerable {
   case uppercase
 }
 
-internal struct TextCase: ViewModifier, Record {
+internal struct TextCaseModifier: ViewModifier, Record {
   @Field var value: TextCaseTypes = .lowercase
 
   func body(content: Content) -> some View {
@@ -1653,7 +1653,7 @@ extension ViewModifierRegistry {
     }
 
     register("textCase") { params, appContext, _ in
-      return try TextCase(from: params, appContext: appContext)
+      return try TextCaseModifier(from: params, appContext: appContext)
     }
 
     register("underline") { params, appContext, _ in

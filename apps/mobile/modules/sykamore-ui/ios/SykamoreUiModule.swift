@@ -5,7 +5,7 @@ public final class SykamoreUiModule: Module {
     Name("SykamoreUi")
 
     // MARK: - Views
-    ExpoUIView(HostView.self)
+    View(HostView.self)
     ExpoUIView(ListView.self)
     ExpoUIView(Button.self)
     ExpoUIView(SectionView.self)
