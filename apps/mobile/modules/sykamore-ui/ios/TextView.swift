@@ -13,6 +13,143 @@ enum TextCase: String, Enumerable {
   }
 }
 
+// ViewModifiers for iOS 16+ text features
+struct BoldTextModifier: ViewModifier {
+  var enabled: Bool
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if enabled {
+      if #available(iOS 16.0, *) {
+        content.bold()
+      } else {
+        content.fontWeight(.bold)
+      }
+    } else {
+      content
+    }
+  }
+}
+
+struct ItalicTextModifier: ViewModifier {
+  var enabled: Bool
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if enabled {
+      if #available(iOS 16.0, *) {
+        content.italic()
+      } else {
+        content
+      }
+    } else {
+      content
+    }
+  }
+}
+
+struct UnderlineTextModifier: ViewModifier {
+  var enabled: Bool
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if enabled {
+      if #available(iOS 16.0, *) {
+        content.underline()
+      } else {
+        content
+      }
+    } else {
+      content
+    }
+  }
+}
+
+struct StrikethroughTextModifier: ViewModifier {
+  var enabled: Bool
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if enabled {
+      if #available(iOS 16.0, *) {
+        content.strikethrough()
+      } else {
+        content
+      }
+    } else {
+      content
+    }
+  }
+}
+
+struct MonospacedTextModifier: ViewModifier {
+  var enabled: Bool
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if enabled {
+      if #available(iOS 16.0, *) {
+        content.monospaced()
+      } else {
+        content.font(.system(.body, design: .monospaced))
+      }
+    } else {
+      content
+    }
+  }
+}
+
+struct KerningTextModifier: ViewModifier {
+  var value: Double?
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if let kerning = value {
+      if #available(iOS 16.0, *) {
+        content.kerning(CGFloat(kerning))
+      } else {
+        content
+      }
+    } else {
+      content
+    }
+  }
+}
+
+struct TrackingTextModifier: ViewModifier {
+  var value: Double?
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if let tracking = value {
+      if #available(iOS 16.0, *) {
+        content.tracking(CGFloat(tracking))
+      } else {
+        content
+      }
+    } else {
+      content
+    }
+  }
+}
+
+struct BaselineOffsetTextModifier: ViewModifier {
+  var value: Double?
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if let offset = value {
+      if #available(iOS 16.0, *) {
+        content.baselineOffset(CGFloat(offset))
+      } else {
+        content
+      }
+    } else {
+      content
+    }
+  }
+}
+
 internal final class TextViewProps: UIBaseViewProps {
   @Field var text: String = ""
   @Field var weight: FontWeight?
@@ -35,13 +172,11 @@ internal final class TextViewProps: UIBaseViewProps {
 internal struct TextView: ExpoSwiftUI.View {
   @ObservedObject var props: TextViewProps
 
-
   var body: some View {
     let hasDeprecatedFontProps = props.weight != nil || props.design != nil || props.size != nil
 
     Text(props.text)
       .if(hasDeprecatedFontProps) { text in
-        // TODO: remove this block of code once we remove the deprecated font props
         text.font(.system(
           size: CGFloat(props.size ?? 17),
           weight: props.weight?.toSwiftUI() ?? .regular,
@@ -53,64 +188,16 @@ internal struct TextView: ExpoSwiftUI.View {
       .if(props.textCase != nil) { text in
         text.textCase(props.textCase?.toSwiftUI())
       }
-      .if(props.bold) { text in
-        if #available(iOS 16.0, *) {
-          text.bold()
-        } else {
-          text.fontWeight(.bold)
-        }
-      }
-      .if(props.italic) { text in
-        if #available(iOS 16.0, *) {
-          text.italic()
-        } else {
-          text
-        }
-      }
-      .if(props.underline) { text in
-        if #available(iOS 16.0, *) {
-          text.underline()
-        } else {
-          text
-        }
-      }
-      .if(props.strikethrough) { text in
-        if #available(iOS 16.0, *) {
-          text.strikethrough()
-        } else {
-          text
-        }
-      }
-      .if(props.monospaced) { text in
-        if #available(iOS 16.0, *) {
-          text.monospaced()
-        } else {
-          text.font(.system(.body, design: .monospaced))
-        }
-      }
+      .modifier(BoldTextModifier(enabled: props.bold))
+      .modifier(ItalicTextModifier(enabled: props.italic))
+      .modifier(UnderlineTextModifier(enabled: props.underline))
+      .modifier(StrikethroughTextModifier(enabled: props.strikethrough))
+      .modifier(MonospacedTextModifier(enabled: props.monospaced))
       .if(props.monospacedDigit) { text in
         text.monospacedDigit()
       }
-      .if(props.kerning != nil) { text in
-        if #available(iOS 16.0, *) {
-          text.kerning(CGFloat(props.kerning ?? 0))
-        } else {
-          text
-        }
-      }
-      .if(props.tracking != nil) { text in
-        if #available(iOS 16.0, *) {
-          text.tracking(CGFloat(props.tracking ?? 0))
-        } else {
-          text
-        }
-      }
-      .if(props.baselineOffset != nil) { text in
-        if #available(iOS 16.0, *) {
-          text.baselineOffset(CGFloat(props.baselineOffset ?? 0))
-        } else {
-          text
-        }
-      }
+      .modifier(KerningTextModifier(value: props.kerning))
+      .modifier(TrackingTextModifier(value: props.tracking))
+      .modifier(BaselineOffsetTextModifier(value: props.baselineOffset))
   }
 }
