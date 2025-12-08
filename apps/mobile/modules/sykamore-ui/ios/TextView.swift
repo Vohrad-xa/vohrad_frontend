@@ -54,31 +54,63 @@ internal struct TextView: ExpoSwiftUI.View {
         text.textCase(props.textCase?.toSwiftUI())
       }
       .if(props.bold) { text in
-        text.bold()
+        if #available(iOS 16.0, *) {
+          text.bold()
+        } else {
+          text.fontWeight(.bold)
+        }
       }
       .if(props.italic) { text in
-        text.italic()
+        if #available(iOS 16.0, *) {
+          text.italic()
+        } else {
+          text
+        }
       }
       .if(props.underline) { text in
-        text.underline()
+        if #available(iOS 16.0, *) {
+          text.underline()
+        } else {
+          text
+        }
       }
       .if(props.strikethrough) { text in
-        text.strikethrough()
+        if #available(iOS 16.0, *) {
+          text.strikethrough()
+        } else {
+          text
+        }
       }
       .if(props.monospaced) { text in
-        text.monospaced()
+        if #available(iOS 16.0, *) {
+          text.monospaced()
+        } else {
+          text.font(.system(.body, design: .monospaced))
+        }
       }
       .if(props.monospacedDigit) { text in
         text.monospacedDigit()
       }
       .if(props.kerning != nil) { text in
-        text.kerning(CGFloat(props.kerning ?? 0))
+        if #available(iOS 16.0, *) {
+          text.kerning(CGFloat(props.kerning ?? 0))
+        } else {
+          text
+        }
       }
       .if(props.tracking != nil) { text in
-        text.tracking(CGFloat(props.tracking ?? 0))
+        if #available(iOS 16.0, *) {
+          text.tracking(CGFloat(props.tracking ?? 0))
+        } else {
+          text
+        }
       }
       .if(props.baselineOffset != nil) { text in
-        text.baselineOffset(CGFloat(props.baselineOffset ?? 0))
+        if #available(iOS 16.0, *) {
+          text.baselineOffset(CGFloat(props.baselineOffset ?? 0))
+        } else {
+          text
+        }
       }
   }
 }

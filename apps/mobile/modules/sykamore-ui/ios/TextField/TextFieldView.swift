@@ -99,6 +99,23 @@ enum TextFieldStyleType: String, Enumerable {
   case roundedBorder = "rounded-border"
 }
 
+struct AutocapitalizationModifier: ViewModifier {
+  var autocapitalization: TextInputAutocapitalization?
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
+    if let autocap = autocapitalization {
+      if #available(iOS 15.0, *) {
+        content.textInputAutocapitalization(autocap.toSwiftUI())
+      } else {
+        content
+      }
+    } else {
+      content
+    }
+  }
+}
+
 final class TextFieldProps: UIBaseViewProps {
   @Field var defaultValue: String = ""
   @Field var placeholder: String = ""
@@ -267,13 +284,7 @@ struct TextFieldView: ExpoSwiftUI.View, ExpoSwiftUI.FocusableView {
       .if(props.submitLabel != nil) { view in
         view.submitLabel(props.submitLabel!.toSwiftUI())
       }
-      .if(props.autocapitalization != nil) { view in
-        if #available(iOS 15.0, *) {
-          view.textInputAutocapitalization(props.autocapitalization!.toSwiftUI())
-        } else {
-          view
-        }
-      }
+      .modifier(AutocapitalizationModifier(autocapitalization: props.autocapitalization))
       .if(props.textFieldStyle == .roundedBorder) { view in
         view.textFieldStyle(.roundedBorder)
       }

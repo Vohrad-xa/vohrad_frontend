@@ -18,6 +18,7 @@ public final class SykamoreUiModule: Module {
     View(ContextMenuPreview.self)
     View(ContextMenuActivationElement.self)
     View(ContextMenuContent.self)
+    ExpoUIView(DateTimePickerView.self)
     ExpoUIView(TextView.self)
     ExpoUIView(ImageView.self)
     ExpoUIView(SwitchView.self)

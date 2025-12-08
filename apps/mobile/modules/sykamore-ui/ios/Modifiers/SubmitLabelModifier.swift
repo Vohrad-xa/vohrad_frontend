@@ -5,21 +5,17 @@ internal enum SubmitLabelType: String, Enumerable {
   case continueLabel = "continue"
   case done = "done"
   case go = "go"
-  case join = "join"
   case next = "next"
   case `return` = "return"
-  case route = "route"
   case search = "search"
   case send = "send"
-    
-  var toSubmitLabel: SubmitLabel {
+
+  var toSubmitLabel: SwiftUI.SubmitLabel {
     switch self {
     case .return: return .`return`
     case .done: return .done
     case .go: return .go
     case .send: return .send
-    case .join: return .join
-    case .route: return .route
     case .search: return .search
     case .next: return .next
     case .continueLabel: return .continue

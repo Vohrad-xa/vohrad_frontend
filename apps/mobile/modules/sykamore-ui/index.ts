@@ -35,6 +35,7 @@ export {Divider} from './src/Divider';
 export {HStack, type HStackProps, type HStackAlignment} from './src/HStack';
 export {VStack, type VStackProps, type VStackAlignment} from './src/VStack';
 export * from './src/Progress';
+export * from './src/DatePicker';
 
 // Modifiers
 export * from './src/modifiers';
