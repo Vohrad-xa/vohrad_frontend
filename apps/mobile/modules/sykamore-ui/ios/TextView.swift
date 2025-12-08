@@ -23,7 +23,7 @@ struct BoldTextModifier: ViewModifier {
       if #available(iOS 16.0, *) {
         content.bold()
       } else {
-        content.fontWeight(.bold)
+        content
       }
     } else {
       content
