@@ -9,7 +9,7 @@ export const SFSymbols = {
   folderFill: 'folder.fill',
   lock: 'lock',
   lockFill: 'lock.fill',
-  rectangleStackFill: 'rectangle.stack.fill',
+  rectangleStackFill: 'rectangle.fill.on.rectangle.fill',
   docText: 'doc.text',
   doc: 'doc',
   docTextFill: 'doc.text',
@@ -26,6 +26,7 @@ export const SFSymbols = {
   lineHorizontalFilter: 'line.horizontal.3.circle',
   checkmarkCircleOutline: 'checkmark.circle',
   addUser: 'person.badge.plus',
+  settings: 'gear',
 } as const;
 
 export type SFSymbolName = (typeof SFSymbols)[keyof typeof SFSymbols];

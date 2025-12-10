@@ -1,16 +1,18 @@
 import {useCallback} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Platform} from 'react-native';
+import {GestureDetector} from 'react-native-gesture-handler';
 import {router} from 'expo-router';
 import {Card} from '@/components/cards/card';
 import {ThemedView, ThemedText, ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {AppearanceMenu} from '@/features/settings';
-import {useTheme, useAuth} from '@/providers';
+import {useTheme, useAuth, useSidebar} from '@/providers';
 import {AppIcons, showConfirmAlert, makeStyleFactory} from '@/utils';
 
 export default function SettingsModal() {
   const {ds, theme, scheme} = useTheme();
   const {logout} = useAuth();
+  const {mainGesture} = useSidebar();
   const styles = createStyles(ds, theme);
 
   const handleLogout = useCallback(() => {
@@ -26,20 +28,20 @@ export default function SettingsModal() {
     });
   }, [logout]);
 
-  return (
+  const content = (
     <ThemedView style={styles.container}>
       <ModalScrollView contentContainerStyle={styles.contentContainer}>
         <Card>
           <Card.Row
             icon={AppIcons.business.profile}
-            onPress={() => router.push('/(modals)/settings/profile')}
+            onPress={() => router.push('/(app)/(tabs)/settings/profile')}
           >
             <ThemedText variant="label">Profile</ThemedText>
           </Card.Row>
           <Card.Divider withIconOffset />
           <Card.Row
             icon={AppIcons.business.organization}
-            onPress={() => router.push('/(modals)/settings/organization')}
+            onPress={() => router.push('/(app)/(tabs)/settings/organization')}
           >
             <ThemedText variant="label">Organization</ThemedText>
           </Card.Row>
@@ -48,7 +50,7 @@ export default function SettingsModal() {
         <Card>
           <Card.Row
             icon={AppIcons.navigation.settings}
-            onPress={() => router.push('/(modals)/settings/app-settings')}
+            onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
           >
             <ThemedText variant="label">App Settings</ThemedText>
           </Card.Row>
@@ -69,14 +71,14 @@ export default function SettingsModal() {
           <Card.Divider withIconOffset />
           <Card.Row
             icon={AppIcons.navigation.settings}
-            onPress={() => router.push('/(modals)/settings/preferences')}
+            onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
           >
             <ThemedText variant="label">Preferences</ThemedText>
           </Card.Row>
           <Card.Divider withIconOffset />
           <Card.Row
             icon={AppIcons.content.language}
-            onPress={() => router.push('/(modals)/settings/language')}
+            onPress={() => router.push('/(app)/(tabs)/settings/language')}
           >
             <ThemedText variant="label">App Language</ThemedText>
           </Card.Row>
@@ -85,28 +87,28 @@ export default function SettingsModal() {
         <Card>
           <Card.Row
             icon={AppIcons.status.help}
-            onPress={() => router.push('/(modals)/settings/support')}
+            onPress={() => router.push('/(app)/(tabs)/settings/support')}
           >
             <ThemedText variant="label">Report an Issue</ThemedText>
           </Card.Row>
           <Card.Divider withIconOffset />
           <Card.Row
             icon={AppIcons.content.privacy}
-            onPress={() => router.push('/(modals)/settings/privacy')}
+            onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
           >
             <ThemedText variant="label">Privacy Policy</ThemedText>
           </Card.Row>
           <Card.Divider withIconOffset />
           <Card.Row
             icon={AppIcons.content.document}
-            onPress={() => router.push('/(modals)/settings/terms')}
+            onPress={() => router.push('/(app)/(tabs)/settings/terms')}
           >
             <ThemedText variant="label">Terms of Use</ThemedText>
           </Card.Row>
           <Card.Divider withIconOffset />
           <Card.Row
             icon={AppIcons.status.info}
-            onPress={() => router.push('/(modals)/settings/about')}
+            onPress={() => router.push('/(app)/(tabs)/settings/about')}
           >
             <ThemedText variant="label">About</ThemedText>
           </Card.Row>
@@ -126,6 +128,12 @@ export default function SettingsModal() {
       </ModalScrollView>
     </ThemedView>
   );
+
+  if (Platform.OS === 'web') {
+    return content;
+  }
+
+  return <GestureDetector gesture={mainGesture}>{content}</GestureDetector>;
 }
 
 const createStyles = makeStyleFactory(

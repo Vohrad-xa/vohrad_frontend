@@ -57,18 +57,24 @@ export default function ItemsScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <HeaderButton
-          icon={AppIcons.navigation.filter}
-          accessibilityLabel="Filter items"
-          iconSize="xl"
-          onPress={() => {
-            router.push(
-              `/(modals)/items/filters?initialFilters=${encodeURIComponent(
-                JSON.stringify(filters),
-              )}`,
-            );
-          }}
-        />
+        <View style={styles.headerRightContainer}>
+          <HeaderButton
+            icon={AppIcons.actions.addItem}
+            accessibilityLabel="Search items"
+            onPress={() => {}}
+          />
+          <HeaderButton
+            icon={AppIcons.navigation.filter}
+            accessibilityLabel="Filter items"
+            onPress={() => {
+              router.push(
+                `/(modals)/items/filters?initialFilters=${encodeURIComponent(
+                  JSON.stringify(filters),
+                )}`,
+              );
+            }}
+          />
+        </View>
       ),
     });
   }, [navigation, filters, router]);
@@ -104,10 +110,15 @@ export default function ItemsScreen() {
 }
 
 const createStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
+      },
+      headerRightContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: ds.spacing.xs,
       },
     }),
   (ds, theme) => `${themeKey(theme, ds)}`,

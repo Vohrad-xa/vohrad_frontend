@@ -24,7 +24,7 @@ interface IconProps {
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 'sm',
+  size = 15,
   tintColor,
   tintToken,
   colorToken,
@@ -38,7 +38,7 @@ export const Icon: React.FC<IconProps> = ({
   const resolvedSize =
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.sm);
   const sizeNoContainer = typeof size === 'number' ? size : ds.iconSize.sm;
-  const frameSize = resolvedSize * 1.9;
+  const frameSize = resolvedSize * 2;
   const resolvedTintToken = tintToken ?? colorToken;
   const resolvedTintColor =
     tintColor ??
@@ -105,7 +105,7 @@ export const AppIcons = {
     event: 'bell' as IconName,
     eventFill: 'bell.fill' as IconName,
     filter: 'equal' as IconName,
-    back: 'chevron.left' as IconName,
+    back: 'chevron.left.2' as IconName,
     forward: 'chevron.right' as IconName,
     close: 'xmark' as IconName,
     chevronRight: 'chevron.right' as IconName,
@@ -129,6 +129,8 @@ export const AppIcons = {
     input: 'keyboard' as IconName,
     edit: 'square.and.pencil' as IconName,
     add: 'plus' as IconName,
+    addUser: 'person.badge.plus' as IconName,
+    addItem: 'plus.square.on.square' as IconName,
     save: 'checkmark.circle' as IconName,
     delete: 'trash' as IconName,
     share: 'square.and.arrow.up' as IconName,

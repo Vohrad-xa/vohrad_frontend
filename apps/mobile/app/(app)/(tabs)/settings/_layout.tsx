@@ -4,8 +4,9 @@ import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {SearchProvider, useSearch} from '@/features/dashboard';
-import {useTheme} from '@/providers';
+import {useTheme, useSidebar} from '@/providers';
 import {AppIcons, makeStyleFactory} from '@/utils';
+import {View} from 'react-native';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -22,6 +23,7 @@ function SettingsStack() {
   const {setSearchQuery} = useSearch();
   const router = useRouter();
   const styles = createStyles(theme, ds);
+  const {toggleSideMenu} = useSidebar();
 
   const handleSearchChange = useCallback(
     (event: SearchChangeEvent) => {
@@ -52,17 +54,30 @@ function SettingsStack() {
             title: 'Settings',
             headerLeft: () => (
               <HeaderButton
-                icon={
-                  Platform.OS === 'ios'
-                    ? AppIcons.navigation.close
-                    : AppIcons.navigation.back
-                }
-                onPress={() => router.dismiss()}
-                iconColorToken="text"
-                accessibilityLabel="Close settings"
-                iconSize="lg"
+                icon={AppIcons.navigation.menu}
+                accessibilityLabel="Open menu"
+                onPress={toggleSideMenu}
               />
             ),
+            headerRight: () => (
+              <View style={styles.headerRightContainer}>
+                <HeaderButton
+                  icon={AppIcons.navigation.event}
+                  accessibilityLabel="Open events"
+                  onPress={() => {}}
+                />
+                <HeaderButton
+                  icon={AppIcons.actions.addUser}
+                  accessibilityLabel="Open back"
+                  onPress={() => {}}
+                />
+              </View>
+            ),
+            headerSearchBarOptions: {
+              placement: 'inline',
+              placeholder: 'Search',
+              onChangeText: handleSearchChange,
+            },
           }}
         />
         <Stack.Screen name="profile" options={{title: 'Profile'}} />
@@ -87,8 +102,7 @@ function SettingsStack() {
           options={{
             title: 'Users',
             headerSearchBarOptions: {
-              headerIconColor: theme.text,
-              placement: 'automatic',
+              placement: 'integratedButton',
               hideWhenScrolling: false,
               placeholder: 'Search...',
               onChangeText: handleSearchChange,
@@ -113,12 +127,16 @@ export default function SettingsLayout() {
 }
 
 const createStyles = makeStyleFactory(
-  (theme: ThemeShape, _ds: DSShape) =>
+  (theme: ThemeShape, ds: DSShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
         backgroundColor:
-          Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
+          Platform.OS === 'web' ? theme.webbackground : theme.background,
+      },
+      headerRightContainer: {
+        flexDirection: 'row',
+        gap: ds.spacing.xs,
       },
     }),
   (theme, ds) => themeKey(theme, ds),

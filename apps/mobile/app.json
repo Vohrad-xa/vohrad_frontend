@@ -59,9 +59,7 @@
       "expo-font",
       "expo-web-browser"
     ],
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "developmentClient": {
       "silentLaunch": true
     },

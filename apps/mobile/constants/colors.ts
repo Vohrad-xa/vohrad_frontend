@@ -138,7 +138,7 @@ const _Tokens = {
     tint: Palette.brand.blue,
     tabIconSelected: Palette.brand.blue,
     card: Palette.cardDarkGlass,
-    input: Palette.gray[650],
+    input: Palette.gray[800],
     purple: Palette.brand.purple,
     iosLightGray: Palette.gray[700],
     iosPlaceholder: Palette.gray[500],

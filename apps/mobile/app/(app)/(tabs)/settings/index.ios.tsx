@@ -27,40 +27,34 @@ export default function SettingsModal() {
   }, [logout]);
 
   return (
-    <Host style={styles.host}>
+    <Host style={styles.host} matchContents>
       <List
         listStyle="insetGrouped"
-        refreshEnabled
         showScrollIndicators={false}
+        sectionSpacing={ds.spacing.xxl}
       >
         {/* Account Section */}
-        <ListSection
-          title="Account"
-          footer="Manage your account settings and personal information."
-        >
+        <ListSection>
           <ListSection.Row
             icon={AppIcons.business.profile}
             iconColorToken="accentBlue"
             title="Profile"
-            onPress={() => router.push('/(modals)/settings/profile')}
+            onPress={() => router.push('/(app)/(tabs)/settings/profile')}
           />
           <ListSection.Row
             icon={AppIcons.business.organization}
             iconColorToken="accentGreen"
             title="Organization"
-            onPress={() => router.push('/(modals)/settings/organization')}
+            onPress={() => router.push('/(app)/(tabs)/settings/organization')}
           />
         </ListSection>
         {/* Preferences Section */}
-        <ListSection
-          title="General"
-          footer="Customize your app experience and preferences"
-        >
+        <ListSection>
           <ListSection.Row
             icon={AppIcons.navigation.settings}
             iconColorToken="glassTint"
             title="App Settings"
-            onPress={() => router.push('/(modals)/settings/app-settings')}
+            onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
           />
           <ListSection.Row
             icon={AppIcons.theme.appearance}
@@ -76,22 +70,11 @@ export default function SettingsModal() {
                   );
                 }}
               >
-                <Button
-                  onPress={() => {}}
-                  modifiers={[{$type: 'tag', tag: 'light'}]}
-                >
+                <Button modifiers={[{$type: 'tag', tag: 'light'}]}>
                   Light
                 </Button>
-                <Button
-                  onPress={() => {}}
-                  modifiers={[{$type: 'tag', tag: 'dark'}]}
-                >
-                  Dark
-                </Button>
-                <Button
-                  onPress={() => {}}
-                  modifiers={[{$type: 'tag', tag: 'system'}]}
-                >
+                <Button modifiers={[{$type: 'tag', tag: 'dark'}]}>Dark</Button>
+                <Button modifiers={[{$type: 'tag', tag: 'system'}]}>
                   Auto
                 </Button>
               </Picker>
@@ -101,47 +84,44 @@ export default function SettingsModal() {
             icon={AppIcons.navigation.preferences}
             iconColorToken="accentOrange"
             title="Preferences"
-            onPress={() => router.push('/(modals)/settings/preferences')}
+            onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
           />
+        </ListSection>
+
+        <ListSection footer="For best results, select the language you mainly speak, if not available, the app will default to English.">
           <ListSection.Row
             icon={AppIcons.content.language}
             iconColorToken="accentBlue"
             title="App Language"
-            onPress={() => router.push('/(modals)/settings/language')}
+            onPress={() => router.push('/(app)/(tabs)/settings/language')}
           />
         </ListSection>
 
         {/* Data & Information */}
-        <ListSection
-          title="Data & Information"
-          footer="Access important legal and informational, including privacy policies and terms of use."
-        >
+        <ListSection>
           <ListSection.Row
             icon={AppIcons.content.privacy}
             iconColorToken="purple"
             title="Privacy Policy"
-            onPress={() => router.push('/(modals)/settings/privacy')}
+            onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
           />
           <ListSection.Row
             icon={AppIcons.content.terms}
             iconColorToken="iconInfo"
             title="Terms of Use"
-            onPress={() => router.push('/(modals)/settings/terms')}
+            onPress={() => router.push('/(app)/(tabs)/settings/terms')}
           />
           <ListSection.Row
             icon={AppIcons.status.info}
             iconColorToken="glassTint"
             title="About"
-            onPress={() => router.push('/(modals)/settings/about')}
+            onPress={() => router.push('/(app)/(tabs)/settings/about')}
           />
-        </ListSection>
-
-        <ListSection footer="Need help or support? Visit our support center or contact us for assistance.">
           <ListSection.Row
             icon={AppIcons.status.help}
             iconColorToken="iconWarning"
             title="Report an Issue"
-            onPress={() => router.push('/(modals)/settings/support')}
+            onPress={() => router.push('/(app)/(tabs)/settings/support')}
           />
         </ListSection>
 

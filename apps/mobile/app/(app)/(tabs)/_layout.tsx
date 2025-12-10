@@ -11,14 +11,14 @@ const TAB_ITEMS: TabItem[] = [
   {name: 'dashboard', label: 'Dashboard', icon: AppIcons.navigation.home},
   {name: 'items', label: 'Items', icon: AppIcons.inventory.itemsSecondary},
   {name: 'vault', label: 'Vault', icon: AppIcons.navigation.vault},
-  {name: 'events', label: 'Events', icon: AppIcons.navigation.event},
+  {name: 'settings', label: 'Settings', icon: AppIcons.navigation.settings},
 ];
 
 const iOS_SF_SYMBOLS = {
   dashboard: SFSymbols.houseFill,
   items: SFSymbols.rectangleStackFill,
   vault: SFSymbols.folderFill,
-  events: SFSymbols.bellFill,
+  settings: SFSymbols.settings,
 } as const;
 
 export const unstable_settings = {

@@ -170,7 +170,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
                   } else if (item.label === 'Items') {
                     router.navigate('/(app)/(tabs)/items');
                   } else if (item.label === 'Events') {
-                    router.navigate('/(app)/(tabs)/events');
+                    router.navigate('/(app)/(tabs)/settings');
                   }
                   // Delay close to ensure navigation completes
                   setTimeout(() => {
@@ -191,11 +191,11 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
               blurIntensity={footerBlurIntensity}
               onPressSettings={() => {
                 Keyboard.dismiss();
-                router.push('/(modals)/settings');
+                router.push('/(app)/(tabs)/settings');
               }}
               onPressProfile={() => {
                 Keyboard.dismiss();
-                router.push('/(modals)/settings/profile');
+                router.push('/(app)/(tabs)/settings/profile');
               }}
             />
           </View>

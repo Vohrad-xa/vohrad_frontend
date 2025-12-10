@@ -25,7 +25,6 @@ export default function HomeLayout() {
                 icon={AppIcons.navigation.menu}
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
-                iconSize="xxl"
               />
             ),
             headerTitleAlign: 'center' as const,

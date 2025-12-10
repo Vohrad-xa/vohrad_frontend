@@ -22,7 +22,7 @@ export default function OrganizationScreen() {
           <Card.Row
             icon={AppIcons.business.organization}
             onPress={() =>
-              router.push('/(modals)/settings/organization/business-details')
+              router.push('/settings/organization/business-details')
             }
           >
             <ThemedText variant="label">Business Details</ThemedText>
@@ -30,14 +30,14 @@ export default function OrganizationScreen() {
           <Card.Divider withIconOffset />
           <Card.Row
             icon={AppIcons.business.profile}
-            onPress={() => router.push('/(modals)/settings/organization/users')}
+            onPress={() => router.push('/settings/organization/users')}
           >
             <ThemedText variant="label">Users</ThemedText>
           </Card.Row>
           <Card.Divider withIconOffset />
           <Card.Row
             icon={AppIcons.business.plan}
-            onPress={() => router.push('/(modals)/settings/organization/plan')}
+            onPress={() => router.push('/settings/organization/plan')}
           >
             <ThemedText variant="label">Plan</ThemedText>
           </Card.Row>

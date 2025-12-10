@@ -58,7 +58,6 @@ function VaultStack() {
                 icon={AppIcons.navigation.menu}
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
-                iconSize="xxl"
               />
             ),
             headerSearchBarOptions: {

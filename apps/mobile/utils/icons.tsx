@@ -82,7 +82,7 @@ export const AppIcons = {
     settings: 'settings-outline' as IconName,
     scan: 'barcode-outline' as IconName,
     profile: 'person-outline' as IconName,
-    event: 'notifications' as IconName,
+    event: 'notifications-outline' as IconName,
     vault: 'folder-open-sharp' as IconName,
     filter: 'filter-outline' as IconName,
     back: Platform.select({
@@ -111,6 +111,8 @@ export const AppIcons = {
     input: 'keypad-outline' as IconName,
     edit: 'pencil-square-o' as IconName,
     add: 'add-outline' as IconName,
+    addUser: 'person-add-outline' as IconName,
+    addItem: 'add-circle-outline' as IconName,
     save: 'checkmark-circle-outline' as IconName,
     delete: 'trash-outline' as IconName,
     share: 'share-outline' as IconName,

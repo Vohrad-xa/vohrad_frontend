@@ -29,20 +29,22 @@ export default function AppSettingsScreen() {
       </ThemedText>
 
       {/* Haptic Feedback Setting */}
-      <Card>
-        {Platform.OS !== 'web' && (
+      {Platform.OS !== 'web' && (
+        <Card>
           <Card.Row icon={AppIcons.settings.haptic} hideChevron>
             <View style={styles.rowContent}>
               <ThemedText variant="label">Haptic Feedback</ThemedText>
               <HapticToggle />
             </View>
           </Card.Row>
-        )}
-      </Card>
-      <ThemedText variant="caption" style={styles.description}>
-        Enable haptic feedback to receive tactile responses for certain actions
-        within the app.
-      </ThemedText>
+        </Card>
+      )}
+      {Platform.OS !== 'web' && (
+        <ThemedText variant="caption" style={styles.description}>
+          Enable haptic feedback to receive tactile responses for certain
+          actions within the app.
+        </ThemedText>
+      )}
     </ModalScrollView>
   );
 }

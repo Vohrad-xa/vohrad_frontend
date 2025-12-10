@@ -17,7 +17,7 @@ export default function UsersScreen() {
   const [filterControl, setFilterControl] = useState<React.ReactNode>(null);
 
   const handleAddUser = useCallback(() => {
-    router.push('/(modals)/settings/organization/add-user');
+    router.push('/settings/organization/add-user');
   }, [router]);
 
   useLayoutEffect(() => {
@@ -26,11 +26,9 @@ export default function UsersScreen() {
         <View style={styles.headerButtonGroup}>
           {filterControl}
           <HeaderButton
-            icon={AppIcons.actions.add}
+            icon={AppIcons.actions.addUser}
             onPress={handleAddUser}
-            iconColorToken="text"
             accessibilityLabel="Add user"
-            iconSize="xl"
           />
         </View>
       ),
@@ -77,8 +75,9 @@ const createStyles = makeStyleFactory(
       },
       headerButtonGroup: {
         flexDirection: 'row',
-        alignItems: 'center',
         gap: ds.spacing.xs,
+        paddingHorizontal: ds.spacing.xs,
+        borderRadius: ds.borderRadius.xxxl,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

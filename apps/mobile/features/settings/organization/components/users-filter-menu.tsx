@@ -64,8 +64,6 @@ export function UsersFilterMenu({
       <HeaderButton
         icon={AppIcons.navigation.filter}
         accessibilityLabel="Filter users"
-        iconColorToken="text"
-        iconSize="xl"
       />
     );
 

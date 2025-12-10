@@ -89,7 +89,6 @@ function ItemsStack() {
                 icon={AppIcons.navigation.menu}
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
-                iconSize="xxl"
               />
             ),
             headerSearchBarOptions: {

@@ -60,7 +60,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
 }) => {
   const {theme, ds} = useTheme();
   const baseSize = Platform.select({
-    ios: 36,
+    ios: ds.spacing.xxl + ds.spacing.xs,
     default: ds.components.tapTarget.minSize,
   });
   const styles = createStyles(ds, baseSize);
@@ -128,6 +128,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
         };
       default:
         return {
+          iconSize: 'lg' as const,
           color: theme.text,
         };
     }
