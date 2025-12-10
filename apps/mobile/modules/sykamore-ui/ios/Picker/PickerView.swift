@@ -65,14 +65,21 @@ internal struct PickerView: ExpoSwiftUI.View {
 
   // Apply style, prompt, labelsHidden, disabled
   private func applyPickerChrome<Content: View>(_ picker: Content) -> some View {
-    var view: AnyView = AnyView(picker)
+    let baseView: AnyView
+    if #available(iOS 15.0, *), let prompt = props.prompt, !prompt.isEmpty {
+      baseView = AnyView(picker.prompt(Text(prompt)))
+    } else {
+      baseView = AnyView(picker)
+    }
+
+    var view = baseView
 
     // pickerStyle
     switch props.pickerStyle {
     case "segmented":
       view = AnyView(view.pickerStyle(.segmented))
     case "menu":
-      if #available(iOS 14.0, tvOS 14.0, *) {
+      if #available(iOS 14.0, *) {
         view = AnyView(view.pickerStyle(.menu))
       } else {
         view = AnyView(view.pickerStyle(.automatic))
@@ -80,7 +87,7 @@ internal struct PickerView: ExpoSwiftUI.View {
     case "wheel":
       view = AnyView(view.pickerStyle(.wheel))
     case "inline":
-      if #available(iOS 16.0, tvOS 16.0, *) {
+      if #available(iOS 16.0, *) {
         view = AnyView(view.pickerStyle(.inline))
       } else {
         view = AnyView(view.pickerStyle(.automatic))
@@ -89,19 +96,12 @@ internal struct PickerView: ExpoSwiftUI.View {
       view = AnyView(view.pickerStyle(.automatic))
     }
 
-    // labelsHidden
     if props.labelsHidden {
       view = AnyView(view.labelsHidden())
     }
 
-    // disabled
     if props.disabled {
       view = AnyView(view.disabled(true))
-    }
-
-    // prompt (mainly useful for .menu)
-    if #available(iOS 15.0, tvOS 15.0, *), let prompt = props.prompt, !prompt.isEmpty {
-      view = AnyView(view.prompt(Text(prompt)))
     }
 
     return view
