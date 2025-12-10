@@ -6,9 +6,8 @@ internal final class PickerProps: UIBaseViewProps {
   @Field var systemImage: String?
   @Field var selection: Either<String, Double>?
 
-  // New: style / prompt / label behavior / disabled
+  // New: style / label behavior / disabled
   @Field var pickerStyle: String = "automatic"
-  @Field var prompt: String?
   @Field var labelsHidden: Bool = false
   @Field var disabled: Bool = false
 
@@ -63,16 +62,9 @@ internal struct PickerView: ExpoSwiftUI.View {
     }
   }
 
-  // Apply style, prompt, labelsHidden, disabled
+  // Apply style, labelsHidden, disabled
   private func applyPickerChrome<Content: View>(_ picker: Content) -> some View {
-    let baseView: AnyView
-    if #available(iOS 15.0, *), let prompt = props.prompt, !prompt.isEmpty {
-      baseView = AnyView(picker.prompt(Text(prompt)))
-    } else {
-      baseView = AnyView(picker)
-    }
-
-    var view = baseView
+    var view = AnyView(picker)
 
     // pickerStyle
     switch props.pickerStyle {

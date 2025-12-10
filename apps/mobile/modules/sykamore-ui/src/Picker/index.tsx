@@ -21,7 +21,6 @@ export type PickerProps = {
   }) => void;
 
   pickerStyle?: PickerStyle;
-  prompt?: string;
   labelsHidden?: boolean;
   disabled?: boolean;
 
