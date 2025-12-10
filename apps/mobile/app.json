@@ -59,7 +59,9 @@
       "expo-font",
       "expo-web-browser"
     ],
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "developmentClient": {
       "silentLaunch": true
     },
@@ -70,7 +72,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "33b26e9a-3917-4ec8-a6ee-d117e8fd80c0"
+        "projectId": "06cd7d4c-9e1c-4751-ae56-68a96fe09efd"
       }
     },
     "owner": "sykamore"

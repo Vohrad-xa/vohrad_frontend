@@ -1,17 +1,17 @@
 import SwiftUI
 import ExpoModulesCore
 
-internal final class GlassContainerViewProps: UIBaseViewProps {
+internal final class GlassEffectContainerViewProps: UIBaseViewProps {
   @Field var spacing: Double?
 }
 
-internal struct GlassContainerView: ExpoSwiftUI.View {
-  @ObservedObject var props: GlassContainerViewProps
+internal struct GlassEffectContainerView: ExpoSwiftUI.View {
+  @ObservedObject var props: GlassEffectContainerViewProps
 
   var body: some View {
     if #available(iOS 26.0, macOS 26.0, tvOS 26.0, *) {
       #if compiler(>=6.2) // Xcode 26
-      GlassContainer(spacing: CGFloat(props.spacing ?? 0.0)) {
+      GlassEffectContainer(spacing: CGFloat(props.spacing ?? 0.0)) {
         Children()
       }
       #else

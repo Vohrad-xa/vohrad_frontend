@@ -229,16 +229,18 @@ struct ListView: ExpoSwiftUI.View {
   }
 
   private func applyScrollIndicators<Content: View>(list: Content) -> some View {
-    if #available(iOS 16.0, tvOS 16.0, *) {
-      var modified = list
-        .scrollIndicators(props.showScrollIndicators ? .visible : .hidden)
-        .scrollDisabled(!props.scrollEnabled)
+    if #available(iOS 16.0, *) {
+      var view = AnyView(
+        list
+          .scrollIndicators(props.showScrollIndicators ? .visible : .hidden)
+          .scrollDisabled(!props.scrollEnabled)
+      )
 
       if props.scrollDismissesKeyboard {
-        modified = modified.scrollDismissesKeyboard(.interactively)
+        view = AnyView(view.scrollDismissesKeyboard(.interactively))
       }
 
-      return AnyView(modified)
+      return view
     }
     return AnyView(list)
   }

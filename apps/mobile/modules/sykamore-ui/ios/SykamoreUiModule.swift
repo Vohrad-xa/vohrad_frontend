@@ -19,6 +19,7 @@ public final class SykamoreUiModule: Module {
     View(ContextMenuPreview.self)
     View(ContextMenuActivationElement.self)
     View(ContextMenuContent.self)
+    ExpoUIView(GlassEffectContainerView.self)
     ExpoUIView(DateTimePickerView.self)
     ExpoUIView(TextView.self)
     ExpoUIView(ImageView.self)
@@ -45,6 +46,5 @@ public final class SykamoreUiModule: Module {
     ExpoUIView(HStackView.self)
     ExpoUIView(VStackView.self)
     ExpoUIView(ProgressView.self)
-    ExpoUIView(GlassContainerView.self)
   }
 }

@@ -16,5 +16,5 @@ export * from './src/Progress';
 export * from './src/DatePicker';
 export * from './src/Picker';
 export * from './src/Popover';
-export * from './src/GlassContainer';
+export * from './src/GlassEffectContainer';
 export * from './src/modifiers';
