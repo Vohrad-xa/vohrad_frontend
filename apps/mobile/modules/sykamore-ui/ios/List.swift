@@ -12,10 +12,10 @@ internal enum SeparatorVisibility: String, Enumerable {
   case visible
   case hidden
 
-  func toVisibility() -> Visibility? {
+  func toVisibility() -> Visibility {
     switch self {
     case .automatic:
-      return nil
+      return .automatic
     case .visible:
       return .visible
     case .hidden:
@@ -84,14 +84,24 @@ final class ListProps: UIBaseViewProps {
   @Field var refreshEnabled: Bool = false
   @Field var refreshing: Bool = false
   @Field var showScrollIndicators: Bool = true
+
   @Field var rowSeparatorVisibility: SeparatorVisibility = .automatic
+  @Field var sectionSeparatorVisibility: SeparatorVisibility = .automatic
+
   @Field var rowInsets: RowInsets?
   @Field var rowBackground: Color?
-  @Field var sectionSeparatorVisibility: SeparatorVisibility = .automatic
   @Field var rowSpacing: Double?
   @Field var sectionSpacing: Double?
+
+  // Extra UI behavior
+  @Field var rowSeparatorTint: Color?
+  @Field var sectionSeparatorTint: Color?
+  @Field var hideScrollContentBackground: Bool = false
+  @Field var scrollDismissesKeyboard: Bool = false
+
   @Field var leadingSwipeActions: SwipeActionsConfig?
   @Field var trailingSwipeActions: SwipeActionsConfig?
+
   var onDeleteItem = EventDispatcher()
   var onMoveItem = EventDispatcher()
   var onSelectionChange = EventDispatcher()
@@ -115,6 +125,7 @@ struct ListView: ExpoSwiftUI.View {
   var body: some View {
     buildList()
   }
+
   func handleDelete(at offsets: IndexSet) {
     for offset in offsets {
       props.onDeleteItem([
@@ -126,6 +137,7 @@ struct ListView: ExpoSwiftUI.View {
       }
     }
   }
+
   func handleMove(from sources: IndexSet, to destination: Int) {
     for source in sources {
       props.onMoveItem([
@@ -134,6 +146,7 @@ struct ListView: ExpoSwiftUI.View {
       ])
     }
   }
+
   func handleSelectionChange(selection: [Int]) {
     let selectionArray = selection
     let jsonDict: [String: Any] = [
@@ -164,6 +177,7 @@ struct ListView: ExpoSwiftUI.View {
             handleSelectionChange(selection: [])
           }
         }
+
     case .multiple, .none:
       let list = List(selection: props.selectEnabled && props.selectionMode != .none ? $multiSelection : nil) {
         listRows
@@ -204,7 +218,7 @@ struct ListView: ExpoSwiftUI.View {
         }
       }
       .onChange(of: props.refreshing) { newValue in
-        handleRefreshingChange(isRefreshing: newValue)
+       handleRefreshingChange(isRefreshing: newValue)
       }
       .modifier(ScrollDisabledModifier(scrollEnabled: props.scrollEnabled))
       .environment(\.editMode, $editModeEnabled)
@@ -216,8 +230,15 @@ struct ListView: ExpoSwiftUI.View {
 
   private func applyScrollIndicators<Content: View>(list: Content) -> some View {
     if #available(iOS 16.0, tvOS 16.0, *) {
-      return AnyView(list.scrollIndicators(props.showScrollIndicators ? .visible : .hidden)
-        .scrollDisabled(!props.scrollEnabled))
+      var modified = list
+        .scrollIndicators(props.showScrollIndicators ? .visible : .hidden)
+        .scrollDisabled(!props.scrollEnabled)
+
+      if props.scrollDismissesKeyboard {
+        modified = modified.scrollDismissesKeyboard(.interactively)
+      }
+
+      return AnyView(modified)
     }
     return AnyView(list)
   }
@@ -226,21 +247,34 @@ struct ListView: ExpoSwiftUI.View {
     var view: AnyView = AnyView(list)
 
     if #available(iOS 15.0, tvOS 15.0, *) {
-      if let visibility = props.rowSeparatorVisibility.toVisibility() {
-        view = AnyView(view.listRowSeparator(visibility))
+      let rowVisibility = props.rowSeparatorVisibility.toVisibility()
+      let sectionVisibility = props.sectionSeparatorVisibility.toVisibility()
+
+      view = AnyView(
+        view
+          .listRowSeparator(rowVisibility)
+          .listSectionSeparator(sectionVisibility)
+      )
+
+      if let tint = props.rowSeparatorTint {
+        view = AnyView(view.listRowSeparatorTint(tint))
       }
+      if let tint = props.sectionSeparatorTint {
+        view = AnyView(view.listSectionSeparatorTint(tint))
+      }
+
       if let insets = props.rowInsets?.toEdgeInsets() {
         view = AnyView(view.listRowInsets(insets))
       }
       if let rowBackground = props.rowBackground {
         view = AnyView(view.listRowBackground(rowBackground))
       }
-      if let sectionVisibility = props.sectionSeparatorVisibility.toVisibility() {
-        view = AnyView(view.listSectionSeparator(sectionVisibility))
-      }
     }
 
     if #available(iOS 16.0, tvOS 16.0, *) {
+      if props.hideScrollContentBackground {
+        view = AnyView(view.scrollContentBackground(.hidden))
+      }
       if let spacing = props.rowSpacing {
         view = AnyView(view.listRowSpacing(spacing))
       }
@@ -351,7 +385,9 @@ struct TrailingSwipeActionsModifier: ViewModifier {
 
 struct ListStyleModifer: ViewModifier {
   var style: String
-  @ViewBuilder func body(content: Content) -> some View {
+
+  @ViewBuilder
+  func body(content: Content) -> some View {
     switch style {
     case "grouped":
       content.listStyle(.grouped)

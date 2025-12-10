@@ -36,13 +36,11 @@ internal enum ButtonControlSize: String, Enumerable {
     case .large:
       return .large
     case .extraLarge:
-      if #available(iOS 17.0, tvOS 17.0, *) {
+      if #available(iOS 17.0, *) {
         return .extraLarge
       } else {
         return .large
       }
-    @unknown default:
-      return .regular
     }
   }
 }
@@ -50,12 +48,8 @@ internal enum ButtonControlSize: String, Enumerable {
 internal enum ButtonVariant: String, Enumerable {
   case `default`
   case bordered
-  case accessoryBar
-  case accessoryBarAction
   case borderedProminent
   case borderless
-  case card
-  case link
   case plain
   case glass
   case glassProminent

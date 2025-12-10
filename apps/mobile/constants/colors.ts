@@ -18,7 +18,7 @@ export const Palette = {
   brand: {
     blue: '#0A84FF',
     lightBlue: '#6AC7F1',
-    green: '#34C759',
+    green: '#36ba06ff',
     yellow: '#FFD60A',
     orange: '#FF9500',
     red: '#ef4444',
@@ -41,7 +41,7 @@ export const Palette = {
   Greige: '#C2C0B6',
   cardDarkGlass: 'rgba(255, 255, 255, 0.1)',
   cardLightGlass: 'rgba(97, 94, 94, 0.16)',
-  glassTintLight: 'rgba(255, 255, 255, 0.79)',
+  glassTintLight: 'rgba(20, 20, 20, 0.27)',
   glassTintDark: 'rgba(186, 185, 185, 0.06)',
   placeholderGray: '#8e8e9385',
 } as const;

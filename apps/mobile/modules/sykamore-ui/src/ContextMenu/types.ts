@@ -1,6 +1,4 @@
-import {ReactElement, ReactNode} from 'react';
-
-import {type ButtonProps} from '../Button';
+import {ReactNode} from 'react';
 import {type CommonViewModifierProps} from '../types';
 
 export type ActivationMethod = 'singlePress' | 'longPress';
@@ -12,8 +10,3 @@ export type ContextMenuProps = {
   activationMethod?: ActivationMethod;
   children: ReactNode;
 } & CommonViewModifierProps;
-
-export type SubmenuProps = {
-  button: ReactElement<ButtonProps>;
-  children: ReactNode;
-};

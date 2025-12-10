@@ -14,29 +14,34 @@ export interface HStackProps extends CommonViewModifierProps {
   spacing?: number;
   alignment?: HStackAlignment;
   backgroundColor?: string;
-  useTapGesture?: boolean;
-  onTap?: () => void;
+  onPress?: () => void;
   children?: React.ReactNode;
 }
 
-type NativeHStackProps = HStackProps;
+// Native-only props
+type NativeHStackProps = Omit<HStackProps, 'onPress'> & {
+  useTapGesture?: boolean;
+  onTap?: () => void;
+};
 
 const HStackNativeView: React.ComponentType<NativeHStackProps> =
   requireNativeView('SykamoreUi', 'HStackView');
 
 function transformHStackProps(props: HStackProps): NativeHStackProps {
-  const {modifiers, ...restProps} = props;
+  const {modifiers, onPress, ...restProps} = props;
+
   return {
+    ...restProps,
+    // wire JS onPress into native tap
+    useTapGesture: !!onPress,
+    onTap: onPress,
     modifiers,
     ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
-    ...restProps,
   };
 }
 
 export function HStack(props: HStackProps) {
-  return (
-    <HStackNativeView {...transformHStackProps(props)}>
-      {props.children}
-    </HStackNativeView>
-  );
+  const nativeProps = transformHStackProps(props);
+
+  return <HStackNativeView {...nativeProps}>{props.children}</HStackNativeView>;
 }

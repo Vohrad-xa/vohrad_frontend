@@ -28,7 +28,7 @@ export function RolePicker({
 
   if (Platform.OS === 'ios') {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const {Host, Picker} = require('@expo/ui/swift-ui');
+    const {Host, Picker} = require('@/modules/sykamore-ui');
     const selectedIndex = selectedRoleId ? roleIds.indexOf(selectedRoleId) : -1;
 
     return (

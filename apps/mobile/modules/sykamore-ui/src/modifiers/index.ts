@@ -44,6 +44,8 @@ export {
   overlay,
   backgroundOverlay,
   animation,
+  glassEffect,
+  glassEffectId,
 } from './modifiers';
 
 export {background} from './background';

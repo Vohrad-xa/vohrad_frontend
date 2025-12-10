@@ -1,14 +1,15 @@
 import {requireNativeView} from 'expo';
-
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 
 export type SectionProps = {
   title?: string;
-  footer?: React.ReactNode;
   header?: React.ReactNode;
+  footer?: React.ReactNode;
   children: React.ReactNode;
   collapsible?: boolean;
+  /** Initial expanded state when collapsible is true (default: true) */
+  initiallyExpanded?: boolean;
 } & CommonViewModifierProps;
 
 const SectionNativeView: React.ComponentType<SectionProps> = requireNativeView(
@@ -33,6 +34,7 @@ const SectionContent: React.ComponentType<object> = requireNativeView(
 
 export function Section(props: SectionProps) {
   const {modifiers, header, footer, children, ...restProps} = props;
+
   return (
     <SectionNativeView
       modifiers={modifiers}

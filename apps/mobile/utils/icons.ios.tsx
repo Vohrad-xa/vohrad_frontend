@@ -1,10 +1,9 @@
 import React from 'react';
-import {Image} from '@expo/ui/swift-ui';
-import {frame, clipShape, background} from '@expo/ui/swift-ui/modifiers';
-import {SymbolView} from 'expo-symbols';
+import {Image} from '@/modules/sykamore-ui';
+import {frame, glassEffect} from '@/modules/sykamore-ui';
+import {SymbolView, type SFSymbol} from 'expo-symbols';
 import {Palette, type TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers/theme-provider';
-import type {SFSymbol} from 'expo-symbols';
 
 export type IconName = string;
 
@@ -25,7 +24,7 @@ interface IconProps {
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 'md',
+  size = 'sm',
   tintColor,
   tintToken,
   colorToken,
@@ -38,8 +37,8 @@ export const Icon: React.FC<IconProps> = ({
 
   const resolvedSize =
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.sm);
-  const sizeNoContainer = typeof size === 'number' ? size : 14;
-  const frameSize = resolvedSize * 1.5;
+  const sizeNoContainer = typeof size === 'number' ? size : ds.iconSize.sm;
+  const frameSize = resolvedSize * 1.9;
   const resolvedTintToken = tintToken ?? colorToken;
   const resolvedTintColor =
     tintColor ??
@@ -74,8 +73,14 @@ export const Icon: React.FC<IconProps> = ({
       size={resolvedSize}
       modifiers={[
         frame({width: frameSize, height: frameSize}),
-        background(resolvedTintColor ?? theme.card),
-        clipShape('roundedRectangle'),
+        glassEffect({
+          glass: {
+            variant: 'regular',
+            tint: resolvedTintColor ?? theme.card,
+          },
+          shape: 'roundedRectangle',
+          cornerRadius: ds.borderRadius.xl,
+        }),
       ]}
     />
   );
@@ -129,7 +134,7 @@ export const AppIcons = {
     share: 'square.and.arrow.up' as IconName,
     refresh: 'arrow.clockwise' as IconName,
     move: 'arrow.turn.down.right' as IconName,
-    logout: 'arrow.right.square.fill' as IconName,
+    logout: 'arrow.right.circle.fill' as IconName,
     close: 'xmark' as IconName,
   },
 
@@ -165,9 +170,9 @@ export const AppIcons = {
   business: {
     supplierFill: 'cart.fill' as IconName,
     supplier: 'cart' as IconName,
-    profile: 'person.circle.fill' as IconName,
+    profile: 'person.fill' as IconName,
     plan: 'creditcard.fill' as IconName,
-    organization: 'building.2.crop.circle' as IconName,
+    organization: 'briefcase.fill' as IconName,
     equipment: 'cpu' as IconName,
     maintenance: 'wrench' as IconName,
     maintenanceFill: 'wrench.fill' as IconName,

@@ -4,6 +4,7 @@ import ExpoModulesCore
 final class SectionProps: UIBaseViewProps {
   @Field var title: String?
   @Field var collapsible: Bool = false
+  @Field var initiallyExpanded: Bool = true
 }
 
 internal final class SectionHeaderProps: ExpoSwiftUI.ViewProps {}
@@ -35,7 +36,12 @@ internal struct SectionContent: ExpoSwiftUI.View {
 
 internal struct SectionView: ExpoSwiftUI.View {
   @ObservedObject var props: SectionProps
-  @State private var isExpanded: Bool = true
+  @State private var isExpanded: Bool
+
+  init(props: SectionProps) {
+    self.props = props
+    _isExpanded = State(initialValue: props.initiallyExpanded)
+  }
 
   var body: some View {
     if #available(iOS 17.0, macOS 14.0, tvOS 17.0, *), props.collapsible {
@@ -94,6 +100,8 @@ internal struct SectionView: ExpoSwiftUI.View {
       contentChildren
     } header: {
       headerView
+    } footer: {
+      footerView
     }
   }
 }

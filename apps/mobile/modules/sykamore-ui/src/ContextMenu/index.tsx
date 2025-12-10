@@ -1,7 +1,7 @@
 import {requireNativeView} from 'expo';
 import {ComponentType} from 'react';
 
-import {type SubmenuProps, type ContextMenuProps} from './types';
+import {type ContextMenuProps} from './types';
 
 export {type ActivationMethod, type ContextMenuProps} from './types';
 
@@ -59,17 +59,4 @@ ContextMenu.Trigger = Trigger;
 ContextMenu.Preview = Preview;
 ContextMenu.Items = Items;
 
-/**
- * @deprecated Use `ContextMenu` component as submenu instead.
- */
-const Submenu = (props: SubmenuProps) => {
-  const {button, children, ...rest} = props;
-  return (
-    <ContextMenu {...rest}>
-      <ContextMenu.Items>{children}</ContextMenu.Items>
-      <ContextMenu.Trigger>{button}</ContextMenu.Trigger>
-    </ContextMenu>
-  );
-};
-
-export {ContextMenu, Submenu};
+export {ContextMenu};

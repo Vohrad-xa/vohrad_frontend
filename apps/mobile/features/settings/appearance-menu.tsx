@@ -18,7 +18,7 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
 
   if (Platform.OS === 'ios') {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const {Host, Picker} = require('@expo/ui/swift-ui');
+    const {Host, Picker} = require('@/modules/sykamore-ui');
     const selectedIndex = values.indexOf(preference);
 
     return (
@@ -28,7 +28,6 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
           selectedIndex={selectedIndex}
           variant="menu"
           label="Appearance"
-          color={theme.muted}
           onOptionSelected={({nativeEvent}: {nativeEvent: {index: number}}) =>
             setScheme(values[nativeEvent.index])
           }

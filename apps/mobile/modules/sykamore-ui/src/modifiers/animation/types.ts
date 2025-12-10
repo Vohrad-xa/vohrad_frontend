@@ -1,4 +1,4 @@
-import {ANIMATION_TYPES} from './constants';
+import type {ANIMATION_TYPES} from './constants';
 
 export type AnimationType = (typeof ANIMATION_TYPES)[number];
 

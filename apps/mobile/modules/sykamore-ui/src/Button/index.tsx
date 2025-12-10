@@ -27,13 +27,6 @@ export type ButtonControlSize =
  * - `plain` - A button with no border or background and a less prominent text.
  * - `glass` – A liquid glass button effect (available only from iOS 26, when built with Xcode 26).
  * - `glassProminent` – A liquid glass button effect – (available only from iOS 26, when built with Xcode 26)
- * macOS-only styles:
- *  - `accessoryBar` - A button style for accessory bars.
- * - `accessoryBarAction` - A button style for accessory bar actions.
- * - `card` - A button style for cards.
- * - `link` - A button style for links.
- *
- * > **warning** The `borderless` variant is unavailable on Apple TV.
  */
 export type ButtonVariant =
   // Common
@@ -43,12 +36,7 @@ export type ButtonVariant =
   | 'glass'
   | 'glassProminent'
   | 'borderedProminent'
-  | 'borderless'
-  // MacOS-only;
-  | 'accessoryBar'
-  | 'accessoryBarAction'
-  | 'card'
-  | 'link';
+  | 'borderless';
 
 export type ButtonProps = {
   onPress?: () => void;

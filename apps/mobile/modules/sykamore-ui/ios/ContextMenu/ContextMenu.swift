@@ -6,15 +6,11 @@ struct SinglePressContextMenu<ActivationElement: View, MenuContent: View>: View 
   let menuContent: MenuContent
 
   var body: some View {
-    #if !os(tvOS)
     SwiftUI.Menu {
       menuContent
     } label: {
       activationElement
     }
-    #else
-    Text("SinglePressContextMenu is not supported on this platform")
-    #endif
   }
 }
 
@@ -24,7 +20,7 @@ struct LongPressContextMenuWithPreview<ActivationElement: View, Preview: View, M
   let menuContent: MenuContent
 
   var body: some View {
-    if #available(iOS 16.0, tvOS 16.0, *) {
+    if #available(iOS 16.0, *) {
       activationElement.contextMenu(menuItems: {
         menuContent
       }, preview: {

@@ -209,3 +209,16 @@ export const backgroundOverlay = (color: Color, alignment: string = 'center') =>
 
 export const animation = (animation: any, animatedValue?: boolean | number) =>
   createModifier('animation', {animation, animatedValue});
+
+export const glassEffect = (params?: {
+  glass?: {
+    variant: 'regular' | 'clear' | 'identity';
+    interactive?: boolean;
+    tint?: Color;
+  };
+  shape?: 'circle' | 'capsule' | 'rectangle' | 'ellipse' | 'roundedRectangle';
+  cornerRadius?: number;
+}) => createModifier('glassEffect', params);
+
+export const glassEffectId = (id: string, namespaceId: string) =>
+  createModifier('glassEffectId', {id, namespaceId});

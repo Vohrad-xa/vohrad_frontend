@@ -1,17 +1,19 @@
 import React from 'react';
-import {Section, HStack, Label, Spacer} from '@expo/ui/swift-ui';
+import {Section, Label, Spacer, HStack, Text} from '@/modules/sykamore-ui';
 import {type TokenName} from '@/constants/colors';
 import {Icon, AppIcons, type IconName} from '@/utils/icons';
 
 interface ListSectionProps {
   title?: string;
+  header?: string;
+  footer?: string;
   children: React.ReactNode;
 }
 
 interface ListSectionRowProps {
   icon: IconName;
   iconColorToken: TokenName;
-  title: string;
+  title?: string;
   onPress?: () => void;
   rightComponent?: React.ReactNode;
   hideChevron?: boolean;
@@ -20,9 +22,19 @@ interface ListSectionRowProps {
 
 const ListSectionComponent: React.FC<ListSectionProps> = ({
   title,
+  header,
+  footer,
   children,
 }) => {
-  return <Section title={title}>{children}</Section>;
+  return (
+    <Section
+      title={title}
+      header={header ? <Text>{header}</Text> : undefined}
+      footer={footer ? <Text>{footer}</Text> : undefined}
+    >
+      {children}
+    </Section>
+  );
 };
 
 const ListSectionRow: React.FC<ListSectionRowProps> = ({
@@ -32,14 +44,16 @@ const ListSectionRow: React.FC<ListSectionRowProps> = ({
   onPress,
   rightComponent,
   hideChevron = false,
-  spacing = 10,
 }) => {
   const showChevron = !hideChevron && !rightComponent;
 
   return (
-    <HStack alignment="center" onPress={onPress} spacing={spacing}>
-      <Icon name={icon} colorToken={iconColorToken} useSwiftUI />
-      <Label title={title} fixedSize={false} />
+    <HStack onPress={onPress}>
+      <Label
+        title={title}
+        icon={<Icon name={icon} colorToken={iconColorToken} useSwiftUI />}
+      />
+
       {rightComponent}
       {showChevron && (
         <>

@@ -1,6 +1,6 @@
 import {useCallback} from 'react';
 import {StyleSheet} from 'react-native';
-import {Host, Picker, List} from '@expo/ui/swift-ui';
+import {Host, Picker, List, Button} from '@/modules/sykamore-ui';
 import {router} from 'expo-router';
 import {ListSection} from '@/components/ui/list-section.ios';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -12,9 +12,6 @@ export default function SettingsModal() {
   const {ds, theme, preference, setScheme} = useTheme();
   const {logout} = useAuth();
   const styles = createStyles(ds, theme);
-
-  const appearanceIndex =
-    preference === 'light' ? 0 : preference === 'dark' ? 1 : 2;
 
   const handleLogout = useCallback(() => {
     showConfirmAlert({
@@ -31,9 +28,16 @@ export default function SettingsModal() {
 
   return (
     <Host style={styles.host}>
-      <List listStyle="automatic">
+      <List
+        listStyle="insetGrouped"
+        refreshEnabled
+        showScrollIndicators={false}
+      >
         {/* Account Section */}
-        <ListSection title="Account">
+        <ListSection
+          title="Account"
+          footer="Manage your account settings and personal information."
+        >
           <ListSection.Row
             icon={AppIcons.business.profile}
             iconColorToken="accentBlue"
@@ -48,34 +52,54 @@ export default function SettingsModal() {
           />
         </ListSection>
         {/* Preferences Section */}
-        <ListSection title="General">
+        <ListSection
+          title="General"
+          footer="Customize your app experience and preferences"
+        >
           <ListSection.Row
             icon={AppIcons.navigation.settings}
-            iconColorToken="accentOrange"
+            iconColorToken="glassTint"
             title="App Settings"
             onPress={() => router.push('/(modals)/settings/app-settings')}
           />
           <ListSection.Row
             icon={AppIcons.theme.appearance}
-            iconColorToken="accentIndigo"
+            iconColorToken="purple"
             title="Appearance"
-            onPress={() => {}}
             rightComponent={
               <Picker
-                options={['Light', 'Dark', 'Auto']}
-                selectedIndex={appearanceIndex}
-                onOptionSelected={({nativeEvent: {index}}) => {
-                  const preferences = ['light', 'dark', 'system'] as const;
-                  setScheme(preferences[index]);
+                label=""
+                selection={preference}
+                onSelectionChange={({nativeEvent}) => {
+                  setScheme(
+                    nativeEvent.selection as 'light' | 'dark' | 'system',
+                  );
                 }}
-                variant="menu"
-                color={theme.muted}
-              />
+              >
+                <Button
+                  onPress={() => {}}
+                  modifiers={[{$type: 'tag', tag: 'light'}]}
+                >
+                  Light
+                </Button>
+                <Button
+                  onPress={() => {}}
+                  modifiers={[{$type: 'tag', tag: 'dark'}]}
+                >
+                  Dark
+                </Button>
+                <Button
+                  onPress={() => {}}
+                  modifiers={[{$type: 'tag', tag: 'system'}]}
+                >
+                  Auto
+                </Button>
+              </Picker>
             }
           />
           <ListSection.Row
             icon={AppIcons.navigation.preferences}
-            iconColorToken="accentTeal"
+            iconColorToken="accentOrange"
             title="Preferences"
             onPress={() => router.push('/(modals)/settings/preferences')}
           />
@@ -88,10 +112,13 @@ export default function SettingsModal() {
         </ListSection>
 
         {/* Data & Information */}
-        <ListSection title="Data & Information">
+        <ListSection
+          title="Data & Information"
+          footer="Access important legal and informational, including privacy policies and terms of use."
+        >
           <ListSection.Row
             icon={AppIcons.content.privacy}
-            iconColorToken="accentIndigo"
+            iconColorToken="purple"
             title="Privacy Policy"
             onPress={() => router.push('/(modals)/settings/privacy')}
           />
@@ -103,18 +130,20 @@ export default function SettingsModal() {
           />
           <ListSection.Row
             icon={AppIcons.status.info}
-            iconColorToken="iconInfo"
+            iconColorToken="glassTint"
             title="About"
             onPress={() => router.push('/(modals)/settings/about')}
           />
         </ListSection>
 
-        <ListSection.Row
-          icon={AppIcons.status.help}
-          iconColorToken="iconWarning"
-          title="Report an Issue"
-          onPress={() => router.push('/(modals)/settings/support')}
-        />
+        <ListSection footer="Need help or support? Visit our support center or contact us for assistance.">
+          <ListSection.Row
+            icon={AppIcons.status.help}
+            iconColorToken="iconWarning"
+            title="Report an Issue"
+            onPress={() => router.push('/(modals)/settings/support')}
+          />
+        </ListSection>
 
         {/* Logout Section */}
         <ListSection>

@@ -12,6 +12,7 @@ export function MenuItem({icon, label, onPress, isDestructive}: MenuItemProps) {
   return (
     <TouchableOpacity style={styles.menuItem} onPress={onPress}>
       <Icon
+        size="lg"
         name={icon}
         color={isDestructive ? theme.destructive : theme.muted}
       />

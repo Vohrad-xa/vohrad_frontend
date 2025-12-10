@@ -82,7 +82,7 @@ export interface ListProps extends CommonViewModifierProps {
   moveEnabled?: boolean;
   /** Allow deletion of list items */
   deleteEnabled?: boolean;
-  /** Make the list scrollable (iOS 16.0+) */
+  /** Make the list scrollable */
   scrollEnabled?: boolean;
   /** Enable SwiftUI edit mode */
   editModeEnabled?: boolean;
@@ -92,18 +92,29 @@ export interface ListProps extends CommonViewModifierProps {
   refreshing?: boolean;
   /** Show or hide scroll indicators (iOS 16.0+) */
   showScrollIndicators?: boolean;
+
   /** Control row separator visibility (iOS 15.0+) */
   rowSeparatorVisibility?: SeparatorVisibility;
+  /** Control section separator visibility (iOS 15.0+) */
+  sectionSeparatorVisibility?: SeparatorVisibility;
+  /** Tint color for row separators (iOS 15.0+) */
+  rowSeparatorTint?: string;
+  /** Tint color for section separators (iOS 15.0+) */
+  sectionSeparatorTint?: string;
+
   /** Apply consistent insets to all rows (iOS 15.0+) */
   rowInsets?: RowInsets;
   /** Apply a background color to all rows (iOS 15.0+) */
   rowBackground?: string;
-  /** Control section separator visibility (iOS 15.0+) */
-  sectionSeparatorVisibility?: SeparatorVisibility;
   /** Spacing between rows (iOS 16.0+) */
   rowSpacing?: number;
   /** Spacing between sections (iOS 17.0+) */
   sectionSpacing?: number;
+  /** Hide system scroll content background so you can style via modifiers (iOS 16.0+) */
+  hideScrollContentBackground?: boolean;
+  /** Dismiss keyboard on scroll (iOS 16.0+) */
+  scrollDismissesKeyboard?: boolean;
+
   /** Leading edge swipe actions (iOS 15.0+) */
   leadingSwipeActions?: SwipeActionsConfig;
   /** Trailing edge swipe actions (iOS 15.0+) */

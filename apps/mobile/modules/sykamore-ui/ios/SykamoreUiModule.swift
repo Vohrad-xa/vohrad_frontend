@@ -6,6 +6,7 @@ public final class SykamoreUiModule: Module {
 
     // MARK: - Views
     View(HostView.self)
+    View(PopoverViewContent.self)
     ExpoUIView(ListView.self)
     ExpoUIView(Button.self)
     ExpoUIView(SectionView.self)
@@ -44,5 +45,6 @@ public final class SykamoreUiModule: Module {
     ExpoUIView(HStackView.self)
     ExpoUIView(VStackView.self)
     ExpoUIView(ProgressView.self)
+    ExpoUIView(GlassContainerView.self)
   }
 }

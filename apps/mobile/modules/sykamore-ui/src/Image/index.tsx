@@ -1,7 +1,6 @@
 import {requireNativeView} from 'expo';
 import {ColorValue} from 'react-native';
 import {type SFSymbol} from 'sf-symbols-typescript';
-
 import {type ViewEvent} from '../types';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
@@ -9,10 +8,6 @@ import {type CommonViewModifierProps} from '../types';
 export interface ImageProps extends CommonViewModifierProps {
   systemName: SFSymbol;
   size?: number;
-  /**
-   * The color of the system image.
-   * Can be a color name like '#ffae00ff', 'red', 'blue', etc.
-   */
   color?: ColorValue;
   /**
    * The variable value for SF Symbols with variable color support.
