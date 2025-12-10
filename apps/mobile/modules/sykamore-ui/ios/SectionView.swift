@@ -44,7 +44,7 @@ internal struct SectionView: ExpoSwiftUI.View {
   }
 
   var body: some View {
-    if #available(iOS 19.0, macOS 15.0, tvOS 18.0, *), props.collapsible {
+    if #available(iOS 17.0, macOS 14.0, tvOS 17.0, *), props.collapsible {
       collapsibleSection
     } else {
       regularSection
@@ -94,14 +94,13 @@ internal struct SectionView: ExpoSwiftUI.View {
     }
   }
 
-  @available(iOS 19.0, macOS 15.0, tvOS 18.0, *)
+  // Note: SwiftUI's Section(isExpanded:) API does not support footer - this is a framework limitation
+  @available(iOS 17.0, macOS 14.0, tvOS 17.0, *)
   private var collapsibleSection: some View {
     Section(isExpanded: $isExpanded) {
       contentChildren
     } header: {
       headerView
-    } footer: {
-      footerView
     }
   }
 }
