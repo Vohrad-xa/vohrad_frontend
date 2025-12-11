@@ -39,22 +39,26 @@ internal struct ImageView: ExpoSwiftUI.View {
       }
     }
 
-    let styledImage: Image
+    return styledContent(image: image)
+      .font(.system(size: CGFloat(props.size ?? 24)))
+      .applyOnTapGesture(useTapGesture: props.useTapGesture, eventDispatcher: props.onTap)
+  }
+
+  @ViewBuilder
+  private func styledContent(image: Image) -> some View {
     if let palette = props.paletteColors, !palette.isEmpty {
       switch palette.count {
       case 1:
-        styledImage = image.foregroundStyle(palette[0])
+        image.foregroundStyle(palette[0])
       case 2:
-        styledImage = image.foregroundStyle(palette[0], palette[1])
+        image.foregroundStyle(palette[0], palette[1])
       default:
-        styledImage = image.foregroundStyle(palette[0], palette[1], palette[2])
+        image.foregroundStyle(palette[0], palette[1], palette[2])
       }
+    } else if let color = props.color {
+      image.foregroundStyle(color)
     } else {
-      styledImage = image.foregroundColor(props.color)
+      image
     }
-
-    return styledImage
-      .font(.system(size: CGFloat(props.size ?? 24)))
-      .applyOnTapGesture(useTapGesture: props.useTapGesture, eventDispatcher: props.onTap)
   }
 }
