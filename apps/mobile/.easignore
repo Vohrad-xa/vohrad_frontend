@@ -2,3 +2,5 @@ docs/
 ../../.vscode/
 ../web/
 .idea/
+../../coverage
+**/*_test_*
