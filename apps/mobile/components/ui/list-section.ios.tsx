@@ -8,6 +8,7 @@ import {
   Button,
   HStack,
 } from '@/modules/sykamore-ui';
+import {useTheme} from '@/providers';
 import {Icon, AppIcons, type IconName} from '@/utils/icons';
 
 interface ListSectionProps {
@@ -53,9 +54,10 @@ const ListSectionRow: React.FC<ListSectionRowProps> = ({
   hideChevron = false,
 }) => {
   const showChevron = !hideChevron && !rightComponent;
+  const {theme} = useTheme();
 
   return (
-    <Button onPress={onPress}>
+    <Button onPress={onPress} color={theme.text}>
       <HStack>
         <Label
           title={title}

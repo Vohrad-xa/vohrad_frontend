@@ -42,7 +42,7 @@ export const Palette = {
   cardDarkGlass: 'rgba(255, 255, 255, 0.1)',
   cardLightGlass: 'rgba(97, 94, 94, 0.16)',
   glassTintLight: 'rgba(20, 20, 20, 0.27)',
-  glassTintDark: 'rgba(186, 185, 185, 0.06)',
+  glassTintDark: 'rgba(186, 185, 185, 0.72)',
   placeholderGray: '#8e8e9385',
 } as const;
 
