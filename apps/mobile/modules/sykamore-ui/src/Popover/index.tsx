@@ -25,15 +25,15 @@ type NativePopoverViewProps = Omit<PopoverViewProps, 'onStateChange'> & {
 };
 
 const PopoverNativeView: React.ComponentType<NativePopoverViewProps> =
-  requireNativeView('SykamoreUI', 'PopoverView');
+  requireNativeView('SykamoreUi', 'PopoverView');
 
 const PopoverViewContent: React.ComponentType<object> = requireNativeView(
-  'SykamoreUI',
+  'SykamoreUi',
   'PopoverViewContent',
 );
 
 const PopoverViewPopContent: React.ComponentType<object> = requireNativeView(
-  'SykamoreUI',
+  'SykamoreUi',
   'PopoverViewPopContent',
 );
 

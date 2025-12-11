@@ -18,7 +18,7 @@ export type GlassEffectContainerProps = {
 type NativeGlassEffectContainerProps = GlassEffectContainerProps;
 
 const GlassEffectContainerNativeView: React.ComponentType<NativeGlassEffectContainerProps> =
-  requireNativeView('SykamoreUI', 'GlassEffectContainerView');
+  requireNativeView('SykamoreUi', 'GlassEffectContainerView');
 
 export function GlassEffectContainer(props: GlassEffectContainerProps) {
   const eventProp = props.modifiers

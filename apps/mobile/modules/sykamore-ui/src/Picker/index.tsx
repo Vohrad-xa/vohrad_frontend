@@ -1,6 +1,7 @@
 import {requireNativeView} from 'expo';
 import type {SFSymbol} from 'sf-symbols-typescript';
-import {View, Text as RNText} from 'react-native';
+import {HStack} from '../HStack';
+import {Text} from '../Text';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 
@@ -42,6 +43,11 @@ const PickerLabelNativeView: React.ComponentType<any> = requireNativeView(
   'PickerLabelView',
 );
 
+const PickerLabelIconNativeView: React.ComponentType<any> = requireNativeView(
+  'SykamoreUi',
+  'PickerLabelIcon',
+);
+
 type NativePickerProps = Omit<PickerProps, 'icon' | 'children' | 'label'> & {
   label?: string;
   children?: React.ReactNode;
@@ -74,15 +80,15 @@ export function Picker(props: PickerProps) {
 
     if (icon && typeof label === 'string') {
       labelNode = (
-        <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
-          {icon}
-          <RNText>{label}</RNText>
-        </View>
+        <HStack alignment="center" spacing={6}>
+          <PickerLabelIconNativeView>{icon}</PickerLabelIconNativeView>
+          <Text>{label}</Text>
+        </HStack>
       );
     } else if (typeof label !== 'string') {
       labelNode = label;
     } else if (icon && !label) {
-      labelNode = icon;
+      labelNode = <PickerLabelIconNativeView>{icon}</PickerLabelIconNativeView>;
     }
 
     return (

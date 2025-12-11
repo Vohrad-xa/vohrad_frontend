@@ -148,7 +148,7 @@ export default function EmailConfirmScreen() {
           variant="primary"
           onPress={() => {
             if (isAuthenticated) {
-              router.replace('/(modals)/settings/profile');
+              router.replace('/(app)/(tabs)/settings/profile');
             } else {
               router.replace('/(auth)/login');
             }

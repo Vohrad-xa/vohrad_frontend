@@ -6,7 +6,9 @@ public final class SykamoreUiModule: Module {
 
     // MARK: - Views
     View(HostView.self)
+    ExpoUIView(PopoverView.self)
     View(PopoverViewContent.self)
+    View(PopoverViewPopContent.self)
     ExpoUIView(ListView.self)
     ExpoUIView(Button.self)
     ExpoUIView(SectionView.self)
@@ -29,6 +31,7 @@ public final class SykamoreUiModule: Module {
     ExpoUIView(PickerView.self)
     View(PickerContentView.self)
     View(PickerLabelView.self)
+    View(PickerLabelIcon.self)
     View(TextFieldView.self) {
       AsyncFunction("setText") { (view: TextFieldView, text: String) in
         view.setText(text)
