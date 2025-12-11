@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
     :ios => '15.1',
     :tvos => '15.1'
   }
-  s.swift_version  = '6.2'
+  s.swift_version  = '5.9'
   s.source         = { git: 'https://github.com/Vohrad-xa/vohrad_frontend' }
   s.static_framework = true
 
