@@ -3,10 +3,10 @@ import {StyleSheet} from 'react-native';
 import {router} from 'expo-router';
 import {ListSection} from '@/components/ui/list-section.ios';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {Host, Picker, List, Button} from '@/modules/sykamore-ui';
+import {Host, Picker, List, Button, Label} from '@/modules/sykamore-ui';
 import {useTheme, useAuth} from '@/providers';
 import {showConfirmAlert, makeStyleFactory} from '@/utils';
-import {AppIcons} from '@/utils/icons';
+import {AppIcons, Icon} from '@/utils/icons';
 
 export default function SettingsModal() {
   const {ds, theme, preference, setScheme} = useTheme();
@@ -59,7 +59,13 @@ export default function SettingsModal() {
 
           <Picker
             label="Theme"
-            systemImage="moon.fill"
+            icon={
+              <Icon
+                name={AppIcons.theme.appearance}
+                useSwiftUI
+                colorToken="purple"
+              />
+            }
             selection={preference}
             onSelectionChange={({nativeEvent}) => {
               setScheme(nativeEvent.selection as 'light' | 'dark' | 'system');

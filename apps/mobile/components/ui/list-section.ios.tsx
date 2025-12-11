@@ -1,6 +1,13 @@
 import React from 'react';
 import {type TokenName} from '@/constants/colors';
-import {Section, Label, Spacer, HStack, Text} from '@/modules/sykamore-ui';
+import {
+  Section,
+  Label,
+  Spacer,
+  Text,
+  Button,
+  HStack,
+} from '@/modules/sykamore-ui';
 import {Icon, AppIcons, type IconName} from '@/utils/icons';
 
 interface ListSectionProps {
@@ -48,24 +55,26 @@ const ListSectionRow: React.FC<ListSectionRowProps> = ({
   const showChevron = !hideChevron && !rightComponent;
 
   return (
-    <HStack onPress={onPress}>
-      <Label
-        title={title}
-        icon={<Icon name={icon} colorToken={iconColorToken} useSwiftUI />}
-      />
+    <Button onPress={onPress}>
+      <HStack>
+        <Label
+          title={title}
+          icon={<Icon name={icon} colorToken={iconColorToken} useSwiftUI />}
+        />
 
-      {rightComponent}
-      {showChevron && (
-        <>
-          <Spacer />
-          <Icon
-            name={AppIcons.navigation.chevronRight}
-            useSwiftUI
-            noContainer
-          />
-        </>
-      )}
-    </HStack>
+        {rightComponent}
+        {showChevron && (
+          <>
+            <Spacer />
+            <Icon
+              name={AppIcons.navigation.chevronRight}
+              useSwiftUI
+              noContainer
+            />
+          </>
+        )}
+      </HStack>
+    </Button>
   );
 };
 

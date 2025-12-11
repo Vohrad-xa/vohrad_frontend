@@ -1,7 +1,6 @@
 import {requireNativeView} from 'expo';
 import type {SFSymbol} from 'sf-symbols-typescript';
 import {HStack} from '../HStack';
-import {Text} from '../Text';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 
@@ -72,23 +71,23 @@ export function Picker(props: PickerProps) {
   if (hasCustomLabelNode) {
     const nativeProps = transformPickerProps({
       ...rest,
-      // No string label to native in this branch
-      label: undefined,
+      // Keep string label for native so we can rebuild a SwiftUI Label spacing
+      label: typeof label === 'string' ? label : undefined,
     });
 
     let labelNode: React.ReactNode = null;
 
     if (icon && typeof label === 'string') {
+      labelNode = <PickerLabelIconNativeView>{icon}</PickerLabelIconNativeView>;
+    } else if (icon && typeof label !== 'string') {
       labelNode = (
         <HStack alignment="center" spacing={6}>
           <PickerLabelIconNativeView>{icon}</PickerLabelIconNativeView>
-          <Text>{label}</Text>
+          {label}
         </HStack>
       );
-    } else if (typeof label !== 'string') {
+    } else if (!icon && typeof label !== 'string') {
       labelNode = label;
-    } else if (icon && !label) {
-      labelNode = <PickerLabelIconNativeView>{icon}</PickerLabelIconNativeView>;
     }
 
     return (

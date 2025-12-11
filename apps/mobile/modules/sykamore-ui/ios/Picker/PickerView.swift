@@ -41,11 +41,23 @@ internal struct PickerView: ExpoSwiftUI.View {
         content
       }
     } else if let labelContent {
-      // Custom React label node (icon, text, whatever)
-      Picker(selection: $selection) {
-        content
-      } label: {
-        labelContent
+      if let icon = extractLabelIcon(labelContent), let label = props.label {
+        Picker(selection: $selection) {
+          content
+        } label: {
+          Label {
+            Text(label)
+          } icon: {
+            icon
+          }
+        }
+      } else {
+        // Custom React label node (text-only or fully custom)
+        Picker(selection: $selection) {
+          content
+        } label: {
+          labelContent
+        }
       }
     } else if let label = props.label {
       // Text-only label
@@ -138,5 +150,11 @@ internal struct PickerView: ExpoSwiftUI.View {
       return doubleValue
     }
     return nil
+  }
+
+  private func extractLabelIcon(_ labelView: PickerLabelView) -> PickerLabelIcon? {
+    labelView.props.children?
+      .compactMap { $0.childView as? PickerLabelIcon }
+      .first
   }
 }
