@@ -5,7 +5,6 @@ import {
   background,
   clipShape,
   frame,
-  glassEffect,
   Image,
 } from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers/theme-provider';

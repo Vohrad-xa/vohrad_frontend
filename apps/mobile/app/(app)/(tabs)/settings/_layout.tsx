@@ -36,6 +36,7 @@ function SettingsStack() {
         screenOptions={{
           headerShown: true,
           headerShadowVisible: false,
+          headerBackButtonMenuEnabled: true,
           headerTransparent: Platform.OS === 'ios',
           headerTitleAlign: 'center',
           headerBackButtonDisplayMode: 'minimal',

@@ -10,6 +10,7 @@ export type SwitchProps = {
   value: boolean;
   label?: string;
   systemImage?: SFSymbol;
+  icon?: React.ReactNode;
   variant?: 'checkbox' | 'switch' | 'button';
   onValueChange?: (value: boolean) => void;
   color?: ColorValue;
@@ -33,14 +34,18 @@ export type SwitchButtonVariantProps = {
   elementColors?: undefined;
 };
 
-type NativeSwitchProps = Omit<SwitchProps, 'onValueChange'> & {
+type NativeSwitchProps = Omit<SwitchProps, 'onValueChange' | 'icon'> & {
   onValueChange: (event: NativeSyntheticEvent<{value: boolean}>) => void;
 };
 
 const SwitchNativeView: React.ComponentType<NativeSwitchProps> =
   requireNativeView('SykamoreUi', 'SwitchView');
+const SwitchIconNativeView: React.ComponentType<{children?: React.ReactNode}> =
+  requireNativeView('SykamoreUi', 'SwitchIcon');
 
-function transformSwitchProps(props: SwitchProps): NativeSwitchProps {
+function transformSwitchProps(
+  props: Omit<SwitchProps, 'icon'>,
+): NativeSwitchProps {
   const {modifiers, ...restProps} = props;
   return {
     modifiers,
@@ -55,5 +60,10 @@ function transformSwitchProps(props: SwitchProps): NativeSwitchProps {
 }
 
 export function Switch(props: SwitchProps) {
-  return <SwitchNativeView {...transformSwitchProps(props)} />;
+  const {icon, ...rest} = props;
+  return (
+    <SwitchNativeView {...transformSwitchProps(rest)}>
+      {icon && <SwitchIconNativeView>{icon}</SwitchIconNativeView>}
+    </SwitchNativeView>
+  );
 }

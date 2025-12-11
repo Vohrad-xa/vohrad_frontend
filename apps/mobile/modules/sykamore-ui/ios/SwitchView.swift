@@ -10,6 +10,15 @@ final class SwitchProps: UIBaseViewProps {
   var onValueChange = EventDispatcher()
 }
 
+internal final class SwitchIconProps: ExpoSwiftUI.ViewProps {}
+internal struct SwitchIcon: ExpoSwiftUI.View {
+  @ObservedObject var props: SwitchIconProps
+
+  var body: some View {
+    Children()
+  }
+}
+
 struct SwitchView: ExpoSwiftUI.View {
   @ObservedObject var props: SwitchProps
   @State var checked: Bool = false
@@ -47,11 +56,25 @@ struct SwitchView: ExpoSwiftUI.View {
   
   @ViewBuilder
   private var toggleView: some View {
-      if let systemImage = props.systemImage, !systemImage.isEmpty {
-        Toggle(props.label ?? "", systemImage: systemImage, isOn: $checked)
-      } else {
-        Toggle(props.label ?? "", isOn: $checked)
+    if let customIcon {
+      Toggle(isOn: $checked) {
+        Label {
+          Text(props.label ?? "")
+        } icon: {
+          customIcon
+        }
       }
+    } else if let systemImage = props.systemImage, !systemImage.isEmpty {
+      Toggle(props.label ?? "", systemImage: systemImage, isOn: $checked)
+    } else {
+      Toggle(props.label ?? "", isOn: $checked)
+    }
+  }
+
+  private var customIcon: SwitchIcon? {
+    props.children?
+      .compactMap({ $0.childView as? SwitchIcon })
+      .first
   }
 }
 
