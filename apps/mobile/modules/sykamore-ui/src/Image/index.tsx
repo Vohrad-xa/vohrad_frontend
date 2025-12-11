@@ -9,6 +9,8 @@ export interface ImageProps extends CommonViewModifierProps {
   systemName: SFSymbol;
   size?: number;
   color?: ColorValue;
+  renderingMode?: 'monochrome' | 'palette' | 'hierarchical' | 'multicolor';
+  paletteColors?: ColorValue[];
   /**
    * The variable value for SF Symbols with variable color support.
    * Can be a number between 0.0 and 1.0.
@@ -32,6 +34,10 @@ function transformNativeProps(props: ImageProps): NativeImageProps {
     modifiers,
     ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
     ...restProps,
+    paletteColors:
+      props.paletteColors && props.paletteColors.length > 0
+        ? props.paletteColors
+        : undefined,
     ...(onPress ? {useTapGesture: true, onTap: () => onPress()} : null),
   };
 }

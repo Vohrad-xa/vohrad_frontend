@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native';
 import {router} from 'expo-router';
 import {ListSection} from '@/components/ui/list-section.ios';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {Host, Picker, List, Button, Label} from '@/modules/sykamore-ui';
+import {Host, Picker, List, Button} from '@/modules/sykamore-ui';
 import {useTheme, useAuth} from '@/providers';
 import {showConfirmAlert, makeStyleFactory} from '@/utils';
 import {AppIcons, Icon} from '@/utils/icons';

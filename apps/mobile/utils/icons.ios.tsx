@@ -19,6 +19,8 @@ interface IconProps {
   iconColor?: string;
   useSwiftUI?: boolean;
   noContainer?: boolean;
+  renderingMode?: 'monochrome' | 'palette' | 'hierarchical' | 'multicolor';
+  paletteColors?: string[];
 }
 
 export const Icon: React.FC<IconProps> = ({
@@ -31,6 +33,8 @@ export const Icon: React.FC<IconProps> = ({
   iconColor,
   useSwiftUI = false,
   noContainer = false,
+  renderingMode,
+  paletteColors,
 }) => {
   const {theme, ds} = useTheme();
 
@@ -61,6 +65,8 @@ export const Icon: React.FC<IconProps> = ({
         systemName={name as SFSymbol}
         color={resolvedTintColor ?? theme.muted}
         size={sizeNoContainer}
+        renderingMode={renderingMode}
+        paletteColors={paletteColors}
       />
     );
   }
@@ -70,6 +76,8 @@ export const Icon: React.FC<IconProps> = ({
       systemName={name as SFSymbol}
       color={resolvedIconColor}
       size={resolvedSize}
+      renderingMode={renderingMode}
+      paletteColors={paletteColors}
       modifiers={[
         frame({width: frameSize, height: frameSize}),
         glassEffect({
