@@ -8,7 +8,7 @@ type AppearanceMenuProps = {
 };
 
 export function AppearanceMenu({style}: AppearanceMenuProps) {
-  const {preference, setScheme, theme} = useTheme();
+  const {preference, setScheme} = useTheme();
   const values: Array<'light' | 'dark' | 'system'> = [
     'light',
     'dark',

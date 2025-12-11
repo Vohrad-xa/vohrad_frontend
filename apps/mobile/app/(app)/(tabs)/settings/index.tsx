@@ -1,7 +1,7 @@
 import {useCallback} from 'react';
 import {StyleSheet, View, Platform} from 'react-native';
-import {GestureDetector} from 'react-native-gesture-handler';
 import {router} from 'expo-router';
+import {GestureDetector} from 'react-native-gesture-handler';
 import {Card} from '@/components/cards/card';
 import {ThemedView, ThemedText, ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';

@@ -23,9 +23,8 @@ export default function HomeScreen() {
   const {fetchUserProfile} = useFetchUserProfile();
 
   const handlePresentModal = useCallback(() => {
-    triggerHaptic('light');
     router.push('/dashboard/cards-filter');
-  }, [triggerHaptic]);
+  }, []);
 
   const handleScanOpen = useCallback(() => {
     triggerHaptic('light');

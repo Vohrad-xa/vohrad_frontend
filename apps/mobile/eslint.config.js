@@ -17,6 +17,7 @@ module.exports = defineConfig([
       '**/*.js',
       '**/*.jsx',
       'docs/**',
+      'modules/sykamore-ui/**',
     ],
   },
   ...expoConfig.map((config) => ({

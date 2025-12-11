@@ -1,12 +1,11 @@
 import React, {useCallback} from 'react';
-import {Platform, StyleSheet} from 'react-native';
-import {Stack, useRouter} from 'expo-router';
+import {Platform, StyleSheet, View} from 'react-native';
+import {Stack} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme, useSidebar} from '@/providers';
 import {AppIcons, makeStyleFactory} from '@/utils';
-import {View} from 'react-native';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -21,7 +20,6 @@ interface SearchChangeEvent {
 function SettingsStack() {
   const {theme, ds} = useTheme();
   const {setSearchQuery} = useSearch();
-  const router = useRouter();
   const styles = createStyles(theme, ds);
   const {toggleSideMenu} = useSidebar();
 

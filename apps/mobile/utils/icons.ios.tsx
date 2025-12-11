@@ -1,8 +1,7 @@
 import React from 'react';
-import {Image} from '@/modules/sykamore-ui';
-import {frame, glassEffect} from '@/modules/sykamore-ui';
 import {SymbolView, type SFSymbol} from 'expo-symbols';
-import {Palette, type TokenName} from '@/constants/colors';
+import {Palette, type TokenName} from '@/constants';
+import {frame, glassEffect, Image} from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers/theme-provider';
 
 export type IconName = string;

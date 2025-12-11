@@ -60,8 +60,10 @@ export default function ItemsScreen() {
         <View style={styles.headerRightContainer}>
           <HeaderButton
             icon={AppIcons.actions.addItem}
-            accessibilityLabel="Search items"
-            onPress={() => {}}
+            accessibilityLabel="Add item"
+            onPress={() => {
+              router.push('/(app)/(tabs)/items');
+            }}
           />
           <HeaderButton
             icon={AppIcons.navigation.filter}
@@ -77,7 +79,7 @@ export default function ItemsScreen() {
         </View>
       ),
     });
-  }, [navigation, filters, router]);
+  }, [navigation, filters, router, styles.headerRightContainer]);
 
   const handleItemPress = (itemId: string) => {
     router.push({

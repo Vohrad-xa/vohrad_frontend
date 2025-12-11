@@ -27,10 +27,10 @@ function resolveAvailabilityMessage(
     case 'NOT_ENROLLED':
       return 'Inactive';
     case 'NO_HARDWARE':
-      return 'Unavailable.';
+      return 'Unavailable';
     case 'UNSUPPORTED':
     default:
-      return 'Unavailable.';
+      return 'Unavailable';
   }
 }
 

@@ -1,9 +1,9 @@
 import {useCallback} from 'react';
 import {StyleSheet} from 'react-native';
-import {Host, Picker, List, Button} from '@/modules/sykamore-ui';
 import {router} from 'expo-router';
 import {ListSection} from '@/components/ui/list-section.ios';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {Host, Picker, List, Button} from '@/modules/sykamore-ui';
 import {useTheme, useAuth} from '@/providers';
 import {showConfirmAlert, makeStyleFactory} from '@/utils';
 import {AppIcons} from '@/utils/icons';
@@ -56,30 +56,20 @@ export default function SettingsModal() {
             title="App Settings"
             onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
           />
-          <ListSection.Row
-            icon={AppIcons.theme.appearance}
-            iconColorToken="purple"
-            title="Appearance"
-            rightComponent={
-              <Picker
-                label=""
-                selection={preference}
-                onSelectionChange={({nativeEvent}) => {
-                  setScheme(
-                    nativeEvent.selection as 'light' | 'dark' | 'system',
-                  );
-                }}
-              >
-                <Button modifiers={[{$type: 'tag', tag: 'light'}]}>
-                  Light
-                </Button>
-                <Button modifiers={[{$type: 'tag', tag: 'dark'}]}>Dark</Button>
-                <Button modifiers={[{$type: 'tag', tag: 'system'}]}>
-                  Auto
-                </Button>
-              </Picker>
-            }
-          />
+
+          <Picker
+            label="Theme"
+            systemImage="moon.fill"
+            selection={preference}
+            onSelectionChange={({nativeEvent}) => {
+              setScheme(nativeEvent.selection as 'light' | 'dark' | 'system');
+            }}
+          >
+            <Button modifiers={[{$type: 'tag', tag: 'light'}]}>Light</Button>
+            <Button modifiers={[{$type: 'tag', tag: 'dark'}]}>Dark</Button>
+            <Button modifiers={[{$type: 'tag', tag: 'system'}]}>Auto</Button>
+          </Picker>
+
           <ListSection.Row
             icon={AppIcons.navigation.preferences}
             iconColorToken="accentOrange"
