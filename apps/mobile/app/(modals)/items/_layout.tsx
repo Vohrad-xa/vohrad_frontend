@@ -68,12 +68,10 @@ export default function ItemsModalsLayout() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor:
-          Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

@@ -433,7 +433,7 @@ export const createDesignSystem = (
       md: 20,
       lg: 24,
       xl: 28,
-      xxl: 32,
+      xxl: 36,
     },
 
     layout: {

@@ -154,7 +154,7 @@ export default function ScanModal() {
           <Icon
             name={AppIcons.actions.scan}
             size={180}
-            color={Palette.white}
+            color={Palette.brand.white}
             style={styles.scanIcon}
           />
         </View>

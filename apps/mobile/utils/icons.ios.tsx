@@ -1,12 +1,7 @@
 import React from 'react';
 import {SymbolView, type SFSymbol} from 'expo-symbols';
 import {Palette, type TokenName} from '@/constants';
-import {
-  background,
-  clipShape,
-  frame,
-  Image,
-} from '@/modules/sykamore-ui';
+import {background, clipShape, frame, Image} from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers/theme-provider';
 
 export type IconName = string;
@@ -48,7 +43,7 @@ export const Icon: React.FC<IconProps> = ({
     tintColor ??
     color ??
     (resolvedTintToken ? theme[resolvedTintToken] : undefined);
-  const resolvedIconColor = iconColor ?? Palette.white;
+  const resolvedIconColor = iconColor ?? Palette.brand.white;
 
   if (!useSwiftUI) {
     return (
@@ -83,13 +78,6 @@ export const Icon: React.FC<IconProps> = ({
     />
   );
 };
-
-export const IconPresets = {
-  small: {size: 'sm' as IconSizeKey},
-  medium: {size: 'md' as IconSizeKey},
-  large: {size: 'lg' as IconSizeKey},
-  xlarge: {size: 'xxl' as IconSizeKey},
-} as const;
 
 export const AppIcons = {
   navigation: {

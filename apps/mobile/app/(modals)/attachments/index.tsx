@@ -1,21 +1,15 @@
 import React from 'react';
-import {StyleSheet, Platform} from 'react-native';
 import {useRouter, useLocalSearchParams} from 'expo-router';
 import {Card} from '@/components/cards/card';
 import {ModalScrollView, ThemedText} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils';
 
 export default function AttachmentDestinationSelectorModal() {
-  const {ds, theme} = useTheme();
-  const styles = createStyles(ds, theme);
   const router = useRouter();
   const params = useLocalSearchParams<{selectedIds?: string}>();
   const selectedIds = params.selectedIds;
 
   return (
-    <ModalScrollView style={styles.container}>
+    <ModalScrollView>
       <Card>
         <Card.Row
           icon="albums-outline"
@@ -65,14 +59,3 @@ export default function AttachmentDestinationSelectorModal() {
     </ModalScrollView>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (_ds: DSShape, theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        backgroundColor:
-          Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);

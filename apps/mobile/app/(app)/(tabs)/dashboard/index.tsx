@@ -62,11 +62,9 @@ export default function HomeScreen() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       scrollView: {
-        backgroundColor:
-          Platform.OS === 'web' ? theme.webbackground : theme.background,
         flex: 1,
       } as ViewStyle,
       container: {

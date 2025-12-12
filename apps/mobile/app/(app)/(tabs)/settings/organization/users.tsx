@@ -77,7 +77,6 @@ const createStyles = makeStyleFactory(
         flexDirection: 'row',
         gap: ds.spacing.xs,
         paddingHorizontal: ds.spacing.xs,
-        borderRadius: ds.borderRadius.xxxl,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

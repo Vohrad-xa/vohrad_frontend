@@ -38,13 +38,13 @@ function SettingsStack() {
           headerShadowVisible: false,
           headerBackButtonMenuEnabled: true,
           headerTransparent: Platform.OS === 'ios',
-          headerTitleAlign: 'center',
+          headerTitleAlign: 'left',
           headerBackButtonDisplayMode: 'minimal',
           contentStyle: styles.container,
-          headerStyle:
-            Platform.OS === 'android'
-              ? {backgroundColor: theme.navigationBar}
-              : undefined,
+          headerTitleStyle: {
+            fontWeight: ds.fontWeight.bold,
+            color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
+          },
         }}
       >
         <Stack.Screen
@@ -53,6 +53,7 @@ function SettingsStack() {
             title: 'Settings',
             headerLeft: () => (
               <HeaderButton
+                iconSize={Platform.OS === 'ios' ? 'xl' : 'xxl'}
                 icon={AppIcons.navigation.menu}
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
@@ -65,16 +66,13 @@ function SettingsStack() {
                   accessibilityLabel="Open events"
                   onPress={() => {}}
                 />
-                <HeaderButton
-                  icon={AppIcons.actions.addUser}
-                  accessibilityLabel="Open back"
-                  onPress={() => {}}
-                />
               </View>
             ),
             headerSearchBarOptions: {
-              placement: 'inline',
+              placement: 'integratedButton',
               placeholder: 'Search',
+              headerIconColor:
+                Platform.OS === 'android' ? theme.headerAndroid : undefined,
               onChangeText: handleSearchChange,
             },
           }}
@@ -130,12 +128,10 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor:
-          Platform.OS === 'web' ? theme.webbackground : theme.background,
       },
       headerRightContainer: {
         flexDirection: 'row',
-        gap: ds.spacing.xs,
+        gap: Platform.OS === 'ios' && 'web' ? ds.spacing.xs : undefined,
       },
     }),
   (theme, ds) => themeKey(theme, ds),

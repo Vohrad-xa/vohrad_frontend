@@ -1,6 +1,6 @@
-import {Platform, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {Stack} from 'expo-router';
-import {type ThemeShape} from '@/constants/theme';
+import {type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
@@ -29,8 +29,7 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       modalContent: {
         flex: 1,
-        backgroundColor:
-          Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
+        backgroundColor: theme.background,
       },
     }),
   (theme) => theme.version.toString(),

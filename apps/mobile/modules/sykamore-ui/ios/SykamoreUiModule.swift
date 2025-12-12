@@ -26,6 +26,7 @@ public final class SykamoreUiModule: Module {
     ExpoUIView(TextView.self)
     ExpoUIView(ImageView.self)
     ExpoUIView(SwitchView.self)
+    View(SwitchIcon.self)
     ExpoUIView(SpacerView.self)
     ExpoUIView(DividerView.self)
     ExpoUIView(PickerView.self)

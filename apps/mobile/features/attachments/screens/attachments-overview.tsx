@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import type {AttachmentKindCount} from '@/features/attachments/utils/attachment-counts';
@@ -59,9 +59,7 @@ export function AttachmentsOverview({
 
   return (
     <ModalScrollView contentContainerStyle={styles.scrollContent}>
-      <View>
-        <AttachmentKindGrid tiles={tiles} />
-      </View>
+      <AttachmentKindGrid tiles={tiles} />
     </ModalScrollView>
   );
 }
@@ -69,11 +67,7 @@ export function AttachmentsOverview({
 const useStyles = makeStyleFactory(
   (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
-      scrollContent: {
-        paddingTop: 0,
-        marginTop: -5,
-        marginHorizontal: 3,
-      },
+      scrollContent: {},
     }),
   (ds, theme) => themeKey(theme, ds),
 );

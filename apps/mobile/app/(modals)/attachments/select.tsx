@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useMemo} from 'react';
-import {StyleSheet, Platform, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useItemsManager, type Item} from '@vohrad/store';
 import {useLocalSearchParams, router, useNavigation} from 'expo-router';
 import {
@@ -120,18 +120,13 @@ export default function ResourceSelectorModal() {
       keyExtractor={(item) => item.id}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.5}
-      style={styles.container}
     />
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
-      container: {
-        backgroundColor:
-          Platform.OS === 'web' ? theme.webbackground : theme.secondbackground,
-      },
       dividerContainer: {
         paddingLeft: ds.spacing.xxl + ds.spacing.sm,
         paddingRight: ds.spacing.xs,

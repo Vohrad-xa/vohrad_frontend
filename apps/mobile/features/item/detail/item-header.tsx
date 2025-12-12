@@ -81,7 +81,7 @@ const createStyles = makeStyleFactory(
         width: ds.spacing.xxxl * 2,
         height: ds.spacing.xxxl * 2,
         borderRadius: ds.borderRadius.full,
-        backgroundColor: theme.secondbackground,
+        backgroundColor: theme.background,
         justifyContent: 'center',
         alignItems: 'center',
         overflow: 'hidden',

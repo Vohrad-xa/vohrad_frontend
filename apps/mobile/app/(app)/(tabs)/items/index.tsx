@@ -121,6 +121,7 @@ const createStyles = makeStyleFactory(
         flexDirection: 'row',
         alignItems: 'center',
         gap: ds.spacing.xs,
+        paddingHorizontal: ds.spacing.xs,
       },
     }),
   (ds, theme) => `${themeKey(theme, ds)}`,

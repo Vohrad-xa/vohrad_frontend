@@ -65,39 +65,40 @@ function ItemsStack() {
     <View style={styles.container}>
       <Stack
         screenOptions={{
+          headerShown: true,
           headerShadowVisible: false,
+          headerLargeTitle: true,
+          headerBackButtonMenuEnabled: true,
           headerTransparent: Platform.OS === 'ios',
-          headerStyle: {
-            backgroundColor:
-              Platform.OS === 'android' ? theme.navigationBar : undefined,
-          },
-          headerTitleAlign: 'center',
-          contentStyle: {
-            backgroundColor:
-              Platform.OS === 'web' ? theme.webbackground : theme.background,
+          headerTitleAlign: 'left',
+          headerBackButtonDisplayMode: 'minimal',
+          contentStyle: styles.container,
+          headerTitleStyle: {
+            fontWeight: ds.fontWeight.bold,
+            color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
           },
         }}
       >
         <Stack.Screen
           name="index"
           options={{
-            headerLargeTitle: true,
             headerBackButtonDisplayMode: 'minimal',
             headerTitle: 'Items',
             headerLeft: () => (
               <HeaderButton
+                iconSize={Platform.OS === 'ios' ? 'xl' : 'xxl'}
                 icon={AppIcons.navigation.menu}
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
               />
             ),
             headerSearchBarOptions: {
-              headerIconColor: theme.text,
-              placement: 'stacked',
-              allowToolbarIntegration: false,
+              placement: 'integratedButton',
               hideWhenScrolling: false,
               placeholder: 'Search...',
               onChangeText: handleSearchChange,
+              headerIconColor:
+                Platform.OS === 'android' ? theme.headerAndroid : undefined,
             },
           }}
         />
@@ -114,12 +115,10 @@ function ItemsStack() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor:
-          Platform.OS === 'web' ? theme.webbackground : theme.background,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

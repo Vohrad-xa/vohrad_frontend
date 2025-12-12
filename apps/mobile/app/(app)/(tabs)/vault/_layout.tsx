@@ -36,17 +36,12 @@ function VaultStack() {
           headerShadowVisible: false,
           headerLargeTitle: true,
           headerBackButtonDisplayMode: 'minimal',
-          headerLargeTitleShadowVisible: true,
           headerTransparent: Platform.OS === 'ios',
-          contentStyle: {
-            backgroundColor:
-              Platform.OS === 'web' ? theme.webbackground : theme.background,
+          headerTitleAlign: 'left',
+          headerTitleStyle: {
+            fontWeight: ds.fontWeight.bold,
+            color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
           },
-          headerStyle: {
-            backgroundColor:
-              Platform.OS === 'android' ? theme.navigationBar : undefined,
-          },
-          headerTitleAlign: 'center',
         }}
       >
         <Stack.Screen
@@ -55,16 +50,17 @@ function VaultStack() {
             headerTitle: 'Vault',
             headerLeft: () => (
               <HeaderButton
+                iconSize={Platform.OS === 'ios' ? 'xl' : 'xxl'}
                 icon={AppIcons.navigation.menu}
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
               />
             ),
             headerSearchBarOptions: {
-              headerIconColor: theme.text,
+              headerIconColor:
+                Platform.OS === 'android' ? theme.headerAndroid : undefined,
               placement: 'stacked',
               shouldShowHintSearchIcon: true,
-              allowToolbarIntegration: false,
               hideWhenScrolling: false,
               placeholder: 'Search...',
               onChangeText: handleSearchChange,
@@ -111,12 +107,10 @@ function VaultStack() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor:
-          Platform.OS === 'web' ? theme.webbackground : theme.background,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

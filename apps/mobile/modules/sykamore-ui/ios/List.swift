@@ -204,6 +204,7 @@ struct ListView: ExpoSwiftUI.View {
         config: props.trailingSwipeActions,
         onAction: handleSwipeAction
       ))
+      .modifier(RowChromeModifier(props: props))
   }
 
   private func applyBaseModifiers<Content: View>(list: Content) -> some View {
@@ -246,37 +247,19 @@ struct ListView: ExpoSwiftUI.View {
   private func applyListChrome<Content: View>(list: Content) -> some View {
     var view: AnyView = AnyView(list)
 
+    // Only apply list-level modifiers here
     if #available(iOS 15.0, tvOS 15.0, *) {
-      let rowVisibility = props.rowSeparatorVisibility.toVisibility()
       let sectionVisibility = props.sectionSeparatorVisibility.toVisibility()
+      view = AnyView(view.listSectionSeparator(sectionVisibility))
 
-      view = AnyView(
-        view
-          .listRowSeparator(rowVisibility)
-          .listSectionSeparator(sectionVisibility)
-      )
-
-      if let tint = props.rowSeparatorTint {
-        view = AnyView(view.listRowSeparatorTint(tint))
-      }
       if let tint = props.sectionSeparatorTint {
         view = AnyView(view.listSectionSeparatorTint(tint))
-      }
-
-      if let insets = props.rowInsets?.toEdgeInsets() {
-        view = AnyView(view.listRowInsets(insets))
-      }
-      if let rowBackground = props.rowBackground {
-        view = AnyView(view.listRowBackground(rowBackground))
       }
     }
 
     if #available(iOS 16.0, tvOS 16.0, *) {
       if props.hideScrollContentBackground {
         view = AnyView(view.scrollContentBackground(.hidden))
-      }
-      if let spacing = props.rowSpacing {
-        view = AnyView(view.listRowSpacing(spacing))
       }
     }
 
@@ -422,5 +405,39 @@ struct ScrollDisabledModifier: ViewModifier {
     } else {
       content
     }
+  }
+}
+
+/** Modifier for row-level styling (separators, insets, background, spacing) */
+struct RowChromeModifier: ViewModifier {
+  let props: ListProps
+
+  func body(content: Content) -> some View {
+    var view = AnyView(content)
+
+    if #available(iOS 15.0, tvOS 15.0, *) {
+      let rowVisibility = props.rowSeparatorVisibility.toVisibility()
+      view = AnyView(view.listRowSeparator(rowVisibility))
+
+      if let tint = props.rowSeparatorTint {
+        view = AnyView(view.listRowSeparatorTint(tint))
+      }
+
+      if let insets = props.rowInsets?.toEdgeInsets() {
+        view = AnyView(view.listRowInsets(insets))
+      }
+
+      if let rowBackground = props.rowBackground {
+        view = AnyView(view.listRowBackground(rowBackground))
+      }
+    }
+
+    if #available(iOS 16.0, tvOS 16.0, *) {
+      if let spacing = props.rowSpacing {
+        view = AnyView(view.listRowSpacing(spacing))
+      }
+    }
+
+    return view
   }
 }

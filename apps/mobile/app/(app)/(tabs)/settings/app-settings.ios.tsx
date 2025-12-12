@@ -4,7 +4,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useBiometricToggle} from '@/features/settings/app-settings/biometric';
 import {Host, List, Switch, Section, Text} from '@/modules/sykamore-ui';
 import {useTheme, useHaptic} from '@/providers';
-import {makeStyleFactory} from '@/utils';
+import {AppIcons, Icon, makeStyleFactory} from '@/utils';
 
 export default function AppSettingsScreen() {
   const {ds, theme} = useTheme();
@@ -51,7 +51,13 @@ export default function AppSettingsScreen() {
             value={biometricEnabled}
             onValueChange={handleBiometricChange}
             label="Biometric Unlock"
-            systemImage="faceid"
+            icon={
+              <Icon
+                name={AppIcons.settings.biometric}
+                useSwiftUI
+                colorToken="accentBlue"
+              />
+            }
           />
         </Section>
 

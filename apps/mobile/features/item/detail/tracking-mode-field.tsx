@@ -52,7 +52,7 @@ export function useTrackingModePress(
           ? {
               containerStyle: {
                 paddingBottom: ds.spacing.xxxl,
-                backgroundColor: theme.secondbackground,
+                backgroundColor: theme.background,
                 borderRadius: ds.components.card.borderRadius,
               },
               textStyle: {

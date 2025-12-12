@@ -2,7 +2,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {useSetPendingFilters, useItemFiltersManager} from '@vohrad/store';
 import {type ItemFilterState} from '@vohrad/types';
 import {Stack, useRouter, useLocalSearchParams} from 'expo-router';
-import {HeaderButton, ThemedView, ModalScrollView} from '@/components/ui';
+import {HeaderButton, ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   PriceRangeFilter,
@@ -83,39 +83,33 @@ export default function ItemFiltersModal() {
           ),
         }}
       />
-      <ThemedView style={styles.container}>
-        <ModalScrollView
-          contentContainerStyle={styles.content}
-          showsVerticalScrollIndicator={false}
-        >
-          <StatusFilter
-            statuses={filters.statuses ?? []}
-            toggleStatus={(status) => toggleFilter('statuses', status)}
-          />
+      <ModalScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <StatusFilter
+          statuses={filters.statuses ?? []}
+          toggleStatus={(status) => toggleFilter('statuses', status)}
+        />
 
-          <TrackingModeFilter
-            trackingModes={filters.trackingModes ?? []}
-            toggleTrackingMode={(mode) => toggleFilter('trackingModes', mode)}
-          />
+        <TrackingModeFilter
+          trackingModes={filters.trackingModes ?? []}
+          toggleTrackingMode={(mode) => toggleFilter('trackingModes', mode)}
+        />
 
-          <PriceRangeFilter
-            priceMin={filters.priceMin ?? null}
-            priceMax={filters.priceMax ?? null}
-            onMinChange={updatePriceMin}
-            onMaxChange={updatePriceMax}
-          />
-        </ModalScrollView>
-      </ThemedView>
+        <PriceRangeFilter
+          priceMin={filters.priceMin ?? null}
+          priceMax={filters.priceMax ?? null}
+          onMinChange={updatePriceMin}
+          onMaxChange={updatePriceMax}
+        />
+      </ModalScrollView>
     </>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) => ({
-    container: {
-      flex: 1,
-      backgroundColor: theme.secondbackground,
-    },
+  (ds: DSShape, _theme: ThemeShape) => ({
     content: {
       padding: ds.spacing.lg,
       gap: ds.spacing.xl,

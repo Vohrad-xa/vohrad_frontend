@@ -61,7 +61,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
   const {theme, ds} = useTheme();
   const baseSize = Platform.select({
     ios: ds.spacing.xxl + ds.spacing.xs,
-    default: ds.components.tapTarget.minSize,
+    default: ds.spacing.xxl + ds.spacing.sm,
   });
   const styles = createStyles(ds, baseSize);
 
@@ -71,7 +71,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
       case 'close':
         return {
           icon: AppIcons.navigation.close,
-          color: theme.muted,
+          color: theme.text,
           iconSize: 'lg' as const,
         };
       case 'cancel':
@@ -105,8 +105,8 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
         return {
           icon: AppIcons.navigation.more,
           sfSymbol: SFSymbols.ellipsis,
-          color: theme.text,
           iconSize: 'lg' as const,
+          color: Platform.OS !== 'ios' ? theme.headerAndroid : theme.text,
         };
       case 'back':
         return {
@@ -129,7 +129,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
       default:
         return {
           iconSize: 'lg' as const,
-          color: theme.text,
+          color: Platform.OS !== 'ios' ? theme.headerAndroid : theme.text,
         };
     }
   })();
@@ -205,7 +205,6 @@ const createStyles = makeStyleFactory(
         minHeight: baseSize,
         justifyContent: 'center',
         alignItems: 'center',
-        alignSelf: 'center',
         ...Platform.select({
           web: {
             marginRight: ds.spacing.sm,
@@ -219,5 +218,5 @@ const createStyles = makeStyleFactory(
         ...ds.typography.heading,
       },
     }),
-  (ds, baseSize) => baseSize.toString(),
+  (baseSize) => baseSize.toString(),
 );

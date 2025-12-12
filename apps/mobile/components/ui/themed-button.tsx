@@ -102,7 +102,7 @@ const createStyles = makeStyleFactory(
 
       switch (variant) {
         case 'primary':
-          return scheme === 'dark' ? Palette.black : Palette.Lbackground;
+          return scheme === 'dark' ? Palette.brand.black : Palette.Lbackground;
         case 'secondary':
           return theme.text;
         case 'destructive':
@@ -165,7 +165,7 @@ const createStyles = makeStyleFactory(
       switch (variant) {
         case 'primary':
           buttonStyle.backgroundColor =
-            scheme === 'dark' ? Palette.Lbackground : Palette.black;
+            scheme === 'dark' ? Palette.Lbackground : Palette.brand.black;
           buttonStyle.borderColor =
             scheme === 'dark' ? Palette.Lbackground : Palette.Dbackground;
           buttonStyle.borderWidth = 1;

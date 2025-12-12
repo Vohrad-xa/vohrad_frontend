@@ -22,6 +22,7 @@ export default function FilterModal() {
         options={{
           title: 'Filter',
           headerShown: true,
+          headerShadowVisible: false,
           headerTransparent: Platform.OS === 'ios',
           headerStyle:
             Platform.OS === 'android' ? styles.headerStyleAndroid : undefined,

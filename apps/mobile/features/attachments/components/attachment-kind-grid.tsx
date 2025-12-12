@@ -51,13 +51,13 @@ export function AttachmentKindGrid({tiles}: AttachmentKindGridProps) {
               Platform.OS === 'ios' ? (
                 <SymbolView
                   name={SFSymbols.folderFill}
-                  size={50}
+                  size={40}
                   tintColor={theme.accentLightBlue}
                 />
               ) : (
                 <Icon
                   name={AppIcons.content.folderOpen}
-                  size={55}
+                  size={40}
                   color={theme.accentLightBlue}
                 />
               )

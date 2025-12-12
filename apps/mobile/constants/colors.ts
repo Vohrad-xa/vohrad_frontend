@@ -2,7 +2,7 @@ import {generateVersion} from '../utils/versioning';
 
 export const Palette = {
   gray: {
-    50: '#F2F2F7',
+    50: '#F2F2F2',
     100: '#E5E5EA',
     200: '#D1D1D6',
     300: '#C7C7CC',
@@ -16,6 +16,7 @@ export const Palette = {
     900: '#0B0B0B',
   },
   brand: {
+    terracotta: '#C6613F',
     blue: '#0A84FF',
     lightBlue: '#6AC7F1',
     green: '#36ba06ff',
@@ -24,20 +25,19 @@ export const Palette = {
     red: '#ef4444',
     redDark: '#dc2626',
     purple: '#6a24c4ff',
+    bluepurple: '#2F23CB',
     teal: '#14B8A6',
     indigo: '#4F46E5',
+    white: '#FFFFFF',
+    black: '#000000',
   },
-  white: '#FFFFFF',
-  black: '#000000',
   Dbackground: '#262624',
   Lbackground: '#FAF9F5',
   Mbackground: '#F2F2F6',
   Obsidian: '#171717ff',
-  // Obsidian: '#111214',
   mushroom: '#9C9A92',
   Onyx: '#1F1E1D',
   Alabaster: '#F5F4ED',
-  terracotta: '#C6613F',
   Greige: '#C2C0B6',
   cardDarkGlass: 'rgba(255, 255, 255, 0.1)',
   cardLightGlass: 'rgba(97, 94, 94, 0.16)',
@@ -49,8 +49,7 @@ export const Palette = {
 const _Tokens = {
   light: {
     // Surfaces & text
-    background: Palette.Lbackground,
-    secondbackground: Palette.Mbackground,
+    background: Palette.Mbackground,
     webbackground: Palette.Lbackground,
     text: '#11181C',
     textlabel: Palette.gray[700],
@@ -59,12 +58,12 @@ const _Tokens = {
     divider: Palette.gray[300],
     lightdivider: Palette.gray[100],
     muted: Palette.gray[600],
-    navigationBar: Palette.white,
+    navigationBar: Palette.brand.white,
     inputPlaceholder: Palette.placeholderGray,
 
     // Brand & accents
-    primary: Palette.terracotta,
-    primaryForeground: Palette.white,
+    primary: Palette.brand.terracotta,
+    primaryForeground: Palette.brand.white,
     accentBlue: Palette.brand.blue,
     accentLightBlue: Palette.brand.lightBlue,
     accentGreen: Palette.brand.green,
@@ -73,15 +72,16 @@ const _Tokens = {
     accentTeal: Palette.brand.teal,
     accentIndigo: Palette.brand.indigo,
     destructive: Palette.brand.red,
-    destructiveForeground: Palette.white,
+    destructiveForeground: Palette.brand.white,
 
     // UI
-    icon: Palette.black,
+    icon: Palette.brand.black,
+    headerAndroid: Palette.brand.bluepurple,
     label: Palette.gray[600],
     tint: Palette.brand.blue,
     tabIconSelected: Palette.brand.blue,
     card: Palette.cardLightGlass,
-    input: Palette.white,
+    input: Palette.brand.white,
     purple: Palette.brand.purple,
     iosLightGray: Palette.gray[50],
     iosPlaceholder: Palette.gray[400],
@@ -92,7 +92,7 @@ const _Tokens = {
     iconWarning: Palette.brand.orange,
     iconDanger: Palette.brand.red,
     sidebarBackground: '#ffffffff',
-    secondary: Palette.terracotta,
+    secondary: Palette.brand.terracotta,
     glassTint: Palette.glassTintLight,
     quickActionIcon: Palette.Lbackground,
     highlight: 'rgba(0, 0, 0, 0.05)',
@@ -100,14 +100,13 @@ const _Tokens = {
 
     // Toggle
     toggleTrackOff: Palette.gray[100],
-    toggleTrackOn: Palette.terracotta,
-    toggleThumb: Palette.white,
+    toggleTrackOn: Palette.brand.terracotta,
+    toggleThumb: Palette.brand.white,
   },
 
   dark: {
     // Surfaces & text
-    background: Palette.black,
-    secondbackground: Palette.gray[800],
+    background: Palette.brand.black,
     webbackground: Palette.Dbackground,
     surface: Palette.gray[800],
     text: '#ECEDEE',
@@ -130,10 +129,11 @@ const _Tokens = {
     accentTeal: Palette.brand.teal,
     accentIndigo: Palette.brand.indigo,
     destructive: Palette.brand.redDark,
-    destructiveForeground: Palette.white,
+    destructiveForeground: Palette.brand.white,
 
     // UI
     icon: Palette.mushroom,
+    headerAndroid: Palette.brand.white,
     label: Palette.mushroom,
     tint: Palette.brand.blue,
     tabIconSelected: Palette.brand.blue,
@@ -157,7 +157,7 @@ const _Tokens = {
     backdrop: 'rgba(0, 0, 0, 0.5)',
     toggleTrackOff: Palette.gray[400],
     toggleTrackOn: Palette.brand.green,
-    toggleThumb: Palette.white,
+    toggleThumb: Palette.brand.white,
   },
 } as const;
 
@@ -186,24 +186,24 @@ export const NavigationThemes = {
   light: {
     dark: false,
     colors: {
-      primary: _Tokens.light.tint,
+      primary: Palette.brand.terracotta,
       background: _Tokens.light.background,
-      card: Palette.white,
+      card: _Tokens.light.navigationBar,
       text: _Tokens.light.text,
       border: _Tokens.light.border,
-      notification: _Tokens.light.primary,
+      notification: Palette.brand.red,
     },
     fonts: NavigationFonts,
   },
   dark: {
     dark: true,
     colors: {
-      primary: _Tokens.dark.tint,
+      primary: Palette.brand.blue,
       background: _Tokens.dark.background,
-      card: _Tokens.dark.card,
+      card: _Tokens.dark.navigationBar,
       text: _Tokens.dark.text,
       border: _Tokens.dark.border,
-      notification: _Tokens.dark.primary,
+      notification: Palette.brand.red,
     },
     fonts: NavigationFonts,
   },

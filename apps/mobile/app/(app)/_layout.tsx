@@ -1,11 +1,7 @@
 import {Platform, View, StyleSheet} from 'react-native';
 import {Stack} from 'expo-router';
 import {GestureDetector} from 'react-native-gesture-handler';
-import Animated, {
-  useAnimatedStyle,
-  interpolate,
-  interpolateColor,
-} from 'react-native-reanimated';
+import Animated, {useAnimatedStyle, interpolate} from 'react-native-reanimated';
 import {ThemedStatusBar} from '@/components/ui';
 import {SIDEBAR_CONFIG} from '@/constants/sidebar';
 import {type ThemeShape} from '@/constants/theme';
@@ -25,22 +21,14 @@ function AppStack() {
   const styles = createStyles(theme);
 
   const mainContentStyle = useAnimatedStyle(() => {
-    // Color swap: main content gets sidebar background when open
-    const backgroundColor = interpolateColor(
-      slideAnim.value,
-      [0, SIDEBAR_CONFIG.width],
-      [theme.background, theme.sidebarBackground],
-    );
-
-    // On web: use margin to shrink content width (triggers CSS Grid reflow)
+    // On web we use margin to shrink content width (triggers CSS Grid reflow)
     if (Platform.OS === 'web') {
       return {
         marginLeft: slideAnim.value,
-        backgroundColor,
       };
     }
 
-    // Mobile: use transform (pushes content, hides overflow)
+    // Mobile we use transform (pushes content, hides overflow)
     const shadowOpacity = interpolate(
       slideAnim.value,
       [0, SIDEBAR_CONFIG.width],
@@ -59,7 +47,6 @@ function AppStack() {
       transform: [{translateX: slideAnim.value}],
       shadowOpacity,
       elevation,
-      backgroundColor,
     };
   });
 

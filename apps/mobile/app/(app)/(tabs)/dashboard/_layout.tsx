@@ -9,30 +9,31 @@ export const unstable_settings = {
 };
 
 export default function HomeLayout() {
-  const {theme} = useTheme();
+  const {theme, ds} = useTheme();
   const {toggleSideMenu} = useSidebar();
 
   return (
-    <View style={{flex: 1, backgroundColor: theme.background}}>
+    <View style={{flex: 1}}>
       <Stack>
         <Stack.Screen
           name="index"
           options={{
             headerLargeTitle: true,
             headerTitle: 'Dashboard',
+            headerTitleAlign: 'left',
             headerLeft: () => (
               <HeaderButton
+                iconSize={Platform.OS === 'ios' ? 'xl' : 'xxl'}
                 icon={AppIcons.navigation.menu}
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
               />
             ),
-            headerTitleAlign: 'center' as const,
             headerTransparent: Platform.OS === 'ios',
             headerShadowVisible: false,
-            headerStyle: {
-              backgroundColor:
-                Platform.OS === 'android' ? theme.navigationBar : undefined,
+            headerTitleStyle: {
+              fontWeight: ds.fontWeight.bold,
+              color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
             },
           }}
         />

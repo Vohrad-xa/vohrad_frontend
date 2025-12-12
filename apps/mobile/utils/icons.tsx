@@ -68,19 +68,12 @@ export const Icon: React.FC<IconProps> = ({
   );
 };
 
-export const IconPresets = {
-  small: {size: 'sm' as IconSizeKey},
-  medium: {size: 'md' as IconSizeKey},
-  large: {size: 'lg' as IconSizeKey},
-  xlarge: {size: 'xxl' as IconSizeKey},
-} as const;
-
 export const AppIcons = {
   navigation: {
     home: 'home' as IconName,
-    menu: 'reorder-two' as IconName,
-    settings: 'settings-outline' as IconName,
-    scan: 'barcode-outline' as IconName,
+    menu: 'filter-circle' as IconName,
+    settings: 'gears' as IconName,
+    scan: 'scan-outline' as IconName,
     profile: 'person-outline' as IconName,
     event: 'notifications-outline' as IconName,
     vault: 'folder-open-sharp' as IconName,
@@ -112,7 +105,7 @@ export const AppIcons = {
     edit: 'pencil-square-o' as IconName,
     add: 'add-outline' as IconName,
     addUser: 'person-add-outline' as IconName,
-    addItem: 'add-circle-outline' as IconName,
+    addItem: 'duplicate-outline' as IconName,
     save: 'checkmark-circle-outline' as IconName,
     delete: 'trash-outline' as IconName,
     share: 'share-outline' as IconName,
