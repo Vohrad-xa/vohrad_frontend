@@ -50,12 +50,12 @@ export default function AppSettingsScreen() {
           <Switch
             value={biometricEnabled}
             onValueChange={handleBiometricChange}
-            label="Biometric Unlock"
+            label="Face ID"
             icon={
               <Icon
                 name={AppIcons.settings.biometric}
                 useSwiftUI
-                colorToken="accentBlue"
+                colorToken="accentGreen"
               />
             }
           />
@@ -73,7 +73,13 @@ export default function AppSettingsScreen() {
             value={hapticEnabled}
             onValueChange={handleHapticChange}
             label="Haptic Feedback"
-            systemImage="iphone.radiowaves.left.and.right"
+            icon={
+              <Icon
+                name={AppIcons.settings.haptic}
+                useSwiftUI
+                colorToken="destructive"
+              />
+            }
           />
         </Section>
       </List>

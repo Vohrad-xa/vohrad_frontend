@@ -110,7 +110,7 @@ export const AppIcons = {
   },
 
   actions: {
-    scan: 'barcode.viewfinder' as IconName,
+    scan: 'viewfinder' as IconName,
     camera: 'camera' as IconName,
     input: 'keyboard' as IconName,
     edit: 'square.and.pencil' as IconName,
@@ -174,8 +174,8 @@ export const AppIcons = {
   },
 
   settings: {
-    biometric: 'touchid' as IconName,
-    haptic: 'iphone.radiowaves.left.and.right' as IconName,
+    biometric: 'faceid' as IconName,
+    haptic: 'hand.tap.fill' as IconName,
   },
 } as const;
 
