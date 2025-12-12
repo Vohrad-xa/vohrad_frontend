@@ -1,7 +1,7 @@
 import React, {useLayoutEffect, useState, useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useNavigation, useRouter} from 'expo-router';
-import {HeaderButton, ModalFlatList, ThemedView} from '@/components/ui';
+import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useSearch} from '@/features/dashboard';
 import {UsersFilterMenu, UsersList} from '@/features/settings/organization';
@@ -35,34 +35,24 @@ export default function UsersScreen() {
     });
   }, [filterControl, navigation, styles.headerButtonGroup, handleAddUser]);
 
+  const handleUserPress = useCallback((_userId: string) => {
+    // TODO: Navigate to user detail when ready
+  }, []);
+
   return (
     <UsersFilterMenu
       searchQuery={searchQuery}
       onFilterControlChange={setFilterControl}
     >
-      {({users, refresh, hasNext, onEndReached}) => {
-        const handleUserPress = (_userId: string) => {
-          // TODO: Navigate to user detail when ready
-        };
-
-        const {listData, renderItem} = UsersList({
-          users,
-          onUserPress: handleUserPress,
-        });
-
-        return (
-          <ThemedView style={styles.container}>
-            <ModalFlatList
-              data={listData}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-              onRefresh={refresh}
-              onEndReached={hasNext ? onEndReached : undefined}
-              onEndReachedThreshold={0.4}
-            />
-          </ThemedView>
-        );
-      }}
+      {({users, refresh, hasNext, onEndReached}) => (
+        <UsersList
+          users={users}
+          onUserPress={handleUserPress}
+          onRefresh={refresh}
+          onEndReached={hasNext ? onEndReached : undefined}
+          onEndReachedThreshold={0.4}
+        />
+      )}
     </UsersFilterMenu>
   );
 }
@@ -70,9 +60,6 @@ export default function UsersScreen() {
 const createStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
-      container: {
-        flex: 1,
-      },
       headerButtonGroup: {
         flexDirection: 'row',
         gap: ds.spacing.xs,

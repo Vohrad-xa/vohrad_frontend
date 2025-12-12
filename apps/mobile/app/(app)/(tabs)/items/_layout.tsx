@@ -90,6 +90,11 @@ function ItemsStack() {
                 icon={AppIcons.navigation.menu}
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
+                style={
+                  Platform.OS === 'android'
+                    ? {marginRight: ds.spacing.md}
+                    : undefined
+                }
               />
             ),
             headerSearchBarOptions: {

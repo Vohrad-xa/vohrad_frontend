@@ -58,6 +58,11 @@ function SettingsStack() {
                   icon={AppIcons.navigation.menu}
                   accessibilityLabel="Open menu"
                   onPress={toggleSideMenu}
+                  style={
+                    Platform.OS === 'android'
+                      ? {marginRight: ds.spacing.md}
+                      : undefined
+                  }
                 />
               ),
               headerRight: () => (
@@ -104,6 +109,8 @@ function SettingsStack() {
                 hideWhenScrolling: false,
                 placeholder: 'Search...',
                 onChangeText: handleSearchChange,
+                headerIconColor:
+                  Platform.OS === 'android' ? theme.headerAndroid : undefined,
               },
             }}
           />

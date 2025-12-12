@@ -1,9 +1,9 @@
 import {View, Platform, StyleSheet} from 'react-native';
 import {Stack} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useSidebar} from '@/providers';
 import {AppIcons, makeStyleFactory} from '@/utils';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -29,6 +29,11 @@ export default function HomeLayout() {
                 icon={AppIcons.navigation.menu}
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
+                style={
+                  Platform.OS === 'android'
+                    ? {marginRight: ds.spacing.md}
+                    : undefined
+                }
               />
             ),
             headerTransparent: Platform.OS === 'ios',

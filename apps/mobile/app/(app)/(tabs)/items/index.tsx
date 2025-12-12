@@ -59,13 +59,6 @@ export default function ItemsScreen() {
       headerRight: () => (
         <View style={styles.headerRightContainer}>
           <HeaderButton
-            icon={AppIcons.actions.addItem}
-            accessibilityLabel="Add item"
-            onPress={() => {
-              router.push('/(app)/(tabs)/items');
-            }}
-          />
-          <HeaderButton
             icon={AppIcons.navigation.filter}
             accessibilityLabel="Filter items"
             onPress={() => {

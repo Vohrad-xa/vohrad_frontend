@@ -14,7 +14,7 @@ interface IconProps {
   useSwiftUI?: boolean;
   size?: number | IconSizeKey;
   color?: string | OpaqueColorValue;
-  colorToken?: TokenName; // prefer passing a token over raw color
+  colorToken?: TokenName;
   tintColor?: string;
   style?: StyleProp<TextStyle>;
   noContainer?: boolean;
@@ -72,7 +72,7 @@ export const AppIcons = {
   navigation: {
     home: 'home' as IconName,
     menu: 'filter-circle' as IconName,
-    settings: 'gears' as IconName,
+    settings: 'gear' as IconName,
     scan: 'scan-outline' as IconName,
     profile: 'person-outline' as IconName,
     event: 'notifications-outline' as IconName,
