@@ -113,6 +113,7 @@ export const AppIcons = {
     move: 'return-down-forward-outline' as IconName,
     logout: 'exit-outline' as IconName,
     close: 'close-outline' as IconName,
+    download: 'cloud-download-outline' as IconName,
   },
 
   content: {
@@ -123,7 +124,6 @@ export const AppIcons = {
     image: 'image-outline' as IconName,
     archive: 'archive-outline' as IconName,
     imageFallback: 'image-outline' as IconName,
-    download: 'cloud-download-outline' as IconName,
     export: 'share-outline' as IconName,
     print: 'print-outline' as IconName,
     language: 'planet-outline' as IconName,

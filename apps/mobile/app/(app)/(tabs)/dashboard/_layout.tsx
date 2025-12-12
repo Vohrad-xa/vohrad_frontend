@@ -1,8 +1,9 @@
-import {View, Platform} from 'react-native';
+import {View, Platform, StyleSheet} from 'react-native';
 import {Stack} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {useTheme, useSidebar} from '@/providers';
-import {AppIcons} from '@/utils';
+import {AppIcons, makeStyleFactory} from '@/utils';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -11,9 +12,10 @@ export const unstable_settings = {
 export default function HomeLayout() {
   const {theme, ds} = useTheme();
   const {toggleSideMenu} = useSidebar();
+  const styles = createStyles(ds, theme);
 
   return (
-    <View style={{flex: 1}}>
+    <View style={styles.container}>
       <Stack>
         <Stack.Screen
           name="index"
@@ -41,3 +43,14 @@ export default function HomeLayout() {
     </View>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (_ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      container: {
+        flex: 1,
+        backgroundColor: theme.background,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);

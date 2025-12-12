@@ -107,10 +107,11 @@ function VaultStack() {
 }
 
 const createStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
+  (_ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
+        backgroundColor: theme.background,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

@@ -124,17 +124,16 @@ export const AppIcons = {
     move: 'arrow.turn.down.right' as IconName,
     logout: 'arrow.right.circle.fill' as IconName,
     close: 'xmark' as IconName,
+    download: 'icloud.and.arrow.up' as IconName,
   },
 
   content: {
     documentFill: 'doc.text.fill' as IconName,
     document: 'doc.text' as IconName,
-    folder: 'folder' as IconName,
     file: 'doc' as IconName,
     image: 'photo' as IconName,
     archive: 'archivebox' as IconName,
     imageFallback: 'photo' as IconName,
-    download: 'arrow.down.circle' as IconName,
     export: 'square.and.arrow.up' as IconName,
     printFill: 'printer.fill' as IconName,
     print: 'printer' as IconName,

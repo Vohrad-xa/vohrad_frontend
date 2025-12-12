@@ -2,6 +2,7 @@ import React from 'react';
 import {useRouter, useLocalSearchParams} from 'expo-router';
 import {Card} from '@/components/cards/card';
 import {ModalScrollView, ThemedText} from '@/components/ui';
+import {AppIcons} from '@/utils/icons';
 
 export default function AttachmentDestinationSelectorModal() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function AttachmentDestinationSelectorModal() {
     <ModalScrollView>
       <Card>
         <Card.Row
-          icon="albums-outline"
+          icon={AppIcons.inventory.item}
           accessibilityLabel="Select item"
           onPress={() =>
             router.push({
@@ -27,7 +28,7 @@ export default function AttachmentDestinationSelectorModal() {
         </Card.Row>
         <Card.Divider withIconOffset />
         <Card.Row
-          icon="locate-outline"
+          icon={AppIcons.inventory.location}
           accessibilityLabel="Select location"
           onPress={() =>
             router.push({
@@ -39,21 +40,6 @@ export default function AttachmentDestinationSelectorModal() {
           }
         >
           <ThemedText variant="label">Locations</ThemedText>
-        </Card.Row>
-        <Card.Divider withIconOffset />
-        <Card.Row
-          icon="layers-outline"
-          accessibilityLabel="Select item location"
-          onPress={() =>
-            router.push({
-              pathname: '/(modals)/attachments/select',
-              params: selectedIds
-                ? {type: 'item_locations', selectedIds}
-                : {type: 'item_locations'},
-            })
-          }
-        >
-          <ThemedText variant="label">Maintenances</ThemedText>
         </Card.Row>
       </Card>
     </ModalScrollView>

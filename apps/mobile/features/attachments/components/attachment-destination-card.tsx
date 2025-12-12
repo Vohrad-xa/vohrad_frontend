@@ -11,7 +11,7 @@ import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
-import {Icon} from '@/utils/icons';
+import {AppIcons, Icon} from '@/utils/icons';
 
 type AttachmentDestinationCardProps = {
   targetName?: string;
@@ -57,7 +57,11 @@ export function AttachmentDestinationCard({
         >
           <View style={styles.cardContent}>
             <View style={styles.iconWrapper}>
-              <Icon name="folder-outline" size="md" color={theme.secondary} />
+              <Icon
+                name={AppIcons.navigation.vault}
+                size="md"
+                color={theme.secondary}
+              />
             </View>
             <View style={styles.textContent}>
               <ThemedText variant="label">
@@ -78,7 +82,7 @@ export function AttachmentDestinationCard({
               </Pressable>
             ) : (
               <Icon
-                name="chevron-forward-outline"
+                name={AppIcons.navigation.chevronRight}
                 colorToken="muted"
                 style={styles.chevron}
               />

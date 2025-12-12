@@ -5,6 +5,7 @@ import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
+import {AppIcons} from '@/utils/icons';
 
 interface AttachmentAddOptionsProps {
   onTakePicture?: () => void;
@@ -24,7 +25,7 @@ export function AttachmentAddOptions({
     <View style={styles.wrapper}>
       <Card>
         <Card.Row
-          icon="camera-outline"
+          icon={AppIcons.actions.camera}
           onPress={onTakePicture}
           accessibilityLabel="Take picture"
         >
@@ -32,7 +33,7 @@ export function AttachmentAddOptions({
         </Card.Row>
         <Card.Divider withIconOffset />
         <Card.Row
-          icon="image-outline"
+          icon={AppIcons.content.image}
           onPress={onChooseFromGallery}
           accessibilityLabel="Choose from gallery"
         >
@@ -40,7 +41,7 @@ export function AttachmentAddOptions({
         </Card.Row>
         <Card.Divider withIconOffset />
         <Card.Row
-          icon="cloud-upload-outline"
+          icon={AppIcons.actions.download}
           onPress={onUploadFiles}
           accessibilityLabel="Upload from device"
         >

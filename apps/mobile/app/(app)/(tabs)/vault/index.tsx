@@ -219,7 +219,6 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: 'green',
       },
       filterContainer: {
         paddingHorizontal: ds.spacing.lg,
