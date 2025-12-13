@@ -32,7 +32,7 @@ export function getIconGlyph(name: IconName): string | undefined {
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 'lg',
+  size = 'md',
   color,
   colorToken,
   tintColor,
@@ -71,8 +71,8 @@ export const Icon: React.FC<IconProps> = ({
 export const AppIcons = {
   navigation: {
     home: 'home' as IconName,
-    menu: 'filter-circle' as IconName,
-    settings: 'gear' as IconName,
+    menu: 'menu-outline' as IconName,
+    settings: 'cog-outline' as IconName,
     scan: 'scan-outline' as IconName,
     profile: 'person-outline' as IconName,
     event: 'notifications-outline' as IconName,

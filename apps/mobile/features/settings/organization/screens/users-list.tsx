@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
-import {FlatList, Platform, StyleSheet} from 'react-native';
-import {List, Divider} from 'react-native-paper';
+import {FlatList, StyleSheet, Platform} from 'react-native';
+import {List, Divider, Avatar} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
@@ -15,9 +15,22 @@ type UsersListProps = {
   onEndReachedThreshold?: number;
 };
 
-const renderLeftIcon = () => (
-  <Icon name={AppIcons.navigation.profile} colorToken="icon" size="lg" />
-);
+const getUserInitials = (user: User): string => {
+  const firstInitial = user.first_name?.[0]?.toUpperCase() ?? '';
+  const lastInitial = user.last_name?.[0]?.toUpperCase() ?? '';
+
+  if (firstInitial && lastInitial) {
+    return `${firstInitial}${lastInitial}`;
+  }
+  if (firstInitial) {
+    return firstInitial;
+  }
+  if (lastInitial) {
+    return lastInitial;
+  }
+  return user.email?.[0]?.toUpperCase() ?? '?';
+};
+
 const renderRightIcon = () => (
   <Icon name={AppIcons.navigation.chevronRight} colorToken="muted" size="sm" />
 );
@@ -37,6 +50,7 @@ export function UsersList({
       const userName =
         `${item.first_name ?? ''} ${item.last_name ?? ''}`.trim() || 'No name';
       const description = `${item.email}${item.role ? ` • ${item.role}` : ''}`;
+      const initials = getUserInitials(item);
 
       return (
         <List.Item
@@ -44,7 +58,9 @@ export function UsersList({
           containerStyle={styles.item}
           title={userName}
           description={description}
-          left={renderLeftIcon}
+          left={() => (
+            <Avatar.Text size={40} style={styles.avatar} label={initials} />
+          )}
           right={renderRightIcon}
           titleStyle={styles.title}
           descriptionStyle={styles.description}
@@ -70,13 +86,13 @@ export function UsersList({
       ItemSeparatorComponent={() => <Divider style={styles.divider} />}
       ListHeaderComponent={
         <>
-          <ThemedText variant="secondary">List of Users</ThemedText>
+          <ThemedText variant="secondary">Users can be managed here</ThemedText>
           <Divider style={styles.titleDivider} />
         </>
       }
       ListHeaderComponentStyle={{
         paddingHorizontal: ds.spacing.lg,
-        paddingTop: ds.spacing.lg,
+        paddingTop: Platform.OS !== 'ios' ? ds.spacing.lg : 0,
       }}
     />
   );
@@ -102,12 +118,15 @@ const createStyles = makeStyleFactory(
         fontSize: ds.typography.caption2.fontSize,
       },
       divider: {
-        marginLeft: ds.spacing.xxxl + ds.spacing.sm,
+        marginLeft: ds.spacing.xxl * 2 + ds.spacing.sm,
         marginRight: ds.spacing.lg,
       },
 
       titleDivider: {
         marginTop: ds.spacing.lg,
+      },
+      avatar: {
+        backgroundColor: theme.secondary,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

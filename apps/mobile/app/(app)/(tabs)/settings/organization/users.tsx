@@ -1,5 +1,5 @@
 import React, {useLayoutEffect, useState, useCallback} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 import {useNavigation, useRouter} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -62,8 +62,8 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       headerButtonGroup: {
         flexDirection: 'row',
-        gap: ds.spacing.xs,
-        paddingHorizontal: ds.spacing.xs,
+        gap: ds.spacing.sm,
+        paddingHorizontal: Platform.OS === 'ios' ? ds.spacing.xxs : 0,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

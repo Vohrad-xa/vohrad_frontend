@@ -25,7 +25,8 @@ export type HeaderButtonVariant =
   | 'action'
   | 'back'
   | 'secondary'
-  | 'destructive';
+  | 'destructive'
+  | 'menu';
 
 export interface HeaderButtonProps
   extends
@@ -61,7 +62,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
   const {theme, ds} = useTheme();
   const baseSize = Platform.select({
     ios: ds.spacing.xxl + ds.spacing.xs,
-    default: ds.spacing.xxl + ds.spacing.sm,
+    default: ds.spacing.xxl,
   });
   const styles = createStyles(ds, baseSize);
 
@@ -126,10 +127,15 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
         return {
           color: theme.destructive,
         };
+      case 'menu':
+        return {
+          icon: AppIcons.navigation.menu,
+          iconSize: 'xl' as const,
+        };
       default:
         return {
-          iconSize: 'lg' as const,
-          color: Platform.OS !== 'ios' ? theme.headerAndroid : theme.text,
+          iconSize: Platform.OS === 'ios' ? ('xl' as const) : ('md' as const),
+          color: theme.text,
         };
     }
   })();

@@ -1,5 +1,11 @@
 import React from 'react';
-import {Pressable, StyleSheet, View, type ViewStyle} from 'react-native';
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  View,
+  type ViewStyle,
+} from 'react-native';
 import {isLiquidGlassAvailable, GlassView} from 'expo-glass-effect';
 import {type DSShape, themeKey, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
@@ -67,7 +73,7 @@ function CardRow({
         <Icon
           name={AppIcons.navigation.chevronRight}
           colorToken="muted"
-          size={14}
+          size={Platform.OS === 'ios' ? 14 : 'sm'}
           style={styles.chevron}
         />
       )}

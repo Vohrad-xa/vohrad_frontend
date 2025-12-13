@@ -3,7 +3,7 @@ import {Stack} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useSidebar} from '@/providers';
-import {AppIcons, makeStyleFactory} from '@/utils';
+import {makeStyleFactory} from '@/utils';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -25,8 +25,7 @@ export default function HomeLayout() {
             headerTitleAlign: 'left',
             headerLeft: () => (
               <HeaderButton
-                iconSize={Platform.OS === 'ios' ? 'xl' : 'xxl'}
-                icon={AppIcons.navigation.menu}
+                variant="menu"
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
                 style={

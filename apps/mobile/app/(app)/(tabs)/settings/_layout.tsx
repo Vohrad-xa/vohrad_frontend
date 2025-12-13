@@ -54,8 +54,7 @@ function SettingsStack() {
               title: 'Settings',
               headerLeft: () => (
                 <HeaderButton
-                  iconSize={Platform.OS === 'ios' ? 'xl' : 'xxl'}
-                  icon={AppIcons.navigation.menu}
+                  variant="menu"
                   accessibilityLabel="Open menu"
                   onPress={toggleSideMenu}
                   style={
@@ -76,10 +75,10 @@ function SettingsStack() {
               ),
               headerSearchBarOptions: {
                 placement: 'integratedButton',
-                placeholder: 'Search',
-                headerIconColor:
-                  Platform.OS === 'android' ? theme.headerAndroid : undefined,
+                hideWhenScrolling: false,
+                placeholder: 'Search...',
                 onChangeText: handleSearchChange,
+                headerIconColor: theme.text,
               },
             }}
           />
@@ -104,13 +103,13 @@ function SettingsStack() {
             name="organization/users"
             options={{
               title: 'Users',
+              headerLargeTitle: true,
               headerSearchBarOptions: {
                 placement: 'integratedButton',
                 hideWhenScrolling: false,
                 placeholder: 'Search...',
                 onChangeText: handleSearchChange,
-                headerIconColor:
-                  Platform.OS === 'android' ? theme.headerAndroid : undefined,
+                headerIconColor: theme.text,
               },
             }}
           />
