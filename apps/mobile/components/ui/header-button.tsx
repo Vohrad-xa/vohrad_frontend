@@ -1,20 +1,107 @@
 import type {FC} from 'react';
 import {Platform, Pressable, StyleSheet, Text} from 'react-native';
-import {SymbolView} from 'expo-symbols';
-import type {TokenName} from '@/constants/colors';
-import {type DSShape} from '@/constants/theme';
+import {Palette, type TokenName} from '@/constants/colors';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {RequiredIconProps, BaseViewProps} from '@/types';
-import {
-  Icon,
-  AppIcons,
-  SFSymbols,
-  type IconName,
-  type SFSymbolName,
-} from '@/utils';
+import {Icon, AppIcons, type IconName} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
+const getReadableIconName = (iconPath: string): string => {
+  const parts = iconPath.split('.');
+  const name = parts[parts.length - 1];
+  const withSpaces = name.replace(/([A-Z])/g, ' $1').trim();
+
+  return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();
+};
+
+type VariantConfig = {
+  icon?: string;
+  text?: string;
+  color?: string;
+  iconSize?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+};
+
+const getVariantConfig = (
+  variant: HeaderButtonVariant | undefined,
+  theme: ThemeShape,
+): VariantConfig => {
+  switch (variant) {
+    case 'text':
+      return {
+        text: '',
+        color: theme.text,
+      };
+    case 'close':
+      return {
+        icon: AppIcons.navigation.close,
+        color: theme.text,
+        iconSize: 'lg',
+      };
+    case 'cancel':
+      return {
+        text: 'Cancel',
+        color: theme.destructive,
+      };
+    case 'save':
+      return {
+        icon: AppIcons.actions.save,
+        color: Palette.brand.white,
+        iconSize: 'lg',
+      };
+    case 'success':
+      return {
+        icon: AppIcons.status.success,
+        color: Palette.brand.green,
+        iconSize: 'xxl',
+      };
+    case 'edit':
+      return {
+        text: 'Edit',
+        color: Palette.brand.blue,
+      };
+    case 'add':
+      return {
+        icon: AppIcons.actions.add,
+        color: theme.text,
+        iconSize: 'lg',
+      };
+    case 'more':
+      return {
+        icon: AppIcons.navigation.more,
+        iconSize: 'lg',
+        color: theme.text,
+      };
+    case 'back':
+      return {
+        icon: AppIcons.navigation.back,
+        color: theme.text,
+        iconSize: 'lg',
+      };
+    case 'action':
+      return {
+        color: theme.accentBlue,
+      };
+    case 'destructive':
+      return {
+        color: theme.destructive,
+      };
+    case 'menu':
+      return {
+        icon: AppIcons.navigation.menu,
+        iconSize: 'lg',
+        color: theme.text,
+      };
+    default:
+      return {
+        iconSize: Platform.OS === 'ios' ? 'xl' : 'md',
+        color: theme.text,
+      };
+  }
+};
+
 export type HeaderButtonVariant =
+  | 'text'
   | 'close'
   | 'cancel'
   | 'save'
@@ -24,7 +111,6 @@ export type HeaderButtonVariant =
   | 'success'
   | 'action'
   | 'back'
-  | 'secondary'
   | 'destructive'
   | 'menu';
 
@@ -35,7 +121,6 @@ export interface HeaderButtonProps
   onPress?: () => void;
   variant?: HeaderButtonVariant;
   icon?: IconName;
-  sfSymbol?: SFSymbolName;
   text?: string;
   textColor?: string;
   textColorToken?: TokenName;
@@ -47,7 +132,6 @@ export interface HeaderButtonProps
 export const HeaderButton: FC<HeaderButtonProps> = ({
   variant,
   icon,
-  sfSymbol,
   text,
   onPress,
   iconColor,
@@ -64,134 +148,58 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
     ios: ds.spacing.xxl + ds.spacing.xs,
     default: ds.spacing.xxl,
   });
-  const styles = createStyles(ds, baseSize);
+  const styles = createStyles(ds, baseSize, theme);
 
-  // Configure based on variant
-  const variantConfig = (() => {
-    switch (variant) {
-      case 'close':
-        return {
-          icon: AppIcons.navigation.close,
-          color: theme.text,
-          iconSize: 'lg' as const,
-        };
-      case 'cancel':
-        return {
-          text: 'Cancel',
-          color: theme.destructive,
-        };
-      case 'save':
-        return {
-          text: 'Save',
-          color: theme.text,
-        };
-      case 'success':
-        return {
-          icon: AppIcons.actions.save,
-          color: theme.accentGreen,
-          iconSize: 'xxl' as const,
-        };
-      case 'edit':
-        return {
-          text: 'Edit',
-          color: theme.accentBlue,
-        };
-      case 'add':
-        return {
-          icon: AppIcons.actions.add,
-          color: theme.accentBlue,
-          iconSize: 'lg' as const,
-        };
-      case 'more':
-        return {
-          icon: AppIcons.navigation.more,
-          sfSymbol: SFSymbols.ellipsis,
-          iconSize: 'lg' as const,
-          color: Platform.OS !== 'ios' ? theme.headerAndroid : theme.text,
-        };
-      case 'back':
-        return {
-          icon: AppIcons.navigation.back,
-          color: theme.text,
-          iconSize: 'lg' as const,
-        };
-      case 'action':
-        return {
-          color: theme.accentBlue,
-        };
-      case 'secondary':
-        return {
-          color: theme.accentBlue,
-        };
-      case 'destructive':
-        return {
-          color: theme.destructive,
-        };
-      case 'menu':
-        return {
-          icon: AppIcons.navigation.menu,
-          iconSize: 'xl' as const,
-        };
-      default:
-        return {
-          iconSize: Platform.OS === 'ios' ? ('xl' as const) : ('md' as const),
-          color: theme.text,
-        };
-    }
-  })();
+  const variantConfig = getVariantConfig(variant, theme);
 
-  // Use variant config as defaults
-  const finalIcon = icon ?? variantConfig.icon;
-  const finalSfSymbol = sfSymbol ?? variantConfig.sfSymbol;
-  const finalText = text ?? variantConfig.text;
-  const finalIconSize = iconSize ?? variantConfig.iconSize ?? 'lg';
-  const finalIconColor =
+  // Variant config as defaults
+  const useIcon = icon ?? variantConfig.icon;
+  const useText = text ?? variantConfig.text;
+  const useIconSize = iconSize ?? variantConfig.iconSize ?? 'lg';
+  const useIconColor =
     iconColor ??
     (iconColorToken ? theme[iconColorToken as TokenName] : variantConfig.color);
-  const finalTextColor =
+  const useTextColor =
     textColor ??
     (textColorToken ? theme[textColorToken as TokenName] : variantConfig.color);
 
-  // Determine button content
-  const buttonContent = finalIcon ? (
-    Platform.OS === 'ios' && finalSfSymbol ? (
-      <SymbolView
-        name={finalSfSymbol}
-        size={ds.iconSize[finalIconSize]}
-        tintColor={finalIconColor}
-      />
-    ) : (
-      <Icon
-        name={finalIcon}
-        color={finalIconColor}
-        size={ds.iconSize[finalIconSize]}
-      />
-    )
-  ) : finalText ? (
-    <Text style={[styles.text, {color: finalTextColor}]}>{finalText}</Text>
+  // Button content based on icon or text
+  const buttonContent = useIcon ? (
+    <Icon name={useIcon} color={useIconColor} size={ds.iconSize[useIconSize]} />
+  ) : useText ? (
+    <Text style={[styles.text, {color: useTextColor}]}>{useText}</Text>
   ) : null;
 
-  // Apply consistent padding for edit/save/cancel/success variants
+  // styling based on variant
   const isActionButton =
     variant === 'edit' ||
-    variant === 'save' ||
     variant === 'cancel' ||
-    variant === 'success';
-
+    variant === 'success' ||
+    variant === 'text';
+  const isSaveButton = variant === 'save';
+  const isMenuButton = variant === 'menu';
   return (
     <Pressable
+      android_ripple={{
+        foreground: true,
+        borderless: true,
+        color: theme.muted,
+        radius: baseSize / 2,
+      }}
       style={[
         styles.button,
         isActionButton ? styles.actionButton : null,
+        isSaveButton ? styles.saveButton : null,
+        isMenuButton ? styles.menuButton : null,
         style,
       ]}
       accessibilityRole="button"
       accessibilityLabel={
         accessibilityLabel ??
-        (finalText
-          ? `${finalText} button`
-          : finalIcon
-            ? `${finalIcon} button`
+        (useText
+          ? `${useText} button`
+          : useIcon
+            ? `${getReadableIconName(useIcon)} button`
             : 'button')
       }
       testID={testID}
@@ -204,7 +212,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
 };
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, baseSize: number) =>
+  (ds: DSShape, baseSize: number, theme: ThemeShape) =>
     StyleSheet.create({
       button: {
         minWidth: baseSize,
@@ -217,12 +225,26 @@ const createStyles = makeStyleFactory(
           },
         }),
       },
+
       actionButton: {
         paddingHorizontal: ds.spacing.sm,
       },
       text: {
         ...ds.typography.heading,
       },
+      saveButton: {
+        backgroundColor: theme.accentBlue,
+        borderRadius: ds.borderRadius.full,
+      },
+      menuButton: {
+        ...Platform.select({
+          android: {
+            marginRight: ds.spacing.md,
+            backgroundColor: theme.background,
+            borderRadius: ds.borderRadius.full,
+          },
+        }),
+      },
     }),
-  (baseSize) => baseSize.toString(),
+  (ds, _baseSize, theme) => themeKey(theme, ds),
 );

@@ -115,7 +115,11 @@ function SettingsStack() {
           />
           <Stack.Screen
             name="organization/add-user"
-            options={{title: 'Add User', presentation: 'modal'}}
+            options={{
+              title: 'Add User',
+              presentation: 'modal',
+              headerTitleAlign: 'center',
+            }}
           />
         </Stack>
       </ScreenLoadingWrapper>

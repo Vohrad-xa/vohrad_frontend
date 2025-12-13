@@ -28,11 +28,6 @@ export default function HomeLayout() {
                 variant="menu"
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
-                style={
-                  Platform.OS === 'android'
-                    ? {marginRight: ds.spacing.md}
-                    : undefined
-                }
               />
             ),
             headerTransparent: Platform.OS === 'ios',

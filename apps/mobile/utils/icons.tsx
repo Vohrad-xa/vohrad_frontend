@@ -106,7 +106,7 @@ export const AppIcons = {
     add: 'add-outline' as IconName,
     addUser: 'person-add-outline' as IconName,
     addItem: 'duplicate-outline' as IconName,
-    save: 'checkmark-circle-outline' as IconName,
+    save: 'checkmark-outline' as IconName,
     delete: 'trash-outline' as IconName,
     share: 'share-outline' as IconName,
     refresh: 'refresh-outline' as IconName,
@@ -140,7 +140,6 @@ export const AppIcons = {
     info: 'information-circle-outline' as IconName,
     help: 'help-circle-outline' as IconName,
     time: 'time-outline' as IconName,
-    checkmarkCircleOutline: 'checkmark-circle-outline' as IconName,
   },
 
   business: {

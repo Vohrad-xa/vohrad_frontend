@@ -113,7 +113,7 @@ export function useSettingsHeader({
       // Normal mode with select option
       headerRight = () => (
         <HeaderButton
-          variant="save"
+          variant="text"
           text="Select"
           onPress={onSelect}
           accessibilityLabel="Select items"

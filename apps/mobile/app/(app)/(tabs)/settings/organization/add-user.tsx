@@ -1,7 +1,7 @@
 import {useRef, useState, useCallback} from 'react';
 import {StyleSheet} from 'react-native';
 import {useNavigation, useRouter} from 'expo-router';
-import {ThemedView, ModalScrollView} from '@/components/ui';
+import {ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AddUserScreen,
@@ -43,15 +43,13 @@ export default function AddUserModal() {
   }, [triggerSuccess, router]);
 
   return (
-    <ThemedView style={styles.container}>
-      <ModalScrollView>
-        <AddUserScreen
-          ref={addUserScreenRef}
-          onFieldChange={checkForChanges}
-          onSaveComplete={handleSaveComplete}
-        />
-      </ModalScrollView>
-    </ThemedView>
+    <ModalScrollView style={styles.container}>
+      <AddUserScreen
+        ref={addUserScreenRef}
+        onFieldChange={checkForChanges}
+        onSaveComplete={handleSaveComplete}
+      />
+    </ModalScrollView>
   );
 }
 

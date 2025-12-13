@@ -117,7 +117,7 @@ export const AppIcons = {
     add: 'plus' as IconName,
     addUser: 'person.badge.plus' as IconName,
     addItem: 'plus.square.on.square' as IconName,
-    save: 'checkmark.circle' as IconName,
+    save: 'checkmark' as IconName,
     delete: 'trash' as IconName,
     share: 'square.and.arrow.up' as IconName,
     refresh: 'arrow.clockwise' as IconName,
