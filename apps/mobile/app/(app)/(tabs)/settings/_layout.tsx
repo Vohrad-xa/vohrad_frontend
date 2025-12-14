@@ -79,7 +79,13 @@ function SettingsStack() {
             }}
           />
           <Stack.Screen name="profile" options={{title: 'Profile'}} />
-          <Stack.Screen name="preferences" options={{title: 'Preferences'}} />
+          <Stack.Screen
+            name="preferences"
+            options={{
+              title: 'Preferences',
+              headerBackButtonMenuEnabled: false,
+            }}
+          />
           <Stack.Screen name="language" options={{title: 'App Language'}} />
           <Stack.Screen name="support" options={{title: 'Report an Issue'}} />
           <Stack.Screen
