@@ -38,6 +38,7 @@ function SettingsStack() {
             headerShown: true,
             headerShadowVisible: false,
             headerBackButtonMenuEnabled: false,
+            animation: 'ios_from_right',
             headerTransparent: Platform.OS === 'ios',
             headerTitleAlign: 'left',
             headerBackButtonDisplayMode: 'minimal',
@@ -57,11 +58,6 @@ function SettingsStack() {
                   variant="menu"
                   accessibilityLabel="Open menu"
                   onPress={toggleSideMenu}
-                  style={
-                    Platform.OS === 'android'
-                      ? {marginRight: ds.spacing.md}
-                      : undefined
-                  }
                 />
               ),
               headerRight: () => (

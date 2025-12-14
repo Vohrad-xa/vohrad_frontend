@@ -8,10 +8,9 @@ import {
   type GestureResponderEvent,
 } from 'react-native';
 import {Tabs} from 'expo-router';
-import {type ThemeShape, type DSShape} from '@/constants';
+import {themeKey, type ThemeShape, type DSShape} from '@/constants';
 import {makeStyleFactory} from '@/utils';
 import {Icon, type IconName} from '@/utils/icons';
-import {NavigationGradient} from './navigation-gradient';
 
 const ANIMATION_CONFIG = {
   scale: {
@@ -51,7 +50,6 @@ type ReactTabsProps = {
   theme: ThemeShape;
   ds: DSShape;
   insetBottom: number;
-  scheme: 'light' | 'dark';
 };
 
 function TabButton({
@@ -110,14 +108,8 @@ function TabButton({
   );
 }
 
-export function ReactTabs({
-  tabs,
-  theme,
-  ds,
-  insetBottom,
-  scheme,
-}: ReactTabsProps) {
-  const styles = createStyles(theme, ds, insetBottom);
+export function ReactTabs({tabs, theme, ds}: ReactTabsProps) {
+  const styles = createStyles(theme, ds);
 
   const renderTabButton = useCallback(
     (props: TabButtonProps) => (
@@ -149,11 +141,6 @@ export function ReactTabs({
     [ds.iconSize.lg, styles.iconContainer, styles.iconContainerActive],
   );
 
-  const renderTabBarBackground = useCallback(
-    () => <NavigationGradient scheme={scheme} />,
-    [scheme],
-  );
-
   return (
     <View style={styles.container}>
       <Tabs
@@ -162,7 +149,6 @@ export function ReactTabs({
           tabBarActiveTintColor: theme.tabIconSelected,
           tabBarInactiveTintColor: theme.icon,
           tabBarStyle: styles.tabBar,
-          tabBarBackground: renderTabBarBackground,
           tabBarButton: Platform.OS === 'android' ? renderTabButton : undefined,
         }}
       >
@@ -171,6 +157,7 @@ export function ReactTabs({
             key={tab.name}
             name={tab.name}
             options={{
+              animation: 'shift',
               title: tab.label,
               tabBarIcon: (props) => renderTabIcon(props, tab.icon),
             }}
@@ -182,16 +169,13 @@ export function ReactTabs({
 }
 
 const createStyles = makeStyleFactory(
-  (theme: ThemeShape, ds: DSShape, insetBottom: number) =>
+  (theme: ThemeShape, ds: DSShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: theme.background,
       },
       tabBar: {
-        height: ds.layout.tabBarHeight + insetBottom * 1.2,
-        paddingTop: ds.spacing.md,
-        backgroundColor: 'transparent',
+        backgroundColor: theme.input,
         borderTopWidth: 0,
         elevation: 0,
       },
@@ -216,5 +200,5 @@ const createStyles = makeStyleFactory(
         backgroundColor: theme.highlight,
       },
     }),
-  (theme, ds, insetBottom) => `${theme.version.toString()}|${insetBottom}`,
+  (ds, theme) => themeKey(ds, theme),
 );

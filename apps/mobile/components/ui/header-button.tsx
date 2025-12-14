@@ -240,8 +240,8 @@ const createStyles = makeStyleFactory(
       menuButton: {
         ...Platform.select({
           android: {
-            marginRight: ds.spacing.md,
-            backgroundColor: theme.background,
+            marginRight: ds.spacing.xxl,
+            backgroundColor: theme.input,
             borderRadius: ds.borderRadius.full,
           },
         }),

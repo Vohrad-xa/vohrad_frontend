@@ -18,16 +18,12 @@ type NativeTabsComponentProps = {
 export function NativeTabsComponent({
   tabs,
   iosSFSymbols,
-  theme,
 }: NativeTabsComponentProps) {
   return (
     <NativeTabs
-      labelVisibilityMode="labeled"
       minimizeBehavior="onScrollDown"
-      disableIndicator={false}
-      backgroundColor={theme.navigationBar}
-      tintColor={theme.tabIconSelected}
-      indicatorColor={theme.card}
+      blurEffect="systemMaterial"
+      labelVisibilityMode="labeled"
     >
       {tabs.map((tab) => (
         <NativeTabs.Trigger key={tab.name} name={tab.name}>

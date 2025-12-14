@@ -35,6 +35,7 @@ function VaultStack() {
           headerShown: true,
           headerShadowVisible: false,
           headerLargeTitle: true,
+          animation: 'ios_from_right',
           headerBackButtonDisplayMode: 'minimal',
           headerTransparent: Platform.OS === 'ios',
           headerTitleAlign: 'left',
@@ -53,11 +54,6 @@ function VaultStack() {
                 variant="menu"
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
-                style={
-                  Platform.OS === 'android'
-                    ? {marginRight: ds.spacing.md}
-                    : undefined
-                }
               />
             ),
             headerSearchBarOptions: {

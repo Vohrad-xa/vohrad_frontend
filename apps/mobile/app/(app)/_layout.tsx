@@ -6,12 +6,7 @@ import {ThemedStatusBar} from '@/components/ui';
 import {SIDEBAR_CONFIG} from '@/constants/sidebar';
 import {type ThemeShape} from '@/constants/theme';
 import {SideMenu, SidebarBackdrop} from '@/features/side-bar';
-import {
-  HeaderVisibilityProvider,
-  SidebarProvider,
-  useSidebar,
-  useTheme,
-} from '@/providers';
+import {SidebarProvider, useSidebar, useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
 function AppStack() {
@@ -104,12 +99,10 @@ function AppStack() {
 
 export default function AppLayout() {
   return (
-    <HeaderVisibilityProvider>
-      <SidebarProvider>
-        <ThemedStatusBar />
-        <AppStack />
-      </SidebarProvider>
-    </HeaderVisibilityProvider>
+    <SidebarProvider>
+      <ThemedStatusBar />
+      <AppStack />
+    </SidebarProvider>
   );
 }
 

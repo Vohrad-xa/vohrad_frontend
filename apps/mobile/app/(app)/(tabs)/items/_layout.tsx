@@ -65,6 +65,7 @@ function ItemsStack() {
     <View style={styles.container}>
       <Stack
         screenOptions={{
+          animation: 'ios_from_right',
           headerShown: true,
           headerShadowVisible: false,
           headerLargeTitle: true,
@@ -89,11 +90,6 @@ function ItemsStack() {
                 variant="menu"
                 accessibilityLabel="Open menu"
                 onPress={toggleSideMenu}
-                style={
-                  Platform.OS === 'android'
-                    ? {marginRight: ds.spacing.md}
-                    : undefined
-                }
               />
             ),
             headerSearchBarOptions: {

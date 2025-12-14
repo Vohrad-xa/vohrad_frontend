@@ -58,7 +58,6 @@ const _Tokens = {
     divider: Palette.gray[300],
     lightdivider: Palette.gray[100],
     muted: Palette.gray[600],
-    navigationBar: Palette.brand.white,
     inputPlaceholder: Palette.placeholderGray,
 
     // Brand & accents
@@ -115,7 +114,6 @@ const _Tokens = {
     border: Palette.gray[700],
     divider: Palette.gray[600],
     lightdivider: Palette.gray[750],
-    navigationBar: Palette.Obsidian,
     inputPlaceholder: Palette.placeholderGray,
 
     // Brand & accents
@@ -188,7 +186,7 @@ export const NavigationThemes = {
     colors: {
       primary: Palette.brand.terracotta,
       background: _Tokens.light.background,
-      card: _Tokens.light.navigationBar,
+      card: _Tokens.light.background,
       text: _Tokens.light.text,
       border: _Tokens.light.border,
       notification: Palette.brand.red,
@@ -199,8 +197,8 @@ export const NavigationThemes = {
     dark: true,
     colors: {
       primary: Palette.brand.blue,
-      background: _Tokens.dark.background,
-      card: _Tokens.dark.navigationBar,
+      background: Palette.brand.black,
+      card: _Tokens.dark.background,
       text: _Tokens.dark.text,
       border: _Tokens.dark.border,
       notification: Palette.brand.red,

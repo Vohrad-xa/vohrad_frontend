@@ -28,7 +28,7 @@ export const unstable_settings = {
 export default function TabLayout() {
   const navigation = useNavigation();
   const segments = useSegments();
-  const {theme, ds, scheme} = useTheme();
+  const {theme, ds} = useTheme();
   const {triggerHaptic} = useHaptic();
   const insets = useSafeAreaInsets();
   const previousTabRef = useRef<string | null>(null);
@@ -60,7 +60,6 @@ export default function TabLayout() {
       theme={theme}
       ds={ds}
       insetBottom={insets.bottom}
-      scheme={scheme}
     />
   );
 }

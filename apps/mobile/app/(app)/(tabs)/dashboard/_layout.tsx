@@ -16,13 +16,22 @@ export default function HomeLayout() {
 
   return (
     <View style={styles.container}>
-      <Stack>
+      <Stack
+        screenOptions={{
+          headerLargeTitle: true,
+          headerTitleAlign: 'left',
+          headerTransparent: Platform.OS === 'ios',
+          headerShadowVisible: false,
+          headerTitleStyle: {
+            fontWeight: ds.fontWeight.bold,
+            color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
+          },
+        }}
+      >
         <Stack.Screen
           name="index"
           options={{
-            headerLargeTitle: true,
             headerTitle: 'Dashboard',
-            headerTitleAlign: 'left',
             headerLeft: () => (
               <HeaderButton
                 variant="menu"
@@ -30,12 +39,6 @@ export default function HomeLayout() {
                 onPress={toggleSideMenu}
               />
             ),
-            headerTransparent: Platform.OS === 'ios',
-            headerShadowVisible: false,
-            headerTitleStyle: {
-              fontWeight: ds.fontWeight.bold,
-              color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-            },
           }}
         />
       </Stack>

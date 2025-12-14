@@ -37,7 +37,7 @@ export function PaperMenu({
   };
 
   const contentStyle = {
-    backgroundColor: theme.navigationBar,
+    backgroundColor: theme.input,
     minWidth: 240,
     paddingVertical: 0,
     ...customContentStyle,

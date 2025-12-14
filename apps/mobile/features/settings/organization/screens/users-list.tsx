@@ -81,6 +81,7 @@ export function UsersList({
       onRefresh={onRefresh}
       refreshing={false}
       onEndReached={onEndReached}
+      contentInsetAdjustmentBehavior="automatic"
       onEndReachedThreshold={onEndReachedThreshold}
       showsVerticalScrollIndicator={Platform.OS === 'web'}
       ItemSeparatorComponent={() => <Divider style={styles.divider} />}
