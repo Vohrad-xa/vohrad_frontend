@@ -1,7 +1,10 @@
 {
-  "platforms": ["apple"],
+  "platforms": ["apple", "android"],
   "coreFeatures": ["swiftui"],
   "apple": {
     "modules": ["SykamoreUiModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.sykamoreui.SykamoreUiModule"]
   }
 }

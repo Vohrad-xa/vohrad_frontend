@@ -24,8 +24,6 @@ export default function FilterModal() {
           headerShown: true,
           headerShadowVisible: false,
           headerTransparent: Platform.OS === 'ios',
-          headerStyle:
-            Platform.OS === 'android' ? styles.headerStyleAndroid : undefined,
           headerTitleStyle: styles.headerTitleStyle,
           headerTitleAlign: 'center',
           headerBackButtonDisplayMode: 'minimal',
@@ -52,9 +50,6 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {
         flex: 1,
-      },
-      headerStyleAndroid: {
-        backgroundColor: theme.navigationBar,
       },
       headerTitleStyle: {
         color: theme.text,

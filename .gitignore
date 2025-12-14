@@ -21,7 +21,6 @@ out/
 
 # ---- React Native  ----
 .kotlin/
-**/android/
 apps/mobile/.expo/
 apps/mobile/expo-env.d.ts
 apps/mobile/.cursor/
@@ -30,6 +29,8 @@ apps/mobile/web-build/
 apps/mobile/.gradle/
 apps/mobile/.idea/
 apps/mobile/*.iml
+apps/mobile/android/*
+apps/mobile/assets/icons/android
 **/android/local.properties
 /docs
 coverage

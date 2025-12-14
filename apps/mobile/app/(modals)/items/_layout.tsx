@@ -35,10 +35,6 @@ export default function ItemsModalsLayout() {
           headerTransparent: Platform.OS === 'ios',
           headerLeft: CloseButton,
           headerBackButtonDisplayMode: 'minimal',
-          headerStyle:
-            Platform.OS === 'android'
-              ? {backgroundColor: theme.navigationBar}
-              : undefined,
           headerTitleAlign: 'center',
           contentStyle: styles.container,
         }}
