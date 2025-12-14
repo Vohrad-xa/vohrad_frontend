@@ -1,20 +1,11 @@
-import React, {forwardRef, useImperativeHandle, useState, useMemo} from 'react';
-import {StyleSheet, View, Platform, Pressable} from 'react-native';
-import {
-  DateTimePickerAndroid,
-  type DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
+import React, {forwardRef, useImperativeHandle, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
 import {useCreateUser} from '@vohrad/store';
-import {Card} from '@/components/cards/card';
-import {
-  ThemedInput,
-  ThemedText,
-  DatePickerMobile,
-  DatePickerWeb,
-} from '@/components/ui';
+import {TextInput, List} from 'react-native-paper';
+import {DatePickerInput} from 'react-native-paper-dates';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {formatDateInput, parseDateInput, showAlert} from '@/utils';
+import {showAlert} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {RolePicker} from '../components';
 import type {UserCreateData} from '@vohrad/types';
@@ -33,12 +24,16 @@ export const AddUserScreen = forwardRef<
   AddUserScreenHandle,
   AddUserScreenProps
 >(({onSaveComplete, onFieldChange}, ref) => {
-  const {ds, theme, scheme} = useTheme();
+  const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
   const {mutateAsync: createUser} = useCreateUser();
   const [formData, setFormData] = useState<Partial<UserCreateData>>({});
-  const handleFieldChange = (key: string, value: string) => {
-    setFormData((prev: Partial<UserCreateData>) => ({...prev, [key]: value}));
+
+  const handleFieldChange = (key: string, value: string | Date | undefined) => {
+    setFormData((prev: Partial<UserCreateData>) => ({
+      ...prev,
+      [key]: value instanceof Date ? value.toISOString().split('T')[0] : value,
+    }));
     onFieldChange?.();
   };
 
@@ -48,28 +43,6 @@ export const AddUserScreen = forwardRef<
 
   const hasChanges = () => {
     return Object.keys(formData).length > 0;
-  };
-
-  const selectedDate = useMemo(
-    () => parseDateInput(formData.date_of_birth),
-    [formData.date_of_birth],
-  );
-
-  const handleDateChange = (event: DateTimePickerEvent, date?: Date) => {
-    if (event.type === 'set' && date) {
-      handleFieldChange('date_of_birth', formatDateInput(date));
-    }
-  };
-
-  const openDatePicker = () => {
-    if (Platform.OS === 'android') {
-      DateTimePickerAndroid.open({
-        value: selectedDate,
-        onChange: handleDateChange,
-        mode: 'date',
-        maximumDate: new Date(),
-      });
-    }
   };
 
   const saveUser = async (): Promise<boolean> => {
@@ -102,200 +75,91 @@ export const AddUserScreen = forwardRef<
     hasChanges,
   }));
 
-  const fields: Array<{
-    label: string;
+  const dateValue = formData.date_of_birth
+    ? new Date(formData.date_of_birth)
+    : undefined;
+
+  const textFields: Array<{
     key: keyof UserCreateData;
-    placeholder: string;
-    keyboardType?: 'default' | 'email-address' | 'phone-pad';
+    label: string;
+    keyboardType?: 'email-address' | 'phone-pad';
+    autoCapitalize?: 'none';
     secureTextEntry?: boolean;
-    type?: 'text' | 'date';
   }> = [
+    {key: 'first_name', label: 'First Name *'},
+    {key: 'last_name', label: 'Last Name *'},
     {
-      label: 'First Name',
-      key: 'first_name',
-      placeholder: 'Required',
-    },
-    {
-      label: 'Last Name',
-      key: 'last_name',
-      placeholder: 'Required',
-    },
-    {
-      label: 'Email',
       key: 'email',
-      placeholder: 'Required',
+      label: 'Email *',
       keyboardType: 'email-address',
+      autoCapitalize: 'none',
     },
-    {
-      label: 'Password',
-      key: 'password',
-      placeholder: 'Required',
-      secureTextEntry: true,
-    },
-    {
-      label: 'Date of Birth',
-      key: 'date_of_birth',
-      placeholder: 'Optional',
-      type: 'date',
-    },
-    {
-      label: 'Phone',
-      key: 'phone_number',
-      placeholder: 'Optional',
-      keyboardType: 'phone-pad',
-    },
-
-    {
-      label: 'Address',
-      key: 'address',
-      placeholder: 'Optional',
-    },
-    {
-      label: 'City',
-      key: 'city',
-      placeholder: 'Optional',
-    },
-    {
-      label: 'Province',
-      key: 'province',
-      placeholder: 'Optional',
-    },
-    {
-      label: 'Postal Code',
-      key: 'postal_code',
-      placeholder: 'Optional',
-    },
-    {
-      label: 'Country',
-      key: 'country',
-      placeholder: 'Optional',
-    },
+    {key: 'password', label: 'Password *', secureTextEntry: true},
+    {key: 'phone_number', label: 'Phone', keyboardType: 'phone-pad'},
+    {key: 'address', label: 'Address'},
+    {key: 'city', label: 'City'},
+    {key: 'province', label: 'Province'},
+    {key: 'postal_code', label: 'Postal Code'},
+    {key: 'country', label: 'Country'},
   ];
-
-  const renderField = (
-    field: {
-      label: string;
-      key: keyof UserCreateData;
-      placeholder: string;
-      keyboardType?: 'default' | 'email-address' | 'phone-pad';
-      secureTextEntry?: boolean;
-      type?: 'text' | 'date';
-    },
-    index: number,
-  ) => {
-    const {label, key, placeholder, keyboardType, secureTextEntry, type} =
-      field;
-    const displayValue = (formData[key] as string) ?? '';
-
-    // iOS Date Picker
-    if (type === 'date' && Platform.OS === 'ios') {
-      return (
-        <DatePickerMobile
-          label={label}
-          selectedDate={selectedDate}
-          onDateChange={handleDateChange}
-          editable
-          displayValue={displayValue}
-          fallbackLabel={placeholder}
-          scheme={scheme}
-          styles={styles}
-        />
-      );
-    }
-
-    // Web Date Picker
-    if (type === 'date' && Platform.OS === 'web') {
-      return (
-        <View style={[styles.fieldRow, styles.webDatePicker]}>
-          <ThemedText variant="label" style={styles.fieldLabel}>
-            {label}
-          </ThemedText>
-          <View style={styles.inputContainer}>
-            <DatePickerWeb
-              mode="date"
-              selectedDate={selectedDate}
-              onDateChange={(date) => {
-                handleFieldChange(key, formatDateInput(date));
-              }}
-              placeholder={placeholder}
-              disabled={false}
-              inputStyle={styles.datePickerInput}
-              theme={theme}
-              scheme={scheme}
-              ds={ds}
-            />
-          </View>
-        </View>
-      );
-    }
-
-    // Android Date Picker
-    if (type === 'date' && Platform.OS === 'android') {
-      return (
-        <Pressable onPress={openDatePicker} style={styles.fieldRow}>
-          <ThemedText variant="label" style={styles.fieldLabel}>
-            {label}
-          </ThemedText>
-          <View style={styles.inputContainer}>
-            <ThemedInput
-              variant="value"
-              textAlign="left"
-              borderless
-              value={displayValue}
-              placeholder={placeholder}
-              editable={false}
-              pointerEvents="none"
-            />
-          </View>
-        </Pressable>
-      );
-    }
-
-    // Regular text input
-    return (
-      <View style={styles.fieldRow}>
-        <ThemedText variant="label" style={styles.fieldLabel}>
-          {label}
-        </ThemedText>
-        <View style={styles.inputContainer}>
-          <ThemedInput
-            variant="value"
-            textAlign="left"
-            value={displayValue}
-            onChangeText={(val) => handleFieldChange(key, val)}
-            placeholder={placeholder}
-            keyboardType={keyboardType}
-            secureTextEntry={secureTextEntry}
-            autoFocus={index === 0}
-          />
-        </View>
-      </View>
-    );
-  };
 
   return (
     <View style={styles.container}>
-      <Card>
-        <View style={styles.roleRow}>
-          <ThemedText variant="label">Role</ThemedText>
-          <RolePicker
-            selectedRoleId={formData.role_id}
-            onRoleSelect={handleRoleSelect}
+      <List.Section
+        title="User Information"
+        style={styles.inputGroup}
+        titleStyle={{
+          ...styles.sectionTitleStyle,
+          paddingBottom: ds.spacing.xxs,
+        }}
+      >
+        {textFields.map((field) => (
+          <TextInput
+            key={field.key}
+            mode="flat"
+            label={field.label}
+            value={(formData[field.key] as string) ?? ''}
+            onChangeText={(val) => handleFieldChange(field.key, val)}
+            keyboardType={field.keyboardType}
+            autoCapitalize={field.autoCapitalize}
+            secureTextEntry={field.secureTextEntry}
+            activeUnderlineColor={theme.primary}
+            textColor={theme.text}
+            style={styles.input}
+            autoFocus={field.key === 'first_name'}
           />
-        </View>
-      </Card>
-      <ThemedText variant="caption" style={styles.helperText}>
-        Select the appropriate role for the new user. Roles determine the
-        permissions and access levels within the organization.
-      </ThemedText>
-      <Card>
-        {fields.map((field, index) => (
-          <React.Fragment key={field.key}>
-            {renderField(field, index)}
-            {index < fields.length - 1 && <Card.Divider />}
-          </React.Fragment>
         ))}
-      </Card>
+        <DatePickerInput
+          locale="en"
+          label="Date of Birth"
+          value={dateValue}
+          onChange={(date) => handleFieldChange('date_of_birth', date)}
+          inputMode="start"
+          presentationStyle="pageSheet"
+          mode="flat"
+          activeUnderlineColor={theme.primary}
+          textColor={theme.text}
+          style={styles.input}
+          calendarIcon="calendar-outline"
+          endYear={new Date().getFullYear()}
+        />
+      </List.Section>
+      <List.Section
+        title="Role Assignment"
+        style={styles.inputGroup}
+        titleStyle={styles.sectionTitleStyle}
+      >
+        <List.Item
+          title="Role"
+          description="Select the appropriate role for the new user"
+          right={() => (
+            <RolePicker
+              selectedRoleId={formData.role_id}
+              onRoleSelect={handleRoleSelect}
+            />
+          )}
+        />
+      </List.Section>
     </View>
   );
 });
@@ -306,53 +170,20 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       container: {
+        flex: 1,
+      },
+      inputGroup: {
         gap: ds.spacing.md,
       },
-      fieldRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
+      input: {
+        backgroundColor: theme.input,
+        height: ds.spacing.xxxl,
       },
-      roleRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        maxHeight: 100,
-      },
-      webDatePicker: {
-        position: 'relative',
-        zIndex: 100,
-      },
-      fieldLabel: {
-        marginRight: ds.spacing.xxl,
-        minWidth: '35%',
-      },
-      inputContainer: {
-        flex: 1,
-      },
-      datePickerInput: {
-        ...ds.typography.value,
+      sectionTitleStyle: {
+        paddingTop: 0,
+        fontWeight: ds.typography.sectionTitle.fontWeight,
+        fontSize: ds.typography.sectionTitle.fontSize,
         color: theme.text,
-        width: '100%',
-        outlineWidth: 0,
-        cursor: 'pointer',
-      },
-      row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: ds.spacing.md * 2,
-        justifyContent: 'flex-start',
-      },
-      valueText: {},
-      iosDatePicker: {
-        flex: 1,
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        marginVertical: -ds.spacing.md,
-        transform: [{scale: 0.9}],
-      },
-      helperText: {
-        marginHorizontal: ds.spacing.lg,
-        marginBottom: ds.spacing.md,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

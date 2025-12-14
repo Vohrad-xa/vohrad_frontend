@@ -37,7 +37,7 @@ function SettingsStack() {
           screenOptions={{
             headerShown: true,
             headerShadowVisible: false,
-            headerBackButtonMenuEnabled: true,
+            headerBackButtonMenuEnabled: false,
             headerTransparent: Platform.OS === 'ios',
             headerTitleAlign: 'left',
             headerBackButtonDisplayMode: 'minimal',
@@ -118,7 +118,6 @@ function SettingsStack() {
             options={{
               title: 'Add User',
               presentation: 'modal',
-              headerTitleAlign: 'center',
             }}
           />
         </Stack>

@@ -203,8 +203,8 @@ export const createDesignSystem = (
           letterSpacing: 0.07,
         },
         {
-          fontSize: 14,
-          lineHeight: 1.294,
+          fontSize: 17,
+          lineHeight: 1.5,
           fontWeight: '400',
           letterSpacing: 0,
         },
@@ -255,7 +255,7 @@ export const createDesignSystem = (
         },
         {
           fontSize: 14,
-          lineHeight: 1.333,
+          lineHeight: 1.429,
           fontWeight: '400',
           letterSpacing: 0.25,
         },
@@ -290,7 +290,7 @@ export const createDesignSystem = (
           letterSpacing: 0.14,
         },
         {
-          fontSize: 11,
+          fontSize: 12,
           lineHeight: 1.333,
           fontWeight: '500',
           letterSpacing: 0.5,

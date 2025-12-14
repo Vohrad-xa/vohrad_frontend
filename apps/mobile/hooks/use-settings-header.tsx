@@ -12,7 +12,7 @@ type Navigation = {
 type UseSettingsHeaderOptions = {
   navigation: Navigation;
   isEditing: boolean;
-  hasChanges: boolean;
+  hasChanges?: boolean;
   onSave: () => void;
   onCancel?: () => void;
   showCancel?: boolean;
@@ -76,14 +76,6 @@ export function useSettingsHeader({
           variant="back"
           onPress={() => router.back()}
           accessibilityLabel="Back"
-        />
-      );
-    } else if (isEditing || (canShowCancel && hasChanges)) {
-      headerLeft = () => (
-        <HeaderButton
-          variant="cancel"
-          onPress={onCancel ?? (() => router.back())}
-          accessibilityLabel="Cancel"
         />
       );
     } else {

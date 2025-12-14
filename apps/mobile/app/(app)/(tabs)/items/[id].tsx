@@ -55,7 +55,6 @@ export default function ItemDetailScreen() {
       }
     },
     onCancel: () => {
-      triggerHaptic('selection');
       formState.resetForm();
       setIsEditing(false);
     },

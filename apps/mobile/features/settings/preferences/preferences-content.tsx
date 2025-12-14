@@ -1,13 +1,7 @@
 import React, {forwardRef, useImperativeHandle} from 'react';
 import {StyleSheet, View, Platform} from 'react-native';
 import {usePreferencesManager} from '@vohrad/store';
-import {
-  ThemedText,
-  InfoRowCard,
-  Toggle,
-  EmptyState,
-  type InfoField,
-} from '@/components/ui';
+import {ThemedText, InfoRowCard, Toggle, type InfoField} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
 import {showConfirmAlert, showAlert} from '@/utils';
@@ -94,10 +88,6 @@ export const PreferencesContentEditable = forwardRef<
     },
     [toggleBusinessHours, triggerHaptic],
   );
-
-  if (!organization) {
-    return <EmptyState message="No organization information available" />;
-  }
 
   const isEditable = isEditing || Platform.OS === 'web';
 

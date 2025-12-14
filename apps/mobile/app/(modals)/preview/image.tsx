@@ -85,7 +85,7 @@ export default function AttachmentImagePreviewModal() {
       title,
       headerRight: () => (
         <HeaderButton
-          icon={AppIcons.content.download}
+          icon={AppIcons.actions.download}
           variant="action"
           onPress={isDownloading ? undefined : handleDownload}
           accessibilityLabel={isDownloading ? 'Sharing image' : 'Share image'}

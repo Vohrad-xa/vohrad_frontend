@@ -110,12 +110,12 @@ const createStyles = makeStyleFactory(
       },
       title: {
         color: theme.text,
-        fontSize: ds.typography.value.fontSize,
+        fontSize: ds.typography.label.fontSize,
         marginBottom: ds.spacing.xs,
       },
       description: {
         color: theme.muted,
-        fontSize: ds.typography.caption2.fontSize,
+        fontSize: ds.typography.caption.fontSize,
       },
       divider: {
         marginLeft: ds.spacing.xxl * 2 + ds.spacing.sm,

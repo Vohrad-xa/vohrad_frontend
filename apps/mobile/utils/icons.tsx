@@ -131,6 +131,7 @@ export const AppIcons = {
     search: 'search-outline' as IconName,
     list: 'list-outline' as IconName,
     terms: 'document-text-outline' as IconName,
+    calendar: 'calendar-outline' as IconName,
   },
 
   status: {

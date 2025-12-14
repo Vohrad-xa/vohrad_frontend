@@ -1,4 +1,4 @@
-import {useRef, useState, useCallback} from 'react';
+import {useRef, useCallback} from 'react';
 import {StyleSheet} from 'react-native';
 import {useNavigation, useRouter} from 'expo-router';
 import {ModalScrollView} from '@/components/ui';
@@ -17,12 +17,6 @@ export default function AddUserModal() {
   const navigation = useNavigation();
   const router = useRouter();
   const addUserScreenRef = useRef<AddUserScreenHandle>(null);
-  const [hasChanges, setHasChanges] = useState(false);
-
-  const checkForChanges = useCallback(() => {
-    const changed = addUserScreenRef.current?.hasChanges() ?? false;
-    setHasChanges(changed);
-  }, []);
 
   const handleSave = useCallback(async () => {
     await addUserScreenRef.current?.saveUser();
@@ -31,7 +25,6 @@ export default function AddUserModal() {
   const {triggerSuccess} = useSettingsHeader({
     navigation,
     isEditing: true,
-    hasChanges,
     onSave: handleSave,
   });
 
@@ -46,7 +39,6 @@ export default function AddUserModal() {
     <ModalScrollView style={styles.container}>
       <AddUserScreen
         ref={addUserScreenRef}
-        onFieldChange={checkForChanges}
         onSaveComplete={handleSaveComplete}
       />
     </ModalScrollView>

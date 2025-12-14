@@ -1,11 +1,12 @@
 import type {FC} from 'react';
-import {Platform, Pressable, StyleSheet, Text} from 'react-native';
+import {Platform, Pressable, StyleSheet} from 'react-native';
 import {Palette, type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {RequiredIconProps, BaseViewProps} from '@/types';
 import {Icon, AppIcons, type IconName} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
+import {ThemedText} from './themed-text';
 
 const getReadableIconName = (iconPath: string): string => {
   const parts = iconPath.split('.');
@@ -58,7 +59,7 @@ const getVariantConfig = (
     case 'edit':
       return {
         text: 'Edit',
-        color: Palette.brand.blue,
+        color: Palette.brand.white,
       };
     case 'add':
       return {
@@ -167,16 +168,15 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
   const buttonContent = useIcon ? (
     <Icon name={useIcon} color={useIconColor} size={ds.iconSize[useIconSize]} />
   ) : useText ? (
-    <Text style={[styles.text, {color: useTextColor}]}>{useText}</Text>
+    <ThemedText variant="body" style={{color: useTextColor}}>
+      {useText}
+    </ThemedText>
   ) : null;
 
   // styling based on variant
   const isActionButton =
-    variant === 'edit' ||
-    variant === 'cancel' ||
-    variant === 'success' ||
-    variant === 'text';
-  const isSaveButton = variant === 'save';
+    variant === 'edit' || variant === 'cancel' || variant === 'text';
+  const isSaveButton = variant === 'save' || variant === 'edit';
   const isMenuButton = variant === 'menu';
   return (
     <Pressable
@@ -228,6 +228,7 @@ const createStyles = makeStyleFactory(
 
       actionButton: {
         paddingHorizontal: ds.spacing.sm,
+        letterSpacing: 1,
       },
       text: {
         ...ds.typography.heading,

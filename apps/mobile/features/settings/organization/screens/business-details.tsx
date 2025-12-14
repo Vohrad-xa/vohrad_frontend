@@ -1,4 +1,4 @@
-import React, {forwardRef, useImperativeHandle, useEffect} from 'react';
+import React, {forwardRef, useImperativeHandle} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {InfoRowCard, EmptyState} from '@/components/ui';
 import type {InfoField} from '@/components/ui';
@@ -9,29 +9,22 @@ import {useOrganization} from '../hooks';
 
 export type BusinessDetailsContentHandle = {
   saveOrganization: () => void;
-  hasChanges: () => boolean;
 };
 
 type BusinessDetailsContentProps = {
   isEditing: boolean;
   onSaveComplete?: () => void;
-  onFieldChange?: () => void;
 };
 
 export const BusinessDetailsContent = forwardRef<
   BusinessDetailsContentHandle,
   BusinessDetailsContentProps
->(({isEditing, onSaveComplete, onFieldChange}, ref) => {
+>(({isEditing, onSaveComplete}, ref) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
 
-  const {
-    organization,
-    stagedValues,
-    handleFieldChange,
-    hasChanges,
-    saveOrganization,
-  } = useOrganization(isEditing);
+  const {organization, stagedValues, handleFieldChange, saveOrganization} =
+    useOrganization(isEditing);
 
   const handleSave = async () => {
     const result = await saveOrganization();
@@ -42,14 +35,7 @@ export const BusinessDetailsContent = forwardRef<
 
   useImperativeHandle(ref, () => ({
     saveOrganization: handleSave,
-    hasChanges,
   }));
-
-  useEffect(() => {
-    if (Object.keys(stagedValues).length > 0) {
-      onFieldChange?.();
-    }
-  }, [stagedValues, onFieldChange]);
 
   if (!organization) {
     return <EmptyState message="No organization information available" />;
