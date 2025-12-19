@@ -74,7 +74,7 @@ const _Tokens = {
     destructiveForeground: Palette.brand.white,
 
     // UI
-    icon: Palette.brand.black,
+    icon: Palette.gray[600],
     headerAndroid: Palette.brand.bluepurple,
     label: Palette.gray[600],
     tint: Palette.brand.blue,
@@ -130,7 +130,7 @@ const _Tokens = {
     destructiveForeground: Palette.brand.white,
 
     // UI
-    icon: Palette.mushroom,
+    icon: Palette.gray[600],
     headerAndroid: Palette.brand.white,
     label: Palette.mushroom,
     tint: Palette.brand.blue,

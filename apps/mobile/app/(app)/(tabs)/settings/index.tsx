@@ -1,19 +1,34 @@
 import {useCallback} from 'react';
-import {StyleSheet, View, Platform} from 'react-native';
+import {StyleSheet, Platform, View} from 'react-native';
 import {router} from 'expo-router';
-import {GestureDetector} from 'react-native-gesture-handler';
-import {Card} from '@/components/cards/card';
-import {ThemedView, ThemedText, ModalScrollView} from '@/components/ui';
+import {GestureDetector, ScrollView} from 'react-native-gesture-handler';
+import {List, Divider} from 'react-native-paper';
+import {type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {AppearanceMenu} from '@/features/settings';
 import {useTheme, useAuth, useSidebar} from '@/providers';
-import {AppIcons, showConfirmAlert, makeStyleFactory} from '@/utils';
+import {Icon, showConfirmAlert, makeStyleFactory} from '@/utils';
 
 export default function SettingsModal() {
   const {ds, theme, scheme} = useTheme();
   const {logout} = useAuth();
   const {mainGesture} = useSidebar();
   const styles = createStyles(ds, theme);
+
+  const renderIcon = (iconName: string, colorToken?: TokenName) => {
+    const IconWrapper = () => (
+      <View style={styles.iconContainer}>
+        <Icon
+          name={iconName}
+          size="sm"
+          colorToken={colorToken}
+          withBackground={!!colorToken}
+        />
+      </View>
+    );
+    IconWrapper.displayName = 'IconWrapper';
+    return IconWrapper;
+  };
 
   const handleLogout = useCallback(() => {
     showConfirmAlert({
@@ -29,102 +44,98 @@ export default function SettingsModal() {
   }, [logout]);
 
   const content = (
-    <ThemedView style={styles.container}>
-      <ModalScrollView contentContainerStyle={styles.contentContainer}>
-        <Card>
-          <Card.Row
-            icon={AppIcons.business.profile}
-            onPress={() => router.push('/(app)/(tabs)/settings/profile')}
-          >
-            <ThemedText variant="label">Profile</ThemedText>
-          </Card.Row>
-          <Card.Divider withIconOffset />
-          <Card.Row
-            icon={AppIcons.business.organization}
-            onPress={() => router.push('/(app)/(tabs)/settings/organization')}
-          >
-            <ThemedText variant="label">Organization</ThemedText>
-          </Card.Row>
-        </Card>
-
-        <Card>
-          <Card.Row
-            icon={AppIcons.navigation.settings}
-            onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
-          >
-            <ThemedText variant="label">App Settings</ThemedText>
-          </Card.Row>
-          <Card.Divider withIconOffset />
-          <Card.Row
-            icon={
-              scheme === 'dark' ? AppIcons.theme.light : AppIcons.theme.dark
-            }
-            hideChevron
-          >
-            <View style={styles.rowContent}>
-              <ThemedText variant="label">Appearance</ThemedText>
-              <AppearanceMenu />
-            </View>
-          </Card.Row>
-          <Card.Divider withIconOffset />
-          <Card.Row
-            icon={AppIcons.navigation.settings}
-            onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
-          >
-            <ThemedText variant="label">Preferences</ThemedText>
-          </Card.Row>
-          <Card.Divider withIconOffset />
-          <Card.Row
-            icon={AppIcons.content.language}
-            onPress={() => router.push('/(app)/(tabs)/settings/language')}
-          >
-            <ThemedText variant="label">App Language</ThemedText>
-          </Card.Row>
-        </Card>
-
-        <Card>
-          <Card.Row
-            icon={AppIcons.status.help}
-            onPress={() => router.push('/(app)/(tabs)/settings/support')}
-          >
-            <ThemedText variant="label">Report an Issue</ThemedText>
-          </Card.Row>
-          <Card.Divider withIconOffset />
-          <Card.Row
-            icon={AppIcons.content.privacy}
-            onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
-          >
-            <ThemedText variant="label">Privacy Policy</ThemedText>
-          </Card.Row>
-          <Card.Divider withIconOffset />
-          <Card.Row
-            icon={AppIcons.content.document}
-            onPress={() => router.push('/(app)/(tabs)/settings/terms')}
-          >
-            <ThemedText variant="label">Terms of Use</ThemedText>
-          </Card.Row>
-          <Card.Divider withIconOffset />
-          <Card.Row
-            icon={AppIcons.status.info}
-            onPress={() => router.push('/(app)/(tabs)/settings/about')}
-          >
-            <ThemedText variant="label">About</ThemedText>
-          </Card.Row>
-        </Card>
-
-        <Card>
-          <Card.Row
-            icon={AppIcons.actions.logout}
-            onPress={handleLogout}
-            hideChevron
-          >
-            <ThemedText variant="label" style={{color: theme.destructive}}>
-              Logout
-            </ThemedText>
-          </Card.Row>
-        </Card>
-      </ModalScrollView>
-    </ThemedView>
+    <ScrollView
+      contentContainerStyle={styles.contentContainer}
+      showsVerticalScrollIndicator={false}
+    >
+      <List.Item
+        title="Profile"
+        description="View and edit your profile"
+        titleStyle={styles.itemTitle}
+        left={renderIcon('person', 'accentBlue')}
+        onPress={() => router.push('/(app)/(tabs)/settings/profile')}
+      />
+      <Divider style={styles.divider} />
+      <List.Item
+        title="Organization"
+        description="Manage organization settings"
+        titleStyle={styles.itemTitle}
+        left={renderIcon('people', 'accentGreen')}
+        onPress={() => router.push('/(app)/(tabs)/settings/organization')}
+      />
+      <Divider style={styles.divider} />
+      <List.Item
+        title="App Settings"
+        description="Configure application settings"
+        titleStyle={styles.itemTitle}
+        left={renderIcon('cog-outline', 'accentBlue')}
+        onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
+      />
+      <Divider style={styles.divider} />
+      <List.Item
+        style={styles.apperanceItem}
+        title="Appearance"
+        description="Switch between light and dark mode"
+        titleStyle={styles.itemTitle}
+        left={renderIcon(scheme === 'dark' ? 'sunny' : 'moon', 'purple')}
+        right={() => <AppearanceMenu />}
+      />
+      <Divider style={styles.divider} />
+      <List.Item
+        title="Preferences"
+        description="Set your app preferences"
+        titleStyle={styles.itemTitle}
+        left={renderIcon('options', 'accentOrange')}
+        onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
+      />
+      <Divider style={styles.divider} />
+      <List.Item
+        title="App Language"
+        description="Select your preferred language"
+        titleStyle={styles.itemTitle}
+        left={renderIcon('planet', 'accentTeal')}
+        onPress={() => router.push('/(app)/(tabs)/settings/language')}
+      />
+      <Divider style={styles.divider} />
+      <List.Item
+        title="Report an Issue"
+        description="Get support or report a problem"
+        titleStyle={styles.itemTitle}
+        left={renderIcon('help-circle', 'accentOrange')}
+        onPress={() => router.push('/(app)/(tabs)/settings/support')}
+      />
+      <Divider style={styles.divider} />
+      <List.Item
+        title="Privacy Policy"
+        description="Read our privacy policy"
+        titleStyle={styles.itemTitle}
+        left={renderIcon('lock-closed', 'accentIndigo')}
+        onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
+      />
+      <Divider style={styles.divider} />
+      <List.Item
+        title="Terms of Use"
+        description="Read the terms of use"
+        titleStyle={styles.itemTitle}
+        left={renderIcon('document-text', 'accentIndigo')}
+        onPress={() => router.push('/(app)/(tabs)/settings/terms')}
+      />
+      <Divider style={styles.divider} />
+      <List.Item
+        title="About"
+        description="Learn more about this app"
+        titleStyle={styles.itemTitle}
+        left={renderIcon('information-circle', 'accentBlue')}
+        onPress={() => router.push('/(app)/(tabs)/settings/about')}
+      />
+      <Divider style={styles.divider} />
+      <List.Item
+        title="Logout"
+        titleStyle={[styles.itemTitle, {color: theme.destructive}]}
+        left={renderIcon('sign-out', 'destructive')}
+        onPress={handleLogout}
+      />
+    </ScrollView>
   );
 
   if (Platform.OS === 'web') {
@@ -137,21 +148,22 @@ export default function SettingsModal() {
 const createStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
-      container: {
-        flex: 1,
-      },
       contentContainer: {
-        padding: ds.spacing.lg,
-        gap: ds.spacing.lg,
+        paddingHorizontal: ds.spacing.xl,
       },
-
-      rowContent: {
-        flexDirection: 'row',
+      itemTitle: {
+        ...ds.typography.label,
+      },
+      iconContainer: {
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        flex: 1,
-        height: 20,
+      },
+      apperanceItem: {
+        paddingRight: 0,
+      },
+      divider: {
+        marginLeft: ds.spacing.xl * 2 + ds.spacing.xxs,
       },
     }),
-  (ds, _theme) => themeKey(_theme, ds),
+  (ds, theme) => themeKey(theme, ds),
 );

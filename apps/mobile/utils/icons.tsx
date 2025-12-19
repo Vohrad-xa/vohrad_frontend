@@ -1,6 +1,6 @@
 import React from 'react';
 import type {OpaqueColorValue, StyleProp, TextStyle} from 'react-native';
-import {Platform} from 'react-native';
+import {Platform, View} from 'react-native';
 import {Ionicons, FontAwesome} from '@expo/vector-icons';
 import {type TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers/theme-provider';
@@ -18,6 +18,7 @@ interface IconProps {
   tintColor?: string;
   style?: StyleProp<TextStyle>;
   noContainer?: boolean;
+  withBackground?: boolean;
 }
 
 export const IconFontFamily = 'Ionicons' as const;
@@ -37,35 +38,54 @@ export const Icon: React.FC<IconProps> = ({
   colorToken,
   tintColor,
   style,
+  withBackground,
 }) => {
   const {theme, ds} = useTheme();
   const resolvedSize =
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
   const resolvedToken = colorToken;
-  const resolvedColor =
+  const backgroundColor =
     tintColor ?? color ?? (resolvedToken ? theme[resolvedToken] : theme.icon);
 
-  // Check FontAwesome
-  if (name in FontAwesome.glyphMap) {
-    return (
+  const iconColor = withBackground ? '#FFFFFF' : backgroundColor;
+
+  const iconElement =
+    name in FontAwesome.glyphMap ? (
       <FontAwesome
         name={name as keyof typeof FontAwesome.glyphMap}
         size={resolvedSize}
-        color={resolvedColor}
+        color={iconColor}
+        style={style}
+      />
+    ) : (
+      <Ionicons
+        name={name as keyof typeof Ionicons.glyphMap}
+        size={resolvedSize}
+        color={iconColor}
         style={style}
       />
     );
+
+  // If withBackground, wrap in a circular container
+  if (withBackground) {
+    const containerSize = resolvedSize * 2;
+    return (
+      <View
+        style={{
+          width: containerSize / 1.2,
+          height: containerSize / 1.2,
+          borderRadius: containerSize / 2,
+          backgroundColor,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        {iconElement}
+      </View>
+    );
   }
 
-  // Default to Ionicons
-  return (
-    <Ionicons
-      name={name as keyof typeof Ionicons.glyphMap}
-      size={resolvedSize}
-      color={resolvedColor}
-      style={style}
-    />
-  );
+  return iconElement;
 };
 
 export const AppIcons = {

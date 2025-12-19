@@ -19,6 +19,7 @@ export default function HomeLayout() {
       <Stack
         screenOptions={{
           headerLargeTitle: true,
+          animation: 'ios_from_right',
           headerTitleAlign: 'left',
           headerTransparent: Platform.OS === 'ios',
           headerShadowVisible: false,

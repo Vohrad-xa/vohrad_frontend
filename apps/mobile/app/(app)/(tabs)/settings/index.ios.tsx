@@ -1,17 +1,14 @@
 import {useCallback} from 'react';
-import {StyleSheet} from 'react-native';
 import {router} from 'expo-router';
 import {ListSection} from '@/components/ui/list-section.ios';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {Host, Picker, List, Button} from '@/modules/sykamore-ui/src/ios';
 import {useTheme, useAuth} from '@/providers';
-import {showConfirmAlert, makeStyleFactory} from '@/utils';
+import {showConfirmAlert} from '@/utils';
 import {AppIcons, Icon} from '@/utils/icons';
 
 export default function SettingsModal() {
-  const {ds, theme, preference, setScheme} = useTheme();
+  const {ds, preference, setScheme} = useTheme();
   const {logout} = useAuth();
-  const styles = createStyles(ds, theme);
 
   const handleLogout = useCallback(() => {
     showConfirmAlert({
@@ -27,7 +24,7 @@ export default function SettingsModal() {
   }, [logout]);
 
   return (
-    <Host style={styles.host} matchContents>
+    <Host style={{flex: 1}} matchContents>
       <List
         listStyle="insetGrouped"
         showScrollIndicators={false}
@@ -135,13 +132,3 @@ export default function SettingsModal() {
     </Host>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      host: {
-        flex: 1,
-      },
-    }),
-  (_ds, _theme) => themeKey(_theme, _ds),
-);
