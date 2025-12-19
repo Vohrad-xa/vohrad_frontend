@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, Platform, View} from 'react-native';
-import {Card, List, Switch} from 'react-native-paper';
-import {ThemedText} from '@/components/ui';
+import {List, Switch, Divider} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {Switch as AndroidSwitch} from '@/modules/sykamore-ui/src/android';
 import {
@@ -25,7 +24,7 @@ export function FilterContent() {
 
   if (Platform.OS === 'ios') {
     return (
-      <Host style={styles.hostContainer} matchContents>
+      <Host style={styles.container} matchContents>
         <IOSList listStyle="insetGrouped" showScrollIndicators={false}>
           <Section
             footer={
@@ -58,52 +57,49 @@ export function FilterContent() {
   }
 
   return (
-    <View style={styles.hostContainer}>
-      <Card.Content style={styles.cardContent}>
-        {cardConfig.map((card) => {
-          const visibilityKey = card.key;
-          const isVisible = visibility[visibilityKey];
+    <View style={styles.container}>
+      {cardConfig.map((card, index) => {
+        const visibilityKey = card.key;
+        const isVisible = visibility[visibilityKey];
 
-          return (
-            <React.Fragment key={visibilityKey}>
-              <List.Item
-                style={styles.listItem}
-                title={card.title}
-                titleStyle={styles.label}
-                accessibilityLabel={`Toggle ${card.title} card`}
-                left={() => (
-                  <View style={styles.iconContainer}>
-                    <Icon name={card.icon} colorToken="muted" size="lg" />
-                  </View>
-                )}
-                right={() =>
-                  Platform.OS === 'android' ? (
-                    <AndroidSwitch
-                      value={isVisible}
-                      onValueChange={(value) =>
-                        setCardVisibility(visibilityKey, value)
-                      }
-                      variant="switch"
-                      scale={0.8}
-                    />
-                  ) : (
-                    <Switch
-                      value={isVisible}
-                      onValueChange={(value) =>
-                        setCardVisibility(visibilityKey, value)
-                      }
-                    />
-                  )
-                }
-              />
-            </React.Fragment>
-          );
-        })}
-      </Card.Content>
-      <ThemedText variant="caption" style={styles.description}>
-        You can choose your preferred overview cards to be displayed on the
-        dashboard.
-      </ThemedText>
+        return (
+          <React.Fragment key={visibilityKey}>
+            <List.Item
+              style={styles.itemList}
+              title={card.title}
+              titleStyle={styles.itemTitle}
+              accessibilityLabel={`Toggle ${card.title} card`}
+              left={() => (
+                <View style={styles.iconContainer}>
+                  <Icon name={card.icon} />
+                </View>
+              )}
+              right={() =>
+                Platform.OS === 'android' ? (
+                  <AndroidSwitch
+                    value={isVisible}
+                    onValueChange={(value) =>
+                      setCardVisibility(visibilityKey, value)
+                    }
+                    variant="switch"
+                    scale={0.8}
+                  />
+                ) : (
+                  <Switch
+                    value={isVisible}
+                    onValueChange={(value) =>
+                      setCardVisibility(visibilityKey, value)
+                    }
+                  />
+                )
+              }
+            />
+            {index < cardConfig.length - 1 && (
+              <Divider style={styles.divider} />
+            )}
+          </React.Fragment>
+        );
+      })}
     </View>
   );
 }
@@ -111,38 +107,27 @@ export function FilterContent() {
 export default FilterContent;
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
-      hostContainer: {
+      container: {
         flex: 1,
-        paddingHorizontal: Platform.OS === 'ios' ? undefined : ds.spacing.sm,
+        paddingHorizontal: Platform.OS === 'ios' ? undefined : ds.spacing.xl,
       },
-      card: {
-        borderRadius: ds.components.card.borderRadius,
-        backgroundColor: theme.input,
+      itemTitle: {
+        ...ds.typography.label,
       },
-      cardContent: {},
+      itemList: {
+        paddingRight: 0,
+        paddingTop: 0,
+        paddingBottom: 0,
+      },
       iconContainer: {
         justifyContent: 'center',
         alignItems: 'center',
       },
-      listItem: {
-        paddingTop: 0,
-        paddingBottom: 0,
-        paddingLeft: 0,
-        paddingRight: 0,
-      },
-
       divider: {
-        marginLeft: ds.spacing.xl * 2,
-      },
-      description: {
-        marginVertical: ds.spacing.lg,
-        paddingHorizontal: ds.spacing.xl,
-      },
-      label: {
-        fontSize: ds.typography.label.fontSize,
+        marginLeft: ds.spacing.xxl + ds.spacing.xs,
       },
     }),
-  (ds, theme) => themeKey(theme, ds),
+  (ds, _theme) => themeKey(_theme, ds),
 );

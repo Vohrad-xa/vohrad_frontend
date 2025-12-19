@@ -51,6 +51,7 @@ export default function SettingsModal() {
       <List.Item
         title="Profile"
         description="View and edit your profile"
+        descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon('person', 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/profile')}
@@ -59,6 +60,7 @@ export default function SettingsModal() {
       <List.Item
         title="Organization"
         description="Manage organization settings"
+        descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon('people', 'accentGreen')}
         onPress={() => router.push('/(app)/(tabs)/settings/organization')}
@@ -67,6 +69,7 @@ export default function SettingsModal() {
       <List.Item
         title="App Settings"
         description="Configure application settings"
+        descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon('cog-outline', 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
@@ -76,6 +79,7 @@ export default function SettingsModal() {
         style={styles.apperanceItem}
         title="Appearance"
         description="Switch between light and dark mode"
+        descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon(scheme === 'dark' ? 'sunny' : 'moon', 'purple')}
         right={() => <AppearanceMenu />}
@@ -84,6 +88,7 @@ export default function SettingsModal() {
       <List.Item
         title="Preferences"
         description="Set your app preferences"
+        descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon('options', 'accentOrange')}
         onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
@@ -92,6 +97,7 @@ export default function SettingsModal() {
       <List.Item
         title="App Language"
         description="Select your preferred language"
+        descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon('planet', 'accentTeal')}
         onPress={() => router.push('/(app)/(tabs)/settings/language')}
@@ -100,6 +106,7 @@ export default function SettingsModal() {
       <List.Item
         title="Report an Issue"
         description="Get support or report a problem"
+        descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon('help-circle', 'accentOrange')}
         onPress={() => router.push('/(app)/(tabs)/settings/support')}
@@ -108,6 +115,7 @@ export default function SettingsModal() {
       <List.Item
         title="Privacy Policy"
         description="Read our privacy policy"
+        descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon('lock-closed', 'accentIndigo')}
         onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
@@ -116,6 +124,7 @@ export default function SettingsModal() {
       <List.Item
         title="Terms of Use"
         description="Read the terms of use"
+        descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon('document-text', 'accentIndigo')}
         onPress={() => router.push('/(app)/(tabs)/settings/terms')}
@@ -124,6 +133,7 @@ export default function SettingsModal() {
       <List.Item
         title="About"
         description="Learn more about this app"
+        descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon('information-circle', 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/about')}
@@ -146,7 +156,7 @@ export default function SettingsModal() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       contentContainer: {
         paddingHorizontal: ds.spacing.xl,
@@ -163,6 +173,11 @@ const createStyles = makeStyleFactory(
       },
       divider: {
         marginLeft: ds.spacing.xl * 2 + ds.spacing.xxs,
+      },
+      description: {
+        ...ds.typography.value,
+        marginTop: ds.spacing.xs,
+        color: theme.muted,
       },
     }),
   (ds, theme) => themeKey(theme, ds),
