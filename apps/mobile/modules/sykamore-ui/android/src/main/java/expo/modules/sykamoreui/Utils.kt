@@ -1,56 +1,82 @@
 package expo.modules.sykamoreui
 
-import android.graphics.Color as AndroidColor
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import android.graphics.Color
+import android.os.Build
+import android.util.Log
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color as ComposeColor
+import androidx.compose.material.icons.Icons
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 
-// Extension property to convert Android Color to Compose Color
-val AndroidColor?.compose: ComposeColor
-  get() = this?.let {
-    ComposeColor(android.graphics.Color.red(this), android.graphics.Color.green(this), android.graphics.Color.blue(this), android.graphics.Color.alpha(this))
-  } ?: ComposeColor.Unspecified
+@Composable
+fun DynamicTheme(content: @Composable (() -> Unit)) {
+  val context = LocalContext.current
+  val colors = when {
+    (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) -> {
+      if (isSystemInDarkTheme()) {
+        dynamicDarkColorScheme(context)
+      } else {
+        dynamicLightColorScheme(context)
+      }
+    }
 
-// Extension property with nullable result
-val AndroidColor?.composeOrNull: ComposeColor?
-  get() = this?.let {
-    ComposeColor(android.graphics.Color.red(this), android.graphics.Color.green(this), android.graphics.Color.blue(this), android.graphics.Color.alpha(this))
+    isSystemInDarkTheme() -> darkColorScheme()
+    else -> lightColorScheme()
   }
-
-@Composable
-fun colorToComposeColor(color: AndroidColor?): ComposeColor {
-  return color?.compose ?: MaterialTheme.colorScheme.onSurface
-}
-
-@Composable
-fun DynamicTheme(content: @Composable () -> Unit) {
-  MaterialTheme {
+  MaterialTheme(colorScheme = colors) {
     content()
   }
 }
 
-// Basic icon mapping - extend as needed
-fun getImageVector(iconName: String): ImageVector? {
-  return when (iconName.lowercase()) {
-    "add" -> Icons.Default.Add
-    "delete" -> Icons.Default.Delete
-    "edit" -> Icons.Default.Edit
-    "close" -> Icons.Default.Close
-    "check" -> Icons.Default.Check
-    "settings" -> Icons.Default.Settings
-    "more" -> Icons.Default.MoreVert
-    "share" -> Icons.Default.Share
-    "favorite" -> Icons.Default.Favorite
-    "home" -> Icons.Default.Home
-    "search" -> Icons.Default.Search
-    "menu" -> Icons.Default.Menu
-    "person" -> Icons.Default.Person
-    "refresh" -> Icons.Default.Refresh
-    "info" -> Icons.Default.Info
-    else -> null
+fun colorToComposeColorOrNull(color: Color?): androidx.compose.ui.graphics.Color? {
+  return color?.let {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      androidx.compose.ui.graphics.Color(it.red(), it.green(), it.blue(), it.alpha())
+    } else {
+      null
+    }
   }
 }
 
+fun colorToComposeColor(color: Color?): androidx.compose.ui.graphics.Color {
+  return colorToComposeColorOrNull(color) ?: androidx.compose.ui.graphics.Color.Unspecified
+}
+
+val Color?.compose: androidx.compose.ui.graphics.Color
+  get() = colorToComposeColor(this)
+
+val Color?.composeOrNull: androidx.compose.ui.graphics.Color?
+  get() = colorToComposeColorOrNull(this)
+
+/**
+ * Gets the ImageVector for a given icon name using reflection.
+ */
+fun getImageVector(icon: String?): ImageVector? {
+  if (icon.isNullOrEmpty()) return null
+  return try {
+    val parts = icon.split(".")
+    if (parts.size != 2) return null
+    val theme = parts[0].lowercase()
+    val name = parts[1]
+    val group = when (theme) {
+      "filled" -> Icons.Filled
+      "outlined" -> Icons.Outlined
+      "rounded" -> Icons.Rounded
+      "sharp" -> Icons.Sharp
+      "twotone" -> Icons.TwoTone
+      else -> return null
+    }
+    val clazz = Class.forName("androidx.compose.material.icons.$theme.${name}Kt")
+    val method = clazz.getDeclaredMethod("get$name", group::class.java)
+    method.invoke(null, group) as? ImageVector
+  } catch (e: Exception) {
+    Log.w("SykamoreUi", "The icon $icon couldn't be found.")
+    return null
+  }
+}

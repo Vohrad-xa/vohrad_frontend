@@ -1,6 +1,6 @@
 import {requireNativeView} from 'expo';
 import {Ref} from 'react';
-import {type ViewEvent} from '../types';
+import {type ViewEvent} from '../../types';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 

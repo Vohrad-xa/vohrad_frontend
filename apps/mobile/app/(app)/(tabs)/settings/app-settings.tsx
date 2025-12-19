@@ -60,6 +60,7 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
         justifyContent: 'space-between',
         flex: 1,
+        height: ds.spacing.xl,
       },
       description: {
         paddingHorizontal: ds.spacing.xl,

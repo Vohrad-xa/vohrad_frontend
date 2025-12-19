@@ -1,7 +1,12 @@
 import React from 'react';
 import {SymbolView, type SFSymbol} from 'expo-symbols';
 import {Palette, type TokenName} from '@/constants';
-import {background, clipShape, frame, Image} from '@/modules/sykamore-ui';
+import {
+  background,
+  clipShape,
+  frame,
+  Image,
+} from '@/modules/sykamore-ui/src/ios';
 import {useTheme} from '@/providers/theme-provider';
 
 export type IconName = string;

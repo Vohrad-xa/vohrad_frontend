@@ -7,7 +7,7 @@ import {
   Text,
   Button,
   HStack,
-} from '@/modules/sykamore-ui';
+} from '@/modules/sykamore-ui/src/ios';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, type IconName} from '@/utils/icons';
 

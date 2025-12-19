@@ -75,6 +75,7 @@ export function UsersList({
 
   return (
     <FlatList
+      style={styles.flatList}
       data={users}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
@@ -104,10 +105,13 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       list: {
         paddingRight: ds.spacing.lg,
-        paddingLeft: ds.spacing.lg,
+        paddingLeft: ds.spacing.lg + 2,
       },
       item: {
         alignItems: 'center',
+      },
+      flatList: {
+        borderRadius: ds.spacing.xxl,
       },
       title: {
         color: theme.text,

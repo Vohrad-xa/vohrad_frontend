@@ -1,6 +1,6 @@
 {
   "platforms": ["apple", "android"],
-  "coreFeatures": ["swiftui"],
+  "coreFeatures": ["swiftui", "compose"],
   "apple": {
     "modules": ["SykamoreUiModule"]
   },

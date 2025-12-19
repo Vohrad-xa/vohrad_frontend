@@ -2,7 +2,7 @@ import {useCallback} from 'react';
 import {StyleSheet} from 'react-native';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useBiometricToggle} from '@/features/settings/app-settings/biometric';
-import {Host, List, Switch, Section, Text} from '@/modules/sykamore-ui';
+import {Host, List, Switch, Section, Text} from '@/modules/sykamore-ui/src/ios';
 import {useTheme, useHaptic} from '@/providers';
 import {AppIcons, Icon, makeStyleFactory} from '@/utils';
 

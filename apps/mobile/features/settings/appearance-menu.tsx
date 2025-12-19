@@ -1,4 +1,6 @@
-import {Platform, type ViewStyle, Pressable} from 'react-native';
+import React from 'react';
+import {Platform, Pressable, type ViewStyle} from 'react-native';
+
 import {ThemedText} from '@/components/ui';
 import {PaperMenu} from '@/components/ui/paper-menu';
 import {useTheme} from '@/providers';
@@ -15,11 +17,11 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
     'system',
   ];
   const options = ['Light', 'Dark', 'System'];
+  const selectedIndex = values.indexOf(preference);
 
   if (Platform.OS === 'ios') {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const {Host, Picker} = require('@/modules/sykamore-ui');
-    const selectedIndex = values.indexOf(preference);
+    const {Host, Picker} = require('@/modules/sykamore-ui/src/ios');
 
     return (
       <Host matchContents useViewportSizeMeasurement style={style}>
@@ -36,6 +38,26 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
     );
   }
 
+  if (Platform.OS === 'android') {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const {Picker} = require('@/modules/sykamore-ui/src/android');
+
+    return (
+      <Picker
+        key={preference}
+        options={options}
+        selectedIndex={selectedIndex}
+        variant="menu"
+        triggerContentPadding={{start: 4, end: 0}}
+        onOptionSelected={({nativeEvent}: {nativeEvent: {index: number}}) =>
+          setScheme(values[nativeEvent.index])
+        }
+        style={style}
+      />
+    );
+  }
+
+  // Fallback for web or other platforms
   const actions = values.map((value, index) => ({
     id: value,
     title: options[index],
@@ -48,9 +70,7 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
       onSelect={(id) => setScheme(id as (typeof values)[number])}
     >
       <Pressable style={style}>
-        <ThemedText variant="label">
-          {options[values.indexOf(preference)]}
-        </ThemedText>
+        <ThemedText variant="label">{options[selectedIndex]}</ThemedText>
       </Pressable>
     </PaperMenu>
   );

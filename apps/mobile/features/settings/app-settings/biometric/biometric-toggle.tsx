@@ -1,6 +1,7 @@
-import {StyleSheet, View} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 import {ThemedText, Toggle} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {Switch} from '@/modules/sykamore-ui/src/android';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {useBiometricToggle} from './use-biometric-toggle';
@@ -10,6 +11,24 @@ export function BiometricToggle() {
   const styles = createStyles(ds, theme);
   const {isEnabled, isAvailable, loading, availabilityMessage, handleToggle} =
     useBiometricToggle();
+
+  if (Platform.OS === 'android') {
+    return (
+      <View style={styles.container}>
+        {availabilityMessage && (
+          <ThemedText style={styles.message} accessibilityRole="text">
+            {availabilityMessage}
+          </ThemedText>
+        )}
+        <Switch
+          value={isEnabled}
+          onValueChange={handleToggle}
+          variant="switch"
+          scale={0.8}
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

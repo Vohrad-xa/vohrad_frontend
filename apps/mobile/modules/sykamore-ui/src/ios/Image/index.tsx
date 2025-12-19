@@ -1,7 +1,7 @@
 import {requireNativeView} from 'expo';
 import {ColorValue} from 'react-native';
 import {type SFSymbol} from 'sf-symbols-typescript';
-import {type ViewEvent} from '../types';
+import {type ViewEvent} from '../../types';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 

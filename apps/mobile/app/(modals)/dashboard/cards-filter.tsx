@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Platform} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
-import {HeaderButton, ModalScrollView, ThemedView} from '@/components/ui';
+import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {FilterContent} from '@/features/dashboard';
 import {useTheme} from '@/providers';
@@ -25,34 +25,33 @@ export default function FilterModal() {
           headerShadowVisible: false,
           headerTransparent: Platform.OS === 'ios',
           headerTitleStyle: styles.headerTitleStyle,
-          headerTitleAlign: 'center',
-          headerBackButtonDisplayMode: 'minimal',
-          headerLeft: () => (
-            <HeaderButton
-              variant="close"
-              onPress={handleClose}
-              accessibilityLabel="Close filters"
-            />
-          ),
+          headerTitleAlign: 'left',
+          headerBackButtonDisplayMode: 'default',
+          headerBackVisible: true,
+          headerLeft: () =>
+            Platform.OS !== 'ios' ? undefined : (
+              <HeaderButton
+                variant="close"
+                accessibilityLabel="Close Filter Modal"
+                onPress={handleClose}
+              />
+            ),
         }}
       />
-      <ThemedView style={styles.container}>
-        <ModalScrollView>
-          <FilterContent />
-        </ModalScrollView>
-      </ThemedView>
+      <FilterContent />
     </>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (_ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
       },
       headerTitleStyle: {
-        color: theme.text,
+        fontWeight: ds.fontWeight.bold,
+        color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

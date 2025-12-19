@@ -62,10 +62,8 @@ export default function SettingsModal() {
             hideChevron
           >
             <View style={styles.rowContent}>
-              <ThemedText variant="label" style={styles.appearanceLabel}>
-                Appearance
-              </ThemedText>
-              <AppearanceMenu style={styles.appearanceMenuStyle} />
+              <ThemedText variant="label">Appearance</ThemedText>
+              <AppearanceMenu />
             </View>
           </Card.Row>
           <Card.Divider withIconOffset />
@@ -151,15 +149,8 @@ const createStyles = makeStyleFactory(
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-      },
-      appearanceMenuStyle: {
-        minWidth: '35%',
-        maxHeight: 20,
-        overflow: 'hidden',
-      },
-      appearanceLabel: {
         flex: 1,
-        minWidth: '70%',
+        height: 20,
       },
     }),
   (ds, _theme) => themeKey(_theme, ds),
