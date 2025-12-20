@@ -32,10 +32,9 @@ const PickerNativeView: React.ComponentType<any> = requireNativeView(
   'PickerView',
 );
 
-const PickerContentNativeView: React.ComponentType<any> = requireNativeView(
-  'SykamoreUi',
-  'PickerContentView',
-);
+export const PickerContentView: React.ComponentType<{
+  children?: React.ReactNode;
+}> = requireNativeView('SykamoreUi', 'PickerContentView');
 
 const PickerLabelNativeView: React.ComponentType<any> = requireNativeView(
   'SykamoreUi',
@@ -95,7 +94,7 @@ export function Picker(props: PickerProps) {
         {labelNode && (
           <PickerLabelNativeView>{labelNode}</PickerLabelNativeView>
         )}
-        <PickerContentNativeView>{children}</PickerContentNativeView>
+        <PickerContentView>{children}</PickerContentView>
       </PickerNativeView>
     );
   }
@@ -108,7 +107,7 @@ export function Picker(props: PickerProps) {
 
   return (
     <PickerNativeView {...nativeProps}>
-      <PickerContentNativeView>{children}</PickerContentNativeView>
+      <PickerContentView>{children}</PickerContentView>
     </PickerNativeView>
   );
 }

@@ -1,8 +1,7 @@
-import {Platform, type ViewStyle, Pressable} from 'react-native';
-import {ThemedText} from '@/components/ui';
-import {PaperMenu} from '@/components/ui/paper-menu';
+import {type ViewStyle} from 'react-native';
 import {useRolesList} from '@/features/roles';
 import type {Role} from '@vohrad/types';
+import {Picker} from '@/modules/sykamore-ui/src/android';
 
 type RolePickerProps = {
   selectedRoleId?: string;
@@ -20,43 +19,25 @@ export function RolePicker({
   const activeRoles = roles.filter((role: Role) => role.is_active);
   const roleIds = activeRoles.map((role: Role) => role.id);
   const roleNames = activeRoles.map((role: Role) => role.name);
-
-  const selectedRole = activeRoles.find(
-    (role: Role) => role.id === selectedRoleId,
-  );
-  const displayText = selectedRole?.name ?? 'Select Role';
-
-  if (Platform.OS === 'ios') {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const {Host, Picker} = require('@/modules/sykamore-ui/src/ios');
-    const selectedIndex = selectedRoleId ? roleIds.indexOf(selectedRoleId) : -1;
-
-    return (
-      <Host matchContents style={style} useViewportSizeMeasurement>
-        <Picker
-          label="Role"
-          options={roleNames}
-          selectedIndex={selectedIndex}
-          variant="menu"
-          onOptionSelected={({nativeEvent}: {nativeEvent: {index: number}}) =>
-            onRoleSelect(roleIds[nativeEvent.index])
-          }
-        />
-      </Host>
-    );
-  }
-
-  const actions = roleIds.map((id, index) => ({
-    id,
-    title: roleNames[index],
-    state: selectedRoleId === id ? ('on' as const) : undefined,
-  }));
+  const selectedIndex = selectedRoleId ? roleIds.indexOf(selectedRoleId) : -1;
 
   return (
-    <PaperMenu actions={actions} onSelect={(id) => onRoleSelect(id)}>
-      <Pressable style={style}>
-        <ThemedText variant="label">{displayText}</ThemedText>
-      </Pressable>
-    </PaperMenu>
+    <Picker
+      options={roleNames}
+      selectedIndex={selectedIndex}
+      variant="menu"
+      triggerContentPadding={{start: 12, end: 8}}
+      style={{
+        borderStyle: 'solid',
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 25,
+        height: 35,
+        ...style,
+      }}
+      onOptionSelected={({nativeEvent}: {nativeEvent: {index: number}}) =>
+        onRoleSelect(roleIds[nativeEvent.index])
+      }
+    />
   );
 }

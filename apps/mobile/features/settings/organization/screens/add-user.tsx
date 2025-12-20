@@ -1,9 +1,10 @@
 import React, {forwardRef, useImperativeHandle, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Pressable, Text} from 'react-native';
 import {useCreateUser} from '@vohrad/store';
 import {TextInput, List} from 'react-native-paper';
-import {DatePickerInput} from 'react-native-paper-dates';
+
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {DatePicker} from '@/modules/sykamore-ui/src/android';
 import {useTheme} from '@/providers';
 import {showAlert} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -28,6 +29,7 @@ export const AddUserScreen = forwardRef<
   const styles = createStyles(ds, theme);
   const {mutateAsync: createUser} = useCreateUser();
   const [formData, setFormData] = useState<Partial<UserCreateData>>({});
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleFieldChange = (key: string, value: string | Date | undefined) => {
     setFormData((prev: Partial<UserCreateData>) => ({
@@ -75,10 +77,6 @@ export const AddUserScreen = forwardRef<
     hasChanges,
   }));
 
-  const dateValue = formData.date_of_birth
-    ? new Date(formData.date_of_birth)
-    : undefined;
-
   const textFields: Array<{
     key: keyof UserCreateData;
     label: string;
@@ -104,13 +102,27 @@ export const AddUserScreen = forwardRef<
   ];
 
   return (
-    <View style={styles.container}>
+    <View>
+      <List.Section
+        title="Role Assignment"
+        titleStyle={styles.sectionTitleStyle}
+      >
+        <List.Item
+          style={styles.itemList}
+          title="Select role for the new User"
+          right={() => (
+            <RolePicker
+              selectedRoleId={formData.role_id}
+              onRoleSelect={handleRoleSelect}
+            />
+          )}
+        />
+      </List.Section>
       <List.Section
         title="User Information"
         style={styles.inputGroup}
         titleStyle={{
           ...styles.sectionTitleStyle,
-          paddingBottom: ds.spacing.xxs,
         }}
       >
         {textFields.map((field) => (
@@ -123,42 +135,47 @@ export const AddUserScreen = forwardRef<
             autoCapitalize={field.autoCapitalize}
             secureTextEntry={field.secureTextEntry}
             textColor={theme.text}
-            autoFocus={field.key === 'first_name'}
             activeOutlineColor={theme.primary}
             outlineStyle={styles.input}
             mode="outlined"
           />
         ))}
-        <DatePickerInput
-          locale="en"
-          label="Date of Birth"
-          value={dateValue}
-          onChange={(date) => handleFieldChange('date_of_birth', date)}
-          inputMode="start"
-          presentationStyle="pageSheet"
-          textColor={theme.text}
-          calendarIcon="calendar-outline"
-          endYear={new Date().getFullYear()}
-          activeOutlineColor={theme.primary}
-          outlineStyle={styles.input}
-          mode="outlined"
-        />
-      </List.Section>
-      <List.Section
-        title="Role Assignment"
-        style={styles.inputGroup}
-        titleStyle={styles.sectionTitleStyle}
-      >
-        <List.Item
-          title="Role"
-          description="Select the appropriate role for the new user"
-          right={() => (
-            <RolePicker
-              selectedRoleId={formData.role_id}
-              onRoleSelect={handleRoleSelect}
-            />
-          )}
-        />
+        <Pressable onPress={() => setShowDatePicker(true)}>
+          <TextInput
+            label="Date of Birth"
+            value={
+              formData.date_of_birth
+                ? new Date(formData.date_of_birth).toLocaleDateString()
+                : ''
+            }
+            editable={false}
+            activeOutlineColor={theme.primary}
+            outlineStyle={styles.input}
+            mode="outlined"
+            pointerEvents="none"
+            right={
+              <TextInput.Icon
+                icon="calendar"
+                forceTextInputFocus
+                onPress={() => setShowDatePicker(true)}
+              />
+            }
+          />
+        </Pressable>
+        {showDatePicker && (
+          <DatePicker
+            initialDate={formData.date_of_birth ?? null}
+            onDateSelected={(date) => {
+              if (date) {
+                handleFieldChange('date_of_birth', date);
+              }
+              setShowDatePicker(false);
+            }}
+            onDismiss={() => setShowDatePicker(false)}
+            confirmText="OK"
+            dismissText="Cancel"
+          />
+        )}
       </List.Section>
     </View>
   );
@@ -169,9 +186,6 @@ AddUserScreen.displayName = 'AddUserScreen';
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      container: {
-        flex: 1,
-      },
       inputGroup: {
         gap: ds.spacing.sm,
       },
@@ -181,10 +195,12 @@ const createStyles = makeStyleFactory(
         borderWidth: 0,
       },
       sectionTitleStyle: {
-        paddingTop: 0,
-        fontWeight: ds.typography.sectionTitle.fontWeight,
-        fontSize: ds.typography.sectionTitle.fontSize,
-        color: theme.text,
+        ...ds.typography.sectionTitle,
+      },
+      itemList: {
+        paddingRight: 0,
+        paddingLeft: 0,
+        paddingVertical: 0,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

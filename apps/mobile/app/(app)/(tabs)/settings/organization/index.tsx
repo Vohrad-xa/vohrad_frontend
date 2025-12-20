@@ -3,11 +3,11 @@ import {StyleSheet, View, Platform} from 'react-native';
 import {router} from 'expo-router';
 import {ScrollView} from 'react-native-gesture-handler';
 import {List, Divider} from 'react-native-paper';
+import {ListSection} from '@/components/ui/list-section.ios';
 import {type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {ListSection} from '@/components/ui/list-section.ios';
-import {Host, List as IOSList} from '@/modules/sykamore-ui/src/ios';
 import {OrganizationHeaderInfo} from '@/features/settings/organization/components';
+import {Host, List as IOSList} from '@/modules/sykamore-ui/src/ios';
 import {useTheme} from '@/providers';
 import {makeStyleFactory, Icon, AppIcons} from '@/utils';
 
