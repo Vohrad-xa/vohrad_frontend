@@ -116,17 +116,17 @@ export const AddUserScreen = forwardRef<
         {textFields.map((field) => (
           <TextInput
             key={field.key}
-            mode="flat"
             label={field.label}
             value={(formData[field.key] as string) ?? ''}
             onChangeText={(val) => handleFieldChange(field.key, val)}
             keyboardType={field.keyboardType}
             autoCapitalize={field.autoCapitalize}
             secureTextEntry={field.secureTextEntry}
-            activeUnderlineColor={theme.primary}
             textColor={theme.text}
-            style={styles.input}
             autoFocus={field.key === 'first_name'}
+            activeOutlineColor={theme.primary}
+            outlineStyle={styles.input}
+            mode="outlined"
           />
         ))}
         <DatePickerInput
@@ -136,12 +136,12 @@ export const AddUserScreen = forwardRef<
           onChange={(date) => handleFieldChange('date_of_birth', date)}
           inputMode="start"
           presentationStyle="pageSheet"
-          mode="flat"
-          activeUnderlineColor={theme.primary}
           textColor={theme.text}
-          style={styles.input}
           calendarIcon="calendar-outline"
           endYear={new Date().getFullYear()}
+          activeOutlineColor={theme.primary}
+          outlineStyle={styles.input}
+          mode="outlined"
         />
       </List.Section>
       <List.Section
@@ -173,11 +173,12 @@ const createStyles = makeStyleFactory(
         flex: 1,
       },
       inputGroup: {
-        gap: ds.spacing.md,
+        gap: ds.spacing.sm,
       },
       input: {
         backgroundColor: theme.input,
-        height: ds.spacing.xxxl,
+        borderRadius: ds.components.input.borderRadius,
+        borderWidth: 0,
       },
       sectionTitleStyle: {
         paddingTop: 0,

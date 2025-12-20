@@ -370,7 +370,7 @@ export const createDesignSystem = (
       },
 
       input: {
-        borderRadius: 15,
+        borderRadius: 20,
         padding: 12,
         height: 44,
         borderWidth: 1,
