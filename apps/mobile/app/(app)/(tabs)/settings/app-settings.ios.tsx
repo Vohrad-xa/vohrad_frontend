@@ -37,8 +37,7 @@ export default function AppSettingsScreen() {
         <Section
           footer={
             <Text>
-              Use your device&apos;s biometric authentication (e.g., fingerprint
-              or face recognition) to unlock the app.
+              Enable Face ID or Touch ID to quickly and securely access the app.
             </Text>
           }
         >
@@ -59,8 +58,8 @@ export default function AppSettingsScreen() {
         <Section
           footer={
             <Text>
-              Enable haptic feedback to receive tactile responses for certain
-              actions within the app.
+              Enable haptic feedback to receive tactile responses when
+              interacting with the app.
             </Text>
           }
         >
