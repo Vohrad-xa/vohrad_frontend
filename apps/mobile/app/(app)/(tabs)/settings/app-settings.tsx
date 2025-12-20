@@ -1,70 +1,87 @@
 import React from 'react';
 import {StyleSheet, Platform, View} from 'react-native';
-import {Card} from '@/components/cards/card';
-import {ModalScrollView, ThemedText} from '@/components/ui';
+import {ScrollView} from 'react-native-gesture-handler';
+import {List, Divider} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {type TokenName} from '@/constants/colors';
 import {BiometricToggle, HapticToggle} from '@/features/settings';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils';
-import {AppIcons} from '@/utils/icons';
+import {makeStyleFactory, Icon} from '@/utils';
 
 export default function AppSettingsScreen() {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
 
-  return (
-    <ModalScrollView contentContainerStyle={styles.container}>
-      {/* Biometric Unlock Setting */}
-      <Card>
-        <Card.Row icon={AppIcons.settings.biometric} hideChevron>
-          <View style={styles.rowContent}>
-            <ThemedText variant="label">Biometric Unlock</ThemedText>
-            <BiometricToggle />
-          </View>
-        </Card.Row>
-      </Card>
-      <ThemedText variant="caption" style={styles.description}>
-        Use your device&apos;s biometric authentication (e.g., fingerprint or
-        face recognition) to unlock the app.
-      </ThemedText>
+  const renderIcon = (iconName: string, colorToken?: TokenName) => {
+    const IconWrapper = () => (
+      <View style={styles.iconContainer}>
+        <Icon
+          name={iconName}
+          colorToken={colorToken}
+          withBackground={!!colorToken}
+        />
+      </View>
+    );
+    IconWrapper.displayName = 'IconWrapper';
+    return IconWrapper;
+  };
 
-      {/* Haptic Feedback Setting */}
+  return (
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
+      <List.Item
+        style={styles.listItem}
+        title="Biometric Unlock"
+        description="Activate fingerprint or facial recognition "
+        descriptionStyle={styles.description}
+        titleStyle={styles.itemTitle}
+        left={renderIcon('finger-print', 'accentGreen')}
+        right={() => <BiometricToggle />}
+      />
+
       {Platform.OS !== 'web' && (
-        <Card>
-          <Card.Row icon={AppIcons.settings.haptic} hideChevron>
-            <View style={styles.rowContent}>
-              <ThemedText variant="label">Haptic Feedback</ThemedText>
-              <HapticToggle />
-            </View>
-          </Card.Row>
-        </Card>
+        <>
+          <Divider style={styles.divider} />
+          <List.Item
+            style={styles.listItem}
+            title="Haptic Feedback"
+            description="Enable haptic feedback to receive tactile responses"
+            descriptionStyle={styles.description}
+            titleStyle={styles.itemTitle}
+            left={renderIcon('phone-portrait', 'destructive')}
+            right={() => <HapticToggle />}
+          />
+        </>
       )}
-      {Platform.OS !== 'web' && (
-        <ThemedText variant="caption" style={styles.description}>
-          Enable haptic feedback to receive tactile responses for certain
-          actions within the app.
-        </ThemedText>
-      )}
-    </ModalScrollView>
+    </ScrollView>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       container: {
-        gap: ds.spacing.xl,
+        paddingHorizontal: ds.spacing.lg,
       },
-      rowContent: {
-        flexDirection: 'row',
+      listItem: {
+        paddingRight: 0,
+      },
+      itemTitle: {
+        ...ds.typography.label,
+      },
+      iconContainer: {
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        flex: 1,
-        height: ds.spacing.xl,
+      },
+      divider: {
+        marginLeft: ds.spacing.xxxl,
       },
       description: {
-        paddingHorizontal: ds.spacing.xl,
-        marginTop: -ds.spacing.md,
+        ...ds.typography.value,
+        color: theme.muted,
+        marginTop: ds.spacing.xs,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

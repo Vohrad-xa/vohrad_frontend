@@ -20,7 +20,6 @@ export default function SettingsModal() {
       <View style={styles.iconContainer}>
         <Icon
           name={iconName}
-          size="sm"
           colorToken={colorToken}
           withBackground={!!colorToken}
         />
@@ -159,7 +158,7 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       contentContainer: {
-        paddingHorizontal: ds.spacing.xl,
+        paddingHorizontal: ds.spacing.lg,
       },
       itemTitle: {
         ...ds.typography.label,
@@ -172,7 +171,7 @@ const createStyles = makeStyleFactory(
         paddingRight: 0,
       },
       divider: {
-        marginLeft: ds.spacing.xl * 2 + ds.spacing.xxs,
+        marginLeft: ds.spacing.xxxl,
       },
       description: {
         ...ds.typography.value,
