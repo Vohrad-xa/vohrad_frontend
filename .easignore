@@ -1,6 +1,5 @@
-docs/
-../../.vscode/
-../web/
+.vscode/
+apps/web/
 .idea/
 ../../coverage
 **/*_test_*

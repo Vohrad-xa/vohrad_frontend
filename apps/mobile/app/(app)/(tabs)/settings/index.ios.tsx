@@ -68,9 +68,9 @@ export default function SettingsModal() {
               setScheme(nativeEvent.selection as 'light' | 'dark' | 'system');
             }}
           >
-            <Button modifiers={[{$type: 'tag', tag: 'light'}]}>Light</Button>
-            <Button modifiers={[{$type: 'tag', tag: 'dark'}]}>Dark</Button>
-            <Button modifiers={[{$type: 'tag', tag: 'system'}]}>Auto</Button>
+            <Button label="Light" modifiers={[{$type: 'tag', tag: 'light'}]} />
+            <Button label="Dark" modifiers={[{$type: 'tag', tag: 'dark'}]} />
+            <Button label="Auto" modifiers={[{$type: 'tag', tag: 'system'}]} />
           </Picker>
 
           <ListSection.Row

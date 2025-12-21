@@ -216,9 +216,7 @@ function transformTextFieldProps(props: TextFieldProps): NativeTextFieldProps {
     onChangeFocus: (event: {nativeEvent: {value: boolean}}) => {
       onChangeFocus?.(event.nativeEvent.value);
     },
-    onChangeSelection: (event: {
-      nativeEvent: {start: number; end: number};
-    }) => {
+    onChangeSelection: (event: {nativeEvent: {start: number; end: number}}) => {
       onChangeSelection?.(event.nativeEvent);
     },
     onSubmit: (event: {nativeEvent: {value: string}}) => {

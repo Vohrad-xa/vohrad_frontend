@@ -60,9 +60,7 @@
       "expo-web-browser",
       "expo-secure-store"
     ],
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "developmentClient": {
       "silentLaunch": true
     },

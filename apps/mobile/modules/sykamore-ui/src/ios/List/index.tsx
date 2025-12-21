@@ -1,7 +1,7 @@
 import {requireNativeView} from 'expo';
-
+import {type ViewEvent} from '../../types';
 import {createViewModifierEventListener} from '../modifiers/utils';
-import {type CommonViewModifierProps, type ViewEvent} from '../types';
+import {type CommonViewModifierProps} from '../types';
 
 const ListNativeView: React.ComponentType<NativeListProps> =
   requireNativeView<NativeListProps>('SykamoreUi', 'ListView');

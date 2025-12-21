@@ -16,7 +16,7 @@ type NativeStepperProps = Omit<StepperProps, 'onValueChanged'> &
   ViewEvent<'onValueChanged', {value: number}>;
 
 const StepperNativeView: React.ComponentType<NativeStepperProps> =
-  requireNativeView('sykamoreUi', 'StepperView');
+  requireNativeView('SykamoreUi', 'StepperView');
 
 function transformStepperProps(props: StepperProps): NativeStepperProps {
   const {modifiers, ...restProps} = props;
