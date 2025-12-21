@@ -925,23 +925,7 @@ internal struct TextAllowsTightening: ViewModifier, Record {
   }
 }
 
-internal enum TextCaseTypes: String, Enumerable {
-  case lowercase
-  case uppercase
-}
 
-internal struct TextCase: ViewModifier, Record {
-  @Field var value: TextCaseTypes = .lowercase
-
-  func body(content: Content) -> some View {
-    switch value {
-    case .lowercase:
-      content.textCase(.lowercase)
-    case .uppercase:
-      content.textCase(.uppercase)
-    }
-  }
-}
 
 internal enum TextLinePattern: String, Enumerable {
   case solid
@@ -1668,7 +1652,7 @@ extension ViewModifierRegistry {
     }
 
     register("textCase") { params, appContext, _ in
-      return try TextCase(from: params, appContext: appContext)
+      return try TextCaseModifier(from: params, appContext: appContext)
     }
 
     register("underline") { params, appContext, _ in

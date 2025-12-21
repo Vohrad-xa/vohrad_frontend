@@ -29,7 +29,7 @@ internal enum ExpoLayoutDirection: String, Enumerable {
   }
 }
 
-internal final class HostViewProps: ExpoSwiftUI.ViewProps, ExpoSwiftUI.SafeAreaControllable {
+internal final class HostViewProps: ExpoSwiftUI.ViewProps {
   @Field var useViewportSizeMeasurement: Bool = false
   @Field var colorScheme: ExpoColorScheme?
   @Field var layoutDirection: ExpoLayoutDirection = .leftToRight
@@ -39,7 +39,7 @@ internal final class HostViewProps: ExpoSwiftUI.ViewProps, ExpoSwiftUI.SafeAreaC
   var onLayoutContent = EventDispatcher()
 }
 
-struct HostView: ExpoSwiftUI.View, ExpoSwiftUI.WithHostingView {
+struct HostView: ExpoSwiftUI.View, ExpoSwiftUI.WithHostingView, ExpoSwiftUI.SafeAreaControllable {
   @ObservedObject var props: HostViewProps
 
   var body: some View {

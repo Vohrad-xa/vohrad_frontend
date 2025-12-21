@@ -1,30 +1,26 @@
 import SwiftUI
 import ExpoModulesCore
 
-public struct Button: ExpoSwiftUI.View {
-  @ObservedObject public var props: ButtonProps
+internal enum ButtonRole: String, Enumerable {
+  case `default`
+  case destructive
+  case cancel
 
-  public init(props: ButtonProps) {
-    self.props = props
-  }
-
-  public var body: some View {
-    if let label = props.label {
-      if let systemImage = props.systemImage {
-        SwiftUI.Button(label, systemImage: systemImage, role: props.role?.toNativeRole()) {
-          props.onButtonPress()
-        }
-      } else {
-        SwiftUI.Button(label, role: props.role?.toNativeRole()) {
-          props.onButtonPress()
-        }
-      }
-    } else {
-      SwiftUI.Button(role: props.role?.toNativeRole(), action: {
-        props.onButtonPress()
-      }) {
-        Children()
-      }
+  func toNativeRole() -> SwiftUI.ButtonRole? {
+    switch self {
+    case .default:
+      return nil
+    case .destructive:
+      return SwiftUI.ButtonRole.destructive
+    case .cancel:
+      return SwiftUI.ButtonRole.cancel
     }
   }
+}
+
+public final class ButtonProps: UIBaseViewProps, Observable {
+  @Field var label: String?
+  @Field var systemImage: String?
+  @Field var role: ButtonRole?
+  var onButtonPress = EventDispatcher()
 }
