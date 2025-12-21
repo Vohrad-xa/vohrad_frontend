@@ -1,6 +1,6 @@
 import {useMemo} from 'react';
-import {useInfiniteAttachments, useAttachmentFilter} from '@vohrad/store';
-import type {AttachmentKind, AttachmentTargetType} from '@vohrad/types';
+import {useInfiniteAttachments, useAttachmentFilter} from '@sykamore/store';
+import type {AttachmentKind, AttachmentTargetType} from '@sykamore/types';
 
 type AttachmentFilterShape = {
   targetType?: AttachmentTargetType;

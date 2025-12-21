@@ -12,7 +12,7 @@ import {
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import type {Item} from '@vohrad/store';
+import type {Item} from '@sykamore/store';
 
 type ItemsListProps = {
   searchQuery?: string;

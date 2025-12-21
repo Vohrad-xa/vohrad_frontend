@@ -1,6 +1,6 @@
 import {useCallback, useMemo, useEffect} from 'react';
-import {resolveAttachmentUrl} from '@vohrad/api-client';
-import type {Item} from '@vohrad/types';
+import {resolveAttachmentUrl} from '@sykamore/api-client';
+import type {Item} from '@sykamore/types';
 import {useAuthStore} from '../../../store';
 import {useInfiniteItems} from '../hooks/use-infinite-items';
 

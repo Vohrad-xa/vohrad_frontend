@@ -5,7 +5,7 @@ import {
   useClearAttachmentFilter,
   useAttachmentFilter,
   useDashboardOverview,
-} from '@vohrad/store';
+} from '@sykamore/store';
 import {useNavigation, useRouter, useLocalSearchParams} from 'expo-router';
 import {RefreshableScrollView, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -22,7 +22,7 @@ import {AllAttachmentsList} from '@/features/attachments/screens/all-attachments
 import {useSearch} from '@/features/dashboard';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, makeStyleFactory} from '@/utils';
-import type {ItemAttachment} from '@vohrad/types';
+import type {ItemAttachment} from '@sykamore/types';
 
 export default function VaultScreen() {
   const router = useRouter();

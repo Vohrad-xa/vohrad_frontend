@@ -1,7 +1,7 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import type {TextInput} from 'react-native';
 import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {validateEmail} from '@vohrad/types';
+import {validateEmail} from '@sykamore/types';
 import {ThemedButton, ThemedText, Input} from '@/components/ui';
 import type {InputStatus} from '@/components/ui';
 import {FormCard} from '@/components/ui/form-card';

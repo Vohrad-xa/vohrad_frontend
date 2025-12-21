@@ -1,4 +1,4 @@
-import type {ApiResponse} from '@vohrad/types';
+import type {ApiResponse} from '@sykamore/types';
 import {API_ENDPOINTS} from './endpoints';
 import {httpClient} from '../http-client';
 

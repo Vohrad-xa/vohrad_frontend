@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useState} from 'react';
-import {searchItemsLocally} from '@vohrad/store';
-import type {Item} from '@vohrad/types';
+import {searchItemsLocally} from '@sykamore/store';
+import type {Item} from '@sykamore/types';
 
 type UseHybridItemSearchOptions = {
   items: Item[];

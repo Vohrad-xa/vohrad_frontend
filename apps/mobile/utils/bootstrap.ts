@@ -1,7 +1,7 @@
 import {Alert, Platform} from 'react-native';
-import {setApiTenant} from '@vohrad/api-client';
-import {authService} from '@vohrad/auth';
-import {useAuthStore, setAuthPersistStorage} from '@vohrad/store';
+import {setApiTenant} from '@sykamore/api-client';
+import {authService} from '@sykamore/auth';
+import {useAuthStore, setAuthPersistStorage} from '@sykamore/store';
 import {
   authenticateWithBiometrics,
   disableBiometrics,

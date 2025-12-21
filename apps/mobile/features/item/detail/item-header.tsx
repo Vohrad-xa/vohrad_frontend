@@ -7,7 +7,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import type {Item} from '@vohrad/types';
+import type {Item} from '@sykamore/types';
 
 interface ItemHeaderProps {
   item: Item;

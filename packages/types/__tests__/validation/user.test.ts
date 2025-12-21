@@ -1,5 +1,5 @@
 import {describe, it, expect} from '@jest/globals';
-import {validateUserUpdate, schemas} from '@vohrad/types';
+import {validateUserUpdate, schemas} from '@sykamore/types';
 
 describe('User Validation', () => {
   it('validates complete user data', () => {

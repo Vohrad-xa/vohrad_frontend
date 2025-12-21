@@ -1,5 +1,5 @@
 import {useCallback} from 'react';
-import {useOrganizationManager} from '@vohrad/store';
+import {useOrganizationManager} from '@sykamore/store';
 import {showConfirmAlert, showAlert} from '@/utils';
 
 export type SaveOrganizationOptions = {

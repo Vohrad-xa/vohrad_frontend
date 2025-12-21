@@ -7,14 +7,14 @@ import React, {
 } from 'react';
 import type {TextInput} from 'react-native';
 import {Pressable, StyleSheet, View} from 'react-native';
-import {useUpdateItem} from '@vohrad/store';
+import {useUpdateItem} from '@sykamore/store';
 import {ThemedText, ThemedInput, Card} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
 import {showAlert} from '@/utils/alert';
 import {Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
-import type {ItemDetail} from '@vohrad/types';
+import type {ItemDetail} from '@sykamore/types';
 
 interface SpecificationsFormProps {
   item: ItemDetail;

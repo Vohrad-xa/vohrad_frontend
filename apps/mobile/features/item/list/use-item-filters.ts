@@ -3,8 +3,8 @@ import {
   usePendingFilters,
   useClearPendingFilters,
   buildODataFilter,
-} from '@vohrad/store';
-import type {ItemFilterState} from '@vohrad/types';
+} from '@sykamore/store';
+import type {ItemFilterState} from '@sykamore/types';
 
 type UseItemFiltersOptions = {
   urlParams?: string;

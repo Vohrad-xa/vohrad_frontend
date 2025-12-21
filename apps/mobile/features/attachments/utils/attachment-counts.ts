@@ -1,4 +1,4 @@
-import type {AttachmentKind, ItemAttachment} from '@vohrad/types';
+import type {AttachmentKind, ItemAttachment} from '@sykamore/types';
 
 export type AttachmentKindCount = Record<AttachmentKind, number>;
 

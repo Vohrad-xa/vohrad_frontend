@@ -1,4 +1,4 @@
-import type {JsonValue, ItemFilterState} from '@vohrad/types';
+import type {JsonValue, ItemFilterState} from '@sykamore/types';
 
 // Builds an OData filter string based on item filter state and optional search term
 export function buildODataFilter(

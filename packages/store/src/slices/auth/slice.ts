@@ -1,6 +1,6 @@
 import type {StateCreator} from 'zustand';
-import type {User, AuthTokens} from '@vohrad/types';
-import {httpClient} from '@vohrad/api-client';
+import type {User, AuthTokens} from '@sykamore/types';
+import {httpClient} from '@sykamore/api-client';
 
 export interface AuthSlice {
   user: User | null;

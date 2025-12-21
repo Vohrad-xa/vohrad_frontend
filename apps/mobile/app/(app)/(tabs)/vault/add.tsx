@@ -12,7 +12,7 @@ import {useAttachmentUpload} from '@/features/attachments/hooks';
 import {useSettingsHeader} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
-import type {AttachmentTargetType} from '@vohrad/store';
+import type {AttachmentTargetType} from '@sykamore/store';
 
 export default function VaultAddScreen() {
   const navigation = useNavigation();

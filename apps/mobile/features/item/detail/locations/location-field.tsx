@@ -1,6 +1,6 @@
 import React from 'react';
 import {ThemedText} from '@/components/ui';
-import type {ItemDetail} from '@vohrad/store';
+import type {ItemDetail} from '@sykamore/store';
 
 interface LocationsProps {
   itemId?: string;

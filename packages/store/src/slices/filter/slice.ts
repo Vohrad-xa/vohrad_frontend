@@ -1,5 +1,5 @@
 import type {StateCreator} from 'zustand';
-import type {ItemFilterState, AttachmentFilter} from '@vohrad/types';
+import type {ItemFilterState, AttachmentFilter} from '@sykamore/types';
 
 export interface FilterSlice {
   pendingFilters: ItemFilterState | null;

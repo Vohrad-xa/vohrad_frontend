@@ -1,5 +1,5 @@
 import {useMemo} from 'react';
-import {useProfileManager} from '@vohrad/store';
+import {useProfileManager} from '@sykamore/store';
 import type {InfoField} from '@/components/ui';
 
 export function useProfileForm() {

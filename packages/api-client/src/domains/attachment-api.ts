@@ -7,7 +7,7 @@ import type {
   AttachmentTargetType,
   AttachmentKind,
   ApiResponse,
-} from '@vohrad/types';
+} from '@sykamore/types';
 
 export type AttachmentCounts = {
   attachments_total: number;

@@ -72,7 +72,7 @@ export {
   useClearAttachmentFilter,
 } from './slices/filter/hooks';
 export type {FilterSlice} from './slices/filter';
-export type {AttachmentFilter} from '@vohrad/types';
+export type {AttachmentFilter} from '@sykamore/types';
 export type {
   User,
   AuthTokens,
@@ -86,7 +86,7 @@ export type {
   RoleType,
   RoleScope,
   RoleStage,
-} from '@vohrad/types';
+} from '@sykamore/types';
 export type {AuthSlice} from './slices/auth';
 export type {TenantSlice} from './slices/tenant';
 export type {
@@ -95,7 +95,7 @@ export type {
   DashboardVisibilityState,
 } from './slices/system';
 export {defaultDashboardVisibility} from './slices/system';
-export type {AttachmentTargetType, AttachmentKind} from '@vohrad/types';
+export type {AttachmentTargetType, AttachmentKind} from '@sykamore/types';
 export {
   buildODataFilter,
   hasActiveFilters,

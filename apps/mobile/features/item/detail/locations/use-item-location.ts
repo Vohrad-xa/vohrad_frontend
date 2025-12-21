@@ -1,10 +1,10 @@
 import {useState, useCallback, useEffect, useRef} from 'react';
-import {useItemDetailManager, useAuthStore} from '@vohrad/store';
+import {useItemDetailManager, useAuthStore} from '@sykamore/store';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {useSettingsHeader} from '@/hooks';
 import {validators} from '@/utils';
 
-import type {ItemLocationData} from '@vohrad/types';
+import type {ItemLocationData} from '@sykamore/types';
 
 type EditableLocation = Omit<ItemLocationData, 'quantity'> & {
   quantity: string;

@@ -10,6 +10,6 @@ export default defineConfig((options) => ({
   platform: 'neutral',
   treeshake: true,
   minify: false,
-  external: ['react', 'react-native', 'expo', '@vohrad/types'],
+  external: ['react', 'react-native', 'expo', '@sykamore/types'],
   outExtension: ({format}) => ({js: format === 'cjs' ? '.cjs' : '.mjs'}),
 }));

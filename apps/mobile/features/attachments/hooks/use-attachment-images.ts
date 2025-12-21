@@ -1,5 +1,5 @@
 import {useCallback} from 'react';
-import {useDeleteAttachment} from '@vohrad/store';
+import {useDeleteAttachment} from '@sykamore/store';
 import {useImageAttachments} from '@/features/attachments/hooks/attachment-images';
 import {useAttachmentContext} from '@/features/attachments/providers/attachment-provider';
 import {showConfirmAlert} from '@/utils';

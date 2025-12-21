@@ -1,5 +1,5 @@
 import {describe, it, expect} from '@jest/globals';
-import {schemas, validation} from '@vohrad/types';
+import {schemas, validation} from '@sykamore/types';
 
 describe('Auth Validation', () => {
   describe('Validation Functions', () => {

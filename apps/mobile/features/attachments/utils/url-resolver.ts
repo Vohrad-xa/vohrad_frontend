@@ -1,5 +1,5 @@
-import {attachmentApi, resolveAttachmentUrl} from '@vohrad/api-client';
-import type {ItemAttachment} from '@vohrad/types';
+import {attachmentApi, resolveAttachmentUrl} from '@sykamore/api-client';
+import type {ItemAttachment} from '@sykamore/types';
 
 export async function resolveAttachmentItemUrl(
   attachment: ItemAttachment,

@@ -1,4 +1,4 @@
-import type {User, AuthTokens} from '@vohrad/types';
+import type {User, AuthTokens} from '@sykamore/types';
 
 export function sanitizeUser(user: User | null): User | null {
   if (!user) {

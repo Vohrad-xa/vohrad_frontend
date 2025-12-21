@@ -3,8 +3,8 @@ import {
   useFetchTargetAttachments,
   useAttachmentFilter,
   type AttachmentTargetType,
-} from '@vohrad/store';
-import type {ItemAttachment} from '@vohrad/types';
+} from '@sykamore/store';
+import type {ItemAttachment} from '@sykamore/types';
 
 interface AttachmentContextValue {
   attachments: ItemAttachment[];

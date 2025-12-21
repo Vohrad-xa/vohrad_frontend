@@ -1,5 +1,5 @@
 {
-  "name": "@vohrad/auth",
+  "name": "@sykamore/auth",
   "version": "0.0.0",
   "private": true,
   "main": "dist/index.cjs",
@@ -26,9 +26,9 @@
     "lint": "eslint --config ../../eslint.packages.config.js \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@vohrad/store": "workspace:*",
-    "@vohrad/api-client": "workspace:*",
-    "@vohrad/types": "workspace:*"
+    "@sykamore/store": "workspace:*",
+    "@sykamore/api-client": "workspace:*",
+    "@sykamore/types": "workspace:*"
   },
   "devDependencies": {
     "tsup": "^8.3.0",

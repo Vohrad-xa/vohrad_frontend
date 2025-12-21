@@ -3,8 +3,8 @@ export type {
   AdminCredentials,
   TokenResponse,
   ApiResponse,
-} from '@vohrad/types';
-export {ApiError} from '@vohrad/types';
+} from '@sykamore/types';
+export {ApiError} from '@sykamore/types';
 export {httpClient} from './http-client';
 export * from './domains';
 export {loadingManager} from './loading-manager';

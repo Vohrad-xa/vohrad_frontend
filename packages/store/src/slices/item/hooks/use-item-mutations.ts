@@ -1,12 +1,12 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
-import {itemApi} from '@vohrad/api-client';
+import {itemApi} from '@sykamore/api-client';
 import type {
   ItemCreate,
   ItemUpdate,
   ItemLocationUpdate,
   ItemDetail,
   ItemLocationData,
-} from '@vohrad/types';
+} from '@sykamore/types';
 
 export function useCreateItem() {
   const queryClient = useQueryClient();

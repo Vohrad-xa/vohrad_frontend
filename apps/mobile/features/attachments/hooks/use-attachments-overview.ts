@@ -3,7 +3,7 @@ import {
   useAttachmentFilter,
   useClearAttachmentFilter,
   useDashboardOverview,
-} from '@vohrad/store';
+} from '@sykamore/store';
 import {computeAttachmentCounts} from '../utils/attachment-counts';
 import {
   useFilteredAttachments,

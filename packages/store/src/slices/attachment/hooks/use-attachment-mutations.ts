@@ -4,8 +4,8 @@ import {
   type AttachmentWithCounts,
   type AttachmentCounts,
   type DashboardOverview,
-} from '@vohrad/api-client';
-import type {ItemAttachment} from '@vohrad/types';
+} from '@sykamore/api-client';
+import type {ItemAttachment} from '@sykamore/types';
 
 interface InfiniteAttachmentsPage {
   items: ItemAttachment[];

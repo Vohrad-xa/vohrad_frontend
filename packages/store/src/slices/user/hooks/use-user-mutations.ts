@@ -1,6 +1,6 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
-import {userApi} from '@vohrad/api-client';
-import type {UserCreateData} from '@vohrad/types';
+import {userApi} from '@sykamore/api-client';
+import type {UserCreateData} from '@sykamore/types';
 
 export function useCreateUser() {
   const queryClient = useQueryClient();

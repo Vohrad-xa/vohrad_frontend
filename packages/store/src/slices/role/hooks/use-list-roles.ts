@@ -1,5 +1,5 @@
 import {useInfiniteQuery} from '@tanstack/react-query';
-import {roleApi} from '@vohrad/api-client';
+import {roleApi} from '@sykamore/api-client';
 
 type UseInfiniteRolesOptions = {
   searchTerm?: string;

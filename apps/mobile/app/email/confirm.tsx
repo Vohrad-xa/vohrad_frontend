@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
-import {userApi} from '@vohrad/api-client';
-import {useAuthStore, type StoreState} from '@vohrad/store';
+import {userApi} from '@sykamore/api-client';
+import {useAuthStore, type StoreState} from '@sykamore/store';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {ThemedText, ThemedButton, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';

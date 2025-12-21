@@ -2,7 +2,7 @@ import {useMemo} from 'react';
 import {
   useInfiniteAttachments,
   buildAttachmentSearchFilter,
-} from '@vohrad/store';
+} from '@sykamore/store';
 
 export interface UseAttachmentSearchOptions {
   searchQuery: string;

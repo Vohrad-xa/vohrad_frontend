@@ -1,6 +1,6 @@
 import React, {useLayoutEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useItemsManager} from '@vohrad/store';
+import {useItemsManager} from '@sykamore/store';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';

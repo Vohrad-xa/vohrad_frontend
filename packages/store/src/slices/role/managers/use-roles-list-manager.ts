@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useMemo} from 'react';
-import type {Role} from '@vohrad/types';
+import type {Role} from '@sykamore/types';
 import {useAuthStore} from '../../../store';
 import {useInfiniteRoles} from '../hooks/use-list-roles';
 

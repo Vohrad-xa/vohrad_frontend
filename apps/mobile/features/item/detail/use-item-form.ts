@@ -1,7 +1,7 @@
 import {useCallback, useState, useEffect, useRef} from 'react';
 import {Keyboard} from 'react-native';
-import {useUpdateItem} from '@vohrad/store';
-import type {TrackingMode, ItemUpdate} from '@vohrad/types';
+import {useUpdateItem} from '@sykamore/store';
+import type {TrackingMode, ItemUpdate} from '@sykamore/types';
 
 interface ItemFormValues {
   name: string;

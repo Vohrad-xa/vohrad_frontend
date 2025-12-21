@@ -6,7 +6,7 @@ import {createSystemSlice, type SystemSlice} from './slices/system/slice';
 import {createFilterSlice, type FilterSlice} from './slices/filter/slice';
 import {sanitizeUser, redactTokens} from './utils/sanitizers';
 import {getPersistBackend} from './utils/storage';
-import {httpClient} from '@vohrad/api-client';
+import {httpClient} from '@sykamore/api-client';
 
 export type StoreState = AuthSlice &
   TenantSlice &

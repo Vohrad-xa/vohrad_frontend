@@ -6,7 +6,7 @@ import {useTheme, useAuth} from '@/providers';
 import type {InteractiveProps} from '@/types';
 import {AppIcons, Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
-import type {User} from '@vohrad/types';
+import type {User} from '@sykamore/types';
 import type {SharedValue} from 'react-native-reanimated';
 
 interface ProfileSectionProps extends Pick<InteractiveProps, 'onPress'> {

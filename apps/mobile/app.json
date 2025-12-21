@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "vohrad",
+    "name": "sykamore",
     "slug": "sykamore",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "vohrad.mobile",
+      "bundleIdentifier": "sykamore.mobile",
       "icon": "./assets/icons/ios/playstore-512.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
@@ -27,7 +27,7 @@
       "playStoreUrl": "https://play.google.com/store/apps/details?id=vohrad.mobile",
       "predictiveBackGestureEnabled": true,
       "edgeToEdgeEnabled": true,
-      "package": "vohrad.mobile",
+      "package": "sykamore.mobile",
       "permissions": [
         "CAMERA",
         "android.permission.CAMERA",

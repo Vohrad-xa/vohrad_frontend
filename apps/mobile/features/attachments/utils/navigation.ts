@@ -1,4 +1,4 @@
-import type {AttachmentTargetType} from '@vohrad/types';
+import type {AttachmentTargetType} from '@sykamore/types';
 
 export interface AttachmentNavigationTarget {
   targetType: AttachmentTargetType;

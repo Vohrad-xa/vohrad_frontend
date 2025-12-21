@@ -4,7 +4,7 @@ import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory, Icon, type IconName} from '@/utils';
-import type {Status} from '@vohrad/types';
+import type {Status} from '@sykamore/types';
 
 interface StatusFieldProps {
   status?: Status | null;

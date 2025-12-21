@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {useSetPendingFilters, useItemFiltersManager} from '@vohrad/store';
-import {type ItemFilterState} from '@vohrad/types';
+import {useSetPendingFilters, useItemFiltersManager} from '@sykamore/store';
+import {type ItemFilterState} from '@sykamore/types';
 import {Stack, useRouter, useLocalSearchParams} from 'expo-router';
 import {HeaderButton, ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';

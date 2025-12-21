@@ -1,6 +1,6 @@
 import {useMemo} from 'react';
-import {resolveAttachmentUrl} from '@vohrad/api-client';
-import type {ItemAttachment} from '@vohrad/types';
+import {resolveAttachmentUrl} from '@sykamore/api-client';
+import type {ItemAttachment} from '@sykamore/types';
 
 export const IMAGE_GRID_COLUMNS = 4;
 

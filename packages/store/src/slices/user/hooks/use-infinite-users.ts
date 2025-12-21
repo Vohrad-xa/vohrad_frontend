@@ -1,5 +1,5 @@
 import {useInfiniteQuery} from '@tanstack/react-query';
-import {userApi} from '@vohrad/api-client';
+import {userApi} from '@sykamore/api-client';
 
 const STALE_TIME = 30 * 60 * 1000;
 

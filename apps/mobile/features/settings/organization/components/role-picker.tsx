@@ -1,7 +1,7 @@
 import {type ViewStyle} from 'react-native';
 import {useRolesList} from '@/features/roles';
-import type {Role} from '@vohrad/types';
 import {Picker} from '@/modules/sykamore-ui/src/android';
+import type {Role} from '@sykamore/types';
 
 type RolePickerProps = {
   selectedRoleId?: string;

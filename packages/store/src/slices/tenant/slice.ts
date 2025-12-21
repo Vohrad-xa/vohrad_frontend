@@ -1,5 +1,5 @@
 import type {StateCreator} from 'zustand';
-import type {Tenant, TenantLicenseInfo} from '@vohrad/types';
+import type {Tenant, TenantLicenseInfo} from '@sykamore/types';
 
 export interface TenantSlice {
   tenant: Tenant | null;

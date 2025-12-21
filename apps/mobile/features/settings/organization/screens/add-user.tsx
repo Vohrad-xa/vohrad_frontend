@@ -1,6 +1,6 @@
 import React, {forwardRef, useImperativeHandle, useState} from 'react';
-import {StyleSheet, View, Pressable, Text} from 'react-native';
-import {useCreateUser} from '@vohrad/store';
+import {StyleSheet, View, Pressable} from 'react-native';
+import {useCreateUser} from '@sykamore/store';
 import {TextInput, List} from 'react-native-paper';
 
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -9,7 +9,7 @@ import {useTheme} from '@/providers';
 import {showAlert} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {RolePicker} from '../components';
-import type {UserCreateData} from '@vohrad/types';
+import type {UserCreateData} from '@sykamore/types';
 
 export type AddUserScreenHandle = {
   saveUser: () => Promise<boolean>;

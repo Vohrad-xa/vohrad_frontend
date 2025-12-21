@@ -1,6 +1,6 @@
 import React, {forwardRef, useImperativeHandle} from 'react';
 import {StyleSheet, View, Platform} from 'react-native';
-import {usePreferencesManager} from '@vohrad/store';
+import {usePreferencesManager} from '@sykamore/store';
 import {ThemedText, InfoRowCard, Toggle, type InfoField} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';

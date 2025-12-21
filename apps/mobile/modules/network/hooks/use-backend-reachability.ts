@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {Platform} from 'react-native';
 import {type NetInfoState} from '@react-native-community/netinfo';
-import {verifyNetworkReachability} from '@vohrad/api-client';
+import {verifyNetworkReachability} from '@sykamore/api-client';
 import {
   BACKEND_REACHABILITY_TIMEOUT_MS,
   REACHABILITY_CACHE_WINDOW_MS,

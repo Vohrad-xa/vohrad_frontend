@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useItemsManager, type Item} from '@vohrad/store';
+import {useItemsManager, type Item} from '@sykamore/store';
 import {useLocalSearchParams, router, useNavigation} from 'expo-router';
 import {
   ModalFlatList,

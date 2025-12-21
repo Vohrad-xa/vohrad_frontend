@@ -6,7 +6,7 @@ import type {
   ItemLocationUpdate,
   ApiResponse,
   PaginatedResponse,
-} from '@vohrad/types';
+} from '@sykamore/types';
 import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';
 

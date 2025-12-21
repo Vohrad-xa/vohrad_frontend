@@ -1,5 +1,5 @@
 {
-  "name": "@vohrad/store",
+  "name": "@sykamore/store",
   "version": "0.0.0",
   "private": true,
   "main": "dist/index.cjs",
@@ -27,8 +27,8 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.7",
-    "@vohrad/api-client": "workspace:*",
-    "@vohrad/types": "workspace:*",
+    "@sykamore/api-client": "workspace:*",
+    "@sykamore/types": "workspace:*",
     "shallow": "link:zustand/react/shallow",
     "use-debounce": "^10.0.6",
     "zustand": "^4.3.9"

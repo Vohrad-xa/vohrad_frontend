@@ -1,5 +1,5 @@
 import {useQuery} from '@tanstack/react-query';
-import {dashboardApi} from '@vohrad/api-client';
+import {dashboardApi} from '@sykamore/api-client';
 import {shallow} from 'zustand/shallow';
 import {useAuthStore} from '../../store';
 import {systemSelectors} from './selectors';

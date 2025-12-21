@@ -1,6 +1,6 @@
 import {useCallback} from 'react';
 import {Linking, Platform} from 'react-native';
-import {errorManager} from '@vohrad/api-client';
+import {errorManager} from '@sykamore/api-client';
 import {useRouter} from 'expo-router';
 import {
   downloadDocumentFile,
@@ -9,7 +9,7 @@ import {
 import {resolveAttachmentItemUrl} from '@/features/attachments/utils/url-resolver';
 import {useNetworkConnectivity} from '@/modules/network';
 import {showAlert} from '@/utils';
-import type {ItemAttachment} from '@vohrad/types';
+import type {ItemAttachment} from '@sykamore/types';
 
 // handling the opening of attachments
 export function useAttachmentPress() {

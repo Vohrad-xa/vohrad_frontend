@@ -5,7 +5,7 @@ import {ThemedText, Toggle} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import type {TrackingMode} from '@vohrad/types';
+import type {TrackingMode} from '@sykamore/types';
 
 interface TrackingModeFilterProps {
   trackingModes: TrackingMode[];

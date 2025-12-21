@@ -1,5 +1,5 @@
 import {useCallback} from 'react';
-import {userApi} from '@vohrad/api-client';
+import {userApi} from '@sykamore/api-client';
 import {useAuthStore} from '../../../store';
 
 export function useFetchUserProfile() {

@@ -1,5 +1,5 @@
 import {useCallback, useMemo} from 'react';
-import {type ListAttachmentsParams} from '@vohrad/api-client';
+import {type ListAttachmentsParams} from '@sykamore/api-client';
 import {useInfiniteAttachments} from '../hooks/use-infinite-attachments';
 
 type AttachmentListFilters = Omit<ListAttachmentsParams, 'page' | 'size'>;

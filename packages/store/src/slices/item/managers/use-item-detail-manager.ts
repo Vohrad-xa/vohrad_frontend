@@ -1,6 +1,6 @@
 import {useCallback, useEffect} from 'react';
-import {resolveAttachmentUrl} from '@vohrad/api-client';
-import type {ItemLocationUpdate} from '@vohrad/types';
+import {resolveAttachmentUrl} from '@sykamore/api-client';
+import type {ItemLocationUpdate} from '@sykamore/types';
 import {useAuthStore} from '../../../store';
 import {useFetchItem, useUpdateItemLocation} from '../hooks';
 

@@ -17,7 +17,7 @@ import {
   type SFSymbolName,
 } from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import type {ItemAttachment, AttachmentKind} from '@vohrad/types';
+import type {ItemAttachment, AttachmentKind} from '@sykamore/types';
 
 type AllAttachmentsListProps = {
   onAttachmentPress: (attachmentId: string) => void;

@@ -1,4 +1,4 @@
-import {useLicenseInfoManager} from '@vohrad/store';
+import {useLicenseInfoManager} from '@sykamore/store';
 
 type UseLicenseInfoOptions = {
   fetchOnMount?: boolean;

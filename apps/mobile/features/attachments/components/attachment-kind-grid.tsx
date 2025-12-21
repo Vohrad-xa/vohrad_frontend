@@ -5,7 +5,7 @@ import {ListRow, Divider} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, SFSymbols, makeStyleFactory} from '@/utils';
-import type {AttachmentKind} from '@vohrad/types';
+import type {AttachmentKind} from '@sykamore/types';
 
 export interface AttachmentKindTile {
   kind: AttachmentKind;

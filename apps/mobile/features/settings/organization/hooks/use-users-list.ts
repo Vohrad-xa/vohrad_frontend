@@ -1,4 +1,4 @@
-import {useUsersListManager} from '@vohrad/store';
+import {useUsersListManager} from '@sykamore/store';
 
 export function useUsersList() {
   const manager = useUsersListManager();

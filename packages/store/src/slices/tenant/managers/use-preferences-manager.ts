@@ -1,6 +1,6 @@
 import {useState, useCallback, useMemo, useEffect} from 'react';
 import {useOrganizationDetails, useUpdateTenantSettings} from '../hooks';
-import type {Tenant} from '@vohrad/types';
+import type {Tenant} from '@sykamore/types';
 
 type PreferencesFormState = {
   timezone: string;

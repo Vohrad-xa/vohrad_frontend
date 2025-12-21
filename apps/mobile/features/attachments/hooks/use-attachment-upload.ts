@@ -1,6 +1,6 @@
 import {useCallback, useMemo, useState} from 'react';
 import {Platform} from 'react-native';
-import {useUploadAttachment, type AttachmentTargetType} from '@vohrad/store';
+import {useUploadAttachment, type AttachmentTargetType} from '@sykamore/store';
 import * as ImagePicker from 'expo-image-picker';
 import type * as DocumentPickerTypes from 'expo-document-picker';
 

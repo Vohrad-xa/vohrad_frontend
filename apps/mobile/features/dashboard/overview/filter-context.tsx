@@ -6,10 +6,10 @@ import {
   useResetDashboardVisibility,
   type DashboardCardKey,
   type DashboardVisibilityState,
-} from '@vohrad/store';
+} from '@sykamore/store';
 import type {MenuCard} from '@/types';
 import {AppIcons} from '@/utils/icons';
-import type {DashboardOverview} from '@vohrad/api-client';
+import type {DashboardOverview} from '@sykamore/api-client';
 
 type DashboardCardConfig = {
   key: DashboardCardKey;

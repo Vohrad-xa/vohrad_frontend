@@ -6,7 +6,7 @@ import {
   createDateSchema,
   validateAgainstPatterns,
   baseSchemas,
-} from '@vohrad/types';
+} from '@sykamore/types';
 import {z} from 'zod';
 
 describe('Validation Helpers', () => {

@@ -1,4 +1,4 @@
-import {useRolesListManager} from '@vohrad/store';
+import {useRolesListManager} from '@sykamore/store';
 
 export function useRolesList() {
   const manager = useRolesListManager();

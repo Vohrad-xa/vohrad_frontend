@@ -1,6 +1,6 @@
 import React, {forwardRef, useImperativeHandle, useEffect} from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
-import {useEmailConfirmation} from '@vohrad/store';
+import {useEmailConfirmation} from '@sykamore/store';
 import {
   ThemedButton,
   ThemedText,

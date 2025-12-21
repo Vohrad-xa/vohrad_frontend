@@ -4,10 +4,10 @@
     "strict": true,
     "paths": {
       "@/*": ["./*"],
-      "@vohrad/api-client": ["../../packages/api-client/dist"],
-      "@vohrad/auth": ["../../packages/auth/dist"],
-      "@vohrad/store": ["../../packages/store/dist"],
-      "@vohrad/types": ["../../packages/types/dist"]
+      "@sykamore/api-client": ["../../packages/api-client/dist"],
+      "@sykamore/auth": ["../../packages/auth/dist"],
+      "@sykamore/store": ["../../packages/store/dist"],
+      "@sykamore/types": ["../../packages/types/dist"]
     },
     "baseUrl": "."
   },

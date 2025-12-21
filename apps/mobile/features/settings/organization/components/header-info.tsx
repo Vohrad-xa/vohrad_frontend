@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
-import {useOrganizationManager} from '@vohrad/store';
+import {useOrganizationManager} from '@sykamore/store';
 import {ThemedText, ThemedView} from '@/components/ui';
 import type {BadgeStatus} from '@/components/ui/themed-view';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';

@@ -5,7 +5,7 @@ import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import type {TrackingMode} from '@vohrad/types';
+import type {TrackingMode} from '@sykamore/types';
 
 const TRACKING_MODE_OPTIONS = [
   {label: 'Abstract', value: 'abstract' as const},

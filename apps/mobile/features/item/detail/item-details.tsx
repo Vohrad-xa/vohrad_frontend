@@ -15,7 +15,7 @@ import {Specifications} from './specifications/specifications-field';
 import {ItemStatusField} from './status-field';
 import {TrackingModeField, useTrackingModePress} from './tracking-mode-field';
 import type {UseItemFormReturn} from './use-item-form';
-import type {ItemDetail} from '@vohrad/types';
+import type {ItemDetail} from '@sykamore/types';
 
 interface ItemDetailsProps {
   quantity?: string;

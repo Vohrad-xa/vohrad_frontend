@@ -4,7 +4,7 @@ import {
   suggestEmailCorrection,
   isEmail,
   schemas,
-} from '@vohrad/types';
+} from '@sykamore/types';
 
 describe('Email Validation', () => {
   describe('validateEmail', () => {

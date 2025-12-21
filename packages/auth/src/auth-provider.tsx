@@ -1,7 +1,7 @@
 import React, {createContext, useContext} from 'react';
 import {authService} from './auth-service';
-import {useAuthStore} from '@vohrad/store';
-import type {AuthContextValue} from '@vohrad/types';
+import {useAuthStore} from '@sykamore/store';
+import type {AuthContextValue} from '@sykamore/types';
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 

@@ -1,6 +1,6 @@
 import {useMutation, useQueryClient} from '@tanstack/react-query';
-import {roleApi} from '@vohrad/api-client';
-import type {RoleCreate, RoleUpdate} from '@vohrad/types';
+import {roleApi} from '@sykamore/api-client';
+import type {RoleCreate, RoleUpdate} from '@sykamore/types';
 
 export function useCreateRole() {
   const queryClient = useQueryClient();

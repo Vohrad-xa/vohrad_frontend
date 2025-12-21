@@ -1,8 +1,8 @@
 import {useState, useCallback} from 'react';
-import {userApi} from '@vohrad/api-client';
+import {userApi} from '@sykamore/api-client';
 import {useAuthStore} from '../../../store';
 import {authSelectors} from '../selectors';
-import type {UserUpdateData} from '@vohrad/types';
+import type {UserUpdateData} from '@sykamore/types';
 
 export function useUpdateProfile() {
   const [isLoading, setIsLoading] = useState(false);

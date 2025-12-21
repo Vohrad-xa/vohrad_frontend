@@ -6,7 +6,7 @@ import {
   useWindowDimensions,
   type ViewStyle,
 } from 'react-native';
-import {useDashboardOverview, useFetchUserProfile} from '@vohrad/store';
+import {useDashboardOverview, useFetchUserProfile} from '@sykamore/store';
 import {router} from 'expo-router';
 import {RefreshableScrollView, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';

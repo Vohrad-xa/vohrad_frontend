@@ -1,5 +1,5 @@
 import {useInfiniteQuery} from '@tanstack/react-query';
-import {attachmentApi, type ListAttachmentsParams} from '@vohrad/api-client';
+import {attachmentApi, type ListAttachmentsParams} from '@sykamore/api-client';
 
 type AttachmentListFilters = Omit<ListAttachmentsParams, 'page' | 'size'>;
 

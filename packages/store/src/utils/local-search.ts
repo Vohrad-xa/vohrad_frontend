@@ -1,4 +1,4 @@
-import type {Item, User} from '@vohrad/types';
+import type {Item, User} from '@sykamore/types';
 
 // local/client-side search for items
 export function searchItemsLocally(items: Item[], searchQuery: string): Item[] {

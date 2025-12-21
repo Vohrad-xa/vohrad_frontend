@@ -14,9 +14,9 @@ export default defineConfig((options) => ({
     'react',
     'react-native',
     'expo',
-    '@vohrad/store',
-    '@vohrad/api-client',
-    '@vohrad/types',
+    '@sykamore/store',
+    '@sykamore/api-client',
+    '@sykamore/types',
   ],
   outExtension: ({format}) => ({js: format === 'cjs' ? '.cjs' : '.mjs'}),
 }));

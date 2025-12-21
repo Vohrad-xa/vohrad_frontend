@@ -1,5 +1,5 @@
 import {useQuery} from '@tanstack/react-query';
-import {roleApi} from '@vohrad/api-client';
+import {roleApi} from '@sykamore/api-client';
 
 const STALE_TIME = 5 * 60 * 1000;
 

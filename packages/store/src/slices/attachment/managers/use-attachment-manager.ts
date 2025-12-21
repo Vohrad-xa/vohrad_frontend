@@ -1,5 +1,5 @@
 import {useCallback} from 'react';
-import type {ItemAttachment, AttachmentTargetType} from '@vohrad/types';
+import type {ItemAttachment, AttachmentTargetType} from '@sykamore/types';
 import {
   useFetchTargetAttachments,
   useUploadAttachment,

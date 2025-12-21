@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {useItemDetailManager} from '@vohrad/store';
+import {useItemDetailManager} from '@sykamore/store';
 import {useLocalSearchParams, useNavigation} from 'expo-router';
 import {
   ModalScrollView,

@@ -4,7 +4,7 @@ import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import type {Category} from '@vohrad/types';
+import type {Category} from '@sykamore/types';
 
 interface CategoryFieldProps {
   category?: Category | null;

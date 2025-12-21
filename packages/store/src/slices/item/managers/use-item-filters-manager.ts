@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react';
-import {type ItemFilterState} from '@vohrad/types';
+import {type ItemFilterState} from '@sykamore/types';
 
 export function useItemFiltersManager(initialFilters: ItemFilterState) {
   const [filters, setFilters] = useState<ItemFilterState>(initialFilters);

@@ -1,6 +1,6 @@
 import {useState, useCallback, useMemo, useEffect} from 'react';
 import {useProfileDetails, useUpdateProfile} from '../hooks';
-import type {UserUpdateData} from '@vohrad/types';
+import type {UserUpdateData} from '@sykamore/types';
 
 type ProfileFormState = Required<{
   [K in keyof UserUpdateData]: string;

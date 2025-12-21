@@ -5,7 +5,7 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
-import {loadingManager} from '@vohrad/api-client';
+import {loadingManager} from '@sykamore/api-client';
 import {ErrorHandlerProvider} from './error-handler-provider';
 
 type LoadingContextValue = {

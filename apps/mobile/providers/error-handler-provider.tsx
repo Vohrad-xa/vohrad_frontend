@@ -1,5 +1,5 @@
 import {useEffect, useRef, type ReactNode} from 'react';
-import {errorManager, type AppError} from '@vohrad/api-client';
+import {errorManager, type AppError} from '@sykamore/api-client';
 import {useNetworkConnectivity} from '@/modules/network';
 import {showAlert, showConfirmAlert} from '@/utils';
 

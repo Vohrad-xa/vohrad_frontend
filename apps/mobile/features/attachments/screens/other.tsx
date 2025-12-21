@@ -1,6 +1,6 @@
 import React, {useCallback, useState} from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
-import {type ItemAttachment} from '@vohrad/types';
+import {type ItemAttachment} from '@sykamore/types';
 import {SymbolView} from 'expo-symbols';
 import {
   ModalFlatList,

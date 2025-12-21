@@ -1,8 +1,8 @@
-import {useAuthStore} from '@vohrad/store';
-import type {AuthTokens} from '@vohrad/types';
-import {ApiError, validation} from '@vohrad/types';
-import {authApi, tenantApi, errorManager} from '@vohrad/api-client';
-import {httpClient, setApiTenant} from '@vohrad/api-client';
+import {useAuthStore} from '@sykamore/store';
+import type {AuthTokens} from '@sykamore/types';
+import {ApiError, validation} from '@sykamore/types';
+import {authApi, tenantApi, errorManager} from '@sykamore/api-client';
+import {httpClient, setApiTenant} from '@sykamore/api-client';
 
 export class AuthService {
   private static instance: AuthService;

@@ -6,7 +6,7 @@ import {Platform} from 'react-native';
 // - Fallback: in-memory Map (non-persistent)
 
 const memory = new Map<string, string>();
-const NS = '@vohrad:'; // namespace prefix for all keys
+const NS = '@sykamore:'; // namespace prefix for all keys
 
 // Keys whose payloads must never be persisted in browser storage.
 const SENSITIVE_KEYS = new Set(['vohrad-auth']);

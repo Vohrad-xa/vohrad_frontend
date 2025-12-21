@@ -7,7 +7,7 @@ import {
   type UserFilterOptions,
   type UserFilterState,
   type User,
-} from '@vohrad/store';
+} from '@sykamore/store';
 
 type UseSearchUsersOptions = {
   searchQuery: string;

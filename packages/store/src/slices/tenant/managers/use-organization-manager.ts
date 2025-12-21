@@ -1,6 +1,6 @@
 import {useState, useCallback, useEffect} from 'react';
 import {useOrganizationDetails, useUpdateTenant} from '../hooks';
-import type {Tenant} from '@vohrad/types';
+import type {Tenant} from '@sykamore/types';
 
 type StagedValues = Record<string, string>;
 

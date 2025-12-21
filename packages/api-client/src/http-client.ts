@@ -1,5 +1,5 @@
-import type {ApiResponse} from '@vohrad/types';
-import {ApiError} from '@vohrad/types';
+import type {ApiResponse} from '@sykamore/types';
+import {ApiError} from '@sykamore/types';
 import {resolveApiUrl, getApiConfig} from './config';
 import {loadingManager} from './loading-manager';
 import {errorManager} from './error-manager';
