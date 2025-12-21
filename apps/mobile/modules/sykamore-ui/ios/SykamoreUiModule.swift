@@ -63,7 +63,6 @@ public final class SykamoreUiModule: Module {
     ExpoUIView(VStackView.self)
     ExpoUIView(ProgressView.self)
     ExpoUIView(FormView.self)
-    ExpoUIView(ToggleView.self)
     ExpoUIView(CircleView.self)
     ExpoUIView(ToggleView.self)
     ExpoUIView(StepperView.self)

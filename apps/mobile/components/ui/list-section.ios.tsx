@@ -8,6 +8,7 @@ import {
   Button,
   HStack,
 } from '@/modules/sykamore-ui/src/ios';
+import {tint} from '@/modules/sykamore-ui/src/ios/modifiers';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, type IconName} from '@/utils/icons';
 
@@ -57,7 +58,7 @@ const ListSectionRow: React.FC<ListSectionRowProps> = ({
   const {theme} = useTheme();
 
   return (
-    <Button onPress={onPress} color={theme.text}>
+    <Button onPress={onPress} modifiers={[tint(theme.text)]}>
       <HStack>
         <Label
           title={title}
