@@ -4,7 +4,6 @@ import ExpoModulesCore
 final class SectionProps: UIBaseViewProps {
   @Field var title: String?
   @Field var collapsible: Bool = false
-  @Field var initiallyExpanded: Bool = true
 }
 
 internal final class SectionHeaderProps: ExpoSwiftUI.ViewProps {}
@@ -36,12 +35,7 @@ internal struct SectionContent: ExpoSwiftUI.View {
 
 internal struct SectionView: ExpoSwiftUI.View {
   @ObservedObject var props: SectionProps
-  @State private var isExpanded: Bool
-
-  init(props: SectionProps) {
-    self.props = props
-    _isExpanded = State(initialValue: props.initiallyExpanded)
-  }
+  @State private var isExpanded: Bool = true
 
   var body: some View {
     if #available(iOS 17.0, macOS 14.0, tvOS 17.0, *), props.collapsible {
@@ -55,8 +49,7 @@ internal struct SectionView: ExpoSwiftUI.View {
   private var contentChildren: some View {
     if let content = props.children?
       .compactMap({ $0.childView as? SectionContent })
-      .first
-    {
+      .first {
       content
     }
   }
@@ -65,8 +58,7 @@ internal struct SectionView: ExpoSwiftUI.View {
   private var headerView: some View {
     if let header = props.children?
       .compactMap({ $0.childView as? SectionHeader })
-      .first
-    {
+      .first {
       header
     } else if let title = props.title, !title.isEmpty {
       Text(title).textCase(nil)
@@ -77,8 +69,7 @@ internal struct SectionView: ExpoSwiftUI.View {
   private var footerView: some View {
     if let footer = props.children?
       .compactMap({ $0.childView as? SectionFooter })
-      .first
-    {
+      .first {
       footer
     }
   }
@@ -94,7 +85,6 @@ internal struct SectionView: ExpoSwiftUI.View {
     }
   }
 
-  // Note: SwiftUI's Section(isExpanded:) API does not support footer - this is a framework limitation
   @available(iOS 17.0, macOS 14.0, tvOS 17.0, *)
   private var collapsibleSection: some View {
     Section(isExpanded: $isExpanded) {

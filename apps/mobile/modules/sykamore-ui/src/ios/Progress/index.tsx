@@ -1,6 +1,5 @@
 import {requireNativeView} from 'expo';
 import {ColorValue} from 'react-native';
-
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 

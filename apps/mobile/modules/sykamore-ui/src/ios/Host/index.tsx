@@ -1,10 +1,10 @@
+import {requireNativeView} from 'expo';
 import {
   type ColorSchemeName,
   I18nManager,
-  type StyleProp,
-  type ViewStyle,
+  StyleProp,
+  ViewStyle,
 } from 'react-native';
-import {requireNativeView} from 'expo';
 
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
@@ -17,6 +17,7 @@ export type HostProps = {
   }) => void;
   colorScheme?: ColorSchemeName;
   layoutDirection?: 'leftToRight' | 'rightToLeft';
+  ignoreSafeAreaKeyboardInsets?: boolean;
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
 } & CommonViewModifierProps;
@@ -36,6 +37,7 @@ export function Host(props: HostProps) {
   const {
     matchContents,
     onLayoutContent,
+    ignoreSafeAreaKeyboardInsets,
     modifiers,
     layoutDirection,
     ...restProps
@@ -60,6 +62,7 @@ export function Host(props: HostProps) {
         layoutDirection ??
         (I18nManager.getConstants().isRTL ? 'rightToLeft' : 'leftToRight')
       }
+      ignoreSafeAreaKeyboardInsets={ignoreSafeAreaKeyboardInsets}
       {...restProps}
     />
   );

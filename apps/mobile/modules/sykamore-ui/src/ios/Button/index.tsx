@@ -1,112 +1,82 @@
 import {requireNativeView} from 'expo';
-import type {ColorValue} from 'react-native';
 import {type SFSymbol} from 'sf-symbols-typescript';
 
 import {type ViewEvent} from '../../types';
-import {getTextFromChildren} from '../../utils';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 
+/**
+ * The role of the button.
+ * - `default` - The default button role.
+ * - `cancel` - A button that cancels the current operation.
+ * - `destructive` - A button that deletes data or performs a destructive action.
+ */
 export type ButtonRole = 'default' | 'cancel' | 'destructive';
 
-export type ButtonControlSize =
-  | 'mini'
-  | 'small'
-  | 'regular'
-  | 'large'
-  | 'extraLarge';
-
-/**
- * The built-in button styles available on iOS.
- *
- * Common styles:
- * - `default` - The default system button style.
- * - `bordered` - A button with a light fill.
- * - `borderless` - A button with no background or border
- * - `borderedProminent` - A bordered button with a prominent appearance.
- * - `plain` - A button with no border or background and a less prominent text.
- * - `glass` – A liquid glass button effect (available only from iOS 26, when built with Xcode 26).
- * - `glassProminent` – A liquid glass button effect – (available only from iOS 26, when built with Xcode 26)
- */
-export type ButtonVariant =
-  // Common
-  | 'default'
-  | 'bordered'
-  | 'plain'
-  | 'glass'
-  | 'glassProminent'
-  | 'borderedProminent'
-  | 'borderless';
-
 export type ButtonProps = {
+  /**
+   * A callback that is called when the button is pressed.
+   */
   onPress?: () => void;
+  /**
+   * A string describing the system image to display in the button.
+   * Only used when `label` is provided.
+   */
   systemImage?: SFSymbol;
+  /**
+   * Indicates the role of the button.
+   */
   role?: ButtonRole;
-  controlSize?: ButtonControlSize;
-  variant?: ButtonVariant;
-  children?: string | React.ReactNode;
-  color?: ColorValue;
-  disabled?: boolean;
+  /**
+   * The text label for the button. Use this for simple text buttons.
+   */
+  label?: string;
+  /**
+   * Custom content for the button label. Use this for custom label views.
+   */
+  children?: React.ReactNode;
 } & CommonViewModifierProps;
 
-/**
- * exposed for ContextMenu
- * @hidden
- */
-export type NativeButtonProps = Omit<
-  ButtonProps,
-  'role' | 'onPress' | 'children' | 'systemImage' | 'controlSize'
-> & {
-  buttonRole?: ButtonRole;
-  text: string | undefined;
-  systemImage?: SFSymbol;
-} & ViewEvent<'onButtonPressed', void>;
+type NativeButtonProps = Omit<ButtonProps, 'onPress'> &
+  ViewEvent<'onButtonPress', void>;
 
-// We have to work around the `role` and `onPress` props being reserved by React Native.
 const ButtonNativeView: React.ComponentType<NativeButtonProps> =
   requireNativeView('SykamoreUi', 'Button');
 
 /**
- * exposed for ContextMenu
- * @hidden
- */
-export function transformButtonProps(
-  props: Omit<ButtonProps, 'children'>,
-  text: string | undefined,
-): NativeButtonProps {
-  const {role, onPress, systemImage, modifiers, ...restProps} = props;
-  return {
-    modifiers,
-    ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
-    ...restProps,
-    text,
-    systemImage,
-    buttonRole: role,
-    onButtonPressed: onPress,
-  };
-}
-
-/**
  * Displays a native button component.
+ *
+ * @example
+ * ```tsx
+ * import { Button } from '@expo/ui/swift-ui';
+ * import { buttonStyle, controlSize, tint, disabled } from '@expo/ui/swift-ui/modifiers';
+ *
+ * <Button
+ *   role="destructive"
+ *   onPress={handlePress}
+ *   label="Delete"
+ *   modifiers={[
+ *     buttonStyle('bordered'),
+ *     controlSize('large'),
+ *     tint('#FF0000'),
+ *     disabled(true)
+ *   ]}
+ * />
+ * ```
  */
 export function Button(props: ButtonProps) {
-  const {children, ...restProps} = props;
+  const {label, children, onPress, modifiers, ...restProps} = props;
 
-  if (!children && !restProps.systemImage) {
-    throw new Error(
-      'Button without systemImage prop should have React children',
-    );
-  }
+  const baseProps = {
+    ...restProps,
+    modifiers,
+    ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
+    onButtonPress: onPress,
+  };
 
-  const text = getTextFromChildren(children);
-
-  const transformedProps = transformButtonProps(restProps, text);
-
-  // Render without children wrapper if text-only or icon-only
-  const shouldRenderDirectly = text != null || children == null;
-
-  if (shouldRenderDirectly) {
-    return <ButtonNativeView {...transformedProps} />;
-  }
-  return <ButtonNativeView {...transformedProps}>{children}</ButtonNativeView>;
+  return (
+    <ButtonNativeView {...baseProps} label={label}>
+      {children}
+    </ButtonNativeView>
+  );
 }

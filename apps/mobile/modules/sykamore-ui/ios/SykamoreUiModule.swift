@@ -7,10 +7,11 @@ public final class SykamoreUiModule: Module {
     // MARK: - Views
     View(HostView.self)
     ExpoUIView(PopoverView.self)
+    View(NamespaceView.self)
     View(PopoverViewContent.self)
     View(PopoverViewPopContent.self)
     ExpoUIView(ListView.self)
-    ExpoUIView(Button.self)
+    ExpoUIView(SykamoreUi.Button.self)
     ExpoUIView(SectionView.self)
     View(SectionHeader.self)
     View(SectionFooter.self)
@@ -22,7 +23,7 @@ public final class SykamoreUiModule: Module {
     View(ContextMenuActivationElement.self)
     View(ContextMenuContent.self)
     ExpoUIView(GlassEffectContainerView.self)
-    ExpoUIView(DateTimePickerView.self)
+    ExpoUIView(DatePickerView.self)
     ExpoUIView(TextView.self)
     ExpoUIView(ImageView.self)
     ExpoUIView(SwitchView.self)
@@ -47,8 +48,25 @@ public final class SykamoreUiModule: Module {
         view.setSelection(start: start, end: end)
       }
     }
+    View(SecureFieldView.self) {
+      AsyncFunction("setText") { (view: SecureFieldView, text: String) in
+        view.setText(text)
+      }
+      AsyncFunction("blur") { (view: SecureFieldView) in
+        view.blur()
+      }
+      AsyncFunction("focus") { (view: SecureFieldView) in
+        view.focus()
+      }
+    }
     ExpoUIView(HStackView.self)
     ExpoUIView(VStackView.self)
     ExpoUIView(ProgressView.self)
+    ExpoUIView(FormView.self)
+    ExpoUIView(ToggleView.self)
+    ExpoUIView(CircleView.self)
+    ExpoUIView(ToggleView.self)
+    ExpoUIView(StepperView.self)
+    ExpoUIView(ConcentricRectangleView.self)
   }
 }
