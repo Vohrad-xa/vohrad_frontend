@@ -1,5 +1,7 @@
 import SwiftUI
 import ExpoModulesCore
+import SykamoreUi
+
 
 enum KeyboardType: String, Enumerable {
   case defaultKeyboard = "default"
@@ -54,27 +56,7 @@ enum TextContentType: String, Enumerable {
   }
 }
 
-enum SubmitLabel: String, Enumerable {
-  case done = "done"
-  case go = "go"
-  case send = "send"
-  case search = "search"
-  case next = "next"
-  case `continue` = "continue"
-  case `return` = "return"
 
-  func toSwiftUI() -> SwiftUI.SubmitLabel {
-    switch self {
-    case .done: return .done
-    case .go: return .go
-    case .send: return .send
-    case .search: return .search
-    case .next: return .next
-    case .continue: return .continue
-    case .return: return .return
-    }
-  }
-}
 
 enum TextInputAutocapitalization: String, Enumerable {
   case never = "never"
@@ -130,9 +112,9 @@ final class TextFieldProps: UIBaseViewProps {
   @Field var submitLabel: SubmitLabel?
   @Field var autocapitalization: TextInputAutocapitalization?
   @Field var textFieldStyle: TextFieldStyleType = .automatic
-  var onValueChanged = EventDispatcher()
-  var onFocusChanged = EventDispatcher()
-  var onSelectionChanged = EventDispatcher()
+  var onChangeText = EventDispatcher()
+  var onChangeFocus = EventDispatcher()
+  var onChangeSelection = EventDispatcher()
   var onSubmit = EventDispatcher()
 }
 
@@ -320,14 +302,14 @@ struct TextFieldView: ExpoSwiftUI.View, ExpoSwiftUI.FocusableView {
         }
       }
       .onChange(of: textManager.text) { newValue in
-        props.onValueChanged(["value": newValue])
+        props.onChangeText(["value": newValue])
       }
       .onChange(of: textManager.isFocused) { newValue in
         isFocused = newValue
       }
       .onChange(of: isFocused) { newValue in
         textManager.isFocused = newValue
-        props.onFocusChanged(["value": newValue])
+        props.onChangeFocus(["value": newValue])
       }
 
     #if !os(tvOS)
@@ -340,7 +322,7 @@ struct TextFieldView: ExpoSwiftUI.View, ExpoSwiftUI.FocusableView {
 
             let start = textManager.text.distance(from: textManager.text.startIndex, to: clampedLower)
             let end = textManager.text.distance(from: textManager.text.startIndex, to: clampedUpper)
-            props.onSelectionChanged(["start": start, "end": end])
+            props.onChangeSelection(["start": start, "end": end])
           }
         }
       }

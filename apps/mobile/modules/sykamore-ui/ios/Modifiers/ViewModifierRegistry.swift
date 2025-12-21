@@ -985,14 +985,14 @@ internal struct TextStrikeThrough: ViewModifier, Record {
   }
 }
 
-internal enum TextAligment: String, Enumerable {
+internal enum TextAlignment: String, Enumerable {
   case center
   case leading
   case trailing
 }
 
 internal struct MultilineTextAlignment: ViewModifier, Record {
-  @Field var alignment: TextAligment = .leading
+  @Field var alignment: TextAlignment = .leading
 
   func body(content: Content) -> some View {
     switch alignment {

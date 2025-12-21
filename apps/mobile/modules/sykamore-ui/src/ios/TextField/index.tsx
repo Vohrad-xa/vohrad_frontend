@@ -187,37 +187,42 @@ export type TextFieldProps = {
 
 export type NativeTextFieldProps = Omit<
   TextFieldProps,
-  'onChangeText' | 'onSubmit'
-> & {} & ViewEvent<'onValueChanged', {value: string}> &
-  ViewEvent<'onFocusChanged', {value: boolean}> &
-  ViewEvent<'onSelectionChanged', {start: number; end: number}> &
+  'onChangeText' | 'onSubmit' | 'onChangeFocus' | 'onChangeSelection'
+> &
+  ViewEvent<'onChangeText', {value: string}> &
+  ViewEvent<'onChangeFocus', {value: boolean}> &
+  ViewEvent<'onChangeSelection', {start: number; end: number}> &
   ViewEvent<'onSubmit', {value: string}>;
 // We have to work around the `role` and `onPress` props being reserved by React Native.
 const TextFieldNativeView: React.ComponentType<NativeTextFieldProps> =
   requireNativeView('SykamoreUi', 'TextFieldView');
 
 function transformTextFieldProps(props: TextFieldProps): NativeTextFieldProps {
-  const {modifiers, ...restProps} = props;
+  const {
+    modifiers,
+    onChangeText,
+    onChangeFocus,
+    onChangeSelection,
+    onSubmit,
+    ...restProps
+  } = props;
   return {
+    ...restProps,
     modifiers,
     ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
-    ...restProps,
-    onValueChanged: (event: {nativeEvent: {value: string}}) => {
-      props.onChangeText?.(event.nativeEvent.value);
+    onChangeText: (event: {nativeEvent: {value: string}}) => {
+      onChangeText?.(event.nativeEvent.value);
     },
-    onFocusChanged: (event: {nativeEvent: {value: boolean}}) => {
-      props.onChangeFocus?.(event.nativeEvent.value);
+    onChangeFocus: (event: {nativeEvent: {value: boolean}}) => {
+      onChangeFocus?.(event.nativeEvent.value);
     },
-    onSelectionChanged: (event: {
+    onChangeSelection: (event: {
       nativeEvent: {start: number; end: number};
     }) => {
-      props.onChangeSelection?.({
-        start: event.nativeEvent.start,
-        end: event.nativeEvent.end,
-      });
+      onChangeSelection?.(event.nativeEvent);
     },
     onSubmit: (event: {nativeEvent: {value: string}}) => {
-      props.onSubmit?.(event.nativeEvent.value);
+      onSubmit?.(event.nativeEvent.value);
     },
   };
 }
