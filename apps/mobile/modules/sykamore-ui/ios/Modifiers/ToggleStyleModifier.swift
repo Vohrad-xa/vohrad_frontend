@@ -19,11 +19,15 @@ internal struct ToggleStyleModifier: ViewModifier, Record {
     case .button:
       content.toggleStyle(.button)
     case .checkbox:
+      #if os(iOS)
+      content.toggleStyle(.automatic)
+      #else
       if #available(iOS 15.0, *) {
         content.toggleStyle(.checkbox)
       } else {
         content.toggleStyle(.automatic)
       }
+      #endif
     case .automatic:
       content.toggleStyle(.automatic)
     }

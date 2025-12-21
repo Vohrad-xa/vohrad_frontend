@@ -1,6 +1,5 @@
 import ExpoModulesCore
 import SwiftUI
-import SykamoreUi
 
 internal struct SubmitLabelModifier: ViewModifier, Record {
   @Field var submitLabel: SubmitLabel?

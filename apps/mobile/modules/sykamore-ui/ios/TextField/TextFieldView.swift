@@ -1,6 +1,5 @@
 import SwiftUI
 import ExpoModulesCore
-import SykamoreUi
 
 
 enum KeyboardType: String, Enumerable {
