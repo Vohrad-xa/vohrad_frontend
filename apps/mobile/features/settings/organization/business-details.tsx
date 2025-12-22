@@ -5,7 +5,7 @@ import type {InfoField} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {useOrganization} from '../hooks';
+import {useOrganization} from './use-organization';
 
 export type BusinessDetailsContentHandle = {
   saveOrganization: () => void;

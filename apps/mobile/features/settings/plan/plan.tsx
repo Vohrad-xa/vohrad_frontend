@@ -4,7 +4,7 @@ import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory, AppIcons, formatDate} from '@/utils';
-import {useLicenseInfo} from '../hooks/use-license-info';
+import {useLicenseInfo} from './use-license-info';
 
 export function PlanScreen() {
   const {ds, theme} = useTheme();

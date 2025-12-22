@@ -7,7 +7,7 @@ import {
   type NativeMenuAction,
 } from '@/components/ui';
 import {AppIcons, sortByDate, type SortOrder, SFSymbols} from '@/utils';
-import {useSearchUsers, type UsersFilterOptions} from '../hooks';
+import {useSearchUsers, type UsersFilterOptions} from './use-search-users';
 
 type UsersFilterMenuProps = {
   searchQuery: string;

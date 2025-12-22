@@ -1,4 +1,9 @@
-export {useOrganization, type SaveOrganizationOptions} from './hooks';
-export {OrganizationHeaderInfo} from './components';
-export {UsersFilterMenu} from './components';
-export * from './screens';
+export {
+  useOrganization,
+  type SaveOrganizationOptions,
+} from './use-organization';
+export {OrganizationHeaderInfo} from './header-info';
+export {
+  BusinessDetailsContent,
+  type BusinessDetailsContentHandle,
+} from './business-details';

@@ -3,10 +3,7 @@ import {StyleSheet, Platform} from 'react-native';
 import {useNavigation, useRouter} from 'expo-router';
 import {ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {
-  AddUserScreen,
-  type AddUserScreenHandle,
-} from '@/features/settings/organization';
+import {AddUserScreen, type AddUserScreenHandle} from '@/features/settings';
 import {useSettingsHeader} from '@/hooks';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';

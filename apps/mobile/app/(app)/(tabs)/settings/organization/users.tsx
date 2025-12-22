@@ -4,7 +4,7 @@ import {useNavigation, useRouter} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useSearch} from '@/features/dashboard';
-import {UsersFilterMenu, UsersList} from '@/features/settings/organization';
+import {UsersFilterMenu, UsersList} from '@/features/settings';
 import {useTheme} from '@/providers';
 import {AppIcons, makeStyleFactory} from '@/utils';
 

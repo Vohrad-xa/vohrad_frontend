@@ -6,7 +6,7 @@ import {useRolesList} from '@/features/roles';
 import {DatePicker, Picker} from '@/modules/sykamore-ui/src/android';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {useAddUser} from '../hooks/use-add-user';
+import {useAddUser} from './use-add-user';
 import type {Role} from '@sykamore/types';
 
 export type AddUserScreenHandle = {

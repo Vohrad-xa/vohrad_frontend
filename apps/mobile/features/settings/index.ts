@@ -1,30 +1,10 @@
-// Main Components
 export {AppearanceMenu} from './appearance-menu';
-
-// App Settings
 export {BiometricToggle, HapticToggle} from './app-settings';
-
-// Profile Management
-export {
-  ProfileContentEditable as ProfileContent,
-  type ProfileContentHandle,
-} from './profile/profile-content';
-export {useProfileForm} from './profile/use-profile-form';
-export type {SaveProfileOptions} from './profile/profile-content';
-
-// Organization Management
-export {
-  useOrganization,
-  type SaveOrganizationOptions,
-  OrganizationHeaderInfo,
-} from './organization';
-
-// Preferences
-export {
-  PreferencesContentEditable as PreferencesContent,
-  type PreferencesContentHandle,
-  type SavePreferencesOptions,
-} from './preferences/preferences-content';
+export * from './profile';
+export * from './organization';
+export * from './user-management';
+export * from './plan';
+export * from './preferences';
 
 // Types
 export type {

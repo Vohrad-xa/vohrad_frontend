@@ -5,7 +5,7 @@ import {ModalScrollView} from '@/components/ui';
 import {
   BusinessDetailsContent,
   type BusinessDetailsContentHandle,
-} from '@/features/settings/organization';
+} from '@/features/settings';
 import {useSettingsHeader} from '@/hooks';
 
 export default function BusinessDetailsScreen() {
