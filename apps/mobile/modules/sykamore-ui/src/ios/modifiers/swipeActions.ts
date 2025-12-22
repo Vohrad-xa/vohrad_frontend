@@ -8,27 +8,18 @@ export type SwipeEdge = 'leading' | 'trailing';
 
 /** Configuration for a single swipe action */
 export interface ModifierSwipeAction {
-  /** Unique identifier for the action */
   id: string;
-  /** Display label for the action */
   label: string;
-  /** SF Symbol name for the action icon */
   systemImage?: string;
-  /** Button role for styling (destructive shows red) */
   role?: SwipeActionRole;
-  /** Custom tint color (hex string like "#FF0000") */
   tint?: string;
 }
 
 /** Options for swipeActions modifier */
 export interface SwipeActionsOptions {
-  /** Edge where actions appear (default: trailing) */
   edge?: SwipeEdge;
-  /** Allow full swipe to trigger first action (default: true) */
   allowsFullSwipe?: boolean;
-  /** Array of swipe actions */
   actions: ModifierSwipeAction[];
-  /** Callback when action is triggered */
   onAction?: (actionId: string, label: string) => void;
 }
 

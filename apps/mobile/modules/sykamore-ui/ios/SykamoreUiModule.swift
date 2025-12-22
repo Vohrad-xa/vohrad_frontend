@@ -26,14 +26,22 @@ public final class SykamoreUiModule: Module {
     ExpoUIView(DatePickerView.self)
     ExpoUIView(TextView.self)
     ExpoUIView(ImageView.self)
-    ExpoUIView(SwitchView.self)
-    View(SwitchIcon.self)
     ExpoUIView(SpacerView.self)
     ExpoUIView(DividerView.self)
     ExpoUIView(PickerView.self)
     View(PickerContentView.self)
     View(PickerLabelView.self)
     View(PickerLabelIcon.self)
+    View(RNHostView.self) {
+      Prop("matchContents") { (view, matchContents: Bool) in
+        view.matchContents = matchContents
+      }
+    }
+    OnDestroy {
+      Task { @MainActor in
+        NamespaceRegistry.shared.removeAll()
+      }
+    }
     View(TextFieldView.self) {
       AsyncFunction("setText") { (view: TextFieldView, text: String) in
         view.setText(text)

@@ -1,6 +1,7 @@
 import {requireNativeView} from 'expo';
 import {type ViewEvent} from '../../types';
 import {createViewModifierEventListener} from '../modifiers/utils';
+import {type ViewModifier} from '../modifiers';
 import {type CommonViewModifierProps} from '../types';
 
 export type StepperProps = {
@@ -10,6 +11,7 @@ export type StepperProps = {
   min?: number;
   max?: number;
   onValueChanged: (value: number) => void;
+  stepperModifiers?: ViewModifier[];
 } & CommonViewModifierProps;
 
 type NativeStepperProps = Omit<StepperProps, 'onValueChanged'> &
@@ -19,9 +21,10 @@ const StepperNativeView: React.ComponentType<NativeStepperProps> =
   requireNativeView('SykamoreUi', 'StepperView');
 
 function transformStepperProps(props: StepperProps): NativeStepperProps {
-  const {modifiers, ...restProps} = props;
+  const {modifiers, stepperModifiers, ...restProps} = props;
   return {
     modifiers,
+    stepperModifiers,
     ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
     ...restProps,
     onValueChanged: ({nativeEvent: {value}}) => {

@@ -1,9 +1,9 @@
 import {requireNativeView} from 'expo';
 import {type SFSymbol} from 'sf-symbols-typescript';
-
 import {type ViewEvent} from '../../types';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
+import {Text} from '../Text';
 
 /**
  * The role of the button.
@@ -14,26 +14,10 @@ import {type CommonViewModifierProps} from '../types';
 export type ButtonRole = 'default' | 'cancel' | 'destructive';
 
 export type ButtonProps = {
-  /**
-   * A callback that is called when the button is pressed.
-   */
   onPress?: () => void;
-  /**
-   * A string describing the system image to display in the button.
-   * Only used when `label` is provided.
-   */
   systemImage?: SFSymbol;
-  /**
-   * Indicates the role of the button.
-   */
   role?: ButtonRole;
-  /**
-   * The text label for the button. Use this for simple text buttons.
-   */
   label?: string;
-  /**
-   * Custom content for the button label. Use this for custom label views.
-   */
   children?: React.ReactNode;
 } & CommonViewModifierProps;
 
@@ -74,9 +58,12 @@ export function Button(props: ButtonProps) {
     onButtonPress: onPress,
   };
 
+  const content =
+    typeof children === 'string' ? <Text>{children}</Text> : children;
+
   return (
     <ButtonNativeView {...baseProps} label={label}>
-      {children}
+      {content}
     </ButtonNativeView>
   );
 }

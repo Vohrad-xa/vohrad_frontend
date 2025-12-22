@@ -4,13 +4,6 @@ import {HStack} from '../HStack';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 
-export type PickerStyle =
-  | 'automatic'
-  | 'menu'
-  | 'segmented'
-  | 'wheel'
-  | 'inline';
-
 export type PickerProps = {
   systemImage?: SFSymbol;
   label?: string | React.ReactNode;
@@ -19,11 +12,6 @@ export type PickerProps = {
   onSelectionChange?: (event: {
     nativeEvent: {selection: string | number};
   }) => void;
-
-  pickerStyle?: PickerStyle;
-  labelsHidden?: boolean;
-  disabled?: boolean;
-
   children?: React.ReactNode;
 } & CommonViewModifierProps;
 

@@ -7,8 +7,6 @@ import {type CommonViewModifierProps} from '../types';
 
 export interface ImageProps extends CommonViewModifierProps {
   systemName: SFSymbol;
-  size?: number;
-  color?: ColorValue;
   /**
    * The variable value for SF Symbols with variable color support.
    * Can be a number between 0.0 and 1.0.

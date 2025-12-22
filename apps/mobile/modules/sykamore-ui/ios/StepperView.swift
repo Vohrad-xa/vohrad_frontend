@@ -7,6 +7,7 @@ final class StepperProps: UIBaseViewProps {
   @Field var min: Int = 0
   @Field var max: Int = 100
   @Field var step: Int = 1
+  @Field var stepperModifiers: ModifierArray?
   var onValueChanged = EventDispatcher()
 }
 
@@ -23,19 +24,25 @@ struct StepperView: ExpoSwiftUI.View {
 
   var body: some View {
 #if !os(tvOS)
-    Stepper(props.label, value: $value, in: props.min...props.max, step: props.step)
-      .onChange(of: value, perform: { newValue in
-        props.onValueChanged(([
-          "value": Int(newValue)
-        ]))
-      })
-      .onAppear {
-        // Ensure the value is set correctly when the view appears
-        if let defaultValue = props.defaultValue {
-          let clampedValue = max(props.min, min(props.max, defaultValue))
-          value = clampedValue
-        }
+    HStack {
+      Text(props.label)
+      Spacer()
+      Stepper("", value: $value, in: props.min...props.max, step: props.step)
+        .labelsHidden()
+        .applyModifiers(props.stepperModifiers, appContext: props.appContext, globalEventDispatcher: props.globalEventDispatcher)
+    }
+    .onChange(of: value, perform: { newValue in
+      props.onValueChanged(([
+        "value": Int(newValue)
+      ]))
+    })
+    .onAppear {
+      // Ensure the value is set correctly when the view appears
+      if let defaultValue = props.defaultValue {
+        let clampedValue = max(props.min, min(props.max, defaultValue))
+        value = clampedValue
       }
+    }
 #else
     EmptyView()
 #endif

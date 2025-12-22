@@ -5,12 +5,6 @@ internal final class PickerProps: UIBaseViewProps {
   @Field var label: String?
   @Field var systemImage: String?
   @Field var selection: Either<String, Double>?
-
-  // New: style / label behavior / disabled
-  @Field var pickerStyle: String = "automatic"
-  @Field var labelsHidden: Bool = false
-  @Field var disabled: Bool = false
-
   var onSelectionChange = EventDispatcher()
 }
 
@@ -74,47 +68,8 @@ internal struct PickerView: ExpoSwiftUI.View {
     }
   }
 
-  // Apply style, labelsHidden, disabled
-  private func applyPickerChrome<Content: View>(_ picker: Content) -> some View {
-    var view = AnyView(picker)
-
-    // pickerStyle
-    switch props.pickerStyle {
-    case "segmented":
-      view = AnyView(view.pickerStyle(.segmented))
-    case "menu":
-      if #available(iOS 14.0, *) {
-        view = AnyView(view.pickerStyle(.menu))
-      } else {
-        view = AnyView(view.pickerStyle(.automatic))
-      }
-    case "wheel":
-      view = AnyView(view.pickerStyle(.wheel))
-    case "inline":
-      if #available(iOS 16.0, *) {
-        view = AnyView(view.pickerStyle(.inline))
-      } else {
-        view = AnyView(view.pickerStyle(.automatic))
-      }
-    default:
-      view = AnyView(view.pickerStyle(.automatic))
-    }
-
-    if props.labelsHidden {
-      view = AnyView(view.labelsHidden())
-    }
-
-    if props.disabled {
-      view = AnyView(view.disabled(true))
-    }
-
-    return view
-  }
-
   var body: some View {
-    let picker = applyPickerChrome(makePicker())
-
-    picker
+    makePicker()
       .onChange(of: selection) { newValue in
         guard let newValue else { return }
 

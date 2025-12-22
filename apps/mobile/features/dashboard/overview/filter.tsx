@@ -6,7 +6,7 @@ import {Switch as AndroidSwitch} from '@/modules/sykamore-ui/src/android';
 import {
   Host,
   List as IOSList,
-  Switch as IOSSwitch,
+  Toggle as IOSToggle,
   Section,
   Text,
 } from '@/modules/sykamore-ui/src/ios';
@@ -39,15 +39,16 @@ export function FilterContent() {
               const isVisible = visibility[visibilityKey];
 
               return (
-                <IOSSwitch
+                <IOSToggle
                   key={visibilityKey}
-                  value={isVisible}
-                  onValueChange={(value) =>
+                  isOn={isVisible}
+                  onIsOnChange={(value) =>
                     setCardVisibility(visibilityKey, value)
                   }
                   label={card.title}
-                  icon={<Icon name={card.icon} />}
-                />
+                >
+                  <Icon name={card.icon} />
+                </IOSToggle>
               );
             })}
           </Section>
@@ -85,9 +86,9 @@ export function FilterContent() {
                     scale={0.8}
                   />
                 ) : (
-                  <Switch
-                    value={isVisible}
-                    onValueChange={(value) =>
+                  <IOSToggle
+                    isOn={isVisible}
+                    onIsOnChange={(value) =>
                       setCardVisibility(visibilityKey, value)
                     }
                   />

@@ -1,6 +1,6 @@
 import {useCallback} from 'react';
 import {useBiometricToggle} from '@/features/settings/app-settings/biometric';
-import {Host, List, Switch, Section, Text} from '@/modules/sykamore-ui/src/ios';
+import {Host, List, Toggle, Section, Text} from '@/modules/sykamore-ui/src/ios';
 import {useHaptic} from '@/providers';
 import {AppIcons, Icon} from '@/utils';
 
@@ -41,18 +41,17 @@ export default function AppSettingsScreen() {
             </Text>
           }
         >
-          <Switch
-            value={biometricEnabled}
-            onValueChange={handleBiometricChange}
+          <Toggle
+            isOn={biometricEnabled}
+            onIsOnChange={handleBiometricChange}
             label="Face ID"
-            icon={
-              <Icon
-                name={AppIcons.settings.biometric}
-                useSwiftUI
-                colorToken="accentGreen"
-              />
-            }
-          />
+          >
+            <Icon
+              name={AppIcons.settings.biometric}
+              useSwiftUI
+              colorToken="accentGreen"
+            />
+          </Toggle>
         </Section>
 
         <Section
@@ -63,18 +62,17 @@ export default function AppSettingsScreen() {
             </Text>
           }
         >
-          <Switch
-            value={hapticEnabled}
-            onValueChange={handleHapticChange}
+          <Toggle
+            isOn={hapticEnabled}
+            onIsOnChange={handleHapticChange}
             label="Haptic Feedback"
-            icon={
-              <Icon
-                name={AppIcons.settings.haptic}
-                useSwiftUI
-                colorToken="destructive"
-              />
-            }
-          />
+          >
+            <Icon
+              name={AppIcons.settings.haptic}
+              useSwiftUI
+              colorToken="destructive"
+            />
+          </Toggle>
         </Section>
       </List>
     </Host>

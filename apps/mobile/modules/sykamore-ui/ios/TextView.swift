@@ -152,11 +152,7 @@ struct BaselineOffsetTextModifier: ViewModifier {
 
 internal final class TextViewProps: UIBaseViewProps {
   @Field var text: String = ""
-  @Field var weight: FontWeight?
-  @Field var design: FontDesign?
-  @Field var size: Double?
   @Field var lineLimit: Int?
-  @Field var color: Color?
   @Field var textCase: TextCase?
   @Field var bold: Bool = false
   @Field var italic: Bool = false
@@ -173,18 +169,8 @@ internal struct TextView: ExpoSwiftUI.View {
   @ObservedObject var props: TextViewProps
 
   var body: some View {
-    let hasDeprecatedFontProps = props.weight != nil || props.design != nil || props.size != nil
-
     Text(props.text)
-      .if(hasDeprecatedFontProps) { text in
-        text.font(.system(
-          size: CGFloat(props.size ?? 17),
-          weight: props.weight?.toSwiftUI() ?? .regular,
-          design: props.design?.toSwiftUI() ?? .default
-        ))
-      }
       .lineLimit(props.lineLimit)
-      .foregroundColor(props.color)
       .if(props.textCase != nil) { text in
         text.textCase(props.textCase?.toSwiftUI())
       }

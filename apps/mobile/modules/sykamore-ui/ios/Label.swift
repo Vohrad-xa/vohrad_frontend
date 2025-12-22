@@ -39,6 +39,8 @@ public struct LabelView: ExpoSwiftUI.View {
       } else {
         Label(title, systemImage: "").labelStyle(.titleOnly)
       }
+    } else {
+      EmptyView()
     }
   }
 

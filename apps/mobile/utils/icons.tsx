@@ -19,6 +19,7 @@ interface IconProps {
   style?: StyleProp<TextStyle>;
   noContainer?: boolean;
   withBackground?: boolean;
+  accessibilityLabel?: string;
 }
 
 export const IconFontFamily = 'Ionicons' as const;

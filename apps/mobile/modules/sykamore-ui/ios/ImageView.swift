@@ -3,8 +3,6 @@ import ExpoModulesCore
 
 internal final class ImageViewProps: UIBaseViewProps {
   @Field var systemName: String = ""
-  @Field var size: Double?
-  @Field var color: Color?
   @Field var variableValue: Double?
   @Field var useTapGesture: Bool?
   var onTap = EventDispatcher()
@@ -24,8 +22,6 @@ internal struct ImageView: ExpoSwiftUI.View {
 
     return
       image
-      .font(.system(size: CGFloat(props.size ?? 24)))
-      .foregroundColor(props.color)
       .applyOnTapGesture(useTapGesture: props.useTapGesture, eventDispatcher: props.onTap)
   }
 }

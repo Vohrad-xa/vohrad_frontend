@@ -2,8 +2,11 @@ import React from 'react';
 import {SymbolView, type SFSymbol} from 'expo-symbols';
 import {Palette, type TokenName} from '@/constants';
 import {
+  accessibilityLabel,
   background,
   clipShape,
+  font,
+  foregroundStyle,
   frame,
   Image,
 } from '@/modules/sykamore-ui/src/ios';
@@ -24,6 +27,7 @@ interface IconProps {
   iconColor?: string;
   useSwiftUI?: boolean;
   noContainer?: boolean;
+  accessibilityLabel?: string;
 }
 
 export const Icon: React.FC<IconProps> = ({
@@ -36,6 +40,7 @@ export const Icon: React.FC<IconProps> = ({
   iconColor,
   useSwiftUI = false,
   noContainer = false,
+  accessibilityLabel: a11yLabel,
 }) => {
   const {theme, ds} = useTheme();
 
@@ -60,12 +65,17 @@ export const Icon: React.FC<IconProps> = ({
     );
   }
 
+  const a11yModifier = a11yLabel ? [accessibilityLabel(a11yLabel)] : [];
+
   if (noContainer) {
     return (
       <Image
         systemName={name as SFSymbol}
-        color={resolvedTintColor ?? theme.muted}
-        size={sizeNoContainer}
+        modifiers={[
+          font({size: sizeNoContainer}),
+          foregroundStyle(resolvedTintColor ?? theme.muted),
+          ...a11yModifier,
+        ]}
       />
     );
   }
@@ -73,12 +83,13 @@ export const Icon: React.FC<IconProps> = ({
   return (
     <Image
       systemName={name as SFSymbol}
-      color={resolvedIconColor}
-      size={resolvedSize}
       modifiers={[
+        font({size: resolvedSize}),
+        foregroundStyle(resolvedIconColor),
         frame({width: frameSize, height: frameSize}),
         background(resolvedTintColor ?? theme.card),
         clipShape('roundedRectangle'),
+        ...a11yModifier,
       ]}
     />
   );

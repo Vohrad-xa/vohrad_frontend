@@ -2,6 +2,7 @@ import {requireNativeView} from 'expo';
 import {type ViewEvent} from '../../types';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
+import {type ModifierSwipeAction} from '../modifiers';
 
 const ListNativeView: React.ComponentType<NativeListProps> =
   requireNativeView<NativeListProps>('SykamoreUi', 'ListView');
@@ -32,9 +33,6 @@ export type ListStyle =
   | 'grouped'
   | 'sidebar';
 
-/** Button role for swipe action styling */
-export type SwipeActionRole = 'default' | 'destructive' | 'cancel';
-
 /** Selection behavior for the list */
 export type SelectionMode = 'multiple' | 'single' | 'none';
 
@@ -49,25 +47,9 @@ export interface RowInsets {
   trailing?: number;
 }
 
-/** Single swipe action configuration */
-export interface SwipeAction {
-  /** Unique identifier for the action */
-  id: string;
-  /** Display label for the action */
-  label: string;
-  /** SF Symbol name for the action icon */
-  systemImage?: string;
-  /** Button role for styling (destructive shows red) */
-  role?: SwipeActionRole;
-  /** Custom tint color (hex string like "#FF0000") */
-  tint?: string;
-}
-
 /** Swipe actions configuration for an edge */
 export interface SwipeActionsConfig {
-  /** Array of swipe actions */
-  actions: SwipeAction[];
-  /** Allow full swipe to trigger first action (default: true) */
+  actions: ModifierSwipeAction[];
   allowsFullSwipe?: boolean;
 }
 
