@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useLayoutEffect, useMemo} from 'react';
-import {View, StyleSheet, Pressable} from 'react-native';
+import {View, StyleSheet, Pressable, Platform} from 'react-native';
 import {
   useSetAttachmentFilter,
   useClearAttachmentFilter,
@@ -175,6 +175,38 @@ export default function VaultScreen() {
         <AllAttachmentsList
           attachments={searchResults}
           onAttachmentPress={handleSearchResultPress}
+        />
+      </View>
+    );
+  }
+
+  // iOS uses native Host/List which cannot be inside ScrollView
+  if (Platform.OS === 'ios') {
+    return (
+      <View style={styles.container}>
+        {hasActiveFilter && filterInfo && (
+          <View style={styles.filterContainer}>
+            <Pressable
+              style={styles.filterChip}
+              onPress={handleClearFilter}
+              accessibilityRole="button"
+              accessibilityLabel={`Clear filter for ${filterInfo.itemName ?? 'item'}`}
+            >
+              <ThemedText variant="caption" style={styles.filterText}>
+                Filtered: {filterInfo.itemName ?? `Item ${filterInfo.targetId}`}
+              </ThemedText>
+              <Icon name={AppIcons.actions.close} size="sm" colorToken="text" />
+            </Pressable>
+          </View>
+        )}
+        <AttachmentsOverview
+          counts={counts}
+          onTilePress={{
+            image: handleImagesPress,
+            document: handleDocumentsPress,
+            archive: handleArchivesPress,
+            other: handleOtherPress,
+          }}
         />
       </View>
     );

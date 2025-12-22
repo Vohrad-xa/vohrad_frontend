@@ -1,7 +1,4 @@
-// Attachments Feature Barrel File
-
 // Components
-export {AttachmentKindGrid} from './components/attachment-kind-grid';
 export {AttachmentAddOptions} from './components/attachment-add-options';
 export {AttachmentUploadPreviewCard} from './components/attachment-upload-preview-card';
 export {AttachmentDestinationCard} from './components/attachment-destination-card';
@@ -12,7 +9,6 @@ export {VaultActionsMenu} from './components/vault-actions-menu';
 export {VaultOptionsMenu} from './components/vault-options-menu';
 
 // Types
-export type {AttachmentKindTile} from './components/attachment-kind-grid';
 export type {AttachmentKindCount} from './utils/attachment-counts';
 
 // Utils

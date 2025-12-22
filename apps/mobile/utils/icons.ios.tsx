@@ -32,7 +32,7 @@ interface IconProps {
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 15,
+  size = 14,
   tintColor,
   tintToken,
   colorToken,

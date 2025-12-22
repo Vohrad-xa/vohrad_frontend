@@ -117,7 +117,6 @@ function SettingsStack() {
             name="users/add-user"
             options={{
               title: 'Add User',
-              presentation: 'modal',
             }}
           />
         </Stack>

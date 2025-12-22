@@ -73,8 +73,8 @@ export const Icon: React.FC<IconProps> = ({
     return (
       <View
         style={{
-          width: containerSize / 1.2,
-          height: containerSize / 1.2,
+          width: containerSize / 1.4,
+          height: containerSize / 1.4,
           borderRadius: containerSize / 2,
           backgroundColor,
           justifyContent: 'center',

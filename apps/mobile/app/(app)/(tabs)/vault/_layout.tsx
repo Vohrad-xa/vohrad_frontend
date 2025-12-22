@@ -40,6 +40,10 @@ function VaultStack() {
           headerTransparent: Platform.OS === 'ios',
           headerTitleAlign: 'left',
           headerTitleStyle: {
+            fontSize:
+              Platform.OS === 'android'
+                ? ds.typography.title3.fontSize
+                : undefined,
             fontWeight: ds.fontWeight.bold,
             color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
           },
@@ -59,9 +63,8 @@ function VaultStack() {
             headerSearchBarOptions: {
               headerIconColor:
                 Platform.OS === 'android' ? theme.headerAndroid : undefined,
-              placement: 'stacked',
-              shouldShowHintSearchIcon: true,
-              hideWhenScrolling: false,
+              placement: 'automatic',
+              hideWhenScrolling: true,
               placeholder: 'Search...',
               onChangeText: handleSearchChange,
             },

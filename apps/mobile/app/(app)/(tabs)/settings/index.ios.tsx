@@ -26,7 +26,7 @@ export default function SettingsModal() {
   return (
     <Host style={{flex: 1}} matchContents>
       <List
-        listStyle="insetGrouped"
+        listStyle="automatic"
         showScrollIndicators={false}
         sectionSpacing={ds.spacing.xxl}
       >
