@@ -105,6 +105,15 @@ export default function SettingsModal() {
       />
       <Divider style={styles.divider} />
       <List.Item
+        title="Plan"
+        description="View and manage your plan"
+        descriptionStyle={styles.description}
+        titleStyle={styles.itemTitle}
+        left={renderIcon('card', 'accentOrange')}
+        onPress={() => router.push('/(app)/(tabs)/settings/plan')}
+      />
+      <Divider style={styles.divider} />
+      <List.Item
         title="App Language"
         description="Select your preferred language"
         descriptionStyle={styles.description}

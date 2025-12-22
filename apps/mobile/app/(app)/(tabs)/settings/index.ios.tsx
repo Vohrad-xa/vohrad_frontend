@@ -69,9 +69,7 @@ export default function SettingsModal() {
             icon={AppIcons.business.plan}
             iconColorToken="accentOrange"
             title="Plan"
-            onPress={() =>
-              router.push('/(app)/(tabs)/settings/organization/plan')
-            }
+            onPress={() => router.push('/(app)/(tabs)/settings/plan')}
           />
         </ListSection>
 
