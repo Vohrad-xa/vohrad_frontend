@@ -17,7 +17,7 @@ export default function UsersScreen() {
   const [filterControl, setFilterControl] = useState<React.ReactNode>(null);
 
   const handleAddUser = useCallback(() => {
-    router.push('/settings/organization/add-user');
+    router.push('/settings/users/add-user');
   }, [router]);
 
   useLayoutEffect(() => {

@@ -44,6 +44,10 @@ function SettingsStack() {
             headerBackButtonDisplayMode: 'minimal',
             contentStyle: styles.container,
             headerTitleStyle: {
+              fontSize:
+                Platform.OS === 'android'
+                  ? ds.typography.title3.fontSize
+                  : undefined,
               fontWeight: ds.fontWeight.bold,
               color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
             },
@@ -61,13 +65,11 @@ function SettingsStack() {
                 />
               ),
               headerRight: () => (
-                <View style={styles.headerRightContainer}>
-                  <HeaderButton
-                    icon={AppIcons.navigation.event}
-                    accessibilityLabel="Open events"
-                    onPress={() => {}}
-                  />
-                </View>
+                <HeaderButton
+                  icon={AppIcons.navigation.event}
+                  accessibilityLabel="Open events"
+                  onPress={() => {}}
+                />
               ),
               headerSearchBarOptions: {
                 placement: 'integratedButton',
@@ -93,12 +95,12 @@ function SettingsStack() {
           <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
           <Stack.Screen name="about" options={{title: 'About'}} />
           <Stack.Screen
-            name="organization/business-details"
+            name="business-details"
             options={{title: 'Business Details'}}
           />
-          <Stack.Screen name="organization/plan" options={{title: 'Plan'}} />
+          <Stack.Screen name="plan" options={{title: 'Plan'}} />
           <Stack.Screen
-            name="organization/users"
+            name="users/index"
             options={{
               title: 'Users',
               headerLargeTitle: true,
@@ -112,7 +114,7 @@ function SettingsStack() {
             }}
           />
           <Stack.Screen
-            name="organization/add-user"
+            name="users/add-user"
             options={{
               title: 'Add User',
               presentation: 'modal',
@@ -133,16 +135,12 @@ export default function SettingsLayout() {
 }
 
 const createStyles = makeStyleFactory(
-  (theme: ThemeShape, ds: DSShape) =>
+  (theme: ThemeShape, _ds: DSShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
         backgroundColor: theme.background,
       },
-      headerRightContainer: {
-        flexDirection: 'row',
-        gap: Platform.OS === 'ios' && 'web' ? ds.spacing.xs : undefined,
-      },
     }),
-  (theme, ds) => themeKey(theme, ds),
+  (theme, _ds) => themeKey(theme, _ds),
 );

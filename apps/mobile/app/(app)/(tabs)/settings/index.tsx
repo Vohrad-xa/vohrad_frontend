@@ -62,9 +62,7 @@ export default function SettingsModal() {
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon('briefcase', 'accentBlue')}
-        onPress={() =>
-          router.push('/(app)/(tabs)/settings/organization/business-details')
-        }
+        onPress={() => router.push('/(app)/(tabs)/settings/business-details')}
       />
       <Divider style={styles.divider} />
       <List.Item
@@ -73,7 +71,7 @@ export default function SettingsModal() {
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
         left={renderIcon('users', 'accentGreen')}
-        onPress={() => router.push('/(app)/(tabs)/settings/organization/users')}
+        onPress={() => router.push('/(app)/(tabs)/settings/users')}
       />
       <Divider style={styles.divider} />
       <List.Item
