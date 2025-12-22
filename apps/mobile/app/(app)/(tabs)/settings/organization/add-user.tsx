@@ -1,5 +1,5 @@
 import {useRef, useCallback} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 import {useNavigation, useRouter} from 'expo-router';
 import {ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -35,13 +35,16 @@ export default function AddUserModal() {
     }, 600);
   }, [triggerSuccess, router]);
 
+  const addUserScreen = (
+    <AddUserScreen ref={addUserScreenRef} onSaveComplete={handleSaveComplete} />
+  );
+
+  if (Platform.OS === 'ios') {
+    return addUserScreen;
+  }
+
   return (
-    <ModalScrollView style={styles.container}>
-      <AddUserScreen
-        ref={addUserScreenRef}
-        onSaveComplete={handleSaveComplete}
-      />
-    </ModalScrollView>
+    <ModalScrollView style={styles.container}>{addUserScreen}</ModalScrollView>
   );
 }
 

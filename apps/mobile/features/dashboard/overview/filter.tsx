@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Platform, View} from 'react-native';
-import {List, Switch, Divider} from 'react-native-paper';
+import {List, Divider} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {Switch as AndroidSwitch} from '@/modules/sykamore-ui/src/android';
 import {

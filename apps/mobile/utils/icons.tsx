@@ -1,6 +1,6 @@
 import React from 'react';
 import type {OpaqueColorValue, StyleProp, TextStyle} from 'react-native';
-import {Platform, View} from 'react-native';
+import {View} from 'react-native';
 import {Ionicons, FontAwesome} from '@expo/vector-icons';
 import {type TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers/theme-provider';

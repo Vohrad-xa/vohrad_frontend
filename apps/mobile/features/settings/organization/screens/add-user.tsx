@@ -1,15 +1,13 @@
-import React, {forwardRef, useImperativeHandle, useState} from 'react';
+import React, {forwardRef, useImperativeHandle} from 'react';
 import {StyleSheet, View, Pressable} from 'react-native';
-import {useCreateUser} from '@sykamore/store';
 import {TextInput, List} from 'react-native-paper';
-
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {DatePicker} from '@/modules/sykamore-ui/src/android';
+import {useRolesList} from '@/features/roles';
+import {DatePicker, Picker} from '@/modules/sykamore-ui/src/android';
 import {useTheme} from '@/providers';
-import {showAlert} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {RolePicker} from '../components';
-import type {UserCreateData} from '@sykamore/types';
+import {useAddUser} from '../hooks/use-add-user';
+import type {Role} from '@sykamore/types';
 
 export type AddUserScreenHandle = {
   saveUser: () => Promise<boolean>;
@@ -27,79 +25,30 @@ export const AddUserScreen = forwardRef<
 >(({onSaveComplete, onFieldChange}, ref) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
-  const {mutateAsync: createUser} = useCreateUser();
-  const [formData, setFormData] = useState<Partial<UserCreateData>>({});
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const handleFieldChange = (key: string, value: string | Date | undefined) => {
-    setFormData((prev: Partial<UserCreateData>) => ({
-      ...prev,
-      [key]: value instanceof Date ? value.toISOString().split('T')[0] : value,
-    }));
-    onFieldChange?.();
-  };
+  const {
+    formData,
+    showDatePicker,
+    setShowDatePicker,
+    handleFieldChange,
+    handleRoleSelect,
+    hasChanges,
+    saveUser,
+    textFields,
+  } = useAddUser(onSaveComplete, onFieldChange);
 
-  const handleRoleSelect = (roleId: string) => {
-    handleFieldChange('role_id', roleId);
-  };
-
-  const hasChanges = () => {
-    return Object.keys(formData).length > 0;
-  };
-
-  const saveUser = async (): Promise<boolean> => {
-    if (!formData.email || !formData.password) {
-      showAlert({
-        title: 'Missing Required Fields',
-        message: 'Email and password are required to create a user.',
-      });
-      return false;
-    }
-
-    try {
-      const cleanedData: Partial<UserCreateData> = {};
-      for (const [key, value] of Object.entries(formData)) {
-        if (value !== null && value !== undefined && value !== '') {
-          cleanedData[key as keyof UserCreateData] = value as never;
-        }
-      }
-
-      await createUser(cleanedData as UserCreateData);
-      onSaveComplete?.();
-      return true;
-    } catch {
-      return false;
-    }
-  };
+  const {roles} = useRolesList();
+  const activeRoles = roles?.filter((role: Role) => role.is_active) ?? [];
+  const roleIds = activeRoles.map((role: Role) => role.id);
+  const roleNames = activeRoles.map((role: Role) => role.name);
+  const selectedIndex = formData.role_id
+    ? roleIds.indexOf(formData.role_id)
+    : -1;
 
   useImperativeHandle(ref, () => ({
     saveUser,
     hasChanges,
   }));
-
-  const textFields: Array<{
-    key: keyof UserCreateData;
-    label: string;
-    keyboardType?: 'email-address' | 'phone-pad';
-    autoCapitalize?: 'none';
-    secureTextEntry?: boolean;
-  }> = [
-    {key: 'first_name', label: 'First Name *'},
-    {key: 'last_name', label: 'Last Name *'},
-    {
-      key: 'email',
-      label: 'Email *',
-      keyboardType: 'email-address',
-      autoCapitalize: 'none',
-    },
-    {key: 'password', label: 'Password *', secureTextEntry: true},
-    {key: 'phone_number', label: 'Phone', keyboardType: 'phone-pad'},
-    {key: 'address', label: 'Address'},
-    {key: 'city', label: 'City'},
-    {key: 'province', label: 'Province'},
-    {key: 'postal_code', label: 'Postal Code'},
-    {key: 'country', label: 'Country'},
-  ];
 
   return (
     <View>
@@ -111,9 +60,23 @@ export const AddUserScreen = forwardRef<
           style={styles.itemList}
           title="Select role for the new User"
           right={() => (
-            <RolePicker
-              selectedRoleId={formData.role_id}
-              onRoleSelect={handleRoleSelect}
+            <Picker
+              options={roleNames}
+              selectedIndex={selectedIndex}
+              variant="menu"
+              triggerContentPadding={{start: 12, end: 8}}
+              style={{
+                borderStyle: 'solid',
+                borderWidth: 1,
+                borderColor: '#ccc',
+                borderRadius: 25,
+                height: 35,
+              }}
+              onOptionSelected={({
+                nativeEvent,
+              }: {
+                nativeEvent: {index: number};
+              }) => handleRoleSelect(roleIds[nativeEvent.index])}
             />
           )}
         />
