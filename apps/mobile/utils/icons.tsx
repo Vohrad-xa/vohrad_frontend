@@ -99,10 +99,7 @@ export const AppIcons = {
     event: 'notifications-outline' as IconName,
     vault: 'folder-open-sharp' as IconName,
     filter: 'filter-outline' as IconName,
-    back: Platform.select({
-      ios: 'chevron-back-outline',
-      default: 'arrow-back',
-    }) as IconName,
+    back: 'arrow-back' as IconName,
     forward: 'chevron-forward-outline' as IconName,
     close: 'close-outline' as IconName,
     chevron: 'chevron-forward-outline' as IconName,
@@ -176,8 +173,6 @@ export const AppIcons = {
 
   theme: {
     appearance: 'sparkles-outline' as IconName,
-    light: 'sunny-outline' as IconName,
-    dark: 'moon-outline' as IconName,
   },
 
   settings: {

@@ -48,21 +48,32 @@ export default function SettingsModal() {
       showsVerticalScrollIndicator={false}
     >
       <List.Item
-        title="Profile"
+        title="My Profile"
         description="View and edit your profile"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('person', 'accentBlue')}
+        left={renderIcon('person', 'destructive')}
         onPress={() => router.push('/(app)/(tabs)/settings/profile')}
       />
       <Divider style={styles.divider} />
       <List.Item
-        title="Organization"
-        description="Manage organization settings"
+        title="Business Details"
+        description="Manage business information"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('people', 'accentGreen')}
-        onPress={() => router.push('/(app)/(tabs)/settings/organization')}
+        left={renderIcon('briefcase', 'accentBlue')}
+        onPress={() =>
+          router.push('/(app)/(tabs)/settings/organization/business-details')
+        }
+      />
+      <Divider style={styles.divider} />
+      <List.Item
+        title="User Management"
+        description="Manage business information"
+        descriptionStyle={styles.description}
+        titleStyle={styles.itemTitle}
+        left={renderIcon('users', 'accentGreen')}
+        onPress={() => router.push('/(app)/(tabs)/settings/organization/users')}
       />
       <Divider style={styles.divider} />
       <List.Item

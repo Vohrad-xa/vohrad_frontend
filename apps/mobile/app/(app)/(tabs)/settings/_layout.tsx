@@ -88,10 +88,6 @@ function SettingsStack() {
           />
           <Stack.Screen name="language" options={{title: 'App Language'}} />
           <Stack.Screen name="support" options={{title: 'Report an Issue'}} />
-          <Stack.Screen
-            name="organization/index"
-            options={{title: 'Organization'}}
-          />
           <Stack.Screen name="app-settings" options={{title: 'App Settings'}} />
           <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
           <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />

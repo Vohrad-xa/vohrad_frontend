@@ -102,7 +102,7 @@ export const AppIcons = {
     menu: 'line.3.horizontal.decrease' as IconName,
     settings: 'gear' as IconName,
     scan: 'barcode.viewfinder' as IconName,
-    profile: 'person' as IconName,
+    profile: 'person.crop.circle.fill' as IconName,
     vault: 'folder' as IconName,
     event: 'bell' as IconName,
     eventFill: 'bell.fill' as IconName,
@@ -112,7 +112,7 @@ export const AppIcons = {
     close: 'xmark' as IconName,
     chevronRight: 'chevron.right' as IconName,
     more: 'ellipsis' as IconName,
-    preferences: 'slider.horizontal.3' as IconName,
+    preferences: 'slider.horizontal.below.square.filled.and.square' as IconName,
   },
 
   inventory: {
@@ -153,7 +153,7 @@ export const AppIcons = {
     export: 'square.and.arrow.up' as IconName,
     printFill: 'printer.fill' as IconName,
     print: 'printer' as IconName,
-    language: 'globe' as IconName,
+    language: 'globe.fill' as IconName,
     privacy: 'hand.raised.fill' as IconName,
     search: 'magnifyingglass' as IconName,
     list: 'list.bullet' as IconName,
@@ -173,7 +173,6 @@ export const AppIcons = {
   business: {
     supplierFill: 'cart.fill' as IconName,
     supplier: 'cart' as IconName,
-    profile: 'person.fill' as IconName,
     plan: 'creditcard.fill' as IconName,
     organization: 'briefcase.fill' as IconName,
     equipment: 'cpu' as IconName,
@@ -184,8 +183,6 @@ export const AppIcons = {
 
   theme: {
     appearance: 'circle.lefthalf.filled' as IconName,
-    light: 'sun.max' as IconName,
-    dark: 'moon' as IconName,
   },
 
   settings: {

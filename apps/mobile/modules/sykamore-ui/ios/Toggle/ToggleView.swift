@@ -42,10 +42,20 @@ internal struct ToggleView: ExpoSwiftUI.View {
 
   @ViewBuilder
   private func makeToggle() -> some View {
-    if let systemImage = props.systemImage, let label = props.label {
-      Toggle(label, systemImage: systemImage, isOn: $checked)
-    } else if let label = props.label {
-      Toggle(label, isOn: $checked)
+    if let label = props.label {
+      if props.children?.isEmpty == false {
+        Toggle(isOn: $checked) {
+          Label {
+            Text(label)
+          } icon: {
+            Children()
+          }
+        }
+      } else if let systemImage = props.systemImage {
+        Toggle(label, systemImage: systemImage, isOn: $checked)
+      } else {
+        Toggle(label, isOn: $checked)
+      }
     } else {
       Toggle(isOn: $checked) { Children() }
     }

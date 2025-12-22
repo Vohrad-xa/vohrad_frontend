@@ -33,18 +33,48 @@ export default function SettingsModal() {
         {/* Account Section */}
         <ListSection>
           <ListSection.Row
-            icon={AppIcons.business.profile}
-            iconColorToken="accentBlue"
-            title="Profile"
+            icon={AppIcons.navigation.profile}
+            iconColorToken="destructive"
+            title="My Profile"
             onPress={() => router.push('/(app)/(tabs)/settings/profile')}
           />
+        </ListSection>
+        {/* Organization Section */}
+        <ListSection>
           <ListSection.Row
             icon={AppIcons.business.organization}
+            iconColorToken="accentBlue"
+            title="Business Details"
+            onPress={() =>
+              router.push(
+                '/(app)/(tabs)/settings/organization/business-details',
+              )
+            }
+          />
+          <ListSection.Row
+            icon="person.badge.key.fill"
             iconColorToken="accentGreen"
-            title="Organization"
-            onPress={() => router.push('/(app)/(tabs)/settings/organization')}
+            title="User Management"
+            onPress={() =>
+              router.push('/(app)/(tabs)/settings/organization/users')
+            }
+          />
+          <ListSection.Row
+            icon={AppIcons.navigation.preferences}
+            iconColorToken="accentOrange"
+            title="Preferences"
+            onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
+          />
+          <ListSection.Row
+            icon={AppIcons.business.plan}
+            iconColorToken="accentOrange"
+            title="Plan"
+            onPress={() =>
+              router.push('/(app)/(tabs)/settings/organization/plan')
+            }
           />
         </ListSection>
+
         {/* Preferences Section */}
         <ListSection>
           <ListSection.Row
@@ -72,13 +102,6 @@ export default function SettingsModal() {
             <Button label="Dark" modifiers={[{$type: 'tag', tag: 'dark'}]} />
             <Button label="Auto" modifiers={[{$type: 'tag', tag: 'system'}]} />
           </Picker>
-
-          <ListSection.Row
-            icon={AppIcons.navigation.preferences}
-            iconColorToken="accentOrange"
-            title="Preferences"
-            onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
-          />
         </ListSection>
 
         <ListSection footer="For best results, select the language you mainly speak, if not available, the app will default to English.">
