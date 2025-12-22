@@ -32,11 +32,6 @@ public final class SykamoreUiModule: Module {
     View(PickerContentView.self)
     View(PickerLabelView.self)
     View(PickerLabelIcon.self)
-    View(RNHostView.self) {
-      Prop("matchContents") { (view, matchContents: Bool) in
-        view.matchContents = matchContents
-      }
-    }
     OnDestroy {
       Task { @MainActor in
         NamespaceRegistry.shared.removeAll()

@@ -25,5 +25,4 @@ export * from './Shapes';
 export * from './DatePicker';
 export * from './Stepper';
 export * from './ContextMenu';
-export * from './RNHostView';
 export * from './Namespace';
