@@ -3,6 +3,7 @@ import {StyleSheet, View, Alert, Platform, Linking} from 'react-native';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ThemedView, EmptyState} from '@/components/ui';
+import type {TokenName} from '@/constants/colors';
 import {Palette} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
@@ -154,7 +155,7 @@ export default function ScanModal() {
           <Icon
             name={AppIcons.actions.scan}
             size={180}
-            color={Palette.brand.white}
+            colorToken={Palette.brand.white as TokenName}
             style={styles.scanIcon}
           />
         </View>

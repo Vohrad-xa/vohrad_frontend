@@ -11,7 +11,6 @@ import {
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons} from '@/utils/icons';
-import {SFSymbols} from '@/utils/sf-symbols';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 type ArchivesListProps = {
@@ -56,7 +55,7 @@ export function ArchivesList({onArchivePress, archives}: ArchivesListProps) {
     if (Platform.OS === 'ios') {
       return (
         <SymbolView
-          name={SFSymbols.archiveBoxFill}
+          name={AppIcons.files.archive}
           type="hierarchical"
           size={30}
           tintColor={theme.secondary}
@@ -64,11 +63,7 @@ export function ArchivesList({onArchivePress, archives}: ArchivesListProps) {
       );
     } else {
       return (
-        <Icon
-          name={AppIcons.content.archive}
-          colorToken="secondary"
-          size="xxl"
-        />
+        <Icon name={AppIcons.files.archive} colorToken="secondary" size="xxl" />
       );
     }
   }, [theme]);

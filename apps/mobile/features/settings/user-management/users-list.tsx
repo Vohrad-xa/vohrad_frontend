@@ -1,101 +1,153 @@
-import React, {useCallback} from 'react';
-import {FlatList, StyleSheet, Platform} from 'react-native';
-import {List, Divider, Avatar} from 'react-native-paper';
+import React, {memo, useCallback, useMemo, useState} from 'react';
+import {
+  RefreshControl,
+  StyleSheet,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
+import {FlashList} from '@shopify/flash-list';
+import {Avatar, Divider, List} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {makeStyleFactory, AppIcons, Icon} from '@/utils';
+import {AppIcons, Icon, makeStyleFactory} from '@/utils';
 import type {User} from '@sykamore/store';
 
 type UsersListProps = {
   users: User[];
   onUserPress: (userId: string) => void;
-  onRefresh?: () => void;
+  onRefresh?: () => Promise<void> | void;
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
 };
 
-const getUserInitials = (user: User): string => {
-  const firstInitial = user.first_name?.[0]?.toUpperCase() ?? '';
-  const lastInitial = user.last_name?.[0]?.toUpperCase() ?? '';
+type UserItemProps = {
+  item: User;
+  onPress: (userId: string) => void;
+  styles: ReturnType<typeof createStyles>;
+};
 
-  if (firstInitial && lastInitial) {
-    return `${firstInitial}${lastInitial}`;
-  }
-  if (firstInitial) {
-    return firstInitial;
-  }
-  if (lastInitial) {
-    return lastInitial;
-  }
+// Paper side renderer props (List.Item left/right)
+type PaperSideProps = {
+  color: string;
+  style?: StyleProp<ViewStyle>;
+};
+
+const getUserInitials = (user: User): string => {
+  const first = user.first_name?.[0]?.toUpperCase() ?? '';
+  const last = user.last_name?.[0]?.toUpperCase() ?? '';
+  if (first && last) return `${first}${last}`;
+  if (first) return first;
+  if (last) return last;
   return user.email?.[0]?.toUpperCase() ?? '?';
 };
 
-const renderRightIcon = () => (
-  <Icon name={AppIcons.navigation.chevronRight} colorToken="muted" size="sm" />
+// Keep this stable so rows don't re-render because of a new function identity.
+const UserRightIcon = (props: PaperSideProps) => (
+  <List.Icon
+    {...props}
+    icon={() => (
+      <Icon name={AppIcons.ui.chevronRight} size="sm" colorToken="muted" />
+    )}
+  />
 );
+
+const UserItem = memo<UserItemProps>(({item, onPress, styles}) => {
+  const handlePress = useCallback(() => onPress(item.id), [item.id, onPress]);
+
+  const name =
+    `${item.first_name ?? ''} ${item.last_name ?? ''}`.trim() || 'No name';
+  const description = `${item.email}${item.role ? ` • ${item.role}` : ''}`;
+  const initials = getUserInitials(item);
+
+  // Per-row renderer, memoized to avoid re-creating the function on every render.
+  const left = useCallback(
+    () => <Avatar.Text size={42} style={styles.avatar} label={initials} />,
+    [initials, styles.avatar],
+  );
+
+  return (
+    <List.Item
+      style={styles.content}
+      title={name}
+      description={description}
+      left={left}
+      right={UserRightIcon}
+      titleStyle={styles.title}
+      descriptionStyle={styles.description}
+      onPress={handlePress}
+    />
+  );
+});
+
+UserItem.displayName = 'UserItem';
 
 export function UsersList({
   users,
   onUserPress,
   onRefresh,
   onEndReached,
-  onEndReachedThreshold,
+  onEndReachedThreshold = 0.5,
 }: UsersListProps) {
   const {ds, theme} = useTheme();
-  const styles = createStyles(ds, theme);
+  const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = useCallback(async () => {
+    if (!onRefresh) return;
+    setRefreshing(true);
+    try {
+      await onRefresh();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [onRefresh]);
 
   const renderItem = useCallback(
-    ({item}: {item: User; index: number}) => {
-      const userName =
-        `${item.first_name ?? ''} ${item.last_name ?? ''}`.trim() || 'No name';
-      const description = `${item.email}${item.role ? ` • ${item.role}` : ''}`;
-      const initials = getUserInitials(item);
-
-      return (
-        <List.Item
-          style={styles.list}
-          containerStyle={styles.item}
-          title={userName}
-          description={description}
-          left={() => (
-            <Avatar.Text size={40} style={styles.avatar} label={initials} />
-          )}
-          right={renderRightIcon}
-          titleStyle={styles.title}
-          descriptionStyle={styles.description}
-          onPress={() => onUserPress(item.id)}
-        />
-      );
-    },
+    ({item}: {item: User}) => (
+      <UserItem item={item} onPress={onUserPress} styles={styles} />
+    ),
     [onUserPress, styles],
   );
 
   const keyExtractor = useCallback((item: User) => item.id, []);
 
+  const ItemSeparator = useCallback(
+    () => <Divider style={styles.divider} />,
+    [styles.divider],
+  );
+
+  const ListHeader = useCallback(
+    () => (
+      <>
+        <ThemedText variant="secondary" style={styles.headerText}>
+          Users can be managed here
+        </ThemedText>
+        <Divider style={styles.titleDivider} />
+      </>
+    ),
+    [styles.headerText, styles.titleDivider],
+  );
+
   return (
-    <FlatList
-      style={styles.flatList}
+    <FlashList
       data={users}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      onRefresh={onRefresh}
-      refreshing={false}
       onEndReached={onEndReached}
-      contentInsetAdjustmentBehavior="automatic"
       onEndReachedThreshold={onEndReachedThreshold}
-      showsVerticalScrollIndicator={Platform.OS === 'web'}
-      ItemSeparatorComponent={() => <Divider style={styles.divider} />}
-      ListHeaderComponent={
-        <>
-          <ThemedText variant="secondary">Users can be managed here</ThemedText>
-          <Divider style={styles.titleDivider} />
-        </>
+      showsVerticalScrollIndicator={false}
+      ItemSeparatorComponent={ItemSeparator}
+      ListHeaderComponent={ListHeader}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          tintColor={theme.iconInfo}
+          progressViewOffset={ds.spacing.lg}
+        />
       }
-      ListHeaderComponentStyle={{
-        paddingHorizontal: ds.spacing.lg,
-        paddingTop: Platform.OS !== 'ios' ? ds.spacing.lg : 0,
-      }}
     />
   );
 }
@@ -103,33 +155,36 @@ export function UsersList({
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      list: {
+      content: {
+        paddingLeft: ds.spacing.lg + ds.spacing.xxs,
         paddingRight: ds.spacing.lg,
-        paddingLeft: ds.spacing.lg + 2,
       },
-      item: {
-        alignItems: 'center',
+
+      headerText: {
+        paddingHorizontal: ds.spacing.lg,
+        paddingTop: ds.spacing.lg,
       },
-      flatList: {
-        borderRadius: ds.spacing.xxl,
-      },
+
       title: {
-        color: theme.text,
-        fontSize: ds.typography.label.fontSize,
+        ...ds.typography.label,
         marginBottom: ds.spacing.xs,
       },
+
       description: {
+        ...ds.typography.caption,
         color: theme.muted,
-        fontSize: ds.typography.caption.fontSize,
       },
+
       divider: {
-        marginLeft: ds.spacing.xxl * 2 + ds.spacing.sm,
+        marginLeft: ds.spacing.xxl * 2 + ds.spacing.md,
         marginRight: ds.spacing.lg,
       },
 
       titleDivider: {
         marginTop: ds.spacing.lg,
+        marginHorizontal: ds.spacing.lg,
       },
+
       avatar: {
         backgroundColor: theme.secondary,
       },

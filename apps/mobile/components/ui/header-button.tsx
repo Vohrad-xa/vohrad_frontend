@@ -4,7 +4,7 @@ import {Palette, type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {RequiredIconProps, BaseViewProps} from '@/types';
-import {Icon, AppIcons, type IconName} from '@/utils';
+import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {ThemedText} from './themed-text';
 
@@ -35,7 +35,7 @@ const getVariantConfig = (
       };
     case 'close':
       return {
-        icon: AppIcons.navigation.close,
+        icon: AppIcons.ui.close,
         color: theme.text,
         iconSize: 'lg',
       };
@@ -69,13 +69,13 @@ const getVariantConfig = (
       };
     case 'more':
       return {
-        icon: AppIcons.navigation.more,
+        icon: AppIcons.ui.more,
         iconSize: 'lg',
         color: theme.text,
       };
     case 'back':
       return {
-        icon: AppIcons.navigation.back,
+        icon: AppIcons.ui.back,
         color: theme.text,
         iconSize: 'lg',
       };
@@ -89,7 +89,7 @@ const getVariantConfig = (
       };
     case 'menu':
       return {
-        icon: AppIcons.navigation.menu,
+        icon: AppIcons.ui.menu,
         iconSize: 'lg',
         color: theme.text,
       };
@@ -121,13 +121,15 @@ export interface HeaderButtonProps
     Pick<BaseViewProps, 'style' | 'accessibilityLabel' | 'testID'> {
   onPress?: () => void;
   variant?: HeaderButtonVariant;
-  icon?: IconName;
+  icon?: string;
   text?: string;
   textColor?: string;
   textColorToken?: TokenName;
   iconColor?: string;
   iconColorToken?: TokenName;
   iconSize?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+  symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
+  symbolColorTokens?: TokenName[];
 }
 
 export const HeaderButton: FC<HeaderButtonProps> = ({
@@ -140,6 +142,8 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
   textColor,
   textColorToken,
   iconSize,
+  symbolType,
+  symbolColorTokens,
   accessibilityLabel,
   testID,
   style,
@@ -166,7 +170,13 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
 
   // Button content based on icon or text
   const buttonContent = useIcon ? (
-    <Icon name={useIcon} color={useIconColor} size={ds.iconSize[useIconSize]} />
+    <Icon
+      name={useIcon}
+      colorToken={useIconColor as TokenName}
+      size={ds.iconSize[useIconSize]}
+      symbolType={symbolType}
+      symbolColorTokens={symbolColorTokens}
+    />
   ) : useText ? (
     <ThemedText variant="body" style={{color: useTextColor}}>
       {useText}
@@ -241,7 +251,7 @@ const createStyles = makeStyleFactory(
         ...Platform.select({
           android: {
             marginRight: ds.spacing.xxl,
-            backgroundColor: theme.input,
+            backgroundColor: theme.iconMulticolor,
             borderRadius: ds.borderRadius.full,
           },
         }),

@@ -16,7 +16,7 @@ import {
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon, type IconName} from '@/utils';
+import {Icon} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 const TEMPLATE_OPTIONS = [
@@ -33,7 +33,7 @@ const TEMPLATE_OPTIONS = [
 type TemplateKey = (typeof TEMPLATE_OPTIONS)[number]['key'];
 
 type AddQuickActionProps = {
-  icon: IconName;
+  icon: string;
   label: string;
   containerRef?: React.RefObject<View | null>;
   actionStyles: QuickActionStyleBundle;

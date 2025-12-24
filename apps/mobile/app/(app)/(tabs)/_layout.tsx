@@ -5,21 +5,14 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NativeTabsComponent, ReactTabs} from '@/components/navigation';
 import {useHaptic, useTheme} from '@/providers';
 import type {TabItem} from '@/types/ui';
-import {AppIcons, SFSymbols} from '@/utils';
+import {AppIcons} from '@/utils';
 
 const TAB_ITEMS: TabItem[] = [
-  {name: 'dashboard', label: 'Dashboard', icon: AppIcons.navigation.home},
-  {name: 'items', label: 'Items', icon: AppIcons.inventory.itemsSecondary},
-  {name: 'vault', label: 'Vault', icon: AppIcons.navigation.vault},
-  {name: 'settings', label: 'Settings', icon: AppIcons.navigation.settings},
+  {name: 'dashboard', label: 'Dashboard', icon: AppIcons.tabs.home},
+  {name: 'items', label: 'Items', icon: AppIcons.tabs.item},
+  {name: 'vault', label: 'Vault', icon: AppIcons.tabs.vault},
+  {name: 'settings', label: 'Settings', icon: AppIcons.tabs.settings},
 ];
-
-const iOS_SF_SYMBOLS = {
-  dashboard: SFSymbols.houseFill,
-  items: SFSymbols.rectangleStackFill,
-  vault: SFSymbols.folderFill,
-  settings: SFSymbols.settings,
-} as const;
 
 export const unstable_settings = {
   initialRouteName: 'dashboard',
@@ -45,13 +38,7 @@ export default function TabLayout() {
   }, [segments, navigation, triggerHaptic]);
 
   if (Platform.OS === 'ios') {
-    return (
-      <NativeTabsComponent
-        tabs={TAB_ITEMS}
-        iosSFSymbols={iOS_SF_SYMBOLS}
-        theme={theme}
-      />
-    );
+    return <NativeTabsComponent tabs={TAB_ITEMS} theme={theme} />;
   }
 
   return (

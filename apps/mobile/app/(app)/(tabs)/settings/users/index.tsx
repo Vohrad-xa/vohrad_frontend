@@ -29,6 +29,8 @@ export default function UsersScreen() {
             icon={AppIcons.actions.addUser}
             onPress={handleAddUser}
             accessibilityLabel="Add user"
+            symbolType="palette"
+            symbolColorTokens={['accentGreen', 'text']}
           />
         </View>
       ),

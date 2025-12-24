@@ -9,13 +9,7 @@ import {
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {
-  Icon,
-  AppIcons,
-  type IconName,
-  SFSymbols,
-  type SFSymbolName,
-} from '@/utils';
+import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import type {ItemAttachment, AttachmentKind} from '@sykamore/types';
 
@@ -67,22 +61,22 @@ export function AllAttachmentsList({
       const kind = attachment.kind as AttachmentKind;
 
       if (Platform.OS === 'ios') {
-        let symbolName: SFSymbolName;
+        let symbolName: string;
         switch (kind) {
           case 'image':
-            symbolName = SFSymbols.photoFill;
+            symbolName = AppIcons.files.image;
             break;
           case 'document':
-            symbolName = SFSymbols.docTextFill;
+            symbolName = AppIcons.files.document;
             break;
           case 'video':
-            symbolName = SFSymbols.videoFill;
+            symbolName = AppIcons.files.image;
             break;
           case 'archive':
-            symbolName = SFSymbols.archiveBoxFill;
+            symbolName = AppIcons.files.archive;
             break;
           default:
-            symbolName = SFSymbols.docFill;
+            symbolName = AppIcons.files.file;
         }
 
         return (
@@ -94,22 +88,22 @@ export function AllAttachmentsList({
           />
         );
       } else {
-        let iconName: IconName;
+        let iconName: string;
         switch (kind) {
           case 'image':
-            iconName = AppIcons.content.image;
+            iconName = AppIcons.files.image;
             break;
           case 'document':
-            iconName = AppIcons.content.document;
+            iconName = AppIcons.files.document;
             break;
           case 'video':
-            iconName = AppIcons.content.file;
+            iconName = AppIcons.files.file;
             break;
           case 'archive':
-            iconName = AppIcons.content.archive;
+            iconName = AppIcons.files.archive;
             break;
           default:
-            iconName = AppIcons.content.file;
+            iconName = AppIcons.files.file;
         }
 
         return <Icon name={iconName} colorToken="secondary" size="xxl" />;

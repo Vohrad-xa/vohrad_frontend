@@ -4,9 +4,6 @@ import {List, Divider} from 'react-native-paper';
 import {ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import type {AttachmentKindCount} from '@/features/attachments/utils/attachment-counts';
-import {useTheme} from '@/providers';
-import {makeStyleFactory, Icon, AppIcons} from '@/utils';
-import type {AttachmentKind} from '@sykamore/types';
 import {
   Host,
   List as IOSList,
@@ -18,8 +15,12 @@ import {
   font,
   foregroundStyle,
   padding,
+  tint,
 } from '@/modules/sykamore-ui/src/ios';
-import {tint} from '@/modules/sykamore-ui/src/ios/modifiers';
+import {useTheme} from '@/providers';
+import {makeStyleFactory, Icon, AppIcons} from '@/utils';
+import type {AttachmentKind} from '@sykamore/types';
+import type {SFSymbol} from 'sf-symbols-typescript';
 
 interface AttachmentKindTile {
   kind: AttachmentKind;
@@ -50,28 +51,28 @@ export function AttachmentsOverview({
         label: 'Images',
         count: counts.image,
         onPress: onTilePress?.image,
-        systemImage: 'photo',
+        systemImage: AppIcons.files.image,
       },
       {
         kind: 'document' as const,
         label: 'Documents',
         count: counts.document,
         onPress: onTilePress?.document,
-        systemImage: 'doc',
+        systemImage: AppIcons.files.document,
       },
       {
         kind: 'archive' as const,
         label: 'Archives',
         count: counts.archive,
         onPress: onTilePress?.archive,
-        systemImage: 'archivebox',
+        systemImage: AppIcons.files.archive,
       },
       {
         kind: 'other' as const,
         label: 'Other',
         count: counts.other,
         onPress: onTilePress?.other,
-        systemImage: 'questionmark.folder',
+        systemImage: AppIcons.files.others,
       },
     ],
     [counts, onTilePress],
@@ -96,7 +97,7 @@ export function AttachmentsOverview({
                 <HStack key={tile.kind}>
                   <Label
                     title={tile.label}
-                    systemImage={tile.systemImage as any}
+                    systemImage={tile.systemImage as SFSymbol}
                   />
                   <Spacer />
                   <Text
@@ -112,7 +113,7 @@ export function AttachmentsOverview({
                     {countText}
                   </Text>
                   <Icon
-                    name={AppIcons.navigation.chevronRight}
+                    name={AppIcons.ui.chevronRight}
                     useSwiftUI
                     noContainer
                   />
@@ -138,9 +139,9 @@ export function AttachmentsOverview({
             }
             left={() => (
               <Icon
-                name={AppIcons.navigation.vault}
+                name={AppIcons.tabs.vault}
                 size="xxl"
-                color={theme.accentLightBlue}
+                colorToken="iconInfo"
               />
             )}
             onPress={tile.onPress}

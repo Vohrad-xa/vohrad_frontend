@@ -3,7 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {makeStyleFactory, Icon, type IconName} from '@/utils';
+import {makeStyleFactory, Icon} from '@/utils';
 import type {Status} from '@sykamore/types';
 
 interface StatusFieldProps {
@@ -23,7 +23,7 @@ const StatusFieldComponent = ({status}: StatusFieldProps) => {
         <ThemedText variant="value">{status?.name ?? 'None'}</ThemedText>
         {status?.icon && (
           <Icon
-            name={status.icon as IconName}
+            name={status.icon}
             size="md"
             style={[styles.statusIcon, {color: status.color}]}
           />

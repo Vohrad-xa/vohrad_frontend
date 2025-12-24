@@ -2,13 +2,13 @@ import {StyleSheet, View, Platform} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon, type IconName} from '@/utils/icons';
+import {Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {ThemedText} from './themed-text';
 
 type EmptyStateProps = {
   message: string;
-  icon?: IconName;
+  icon?: string;
   iconSize?: number;
 };
 

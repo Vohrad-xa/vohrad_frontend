@@ -17,7 +17,6 @@ import {type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
-import {type IconName} from '@/utils/icons';
 import {Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {DatePickerMobile} from '../ui/date-picker-mobile';
@@ -40,9 +39,9 @@ type InfoRowProps = {
   type?: 'text' | 'date' | 'time';
   keyboardType?: TextInputProps['keyboardType'];
   renderAccessory?: React.ReactNode;
-  icon?: IconName; // Icon name to display at the start of the row
-  iconSize?: number; // Icon size (defaults to 20)
-  iconColorToken?: TokenName; // Icon color token (defaults to 'muted')
+  icon?: string;
+  iconSize?: number;
+  iconColorToken?: TokenName;
 };
 
 const InfoRowComponent: React.FC<InfoRowProps> = ({

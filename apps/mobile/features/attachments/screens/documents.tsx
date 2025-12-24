@@ -1,123 +1,278 @@
-import React, {useCallback, useState} from 'react';
-import {Platform, StyleSheet, View} from 'react-native';
-import {type ItemAttachment} from '@sykamore/types';
-import {SymbolView} from 'expo-symbols';
+import React, {useCallback, useMemo, memo, useState} from 'react';
 import {
-  ModalFlatList,
-  ListRow,
-  Divider,
-  type ListRowData,
-} from '@/components/ui';
+  Platform,
+  StyleSheet,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
+import {FlashList} from '@shopify/flash-list';
+import {type ItemAttachment} from '@sykamore/types';
+import {List, Divider} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon, AppIcons} from '@/utils/icons';
-import {SFSymbols} from '@/utils/sf-symbols';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {
+  makeStyleFactory,
+  AppIcons,
+  Icon,
+  formatDateShort,
+  getAttachmentFileIcon,
+  type AttachmentIcon,
+} from '@/utils';
 
 type DocumentsListProps = {
   onDocumentPress: (documentId: string) => void;
   documents: ItemAttachment[];
+  onEndReached?: () => void;
+  onEndReachedThreshold?: number;
 };
+
+type DocumentRow = {
+  id: string;
+  uiTitle: string;
+  uiDescription: string;
+  fileIcon: AttachmentIcon;
+};
+
+type DocumentItemProps = {
+  item: DocumentRow;
+  styles: ReturnType<typeof createStyles>;
+  isSelectionMode: boolean;
+  isSelected: boolean;
+  onPressRow: (id: string) => void;
+  onLongPressRow: (id: string) => void;
+};
+
+type PaperSideProps = {
+  color: string;
+  style?: unknown;
+};
+
+const DocumentItem = memo<DocumentItemProps>(
+  ({item, styles, isSelectionMode, isSelected, onPressRow, onLongPressRow}) => {
+    const handlePress = useCallback(() => {
+      onPressRow(item.id);
+    }, [item.id, onPressRow]);
+
+    const handleLongPress = useCallback(() => {
+      onLongPressRow(item.id);
+    }, [item.id, onLongPressRow]);
+
+    const Left = useCallback(
+      (props: PaperSideProps) => {
+        if (isSelectionMode) {
+          const icon = isSelected
+            ? 'checkbox-marked'
+            : 'checkbox-blank-outline';
+          return (
+            <List.Icon
+              color={props.color}
+              style={[
+                props.style as StyleProp<ViewStyle>,
+                styles.leftIconScale,
+              ]}
+              icon={icon}
+            />
+          );
+        }
+
+        return (
+          <List.Icon
+            color={props.color}
+            style={[props.style as StyleProp<ViewStyle>, styles.leftIconScale]}
+            icon={() => (
+              <Icon
+                name={item.fileIcon.name}
+                size="lg"
+                colorToken={item.fileIcon.colorToken}
+                symbolType={item.fileIcon.symbolType}
+                symbolColorTokens={item.fileIcon.symbolColorTokens}
+              />
+            )}
+          />
+        );
+      },
+      [isSelectionMode, isSelected, item.fileIcon, styles.leftIconScale],
+    );
+
+    const Right = useCallback(
+      (props: PaperSideProps) => (
+        <List.Icon
+          color={props.color}
+          style={props.style as StyleProp<ViewStyle>}
+          icon={() => (
+            <Icon
+              name={AppIcons.ui.chevronRight}
+              size="sm"
+              colorToken="muted"
+              useSwiftUI={false}
+            />
+          )}
+        />
+      ),
+      [],
+    );
+
+    return (
+      <List.Item
+        containerStyle={styles.container}
+        style={styles.content}
+        title={item.uiTitle}
+        description={item.uiDescription}
+        left={Left}
+        right={Right}
+        titleStyle={styles.title}
+        descriptionStyle={styles.description}
+        onPress={handlePress}
+        onLongPress={handleLongPress}
+      />
+    );
+  },
+);
+
+DocumentItem.displayName = 'DocumentItem';
 
 export function DocumentsList({
   onDocumentPress,
   documents,
+  onEndReached,
+  onEndReachedThreshold,
 }: DocumentsListProps) {
   const {ds, theme} = useTheme();
-  const styles = createStyles(ds, theme);
-  const [loadingDocumentId, setLoadingDocumentId] = useState<string | null>(
-    null,
-  );
+  const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
 
-  const handleDocumentPress = useCallback(
-    async (documentId: string) => {
-      setLoadingDocumentId(documentId);
-      try {
-        const results = await Promise.all([
-          onDocumentPress(documentId),
-          new Promise((resolve) => setTimeout(resolve, 500)),
-        ]);
-        return results[0];
-      } finally {
-        setLoadingDocumentId(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const isSelectionMode = selectedIds.size > 0;
+
+  const toggleSelected = useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const handlePressRow = useCallback(
+    (id: string) => {
+      if (isSelectionMode) {
+        toggleSelected(id);
+        return;
       }
+      onDocumentPress(id);
     },
-    [onDocumentPress],
+    [isSelectionMode, toggleSelected, onDocumentPress],
   );
 
-  const transformDocumentToListRow = useCallback(
-    (document: ItemAttachment): ListRowData => ({
-      id: document.id,
-      name: document.original_filename,
-      loading: loadingDocumentId === document.id,
-      onPress: () => handleDocumentPress(document.id),
-    }),
-    [handleDocumentPress, loadingDocumentId],
+  const handleLongPressRow = useCallback(
+    (id: string) => {
+      toggleSelected(id);
+    },
+    [toggleSelected],
   );
 
-  const listData = documents.map(transformDocumentToListRow);
+  const rows = useMemo<DocumentRow[]>(() => {
+    return documents.map((d) => {
+      const size = Number(d.size);
+      const fileSize = Number.isFinite(size)
+        ? `${(size / 1024).toFixed(1)} KB`
+        : 'Unknown size';
 
-  const renderDocumentIcon = useCallback(() => {
-    if (Platform.OS === 'ios') {
-      return (
-        <SymbolView
-          name={SFSymbols.docTextFill}
-          type="hierarchical"
-          size={30}
-          tintColor={theme.secondary}
-        />
-      );
-    } else {
-      return (
-        <Icon
-          name={AppIcons.content.document}
-          colorToken="secondary"
-          size="xxl"
-        />
-      );
-    }
-  }, [theme]);
+      const fileTypeRaw = (d.extension ?? d.file_type ?? 'Unknown').toString();
+      const dateAdded = d.created_at ? formatDateShort(d.created_at) : '—';
+
+      const title = d.original_filename ?? d.filename ?? 'Untitled';
+
+      return {
+        id: d.id,
+        uiTitle: title,
+        uiDescription: `${dateAdded} • ${fileTypeRaw.toUpperCase()} - ${fileSize}`,
+        fileIcon: getAttachmentFileIcon({
+          filename: title,
+          extension: d.extension ?? null,
+          fileType: d.file_type ?? null,
+        }),
+      };
+    });
+  }, [documents]);
 
   const renderItem = useCallback(
-    ({item, index}: {item: ListRowData; index: number}) => (
-      <View>
-        <ListRow
-          item={item}
-          showImage={false}
-          showChevron={false}
-          customLeftIcon={renderDocumentIcon()}
-        />
-        {index < listData.length - 1 && (
-          <View style={styles.dividerContainer}>
-            <Divider />
-          </View>
-        )}
-      </View>
+    ({item}: {item: DocumentRow}) => (
+      <DocumentItem
+        item={item}
+        styles={styles}
+        isSelectionMode={isSelectionMode}
+        isSelected={selectedIds.has(item.id)}
+        onPressRow={handlePressRow}
+        onLongPressRow={handleLongPressRow}
+      />
     ),
-    [listData.length, styles, renderDocumentIcon],
+    [styles, isSelectionMode, selectedIds, handlePressRow, handleLongPressRow],
+  );
+
+  const keyExtractor = useCallback((item: DocumentRow) => item.id, []);
+
+  const ItemSeparator = useCallback(
+    () => <Divider style={styles.divider} />,
+    [styles.divider],
+  );
+
+  const ListHeader = useCallback(
+    () => <Divider style={styles.titleDivider} />,
+    [styles.titleDivider],
   );
 
   return (
-    <View style={styles.container}>
-      <ModalFlatList
-        data={listData}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-    </View>
+    <FlashList
+      data={rows}
+      extraData={selectedIds}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={onEndReachedThreshold}
+      showsVerticalScrollIndicator={false}
+      ItemSeparatorComponent={ItemSeparator}
+      ListHeaderComponent={ListHeader}
+      style={styles.flashList}
+    />
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      container: {
-        flex: 1,
+      container: {},
+      content: {
+        paddingRight: Platform.OS === 'android' ? ds.spacing.md : ds.spacing.lg,
+        paddingTop: ds.spacing.md,
+        paddingBottom: ds.spacing.md,
       },
-      dividerContainer: {
-        paddingLeft: ds.spacing.xxl + ds.spacing.md + 2,
-        paddingRight: ds.spacing.xs,
+
+      title: {
+        ...ds.typography.label,
+        marginBottom: ds.spacing.xs,
       },
+
+      description: {
+        color: theme.muted,
+        fontSize: ds.typography.caption.fontSize,
+      },
+
+      divider: {
+        marginLeft: ds.spacing.xxl * 2,
+        marginRight: ds.spacing.lg,
+      },
+
+      titleDivider: {
+        marginHorizontal: ds.spacing.lg,
+        marginTop: ds.spacing.lg,
+      },
+
+      leftIconScale: {
+        alignSelf: 'center',
+        transform: Platform.OS === 'android' ? [{scale: 1.5}] : [{scale: 1.8}],
+        width: ds.spacing.xxl,
+      },
+      flashList: {},
     }),
   (ds, theme) => themeKey(theme, ds),
 );

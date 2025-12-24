@@ -7,10 +7,10 @@ import {
 } from 'react-native';
 import {ThemedText} from '@/components/ui';
 import {useTheme} from '@/providers';
-import {Icon, type IconName} from '@/utils';
+import {Icon} from '@/utils';
 
 type ScanQuickActionProps = {
-  icon: IconName;
+  icon: string;
   label: string;
   actionStyles: {
     actionButton: ViewStyle;

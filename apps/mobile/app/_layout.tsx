@@ -6,13 +6,13 @@ import {Stack, useRootNavigationState} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
-import {PaperProvider} from 'react-native-paper';
 import {LoadingOverlay} from '@/components/ui';
 import {AttachmentProvider} from '@/features/attachments/providers/attachment-provider';
 import {useBootstrap} from '@/hooks/use-bootstrap';
 import {NetworkProvider} from '@/modules/network';
 import {NetworkBanner} from '@/modules/network/components/network-banner';
 import {
+  PaperThemeProvider,
   AppThemeProvider,
   AuthProvider,
   useAuth,
@@ -63,7 +63,7 @@ export default function RootLayout() {
       <KeyboardProvider>
         <QueryClientProvider client={queryClient}>
           <AppThemeProvider>
-            <PaperProvider>
+            <PaperThemeProvider>
               <HapticProvider>
                 <ActionSheetProvider>
                   <NetworkProvider>
@@ -80,7 +80,7 @@ export default function RootLayout() {
                   </NetworkProvider>
                 </ActionSheetProvider>
               </HapticProvider>
-            </PaperProvider>
+            </PaperThemeProvider>
           </AppThemeProvider>
         </QueryClientProvider>
       </KeyboardProvider>

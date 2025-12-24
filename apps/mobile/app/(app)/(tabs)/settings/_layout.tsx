@@ -66,7 +66,7 @@ function SettingsStack() {
               ),
               headerRight: () => (
                 <HeaderButton
-                  icon={AppIcons.navigation.event}
+                  icon={AppIcons.tabs.notifications}
                   accessibilityLabel="Open events"
                   onPress={() => {}}
                 />

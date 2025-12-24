@@ -76,11 +76,7 @@ export function ProfileSection({
           style={styles.settingsButton}
           onPress={onPressSettings}
         >
-          <Icon
-            name={AppIcons.navigation.settings}
-            size="lg"
-            color={theme.muted}
-          />
+          <Icon name={AppIcons.tabs.settings} size="lg" colorToken="muted" />
         </TouchableOpacity>
       </View>
     </AnimatedBlurView>

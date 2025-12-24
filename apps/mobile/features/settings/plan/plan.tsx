@@ -17,7 +17,7 @@ export function PlanScreen() {
         Active
       </ThemedText>
       <Card>
-        <Card.Row hideChevron icon={AppIcons.business.plan}>
+        <Card.Row hideChevron icon={AppIcons.preferences.plan}>
           <ThemedText variant="label">{license?.name}</ThemedText>
           <ThemedText variant="secondary" colorToken="muted">
             allows {license?.seats} users
@@ -36,7 +36,7 @@ export function PlanScreen() {
         License Key
       </ThemedText>
       <Card>
-        <Card.Row hideChevron icon={AppIcons.content.folder}>
+        <Card.Row hideChevron icon={AppIcons.files.folder}>
           <ThemedText variant="footnote">{license?.license_key}</ThemedText>
         </Card.Row>
       </Card>

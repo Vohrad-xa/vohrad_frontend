@@ -80,14 +80,10 @@ export function OverviewCards({
                 glassEffectStyle="regular"
                 isInteractive
               >
-                <Icon
-                  name={AppIcons.navigation.more}
-                  colorToken="icon"
-                  size="lg"
-                />
+                <Icon name={AppIcons.ui.more} colorToken="icon" size="lg" />
               </GlassView>
             ) : (
-              <Icon name={AppIcons.navigation.filter} size="lg" />
+              <Icon name={AppIcons.ui.filter} size="lg" />
             )}
           </Pressable>
         </View>

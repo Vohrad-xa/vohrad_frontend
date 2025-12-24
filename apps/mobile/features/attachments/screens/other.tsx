@@ -11,7 +11,6 @@ import {
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons} from '@/utils/icons';
-import {SFSymbols} from '@/utils/sf-symbols';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 type OtherListProps = {
@@ -56,7 +55,7 @@ export function OtherList({onOtherPress, others}: OtherListProps) {
     if (Platform.OS === 'ios') {
       return (
         <SymbolView
-          name={SFSymbols.docTextFill}
+          name={AppIcons.files.document}
           type="hierarchical"
           size={30}
           tintColor={theme.secondary}
@@ -64,7 +63,7 @@ export function OtherList({onOtherPress, others}: OtherListProps) {
       );
     } else {
       return (
-        <Icon name={AppIcons.content.file} colorToken="secondary" size="xxl" />
+        <Icon name={AppIcons.files.file} colorToken="secondary" size="xxl" />
       );
     }
   }, [theme]);

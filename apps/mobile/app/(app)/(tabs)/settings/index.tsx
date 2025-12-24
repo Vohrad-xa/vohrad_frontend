@@ -7,10 +7,10 @@ import {type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {AppearanceMenu} from '@/features/settings';
 import {useTheme, useAuth, useSidebar} from '@/providers';
-import {Icon, showConfirmAlert, makeStyleFactory} from '@/utils';
+import {Icon, showConfirmAlert, makeStyleFactory, AppIcons} from '@/utils';
 
 export default function SettingsModal() {
-  const {ds, theme, scheme} = useTheme();
+  const {ds, theme} = useTheme();
   const {logout} = useAuth();
   const {mainGesture} = useSidebar();
   const styles = createStyles(ds, theme);
@@ -53,7 +53,7 @@ export default function SettingsModal() {
         description="View and edit your profile"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('person', 'destructive')}
+        left={renderIcon(AppIcons.tabs.profile, 'destructive')}
         onPress={() => router.push('/(app)/(tabs)/settings/profile')}
       />
       <Divider style={styles.divider} />
@@ -62,7 +62,7 @@ export default function SettingsModal() {
         description="Manage business information"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('briefcase', 'accentBlue')}
+        left={renderIcon(AppIcons.features.organization, 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/business-details')}
       />
       <Divider style={styles.divider} />
@@ -71,7 +71,7 @@ export default function SettingsModal() {
         description="Manage business information"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('users', 'accentGreen')}
+        left={renderIcon(AppIcons.features.userManagement, 'accentGreen')}
         onPress={() => router.push('/(app)/(tabs)/settings/users')}
       />
       <Divider style={styles.divider} />
@@ -80,7 +80,7 @@ export default function SettingsModal() {
         description="Configure application settings"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('cog-outline', 'accentBlue')}
+        left={renderIcon(AppIcons.tabs.settings, 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
       />
       <Divider style={styles.divider} />
@@ -90,7 +90,7 @@ export default function SettingsModal() {
         description="Switch between light and dark mode"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(scheme === 'dark' ? 'sunny' : 'moon', 'purple')}
+        left={renderIcon(AppIcons.preferences.appearance, 'accentTeal')}
         right={() => <AppearanceMenu />}
       />
       <Divider style={styles.divider} />
@@ -99,7 +99,7 @@ export default function SettingsModal() {
         description="Set your app preferences"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('options', 'accentOrange')}
+        left={renderIcon(AppIcons.preferences.settings, 'accentOrange')}
         onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
       />
       <Divider style={styles.divider} />
@@ -108,7 +108,7 @@ export default function SettingsModal() {
         description="View and manage your plan"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('card', 'accentOrange')}
+        left={renderIcon(AppIcons.preferences.plan, 'accentOrange')}
         onPress={() => router.push('/(app)/(tabs)/settings/plan')}
       />
       <Divider style={styles.divider} />
@@ -117,7 +117,7 @@ export default function SettingsModal() {
         description="Select your preferred language"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('planet', 'accentTeal')}
+        left={renderIcon(AppIcons.preferences.language, 'accentTeal')}
         onPress={() => router.push('/(app)/(tabs)/settings/language')}
       />
       <Divider style={styles.divider} />
@@ -126,7 +126,7 @@ export default function SettingsModal() {
         description="Get support or report a problem"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('help-circle', 'accentOrange')}
+        left={renderIcon(AppIcons.features.support, 'accentOrange')}
         onPress={() => router.push('/(app)/(tabs)/settings/support')}
       />
       <Divider style={styles.divider} />
@@ -135,7 +135,7 @@ export default function SettingsModal() {
         description="Read our privacy policy"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('lock-closed', 'accentIndigo')}
+        left={renderIcon(AppIcons.preferences.privacy, 'accentIndigo')}
         onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
       />
       <Divider style={styles.divider} />
@@ -144,7 +144,7 @@ export default function SettingsModal() {
         description="Read the terms of use"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('document-text', 'accentIndigo')}
+        left={renderIcon(AppIcons.preferences.terms, 'accentIndigo')}
         onPress={() => router.push('/(app)/(tabs)/settings/terms')}
       />
       <Divider style={styles.divider} />
@@ -153,14 +153,14 @@ export default function SettingsModal() {
         description="Learn more about this app"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('information-circle', 'accentBlue')}
+        left={renderIcon(AppIcons.status.info, 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/about')}
       />
       <Divider style={styles.divider} />
       <List.Item
         title="Logout"
         titleStyle={[styles.itemTitle, {color: theme.destructive}]}
-        left={renderIcon('sign-out', 'destructive')}
+        left={renderIcon(AppIcons.actions.logout, 'destructive')}
         onPress={handleLogout}
       />
     </ScrollView>

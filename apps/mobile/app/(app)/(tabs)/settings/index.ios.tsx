@@ -33,7 +33,7 @@ export default function SettingsModal() {
         {/* Account Section */}
         <ListSection>
           <ListSection.Row
-            icon={AppIcons.navigation.profile}
+            icon={AppIcons.tabs.profile}
             iconColorToken="destructive"
             title="My Profile"
             onPress={() => router.push('/(app)/(tabs)/settings/profile')}
@@ -42,7 +42,7 @@ export default function SettingsModal() {
         {/* Organization Section */}
         <ListSection>
           <ListSection.Row
-            icon={AppIcons.business.organization}
+            icon={AppIcons.features.organization}
             iconColorToken="accentBlue"
             title="Business Details"
             onPress={() =>
@@ -56,13 +56,13 @@ export default function SettingsModal() {
             onPress={() => router.push('/(app)/(tabs)/settings/users')}
           />
           <ListSection.Row
-            icon={AppIcons.navigation.preferences}
+            icon={AppIcons.preferences.settings}
             iconColorToken="accentOrange"
             title="Preferences"
             onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
           />
           <ListSection.Row
-            icon={AppIcons.business.plan}
+            icon={AppIcons.preferences.plan}
             iconColorToken="accentOrange"
             title="Plan"
             onPress={() => router.push('/(app)/(tabs)/settings/plan')}
@@ -72,7 +72,7 @@ export default function SettingsModal() {
         {/* Preferences Section */}
         <ListSection>
           <ListSection.Row
-            icon={AppIcons.navigation.settings}
+            icon={AppIcons.tabs.settings}
             iconColorToken="glassTint"
             title="App Settings"
             onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
@@ -82,7 +82,7 @@ export default function SettingsModal() {
             label="Theme"
             icon={
               <Icon
-                name={AppIcons.theme.appearance}
+                name={AppIcons.preferences.appearance}
                 useSwiftUI
                 colorToken="purple"
               />
@@ -100,7 +100,7 @@ export default function SettingsModal() {
 
         <ListSection footer="For best results, select the language you mainly speak, if not available, the app will default to English.">
           <ListSection.Row
-            icon={AppIcons.content.language}
+            icon={AppIcons.preferences.language}
             iconColorToken="accentBlue"
             title="App Language"
             onPress={() => router.push('/(app)/(tabs)/settings/language')}
@@ -110,13 +110,13 @@ export default function SettingsModal() {
         {/* Data & Information */}
         <ListSection>
           <ListSection.Row
-            icon={AppIcons.content.privacy}
+            icon={AppIcons.preferences.privacy}
             iconColorToken="purple"
             title="Privacy Policy"
             onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
           />
           <ListSection.Row
-            icon={AppIcons.content.terms}
+            icon={AppIcons.preferences.terms}
             iconColorToken="iconInfo"
             title="Terms of Use"
             onPress={() => router.push('/(app)/(tabs)/settings/terms')}

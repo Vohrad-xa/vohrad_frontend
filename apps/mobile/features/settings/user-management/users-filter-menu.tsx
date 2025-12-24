@@ -6,7 +6,7 @@ import {
   PaperMenu,
   type NativeMenuAction,
 } from '@/components/ui';
-import {AppIcons, sortByDate, type SortOrder, SFSymbols} from '@/utils';
+import {AppIcons, sortByDate, type SortOrder} from '@/utils';
 import {useSearchUsers, type UsersFilterOptions} from './use-search-users';
 
 type UsersFilterMenuProps = {
@@ -62,7 +62,7 @@ export function UsersFilterMenu({
   const renderFilterControl = useMemo(() => {
     const trigger = (
       <HeaderButton
-        icon={AppIcons.navigation.filter}
+        icon={AppIcons.ui.filter}
         accessibilityLabel="Filter users"
       />
     );
@@ -73,8 +73,8 @@ export function UsersFilterMenu({
         id: 'select-user',
         title: 'Select',
         image: Platform.select({
-          ios: SFSymbols.checkmarkCircleOutline,
-          default: AppIcons.content.file,
+          ios: AppIcons.actions.select,
+          default: AppIcons.files.file,
         }),
       },
       {

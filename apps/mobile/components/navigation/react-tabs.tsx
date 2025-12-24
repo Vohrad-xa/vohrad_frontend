@@ -10,7 +10,7 @@ import {
 import {Tabs} from 'expo-router';
 import {themeKey, type ThemeShape, type DSShape} from '@/constants';
 import {makeStyleFactory} from '@/utils';
-import {Icon, type IconName} from '@/utils/icons';
+import {Icon} from '@/utils/icons';
 
 const ANIMATION_CONFIG = {
   scale: {
@@ -42,7 +42,7 @@ type TabIconProps = {
 type TabItem = {
   name: string;
   label: string;
-  icon: IconName;
+  icon: string;
 };
 
 type ReactTabsProps = {
@@ -119,7 +119,7 @@ export function ReactTabs({tabs, theme, ds}: ReactTabsProps) {
   );
 
   const renderTabIcon = useCallback(
-    (props: TabIconProps, icon: IconName) => {
+    (props: TabIconProps, icon: string) => {
       const {color, size, focused} = props;
       const iconSize = size ?? ds.iconSize.lg;
 

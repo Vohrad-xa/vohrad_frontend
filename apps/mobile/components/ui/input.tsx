@@ -8,9 +8,10 @@ import {
   Platform,
 } from 'react-native';
 
+import type {TokenName} from '@/constants';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon, type IconName, makeStyleFactory} from '@/utils';
+import {Icon, makeStyleFactory} from '@/utils';
 import {GlassCard} from '../cards/glass-card';
 
 export type InputStatus = 'none' | 'error' | 'success';
@@ -18,7 +19,7 @@ export type InputStatus = 'none' | 'error' | 'success';
 export type InputProps = TextInputProps & {
   status?: InputStatus;
   onStatusIconPress?: () => void;
-  rightIconName?: IconName;
+  rightIconName?: string;
   onRightIconPress?: () => void;
   disableGlass?: boolean;
 };
@@ -48,9 +49,9 @@ export const Input = forwardRef<TextInput, InputProps>(
 
     const statusIcon =
       status === 'error'
-        ? {name: 'warning-outline' as IconName, color: theme.destructive}
+        ? {name: 'warning-outline', color: theme.destructive}
         : status === 'success'
-          ? {name: 'checkmark-outline' as IconName, color: theme.accentGreen}
+          ? {name: 'checkmark-outline', color: theme.accentGreen}
           : null;
 
     const inputContent = (
@@ -79,7 +80,7 @@ export const Input = forwardRef<TextInput, InputProps>(
                   <Icon
                     name={statusIcon.name}
                     size={iconSize}
-                    color={statusIcon.color}
+                    colorToken={statusIcon.color as TokenName}
                   />
                 </TouchableOpacity>
               ) : rightIconName ? (
@@ -91,7 +92,7 @@ export const Input = forwardRef<TextInput, InputProps>(
                   <Icon
                     name={rightIconName}
                     size={iconSize}
-                    color={theme.icon}
+                    colorToken="icon"
                   />
                 </TouchableOpacity>
               ) : null}

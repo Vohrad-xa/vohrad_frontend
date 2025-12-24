@@ -58,7 +58,7 @@ export function AttachmentDestinationCard({
           <View style={styles.cardContent}>
             <View style={styles.iconWrapper}>
               <Icon
-                name={AppIcons.navigation.vault}
+                name={AppIcons.tabs.vault}
                 size="md"
                 color={theme.secondary}
               />
@@ -82,7 +82,7 @@ export function AttachmentDestinationCard({
               </Pressable>
             ) : (
               <Icon
-                name={AppIcons.navigation.chevronRight}
+                name={AppIcons.ui.chevronRight}
                 colorToken="muted"
                 style={styles.chevron}
               />

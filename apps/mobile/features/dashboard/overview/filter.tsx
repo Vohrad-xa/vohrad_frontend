@@ -112,7 +112,8 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {
         flex: 1,
-        paddingHorizontal: Platform.OS === 'ios' ? undefined : ds.spacing.xl,
+        paddingHorizontal: ds.spacing.lg,
+        paddingVertical: ds.spacing.md,
       },
       itemTitle: {
         ...ds.typography.label,
@@ -127,7 +128,7 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
       },
       divider: {
-        marginLeft: ds.spacing.xxl + ds.spacing.xs,
+        marginLeft: ds.spacing.xxl + ds.iconSize.xs,
       },
     }),
   (ds, _theme) => themeKey(_theme, ds),

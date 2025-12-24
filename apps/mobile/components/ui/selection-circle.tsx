@@ -3,7 +3,7 @@ import {StyleSheet, View, Platform} from 'react-native';
 import {SymbolView} from 'expo-symbols';
 import type {DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon, type SFSymbolName} from '@/utils';
+import {Icon} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 interface SelectionCircleProps {
@@ -17,7 +17,7 @@ export function SelectionCircle({selected}: SelectionCircleProps) {
   if (Platform.OS === 'ios') {
     return (
       <SymbolView
-        name={(selected ? 'checkmark.circle.fill' : 'circle') as SFSymbolName}
+        name={selected ? 'checkmark.circle.fill' : 'circle'}
         size={25}
         tintColor={selected ? theme.secondary : theme.muted}
       />

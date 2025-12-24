@@ -22,7 +22,7 @@ export const SearchBar = forwardRef<TextInput, SearchBarProps>(
     {
       containerStyle,
       style,
-      icon: iconName = AppIcons.inventory.search,
+      icon: iconName = AppIcons.features.search,
       iconColorToken = 'muted',
       showIcon = true,
       placeholderTextColor,

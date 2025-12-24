@@ -2,10 +2,8 @@ import {useCallback} from 'react';
 import {Platform} from 'react-native';
 import {Stack, useRouter} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
-import {useTheme} from '@/providers';
 
 export default function PreviewModalLayout() {
-  const {theme} = useTheme();
   const router = useRouter();
 
   const handleClose = useCallback(() => {
@@ -27,10 +25,6 @@ export default function PreviewModalLayout() {
               accessibilityLabel="Close preview"
             />
           ),
-          contentStyle: {
-            backgroundColor:
-              Platform.OS === 'web' ? theme.webbackground : theme.background,
-          },
         }}
       >
         <Stack.Screen

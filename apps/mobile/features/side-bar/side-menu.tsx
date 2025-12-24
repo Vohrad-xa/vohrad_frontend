@@ -39,16 +39,16 @@ interface SideMenuProps {
 }
 
 const menuItems: MenuItemType[] = [
-  {icon: AppIcons.navigation.home, label: 'Home'},
-  {icon: AppIcons.business.maintenance, label: 'Maintenances'},
+  {icon: AppIcons.tabs.home, label: 'Home'},
+  {icon: AppIcons.features.maintenance, label: 'Maintenances'},
   {icon: AppIcons.actions.move, label: 'Check In/Out'},
-  {icon: AppIcons.inventory.item, label: 'Items'},
-  {icon: AppIcons.inventory.location, label: 'Locations'},
-  {icon: AppIcons.content.document, label: 'Documents'},
-  {icon: AppIcons.business.supplier, label: 'Suppliers'},
-  {icon: AppIcons.navigation.event, label: 'Events'},
-  {icon: AppIcons.content.print, label: 'Labels'},
-  {icon: AppIcons.inventory.category, label: 'Categories'},
+  {icon: AppIcons.features.item, label: 'Items'},
+  {icon: AppIcons.features.location, label: 'Locations'},
+  {icon: AppIcons.files.document, label: 'Documents'},
+  {icon: AppIcons.features.supplier, label: 'Suppliers'},
+  {icon: AppIcons.tabs.notifications, label: 'Events'},
+  {icon: AppIcons.files.print, label: 'Labels'},
+  {icon: AppIcons.features.category, label: 'Categories'},
 ];
 
 export function SideMenu({slideAnim, onClose}: SideMenuProps) {

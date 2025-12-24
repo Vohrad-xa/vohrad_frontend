@@ -6,7 +6,7 @@ import {
   PaperMenu,
   type NativeMenuAction,
 } from '@/components/ui';
-import {AppIcons, SFSymbols} from '@/utils';
+import {AppIcons} from '@/utils';
 
 interface VaultActionsMenuProps {
   onAddDocument: () => void;
@@ -24,7 +24,7 @@ export function VaultActionsMenu({
       id: 'add-document',
       title: 'Add Document',
       image: Platform.select({
-        ios: SFSymbols.plusCircle,
+        ios: AppIcons.actions.add,
         default: AppIcons.actions.add,
       }),
     },
@@ -32,7 +32,7 @@ export function VaultActionsMenu({
       id: 'scan-document',
       title: 'Scan Document',
       image: Platform.select({
-        ios: SFSymbols.camera,
+        ios: AppIcons.actions.camera,
         default: AppIcons.actions.camera,
       }),
     },
@@ -40,40 +40,40 @@ export function VaultActionsMenu({
       id: 'filter',
       title: 'Filter',
       image: Platform.select({
-        ios: SFSymbols.lineHorizontalFilter,
-        default: AppIcons.navigation.filter,
+        ios: AppIcons.ui.filter,
+        default: AppIcons.ui.filter,
       }),
       subactions: [
         {
           id: 'filter-images',
           title: 'Images',
           image: Platform.select({
-            ios: SFSymbols.photo,
-            default: AppIcons.content.image,
+            ios: AppIcons.files.image,
+            default: AppIcons.files.image,
           }),
         },
         {
           id: 'filter-documents',
           title: 'Documents',
           image: Platform.select({
-            ios: SFSymbols.docText,
-            default: AppIcons.content.document,
+            ios: AppIcons.files.document,
+            default: AppIcons.files.document,
           }),
         },
         {
           id: 'filter-archives',
           title: 'Archives',
           image: Platform.select({
-            ios: SFSymbols.archivebox,
-            default: AppIcons.content.archive,
+            ios: AppIcons.files.archive,
+            default: AppIcons.files.archive,
           }),
         },
         {
           id: 'filter-other',
           title: 'Other',
           image: Platform.select({
-            ios: SFSymbols.doc,
-            default: AppIcons.content.file,
+            ios: AppIcons.files.file,
+            default: AppIcons.files.file,
           }),
         },
       ],

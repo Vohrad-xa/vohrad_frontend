@@ -33,7 +33,7 @@ export function AttachmentAddOptions({
         </Card.Row>
         <Card.Divider withIconOffset />
         <Card.Row
-          icon={AppIcons.content.image}
+          icon={AppIcons.files.image}
           onPress={onChooseFromGallery}
           accessibilityLabel="Choose from gallery"
         >

@@ -4,7 +4,7 @@ import {Image} from 'expo-image';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import type {ImageAttachmentItem} from '@/features/attachments/hooks/attachment-images';
 import {useTheme} from '@/providers';
-import {Icon} from '@/utils/icons';
+import {AppIcons, Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 type AttachmentImagePreviewProps = {
@@ -70,8 +70,8 @@ export function AttachmentImagePreview({
             disabled={currentIndex === 0}
           >
             <Icon
-              name="chevron-back-outline"
-              size="xl"
+              name={AppIcons.ui.chevronLeft}
+              size="xxl"
               colorToken={currentIndex === 0 ? 'muted' : 'tint'}
             />
           </Pressable>
@@ -83,8 +83,8 @@ export function AttachmentImagePreview({
             disabled={currentIndex === attachments.length - 1}
           >
             <Icon
-              name="chevron-forward-outline"
-              size="xl"
+              name={AppIcons.ui.chevronRight}
+              size="xxl"
               colorToken={
                 currentIndex === attachments.length - 1 ? 'muted' : 'tint'
               }
@@ -114,7 +114,6 @@ const useStyles = makeStyleFactory(
       arrowButton: {
         position: 'absolute',
         top: '50%',
-        padding: ds.spacing.md,
         transform: [{translateY: -ds.spacing.xl}],
       },
       leftArrow: {

@@ -28,7 +28,7 @@ export const Palette = {
     bluepurple: '#10385bff',
     teal: '#14B8A6',
     indigo: '#4F46E5',
-    white: '#FFFFFF',
+    white: '#FFFFFE',
     black: '#000000',
   },
   Dbackground: '#262624',
@@ -49,7 +49,7 @@ export const Palette = {
 const _Tokens = {
   light: {
     // Surfaces & text
-    background: Palette.Mbackground,
+    background: Palette.brand.white,
     webbackground: Palette.Lbackground,
     text: '#11181C',
     textlabel: Palette.gray[700],
@@ -85,9 +85,9 @@ const _Tokens = {
     iosLightGray: Palette.gray[50],
     iosPlaceholder: Palette.gray[400],
     overlay: Palette.gray[200],
-    iconInfo: Palette.brand.blue,
+    iconInfo: Palette.brand.terracotta,
     iconPositive: Palette.brand.green,
-    iconCaution: Palette.brand.yellow,
+    iconMulticolor: Palette.gray[200],
     iconWarning: Palette.brand.orange,
     iconDanger: Palette.brand.red,
     sidebarBackground: '#ffffffff',
@@ -112,7 +112,7 @@ const _Tokens = {
     textlabel: Palette.Greige,
     muted: Palette.gray[500],
     border: Palette.gray[700],
-    divider: Palette.gray[600],
+    divider: Palette.gray[700],
     lightdivider: Palette.gray[750],
     inputPlaceholder: Palette.placeholderGray,
 
@@ -130,7 +130,7 @@ const _Tokens = {
     destructiveForeground: Palette.brand.white,
 
     // UI
-    icon: Palette.gray[600],
+    icon: Palette.brand.white,
     headerAndroid: Palette.brand.white,
     label: Palette.mushroom,
     tint: Palette.brand.blue,
@@ -143,9 +143,9 @@ const _Tokens = {
     overlay: Palette.gray[600],
     iconInfo: Palette.brand.blue,
     iconPositive: Palette.brand.green,
-    iconCaution: Palette.brand.yellow,
     iconWarning: Palette.brand.orange,
     iconDanger: Palette.brand.red,
+    iconMulticolor: Palette.brand.white,
     // sidebarBackground: Palette.Onyx,
     sidebarBackground: '#0e0d0dff',
     secondary: Palette.Greige,

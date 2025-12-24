@@ -22,25 +22,25 @@ const CARD_CONFIG: DashboardCardConfig[] = [
   {
     key: 'items',
     title: 'Items',
-    icon: AppIcons.inventory.item,
+    icon: AppIcons.features.item,
     colorToken: 'accentBlue',
   },
   {
     key: 'locations',
     title: 'Locations',
-    icon: AppIcons.inventory.location,
+    icon: AppIcons.features.location,
     colorToken: 'accentYellow',
   },
   {
     key: 'maintenance',
     title: 'Maintenance',
-    icon: AppIcons.business.maintenance,
+    icon: AppIcons.features.maintenance,
     colorToken: 'accentOrange',
   },
   {
     key: 'suppliers',
     title: 'Suppliers',
-    icon: AppIcons.business.supplier,
+    icon: AppIcons.features.supplier,
     colorToken: 'accentGreen',
   },
   {
@@ -52,7 +52,7 @@ const CARD_CONFIG: DashboardCardConfig[] = [
   {
     key: 'attachments',
     title: 'Attachments',
-    icon: AppIcons.content.document,
+    icon: AppIcons.files.document,
     colorToken: 'accentIndigo',
   },
 ];

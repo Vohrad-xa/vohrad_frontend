@@ -30,14 +30,14 @@ export function QuickActions({onScanPress}: QuickActionsProps) {
       {label: 'Add', icon: AppIcons.actions.add},
       {label: 'Move', icon: AppIcons.actions.move},
       {label: 'Scan', icon: AppIcons.actions.scan},
-      {label: 'Maintain', icon: AppIcons.business.maintenance},
-      {label: 'Print', icon: AppIcons.content.print},
-      {label: 'Categories', icon: AppIcons.inventory.category},
-      {label: 'Suppliers', icon: AppIcons.business.supplier},
-      {label: 'Events', icon: AppIcons.navigation.event},
-      {label: 'Documents', icon: AppIcons.content.document},
-      {label: 'Locations', icon: AppIcons.inventory.location},
-      {label: 'Items', icon: AppIcons.inventory.item},
+      {label: 'Maintain', icon: AppIcons.features.maintenance},
+      {label: 'Print', icon: AppIcons.files.print},
+      {label: 'Categories', icon: AppIcons.features.category},
+      {label: 'Suppliers', icon: AppIcons.features.supplier},
+      {label: 'Events', icon: AppIcons.tabs.notifications},
+      {label: 'Documents', icon: AppIcons.files.document},
+      {label: 'Locations', icon: AppIcons.features.location},
+      {label: 'Items', icon: AppIcons.features.item},
     ],
     [],
   );
@@ -164,9 +164,6 @@ const createStyles = makeStyleFactory(
       gap: ds.spacing.md,
       overflow: 'auto',
     };
-    const contentStylesMobile = {
-      // Mobile uses FlatList, no styles needed
-    };
 
     return StyleSheet.create({
       card: Platform.select({
@@ -175,19 +172,17 @@ const createStyles = makeStyleFactory(
       }) as ViewStyle,
       webGrid: Platform.select({
         web: contentStylesWeb,
-        default: contentStylesMobile,
       }) as ViewStyle,
       actionButton: {
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: ds.spacing.sm,
         paddingVertical: Platform.OS === 'ios' ? ds.spacing.xs : ds.spacing.md,
         gap: ds.spacing.sm,
-        minWidth: 77,
+        minWidth: 78.5,
       } as ViewStyle,
       iconContainer: {
-        width: 48,
-        height: 48,
+        width: 50,
+        height: 50,
         borderRadius: ds.borderRadius.full,
         backgroundColor: theme.secondary,
         alignItems: 'center',

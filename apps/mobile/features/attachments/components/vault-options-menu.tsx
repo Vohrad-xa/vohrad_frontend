@@ -6,7 +6,7 @@ import {
   PaperMenu,
   type NativeMenuAction,
 } from '@/components/ui';
-import {AppIcons, SFSymbols} from '@/utils';
+import {AppIcons} from '@/utils';
 
 interface VaultOptionsMenuProps {
   onSelect?: () => void;
@@ -95,7 +95,7 @@ export function VaultOptionsMenu({
           id: 'select',
           title: 'Select',
           image: Platform.select({
-            ios: SFSymbols.checkmarkCircleOutline,
+            ios: AppIcons.status.success,
             default: AppIcons.actions.save,
           }),
         },
@@ -103,7 +103,7 @@ export function VaultOptionsMenu({
           id: 'scan',
           title: 'Scan',
           image: Platform.select({
-            ios: SFSymbols.camera,
+            ios: AppIcons.actions.camera,
             default: AppIcons.actions.scan,
           }),
         },

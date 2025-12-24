@@ -10,7 +10,7 @@ import {
 } from '@/modules/sykamore-ui/src/ios';
 import {tint} from '@/modules/sykamore-ui/src/ios/modifiers';
 import {useTheme} from '@/providers';
-import {Icon, AppIcons, type IconName} from '@/utils/icons';
+import {Icon, AppIcons} from '@/utils/icons';
 
 interface ListSectionProps {
   title?: string;
@@ -20,7 +20,7 @@ interface ListSectionProps {
 }
 
 interface ListSectionRowProps {
-  icon: IconName;
+  icon: string;
   iconColorToken: TokenName;
   title?: string;
   onPress?: () => void;
@@ -69,11 +69,7 @@ const ListSectionRow: React.FC<ListSectionRowProps> = ({
         {showChevron && (
           <>
             <Spacer />
-            <Icon
-              name={AppIcons.navigation.chevronRight}
-              useSwiftUI
-              noContainer
-            />
+            <Icon name={AppIcons.ui.chevronRight} useSwiftUI noContainer />
           </>
         )}
       </HStack>

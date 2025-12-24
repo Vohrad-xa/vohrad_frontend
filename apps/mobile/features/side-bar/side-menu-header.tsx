@@ -7,7 +7,6 @@ import {
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {SearchBar, GlassCard, AnimatedBlurView} from '@/components/ui';
-import type {ColorScheme} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons} from '@/utils';
@@ -28,7 +27,7 @@ export function SideMenuHeader({onClose, blurIntensity}: SideMenuHeaderProps) {
       ? (StatusBar.currentHeight ?? 0) + ds.spacing.lg
       : Math.max(insets.top, ds.spacing.xl);
 
-  const styles = createStyles(theme, ds, scheme, topPadding);
+  const styles = createStyles(theme, ds, topPadding);
 
   return (
     <AnimatedBlurView
@@ -44,7 +43,7 @@ export function SideMenuHeader({onClose, blurIntensity}: SideMenuHeaderProps) {
             onPress={onClose}
             accessibilityLabel="Close sidebar"
           >
-            <Icon name={AppIcons.navigation.close} />
+            <Icon name={AppIcons.ui.close} />
           </TouchableOpacity>
         </GlassCard>
       </View>
@@ -53,7 +52,7 @@ export function SideMenuHeader({onClose, blurIntensity}: SideMenuHeaderProps) {
 }
 
 const createStyles = makeStyleFactory(
-  (theme: ThemeShape, ds: DSShape, scheme: ColorScheme, topPadding: number) =>
+  (_theme: ThemeShape, ds: DSShape, topPadding: number) =>
     StyleSheet.create({
       headerBlurView: {
         paddingLeft: ds.spacing.lg,
@@ -78,6 +77,5 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
       },
     }),
-  (theme, ds, scheme, topPadding) =>
-    `${themeKey(theme, ds)}|${scheme}|${topPadding}`,
+  (theme, ds, topPadding) => `${themeKey(theme, ds)}|${topPadding}`,
 );
