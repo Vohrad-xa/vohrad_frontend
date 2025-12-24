@@ -69,6 +69,7 @@ const DocumentItem = memo<DocumentItemProps>(
               style={[
                 props.style as StyleProp<ViewStyle>,
                 styles.leftIconScale,
+                styles.checkboxScale,
               ]}
               icon={icon}
             />
@@ -91,7 +92,13 @@ const DocumentItem = memo<DocumentItemProps>(
           />
         );
       },
-      [isSelectionMode, isSelected, item.fileIcon, styles.leftIconScale],
+      [
+        isSelectionMode,
+        isSelected,
+        item.fileIcon,
+        styles.leftIconScale,
+        styles.checkboxScale,
+      ],
     );
 
     const Right = useCallback(
@@ -114,7 +121,6 @@ const DocumentItem = memo<DocumentItemProps>(
 
     return (
       <List.Item
-        containerStyle={styles.container}
         style={styles.content}
         title={item.uiTitle}
         description={item.uiDescription}
@@ -179,7 +185,6 @@ export function DocumentsList({
 
       const fileTypeRaw = (d.extension ?? d.file_type ?? 'Unknown').toString();
       const dateAdded = d.created_at ? formatDateShort(d.created_at) : '—';
-
       const title = d.original_filename ?? d.filename ?? 'Untitled';
 
       return {
@@ -240,7 +245,6 @@ export function DocumentsList({
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      container: {},
       content: {
         paddingRight: Platform.OS === 'android' ? ds.spacing.md : ds.spacing.lg,
         paddingTop: ds.spacing.md,
@@ -271,6 +275,9 @@ const createStyles = makeStyleFactory(
         alignSelf: 'center',
         transform: Platform.OS === 'android' ? [{scale: 1.5}] : [{scale: 1.8}],
         width: ds.spacing.xxl,
+      },
+      checkboxScale: {
+        transform: [{scale: 1.2}],
       },
       flashList: {},
     }),
