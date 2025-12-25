@@ -175,11 +175,7 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
       return documents.map((d) => {
         const fileSize = formatBytes(Number(d.size));
 
-        const fileTypeRaw = (
-          d.extension ??
-          d.file_type ??
-          'Unknown'
-        ).toString();
+        const fileTypeRaw = d.extension ?? d.file_type ?? 'Unknown';
         const dateAdded = d.created_at ? formatDateShort(d.created_at) : '—';
         const title = d.original_filename ?? d.filename ?? 'Untitled';
 
