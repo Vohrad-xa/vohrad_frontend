@@ -12,7 +12,6 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {
   makeStyleFactory,
-  AppIcons,
   Icon,
   formatDateShort,
   getAttachmentFileIcon,
@@ -101,31 +100,12 @@ const DocumentItem = memo<DocumentItemProps>(
       ],
     );
 
-    const Right = useCallback(
-      (props: PaperSideProps) => (
-        <List.Icon
-          color={props.color}
-          style={props.style as StyleProp<ViewStyle>}
-          icon={() => (
-            <Icon
-              name={AppIcons.ui.chevronRight}
-              size="sm"
-              colorToken="muted"
-              useSwiftUI={false}
-            />
-          )}
-        />
-      ),
-      [],
-    );
-
     return (
       <List.Item
         style={styles.content}
         title={item.uiTitle}
         description={item.uiDescription}
         left={Left}
-        right={Right}
         titleStyle={styles.title}
         descriptionStyle={styles.description}
         onPress={handlePress}
@@ -176,7 +156,7 @@ export function DocumentsList({
     [toggleSelected],
   );
 
-  const rows = useMemo<DocumentRow[]>(() => {
+  const files = useMemo<DocumentRow[]>(() => {
     return documents.map((d) => {
       const size = Number(d.size);
       const fileSize = Number.isFinite(size)
@@ -228,7 +208,7 @@ export function DocumentsList({
 
   return (
     <FlashList
-      data={rows}
+      data={files}
       extraData={selectedIds}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
@@ -237,7 +217,6 @@ export function DocumentsList({
       showsVerticalScrollIndicator={false}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={ListHeader}
-      style={styles.flashList}
     />
   );
 }
@@ -246,9 +225,9 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       content: {
-        paddingRight: Platform.OS === 'android' ? ds.spacing.md : ds.spacing.lg,
         paddingTop: ds.spacing.md,
         paddingBottom: ds.spacing.md,
+        paddingRight: ds.spacing.lg,
       },
 
       title: {
@@ -262,7 +241,7 @@ const createStyles = makeStyleFactory(
       },
 
       divider: {
-        marginLeft: ds.spacing.xxl * 2,
+        marginLeft: ds.spacing.xxl * 2 + ds.spacing.sm,
         marginRight: ds.spacing.lg,
       },
 
@@ -273,13 +252,12 @@ const createStyles = makeStyleFactory(
 
       leftIconScale: {
         alignSelf: 'center',
-        transform: Platform.OS === 'android' ? [{scale: 1.5}] : [{scale: 1.8}],
-        width: ds.spacing.xxl,
+        transform: Platform.OS === 'android' ? [{scale: 1.4}] : [{scale: 1.6}],
+        width: ds.spacing.xxl + ds.spacing.sm,
       },
       checkboxScale: {
-        transform: [{scale: 1.2}],
+        transform: [{scale: 1}],
       },
-      flashList: {},
     }),
   (ds, theme) => themeKey(theme, ds),
 );
