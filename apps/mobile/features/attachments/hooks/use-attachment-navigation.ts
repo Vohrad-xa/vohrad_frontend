@@ -8,8 +8,8 @@ import {
   buildAttachmentVaultDocumentsRoute,
   buildAttachmentVaultArchivesRoute,
   buildAttachmentVaultOtherRoute,
-} from '../utils/navigation';
-import type {AttachmentNavigationTarget} from '../utils/navigation';
+  type AttachmentNavigationTarget,
+} from '../utils';
 
 export function useAttachmentNavigation() {
   const router = useRouter();

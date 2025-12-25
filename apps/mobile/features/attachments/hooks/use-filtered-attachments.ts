@@ -18,28 +18,36 @@ export interface UseFilteredAttachmentsOptions {
   enabled?: boolean;
 }
 
+/**
+ * Returns a flat list of attachments with infinite pagination.
+ *
+ * Global filter (store) overrides local initialFilter.
+ * Filters are memoized with primitive deps so inline initialFilter objects
+ * don’t constantly change the queryKey.
+ */
 export function useFilteredAttachments(
   options?: UseFilteredAttachmentsOptions,
 ) {
   const globalFilter = useAttachmentFilter();
   const {kind, pageSize, initialFilter, enabled = true} = options ?? {};
 
-  // Combine global and local filters. The global filter takes precedence.
   const filters = useMemo((): AttachmentFilterShape => {
-    const source = globalFilter ?? initialFilter;
-    const shape: AttachmentFilterShape = {};
+    const sourceTargetType =
+      globalFilter?.targetType ?? initialFilter?.targetType;
+    const sourceTargetId = globalFilter?.targetId ?? initialFilter?.targetId;
 
-    if (source?.targetType) {
-      shape.targetType = source.targetType;
-    }
-    if (source?.targetId) {
-      shape.targetId = source.targetId;
-    }
-    if (kind) {
-      shape.kind = kind;
-    }
-    return shape;
-  }, [globalFilter, initialFilter, kind]);
+    return {
+      ...(sourceTargetType ? {targetType: sourceTargetType} : {}),
+      ...(sourceTargetId ? {targetId: sourceTargetId} : {}),
+      ...(kind ? {kind} : {}),
+    };
+  }, [
+    globalFilter?.targetType,
+    globalFilter?.targetId,
+    initialFilter?.targetType,
+    initialFilter?.targetId,
+    kind,
+  ]);
 
   const {data, error, fetchNextPage, hasNextPage, isFetching, refetch} =
     useInfiniteAttachments(filters, pageSize, enabled);

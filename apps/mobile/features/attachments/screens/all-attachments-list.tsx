@@ -1,6 +1,5 @@
 import React, {useCallback, useState} from 'react';
-import {Platform, StyleSheet, View} from 'react-native';
-import {SymbolView} from 'expo-symbols';
+import {StyleSheet, View} from 'react-native';
 import {
   ModalFlatList,
   ListRow,
@@ -56,61 +55,26 @@ export function AllAttachmentsList({
 
   const listData = attachments.map(transformAttachmentToListRow);
 
-  const renderAttachmentIcon = useCallback(
-    (attachment: ItemAttachment) => {
-      const kind = attachment.kind as AttachmentKind;
+  const renderAttachmentIcon = useCallback((attachment: ItemAttachment) => {
+    const kind = attachment.kind as AttachmentKind;
 
-      if (Platform.OS === 'ios') {
-        let symbolName: string;
-        switch (kind) {
-          case 'image':
-            symbolName = AppIcons.files.image;
-            break;
-          case 'document':
-            symbolName = AppIcons.files.document;
-            break;
-          case 'video':
-            symbolName = AppIcons.files.image;
-            break;
-          case 'archive':
-            symbolName = AppIcons.files.archive;
-            break;
-          default:
-            symbolName = AppIcons.files.file;
-        }
+    let iconName: string;
+    switch (kind) {
+      case 'image':
+        iconName = AppIcons.files.image;
+        break;
+      case 'document':
+        iconName = AppIcons.files.document;
+        break;
+      case 'archive':
+        iconName = AppIcons.files.archive;
+        break;
+      default:
+        iconName = AppIcons.files.file;
+    }
 
-        return (
-          <SymbolView
-            name={symbolName}
-            type="hierarchical"
-            size={30}
-            tintColor={theme.secondary}
-          />
-        );
-      } else {
-        let iconName: string;
-        switch (kind) {
-          case 'image':
-            iconName = AppIcons.files.image;
-            break;
-          case 'document':
-            iconName = AppIcons.files.document;
-            break;
-          case 'video':
-            iconName = AppIcons.files.file;
-            break;
-          case 'archive':
-            iconName = AppIcons.files.archive;
-            break;
-          default:
-            iconName = AppIcons.files.file;
-        }
-
-        return <Icon name={iconName} colorToken="secondary" size="xxl" />;
-      }
-    },
-    [theme],
-  );
+    return <Icon name={iconName} colorToken="secondary" size="xxl" />;
+  }, []);
 
   const renderItem = useCallback(
     ({item, index}: {item: ListRowData & {id: string}; index: number}) => {

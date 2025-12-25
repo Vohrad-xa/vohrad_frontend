@@ -20,12 +20,7 @@ export {useImageSelection} from './hooks/use-image-selection';
 export {useFilteredAttachments} from './hooks/use-filtered-attachments';
 export {useAttachmentsOverview} from './hooks/use-attachments-overview';
 export {useAttachmentImages} from './hooks/use-attachment-images';
-export {
-  useAttachmentsByKind,
-  useAttachmentDocuments,
-  useAttachmentArchives,
-  useAttachmentOther,
-} from './hooks/use-attachments-by-kind';
+export {useAttachmentsByKind} from './hooks/use-attachments-by-kind';
 export {useAttachmentNavigation} from './hooks/use-attachment-navigation';
 export {useAttachmentSearch} from './hooks/use-attachment-search';
 export {useAttachmentPress} from './hooks/use-attachment-press';

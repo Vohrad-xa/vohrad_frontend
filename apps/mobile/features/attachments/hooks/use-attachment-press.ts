@@ -6,9 +6,9 @@ import {
   downloadDocumentFile,
   shareDownloadedFile,
 } from '@/features/attachments/utils/file-download';
-import {resolveAttachmentItemUrl} from '@/features/attachments/utils/url-resolver';
 import {useNetworkConnectivity} from '@/modules/network';
 import {showAlert} from '@/utils';
+import {resolveAttachmentItemUrl} from '../utils';
 import type {ItemAttachment} from '@sykamore/types';
 
 // handling the opening of attachments

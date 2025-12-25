@@ -10,7 +10,7 @@ export function useInfiniteAttachments(
   pageSize = 50,
   enabled = true,
 ) {
-  const queryKey = ['attachments', 'list', filters];
+  const queryKey = ['attachments', 'list', filters, pageSize];
 
   return useInfiniteQuery({
     queryKey,

@@ -3,9 +3,9 @@ import {
   useDocumentAttachments,
   useArchiveAttachments,
   useOtherAttachments,
-} from '@/features/attachments/hooks/attachment-images';
-import {useOptionalAttachmentContext} from '@/features/attachments/providers/attachment-provider';
-import {resolveAttachmentItemUrl} from '../utils/url-resolver';
+} from '../hooks/attachment-images';
+import {useOptionalAttachmentContext} from '../providers/attachment-provider';
+import {resolveAttachmentItemUrl} from '../utils';
 import {useFilteredAttachments} from './use-filtered-attachments';
 
 type AttachmentKind = 'document' | 'archive' | 'other';
@@ -16,6 +16,14 @@ const kindFilterHooks = {
   other: useOtherAttachments,
 } as const;
 
+/**
+ * Single entry-point to read attachments for one kind.
+ *
+ * If AttachmentProvider is present, use its attachments (no extra fetch).
+ * Otherwise, fetch from the global vault via useFilteredAttachments.
+ *
+ * getById/resolveUrlById are meant for user actions (tap/open), not hot paths.
+ */
 export function useAttachmentsByKind(kind: AttachmentKind) {
   const attachmentContext = useOptionalAttachmentContext();
   const targetId = attachmentContext?.targetId ?? undefined;
@@ -62,42 +70,5 @@ export function useAttachmentsByKind(kind: AttachmentKind) {
     isLoading,
     getById,
     resolveUrlById,
-  };
-}
-
-// Specialized exports for backward compatibility
-export function useAttachmentDocuments() {
-  const result = useAttachmentsByKind('document');
-  return {
-    documentAttachments: result.attachments,
-    loadMore: result.loadMore,
-    hasNext: result.hasNext,
-    isLoading: result.isLoading,
-    getDocumentById: result.getById,
-    resolveDocumentUrlById: result.resolveUrlById,
-  };
-}
-
-export function useAttachmentArchives() {
-  const result = useAttachmentsByKind('archive');
-  return {
-    archiveAttachments: result.attachments,
-    loadMore: result.loadMore,
-    hasNext: result.hasNext,
-    isLoading: result.isLoading,
-    getArchiveById: result.getById,
-    resolveArchiveUrlById: result.resolveUrlById,
-  };
-}
-
-export function useAttachmentOther() {
-  const result = useAttachmentsByKind('other');
-  return {
-    otherAttachments: result.attachments,
-    loadMore: result.loadMore,
-    hasNext: result.hasNext,
-    isLoading: result.isLoading,
-    getOtherById: result.getById,
-    resolveOtherUrlById: result.resolveUrlById,
   };
 }

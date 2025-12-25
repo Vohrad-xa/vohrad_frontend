@@ -67,6 +67,7 @@ export const AppIcons = {
     archive: 'archive-outline',
     print: 'printer-outline',
     list: 'format-list-bulleted',
+    others: 'folder-question-outline',
   },
 
   /** Status and feedback indicators */

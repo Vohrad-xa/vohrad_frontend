@@ -4,12 +4,17 @@ import {
   useClearAttachmentFilter,
   useDashboardOverview,
 } from '@sykamore/store';
-import {computeAttachmentCounts} from '../utils/attachment-counts';
+import {computeAttachmentCounts} from '../utils';
 import {
   useFilteredAttachments,
   type UseFilteredAttachmentsOptions,
 } from './use-filtered-attachments';
 
+/**
+ * Overview helper for the vault:
+ * - If a filter is active, compute counts from the filtered in-memory list.
+ * - Otherwise, use dashboard counts (cheap, avoids recomputing on every render).
+ */
 export function useAttachmentsOverview(
   options?: UseFilteredAttachmentsOptions,
 ) {
@@ -17,9 +22,7 @@ export function useAttachmentsOverview(
   const clearAttachmentFilter = useClearAttachmentFilter();
   const {data: dashboardData} = useDashboardOverview();
 
-  const {attachments, ...rest} = useFilteredAttachments({
-    ...options,
-  });
+  const {attachments, ...rest} = useFilteredAttachments({...options});
 
   const counts = useMemo(() => {
     if (attachmentFilter) {

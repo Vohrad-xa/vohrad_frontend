@@ -1,9 +1,10 @@
 import React, {useCallback} from 'react';
-import {useAttachmentOther, useAttachmentPress} from '@/features/attachments';
+import {useAttachmentsByKind, useAttachmentPress} from '@/features/attachments';
 import {OtherList} from '@/features/attachments/screens/other';
 
 export default function VaultOtherScreen() {
-  const {otherAttachments, getOtherById} = useAttachmentOther();
+  const {attachments: otherAttachments, getById: getOtherById} =
+    useAttachmentsByKind('other');
   const handleAttachmentPress = useAttachmentPress();
 
   const handleOtherPress = useCallback(
