@@ -2,17 +2,17 @@ import React from 'react';
 import {StyleSheet, Platform, View} from 'react-native';
 import {List, Divider} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {Switch as AndroidSwitch} from '@/modules/sykamore-ui/src/android';
+import {useTheme} from '@/providers';
+import {Icon} from '@/utils/icons';
+import {makeStyleFactory} from '@/utils/style-factory';
+import {Switch as AndroidSwitch} from 'sykamore-ui/android';
 import {
   Host,
   List as IOSList,
   Toggle as IOSToggle,
   Section,
   Text,
-} from '@/modules/sykamore-ui/src/ios';
-import {useTheme} from '@/providers';
-import {Icon} from '@/utils/icons';
-import {makeStyleFactory} from '@/utils/style-factory';
+} from 'sykamore-ui/ios';
 import {useDashboardCardControls} from './filter-context';
 
 export function FilterContent() {

@@ -6,7 +6,7 @@ import {
   authenticateWithBiometrics,
   disableBiometrics,
   shouldRequireAuthenticationOnLaunch,
-} from '@/modules/security/biometric-service';
+} from '@/features/security/biometric-service';
 import {secureStorage} from '@/utils/secure-storage';
 import * as AppStorage from '@/utils/storage';
 

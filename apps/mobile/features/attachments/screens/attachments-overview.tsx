@@ -4,6 +4,8 @@ import {List, Divider} from 'react-native-paper';
 import {ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import type {AttachmentKindCount} from '@/features/attachments/utils/attachment-counts';
+import {useTheme} from '@/providers';
+import {makeStyleFactory, Icon, AppIcons} from '@/utils';
 import {
   Host,
   List as IOSList,
@@ -16,9 +18,7 @@ import {
   foregroundStyle,
   padding,
   tint,
-} from '@/modules/sykamore-ui/src/ios';
-import {useTheme} from '@/providers';
-import {makeStyleFactory, Icon, AppIcons} from '@/utils';
+} from 'sykamore-ui/ios';
 import type {AttachmentKind} from '@sykamore/types';
 import type {SFSymbol} from 'sf-symbols-typescript';
 

@@ -11,7 +11,7 @@ import {
   Button,
   datePickerStyle,
   Text,
-} from '@/modules/sykamore-ui/src/ios';
+} from 'sykamore-ui/ios';
 import {useAddUser} from './use-add-user';
 import type {Role} from '@sykamore/types';
 

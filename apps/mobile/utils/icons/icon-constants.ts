@@ -18,7 +18,7 @@ export const AppIcons = {
   /** Main app sections (for tabs/navigation) */
   tabs: {
     home: 'home-variant',
-    vault: 'folder-open-outline',
+    vault: 'folder',
     settings: 'cog-outline',
     profile: 'account-circle',
     notifications: 'bell-outline',
@@ -60,7 +60,7 @@ export const AppIcons = {
   /** Files and documents */
   files: {
     document: 'file-document-outline',
-    folder: 'folder-outline',
+    folder: 'folder',
     file: 'file-outline',
     image: 'image-outline',
     imageFallback: 'image-off-outline',

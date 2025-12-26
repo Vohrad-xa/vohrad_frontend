@@ -6,7 +6,7 @@ import {
   downloadDocumentFile,
   shareDownloadedFile,
 } from '@/features/attachments/utils/file-download';
-import {useNetworkConnectivity} from '@/modules/network';
+import {useNetworkConnectivity} from '@/features/network';
 import {showAlert} from '@/utils';
 import {resolveAttachmentItemUrl} from '../utils';
 import type {ItemAttachment} from '@sykamore/types';

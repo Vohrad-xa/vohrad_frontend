@@ -21,7 +21,7 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
 
   if (Platform.OS === 'ios') {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const {Host, Picker} = require('@/modules/sykamore-ui/src/ios');
+    const {Host, Picker} = require('sykamore-ui/ios');
 
     return (
       <Host matchContents useViewportSizeMeasurement style={style}>
@@ -40,7 +40,7 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
 
   if (Platform.OS === 'android') {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const {Picker} = require('@/modules/sykamore-ui/src/android');
+    const {Picker} = require('sykamore-ui/android');
 
     return (
       <Picker

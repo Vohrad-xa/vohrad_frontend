@@ -7,18 +7,12 @@ import {
   TouchableOpacity,
   Platform,
 } from 'react-native';
-
-import type {TokenName} from '@/constants';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon, makeStyleFactory} from '@/utils';
 import {GlassCard} from '../cards/glass-card';
 
-export type InputStatus = 'none' | 'error' | 'success';
-
 export type InputProps = TextInputProps & {
-  status?: InputStatus;
-  onStatusIconPress?: () => void;
   rightIconName?: string;
   onRightIconPress?: () => void;
   disableGlass?: boolean;
@@ -29,8 +23,6 @@ export const Input = forwardRef<TextInput, InputProps>(
     {
       style,
       placeholderTextColor,
-      status = 'none',
-      onStatusIconPress,
       rightIconName,
       onRightIconPress,
       disableGlass = false,
@@ -43,17 +35,6 @@ export const Input = forwardRef<TextInput, InputProps>(
 
     const iconSize = ds.iconSize.md;
 
-    const hasStatus = status === 'error' || status === 'success';
-    const hasCustomRight = !hasStatus && !!rightIconName;
-    const showRightIcon = hasStatus || hasCustomRight;
-
-    const statusIcon =
-      status === 'error'
-        ? {name: 'warning-outline', color: theme.destructive}
-        : status === 'success'
-          ? {name: 'checkmark-outline', color: theme.accentGreen}
-          : null;
-
     const inputContent = (
       <>
         <TextInput
@@ -61,41 +42,23 @@ export const Input = forwardRef<TextInput, InputProps>(
           style={[
             styles.input,
             styles.baseInput,
-            showRightIcon && styles.inputWithRightIcon,
+            rightIconName && styles.inputWithRightIcon,
             style,
           ]}
           placeholderTextColor={placeholderTextColor ?? theme.iosPlaceholder}
           {...props}
         />
 
-        {showRightIcon && (
+        {rightIconName && (
           <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
             <View style={styles.rightIconContainer}>
-              {statusIcon ? (
-                <TouchableOpacity
-                  activeOpacity={onStatusIconPress ? 0.6 : 1}
-                  onPress={onStatusIconPress}
-                  hitSlop={{top: 6, bottom: 6, left: 6, right: 6}}
-                >
-                  <Icon
-                    name={statusIcon.name}
-                    size={iconSize}
-                    colorToken={statusIcon.color as TokenName}
-                  />
-                </TouchableOpacity>
-              ) : rightIconName ? (
-                <TouchableOpacity
-                  activeOpacity={onRightIconPress ? 0.6 : 1}
-                  onPress={onRightIconPress}
-                  hitSlop={{top: 6, bottom: 6, left: 6, right: 6}}
-                >
-                  <Icon
-                    name={rightIconName}
-                    size={iconSize}
-                    colorToken="icon"
-                  />
-                </TouchableOpacity>
-              ) : null}
+              <TouchableOpacity
+                activeOpacity={onRightIconPress ? 0.6 : 1}
+                onPress={onRightIconPress}
+                hitSlop={{top: 6, bottom: 6, left: 6, right: 6}}
+              >
+                <Icon name={rightIconName} size={iconSize} colorToken="icon" />
+              </TouchableOpacity>
             </View>
           </View>
         )}

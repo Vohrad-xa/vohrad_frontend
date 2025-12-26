@@ -12,7 +12,7 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
       ...base,
       colors: {
         ...base.colors,
-        primary: theme.primary,
+        primary: theme.accentBlue,
         onPrimary: theme.primaryForeground,
         background: theme.background,
         surface: theme.input,

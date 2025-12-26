@@ -3,9 +3,9 @@ import {StyleSheet, View, Pressable} from 'react-native';
 import {TextInput, List} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useRolesList} from '@/features/roles';
-import {DatePicker, Picker} from '@/modules/sykamore-ui/src/android';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
+import {DatePicker, Picker} from 'sykamore-ui/android';
 import {useAddUser} from './use-add-user';
 import type {Role} from '@sykamore/types';
 

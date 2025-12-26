@@ -5,13 +5,22 @@ import React, {
   useState,
   forwardRef,
   useImperativeHandle,
+  useRef,
+  useEffect,
 } from 'react';
-import {Platform, StyleSheet} from 'react-native';
+import {
+  Animated,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {type ItemAttachment} from '@sykamore/types';
-import {List, Divider} from 'react-native-paper';
+import {Checkbox, Divider} from 'react-native-paper';
+import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useTheme} from '@/providers';
+import {useTheme, useHaptic} from '@/providers';
 import {
   makeStyleFactory,
   Icon,
@@ -33,10 +42,6 @@ type DocumentsListProps = {
   onSelectionChange?: (selectedIds: Set<string>) => void;
 };
 
-type ListItemLeftProps = Parameters<
-  NonNullable<React.ComponentProps<typeof List.Item>['left']>
->[0];
-
 type DocumentRow = {
   id: string;
   uiTitle: string;
@@ -47,14 +52,25 @@ type DocumentRow = {
 type DocumentItemProps = {
   item: DocumentRow;
   styles: ReturnType<typeof createStyles>;
-  isSelectionMode: boolean;
+  selectionVisible: boolean;
   isSelected: boolean;
   onPressRow: (id: string) => void;
   onLongPressRow: (id: string) => void;
+  animation: Animated.Value;
+  selectionShift: number;
 };
 
 const DocumentItem = memo<DocumentItemProps>(
-  ({item, styles, isSelectionMode, isSelected, onPressRow, onLongPressRow}) => {
+  ({
+    item,
+    styles,
+    selectionVisible,
+    isSelected,
+    onPressRow,
+    onLongPressRow,
+    animation,
+    selectionShift,
+  }) => {
     const handlePress = useCallback(() => {
       onPressRow(item.id);
     }, [item.id, onPressRow]);
@@ -63,50 +79,76 @@ const DocumentItem = memo<DocumentItemProps>(
       onLongPressRow(item.id);
     }, [item.id, onLongPressRow]);
 
+    const checkboxTranslateX = animation.interpolate({
+      inputRange: [0, 1],
+      outputRange: [-selectionShift, 0],
+    });
+
+    const contentTranslateX = animation.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, selectionShift],
+    });
+
     return (
-      <List.Item
-        style={styles.content}
-        title={item.uiTitle}
-        description={item.uiDescription}
-        titleStyle={styles.title}
-        descriptionStyle={styles.description}
+      <TouchableOpacity
+        style={[
+          styles.content,
+          selectionVisible ? styles.contentSelection : null,
+          isSelected ? styles.contentSelected : null,
+        ]}
         onPress={handlePress}
         onLongPress={handleLongPress}
-        left={(props: ListItemLeftProps) => {
-          if (isSelectionMode) {
-            const icon = isSelected
-              ? 'checkbox-marked'
-              : 'checkbox-blank-outline';
-            return (
-              <List.Icon
-                {...props}
-                style={[
-                  props.style,
-                  styles.leftIconScale,
-                  styles.checkboxScale,
-                ]}
-                icon={icon}
-              />
-            );
-          }
+        accessibilityRole="button"
+        activeOpacity={0.5}
+      >
+        <>
+          {selectionVisible ? (
+            <Animated.View
+              style={[
+                styles.checkboxContainer,
+                {
+                  opacity: animation,
+                  transform: [{translateX: checkboxTranslateX}],
+                },
+              ]}
+            >
+              <Checkbox.Android status={isSelected ? 'checked' : 'unchecked'} />
+            </Animated.View>
+          ) : null}
 
-          return (
-            <List.Icon
-              {...props}
-              style={[props.style, styles.leftIconScale]}
-              icon={() => (
-                <Icon
-                  name={item.fileIcon.name}
-                  size="lg"
-                  colorToken={item.fileIcon.colorToken}
-                  symbolType={item.fileIcon.symbolType}
-                  symbolColorTokens={item.fileIcon.symbolColorTokens}
-                />
-              )}
-            />
-          );
-        }}
-      />
+          <Animated.View
+            style={[
+              styles.rowContainer,
+              {transform: [{translateX: contentTranslateX}]},
+            ]}
+          >
+            <View style={styles.iconContainer}>
+              <Icon
+                name={item.fileIcon.name}
+                size="lg"
+                colorToken={item.fileIcon.colorToken}
+                symbolType={item.fileIcon.symbolType}
+                symbolColorTokens={item.fileIcon.symbolColorTokens}
+              />
+            </View>
+
+            <View style={styles.textContainer}>
+              <ThemedText
+                variant="label"
+                numberOfLines={1}
+                ellipsizeMode="middle"
+                style={styles.title}
+              >
+                {item.uiTitle}
+              </ThemedText>
+
+              <ThemedText numberOfLines={1} style={styles.description}>
+                {item.uiDescription}
+              </ThemedText>
+            </View>
+          </Animated.View>
+        </>
+      </TouchableOpacity>
     );
   },
 );
@@ -125,12 +167,35 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
     ref,
   ) => {
     const {ds, theme} = useTheme();
+    const {triggerHaptic} = useHaptic();
     const styles = createStyles(ds, theme);
-
     const [selectedIds, setSelectedIds] = useState<Set<string>>(
       () => new Set(),
     );
     const isSelectionMode = selectedIds.size > 0;
+    const [selectionVisible, setSelectionVisible] = useState(false);
+    const selectionAnimation = useRef(new Animated.Value(0)).current;
+    const selectionShift = ds.spacing.xxl + ds.spacing.md;
+
+    useEffect(() => {
+      if (isSelectionMode) {
+        setSelectionVisible(true);
+        Animated.timing(selectionAnimation, {
+          toValue: 1,
+          duration: 230,
+          useNativeDriver: true,
+        }).start();
+        return;
+      }
+
+      Animated.timing(selectionAnimation, {
+        toValue: 0,
+        duration: 230,
+        useNativeDriver: true,
+      }).start(({finished}) => {
+        if (finished) setSelectionVisible(false);
+      });
+    }, [isSelectionMode, selectionAnimation, selectionShift]);
 
     const clearSelection = useCallback(() => {
       const empty = new Set<string>();
@@ -142,6 +207,7 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
 
     const toggleSelected = useCallback(
       (id: string) => {
+        triggerHaptic('light');
         setSelectedIds((prev) => {
           const next = new Set(prev);
           if (next.has(id)) next.delete(id);
@@ -150,7 +216,7 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
           return next;
         });
       },
-      [onSelectionChange],
+      [onSelectionChange, triggerHaptic],
     );
 
     const handlePressRow = useCallback(
@@ -174,7 +240,6 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
     const files = useMemo<DocumentRow[]>(() => {
       return documents.map((d) => {
         const fileSize = formatBytes(Number(d.size));
-
         const fileTypeRaw = d.extension ?? d.file_type ?? 'Unknown';
         const dateAdded = d.created_at ? formatDateShort(d.created_at) : '—';
         const title = d.original_filename ?? d.filename ?? 'Untitled';
@@ -182,7 +247,7 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
         return {
           id: d.id,
           uiTitle: title,
-          uiDescription: `${dateAdded} • ${fileTypeRaw.toUpperCase()} • ${fileSize}`,
+          uiDescription: `${dateAdded} • ${String(fileTypeRaw).toUpperCase()} • ${fileSize}`,
           fileIcon: getAttachmentFileIcon({
             filename: title,
             extension: d.extension ?? null,
@@ -197,18 +262,22 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
         <DocumentItem
           item={item}
           styles={styles}
-          isSelectionMode={isSelectionMode}
+          selectionVisible={selectionVisible}
           isSelected={selectedIds.has(item.id)}
           onPressRow={handlePressRow}
           onLongPressRow={handleLongPressRow}
+          animation={selectionAnimation}
+          selectionShift={selectionShift}
         />
       ),
       [
         styles,
-        isSelectionMode,
+        selectionVisible,
         selectedIds,
         handlePressRow,
         handleLongPressRow,
+        selectionAnimation,
+        selectionShift,
       ],
     );
 
@@ -220,7 +289,7 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
     );
 
     const ListHeader = useCallback(
-      () => <Divider style={styles.titleDivider} />,
+      () => <Divider style={styles.titleDivider} leftInset />,
       [styles.titleDivider],
     );
 
@@ -245,13 +314,48 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       content: {
-        paddingTop: ds.spacing.md,
-        paddingBottom: ds.spacing.md,
-        paddingRight: ds.spacing.lg,
+        paddingVertical: ds.spacing.lg,
+        paddingHorizontal: ds.spacing.lg,
+        marginVertical: -0.2,
+      },
+
+      contentSelection: {
+        paddingRight: ds.spacing.lg + ds.spacing.xxl + ds.spacing.sm,
+      },
+
+      contentSelected: {
+        backgroundColor: theme.iosLightGray,
+      },
+
+      rowContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+      },
+
+      checkboxContainer: {
+        position: 'absolute',
+        left: ds.spacing.lg,
+        top: 0,
+        bottom: 0,
+        justifyContent: 'center',
+        width: ds.spacing.xxl + ds.spacing.sm,
+        alignItems: 'center',
+      },
+
+      iconContainer: {
+        width: ds.spacing.xxl + ds.spacing.sm,
+        alignItems: 'center',
+        justifyContent: 'center',
+        transform: Platform.OS === 'android' ? [{scale: 1.4}] : [{scale: 1.7}],
+      },
+
+      textContainer: {
+        flex: 1,
+        minWidth: 0,
+        marginLeft: ds.spacing.md,
       },
 
       title: {
-        ...ds.typography.label,
         marginBottom: ds.spacing.xs,
       },
 
@@ -261,23 +365,20 @@ const createStyles = makeStyleFactory(
       },
 
       divider: {
-        marginLeft: ds.spacing.xxl * 2 + ds.spacing.sm,
+        marginLeft:
+          ds.spacing.lg + (ds.spacing.xxl + ds.spacing.sm) + ds.spacing.md,
         marginRight: ds.spacing.lg,
       },
 
+      dividerSelected: {
+        backgroundColor: theme.iosPlaceholder,
+      },
+
       titleDivider: {
-        marginHorizontal: ds.spacing.lg,
+        marginRight: ds.spacing.lg,
         marginTop: ds.spacing.lg,
-      },
-
-      leftIconScale: {
-        alignSelf: 'center',
-        transform: Platform.OS === 'android' ? [{scale: 1.4}] : [{scale: 1.6}],
-        width: ds.spacing.xxl + ds.spacing.sm,
-      },
-
-      checkboxScale: {
-        transform: [{scale: 1}],
+        color: theme.iosPlaceholder,
+        opacity: 0.8,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

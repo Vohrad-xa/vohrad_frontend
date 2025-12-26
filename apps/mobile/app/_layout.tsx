@@ -8,9 +8,9 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
 import {LoadingOverlay} from '@/components/ui';
 import {AttachmentProvider} from '@/features/attachments/providers/attachment-provider';
+import {NetworkProvider} from '@/features/network';
+import {NetworkBanner} from '@/features/network/components/network-banner';
 import {useBootstrap} from '@/hooks/use-bootstrap';
-import {NetworkProvider} from '@/modules/network';
-import {NetworkBanner} from '@/modules/network/components/network-banner';
 import {
   PaperThemeProvider,
   AppThemeProvider,
@@ -58,6 +58,8 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
 }
 
 export default function RootLayout() {
+  const isBootstrapComplete = useBootstrap();
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <KeyboardProvider>
@@ -71,7 +73,7 @@ export default function RootLayout() {
                       <AuthProvider>
                         <AttachmentProvider>
                           <RootNavigation
-                            isBootstrapComplete={useBootstrap()}
+                            isBootstrapComplete={isBootstrapComplete}
                           />
                           <NetworkBanner />
                         </AttachmentProvider>

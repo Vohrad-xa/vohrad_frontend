@@ -1,0 +1,14 @@
+{
+  "name": "sykamore-ui",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Sykamore UI native module",
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  },
+  "dependencies": {
+    "sf-symbols-typescript": "^2.1.0"
+  }
+}

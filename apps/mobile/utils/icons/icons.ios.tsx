@@ -1,6 +1,7 @@
 import React from 'react';
 import {SymbolView, type SFSymbol, type SymbolViewProps} from 'expo-symbols';
 import {Palette} from '@/constants';
+import {useTheme} from '@/providers/theme-provider';
 import {
   accessibilityLabel,
   background,
@@ -9,8 +10,7 @@ import {
   foregroundStyle,
   frame,
   Image,
-} from '@/modules/sykamore-ui/src/ios';
-import {useTheme} from '@/providers/theme-provider';
+} from 'sykamore-ui/ios';
 import type {IconProps} from './icon-types';
 
 type SymbolType = NonNullable<SymbolViewProps['type']>;

@@ -7,7 +7,7 @@ import {
   disableBiometrics,
   recordDecline,
   type BiometricAvailability,
-} from '@/modules/security/biometric-service';
+} from '@/features/security/biometric-service';
 
 export type BiometricStatus = {
   availability: BiometricAvailability;

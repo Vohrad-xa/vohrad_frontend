@@ -3,10 +3,9 @@ import type {TextInput} from 'react-native';
 import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {validateEmail} from '@sykamore/types';
 import {ThemedButton, ThemedText, Input} from '@/components/ui';
-import type {InputStatus} from '@/components/ui';
 import {FormCard} from '@/components/ui/form-card';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import * as biometricService from '@/modules/security/biometric-service';
+import * as biometricService from '@/features/security/biometric-service';
 import {useAuth, useTheme} from '@/providers';
 import * as AppStorage from '@/utils/storage';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -87,11 +86,7 @@ export function PersonalEmailForm({
     [form.email],
   );
 
-  const showSubdomainSuccess = form.subdomain.trim().length > 0;
   const showEmailError = showEmailValidation && !emailValidation.isValid;
-  const showEmailSuccess =
-    showEmailValidation && emailValidation.isValid && form.email.length > 0;
-  const showPasswordSuccess = form.password.length > 0;
 
   const isFormValid =
     form.subdomain.trim().length > 0 &&
@@ -179,17 +174,6 @@ export function PersonalEmailForm({
     {key: 'password', placeholder: 'Password', secureTextEntry: true},
   ];
 
-  const statusFor = (key: FieldKey): InputStatus => {
-    if (key === 'email') {
-      if (showEmailError) return 'error';
-      if (showEmailSuccess) return 'success';
-      return 'none';
-    }
-    if (key === 'subdomain') return showSubdomainSuccess ? 'success' : 'none';
-    if (key === 'password') return showPasswordSuccess ? 'success' : 'none';
-    return 'none';
-  };
-
   return (
     <View style={styles.content}>
       <FormCard<FieldRow>
@@ -212,8 +196,6 @@ export function PersonalEmailForm({
                 onSubmitEditing={
                   item.key === 'password' ? handleLogin : undefined
                 }
-                status={statusFor(item.key)}
-                onStatusIconPress={isEmail ? handleEmailErrorPress : undefined}
               />
 
               {isEmail && (showEmailError || emailValidation.suggestion) && (

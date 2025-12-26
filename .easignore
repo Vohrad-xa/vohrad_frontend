@@ -1,5 +1,5 @@
 .vscode/
 apps/web/
 .idea/
-../../coverage
-**/*_test_*
+coverage/
+packages/**/__tests__/**

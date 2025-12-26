@@ -1,9 +1,9 @@
 import {Platform, StyleSheet, View} from 'react-native';
 import {ThemedText, Toggle} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {Switch} from '@/modules/sykamore-ui/src/android';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
+import {Switch} from 'sykamore-ui/android';
 import {useBiometricToggle} from './use-biometric-toggle';
 
 export function BiometricToggle() {

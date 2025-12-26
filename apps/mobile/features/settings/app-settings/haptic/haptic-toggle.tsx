@@ -1,7 +1,7 @@
 import {Platform} from 'react-native';
 import {Toggle} from '@/components/ui';
-import {Switch} from '@/modules/sykamore-ui/src/android';
 import {useHaptic} from '@/providers';
+import {Switch} from 'sykamore-ui/android';
 
 export function HapticToggle() {
   const {isEnabled, setEnabled} = useHaptic();

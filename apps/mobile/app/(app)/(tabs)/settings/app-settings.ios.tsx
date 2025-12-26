@@ -1,8 +1,8 @@
 import {useCallback} from 'react';
 import {useBiometricToggle} from '@/features/settings/app-settings/biometric';
-import {Host, List, Toggle, Section, Text} from '@/modules/sykamore-ui/src/ios';
 import {useHaptic} from '@/providers';
 import {AppIcons, Icon} from '@/utils';
+import {Host, List, Toggle, Section, Text} from 'sykamore-ui/ios';
 
 export default function AppSettingsScreen() {
   const {

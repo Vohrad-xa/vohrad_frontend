@@ -1,9 +1,0 @@
-{
-  "expo": {
-    "name": "vohrad-frontend",
-    "slug": "vohrad-frontend",
-    "version": "1.0.0",
-    "sdkVersion": "54.0.0",
-    "platforms": ["ios", "android", "web"]
-  }
-}

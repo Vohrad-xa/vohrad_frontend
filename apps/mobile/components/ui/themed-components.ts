@@ -8,6 +8,6 @@ export {ThemedInput} from './themed-input';
 export type {ThemedTextProps} from './themed-text';
 export type {ThemedViewProps} from './themed-view';
 export type {ThemedButtonProps} from './themed-button';
-export type {InputProps, InputStatus} from './input';
+export type {InputProps} from './input';
 export type {ThemedInputProps} from './themed-input';
 export type {SearchBarProps} from './search-bar';

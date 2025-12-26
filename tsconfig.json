@@ -11,10 +11,10 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@vohrad/api-client": ["packages/api-client/src"],
-      "@vohrad/auth": ["packages/auth/src"],
-      "@vohrad/store": ["packages/store/src"],
-      "@vohrad/types": ["packages/types/src"]
+      "@sykamore/api-client": ["packages/api-client/src"],
+      "@sykamore/auth": ["packages/auth/src"],
+      "@sykamore/store": ["packages/store/src"],
+      "@sykamore/types": ["packages/types/src"]
     }
   }
 }

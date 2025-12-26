@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "sykamore",
-    "slug": "sykamore-app",
-    "version": "1.0.0",
+    "slug": "sykamore",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icons/android/playstore-512.png",
     "scheme": "mobile",
@@ -24,7 +24,6 @@
         "foregroundImage": "./assets/icons/android/playstore-512.png",
         "backgroundColor": "#00000000"
       },
-      "playStoreUrl": "https://play.google.com/store/apps/details?id=vohrad.mobile",
       "predictiveBackGestureEnabled": true,
       "edgeToEdgeEnabled": true,
       "package": "sykamore.mobile",
@@ -66,6 +65,7 @@
     },
     "experiments": {
       "typedRoutes": true,
+      "autolinkingModuleResolution": true,
       "reactCompiler": false
     },
     "extra": {
@@ -74,6 +74,6 @@
         "projectId": "82b7131e-841a-46c9-970b-4426291c6480"
       }
     },
-    "owner": "sykamore-app"
+    "owner": "sykamore"
   }
 }
