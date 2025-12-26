@@ -16,6 +16,9 @@
         "ITSAppUsesNonExemptEncryption": false,
         "NSFaceIDUsageDescription": "Face ID lets you unlock the app quickly and securely.",
         "NSCameraUsageDescription": "This app uses the camera to scan barcodes and QR codes for quick data entry."
+      },
+      "runtimeVersion": {
+        "policy": "appVersion"
       }
     },
     "android": {
@@ -31,7 +34,8 @@
         "CAMERA",
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "output": "single",
@@ -74,6 +78,9 @@
         "projectId": "82b7131e-841a-46c9-970b-4426291c6480"
       }
     },
-    "owner": "sykamore-app"
+    "owner": "sykamore-app",
+    "updates": {
+      "url": "https://u.expo.dev/82b7131e-841a-46c9-970b-4426291c6480"
+    }
   }
 }
