@@ -1,5 +1,0 @@
-.vscode/
-apps/web/
-.idea/
-coverage/
-packages/**/__tests__/**
