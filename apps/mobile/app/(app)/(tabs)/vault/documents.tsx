@@ -1,9 +1,9 @@
 import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
+import {Platform} from 'react-native';
 import {useDeleteAttachment} from '@sykamore/store';
 import {useNavigation} from 'expo-router';
-import {Snackbar} from 'react-native-paper';
+import {IconButton, Snackbar} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {HeaderButton} from '@/components/ui';
 import {
   useAttachmentsByKind,
   useAttachmentPress,
@@ -19,7 +19,7 @@ import {showConfirmAlert, sanitizeInlineText} from '@/utils';
 export default function VaultDocumentsScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const {ds} = useTheme();
+  const {ds, theme} = useTheme();
 
   const {attachments: documentAttachments, getById: getDocumentById} =
     useAttachmentsByKind('document');
@@ -80,19 +80,44 @@ export default function VaultDocumentsScreen() {
   }, [selectedIds, deleteAttachment, getDocumentById]);
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () =>
-        isSelectionMode ? (
-          <HeaderButton
-            variant="cancel"
-            text="delete"
-            onPress={handleDeleteSelected}
-          />
-        ) : (
-          <VaultOptionsMenu />
-        ),
-    });
-  }, [navigation, isSelectionMode, handleDeleteSelected]);
+    const options =
+      Platform.OS === 'ios'
+        ? {
+            unstable_headerRightItems: () =>
+              isSelectionMode
+                ? [
+                    {
+                      type: 'button',
+                      label: 'Delete',
+                      icon: {type: 'sfSymbol', name: 'trash'},
+                      onPress: () => void handleDeleteSelected(),
+                    },
+                  ]
+                : [{type: 'custom', element: <VaultOptionsMenu />}],
+          }
+        : {
+            headerRight: () =>
+              isSelectionMode ? (
+                <>
+                  <IconButton
+                    icon="delete"
+                    onPress={() => void handleDeleteSelected()}
+                    style={{margin: 0}}
+                  />
+                </>
+              ) : (
+                <VaultOptionsMenu />
+              ),
+          };
+
+    navigation.setOptions(options);
+  }, [
+    navigation,
+    isSelectionMode,
+    handleDeleteSelected,
+    theme.destructive,
+    theme.accentBlue,
+  ]);
 
   const handleDocumentPress = useCallback(
     async (documentId: string) => {
