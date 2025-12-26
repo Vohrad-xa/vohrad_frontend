@@ -47,19 +47,19 @@ const getVariantConfig = (
     case 'save':
       return {
         icon: AppIcons.actions.save,
-        color: Palette.brand.white,
+        color: Palette.white,
         iconSize: 'lg',
       };
     case 'success':
       return {
         icon: AppIcons.status.success,
-        color: Palette.brand.green,
+        color: Palette.green,
         iconSize: 'xxl',
       };
     case 'edit':
       return {
         text: 'Edit',
-        color: Palette.brand.white,
+        color: Palette.white,
       };
     case 'add':
       return {
@@ -251,7 +251,7 @@ const createStyles = makeStyleFactory(
         ...Platform.select({
           android: {
             marginRight: ds.spacing.xxl,
-            backgroundColor: theme.iconMulticolor,
+            backgroundColor: theme.glassTint,
             borderRadius: ds.borderRadius.full,
           },
         }),

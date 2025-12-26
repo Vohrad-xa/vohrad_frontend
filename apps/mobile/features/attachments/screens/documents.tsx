@@ -23,11 +23,11 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
 import {
   makeStyleFactory,
-  Icon,
   formatDateShort,
   formatBytes,
   getAttachmentFileIcon,
   type AttachmentIcon,
+  Icon,
 } from '@/utils';
 
 export type DocumentsListRef = {
@@ -88,6 +88,7 @@ const DocumentItem = memo<DocumentItemProps>(
       inputRange: [0, 1],
       outputRange: [0, selectionShift],
     });
+    const {theme} = useTheme();
 
     return (
       <TouchableOpacity
@@ -112,7 +113,10 @@ const DocumentItem = memo<DocumentItemProps>(
                 },
               ]}
             >
-              <Checkbox.Android status={isSelected ? 'checked' : 'unchecked'} />
+              <Checkbox.Android
+                status={isSelected ? 'checked' : 'unchecked'}
+                color={theme.accentBlue}
+              />
             </Animated.View>
           ) : null}
 
@@ -142,7 +146,7 @@ const DocumentItem = memo<DocumentItemProps>(
                 {item.uiTitle}
               </ThemedText>
 
-              <ThemedText numberOfLines={1} style={styles.description}>
+              <ThemedText variant="caption" numberOfLines={1}>
                 {item.uiDescription}
               </ThemedText>
             </View>
@@ -324,7 +328,7 @@ const createStyles = makeStyleFactory(
       },
 
       contentSelected: {
-        backgroundColor: theme.iosLightGray,
+        backgroundColor: theme.selected,
       },
 
       rowContainer: {
@@ -359,11 +363,6 @@ const createStyles = makeStyleFactory(
         marginBottom: ds.spacing.xs,
       },
 
-      description: {
-        color: theme.muted,
-        fontSize: ds.typography.caption.fontSize,
-      },
-
       divider: {
         marginLeft:
           ds.spacing.lg + (ds.spacing.xxl + ds.spacing.sm) + ds.spacing.md,
@@ -371,13 +370,12 @@ const createStyles = makeStyleFactory(
       },
 
       dividerSelected: {
-        backgroundColor: theme.iosPlaceholder,
+        backgroundColor: theme.ripple,
       },
 
       titleDivider: {
         marginRight: ds.spacing.lg,
-        marginTop: ds.spacing.lg,
-        color: theme.iosPlaceholder,
+        color: theme.ripple,
         opacity: 0.8,
       },
     }),

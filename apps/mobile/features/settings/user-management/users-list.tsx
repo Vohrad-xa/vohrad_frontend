@@ -62,8 +62,8 @@ const UserItem = memo<UserItemProps>(({item, onPress, styles}) => {
 
   // Per-row renderer, memoized to avoid re-creating the function on every render.
   const left = useCallback(
-    () => <Avatar.Text size={42} style={styles.avatar} label={initials} />,
-    [initials, styles.avatar],
+    () => <Avatar.Text size={42} label={initials} />,
+    [initials],
   );
 
   return (
@@ -144,7 +144,7 @@ export function UsersList({
         <RefreshControl
           refreshing={refreshing}
           onRefresh={handleRefresh}
-          tintColor={theme.iconInfo}
+          tintColor={theme.accentDeepblue}
           progressViewOffset={ds.spacing.lg}
         />
       }
@@ -183,10 +183,6 @@ const createStyles = makeStyleFactory(
       titleDivider: {
         marginTop: ds.spacing.lg,
         marginHorizontal: ds.spacing.lg,
-      },
-
-      avatar: {
-        backgroundColor: theme.secondary,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

@@ -29,7 +29,7 @@ const CARD_CONFIG: DashboardCardConfig[] = [
     key: 'locations',
     title: 'Locations',
     icon: AppIcons.features.location,
-    colorToken: 'accentYellow',
+    colorToken: 'accentGreen',
   },
   {
     key: 'maintenance',
@@ -41,7 +41,7 @@ const CARD_CONFIG: DashboardCardConfig[] = [
     key: 'suppliers',
     title: 'Suppliers',
     icon: AppIcons.features.supplier,
-    colorToken: 'accentGreen',
+    colorToken: 'accentDeepblue',
   },
   {
     key: 'checkInOut',
@@ -53,7 +53,7 @@ const CARD_CONFIG: DashboardCardConfig[] = [
     key: 'attachments',
     title: 'Attachments',
     icon: AppIcons.files.document,
-    colorToken: 'accentIndigo',
+    colorToken: 'accentOrange',
   },
 ];
 

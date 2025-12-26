@@ -28,7 +28,7 @@ const ListItem: FC<ListItemProps> = ({
         <View style={styles.iconContainer}>
           <Icon
             name={icon}
-            color={isDestructive ? theme.iconDanger : undefined}
+            color={isDestructive ? theme.destructive : undefined}
           />
         </View>
       )}
@@ -79,7 +79,7 @@ const createStyles = makeStyleFactory(
         fontWeight: ds.fontWeight.medium,
       },
       labelTextDestructive: {
-        color: theme.iconDanger,
+        color: theme.destructive,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

@@ -37,7 +37,7 @@ export const AppIcons = {
     refresh: 'arrow.clockwise',
     move: 'arrow.turn.down.right',
     download: 'icloud.and.arrow.down',
-    scan: 'barcode.viewfinder',
+    scan: 'viewfinder',
     camera: 'camera',
     input: 'keyboard',
     select: 'checkmark.circle',

@@ -98,7 +98,7 @@ export const AddUserScreen = forwardRef<
             autoCapitalize={field.autoCapitalize}
             secureTextEntry={field.secureTextEntry}
             textColor={theme.text}
-            activeOutlineColor={theme.primary}
+            activeOutlineColor={theme.secondary}
             outlineStyle={styles.input}
             mode="outlined"
           />
@@ -153,7 +153,7 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.sm,
       },
       input: {
-        backgroundColor: theme.input,
+        backgroundColor: theme.card,
         borderRadius: ds.components.input.borderRadius,
         borderWidth: 0,
       },

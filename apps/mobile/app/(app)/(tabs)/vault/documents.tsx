@@ -2,7 +2,7 @@ import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
 import {Platform} from 'react-native';
 import {useDeleteAttachment} from '@sykamore/store';
 import {useNavigation} from 'expo-router';
-import {IconButton, Snackbar} from 'react-native-paper';
+import {Snackbar} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   useAttachmentsByKind,
@@ -14,12 +14,18 @@ import {
   type DocumentsListRef,
 } from '@/features/attachments/screens/documents';
 import {useTheme} from '@/providers';
-import {showConfirmAlert, sanitizeInlineText} from '@/utils';
+import {
+  showConfirmAlert,
+  getHeaderOptions,
+  type HeaderAction,
+  sanitizeInlineText,
+  AppIcons,
+} from '@/utils';
 
 export default function VaultDocumentsScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const {ds, theme} = useTheme();
+  const {ds} = useTheme();
 
   const {attachments: documentAttachments, getById: getDocumentById} =
     useAttachmentsByKind('document');
@@ -80,44 +86,33 @@ export default function VaultDocumentsScreen() {
   }, [selectedIds, deleteAttachment, getDocumentById]);
 
   useLayoutEffect(() => {
-    const options =
-      Platform.OS === 'ios'
-        ? {
-            unstable_headerRightItems: () =>
-              isSelectionMode
-                ? [
-                    {
-                      type: 'button',
-                      label: 'Delete',
-                      icon: {type: 'sfSymbol', name: 'trash'},
-                      onPress: () => void handleDeleteSelected(),
-                    },
-                  ]
-                : [{type: 'custom', element: <VaultOptionsMenu />}],
-          }
-        : {
-            headerRight: () =>
-              isSelectionMode ? (
-                <>
-                  <IconButton
-                    icon="delete"
-                    onPress={() => void handleDeleteSelected()}
-                    style={{margin: 0}}
-                  />
-                </>
-              ) : (
-                <VaultOptionsMenu />
-              ),
-          };
+    const right: HeaderAction[] | undefined = isSelectionMode
+      ? [
+          {
+            key: 'download',
+            label: 'Download selected',
+            iosSymbol: AppIcons.actions.share,
+            icon: AppIcons.actions.share,
+            onPress: () => void handleDeleteSelected(),
+          },
+          {
+            key: 'delete',
+            label: 'Delete selected',
+            iosSymbol: AppIcons.actions.delete,
+            icon: AppIcons.actions.delete,
+            onPress: () => void handleDeleteSelected(),
+          },
+        ]
+      : undefined;
 
-    navigation.setOptions(options);
-  }, [
-    navigation,
-    isSelectionMode,
-    handleDeleteSelected,
-    theme.destructive,
-    theme.accentBlue,
-  ]);
+    navigation.setOptions(
+      getHeaderOptions({
+        right,
+        // When not selecting, show options menu
+        headerRightElement: isSelectionMode ? undefined : <VaultOptionsMenu />,
+      }),
+    );
+  }, [navigation, isSelectionMode, handleDeleteSelected]);
 
   const handleDocumentPress = useCallback(
     async (documentId: string) => {
@@ -139,13 +134,15 @@ export default function VaultDocumentsScreen() {
 
       <Snackbar
         visible={snackbarVisible}
-        wrapperStyle={{bottom: insets.bottom + ds.spacing.lg}}
+        wrapperStyle={
+          Platform.OS === 'ios'
+            ? {bottom: insets.bottom + ds.spacing.md}
+            : undefined
+        }
         onDismiss={() => setSnackbarVisible(false)}
         duration={3000}
         style={{borderRadius: ds.borderRadius.full}}
-        action={{
-          label: 'OK',
-        }}
+        action={{label: 'OK'}}
       >
         {deletedCount === 1
           ? '1 document deleted'

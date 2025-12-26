@@ -141,7 +141,7 @@ export function AttachmentsOverview({
               <Icon
                 name={AppIcons.tabs.vault}
                 size="xxl"
-                colorToken="iconInfo"
+                colorToken="accentBlue"
               />
             )}
             onPress={tile.onPress}

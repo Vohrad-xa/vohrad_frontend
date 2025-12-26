@@ -72,7 +72,7 @@ export function AttachmentImagePreview({
             <Icon
               name={AppIcons.ui.chevronLeft}
               size="xxl"
-              colorToken={currentIndex === 0 ? 'muted' : 'tint'}
+              colorToken={currentIndex === 0 ? 'muted' : 'accentBlue'}
             />
           </Pressable>
           <Pressable
@@ -86,7 +86,7 @@ export function AttachmentImagePreview({
               name={AppIcons.ui.chevronRight}
               size="xxl"
               colorToken={
-                currentIndex === attachments.length - 1 ? 'muted' : 'tint'
+                currentIndex === attachments.length - 1 ? 'muted' : 'accentBlue'
               }
             />
           </Pressable>

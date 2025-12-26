@@ -94,7 +94,7 @@ function TabButton({
       onPressOut={handlePressOut}
       style={styles.tabButtonContainer}
       android_ripple={{
-        color: theme.highlight,
+        color: theme.ripple,
         borderless: true,
         radius: ANIMATION_CONFIG.ripple.radius,
       }}
@@ -146,7 +146,7 @@ export function ReactTabs({tabs, theme, ds}: ReactTabsProps) {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: theme.tabIconSelected,
+          tabBarActiveTintColor: theme.accentDeepblue,
           tabBarInactiveTintColor: theme.icon,
           tabBarStyle: styles.tabBar,
           tabBarButton: Platform.OS === 'android' ? renderTabButton : undefined,
@@ -197,7 +197,7 @@ const createStyles = makeStyleFactory(
         borderRadius: ds.borderRadius.full,
       },
       iconContainerActive: {
-        backgroundColor: theme.highlight,
+        backgroundColor: theme.card,
       },
     }),
   (ds, theme) => themeKey(ds, theme),

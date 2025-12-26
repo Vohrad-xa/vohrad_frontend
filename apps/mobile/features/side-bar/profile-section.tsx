@@ -116,7 +116,6 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
       },
       avatarText: {
-        color: theme.primaryForeground,
         ...ds.typography.heading,
       },
       profileName: {

@@ -2,7 +2,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {useSetPendingFilters, useItemFiltersManager} from '@sykamore/store';
 import {type ItemFilterState} from '@sykamore/types';
 import {Stack, useRouter, useLocalSearchParams} from 'expo-router';
-import {HeaderButton, ModalScrollView} from '@/components/ui';
+import {ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   PriceRangeFilter,
@@ -11,6 +11,7 @@ import {
 } from '@/features/item';
 import {useTheme} from '@/providers';
 import {triggerHaptic, makeStyleFactory} from '@/utils';
+import {getHeaderOptions} from '@/utils/navigation/header-actions';
 
 export default function ItemFiltersModal() {
   const router = useRouter();
@@ -65,23 +66,34 @@ export default function ItemFiltersModal() {
   return (
     <>
       <Stack.Screen
-        options={{
-          headerLeft: () => (
-            <HeaderButton
-              variant="cancel"
-              text="Reset"
-              onPress={handleReset}
-              accessibilityLabel="Reset filters"
-            />
-          ),
-          headerRight: () => (
-            <HeaderButton
-              variant="save"
-              onPress={handleSave}
-              accessibilityLabel="Save filters"
-            />
-          ),
-        }}
+        options={getHeaderOptions({
+          right: [
+            {
+              key: 'reset',
+              label: 'Reset Filters',
+              iosSymbol: 'arrow.counterclockwise',
+              icon: 'restore',
+              onPress: handleReset,
+            },
+            {
+              key: 'save',
+              label: 'Save Filters',
+              iosSymbol: 'checkmark',
+              icon: 'content-save',
+              variant: 'prominent',
+              onPress: handleSave,
+            },
+          ],
+          left: [
+            {
+              key: 'close',
+              label: 'Close',
+              iosSymbol: 'xmark',
+              icon: 'arrow-left',
+              onPress: () => router.back(),
+            },
+          ],
+        })}
       />
       <ModalScrollView
         contentContainerStyle={styles.content}

@@ -33,7 +33,6 @@ const createStyles = makeStyleFactory(
           fontWeight: ds.fontWeight.semibold,
           letterSpacing: 0.5,
           textTransform: 'uppercase',
-          color: theme.primaryForeground,
         },
       });
     }

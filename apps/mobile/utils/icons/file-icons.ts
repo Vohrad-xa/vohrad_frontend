@@ -91,25 +91,25 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
         return {
           name: 'doc.plaintext.fill',
           symbolType: 'palette',
-          symbolColorTokens: ['destructive', 'iconMulticolor'],
+          symbolColorTokens: ['destructive', 'docIcon'],
         };
       case 'word':
         return {
           name: 'doc.plaintext.fill',
           symbolType: 'palette',
-          symbolColorTokens: ['accentBlue', 'iconMulticolor'],
+          symbolColorTokens: ['accentBlue', 'docIcon'],
         };
       case 'excel':
         return {
           name: 'doc.plaintext.fill',
           symbolType: 'palette',
-          symbolColorTokens: ['accentGreen', 'iconMulticolor'],
+          symbolColorTokens: ['accentGreen', 'docIcon'],
         };
       case 'ppt':
         return {
           name: 'doc.plaintext.fill',
           symbolType: 'palette',
-          symbolColorTokens: ['accentOrange', 'iconMulticolor'],
+          symbolColorTokens: ['accentOrange', 'docIcon'],
         };
       case 'archive':
         return {name: 'doc.zipper', symbolType: 'hierarchical'};
@@ -117,13 +117,13 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
         return {
           name: 'photo.fill.on.rectangle.fill',
           symbolType: 'palette',
-          symbolColorTokens: ['accentIndigo', 'iconMulticolor'],
+          symbolColorTokens: ['accentIndigo', 'docIcon'],
         };
       case 'text':
         return {
           name: 'doc.plaintext.fill',
           symbolType: 'palette',
-          symbolColorTokens: ['text', 'iconMulticolor'],
+          symbolColorTokens: ['text', 'docIcon'],
         };
       default:
         return {name: 'doc', symbolType: 'hierarchical'};
@@ -155,7 +155,7 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
     case 'archive':
       return {
         name: 'file-archive-outline',
-        colorToken: 'accentYellow',
+        colorToken: 'muted',
       };
     case 'image':
       return {

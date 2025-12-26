@@ -120,7 +120,7 @@ const createStyles = makeStyleFactory(
         left: 0,
         top: 0,
         bottom: 0,
-        backgroundColor: theme.lightdivider,
+        backgroundColor: theme.divider,
         zIndex: 10000,
         pointerEvents: 'none',
       },

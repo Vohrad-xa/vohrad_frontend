@@ -52,9 +52,7 @@ export const DatePickerMobile: React.FC<DatePickerMobileProps> = ({
   // iOS: Read-only text (non-editable)
   return (
     <View style={styles.row}>
-      <ThemedText variant="label" colorToken="label">
-        {label}
-      </ThemedText>
+      <ThemedText variant="label">{label}</ThemedText>
       <ThemedText variant="value" style={styles.valueText}>
         {displayValue || fallbackLabel}
       </ThemedText>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Platform} from 'react-native';
+import {StyleSheet} from 'react-native';
 import RNSlider, {type SliderProps} from '@react-native-community/slider';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
@@ -11,9 +11,7 @@ export function Slider(props: SliderProps) {
 
   return (
     <RNSlider
-      minimumTrackTintColor={theme.toggleTrackOn}
       maximumTrackTintColor={theme.surface}
-      thumbTintColor={Platform.OS === 'ios' ? theme.toggleThumb : theme.divider}
       style={styles.slider}
       {...props}
     />

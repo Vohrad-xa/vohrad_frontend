@@ -42,7 +42,7 @@ export const SearchBar = forwardRef<TextInput, SearchBarProps>(
         <Input
           ref={ref}
           style={[styles.compactInput, showIcon && styles.inputWithIcon, style]}
-          placeholderTextColor={placeholderTextColor ?? theme.iosPlaceholder}
+          placeholderTextColor={placeholderTextColor ?? theme.muted}
           returnKeyType={returnKeyType}
           autoCorrect={autoCorrect ?? false}
           autoCapitalize={autoCapitalize ?? 'none'}

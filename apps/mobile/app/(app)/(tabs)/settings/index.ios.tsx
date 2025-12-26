@@ -84,7 +84,7 @@ export default function SettingsModal() {
               <Icon
                 name={AppIcons.preferences.appearance}
                 useSwiftUI
-                colorToken="purple"
+                colorToken="accentPurple"
               />
             }
             selection={preference}
@@ -111,13 +111,13 @@ export default function SettingsModal() {
         <ListSection>
           <ListSection.Row
             icon={AppIcons.preferences.privacy}
-            iconColorToken="purple"
+            iconColorToken="accentPurple"
             title="Privacy Policy"
             onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
           />
           <ListSection.Row
             icon={AppIcons.preferences.terms}
-            iconColorToken="iconInfo"
+            iconColorToken="accentOrange"
             title="Terms of Use"
             onPress={() => router.push('/(app)/(tabs)/settings/terms')}
           />
@@ -129,7 +129,7 @@ export default function SettingsModal() {
           />
           <ListSection.Row
             icon={AppIcons.status.help}
-            iconColorToken="iconWarning"
+            iconColorToken="accentOrange"
             title="Report an Issue"
             onPress={() => router.push('/(app)/(tabs)/settings/support')}
           />

@@ -17,12 +17,12 @@ export const AppIcons = {
 
   /** Main app sections (for tabs/navigation) */
   tabs: {
-    home: 'home-variant',
+    home: 'home',
     vault: 'folder',
-    settings: 'cog-outline',
+    settings: 'cog',
     profile: 'account-circle',
     notifications: 'bell-outline',
-    item: 'layers',
+    item: 'card-multiple',
   },
 
   /** User actions and operations */
@@ -31,10 +31,10 @@ export const AppIcons = {
     addUser: 'account-plus-outline',
     addItem: 'content-duplicate',
     edit: 'pencil-outline',
-    delete: 'delete-outline',
+    delete: 'delete',
     save: 'check',
     close: 'close',
-    share: 'share-outline',
+    share: 'share-variant',
     refresh: 'refresh',
     move: 'arrow-up-right',
     download: 'cloud-arrow-down-outline',
@@ -47,14 +47,15 @@ export const AppIcons = {
 
   /** App domain features */
   features: {
-    item: 'layers-outline',
+    item: 'card-multiple-outline',
     category: 'view-grid-outline',
-    location: 'navigation-variant-outline',
+    location: 'map-marker-radius-outline',
     supplier: 'cart-outline',
     organization: 'briefcase-variant',
-    maintenance: 'wrench-outline',
+    maintenance: 'folder-wrench-outline',
     support: 'help-circle',
     userManagement: 'account-supervisor',
+    attachments: 'file-document-outline',
   },
 
   /** Files and documents */

@@ -23,3 +23,4 @@ export * from './versioning';
 export * from './bootstrap';
 export * from './formate-bytes';
 export * from './name-sanitizer';
+export * from './navigation';

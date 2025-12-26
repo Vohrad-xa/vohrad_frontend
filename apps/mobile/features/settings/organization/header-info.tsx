@@ -22,9 +22,7 @@ export function OrganizationHeaderInfo() {
 
       <View style={styles.headerColumn}>
         <View style={styles.headerRow}>
-          <ThemedText variant="label" colorToken="label">
-            {organization.sub_domain}
-          </ThemedText>
+          <ThemedText variant="label">{organization.sub_domain}</ThemedText>
           <ThemedView
             variant="statusBadge"
             badgeStatus={organization.status as BadgeStatus}
@@ -32,9 +30,7 @@ export function OrganizationHeaderInfo() {
             <ThemedText variant="badgeText">{organization.status}</ThemedText>
           </ThemedView>
         </View>
-        <ThemedText variant="secondary" colorToken="label">
-          {organization.email}
-        </ThemedText>
+        <ThemedText variant="secondary">{organization.email}</ThemedText>
         <ThemedText variant="secondary" style={styles.headerSupporting}>
           Since {formatDate(organization.created_at)}
         </ThemedText>

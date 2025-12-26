@@ -2,18 +2,23 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {StyleSheet, View, Alert, Platform, Linking} from 'react-native';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import {Stack, useRouter} from 'expo-router';
-import {HeaderButton, ThemedView, EmptyState} from '@/components/ui';
+import {ThemedView, EmptyState} from '@/components/ui';
 import type {TokenName} from '@/constants/colors';
 import {Palette} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
 import {AppIcons, Icon, makeStyleFactory} from '@/utils';
+import {
+  getHeaderOptions,
+  type HeaderAction,
+} from '@/utils/navigation/header-actions';
 
 export default function ScanModal() {
   const {ds, theme} = useTheme();
   const {triggerHaptic} = useHaptic();
   const router = useRouter();
   const styles = createStyles(ds, theme);
+
   const [permission, requestPermission] = useCameraPermissions();
   const [enableTorch, setEnableTorch] = useState(false);
   const hasRequestedPermission = useRef(false);
@@ -28,10 +33,14 @@ export default function ScanModal() {
 
         if (!result.granted) {
           Alert.alert(
-            'Camera Permission Required',
-            'Please enable camera access in Settings to scan barcodes and QR codes.',
+            'Permission Required',
+            'Enable camera access in Settings to be able to scan barcodes and QR codes.',
             [
-              {text: 'Cancel', style: 'cancel', onPress: () => router.back()},
+              {
+                text: 'Cancel',
+                style: 'destructive',
+                onPress: () => router.back(),
+              },
               {
                 text: 'Open Settings',
                 onPress: () => {
@@ -66,41 +75,44 @@ export default function ScanModal() {
     setEnableTorch((prev) => !prev);
   }, []);
 
-  const CloseButton = useCallback(
-    () => (
-      <HeaderButton
-        variant="close"
-        onPress={handleClose}
-        accessibilityLabel="Close scanner"
-      />
-    ),
-    [handleClose],
-  );
+  const headerLeftActions: HeaderAction[] =
+    Platform.OS === 'ios' || Platform.OS === 'web'
+      ? [
+          {
+            key: 'close',
+            label: 'Close scanner',
+            iosSymbol: 'xmark',
+            icon: 'close',
+            variant: 'clear',
+            onPress: handleClose,
+          },
+        ]
+      : [];
 
-  const TorchButton = useCallback(
-    () => (
-      <HeaderButton
-        icon="flash-outline"
-        onPress={handleToggleTorch}
-        accessibilityLabel={enableTorch ? 'Turn off flash' : 'Turn on flash'}
-      />
-    ),
-    [enableTorch, handleToggleTorch],
-  );
-
-  const headerLeftConfig =
-    Platform.OS === 'ios' || Platform.OS === 'web' ? CloseButton : undefined;
+  const headerRightActions: HeaderAction[] = [
+    {
+      key: 'torch',
+      label: enableTorch ? 'Turn off flash' : 'Turn on flash',
+      iosSymbol: enableTorch ? 'flashlight.off.fill' : 'flashlight.on.fill',
+      icon: enableTorch ? 'flash-off' : 'flash',
+      variant: 'clear',
+      onPress: handleToggleTorch,
+    },
+  ];
 
   if (!permission?.granted) {
     return (
       <>
         <Stack.Screen
           options={{
+            presentation: 'fullScreenModal',
             title: 'Scanner',
             headerShown: true,
             headerTransparent: Platform.OS === 'ios',
             headerBackButtonDisplayMode: 'default',
-            headerLeft: headerLeftConfig,
+            ...getHeaderOptions({
+              left: headerLeftActions.length ? headerLeftActions : undefined,
+            }),
           }}
         />
         <ThemedView style={styles.container}>
@@ -117,19 +129,15 @@ export default function ScanModal() {
     <>
       <Stack.Screen
         options={{
-          title: '',
+          title: 'Scanner',
           headerShown: true,
           headerTransparent: true,
           headerBackButtonDisplayMode: 'default',
-          headerStyle: {
-            backgroundColor: 'transparent',
-          },
-          headerTitleStyle: {
-            color: theme.primaryForeground,
-          },
-          headerBackTitle: 'Back ',
-          headerLeft: headerLeftConfig,
-          headerRight: TorchButton,
+          headerStyle: {backgroundColor: 'transparent'},
+          ...getHeaderOptions({
+            left: headerLeftActions.length ? headerLeftActions : undefined,
+            right: headerRightActions,
+          }),
         }}
       />
       <View style={styles.cameraContainer}>
@@ -155,7 +163,7 @@ export default function ScanModal() {
           <Icon
             name={AppIcons.actions.scan}
             size={180}
-            colorToken={Palette.brand.white as TokenName}
+            colorToken={Palette.white as TokenName}
             style={styles.scanIcon}
           />
         </View>
@@ -165,13 +173,14 @@ export default function ScanModal() {
 }
 
 const createStyles = makeStyleFactory(
-  (_ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
         backgroundColor: theme.background,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingHorizontal: ds.spacing.lg,
       },
       cameraContainer: {
         flex: 1,

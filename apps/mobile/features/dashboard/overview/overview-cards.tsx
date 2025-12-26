@@ -97,7 +97,7 @@ export function OverviewCards({
               android_ripple={
                 isAndroid
                   ? {
-                      color: `${theme.highlight}`,
+                      color: `${theme.glassTint}`,
                       borderless: false,
                       radius: ds.components.card.borderRadius,
                     }

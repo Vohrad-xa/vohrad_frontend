@@ -79,7 +79,7 @@ export function Toggle({
     backgroundColor: interpolateColor(
       animatedValue.value,
       [0, 1],
-      [theme.toggleTrackOff, theme.toggleTrackOn],
+      [theme.primary, theme.primary],
     ),
   }));
 
@@ -138,7 +138,7 @@ const createStyles = makeStyleFactory(
         width: 30,
         height: 22,
         borderRadius: ds.borderRadius.full,
-        backgroundColor: theme.toggleThumb,
+        backgroundColor: theme.selected,
         ...ds.shadows.sm,
       },
     }),

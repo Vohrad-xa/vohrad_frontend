@@ -102,15 +102,15 @@ const createStyles = makeStyleFactory(
 
       switch (variant) {
         case 'primary':
-          return scheme === 'dark' ? Palette.brand.black : Palette.Lbackground;
+          return scheme === 'dark' ? Palette.black : Palette.webLightBackground;
         case 'secondary':
           return theme.text;
         case 'destructive':
-          return theme.destructiveForeground;
+          return Palette.white;
         case 'ghost':
           return theme.text;
         default:
-          return theme.primaryForeground;
+          return theme.text;
       }
     };
 
@@ -165,9 +165,11 @@ const createStyles = makeStyleFactory(
       switch (variant) {
         case 'primary':
           buttonStyle.backgroundColor =
-            scheme === 'dark' ? Palette.Lbackground : Palette.brand.black;
+            scheme === 'dark' ? Palette.webLightBackground : Palette.black;
           buttonStyle.borderColor =
-            scheme === 'dark' ? Palette.Lbackground : Palette.Dbackground;
+            scheme === 'dark'
+              ? Palette.webLightBackground
+              : Palette.webDarkBackground;
           buttonStyle.borderWidth = 1;
           break;
         case 'secondary':

@@ -176,7 +176,7 @@ export const SpecificationsForm = forwardRef<
                       <Icon
                         name="remove-outline"
                         size="sm"
-                        colorToken="destructiveForeground"
+                        colorToken="destructive"
                       />
                     </View>
                   </Pressable>
@@ -227,7 +227,11 @@ export const SpecificationsForm = forwardRef<
             style={styles.addButton}
             hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
           >
-            <Icon name="add-circle-outline" size="md" colorToken="tint" />
+            <Icon
+              name="add-circle-outline"
+              size="md"
+              colorToken="accentDeepblue"
+            />
           </Pressable>
           <Pressable onPress={handleAddField} style={styles.addTextButton}>
             <ThemedText variant="label">add new field</ThemedText>

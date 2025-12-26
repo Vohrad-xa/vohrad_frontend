@@ -45,7 +45,7 @@ export const Input = forwardRef<TextInput, InputProps>(
             rightIconName && styles.inputWithRightIcon,
             style,
           ]}
-          placeholderTextColor={placeholderTextColor ?? theme.iosPlaceholder}
+          placeholderTextColor={placeholderTextColor ?? theme.card}
           {...props}
         />
 

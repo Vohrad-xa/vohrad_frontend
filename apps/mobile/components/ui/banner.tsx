@@ -90,7 +90,7 @@ export function BannerTop({
         {shouldShowSpinner && (
           <ActivityIndicator
             size="small"
-            color={Palette.brand.white}
+            color={Palette.white}
             style={styles.spinner}
           />
         )}
@@ -132,7 +132,7 @@ const useStyles = makeStyleFactory(
       marginRight: ds.spacing.sm,
     },
     text: {
-      color: Palette.brand.white,
+      color: Palette.white,
       fontWeight: ds.fontWeight.medium,
     },
   }),

@@ -90,7 +90,7 @@ export default function SettingsModal() {
         description="Switch between light and dark mode"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.preferences.appearance, 'accentTeal')}
+        left={renderIcon(AppIcons.preferences.appearance, 'accentIndigo')}
         right={() => <AppearanceMenu />}
       />
       <Divider style={styles.divider} />
@@ -117,7 +117,7 @@ export default function SettingsModal() {
         description="Select your preferred language"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.preferences.language, 'accentTeal')}
+        left={renderIcon(AppIcons.preferences.language, 'accentIndigo')}
         onPress={() => router.push('/(app)/(tabs)/settings/language')}
       />
       <Divider style={styles.divider} />

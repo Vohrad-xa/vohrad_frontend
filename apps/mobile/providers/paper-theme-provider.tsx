@@ -1,5 +1,6 @@
 import React, {useMemo} from 'react';
 import {MD3DarkTheme, MD3LightTheme, PaperProvider} from 'react-native-paper';
+import {Palette} from '@/constants';
 import {useTheme} from './theme-provider';
 
 export function PaperThemeProvider({children}: {children: React.ReactNode}) {
@@ -12,17 +13,32 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
       ...base,
       colors: {
         ...base.colors,
-        primary: theme.accentBlue,
-        onPrimary: theme.primaryForeground,
+        primary: theme.primary,
+        onPrimary: theme.text,
+        primaryContainer: theme.secondary,
+        onPrimaryContainer: theme.input,
         background: theme.background,
-        surface: theme.input,
-        onSurface: theme.text,
-        onSurfaceVariant: theme.iconInfo,
-        outline: theme.border,
-        outlineVariant: theme.divider,
-        secondary: theme.secondary,
+        secondary: theme.webbackground,
+        onSecondary: theme.text,
+        secondaryContainer: theme.accentDeepblue, // bottom tab buttons container
+        onSecondaryContainer: Palette.white,
+
+        // tertiary: theme.accentBlue,
+        // onTertiary: theme.accentBlue,
+        // tertiaryContainer: theme.accentBlue,
+        // onTertiaryContainer: theme.accentGreen,
+
+        surface: theme.background, // outlined cards backgrounds
+        onSurface: theme.text, // main text color
+        surfaceVariant: theme.surface, // button backgrounds, input backgrounds
+        onSurfaceVariant: theme.muted,
+
+        // outline: theme.border,
+        // outlineVariant: theme.divider,
+
+        errorContainer: Palette.white,
         error: theme.destructive,
-        onError: theme.destructiveForeground,
+        onError: theme.background,
         backdrop: theme.backdrop,
       },
     };

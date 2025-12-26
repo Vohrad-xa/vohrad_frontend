@@ -149,10 +149,8 @@ export const ProfileContentEditable = forwardRef<
           <View style={styles.metaSeparator} />
 
           <View style={styles.metaColumn}>
-            <ThemedText variant="label" colorToken="label">
-              Member Since
-            </ThemedText>
-            <ThemedText variant="secondary" colorToken="label">
+            <ThemedText variant="label">Member Since</ThemedText>
+            <ThemedText variant="secondary">
               {formatDate(profileDetails.created_at)}
             </ThemedText>
             <ThemedText variant="secondary" style={styles.metaSupporting}>

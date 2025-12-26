@@ -92,14 +92,14 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
           <View style={styles.iconContainer}>
             <Icon name={icon} size={iconSize} colorToken={iconColorToken} />
           </View>
-          <ThemedText variant="label" colorToken="label">
+          <ThemedText variant="label" colorToken="card">
             {labelText}
           </ThemedText>
         </View>
       );
     }
     return (
-      <ThemedText variant="label" colorToken="label">
+      <ThemedText variant="label" colorToken="card">
         {labelText}
       </ThemedText>
     );
@@ -299,7 +299,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
   if (type === 'time' && Platform.OS === 'android') {
     return (
       <Pressable onPress={handleRowPress} style={rowStyles}>
-        <ThemedText variant="label" colorToken="label">
+        <ThemedText variant="label" colorToken="card">
           {label}
         </ThemedText>
         <TextInput
@@ -307,8 +307,8 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
           value={displayValue}
           onChangeText={onChangeText}
           placeholder={fallbackLabel}
-          placeholderTextColor={theme.iosPlaceholder}
-          selectionColor={theme.tint}
+          placeholderTextColor={theme.muted}
+          selectionColor={theme.accentBlue}
           underlineColorAndroid="transparent"
           editable={
             type === 'time' && Platform.OS === 'android' ? false : editable
@@ -326,7 +326,7 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
 
   return (
     <Pressable onPress={handleRowPress} style={rowStyles}>
-      <ThemedText variant="label" colorToken="label">
+      <ThemedText variant="label" colorToken="card">
         {label}
       </ThemedText>
       <TextInput
@@ -334,8 +334,8 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
         value={displayValue}
         onChangeText={onChangeText}
         placeholder={fallbackLabel}
-        placeholderTextColor={theme.iosPlaceholder}
-        selectionColor={theme.tint}
+        placeholderTextColor={theme.muted}
+        selectionColor={theme.accentBlue}
         underlineColorAndroid="transparent"
         editable={
           type === 'date' && Platform.OS === 'android' ? false : editable
@@ -397,7 +397,7 @@ const createStyles = makeStyleFactory(
         marginRight: ds.spacing.xl,
         borderRadius: ds.borderRadius.lg,
         padding: 4,
-        backgroundColor: theme.highlight,
+        backgroundColor: theme.glassTint,
       },
       labelWithIcon: {
         flexDirection: 'row',

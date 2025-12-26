@@ -41,7 +41,7 @@ export const Icon: React.FC<IconProps> = ({
   const frameSize = resolvedSize * 2;
   const resolvedTintColor =
     color ?? (colorToken ? theme[colorToken] : undefined);
-  const resolvedIconColor = Palette.brand.white;
+  const resolvedIconColor = Palette.white;
 
   /**
    * SymbolView path - Use for standard React Native components.

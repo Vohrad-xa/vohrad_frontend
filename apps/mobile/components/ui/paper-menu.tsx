@@ -74,7 +74,7 @@ export function PaperMenu({
             title={action.title}
             disabled={action.disabled}
             leadingIcon={action.image}
-            rippleColor={theme.overlay}
+            rippleColor={theme.card}
             titleStyle={{
               color: action.destructive ? theme.destructive : theme.text,
               fontSize: ds.typography.body.fontSize,

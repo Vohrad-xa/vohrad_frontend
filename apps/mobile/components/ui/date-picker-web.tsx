@@ -45,7 +45,8 @@ export const DatePickerWeb: React.FC<DatePickerWebProps> = ({
       document.head.appendChild(styleElement);
     }
 
-    const selectionColor = scheme === 'light' ? theme.primary : theme.tint;
+    const selectionColor =
+      scheme === 'light' ? theme.primary : theme.accentDeepblue;
 
     styleElement.textContent = `
       .react-datepicker {
@@ -84,7 +85,7 @@ export const DatePickerWeb: React.FC<DatePickerWebProps> = ({
         font-weight: 600 !important;
       }
       .react-datepicker__day:hover {
-        background: ${theme.overlay} !important;
+        background: ${theme.card} !important;
         border-radius: 50px !important;
       }
       .react-datepicker__day--disabled {
@@ -119,7 +120,7 @@ export const DatePickerWeb: React.FC<DatePickerWebProps> = ({
         font-size: ${ds.typography.body.fontSize}px !important;
       }
       .react-datepicker__time-list-item:hover {
-        background: ${theme.overlay} !important;
+        background: ${theme.card} !important;
       }
       .react-datepicker__time-list-item--selected {
         background: ${selectionColor} !important;
