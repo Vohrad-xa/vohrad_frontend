@@ -69,6 +69,7 @@ export default function ItemFiltersModal() {
         options={getHeaderOptions({
           right: [
             {
+              type: 'button',
               key: 'reset',
               label: 'Reset Filters',
               iosSymbol: 'arrow.counterclockwise',
@@ -76,6 +77,7 @@ export default function ItemFiltersModal() {
               onPress: handleReset,
             },
             {
+              type: 'button',
               key: 'save',
               label: 'Save Filters',
               iosSymbol: 'checkmark',
@@ -86,6 +88,7 @@ export default function ItemFiltersModal() {
           ],
           left: [
             {
+              type: 'button',
               key: 'close',
               label: 'Close',
               iosSymbol: 'xmark',
