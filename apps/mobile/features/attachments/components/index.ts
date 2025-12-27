@@ -4,4 +4,3 @@ export {AttachmentDestinationCard} from './attachment-destination-card';
 export {AttachmentImagePreview} from './attachment-image-preview';
 export {SelectableImageTile} from './selectable-image-tile';
 export {VaultActionsMenu} from './vault-actions-menu';
-export {VaultOptionsMenu} from './vault-options-menu';

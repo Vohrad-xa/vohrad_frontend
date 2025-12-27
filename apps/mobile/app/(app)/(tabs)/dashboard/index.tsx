@@ -28,7 +28,7 @@ export default function HomeScreen() {
 
   const handleScanOpen = useCallback(() => {
     triggerHaptic('light');
-    router.push('/scan');
+    router.push('/dashboard/scan');
   }, [triggerHaptic]);
 
   const handleRefresh = useCallback(async () => {

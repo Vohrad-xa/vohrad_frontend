@@ -3,12 +3,13 @@ import {useLayoutEffect, useState, useCallback, useRef, useEffect} from 'react';
 import type {ReactNode} from 'react';
 import {Platform, Pressable} from 'react-native';
 import {useRouter} from 'expo-router';
-import {triggerHaptic, Icon, AppIcons} from '@/utils';
 import {
   getHeaderOptions,
   type HeaderAction,
   type NavigationLike,
 } from '@/utils/navigation/header-actions';
+import {triggerHaptic} from '../haptics';
+import {Icon, AppIcons} from '../icons';
 
 /**
  * Options for `useSettingsHeader`.
@@ -144,36 +145,37 @@ export function useSettingsHeader({
 
     if (showSuccess) {
       right.push({
+        type: 'button',
         key: 'saved',
         label: 'Saved',
         iosSymbol: 'checkmark',
         icon: 'check',
         disabled: true,
-        variant: 'clear',
       });
     } else if (isEditing && idleAction === 'select') {
       if (selectedCount > 0 && onDeleteSelected) {
         right.push({
+          type: 'button',
           key: 'delete',
           label: 'Delete',
           iosSymbol: 'trash',
           icon: 'delete',
           tintColor: destructiveTint,
-          variant: 'clear',
           onPress: onDeleteSelected,
         });
       }
     } else if (idleAction === 'select' && onSelect && !isEditing) {
       right.push({
+        type: 'button',
         key: 'select',
         label: 'Select',
         iosSymbol: 'checkmark.circle',
         icon: 'check',
-        variant: 'clear',
         onPress: onSelect,
       });
     } else if (hasChanges || (isEditing && idleAction !== 'select')) {
       right.push({
+        type: 'button',
         key: 'save',
         label: 'Save',
         iosSymbol: 'checkmark',
@@ -184,11 +186,11 @@ export function useSettingsHeader({
       });
     } else if (idleAction === 'edit') {
       right.push({
+        type: 'button',
         key: 'edit',
         label: 'Edit',
         iosSymbol: 'pencil',
         icon: 'pencil',
-        variant: 'clear',
         onPress: onSave,
       });
     }

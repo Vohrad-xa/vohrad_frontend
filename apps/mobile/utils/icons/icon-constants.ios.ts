@@ -42,6 +42,8 @@ export const AppIcons = {
     input: 'keyboard',
     select: 'checkmark.circle',
     logout: 'arrow.right.circle.fill',
+    enableTorch: 'flashlight.on.fill',
+    disableTorch: 'flashlight.off.fill',
   },
 
   /** App domain features */

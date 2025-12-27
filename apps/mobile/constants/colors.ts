@@ -116,7 +116,7 @@ const _Tokens = {
     surface: Palette.gray[800],
     glassTint: Palette.glassTintDark,
     card: Palette.cardDark,
-    headerAndroid: Palette.bluepurple,
+    headerAndroid: Palette.white,
   },
 } as const;
 

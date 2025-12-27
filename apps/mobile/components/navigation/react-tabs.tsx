@@ -146,7 +146,7 @@ export function ReactTabs({tabs, theme, ds}: ReactTabsProps) {
       <Tabs
         screenOptions={{
           headerShown: false,
-          tabBarActiveTintColor: theme.accentDeepblue,
+          tabBarActiveTintColor: theme.accentBlue,
           tabBarInactiveTintColor: theme.icon,
           tabBarStyle: styles.tabBar,
           tabBarButton: Platform.OS === 'android' ? renderTabButton : undefined,

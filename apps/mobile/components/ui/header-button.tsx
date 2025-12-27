@@ -91,7 +91,6 @@ const getVariantConfig = (
       return {
         icon: AppIcons.ui.menu,
         iconSize: 'lg',
-        color: theme.text,
       };
     default:
       return {
@@ -187,7 +186,6 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
   const isActionButton =
     variant === 'edit' || variant === 'cancel' || variant === 'text';
   const isSaveButton = variant === 'save' || variant === 'edit';
-  const isMenuButton = variant === 'menu';
   return (
     <Pressable
       android_ripple={{
@@ -200,7 +198,6 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
         styles.button,
         isActionButton ? styles.actionButton : null,
         isSaveButton ? styles.saveButton : null,
-        isMenuButton ? styles.menuButton : null,
         style,
       ]}
       accessibilityRole="button"
@@ -246,15 +243,6 @@ const createStyles = makeStyleFactory(
       saveButton: {
         backgroundColor: theme.accentBlue,
         borderRadius: ds.borderRadius.full,
-      },
-      menuButton: {
-        ...Platform.select({
-          android: {
-            marginRight: ds.spacing.xxl,
-            backgroundColor: theme.glassTint,
-            borderRadius: ds.borderRadius.full,
-          },
-        }),
       },
     }),
   (ds, _baseSize, theme) => themeKey(theme, ds),

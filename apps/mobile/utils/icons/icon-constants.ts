@@ -43,6 +43,8 @@ export const AppIcons = {
     input: 'keyboard-outline',
     select: 'check-circle-outline',
     logout: 'logout',
+    enableTorch: 'flash',
+    disableTorch: 'flash-off',
   },
 
   /** App domain features */
@@ -76,7 +78,7 @@ export const AppIcons = {
     success: 'check-circle-outline',
     warning: 'alert-outline',
     error: 'alert-circle-outline',
-    info: 'information-outline',
+    info: 'information',
     help: 'help-circle-outline',
     time: 'clock-outline',
   },

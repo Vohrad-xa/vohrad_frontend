@@ -23,6 +23,7 @@ export default function HomeLayout() {
           headerTitleAlign: 'left',
           headerTransparent: Platform.OS === 'ios',
           headerShadowVisible: false,
+          headerBackButtonDisplayMode: 'minimal',
           headerTitleStyle: {
             fontSize:
               Platform.OS === 'android'
@@ -40,10 +41,17 @@ export default function HomeLayout() {
             headerLeft: () => (
               <HeaderButton
                 variant="menu"
-                accessibilityLabel="Open menu"
+                accessibilityLabel="Open side bar menu"
                 onPress={toggleSideMenu}
               />
             ),
+          }}
+        />
+        <Stack.Screen
+          name="scan"
+          options={{
+            headerTitle: 'Scanner',
+            headerLargeTitle: false,
           }}
         />
       </Stack>

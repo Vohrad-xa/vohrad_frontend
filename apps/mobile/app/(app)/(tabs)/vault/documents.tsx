@@ -4,11 +4,7 @@ import {useDeleteAttachment} from '@sykamore/store';
 import {useNavigation} from 'expo-router';
 import {Snackbar} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {
-  useAttachmentsByKind,
-  useAttachmentPress,
-  VaultOptionsMenu,
-} from '@/features/attachments';
+import {useAttachmentsByKind, useAttachmentPress} from '@/features/attachments';
 import {
   DocumentsList,
   type DocumentsListRef,
@@ -89,15 +85,11 @@ export default function VaultDocumentsScreen() {
     const right: HeaderAction[] | undefined = isSelectionMode
       ? [
           {
-            key: 'download',
-            label: 'Download selected',
-            iosSymbol: AppIcons.actions.share,
-            icon: AppIcons.actions.share,
-            onPress: () => void handleDeleteSelected(),
-          },
-          {
+            type: 'button',
             key: 'delete',
-            label: 'Delete selected',
+            label: 'Delete',
+            accessibilityLabel: 'Delete selected documents',
+            accessibilityHint: 'Permanently delete selected documents',
             iosSymbol: AppIcons.actions.delete,
             icon: AppIcons.actions.delete,
             onPress: () => void handleDeleteSelected(),
@@ -108,8 +100,6 @@ export default function VaultDocumentsScreen() {
     navigation.setOptions(
       getHeaderOptions({
         right,
-        // When not selecting, show options menu
-        headerRightElement: isSelectionMode ? undefined : <VaultOptionsMenu />,
       }),
     );
   }, [navigation, isSelectionMode, handleDeleteSelected]);
