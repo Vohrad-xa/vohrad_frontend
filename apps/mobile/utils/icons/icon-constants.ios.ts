@@ -12,6 +12,7 @@ export const AppIcons = {
     chevronRight: 'chevron.right',
     chevronLeft: 'chevron.left',
     filter: 'equal',
+    chevronUpDown: 'chevron.up.chevron.down',
   },
 
   /** Main app sections (for tabs/navigation) */

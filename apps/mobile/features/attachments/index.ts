@@ -23,6 +23,7 @@ export {useAttachmentsByKind} from './hooks/use-attachments-by-kind';
 export {useAttachmentNavigation} from './hooks/use-attachment-navigation';
 export {useAttachmentSearch} from './hooks/use-attachment-search';
 export {useAttachmentPress} from './hooks/use-attachment-press';
+export {useAttachmentShare} from './hooks/use-attachment-share';
 
 // Screens
 export {AttachmentsOverview} from './screens/attachments-overview';

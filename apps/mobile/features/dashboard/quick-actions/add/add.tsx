@@ -8,12 +8,8 @@ import {
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
-import {
-  NativeMenu,
-  PaperMenu,
-  type NativeMenuAction,
-  ThemedText,
-} from '@/components/ui';
+import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
+import {PaperMenu, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils';
@@ -54,7 +50,7 @@ export function AddQuickAction({
     setActiveTemplate(actionId as TemplateKey);
   }, []);
 
-  const menuActions: NativeMenuAction[] = useMemo(
+  const menuActions: SykaMenuAction[] = useMemo(
     () =>
       TEMPLATE_OPTIONS.map(({label, key}) => ({
         id: key,
@@ -63,27 +59,34 @@ export function AddQuickAction({
     [],
   );
 
-  const MenuComponent = Platform.OS === 'web' ? PaperMenu : NativeMenu;
+  const trigger = (
+    <TouchableOpacity
+      accessibilityHint="Opens quick add options"
+      accessibilityRole="button"
+      activeOpacity={0.7}
+      style={actionStyles.actionButton}
+    >
+      <View style={actionStyles.iconContainer}>
+        <Icon name={icon} size={ds.iconSize.xxl} colorToken="quickActionIcon" />
+      </View>
+      <ThemedText style={actionStyles.actionLabel}>{label}</ThemedText>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={componentStyles.wrapper}>
-      <MenuComponent actions={menuActions} onSelect={handleSelect}>
-        <TouchableOpacity
-          accessibilityHint="Opens quick add options"
-          accessibilityRole="button"
-          activeOpacity={0.7}
-          style={actionStyles.actionButton}
+      {Platform.OS === 'web' ? (
+        <PaperMenu actions={menuActions} onSelect={handleSelect}>
+          {trigger}
+        </PaperMenu>
+      ) : (
+        <SykaMenuView
+          actions={menuActions}
+          onPressAction={({nativeEvent}) => handleSelect(nativeEvent.event)}
         >
-          <View style={actionStyles.iconContainer}>
-            <Icon
-              name={icon}
-              size={ds.iconSize.xxl}
-              colorToken="quickActionIcon"
-            />
-          </View>
-          <ThemedText style={actionStyles.actionLabel}>{label}</ThemedText>
-        </TouchableOpacity>
-      </MenuComponent>
+          {trigger}
+        </SykaMenuView>
+      )}
     </View>
   );
 }

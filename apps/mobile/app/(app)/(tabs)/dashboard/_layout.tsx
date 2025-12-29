@@ -38,6 +38,7 @@ export default function HomeLayout() {
           name="index"
           options={{
             headerTitle: 'Dashboard',
+            headerTitleAlign: 'center',
             headerLeft: () => (
               <HeaderButton
                 variant="menu"

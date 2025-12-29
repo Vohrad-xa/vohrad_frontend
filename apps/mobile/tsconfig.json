@@ -5,7 +5,6 @@
     "moduleSuffixes": [".ios", ".native", ""],
     "paths": {
       "@/*": ["./*"],
-      "sykamore-ui/*": ["./modules/sykamore-ui/src/*"],
       "@sykamore/api-client": ["../../packages/api-client/dist"],
       "@sykamore/auth": ["../../packages/auth/dist"],
       "@sykamore/store": ["../../packages/store/dist"],

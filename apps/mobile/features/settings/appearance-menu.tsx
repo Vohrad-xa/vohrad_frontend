@@ -1,6 +1,5 @@
 import React from 'react';
 import {Platform, Pressable, type ViewStyle} from 'react-native';
-
 import {ThemedText} from '@/components/ui';
 import {PaperMenu} from '@/components/ui/paper-menu';
 import {useTheme} from '@/providers';

@@ -1,5 +1,12 @@
-import {Share, Platform} from 'react-native';
-import * as FileSystem from 'expo-file-system/legacy';
+import {Platform} from 'react-native';
+import {Directory, File, Paths} from 'expo-file-system';
+import Share from 'react-native-share';
+
+type ShareResult = {
+  success: boolean;
+  dismissedAction?: boolean;
+  message?: string;
+};
 
 export type DocumentDownloadParams = {
   sourceUrl: string;
@@ -21,25 +28,30 @@ export async function downloadDocumentFile(
     return options.sourceUrl;
   }
 
-  const baseDir = FileSystem.documentDirectory ?? FileSystem.cacheDirectory;
-  if (!baseDir) {
-    throw new Error('File system unavailable');
-  }
-
-  const downloadsDir = `${baseDir}documents`;
-  await ensureDirectoryExists(downloadsDir);
+  // Share uses RNShare's FileProvider, which only exposes cache/download paths on Android.
+  const downloadsDir = new Directory(Paths.cache, 'downloads');
+  ensureDirectoryExists(downloadsDir);
 
   const fileName = buildDownloadFileName(options);
-  const targetPath = `${downloadsDir}/${fileName}`;
-  await FileSystem.downloadAsync(options.sourceUrl, targetPath);
-  return targetPath;
+  const targetFile = new File(downloadsDir, fileName);
+  const downloadedFile = await File.downloadFileAsync(
+    options.sourceUrl,
+    targetFile,
+    {idempotent: true},
+  );
+
+  if (!downloadedFile?.uri) {
+    throw new Error('Download failed to produce a file URI');
+  }
+
+  return downloadedFile.uri;
 }
 
 export async function shareDownloadedFile(
   localPath: string,
   displayName: string,
   _mimeType?: string,
-): Promise<void> {
+): Promise<ShareResult> {
   if (Platform.OS === 'web') {
     try {
       const response = await fetch(localPath);
@@ -56,13 +68,43 @@ export async function shareDownloadedFile(
       console.error('Failed to download file on web:', error);
       window.open(localPath, '_blank');
     }
-    return;
+    return {success: true, message: 'downloaded'};
   }
 
-  await Share.share({
-    url: localPath,
-    message: displayName,
-    title: displayName,
+  if (!localPath) {
+    throw new Error('Missing local file path for sharing');
+  }
+
+  const uri = normalizeShareUri(localPath);
+  const mimeType = _mimeType?.trim() ?? undefined;
+
+  return Share.open({
+    url: uri,
+    type: mimeType,
+    filename: displayName,
+    failOnCancel: false,
+  });
+}
+
+export async function shareDownloadedFiles(
+  localPaths: string[],
+): Promise<ShareResult> {
+  if (localPaths.length === 0) {
+    throw new Error('Missing local file paths for sharing');
+  }
+
+  if (Platform.OS === 'web') {
+    for (const localPath of localPaths) {
+      await shareDownloadedFile(localPath, 'document');
+    }
+    return {success: true, message: 'downloaded'};
+  }
+
+  const urls = localPaths.map(normalizeShareUri);
+
+  return Share.open({
+    urls,
+    failOnCancel: false,
   });
 }
 
@@ -88,11 +130,27 @@ export function buildDownloadFileName(
   return `${baseName || id}.${finalExtension}`;
 }
 
-async function ensureDirectoryExists(path: string): Promise<void> {
-  const dirInfo = await FileSystem.getInfoAsync(path);
-  if (dirInfo.exists && dirInfo.isDirectory) {
+function ensureDirectoryExists(directory: Directory): void {
+  if (directory.exists) {
     return;
   }
 
-  await FileSystem.makeDirectoryAsync(path, {intermediates: true});
+  directory.create({intermediates: true, idempotent: true});
+}
+
+function normalizeShareUri(localPath: string): string {
+  const trimmed = localPath.trim();
+  if (!trimmed) {
+    throw new Error('Missing local file path for sharing');
+  }
+
+  const hasScheme = /^[a-z][a-z0-9+.-]*:/.test(trimmed);
+  if (hasScheme) {
+    if (trimmed.startsWith('file:/') && !trimmed.startsWith('file://')) {
+      return `file://${trimmed.slice('file:'.length)}`;
+    }
+    return trimmed;
+  }
+
+  return `file://${trimmed}`;
 }

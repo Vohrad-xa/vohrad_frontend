@@ -3,12 +3,27 @@
   "version": "0.0.1",
   "private": true,
   "description": "Sykamore UI native module",
+  "main": "src/index.tsx",
+  "react-native": "src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx",
+    "./ios": "./src/ios/index.tsx",
+    "./ios/modifiers": "./src/ios/modifiers/index.ts",
+    "./android": "./src/android/index.tsx"
+  },
+  "files": [
+    "src",
+    "android",
+    "ios",
+    "expo-module.config.json"
+  ],
   "peerDependencies": {
     "expo": "*",
     "react": "*",
     "react-native": "*"
   },
   "dependencies": {
+    "expo-modules-core": "*",
     "sf-symbols-typescript": "^2.1.0"
   }
 }

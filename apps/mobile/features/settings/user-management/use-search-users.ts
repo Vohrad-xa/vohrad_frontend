@@ -23,6 +23,12 @@ type UseHybridUserSearchOptions = {
   filters?: UserFilterOptions;
 };
 
+const parseDateValue = (value?: string | null) => {
+  if (!value) return null;
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? null : parsed;
+};
+
 function useUserServerSearchState(searchQuery: string) {
   const [shouldUseServerSearch, setShouldUseServerSearch] = useState(false);
 
@@ -43,31 +49,37 @@ function useHybridUserSearch({
   isUsingServerSearch,
   filters,
 }: UseHybridUserSearchOptions) {
-  const parseDate = (value?: string | null) => {
-    if (!value) return null;
-    const parsed = Date.parse(value);
-    return Number.isNaN(parsed) ? null : parsed;
-  };
-
   const filteredByFilters = useMemo(() => {
     if (!filters) return users;
 
-    const createdFrom = parseDate(filters.createdFrom);
-    const createdTo = parseDate(filters.createdTo);
+    const roleFilter = filters.role?.trim() ?? '';
+    const hasRoleFilter = roleFilter.length > 0;
+    const createdFrom = parseDateValue(filters.createdFrom);
+    const createdTo = parseDateValue(filters.createdTo);
+    const hasDateFilter = createdFrom !== null || createdTo !== null;
+
+    if (!hasRoleFilter && !hasDateFilter) {
+      return users;
+    }
 
     return users.filter((user) => {
-      if (filters.role && user.role !== filters.role) {
+      if (hasRoleFilter && user.role !== roleFilter) {
         return false;
       }
 
-      const createdAt = parseDate(user.created_at);
-      if (createdFrom !== null) {
-        if (createdAt === null || createdAt < createdFrom) {
+      if (hasDateFilter) {
+        const createdAtValue = user.created_at;
+        if (!createdAtValue) {
           return false;
         }
-      }
-      if (createdTo !== null) {
-        if (createdAt === null || createdAt > createdTo) {
+        const createdAt = parseDateValue(createdAtValue);
+        if (createdAt === null) {
+          return false;
+        }
+        if (createdFrom !== null && createdAt < createdFrom) {
+          return false;
+        }
+        if (createdTo !== null && createdAt > createdTo) {
           return false;
         }
       }
@@ -110,6 +122,12 @@ function useHybridUserSearch({
   return filteredUsers;
 }
 
+/**
+ * Hybrid users query: local filter/search first, then switches to server when needed.
+ *
+ * - Server mode turns on when filters are set or local search finds no matches, and resets when the search query changes.
+ * - While in server mode, local search is skipped (role/date filters still apply on the result set).
+ */
 export function useSearchUsers(options: UseSearchUsersOptions) {
   const {searchQuery, pageSize, filters} = options;
   const {shouldUseServerSearch, enableServerSearch} =
@@ -126,9 +144,11 @@ export function useSearchUsers(options: UseSearchUsersOptions) {
     if (!shouldUseRemote) {
       return undefined;
     }
-    const searchTerm = shouldUseServerSearch ? searchQuery : undefined;
+    const normalizedSearchQuery = searchQuery.trim();
+    const searchTerm =
+      normalizedSearchQuery.length > 0 ? normalizedSearchQuery : undefined;
     return buildUserODataFilter(filters, searchTerm);
-  }, [searchQuery, filters, shouldUseRemote, shouldUseServerSearch]);
+  }, [searchQuery, filters, shouldUseRemote]);
 
   const manager = useUsersListManager({
     odataFilter,

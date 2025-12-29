@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android"],
+  "apple": {
+    "modules": ["SykaMenuModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.sykamoremenu.SykaMenuModule"]
+  }
+}

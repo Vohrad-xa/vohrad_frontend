@@ -1,0 +1,41 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:${kotlinVersion}")
+  }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'expo-module-gradle-plugin'
+apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
+
+group = 'expo.modules.sykamoremenu'
+version = '0.0.1'
+
+android {
+  namespace "expo.modules.sykamoremenu"
+  defaultConfig {
+    versionCode 1
+    versionName "0.0.1"
+  }
+  buildFeatures {
+    compose true
+  }
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  implementation 'androidx.appcompat:appcompat:1.7.0'
+  implementation 'androidx.compose.foundation:foundation-android:1.7.6'
+  implementation 'androidx.compose.ui:ui-android:1.7.6'
+  implementation "androidx.compose.material3:material3:1.5.0-alpha08"
+  implementation 'androidx.compose.material3:material3-android:1.5.0-alpha08'
+  implementation 'androidx.compose.material:material-icons-extended:1.7.6'
+  implementation 'androidx.lifecycle:lifecycle-runtime:2.9.3'
+  compileOnly 'com.facebook.react:react-android'
+}

@@ -1,16 +1,13 @@
-import React, {memo, useCallback, useMemo, useState} from 'react';
-import {
-  RefreshControl,
-  StyleSheet,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import React, {memo, useCallback, useEffect, useMemo, useRef} from 'react';
+import {StyleSheet, type StyleProp, type ViewStyle} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {Avatar, Divider, List} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
 import {AppIcons, Icon, makeStyleFactory} from '@/utils';
+import type {FlashListRef} from '@shopify/flash-list';
 import type {User} from '@sykamore/store';
 
 type UsersListProps = {
@@ -19,6 +16,7 @@ type UsersListProps = {
   onRefresh?: () => Promise<void> | void;
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
+  scrollToTopKey?: string;
 };
 
 type UserItemProps = {
@@ -27,7 +25,6 @@ type UserItemProps = {
   styles: ReturnType<typeof createStyles>;
 };
 
-// Paper side renderer props (List.Item left/right)
 type PaperSideProps = {
   color: string;
   style?: StyleProp<ViewStyle>;
@@ -42,7 +39,6 @@ const getUserInitials = (user: User): string => {
   return user.email?.[0]?.toUpperCase() ?? '?';
 };
 
-// Keep this stable so rows don't re-render because of a new function identity.
 const UserRightIcon = (props: PaperSideProps) => (
   <List.Icon
     {...props}
@@ -57,7 +53,7 @@ const UserItem = memo<UserItemProps>(({item, onPress, styles}) => {
 
   const name =
     `${item.first_name ?? ''} ${item.last_name ?? ''}`.trim() || 'No name';
-  const description = `${item.email}${item.role ? ` • ${item.role}` : ''}`;
+  const description = `${item.email}${item.role ? ` - ${item.role}` : ''}`;
   const initials = getUserInitials(item);
 
   // Per-row renderer, memoized to avoid re-creating the function on every render.
@@ -88,21 +84,26 @@ export function UsersList({
   onRefresh,
   onEndReached,
   onEndReachedThreshold = 0.5,
+  scrollToTopKey,
 }: UsersListProps) {
   const {ds, theme} = useTheme();
   const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
+  const listRef = useRef<FlashListRef<User>>(null);
+  const previousScrollKeyRef = useRef<string | null>(null);
+  const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({
+    onRefresh,
+  });
 
-  const [refreshing, setRefreshing] = useState(false);
-
-  const handleRefresh = useCallback(async () => {
-    if (!onRefresh) return;
-    setRefreshing(true);
-    try {
-      await onRefresh();
-    } finally {
-      setRefreshing(false);
+  useEffect(() => {
+    if (!scrollToTopKey) return;
+    if (
+      previousScrollKeyRef.current &&
+      previousScrollKeyRef.current !== scrollToTopKey
+    ) {
+      listRef.current?.scrollToOffset({offset: 0, animated: true});
     }
-  }, [onRefresh]);
+    previousScrollKeyRef.current = scrollToTopKey;
+  }, [scrollToTopKey]);
 
   const renderItem = useCallback(
     ({item}: {item: User}) => (
@@ -121,17 +122,18 @@ export function UsersList({
   const ListHeader = useCallback(
     () => (
       <>
-        <ThemedText variant="secondary" style={styles.headerText}>
-          Users can be managed here
+        <ThemedText variant="caption" style={styles.headerText}>
+          {users.length === 1 ? '1 user found' : `${users.length} users found`}
         </ThemedText>
         <Divider style={styles.titleDivider} />
       </>
     ),
-    [styles.headerText, styles.titleDivider],
+    [styles.headerText, styles.titleDivider, users.length],
   );
 
   return (
     <FlashList
+      ref={listRef}
       data={users}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
@@ -140,14 +142,10 @@ export function UsersList({
       showsVerticalScrollIndicator={false}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={ListHeader}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={handleRefresh}
-          tintColor={theme.accentDeepblue}
-          progressViewOffset={ds.spacing.lg}
-        />
-      }
+      contentInsetAdjustmentBehavior="automatic"
+      refreshing={refreshing}
+      onRefresh={handleRefresh}
+      progressViewOffset={ds.spacing.lg}
     />
   );
 }
@@ -162,7 +160,6 @@ const createStyles = makeStyleFactory(
 
       headerText: {
         paddingHorizontal: ds.spacing.lg,
-        paddingTop: ds.spacing.lg,
       },
 
       title: {
@@ -181,7 +178,7 @@ const createStyles = makeStyleFactory(
       },
 
       titleDivider: {
-        marginTop: ds.spacing.lg,
+        marginTop: ds.spacing.md,
         marginHorizontal: ds.spacing.lg,
       },
     }),

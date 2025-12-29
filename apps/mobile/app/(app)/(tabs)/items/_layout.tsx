@@ -87,8 +87,8 @@ function ItemsStack() {
         <Stack.Screen
           name="index"
           options={{
-            headerBackButtonDisplayMode: 'minimal',
             headerTitle: 'Items',
+            headerTitleAlign: 'center',
             headerLeft: () => (
               <HeaderButton
                 variant="menu"

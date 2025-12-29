@@ -20,11 +20,6 @@ export {InfoRowCard, type InfoField} from '../cards/info-row-card';
 export {DatePickerWeb} from './date-picker-web';
 export {DatePickerMobile} from './date-picker-mobile';
 export {
-  NativeMenu,
-  type NativeMenuAction,
-  type NativeMenuProps,
-} from './native-menu';
-export {
   ListRow,
   type ListRowData,
   type ListPosition,

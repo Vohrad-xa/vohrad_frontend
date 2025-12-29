@@ -17,6 +17,7 @@ module.exports = defineConfig([
       '**/*.js',
       '**/*.jsx',
       'docs/**',
+      'modules/syka-menu/**',
       'modules/sykamore-ui/**',
     ],
   },

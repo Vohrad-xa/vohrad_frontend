@@ -52,6 +52,7 @@ function VaultStack() {
           name="index"
           options={{
             headerTitle: 'Vault',
+            headerTitleAlign: 'center',
             headerLeft: () => (
               <HeaderButton
                 variant="menu"

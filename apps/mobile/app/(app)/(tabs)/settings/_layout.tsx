@@ -57,6 +57,7 @@ function SettingsStack() {
             name="index"
             options={{
               title: 'Settings',
+              headerTitleAlign: 'center',
               headerLeft: () => (
                 <HeaderButton
                   variant="menu"
@@ -106,7 +107,6 @@ function SettingsStack() {
               headerLargeTitle: true,
               headerSearchBarOptions: {
                 placement: 'integratedButton',
-                hideWhenScrolling: false,
                 placeholder: 'Search...',
                 onChangeText: handleSearchChange,
                 headerIconColor: theme.text,

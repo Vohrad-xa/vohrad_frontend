@@ -1,9 +1,8 @@
 import React from 'react';
+import {Section, Label, Spacer, Text, Button, HStack, tint} from 'sykamore-ui';
 import {type TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons} from '@/utils/icons';
-import {Section, Label, Spacer, Text, Button, HStack} from 'sykamore-ui/ios';
-import {tint} from 'sykamore-ui/ios/modifiers';
 
 interface ListSectionProps {
   title?: string;

@@ -13,6 +13,7 @@ export const AppIcons = {
     chevronLeft: 'chevron-left',
     filter: 'filter-variant',
     search: 'magnify',
+    chevronUpDown: 'unfold-more-horizontal',
   },
 
   /** Main app sections (for tabs/navigation) */
@@ -71,6 +72,7 @@ export const AppIcons = {
     print: 'printer-outline',
     list: 'format-list-bulleted',
     others: 'folder-question-outline',
+    test: 'outlined-info',
   },
 
   /** Status and feedback indicators */

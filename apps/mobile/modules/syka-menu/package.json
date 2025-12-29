@@ -1,0 +1,23 @@
+{
+  "name": "syka-menu",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Context menu module for iOS and Android",
+  "main": "src/index.tsx",
+  "react-native": "src/index.tsx",
+  "files": [
+    "src",
+    "android",
+    "ios",
+    "expo-module.config.json",
+    "README.md"
+  ],
+  "peerDependencies": {
+    "expo": "*",
+    "react": "*",
+    "react-native": "*"
+  },
+  "dependencies": {
+    "expo-modules-core": "*"
+  }
+}

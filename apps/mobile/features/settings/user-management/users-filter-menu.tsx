@@ -1,12 +1,9 @@
-import React, {useMemo, useState, useCallback} from 'react';
+import React, {useMemo, useState, useCallback, useEffect} from 'react';
 import {Platform} from 'react-native';
-import {
-  HeaderButton,
-  NativeMenu,
-  PaperMenu,
-  type NativeMenuAction,
-} from '@/components/ui';
-import {AppIcons, sortByDate, type SortOrder} from '@/utils';
+import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
+import {HeaderButton} from '@/components/ui';
+import {useRolesList} from '@/features/roles';
+import {AppIcons} from '@/utils';
 import {useSearchUsers, type UsersFilterOptions} from './use-search-users';
 
 type UsersFilterMenuProps = {
@@ -30,32 +27,42 @@ export function UsersFilterMenu({
     createdFrom: null,
     createdTo: null,
   });
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
   const {users, refresh, hasNext, onEndReached} = useSearchUsers({
     searchQuery,
     filters,
   });
+  const {roles: availableRoles} = useRolesList();
+  const [roleSourceUsers, setRoleSourceUsers] = useState(users);
 
-  const sortedUsers = useMemo(() => {
-    return sortByDate(users, 'created_at', sortOrder);
-  }, [sortOrder, users]);
+  useEffect(() => {
+    if (filters.role === null) {
+      setRoleSourceUsers(users);
+    }
+  }, [filters.role, users]);
 
   const roles = useMemo(() => {
     const roleSet = new Set<string>();
-    users.forEach((user) => {
-      if (user.role) roleSet.add(user.role);
-    });
+    if (availableRoles.length > 0) {
+      availableRoles.forEach((role) => {
+        if (role.name) roleSet.add(role.name);
+      });
+    } else {
+      roleSourceUsers.forEach((user) => {
+        if (user.role) roleSet.add(user.role);
+      });
+    }
+    if (filters.role) {
+      roleSet.add(filters.role);
+    }
     return Array.from(roleSet).sort();
-  }, [users]);
+  }, [availableRoles, filters.role, roleSourceUsers]);
 
   const handleSelect = useCallback((id: string) => {
     if (id === 'all-roles') {
       setFilters((prev) => ({...prev, role: null}));
     } else if (id.startsWith('role-')) {
       setFilters((prev) => ({...prev, role: id.replace('role-', '')}));
-    } else if (id === 'asc' || id === 'desc') {
-      setSortOrder(id);
     }
   }, []);
 
@@ -67,20 +74,19 @@ export function UsersFilterMenu({
       />
     );
 
-    // menu/menu for iOS and Android
-    const nativeMenuActions: NativeMenuAction[] = [
+    const menuActions: SykaMenuAction[] = [
       {
         id: 'select-user',
         title: 'Select',
         image: Platform.select({
           ios: AppIcons.actions.select,
-          default: AppIcons.files.file,
+          default: 'outlined.Info',
         }),
       },
       {
         id: 'roles-group',
-        title: 'Filters',
-        displayInline: true,
+        title: 'Filter by Role',
+        menuOptions: {displayInline: true},
         subactions: [
           {
             id: 'all-roles',
@@ -94,74 +100,24 @@ export function UsersFilterMenu({
           })),
         ],
       },
-      {
-        id: 'sort-group',
-        title: 'Sort By',
-        displayInline: true,
-        subactions: [
-          {
-            id: 'asc',
-            title: 'Oldest First',
-            state: sortOrder === 'asc' ? ('on' as const) : ('off' as const),
-          },
-          {
-            id: 'desc',
-            title: 'Newest First',
-            state: sortOrder === 'desc' ? ('on' as const) : ('off' as const),
-          },
-        ],
-      },
     ];
-
-    // Paper Menu for web
-    const paperActions = [
-      {
-        id: 'all-roles',
-        title: 'All Roles',
-        state: filters.role === null ? ('on' as const) : undefined,
-      },
-      ...roles.map((role) => ({
-        id: `role-${role}`,
-        title: role,
-        state: filters.role === role ? ('on' as const) : undefined,
-      })),
-      {
-        id: 'divider-sort',
-        title: '',
-        displayInline: true,
-        disabled: true,
-        hidden: true,
-      },
-      {
-        id: 'asc',
-        title: 'Oldest First',
-        displayInline: true,
-        state: sortOrder === 'asc' ? ('on' as const) : undefined,
-      },
-      {
-        id: 'desc',
-        title: 'Newest First',
-        state: sortOrder === 'desc' ? ('on' as const) : undefined,
-      },
-    ];
-
-    const MenuComponent = Platform.OS === 'web' ? PaperMenu : NativeMenu;
-    const menuActions =
-      Platform.OS === 'web' ? paperActions : nativeMenuActions;
 
     return (
-      <MenuComponent actions={menuActions} onSelect={handleSelect}>
+      <SykaMenuView
+        actions={menuActions}
+        onPressAction={({nativeEvent}) => handleSelect(nativeEvent.event)}
+      >
         {trigger}
-      </MenuComponent>
+      </SykaMenuView>
     );
-  }, [roles, filters.role, sortOrder, handleSelect]);
+  }, [roles, filters.role, handleSelect]);
 
   React.useEffect(() => {
     onFilterControlChange?.(renderFilterControl);
   }, [onFilterControlChange, renderFilterControl]);
 
   return children({
-    users: sortedUsers,
+    users,
     refresh,
     hasNext,
     onEndReached,

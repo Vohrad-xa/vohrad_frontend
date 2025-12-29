@@ -2,12 +2,15 @@ import * as React from 'react';
 import {type ViewStyle} from 'react-native';
 import {Menu, Divider} from 'react-native-paper';
 import {useTheme} from '@/providers';
-import type {NativeMenuProps} from './native-menu';
+import type {SykaMenuAction} from 'syka-menu';
 
-export interface PaperMenuProps extends Omit<
-  NativeMenuProps,
-  'isAnchoredToRight'
-> {
+type PaperMenuBaseProps = {
+  actions: SykaMenuAction[];
+  onSelect: (actionId: string) => void;
+  children: React.ReactNode;
+};
+
+export interface PaperMenuProps extends PaperMenuBaseProps {
   anchorPosition?: 'top' | 'bottom';
   elevation?: 0 | 1 | 2 | 3 | 4 | 5;
   mode?: 'flat' | 'elevated';
@@ -60,23 +63,29 @@ export function PaperMenu({
       mode={mode}
     >
       {actions.map((action, index) => {
-        if (action.hidden) return null;
+        const {attributes} = action;
+        if (attributes?.hidden) return null;
 
         const items = [];
-        if (action.displayInline && index > 0) {
-          items.push(<Divider key={`divider-${action.id}`} />);
+        const actionId = action.id;
+        if (action.menuOptions?.displayInline && index > 0) {
+          items.push(<Divider key={`divider-${actionId ?? index}`} />);
+        }
+
+        if (!actionId) {
+          return items.length ? items : null;
         }
 
         items.push(
           <Menu.Item
-            key={action.id}
-            onPress={() => handleAction(action.id)}
+            key={actionId}
+            onPress={() => handleAction(actionId)}
             title={action.title}
-            disabled={action.disabled}
+            disabled={attributes?.disabled}
             leadingIcon={action.image}
             rippleColor={theme.card}
             titleStyle={{
-              color: action.destructive ? theme.destructive : theme.text,
+              color: attributes?.destructive ? theme.destructive : theme.text,
               fontSize: ds.typography.body.fontSize,
               fontWeight: ds.fontWeight.medium,
             }}

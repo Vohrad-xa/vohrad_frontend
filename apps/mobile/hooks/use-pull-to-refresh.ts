@@ -23,7 +23,7 @@ export function usePullToRefresh(
 ): PullToRefreshResult {
   const {triggerHaptic} = useHaptic();
   const {isDeviceOffline} = useNetworkConnectivity();
-  const {onRefresh, minDelayMs = 300, requireNetwork = true} = options;
+  const {onRefresh, minDelayMs = 1000, requireNetwork = true} = options;
   const [refreshing, setRefreshing] = useState(false);
   const shouldEnableRefreshControl = !requireNetwork || !isDeviceOffline;
 

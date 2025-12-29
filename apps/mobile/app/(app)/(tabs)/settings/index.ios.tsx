@@ -1,10 +1,10 @@
 import {useCallback} from 'react';
 import {router} from 'expo-router';
+import {Host, Picker, List, Button} from 'sykamore-ui';
 import {ListSection} from '@/components/ui/list-section.ios';
 import {useTheme, useAuth} from '@/providers';
 import {showConfirmAlert} from '@/utils';
 import {AppIcons, Icon} from '@/utils/icons';
-import {Host, Picker, List, Button} from 'sykamore-ui/ios';
 
 export default function SettingsModal() {
   const {ds, preference, setScheme} = useTheme();

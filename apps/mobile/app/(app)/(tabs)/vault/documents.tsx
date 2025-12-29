@@ -4,7 +4,11 @@ import {useDeleteAttachment} from '@sykamore/store';
 import {useNavigation} from 'expo-router';
 import {Snackbar} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useAttachmentsByKind, useAttachmentPress} from '@/features/attachments';
+import {
+  useAttachmentsByKind,
+  useAttachmentPress,
+  useAttachmentShare,
+} from '@/features/attachments';
 import {
   DocumentsList,
   type DocumentsListRef,
@@ -26,13 +30,14 @@ export default function VaultDocumentsScreen() {
   const {attachments: documentAttachments, getById: getDocumentById} =
     useAttachmentsByKind('document');
   const handleAttachmentPress = useAttachmentPress();
+  const {shareAttachments, isProcessing} = useAttachmentShare();
   const {mutateAsync: deleteAttachment} = useDeleteAttachment();
 
   const documentsListRef = useRef<DocumentsListRef>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const isSelectionMode = selectedIds.size > 0;
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [deletedCount, setDeletedCount] = useState(0);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleSelectionChange = useCallback((ids: Set<string>) => {
     setSelectedIds(ids);
@@ -72,7 +77,9 @@ export default function VaultDocumentsScreen() {
             ),
           );
           documentsListRef.current?.clearSelection();
-          setDeletedCount(count);
+          setSnackbarMessage(
+            count === 1 ? '1 document deleted' : `${count} documents deleted`,
+          );
           setSnackbarVisible(true);
         } catch (error) {
           console.error('Failed to delete documents:', error);
@@ -81,9 +88,47 @@ export default function VaultDocumentsScreen() {
     });
   }, [selectedIds, deleteAttachment, getDocumentById]);
 
+  const handleShareSelected = useCallback(async () => {
+    if (selectedIds.size === 0 || isProcessing) return;
+
+    const count = selectedIds.size;
+    const selectedDocuments = Array.from(selectedIds)
+      .map((id) => getDocumentById(id))
+      .filter((doc) => doc != null);
+
+    try {
+      const shared = await shareAttachments(selectedDocuments);
+      if (!shared) {
+        if (Platform.OS === 'android') {
+          documentsListRef.current?.clearSelection();
+        }
+        return;
+      }
+
+      documentsListRef.current?.clearSelection();
+      setSnackbarMessage(
+        count === 1 ? '1 document shared' : `${count} documents shared`,
+      );
+      setSnackbarVisible(true);
+    } catch (error) {
+      console.error('Share operation failed:', error);
+    }
+  }, [selectedIds, getDocumentById, shareAttachments, isProcessing]);
+
   useLayoutEffect(() => {
     const right: HeaderAction[] | undefined = isSelectionMode
       ? [
+          {
+            type: 'button',
+            key: 'share',
+            label: 'Share',
+            accessibilityLabel: 'Share selected documents',
+            accessibilityHint: 'Share or download selected documents',
+            iosSymbol: AppIcons.actions.share,
+            icon: AppIcons.actions.share,
+            onPress: () => void handleShareSelected(),
+            disabled: isProcessing,
+          },
           {
             type: 'button',
             key: 'delete',
@@ -93,6 +138,7 @@ export default function VaultDocumentsScreen() {
             iosSymbol: AppIcons.actions.delete,
             icon: AppIcons.actions.delete,
             onPress: () => void handleDeleteSelected(),
+            disabled: isProcessing,
           },
         ]
       : undefined;
@@ -102,7 +148,13 @@ export default function VaultDocumentsScreen() {
         right,
       }),
     );
-  }, [navigation, isSelectionMode, handleDeleteSelected]);
+  }, [
+    navigation,
+    isSelectionMode,
+    handleShareSelected,
+    handleDeleteSelected,
+    isProcessing,
+  ]);
 
   const handleDocumentPress = useCallback(
     async (documentId: string) => {
@@ -134,9 +186,7 @@ export default function VaultDocumentsScreen() {
         style={{borderRadius: ds.borderRadius.full}}
         action={{label: 'OK'}}
       >
-        {deletedCount === 1
-          ? '1 document deleted'
-          : `${deletedCount} documents deleted`}
+        {snackbarMessage}
       </Snackbar>
     </>
   );

@@ -1,11 +1,13 @@
 import React, {forwardRef, useImperativeHandle} from 'react';
 import {StyleSheet, View, Pressable} from 'react-native';
-import {TextInput, List} from 'react-native-paper';
+import {Button, TextInput, List} from 'react-native-paper';
+import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useRolesList} from '@/features/roles';
 import {useTheme} from '@/providers';
+import {AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {DatePicker, Picker} from 'sykamore-ui/android';
+import {DatePicker} from 'sykamore-ui/android';
 import {useAddUser} from './use-add-user';
 import type {Role} from '@sykamore/types';
 
@@ -39,11 +41,28 @@ export const AddUserScreen = forwardRef<
 
   const {roles} = useRolesList();
   const activeRoles = roles?.filter((role: Role) => role.is_active) ?? [];
-  const roleIds = activeRoles.map((role: Role) => role.id);
-  const roleNames = activeRoles.map((role: Role) => role.name);
-  const selectedIndex = formData.role_id
-    ? roleIds.indexOf(formData.role_id)
-    : -1;
+  const hasRoles = activeRoles.length > 0;
+  const selectedRoleName = hasRoles
+    ? (activeRoles.find((role) => role.id === formData.role_id)?.name ??
+      'Select role')
+    : 'No roles';
+  const menuActions: SykaMenuAction[] = hasRoles
+    ? activeRoles.map((role) => ({
+        id: role.id,
+        title: role.name,
+        state: formData.role_id === role.id ? 'on' : 'off',
+      }))
+    : [
+        {
+          id: 'no-roles',
+          title: 'No roles available',
+          attributes: {disabled: true},
+        },
+      ];
+  const handleRoleMenuSelect = (roleId: string) => {
+    if (!hasRoles || roleId === 'no-roles') return;
+    handleRoleSelect(roleId);
+  };
 
   useImperativeHandle(ref, () => ({
     saveUser,
@@ -60,24 +79,23 @@ export const AddUserScreen = forwardRef<
           style={styles.itemList}
           title="Select role for the new User"
           right={() => (
-            <Picker
-              options={roleNames}
-              selectedIndex={selectedIndex}
-              variant="menu"
-              triggerContentPadding={{start: 12, end: 8}}
-              style={{
-                borderStyle: 'solid',
-                borderWidth: 1,
-                borderColor: '#ccc',
-                borderRadius: 25,
-                height: 35,
-              }}
-              onOptionSelected={({
-                nativeEvent,
-              }: {
-                nativeEvent: {index: number};
-              }) => handleRoleSelect(roleIds[nativeEvent.index])}
-            />
+            <SykaMenuView
+              actions={menuActions}
+              onPressAction={({nativeEvent}) =>
+                handleRoleMenuSelect(nativeEvent.event)
+              }
+              accessibilityLabel="Select role"
+            >
+              <Button
+                icon={AppIcons.ui.chevronUpDown}
+                mode="elevated"
+                contentStyle={{flexDirection: 'row-reverse'}}
+                accessibilityLabel="Selected role"
+                style={styles.rolTriggerButton}
+              >
+                {selectedRoleName}
+              </Button>
+            </SykaMenuView>
           )}
         />
       </List.Section>
@@ -164,6 +182,10 @@ const createStyles = makeStyleFactory(
         paddingRight: 0,
         paddingLeft: 0,
         paddingVertical: 0,
+      },
+      rolTriggerButton: {
+        width: 115,
+        maxWidth: 160,
       },
     }),
   (ds, theme) => themeKey(theme, ds),
