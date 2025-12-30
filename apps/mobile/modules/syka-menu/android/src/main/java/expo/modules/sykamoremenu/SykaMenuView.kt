@@ -8,10 +8,9 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.TouchDelegate
 import android.view.ViewGroup
-import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.core.content.ContextCompat
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ExpoView
@@ -153,7 +152,6 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
 
     val rootView = rootView as? ViewGroup ?: return
     val anchor = getAnchorBounds()
-    val submenuTitleColor = Color(ContextCompat.getColor(context, R.color.sykamore_menu_accent))
     val overlay = ComposeView(context).apply {
       layoutParams = ViewGroup.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -162,6 +160,7 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
       setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
       setContent {
         DynamicTheme {
+          val submenuTitleColor = MaterialTheme.colorScheme.primary
           SykaDropdownMenu(
             anchor = anchor,
             actions = actions.toList(),

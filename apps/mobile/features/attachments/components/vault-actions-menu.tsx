@@ -178,7 +178,7 @@ export function VaultActionsMenu({
     {
       title: 'Advanced',
       preferredElementSize: 'medium',
-      menuOptions: {displayInline: true},
+      menuOptions: {displayInline: false},
       subactions: [
         {
           id: 'support-refresh',

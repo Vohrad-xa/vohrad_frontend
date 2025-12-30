@@ -24,8 +24,6 @@ import androidx.core.content.ContextCompat
 import java.util.Locale
 import kotlin.math.min
 
-val DisabledMenuColor = Color(0x77888888)
-
 /**
  * Gets the ImageVector for a given icon name using reflection.
  */
@@ -78,7 +76,8 @@ fun DynamicTheme(content: @Composable () -> Unit) {
  */
 fun resolveIconColor(
   action: SykaMenuActionRecord,
-  isSubmenuTrigger: Boolean
+  isSubmenuTrigger: Boolean,
+  destructiveColor: Color
 ): Color? {
   val isDisabled = action.attributes?.disabled == true
   val isDestructive = action.attributes?.destructive == true ||
@@ -86,8 +85,8 @@ fun resolveIconColor(
   val imageColor = action.imageColor?.let { Color(it) }
 
   return when {
-    isDestructive -> Color.Red
-    isDisabled -> DisabledMenuColor
+    isDisabled -> null
+    isDestructive -> destructiveColor
     imageColor != null -> imageColor
     else -> null
   }

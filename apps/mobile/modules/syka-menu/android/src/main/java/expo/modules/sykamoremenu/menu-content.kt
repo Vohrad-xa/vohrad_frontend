@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
@@ -62,11 +61,11 @@ internal fun SykaDropdownMenu(
   val sizeForOffset = rootSize ?: menuSizes[levelKey] ?: menuSize
   val density = LocalDensity.current
   val configuration = LocalConfiguration.current
-  val edgeMargin = dimensionResource(R.dimen.sykamore_menu_edge_margin)
+  val edgeMargin = MenuEdgeMargin
   val edgeMarginPx = with(density) { edgeMargin.toPx() }
   val screenWidthDp = configuration.screenWidthDp.dp
   val screenWidthPx = with(density) { screenWidthDp.toPx() }
-  val menuMaxWidthDp = maxOf(screenWidthDp / 2, 320.dp)
+  val menuMaxWidthDp = maxOf(screenWidthDp * MenuMaxWidthFraction, MenuMinWidth)
   val menuMaxWidthPx = with(density) { menuMaxWidthDp.toPx() }
   val anchorWidth = with(density) { anchor.width.toDp() }
   val anchorHeight = with(density) { anchor.height.toDp() }
@@ -105,7 +104,7 @@ internal fun SykaDropdownMenu(
       DropdownMenu(
         expanded = true,
         onDismissRequest = onDismiss,
-        shape = RoundedCornerShape(dimensionResource(R.dimen.sykamore_menu_corner_radius)),
+        shape = RoundedCornerShape(MenuCornerRadius),
         containerColor = MenuDefaults.containerColor,
         offset = DpOffset(menuOffsetX, 0.dp),
         modifier = (menuWidthDp?.let { Modifier.width(it) } ?: Modifier)
@@ -201,9 +200,19 @@ private fun MenuActionItem(
   val hasSubactions = action.subactions.isNotEmpty()
   val isDisabled = action.attributes?.disabled == true
   val isSubmenuTrigger = hasSubactions
-  val resolvedTitleColor = resolveTitleColor(action, isSubmenuTrigger, submenuTitleColor)
-  val resolvedIconColor = resolveIconColor(action, isSubmenuTrigger)
-  val subtitleColor = resolvedTitleColor?.copy(alpha = 0.7f)
+  val destructiveColor = MaterialTheme.colorScheme.error
+  val resolvedTitleColor = resolveTitleColor(
+    action = action,
+    isSubmenuTrigger = isSubmenuTrigger,
+    submenuTitleColor = submenuTitleColor,
+    destructiveColor = destructiveColor
+  )
+  val resolvedIconColor = resolveIconColor(
+    action = action,
+    isSubmenuTrigger = isSubmenuTrigger,
+    destructiveColor = destructiveColor
+  )
+  val subtitleColor = resolvedTitleColor?.copy(alpha = MenuSubtitleAlpha)
     ?: MaterialTheme.colorScheme.onSurfaceVariant
   val trailingIcon: (@Composable () -> Unit)? = when {
     isSubmenuTrigger -> {
@@ -237,10 +246,7 @@ private fun MenuActionItem(
     colors = MenuDefaults.itemColors(
       textColor = resolvedTitleColor ?: Color.Unspecified,
       leadingIconColor = resolvedIconColor ?: Color.Unspecified,
-      trailingIconColor = resolvedTitleColor ?: Color.Unspecified,
-      disabledTextColor = DisabledMenuColor,
-      disabledLeadingIconColor = DisabledMenuColor,
-      disabledTrailingIconColor = DisabledMenuColor
+      trailingIconColor = resolvedTitleColor ?: Color.Unspecified
     ),
     leadingIcon = action.image?.let { iconName ->
       {
@@ -267,7 +273,7 @@ private fun MenuItemText(
   subtitle: String?,
   subtitleColor: Color
 ) {
-  Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+  Column(verticalArrangement = Arrangement.spacedBy(MenuSubtitleSpacing)) {
     Text(
       text = title,
       style = MaterialTheme.typography.bodyLarge
@@ -291,7 +297,7 @@ private fun SectionTitle(text: String) {
     textAlign = TextAlign.Start,
     modifier = Modifier
       .fillMaxWidth()
-      .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 4.dp)
+      .padding(MenuSectionTitlePadding)
   )
 }
 
@@ -312,7 +318,8 @@ private fun MenuIcon(
 private fun resolveTitleColor(
   action: SykaMenuActionRecord,
   isSubmenuTrigger: Boolean,
-  submenuTitleColor: Color
+  submenuTitleColor: Color,
+  destructiveColor: Color
 ): Color? {
   val isDisabled = action.attributes?.disabled == true
   val isDestructive = action.attributes?.destructive == true ||
@@ -320,8 +327,8 @@ private fun resolveTitleColor(
   val titleColor = action.titleColor?.let { Color(it) }
 
   return when {
-    isDestructive -> Color.Red
-    isDisabled -> DisabledMenuColor
+    isDisabled -> null
+    isDestructive -> destructiveColor
     titleColor != null -> titleColor
     isSubmenuTrigger -> submenuTitleColor
     else -> null
