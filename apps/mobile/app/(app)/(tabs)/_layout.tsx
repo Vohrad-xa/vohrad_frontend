@@ -1,52 +1,88 @@
 import React, {useEffect, useRef} from 'react';
 import {Platform} from 'react-native';
-import {useNavigation, useSegments} from 'expo-router';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {NativeTabsComponent, ReactTabs} from '@/components/navigation';
+import {Tabs, useSegments} from 'expo-router';
+import {
+  NativeTabs,
+  Icon as NativeTabIcon,
+  Label,
+} from 'expo-router/unstable-native-tabs';
 import {useHaptic, useTheme} from '@/providers';
-import type {TabItem} from '@/types/ui';
-import {AppIcons} from '@/utils';
+import {AppIcons, Icon} from '@/utils';
 
-const TAB_ITEMS: TabItem[] = [
-  {name: 'dashboard', label: 'Dashboard', icon: AppIcons.tabs.home},
-  {name: 'items', label: 'Items', icon: AppIcons.tabs.item},
-  {name: 'vault', label: 'Vault', icon: AppIcons.tabs.vault},
-  {name: 'settings', label: 'Settings', icon: AppIcons.tabs.settings},
-];
+const TABS = [
+  {name: 'dashboard', title: 'Dashboard', icon: AppIcons.tabs.home},
+  {name: 'items', title: 'Items', icon: AppIcons.tabs.item},
+  {name: 'vault', title: 'Vault', icon: AppIcons.tabs.vault},
+  {name: 'settings', title: 'Settings', icon: AppIcons.tabs.settings},
+] as const;
 
-export const unstable_settings = {
-  initialRouteName: 'dashboard',
-};
+type TabName = (typeof TABS)[number]['name'];
+
+export const unstable_settings = {initialRouteName: 'dashboard'};
+
+function isTabName(v: string | undefined): v is TabName {
+  return (
+    v === 'dashboard' || v === 'items' || v === 'vault' || v === 'settings'
+  );
+}
 
 export default function TabLayout() {
-  const navigation = useNavigation();
   const segments = useSegments();
-  const {theme, ds} = useTheme();
   const {triggerHaptic} = useHaptic();
-  const insets = useSafeAreaInsets();
-  const previousTabRef = useRef<string | null>(null);
+  const {theme, ds} = useTheme();
+  const prev = useRef<TabName | null>(null);
 
   useEffect(() => {
-    const currentSegment = segments[segments.length - 1] ?? 'dashboard';
-    const activeTab =
-      TAB_ITEMS.find((tab) => tab.name === currentSegment) ?? TAB_ITEMS[0];
+    if (segments[1] !== '(tabs)') return;
 
-    if (previousTabRef.current && previousTabRef.current !== activeTab.name) {
-      triggerHaptic('light');
-    }
-    previousTabRef.current = activeTab.name;
-  }, [segments, navigation, triggerHaptic]);
+    const tab = segments[2];
+    const active: TabName = isTabName(tab) ? tab : 'dashboard';
+
+    if (prev.current && prev.current !== active) triggerHaptic('light');
+    prev.current = active;
+  }, [segments, triggerHaptic]);
 
   if (Platform.OS === 'ios') {
-    return <NativeTabsComponent tabs={TAB_ITEMS} theme={theme} />;
+    return (
+      <NativeTabs>
+        {TABS.map((t) => (
+          <NativeTabs.Trigger key={t.name} name={t.name}>
+            <NativeTabIcon sf={t.icon} />
+            <Label>{t.title}</Label>
+          </NativeTabs.Trigger>
+        ))}
+      </NativeTabs>
+    );
   }
 
   return (
-    <ReactTabs
-      tabs={TAB_ITEMS}
-      theme={theme}
-      ds={ds}
-      insetBottom={insets.bottom}
-    />
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: theme.accentBlue,
+        tabBarInactiveTintColor: theme.text,
+        tabBarHideOnKeyboard: true,
+        tabBarLabelStyle: {
+          ...ds.typography.footnote,
+        },
+        tabBarStyle: {
+          borderTopWidth: 0,
+          backgroundColor: theme.modalBackground,
+        },
+      }}
+    >
+      {TABS.map((t) => (
+        <Tabs.Screen
+          key={t.name}
+          name={t.name}
+          options={{
+            title: t.title,
+            tabBarIcon: ({color, size}) => (
+              <Icon name={t.icon} color={color} size={size} />
+            ),
+          }}
+        />
+      ))}
+    </Tabs>
   );
 }

@@ -1,11 +1,10 @@
-import React, {useCallback} from 'react';
-import {Platform, StyleSheet, View} from 'react-native';
+import React, {useCallback, useMemo} from 'react';
+import {Platform} from 'react-native';
 import {Stack} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme, useSidebar} from '@/providers';
-import {AppIcons, makeStyleFactory} from '@/utils';
+import {AppIcons} from '@/utils';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -20,7 +19,6 @@ interface SearchChangeEvent {
 function SettingsStack() {
   const {theme, ds} = useTheme();
   const {setSearchQuery} = useSearch();
-  const styles = createStyles(theme, ds);
   const {toggleSideMenu} = useSidebar();
 
   const handleSearchChange = useCallback(
@@ -30,98 +28,102 @@ function SettingsStack() {
     [setSearchQuery],
   );
 
+  const headerLeftMenu = useCallback(
+    () => (
+      <HeaderButton
+        variant="menu"
+        accessibilityLabel="Open menu"
+        onPress={toggleSideMenu}
+      />
+    ),
+    [toggleSideMenu],
+  );
+
+  // TODO: wire up notifications screen
+  const headerRightNotifications = useCallback(
+    () => (
+      <HeaderButton
+        icon={AppIcons.tabs.notifications}
+        accessibilityLabel="Open events"
+        onPress={undefined}
+      />
+    ),
+    [],
+  );
+
+  const searchBarOptions = useMemo(
+    () => ({
+      placement: 'integratedButton' as const,
+      hideWhenScrolling: false,
+      placeholder: 'Search...',
+      onChangeText: handleSearchChange,
+    }),
+    [handleSearchChange],
+  );
+
+  const stackScreenOptions = useMemo(
+    () => ({
+      headerShown: true,
+      headerShadowVisible: false,
+      animation: 'ios_from_right' as const,
+      headerBackButtonDisplayMode: 'minimal' as const,
+      headerTransparent: Platform.OS === 'ios',
+      headerTitleAlign: 'left' as const,
+      headerTitleStyle: {
+        fontSize:
+          Platform.OS === 'android' ? ds.typography.title3.fontSize : undefined,
+        fontWeight: ds.fontWeight.bold,
+        color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
+      },
+    }),
+    [ds.typography.title3.fontSize, ds.fontWeight.bold, theme.headerAndroid],
+  );
+
+  const indexOptions = useMemo(
+    () => ({
+      title: 'Settings',
+      headerTitleAlign: 'center' as const,
+      headerLeft: headerLeftMenu,
+      headerRight: headerRightNotifications,
+      headerSearchBarOptions: searchBarOptions,
+    }),
+    [headerLeftMenu, headerRightNotifications, searchBarOptions],
+  );
+
+  const usersIndexOptions = useMemo(
+    () => ({
+      title: 'Users',
+      headerLargeTitle: true,
+      headerSearchBarOptions: searchBarOptions,
+    }),
+    [searchBarOptions],
+  );
+
   return (
-    <View style={styles.container}>
-      <ScreenLoadingWrapper>
-        <Stack
-          screenOptions={{
-            headerShown: true,
-            headerShadowVisible: false,
-            headerBackButtonMenuEnabled: false,
-            animation: 'ios_from_right',
-            headerTransparent: Platform.OS === 'ios',
-            headerTitleAlign: 'left',
-            headerBackButtonDisplayMode: 'minimal',
-            contentStyle: styles.container,
-            headerTitleStyle: {
-              fontSize:
-                Platform.OS === 'android'
-                  ? ds.typography.title3.fontSize
-                  : undefined,
-              fontWeight: ds.fontWeight.bold,
-              color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-            },
-          }}
-        >
-          <Stack.Screen
-            name="index"
-            options={{
-              title: 'Settings',
-              headerTitleAlign: 'center',
-              headerLeft: () => (
-                <HeaderButton
-                  variant="menu"
-                  accessibilityLabel="Open menu"
-                  onPress={toggleSideMenu}
-                />
-              ),
-              headerRight: () => (
-                <HeaderButton
-                  icon={AppIcons.tabs.notifications}
-                  accessibilityLabel="Open events"
-                  onPress={() => {}}
-                />
-              ),
-              headerSearchBarOptions: {
-                placement: 'integratedButton',
-                hideWhenScrolling: false,
-                placeholder: 'Search...',
-                onChangeText: handleSearchChange,
-                headerIconColor: theme.text,
-              },
-            }}
-          />
-          <Stack.Screen name="profile" options={{title: 'Profile'}} />
-          <Stack.Screen
-            name="preferences"
-            options={{
-              title: 'Preferences',
-              headerBackButtonMenuEnabled: false,
-            }}
-          />
-          <Stack.Screen name="language" options={{title: 'App Language'}} />
-          <Stack.Screen name="support" options={{title: 'Report an Issue'}} />
-          <Stack.Screen name="app-settings" options={{title: 'App Settings'}} />
-          <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
-          <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
-          <Stack.Screen name="about" options={{title: 'About'}} />
-          <Stack.Screen
-            name="business-details"
-            options={{title: 'Business Details'}}
-          />
-          <Stack.Screen name="plan" options={{title: 'Plan'}} />
-          <Stack.Screen
-            name="users/index"
-            options={{
-              title: 'Users',
-              headerLargeTitle: true,
-              headerSearchBarOptions: {
-                placement: 'integratedButton',
-                placeholder: 'Search...',
-                onChangeText: handleSearchChange,
-                headerIconColor: theme.text,
-              },
-            }}
-          />
-          <Stack.Screen
-            name="users/add-user"
-            options={{
-              title: 'Add User',
-            }}
-          />
-        </Stack>
-      </ScreenLoadingWrapper>
-    </View>
+    <ScreenLoadingWrapper>
+      <Stack screenOptions={stackScreenOptions}>
+        <Stack.Screen name="index" options={indexOptions} />
+        <Stack.Screen name="profile" options={{title: 'Profile'}} />
+        <Stack.Screen
+          name="preferences"
+          options={{title: 'Preferences', headerBackButtonMenuEnabled: false}}
+        />
+        <Stack.Screen name="language" options={{title: 'App Language'}} />
+        <Stack.Screen name="support" options={{title: 'Report an Issue'}} />
+        <Stack.Screen name="app-settings" options={{title: 'App Settings'}} />
+        <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
+        <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
+        <Stack.Screen name="about" options={{title: 'About'}} />
+        <Stack.Screen
+          name="business-details"
+          options={{title: 'Business Details'}}
+        />
+        <Stack.Screen name="plan" options={{title: 'Plan'}} />
+
+        <Stack.Screen name="users/index" options={usersIndexOptions} />
+        <Stack.Screen name="users/add-user" options={{title: 'Add User'}} />
+      </Stack>
+    </ScreenLoadingWrapper>
   );
 }
 
@@ -132,14 +134,3 @@ export default function SettingsLayout() {
     </SearchProvider>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (theme: ThemeShape, _ds: DSShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-        backgroundColor: theme.background,
-      },
-    }),
-  (theme, _ds) => themeKey(theme, _ds),
-);

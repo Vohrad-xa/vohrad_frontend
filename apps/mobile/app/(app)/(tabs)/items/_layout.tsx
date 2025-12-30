@@ -1,12 +1,10 @@
 import type {ReactNode} from 'react';
-import {useCallback, createContext, useContext, useState} from 'react';
-import {Platform, View, StyleSheet} from 'react-native';
+import {useCallback, createContext, useContext, useMemo, useState} from 'react';
+import {Platform} from 'react-native';
 import {Stack} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme, useSidebar} from '@/providers';
-import {makeStyleFactory} from '@/utils';
 
 interface SearchChangeEvent {
   nativeEvent: {
@@ -35,10 +33,13 @@ export function useItemChanges() {
 function ItemChangesProvider({children}: {children: ReactNode}) {
   const [hasChanges, setHasChanges] = useState(false);
 
-  const value = {
-    hasChanges,
-    setHasChanges,
-  };
+  const value = useMemo(
+    () => ({
+      hasChanges,
+      setHasChanges,
+    }),
+    [hasChanges],
+  );
 
   return (
     <ItemChangesContext.Provider value={value}>
@@ -51,83 +52,77 @@ function ItemsStack() {
   const {theme, ds} = useTheme();
   const {toggleSideMenu} = useSidebar();
   const {setSearchQuery} = useSearch();
-  const styles = createStyles(ds, theme);
 
   const handleSearchChange = useCallback(
     (event: SearchChangeEvent) => {
-      const text = event.nativeEvent.text;
-      setSearchQuery(text);
+      setSearchQuery(event.nativeEvent.text);
     },
     [setSearchQuery],
   );
 
-  return (
-    <View style={styles.container}>
-      <Stack
-        screenOptions={{
-          animation: 'ios_from_right',
-          headerShown: true,
-          headerShadowVisible: false,
-          headerLargeTitle: true,
-          headerBackButtonMenuEnabled: true,
-          headerTransparent: Platform.OS === 'ios',
-          headerTitleAlign: 'left',
-          headerBackButtonDisplayMode: 'minimal',
-          contentStyle: styles.container,
-          headerTitleStyle: {
-            fontSize:
-              Platform.OS === 'android'
-                ? ds.typography.title3.fontSize
-                : undefined,
-            fontWeight: ds.fontWeight.bold,
-            color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          },
-        }}
-      >
-        <Stack.Screen
-          name="index"
-          options={{
-            headerTitle: 'Items',
-            headerTitleAlign: 'center',
-            headerLeft: () => (
-              <HeaderButton
-                variant="menu"
-                accessibilityLabel="Open menu"
-                onPress={toggleSideMenu}
-              />
-            ),
-            headerSearchBarOptions: {
-              placement: 'integratedButton',
-              hideWhenScrolling: false,
-              placeholder: 'Search...',
-              onChangeText: handleSearchChange,
-              headerIconColor:
-                Platform.OS === 'android' ? theme.headerAndroid : undefined,
-            },
-          }}
-        />
-        <Stack.Screen
-          name="[id]"
-          options={{
-            headerTitle: 'Item Details',
-            headerBackButtonDisplayMode: 'minimal',
-          }}
-        />
-      </Stack>
-    </View>
+  const headerLeftMenu = useCallback(
+    () => (
+      <HeaderButton
+        variant="menu"
+        accessibilityLabel="Open menu"
+        onPress={toggleSideMenu}
+      />
+    ),
+    [toggleSideMenu],
   );
-}
 
-const createStyles = makeStyleFactory(
-  (_ds: DSShape, theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-        backgroundColor: theme.background,
+  const headerSearchBarOptions = useMemo(
+    () => ({
+      placement: 'integratedButton' as const,
+      hideWhenScrolling: false,
+      placeholder: 'Search...',
+      onChangeText: handleSearchChange,
+    }),
+    [handleSearchChange],
+  );
+
+  const stackScreenOptions = useMemo(
+    () => ({
+      headerShown: true,
+      headerShadowVisible: false,
+      headerLargeTitle: true,
+      animation: 'ios_from_right' as const,
+      headerBackButtonDisplayMode: 'minimal' as const,
+      headerTransparent: Platform.OS === 'ios',
+      headerTitleAlign: 'left' as const,
+      headerTitleStyle: {
+        fontSize:
+          Platform.OS === 'android' ? ds.typography.title3.fontSize : undefined,
+        fontWeight: ds.fontWeight.bold,
+        color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
       },
     }),
-  (ds, theme) => themeKey(theme, ds),
-);
+    [ds.typography.title3.fontSize, ds.fontWeight.bold, theme.headerAndroid],
+  );
+
+  const indexOptions = useMemo(
+    () => ({
+      headerTitle: 'Items',
+      headerTitleAlign: 'center' as const,
+      headerLeft: headerLeftMenu,
+      headerSearchBarOptions,
+    }),
+    [headerLeftMenu, headerSearchBarOptions],
+  );
+
+  return (
+    <Stack screenOptions={stackScreenOptions}>
+      <Stack.Screen name="index" options={indexOptions} />
+      <Stack.Screen
+        name="[id]"
+        options={{
+          headerTitle: 'Item Details',
+          headerBackButtonDisplayMode: 'minimal',
+        }}
+      />
+    </Stack>
+  );
+}
 
 export default function ItemsLayout() {
   return (

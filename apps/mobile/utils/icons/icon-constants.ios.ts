@@ -18,10 +18,10 @@ export const AppIcons = {
   /** Main app sections (for tabs/navigation) */
   tabs: {
     home: 'house.fill',
-    vault: 'folder.fill',
-    settings: 'gearshape.fill',
+    vault: 'tray.full.fill',
+    settings: 'gear',
     profile: 'person.crop.circle.fill',
-    item: 'rectangle.stack.fill',
+    item: 'square.grid.2x2.fill',
     notifications: 'bell',
   },
 

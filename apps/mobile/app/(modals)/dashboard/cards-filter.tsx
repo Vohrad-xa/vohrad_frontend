@@ -1,20 +1,20 @@
 import React from 'react';
-import {StyleSheet, Platform} from 'react-native';
-import {Stack, useRouter} from 'expo-router';
+import {Platform} from 'react-native';
+import {Stack, router} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {FilterContent} from '@/features/dashboard';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils';
+
+const CloseHeaderLeft = () => (
+  <HeaderButton
+    variant="close"
+    accessibilityLabel="Close Filter Modal"
+    onPress={() => router.dismiss()}
+  />
+);
 
 export default function FilterModal() {
   const {ds, theme} = useTheme();
-  const router = useRouter();
-  const styles = createStyles(ds, theme);
-
-  const handleClose = () => {
-    router.dismiss();
-  };
 
   return (
     <>
@@ -24,35 +24,14 @@ export default function FilterModal() {
           headerShown: true,
           headerShadowVisible: false,
           headerTransparent: Platform.OS === 'ios',
-          headerTitleStyle: styles.headerTitleStyle,
-          headerTitleAlign: 'left',
-          headerBackButtonDisplayMode: 'default',
-          headerBackVisible: true,
-          headerLeft: () =>
-            Platform.OS !== 'ios' ? undefined : (
-              <HeaderButton
-                variant="close"
-                accessibilityLabel="Close Filter Modal"
-                onPress={handleClose}
-              />
-            ),
+          headerLeft: Platform.OS === 'ios' ? CloseHeaderLeft : undefined,
+          headerTitleStyle: {
+            fontWeight: ds.fontWeight.bold,
+            color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
+          },
         }}
       />
       <FilterContent />
     </>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-      },
-      headerTitleStyle: {
-        fontWeight: ds.fontWeight.bold,
-        color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);

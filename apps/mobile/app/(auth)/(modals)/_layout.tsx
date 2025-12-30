@@ -13,10 +13,6 @@ export default function AuthModalsLayout() {
         contentStyle: {backgroundColor: theme.background},
         headerShown: true,
         headerTransparent: Platform.OS === 'ios',
-        headerStyle:
-          Platform.OS === 'android'
-            ? {backgroundColor: theme.background}
-            : undefined,
         headerShadowVisible: false,
         headerTitleStyle: {color: theme.text},
         headerTintColor: theme.text,

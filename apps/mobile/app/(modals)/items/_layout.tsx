@@ -1,30 +1,18 @@
-import {useCallback} from 'react';
-import {Platform, StyleSheet} from 'react-native';
-import {Stack, useRouter} from 'expo-router';
+import {Platform} from 'react-native';
+import {Stack, router} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils';
+
+const CloseHeaderLeft = () => (
+  <HeaderButton
+    variant="close"
+    onPress={() => router.dismiss()}
+    accessibilityLabel="Close"
+  />
+);
 
 export default function ItemsModalsLayout() {
-  const {ds, theme} = useTheme();
-  const router = useRouter();
-  const styles = createStyles(ds, theme);
-
-  const handleClose = useCallback(() => {
-    router.dismiss();
-  }, [router]);
-
-  const CloseButton = useCallback(
-    () => (
-      <HeaderButton
-        variant="close"
-        onPress={handleClose}
-        accessibilityLabel="Close"
-      />
-    ),
-    [handleClose],
-  );
+  const {theme} = useTheme();
 
   return (
     <ScreenLoadingWrapper>
@@ -33,42 +21,19 @@ export default function ItemsModalsLayout() {
           headerShown: true,
           headerShadowVisible: false,
           headerTransparent: Platform.OS === 'ios',
-          headerLeft: CloseButton,
+          headerLeft: () => <CloseHeaderLeft />,
           headerBackButtonDisplayMode: 'minimal',
           headerTitleAlign: 'center',
-          contentStyle: styles.container,
+          contentStyle: {backgroundColor: theme.modalBackground},
         }}
       >
-        <Stack.Screen
-          name="filters"
-          options={{
-            title: 'Item Filters',
-            headerBackButtonDisplayMode: 'minimal',
-          }}
-        />
-        <Stack.Screen
-          name="location"
-          options={{
-            title: 'Locations',
-          }}
-        />
+        <Stack.Screen name="filters" options={{title: 'Item Filters'}} />
+        <Stack.Screen name="location" options={{title: 'Locations'}} />
         <Stack.Screen
           name="specifications"
-          options={{
-            title: 'Specifications',
-          }}
+          options={{title: 'Specifications'}}
         />
       </Stack>
     </ScreenLoadingWrapper>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);

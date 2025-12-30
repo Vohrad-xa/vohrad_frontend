@@ -1,11 +1,11 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {useCallback, useLayoutEffect, useMemo, useState} from 'react';
 import {useLocalSearchParams, useNavigation} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {AttachmentDocumentPreview} from '@/features/attachments';
 import {
   downloadDocumentFile,
   shareDownloadedFile,
-} from '@/features/attachments/utils/file-download';
+} from '@/features/attachments/utils';
 import {AppIcons, showAlert} from '@/utils';
 
 type DocumentPreviewParams = {
@@ -53,8 +53,8 @@ export default function DocumentPreviewModal() {
     setIsDownloading(true);
     try {
       const localPath = await downloadDocumentFile({
-        sourceUrl: documentParams.sourceUrl!,
-        id: documentParams.id!,
+        sourceUrl: documentParams.sourceUrl,
+        id: documentParams.id,
         originalFilename: documentParams.originalFilename ?? '',
         extension: documentParams.extension ?? '',
       });
@@ -75,13 +75,12 @@ export default function DocumentPreviewModal() {
     }
   }, [documentParams, documentTitle]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       title: documentTitle,
       headerRight: () => (
         <HeaderButton
           icon={AppIcons.actions.download}
-          variant="action"
           onPress={isDownloading ? undefined : handleDownload}
           accessibilityLabel={
             isDownloading ? 'Sharing document' : 'Share document'

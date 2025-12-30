@@ -23,11 +23,10 @@ function AppStack() {
       };
     }
 
-    // Mobile we use transform (pushes content, hides overflow)
     const shadowOpacity = interpolate(
       slideAnim.value,
       [0, SIDEBAR_CONFIG.width],
-      [0, Platform.OS === 'ios' ? 0.05 : 0.05],
+      [0, 0.05],
       'clamp',
     );
 
@@ -53,45 +52,29 @@ function AppStack() {
       'clamp',
     );
 
-    return {
-      opacity,
-    };
+    return {opacity};
   });
+
+  const Main = (
+    <Animated.View style={[styles.mainContent, mainContentStyle]}>
+      <Animated.View style={[styles.border, borderStyle]} />
+
+      <SidebarBackdrop slideAnim={slideAnim} />
+
+      <Stack screenOptions={{headerShown: false}}>
+        <Stack.Screen name="(tabs)" />
+      </Stack>
+    </Animated.View>
+  );
 
   return (
     <View style={styles.container}>
       <SideMenu slideAnim={slideAnim} onClose={closeSideMenu} />
 
       {Platform.OS === 'web' ? (
-        <Animated.View style={[styles.mainContent, mainContentStyle]}>
-          <Animated.View style={[styles.border, borderStyle]} />
-
-          <SidebarBackdrop slideAnim={slideAnim} />
-
-          <Stack
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen name="(tabs)" />
-          </Stack>
-        </Animated.View>
+        Main
       ) : (
-        <GestureDetector gesture={mainGesture}>
-          <Animated.View style={[styles.mainContent, mainContentStyle]}>
-            <Animated.View style={[styles.border, borderStyle]} />
-
-            <SidebarBackdrop slideAnim={slideAnim} />
-
-            <Stack
-              screenOptions={{
-                headerShown: false,
-              }}
-            >
-              <Stack.Screen name="(tabs)" />
-            </Stack>
-          </Animated.View>
-        </GestureDetector>
+        <GestureDetector gesture={mainGesture}>{Main}</GestureDetector>
       )}
     </View>
   );
@@ -114,13 +97,17 @@ const createStyles = makeStyleFactory(
       },
       mainContent: {
         flex: 1,
+        shadowColor: '#000',
+        shadowRadius: 12,
+        shadowOffset: {width: 0, height: 2},
       },
       border: {
         position: 'absolute',
         left: 0,
         top: 0,
         bottom: 0,
-        backgroundColor: theme.divider,
+        width: 0.3,
+        backgroundColor: theme.border,
         zIndex: 10000,
         pointerEvents: 'none',
       },
