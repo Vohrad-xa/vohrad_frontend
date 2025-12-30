@@ -1,5 +1,5 @@
-import React, {memo, useCallback, useEffect, useMemo, useRef} from 'react';
-import {StyleSheet, type StyleProp, type ViewStyle} from 'react-native';
+import React, {memo, useCallback, useMemo} from 'react';
+import {StyleSheet} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {Avatar, Divider, List} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
@@ -7,7 +7,6 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
 import {AppIcons, Icon, makeStyleFactory} from '@/utils';
-import type {FlashListRef} from '@shopify/flash-list';
 import type {User} from '@sykamore/store';
 
 type UsersListProps = {
@@ -16,18 +15,12 @@ type UsersListProps = {
   onRefresh?: () => Promise<void> | void;
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
-  scrollToTopKey?: string;
 };
 
 type UserItemProps = {
   item: User;
   onPress: (userId: string) => void;
   styles: ReturnType<typeof createStyles>;
-};
-
-type PaperSideProps = {
-  color: string;
-  style?: StyleProp<ViewStyle>;
 };
 
 const getUserInitials = (user: User): string => {
@@ -39,9 +32,8 @@ const getUserInitials = (user: User): string => {
   return user.email?.[0]?.toUpperCase() ?? '?';
 };
 
-const UserRightIcon = (props: PaperSideProps) => (
+const UserRightIcon = () => (
   <List.Icon
-    {...props}
     icon={() => (
       <Icon name={AppIcons.ui.chevronRight} size="sm" colorToken="muted" />
     )}
@@ -56,7 +48,6 @@ const UserItem = memo<UserItemProps>(({item, onPress, styles}) => {
   const description = `${item.email}${item.role ? ` - ${item.role}` : ''}`;
   const initials = getUserInitials(item);
 
-  // Per-row renderer, memoized to avoid re-creating the function on every render.
   const left = useCallback(
     () => <Avatar.Text size={42} label={initials} />,
     [initials],
@@ -84,26 +75,12 @@ export function UsersList({
   onRefresh,
   onEndReached,
   onEndReachedThreshold = 0.5,
-  scrollToTopKey,
 }: UsersListProps) {
   const {ds, theme} = useTheme();
   const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
-  const listRef = useRef<FlashListRef<User>>(null);
-  const previousScrollKeyRef = useRef<string | null>(null);
   const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({
     onRefresh,
   });
-
-  useEffect(() => {
-    if (!scrollToTopKey) return;
-    if (
-      previousScrollKeyRef.current &&
-      previousScrollKeyRef.current !== scrollToTopKey
-    ) {
-      listRef.current?.scrollToOffset({offset: 0, animated: true});
-    }
-    previousScrollKeyRef.current = scrollToTopKey;
-  }, [scrollToTopKey]);
 
   const renderItem = useCallback(
     ({item}: {item: User}) => (
@@ -133,7 +110,6 @@ export function UsersList({
 
   return (
     <FlashList
-      ref={listRef}
       data={users}
       renderItem={renderItem}
       keyExtractor={keyExtractor}

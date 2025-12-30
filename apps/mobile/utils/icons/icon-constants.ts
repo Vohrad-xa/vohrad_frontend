@@ -19,11 +19,11 @@ export const AppIcons = {
   /** Main app sections (for tabs/navigation) */
   tabs: {
     home: 'home',
-    vault: 'folder',
-    settings: 'cog',
+    vault: 'cloud-lock',
+    settings: 'file-cog',
     profile: 'account-circle',
     notifications: 'bell-outline',
-    item: 'card-multiple',
+    item: 'view-dashboard',
   },
 
   /** User actions and operations */

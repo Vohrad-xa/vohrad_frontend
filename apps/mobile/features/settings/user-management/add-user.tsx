@@ -85,13 +85,18 @@ export const AddUserScreen = forwardRef<
                 handleRoleMenuSelect(nativeEvent.event)
               }
               accessibilityLabel="Select role"
+              ripple={{
+                mode: 'bounded',
+                cornerRadius: ds.borderRadius.full,
+              }}
             >
               <Button
                 icon={AppIcons.ui.chevronUpDown}
-                mode="elevated"
+                mode="text"
                 contentStyle={{flexDirection: 'row-reverse'}}
                 accessibilityLabel="Selected role"
                 style={styles.rolTriggerButton}
+                compact
               >
                 {selectedRoleName}
               </Button>
@@ -184,7 +189,6 @@ const createStyles = makeStyleFactory(
         paddingVertical: 0,
       },
       rolTriggerButton: {
-        width: 115,
         maxWidth: 160,
       },
     }),

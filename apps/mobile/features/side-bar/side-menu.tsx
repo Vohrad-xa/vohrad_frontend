@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import React, {useMemo} from 'react';
 import {
   View,
   Keyboard,
@@ -8,7 +8,6 @@ import {
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
-import {LinearGradient} from 'expo-linear-gradient';
 import {router} from 'expo-router';
 import {
   Gesture,
@@ -16,13 +15,14 @@ import {
   ScrollView,
 } from 'react-native-gesture-handler';
 import Animated, {
+  interpolate,
+  interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-  interpolateColor,
-  interpolate,
 } from 'react-native-reanimated';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+
 import {SIDEBAR_CONFIG} from '@/constants/sidebar';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useSidebar, useTheme} from '@/providers';
@@ -34,10 +34,10 @@ import {ProfileSection} from './profile-section';
 import {SideMenuHeader} from './side-menu-header';
 import type {SharedValue} from 'react-native-reanimated';
 
-interface SideMenuProps {
+type SideMenuProps = {
   slideAnim: SharedValue<number>;
   onClose: () => void;
-}
+};
 
 const menuItems: MenuItemType[] = [
   {icon: AppIcons.tabs.home, label: 'Home'},
@@ -52,17 +52,22 @@ const menuItems: MenuItemType[] = [
   {icon: AppIcons.features.category, label: 'Categories'},
 ];
 
+const ROUTE_BY_LABEL: Partial<Record<string, string>> = {
+  Home: '/(app)/(tabs)/dashboard',
+  Items: '/(app)/(tabs)/items',
+  Events: '/(app)/(tabs)/settings',
+};
+
 export function SideMenu({slideAnim, onClose}: SideMenuProps) {
   const {theme, ds} = useTheme();
   const {menuCloseGesture} = useSidebar();
   const insets = useSafeAreaInsets();
-  const nativeGesture = useMemo(() => Gesture.Native(), []);
-  const composedGesture = useMemo(
-    () => Gesture.Simultaneous(menuCloseGesture, nativeGesture),
-    [menuCloseGesture, nativeGesture],
-  );
 
-  // Calculate heights needed for padding
+  const gesture = useMemo(() => {
+    // allow scrollview + close-pan together
+    return Gesture.Simultaneous(menuCloseGesture, Gesture.Native());
+  }, [menuCloseGesture]);
+
   const headerHeight =
     Platform.OS === 'android'
       ? (StatusBar.currentHeight ?? 0) +
@@ -89,69 +94,45 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
     const maxScroll = contentSize.height - layoutMeasurement.height;
     const distanceFromBottom = maxScroll - scrollY;
 
-    const isScrolled = scrollY > 10;
-    const isAtBottom = distanceFromBottom > 10;
-
-    headerBlurIntensity.value = withTiming(isScrolled ? 40 : 0, {
+    headerBlurIntensity.value = withTiming(scrollY > 10 ? 40 : 0, {
       duration: 200,
     });
-
-    footerBlurIntensity.value = withTiming(isAtBottom ? 40 : 0, {
+    footerBlurIntensity.value = withTiming(distanceFromBottom > 10 ? 40 : 0, {
       duration: 200,
     });
   };
 
-  const contentStyle = useAnimatedStyle(() => {
-    const scale = interpolate(
-      slideAnim.value,
-      [0, SIDEBAR_CONFIG.width],
-      [0.95, 1],
-      'clamp',
-    );
-
-    const opacity = interpolate(
-      slideAnim.value,
-      [0, SIDEBAR_CONFIG.width * 0.3, SIDEBAR_CONFIG.width],
-      [0.3, 0.6, 1],
-      'clamp',
-    );
-
-    return {
-      transform: [{scale}],
-      opacity,
-    };
-  });
-
-  // Color swap for the container, not the content
   const containerStyle = useAnimatedStyle(() => {
-    // On web, keep sidebarBackground even when open
-    // On mobile, transition to background when open
-    const backgroundColor = interpolateColor(
+    const bg = interpolateColor(
       slideAnim.value,
       [0, SIDEBAR_CONFIG.width],
       Platform.OS === 'web'
-        ? [theme.sidebarBackground, theme.sidebarBackground] // Always sidebarBackground on web
-        : [theme.sidebarBackground, theme.background], // Mobile: sidebarBackground -> background
+        ? [theme.sidebarBackground, theme.sidebarBackground]
+        : [theme.sidebarBackground, theme.background],
     );
 
+    return {backgroundColor: bg};
+  }, [theme.sidebarBackground, theme.background]);
+
+  const contentStyle = useAnimatedStyle(() => {
+    const t = slideAnim.value;
     return {
-      backgroundColor,
+      opacity: interpolate(
+        t,
+        [0, SIDEBAR_CONFIG.width * 0.3, SIDEBAR_CONFIG.width],
+        [0.3, 0.6, 1],
+        'clamp',
+      ),
+      transform: [
+        {
+          scale: interpolate(t, [0, SIDEBAR_CONFIG.width], [0.95, 1], 'clamp'),
+        },
+      ],
     };
   });
 
-  // Gradient shadow opacity
-  const shadowStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(
-      slideAnim.value,
-      [0, SIDEBAR_CONFIG.width],
-      [1, 0],
-      'clamp',
-    );
-    return {opacity};
-  });
-
   return (
-    <GestureDetector gesture={composedGesture}>
+    <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.container, containerStyle]}>
         <Animated.View style={[StyleSheet.absoluteFill, contentStyle]}>
           <ScrollView
@@ -162,60 +143,45 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
             onScroll={handleScroll}
             scrollEventThrottle={16}
           >
-            {menuItems.map((item, index) => (
+            {menuItems.map((item) => (
               <MenuItem
-                key={index}
+                key={item.label}
                 icon={item.icon}
                 label={item.label}
                 onPress={() => {
                   Keyboard.dismiss();
-                  if (item.label === 'Home') {
-                    router.navigate('/(app)/(tabs)/dashboard');
-                  } else if (item.label === 'Items') {
-                    router.navigate('/(app)/(tabs)/items');
-                  } else if (item.label === 'Events') {
-                    router.navigate('/(app)/(tabs)/settings');
-                  }
-                  // Delay close to ensure navigation completes
-                  setTimeout(() => {
-                    onClose();
-                  }, 200);
+
+                  const path = ROUTE_BY_LABEL[item.label];
+                  if (path) router.navigate(path as any);
+
+                  onClose();
                 }}
               />
             ))}
           </ScrollView>
+
           <View style={styles.absoluteTop}>
             <SideMenuHeader
               onClose={onClose}
               blurIntensity={headerBlurIntensity}
             />
           </View>
+
           <View style={styles.absoluteBottom}>
             <ProfileSection
               blurIntensity={footerBlurIntensity}
               onPressSettings={() => {
                 Keyboard.dismiss();
                 router.push('/(app)/(tabs)/settings');
+                onClose();
               }}
               onPressProfile={() => {
                 Keyboard.dismiss();
                 router.push('/(app)/(tabs)/settings/profile');
+                onClose();
               }}
             />
           </View>
-        </Animated.View>
-
-        {/* edge shadow gradient */}
-        <Animated.View
-          pointerEvents="none"
-          style={[styles.shadowContainer, shadowStyle]}
-        >
-          <LinearGradient
-            colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.2)', 'transparent']}
-            start={{x: 1, y: 0}}
-            end={{x: 0, y: 0}}
-            style={styles.gradient}
-          />
         </Animated.View>
       </Animated.View>
     </GestureDetector>
@@ -236,7 +202,6 @@ const createStyles = makeStyleFactory(
         top: 0,
         bottom: 0,
         width: SIDEBAR_CONFIG.width,
-        zIndex: 0,
         overflow: 'hidden',
       },
       scrollContainer: {
@@ -251,25 +216,14 @@ const createStyles = makeStyleFactory(
         position: 'absolute',
         top: 0,
         left: 0,
-        right: 0.5,
+        right: 0,
         zIndex: 1,
       },
       absoluteBottom: {
         position: 'absolute',
         bottom: 0,
         left: 0,
-        right: 0.5,
-      },
-      shadowContainer: {
-        position: 'absolute',
         right: 0,
-        top: 0,
-        bottom: 0,
-        width: 120,
-        zIndex: 3,
-      },
-      gradient: {
-        flex: 1,
       },
     }),
   (theme, ds, headerHeight, footerHeight) =>

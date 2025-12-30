@@ -16,7 +16,6 @@ function AppStack() {
   const styles = createStyles(theme);
 
   const mainContentStyle = useAnimatedStyle(() => {
-    // On web we use margin to shrink content width (triggers CSS Grid reflow)
     if (Platform.OS === 'web') {
       return {
         marginLeft: slideAnim.value,
@@ -100,9 +99,6 @@ const createStyles = makeStyleFactory(
       },
       mainContent: {
         flex: 1,
-        shadowColor: '#000',
-        shadowRadius: 12,
-        shadowOffset: {width: 0, height: 2},
       },
       border: {
         position: 'absolute',

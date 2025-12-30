@@ -2,7 +2,7 @@ import {Easing} from 'react-native-reanimated';
 
 export const SIDEBAR_CONFIG = {
   width: 315,
-  gestureEdgeWidth: 50,
+  gestureEdgeWidth: 30,
   velocityThreshold: 1000,
   openThreshold: 0.4,
   closeThreshold: 220,
