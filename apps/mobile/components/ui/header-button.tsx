@@ -1,4 +1,3 @@
-import type {FC} from 'react';
 import {Platform, Pressable, StyleSheet} from 'react-native';
 import {Palette, type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -79,10 +78,6 @@ const getVariantConfig = (
         color: theme.text,
         iconSize: 'lg',
       };
-    case 'action':
-      return {
-        color: theme.accentBlue,
-      };
     case 'destructive':
       return {
         color: theme.destructive,
@@ -94,7 +89,7 @@ const getVariantConfig = (
       };
     default:
       return {
-        iconSize: Platform.OS === 'ios' ? 'xl' : 'md',
+        iconSize: Platform.OS === 'ios' ? 'xl' : 'lg',
         color: theme.text,
       };
   }
@@ -109,7 +104,6 @@ export type HeaderButtonVariant =
   | 'add'
   | 'more'
   | 'success'
-  | 'action'
   | 'back'
   | 'destructive'
   | 'menu';
@@ -131,7 +125,7 @@ export interface HeaderButtonProps
   symbolColorTokens?: TokenName[];
 }
 
-export const HeaderButton: FC<HeaderButtonProps> = ({
+export const HeaderButton = ({
   variant,
   icon,
   text,
@@ -146,11 +140,11 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
   accessibilityLabel,
   testID,
   style,
-}) => {
+}: HeaderButtonProps) => {
   const {theme, ds} = useTheme();
   const baseSize = Platform.select({
     ios: ds.spacing.xxl + ds.spacing.xs,
-    default: ds.spacing.xxl,
+    default: ds.spacing.xxl + ds.spacing.md,
   });
   const styles = createStyles(ds, baseSize, theme);
 
@@ -160,9 +154,9 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
   const useIcon = icon ?? variantConfig.icon;
   const useText = text ?? variantConfig.text;
   const useIconSize = iconSize ?? variantConfig.iconSize ?? 'lg';
+  const useIconColorToken = iconColor ? undefined : iconColorToken;
   const useIconColor =
-    iconColor ??
-    (iconColorToken ? theme[iconColorToken as TokenName] : variantConfig.color);
+    iconColor ?? (useIconColorToken ? undefined : variantConfig.color);
   const useTextColor =
     textColor ??
     (textColorToken ? theme[textColorToken as TokenName] : variantConfig.color);
@@ -171,7 +165,8 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
   const buttonContent = useIcon ? (
     <Icon
       name={useIcon}
-      colorToken={useIconColor as TokenName}
+      color={useIconColor}
+      colorToken={useIconColorToken}
       size={ds.iconSize[useIconSize]}
       symbolType={symbolType}
       symbolColorTokens={symbolColorTokens}
@@ -182,24 +177,15 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
     </ThemedText>
   ) : null;
 
-  // styling based on variant
-  const isActionButton =
-    variant === 'edit' || variant === 'cancel' || variant === 'text';
-  const isSaveButton = variant === 'save' || variant === 'edit';
   return (
     <Pressable
       android_ripple={{
         foreground: true,
         borderless: true,
-        color: theme.muted,
+        color: theme.ripple,
         radius: baseSize / 2,
       }}
-      style={[
-        styles.button,
-        isActionButton ? styles.actionButton : null,
-        isSaveButton ? styles.saveButton : null,
-        style,
-      ]}
+      style={[styles.button, style]}
       accessibilityRole="button"
       accessibilityLabel={
         accessibilityLabel ??
@@ -219,7 +205,7 @@ export const HeaderButton: FC<HeaderButtonProps> = ({
 };
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, baseSize: number, theme: ThemeShape) =>
+  (ds: DSShape, baseSize: number, _theme: ThemeShape) =>
     StyleSheet.create({
       button: {
         minWidth: baseSize,
@@ -228,21 +214,9 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
         ...Platform.select({
           web: {
-            marginRight: ds.spacing.sm,
+            marginHorizontal: ds.spacing.sm,
           },
         }),
-      },
-
-      actionButton: {
-        paddingHorizontal: ds.spacing.sm,
-        letterSpacing: 1,
-      },
-      text: {
-        ...ds.typography.heading,
-      },
-      saveButton: {
-        backgroundColor: theme.accentBlue,
-        borderRadius: ds.borderRadius.full,
       },
     }),
   (ds, _baseSize, theme) => themeKey(theme, ds),

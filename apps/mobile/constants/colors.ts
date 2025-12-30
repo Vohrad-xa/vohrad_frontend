@@ -61,7 +61,7 @@ const _Tokens = {
     white: Palette.white,
     destructive: Palette.red,
     muted: Palette.gray[600],
-    ripple: Palette.gray[300],
+    ripple: 'rgba(31, 0, 0, 0.16)',
     selected: Palette.gray[300],
 
     // Icons
@@ -100,7 +100,7 @@ const _Tokens = {
     white: Palette.white,
     destructive: Palette.redDark,
     muted: Palette.gray[500],
-    ripple: Palette.gray[400],
+    ripple: 'rgba(79, 77, 77, 0.45)',
     selected: Palette.gray[750],
 
     // Icons

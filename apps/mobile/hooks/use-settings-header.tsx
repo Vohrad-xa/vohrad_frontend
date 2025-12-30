@@ -145,15 +145,11 @@ export function useSettingsHeader({
                 type: 'button',
                 label: right.label,
                 icon: {type: 'sfSymbol', name: iconName},
-
-                // ✅ Save becomes prominent glass
                 variant: right.kind === 'save' ? 'prominent' : 'clear',
-
-                // optional: tint prominent save (keep red for delete)
                 tintColor: isDestructive
                   ? 'red'
                   : right.kind === 'save'
-                    ? undefined // set to e.g. theme.accentBlue if you want
+                    ? undefined
                     : undefined,
 
                 onPress: () => void right.onPress(),

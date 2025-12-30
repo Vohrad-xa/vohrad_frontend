@@ -1,18 +1,14 @@
 import React, {useLayoutEffect, useState, useCallback} from 'react';
-import {Platform, StyleSheet, View} from 'react-native';
+import {Platform, View} from 'react-native';
 import {useNavigation, useRouter} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useSearch} from '@/features/dashboard';
 import {UsersFilterMenu, UsersList} from '@/features/settings';
-import {useTheme} from '@/providers';
-import {AppIcons, makeStyleFactory} from '@/utils';
+import {AppIcons} from '@/utils';
 
 export default function UsersScreen() {
-  const {ds, theme} = useTheme();
   const navigation = useNavigation();
   const router = useRouter();
-  const styles = createStyles(ds, theme);
   const {searchQuery} = useSearch();
   const [filterControl, setFilterControl] = useState<React.ReactNode>(null);
 
@@ -23,17 +19,23 @@ export default function UsersScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <View style={styles.headerButtonGroup}>
-          {filterControl}
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: Platform.OS === 'ios' ? 12 : undefined,
+            paddingHorizontal: Platform.OS === 'ios' ? 4 : 0,
+          }}
+        >
           <HeaderButton
             icon={AppIcons.actions.addUser}
             onPress={handleAddUser}
             accessibilityLabel="Add user"
           />
+          {filterControl}
         </View>
       ),
     });
-  }, [filterControl, navigation, styles.headerButtonGroup, handleAddUser]);
+  }, [filterControl, navigation, handleAddUser]);
 
   const handleUserPress = useCallback((_userId: string) => {
     // TODO: Navigate to user detail when ready
@@ -56,15 +58,3 @@ export default function UsersScreen() {
     </UsersFilterMenu>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      headerButtonGroup: {
-        flexDirection: 'row',
-        gap: ds.spacing.sm,
-        paddingHorizontal: Platform.OS === 'ios' ? ds.spacing.xxs : 0,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);
