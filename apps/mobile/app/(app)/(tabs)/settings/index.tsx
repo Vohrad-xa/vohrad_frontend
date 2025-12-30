@@ -2,32 +2,42 @@ import {useCallback} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {router} from 'expo-router';
 import {ScrollView} from 'react-native-gesture-handler';
-import {List, Divider} from 'react-native-paper';
-import {type TokenName} from '@/constants/colors';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {Divider, List} from 'react-native-paper';
+import {
+  themeKey,
+  type DSShape,
+  type ThemeShape,
+  type TokenName,
+} from '@/constants';
 import {AppearanceMenu} from '@/features/settings';
-import {useTheme, useAuth} from '@/providers';
-import {Icon, showConfirmAlert, makeStyleFactory, AppIcons} from '@/utils';
+import {useAuth, useTheme} from '@/providers';
+import {AppIcons, Icon, makeStyleFactory, showConfirmAlert} from '@/utils';
 
 export default function SettingsModal() {
   const {ds, theme} = useTheme();
   const {logout} = useAuth();
   const styles = createStyles(ds, theme);
 
-  const renderIcon = (iconName: string, colorToken?: TokenName) => {
-    const IconWrapper = () => (
-      <View style={styles.iconContainer}>
-        <Icon
-          name={iconName}
-          colorToken={colorToken}
-          withBackground={!!colorToken}
-          size={20}
-        />
-      </View>
-    );
-    IconWrapper.displayName = 'IconWrapper';
-    return IconWrapper;
-  };
+  const leftIcon = useCallback(
+    (iconName: string, colorToken?: TokenName) => {
+      function IconWrapper() {
+        return (
+          <View style={styles.iconContainer}>
+            <Icon
+              name={iconName}
+              colorToken={colorToken}
+              withBackground={!!colorToken}
+              size={20}
+            />
+          </View>
+        );
+      }
+
+      IconWrapper.displayName = `SettingsLeftIcon(${iconName})`;
+      return IconWrapper;
+    },
+    [styles.iconContainer],
+  );
 
   const handleLogout = useCallback(() => {
     showConfirmAlert({
@@ -36,13 +46,11 @@ export default function SettingsModal() {
       confirmText: 'Logout',
       cancelText: 'Cancel',
       destructive: true,
-      onConfirm: () => {
-        logout();
-      },
+      onConfirm: logout,
     });
   }, [logout]);
 
-  const content = (
+  return (
     <ScrollView
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
@@ -52,120 +60,130 @@ export default function SettingsModal() {
         description="View and edit your profile"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.tabs.profile, 'destructive')}
+        left={leftIcon(AppIcons.tabs.profile, 'destructive')}
         onPress={() => router.push('/(app)/(tabs)/settings/profile')}
       />
       <Divider style={styles.divider} />
+
       <List.Item
         title="Business Details"
         description="Manage business information"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.features.organization, 'accentBlue')}
+        left={leftIcon(AppIcons.features.organization, 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/business-details')}
       />
       <Divider style={styles.divider} />
+
       <List.Item
         title="User Management"
-        description="Manage business information"
+        description="Manage users and roles"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.features.userManagement, 'accentGreen')}
+        left={leftIcon(AppIcons.features.userManagement, 'accentGreen')}
         onPress={() => router.push('/(app)/(tabs)/settings/users')}
       />
       <Divider style={styles.divider} />
+
       <List.Item
         title="App Settings"
         description="Configure application settings"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.tabs.settings, 'accentBlue')}
+        left={leftIcon(AppIcons.tabs.settings, 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
       />
       <Divider style={styles.divider} />
+
       <List.Item
-        style={styles.apperanceItem}
+        style={styles.appearanceItem}
         title="Appearance"
         description="Switch between light and dark mode"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.preferences.appearance, 'accentIndigo')}
-        right={() => <AppearanceMenu />}
+        left={leftIcon(AppIcons.preferences.appearance, 'accentIndigo')}
+        right={(props) => <AppearanceMenu style={props.style} />}
       />
       <Divider style={styles.divider} />
+
       <List.Item
         title="Preferences"
         description="Set your app preferences"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.preferences.settings, 'accentOrange')}
+        left={leftIcon(AppIcons.preferences.settings, 'accentOrange')}
         onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
       />
       <Divider style={styles.divider} />
+
       <List.Item
         title="Plan"
         description="View and manage your plan"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.preferences.plan, 'accentOrange')}
+        left={leftIcon(AppIcons.preferences.plan, 'accentOrange')}
         onPress={() => router.push('/(app)/(tabs)/settings/plan')}
       />
       <Divider style={styles.divider} />
+
       <List.Item
         title="App Language"
         description="Select your preferred language"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.preferences.language, 'accentIndigo')}
+        left={leftIcon(AppIcons.preferences.language, 'accentIndigo')}
         onPress={() => router.push('/(app)/(tabs)/settings/language')}
       />
       <Divider style={styles.divider} />
+
       <List.Item
         title="Report an Issue"
         description="Get support or report a problem"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.features.support, 'accentOrange')}
+        left={leftIcon(AppIcons.features.support, 'accentOrange')}
         onPress={() => router.push('/(app)/(tabs)/settings/support')}
       />
       <Divider style={styles.divider} />
+
       <List.Item
         title="Privacy Policy"
         description="Read our privacy policy"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.preferences.privacy, 'accentIndigo')}
+        left={leftIcon(AppIcons.preferences.privacy, 'accentIndigo')}
         onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
       />
       <Divider style={styles.divider} />
+
       <List.Item
         title="Terms of Use"
         description="Read the terms of use"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.preferences.terms, 'accentIndigo')}
+        left={leftIcon(AppIcons.preferences.terms, 'accentIndigo')}
         onPress={() => router.push('/(app)/(tabs)/settings/terms')}
       />
       <Divider style={styles.divider} />
+
       <List.Item
         title="About"
         description="Learn more about this app"
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.status.info, 'accentBlue')}
+        left={leftIcon(AppIcons.status.info, 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/about')}
       />
       <Divider style={styles.divider} />
+
       <List.Item
         title="Logout"
         titleStyle={[styles.itemTitle, {color: theme.destructive}]}
-        left={renderIcon(AppIcons.actions.logout, 'destructive')}
+        left={leftIcon(AppIcons.actions.logout, 'destructive')}
         onPress={handleLogout}
       />
     </ScrollView>
   );
-
-  return content;
 }
 
 const createStyles = makeStyleFactory(
@@ -182,13 +200,12 @@ const createStyles = makeStyleFactory(
         justifyContent: 'center',
         alignItems: 'center',
       },
-      apperanceItem: {
+      appearanceItem: {
         paddingRight: 0,
       },
       divider: {
         marginLeft: ds.spacing.xxl + ds.spacing.md,
         marginVertical: ds.spacing.xxs,
-        height: 0.8,
       },
       description: {
         ...ds.typography.value,
