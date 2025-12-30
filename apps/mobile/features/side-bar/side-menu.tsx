@@ -8,7 +8,7 @@ import {
   type NativeSyntheticEvent,
   type NativeScrollEvent,
 } from 'react-native';
-import {router} from 'expo-router';
+import {router, type Href} from 'expo-router';
 import {
   Gesture,
   GestureDetector,
@@ -52,7 +52,7 @@ const menuItems: MenuItemType[] = [
   {icon: AppIcons.features.category, label: 'Categories'},
 ];
 
-const ROUTE_BY_LABEL: Partial<Record<string, string>> = {
+const ROUTE_BY_LABEL: Partial<Record<string, Href>> = {
   Home: '/(app)/(tabs)/dashboard',
   Items: '/(app)/(tabs)/items',
   Events: '/(app)/(tabs)/settings',
@@ -152,7 +152,7 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
                   Keyboard.dismiss();
 
                   const path = ROUTE_BY_LABEL[item.label];
-                  if (path) router.navigate(path as any);
+                  if (path) router.navigate(path);
 
                   onClose();
                 }}

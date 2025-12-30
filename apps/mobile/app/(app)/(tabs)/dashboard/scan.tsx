@@ -119,7 +119,7 @@ export default function ScanScreen() {
         right,
       }),
     );
-  }, [navigation, enableTorch, handleToggleTorch]);
+  }, [navigation, enableTorch, handleToggleTorch, theme.accentOrange]);
 
   if (!permission?.granted) {
     return (
