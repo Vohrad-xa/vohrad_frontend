@@ -10,8 +10,8 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.icons.Icons
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
@@ -194,16 +194,6 @@ private fun resolveThemeDrawable(context: Context, attr: Int): Drawable? {
   return ContextCompat.getDrawable(context, outValue.resourceId)
 }
 
-private fun createFallbackRippleDrawable(
-  context: Context,
-  mask: Drawable?
-): RippleDrawable? {
-  val rippleColor = resolveThemeColor(context, android.R.attr.colorControlHighlight)
-    ?: android.graphics.Color.parseColor("#33000000")
-  val colorStateList = ColorStateList.valueOf(rippleColor)
-  return RippleDrawable(colorStateList, null, mask)
-}
-
 private fun resolveThemeColor(context: Context, attr: Int): Int? {
   val outValue = TypedValue()
   val resolved = context.theme.resolveAttribute(attr, outValue, true)
@@ -215,6 +205,16 @@ private fun resolveThemeColor(context: Context, attr: Int): Int? {
   } else {
     outValue.data
   }
+}
+
+private fun createFallbackRippleDrawable(
+  context: Context,
+  mask: Drawable?
+): RippleDrawable? {
+  val rippleColor = resolveThemeColor(context, android.R.attr.colorControlHighlight)
+    ?: android.graphics.Color.parseColor("#33000000")
+  val colorStateList = ColorStateList.valueOf(rippleColor)
+  return RippleDrawable(colorStateList, null, mask)
 }
 
 private fun clearRipple(view: View) {
