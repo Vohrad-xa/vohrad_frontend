@@ -1,18 +1,17 @@
 import {useCallback} from 'react';
-import {StyleSheet, Platform, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {router} from 'expo-router';
-import {GestureDetector, ScrollView} from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
 import {List, Divider} from 'react-native-paper';
 import {type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {AppearanceMenu} from '@/features/settings';
-import {useTheme, useAuth, useSidebar} from '@/providers';
+import {useTheme, useAuth} from '@/providers';
 import {Icon, showConfirmAlert, makeStyleFactory, AppIcons} from '@/utils';
 
 export default function SettingsModal() {
   const {ds, theme} = useTheme();
   const {logout} = useAuth();
-  const {mainGesture} = useSidebar();
   const styles = createStyles(ds, theme);
 
   const renderIcon = (iconName: string, colorToken?: TokenName) => {
@@ -166,11 +165,7 @@ export default function SettingsModal() {
     </ScrollView>
   );
 
-  if (Platform.OS === 'web') {
-    return content;
-  }
-
-  return <GestureDetector gesture={mainGesture}>{content}</GestureDetector>;
+  return content;
 }
 
 const createStyles = makeStyleFactory(

@@ -1,3 +1,4 @@
+import {useMemo} from 'react';
 import {
   View,
   Keyboard,
@@ -55,8 +56,11 @@ export function SideMenu({slideAnim, onClose}: SideMenuProps) {
   const {theme, ds} = useTheme();
   const {menuCloseGesture} = useSidebar();
   const insets = useSafeAreaInsets();
-  const nativeGesture = Gesture.Native();
-  const composedGesture = Gesture.Simultaneous(menuCloseGesture, nativeGesture);
+  const nativeGesture = useMemo(() => Gesture.Native(), []);
+  const composedGesture = useMemo(
+    () => Gesture.Simultaneous(menuCloseGesture, nativeGesture),
+    [menuCloseGesture, nativeGesture],
+  );
 
   // Calculate heights needed for padding
   const headerHeight =

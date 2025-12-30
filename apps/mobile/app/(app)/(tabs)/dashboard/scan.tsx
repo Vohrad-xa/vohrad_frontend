@@ -78,21 +78,31 @@ export default function ScanScreen() {
   }, []);
 
   useLayoutEffect(() => {
-    const left: HeaderAction[] = [
+    const left: HeaderAction[] =
+      Platform.OS === 'ios'
+        ? [
+            {
+              type: 'button',
+              key: 'close-scanner',
+              label: 'Close',
+              accessibilityLabel: 'Close scanner',
+              accessibilityHint: 'Closes the barcode scanner',
+              iosSymbol: AppIcons.actions.close,
+              icon: AppIcons.actions.close,
+              onPress: () => router.dismiss(),
+            },
+          ]
+        : [];
+
+    const right: HeaderAction[] = [
       {
         type: 'button',
-        key: 'close-scanner',
-        label: 'Close',
-        accessibilityLabel: 'Close scanner',
-        iosSymbol: AppIcons.actions.close,
-        icon: AppIcons.actions.close,
-        onPress: () => router.dismiss(),
-      },
-      {
-        type: 'button',
+        variant: 'prominent',
+        tintColor: enableTorch ? theme.accentOrange : 'transparent',
         key: 'enable-torch',
         label: enableTorch ? 'Turn off flash' : 'Turn on flash',
         accessibilityLabel: enableTorch ? 'Turn off flash' : 'Turn on flash',
+        accessibilityHint: 'Toggles the camera flash',
         iosSymbol: enableTorch
           ? AppIcons.actions.disableTorch
           : AppIcons.actions.enableTorch,
@@ -105,7 +115,8 @@ export default function ScanScreen() {
 
     navigation.setOptions(
       getHeaderOptions({
-        left: Platform.OS === 'ios' ? left : undefined,
+        left,
+        right,
       }),
     );
   }, [navigation, enableTorch, handleToggleTorch]);

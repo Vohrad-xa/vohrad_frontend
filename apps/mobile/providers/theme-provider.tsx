@@ -14,7 +14,6 @@ import {
   Appearance,
   Platform,
   useWindowDimensions,
-  PixelRatio,
 } from 'react-native';
 import {ThemeProvider as NavigationThemeProvider} from '@react-navigation/native';
 import {
@@ -59,10 +58,7 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
   const isAnimating = useRef(false);
   const scheme: ColorScheme =
     preference === 'system' ? systemScheme : preference;
-
-  // Reactive design system - updates on dimension/font scale changes
-  const {width, height} = useWindowDimensions();
-  const fontScale = PixelRatio.getFontScale();
+  const {width, height, fontScale} = useWindowDimensions();
   const ds = useMemo(
     () => createDesignSystem(width, height, fontScale),
     [width, height, fontScale],
@@ -128,7 +124,7 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
       toValue: 0,
       duration: 320,
       easing: Easing.out(Easing.quad),
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start(() => {
       isAnimating.current = false;
       setOverlayColor(null);
