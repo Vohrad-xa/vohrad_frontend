@@ -11,7 +11,9 @@ import android.util.TypedValue
 import android.view.View
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -66,7 +68,15 @@ fun DynamicTheme(content: @Composable () -> Unit) {
     else -> lightColorScheme()
   }
 
-  MaterialTheme(colorScheme = colors) {
+  val shapes = Shapes(
+    extraSmall = RoundedCornerShape(UiShapeRadius),
+    small = RoundedCornerShape(UiShapeRadius),
+    medium = RoundedCornerShape(UiShapeRadius),
+    large = RoundedCornerShape(UiShapeRadius),
+    extraLarge = RoundedCornerShape(UiShapeRadius)
+  )
+
+  MaterialTheme(colorScheme = colors, shapes = shapes) {
     content()
   }
 }

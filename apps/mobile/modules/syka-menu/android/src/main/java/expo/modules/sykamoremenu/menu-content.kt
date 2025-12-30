@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -61,11 +60,11 @@ internal fun SykaDropdownMenu(
   val sizeForOffset = rootSize ?: menuSizes[levelKey] ?: menuSize
   val density = LocalDensity.current
   val configuration = LocalConfiguration.current
-  val edgeMargin = MenuEdgeMargin
+  val edgeMargin = UiEdgeMargin
   val edgeMarginPx = with(density) { edgeMargin.toPx() }
   val screenWidthDp = configuration.screenWidthDp.dp
   val screenWidthPx = with(density) { screenWidthDp.toPx() }
-  val menuMaxWidthDp = maxOf(screenWidthDp * MenuMaxWidthFraction, MenuMinWidth)
+  val menuMaxWidthDp = maxOf(screenWidthDp * UiMaxWidthFraction, UiMinWidth)
   val menuMaxWidthPx = with(density) { menuMaxWidthDp.toPx() }
   val anchorWidth = with(density) { anchor.width.toDp() }
   val anchorHeight = with(density) { anchor.height.toDp() }
@@ -104,7 +103,7 @@ internal fun SykaDropdownMenu(
       DropdownMenu(
         expanded = true,
         onDismissRequest = onDismiss,
-        shape = RoundedCornerShape(MenuCornerRadius),
+        shape = MaterialTheme.shapes.small,
         containerColor = MenuDefaults.containerColor,
         offset = DpOffset(menuOffsetX, 0.dp),
         modifier = (menuWidthDp?.let { Modifier.width(it) } ?: Modifier)
@@ -212,7 +211,7 @@ private fun MenuActionItem(
     isSubmenuTrigger = isSubmenuTrigger,
     destructiveColor = destructiveColor
   )
-  val subtitleColor = resolvedTitleColor?.copy(alpha = MenuSubtitleAlpha)
+  val subtitleColor = resolvedTitleColor?.copy(alpha = UiSubtitleAlpha)
     ?: MaterialTheme.colorScheme.onSurfaceVariant
   val trailingIcon: (@Composable () -> Unit)? = when {
     isSubmenuTrigger -> {
@@ -273,7 +272,7 @@ private fun MenuItemText(
   subtitle: String?,
   subtitleColor: Color
 ) {
-  Column(verticalArrangement = Arrangement.spacedBy(MenuSubtitleSpacing)) {
+  Column(verticalArrangement = Arrangement.spacedBy(UiSubtitleSpacing)) {
     Text(
       text = title,
       style = MaterialTheme.typography.bodyLarge
@@ -297,7 +296,7 @@ private fun SectionTitle(text: String) {
     textAlign = TextAlign.Start,
     modifier = Modifier
       .fillMaxWidth()
-      .padding(MenuSectionTitlePadding)
+      .padding(UiSectionTitlePadding)
   )
 }
 
