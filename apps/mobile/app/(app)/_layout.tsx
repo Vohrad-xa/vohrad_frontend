@@ -1,5 +1,5 @@
 import {Platform, View, StyleSheet} from 'react-native';
-import {Stack} from 'expo-router';
+import {Stack, useSegments} from 'expo-router';
 import {GestureDetector} from 'react-native-gesture-handler';
 import Animated, {useAnimatedStyle, interpolate} from 'react-native-reanimated';
 import {ThemedStatusBar} from '@/components/ui';
@@ -81,8 +81,11 @@ function AppStack() {
 }
 
 export default function AppLayout() {
+  const segments = useSegments();
+  const isRootTabScreen = segments[1] === '(tabs)' && segments.length === 3;
+
   return (
-    <SidebarProvider>
+    <SidebarProvider edgeGestureEnabled={isRootTabScreen}>
       <ThemedStatusBar />
       <AppStack />
     </SidebarProvider>
