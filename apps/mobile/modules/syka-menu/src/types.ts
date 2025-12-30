@@ -117,6 +117,39 @@ export type SykaMenuAction = {
 };
 
 /**
+ * Android-only ripple behavior for the menu trigger.
+ *
+ * - `auto` uses the system default.
+ * - `circle` forces a circular ripple.
+ * - `bounded` keeps the ripple within view bounds.
+ */
+export type MenuRippleMode = 'auto' | 'circle' | 'bounded';
+
+/**
+ * Android-only ripple configuration for the trigger view.
+ *
+ * - `mode` defaults to `auto`.
+ */
+export type MenuRippleConfig = {
+  /**
+   * Ripple shape/behavior for the trigger view.
+   */
+  mode?: MenuRippleMode;
+  /**
+   * Overrides the ripple radius in pixels.
+   */
+  radius?: number;
+  /**
+   * Rounded-corner radius for bounded ripples (pixels).
+   */
+  cornerRadius?: number;
+  /**
+   * Disables the ripple when set to false.
+   */
+  enabled?: boolean;
+};
+
+/**
  * Props for SykaMenuView.
  *
  * - Provide `actions` to define the menu content.
@@ -170,6 +203,10 @@ type MenuComponentPropsBase = {
     right: number;
   };
   /**
+   * Android only. Ripple behavior for the trigger view.
+   */
+  ripple?: MenuRippleConfig;
+  /**
    * E2E identifier.
    */
   testID?: string;
@@ -213,6 +250,7 @@ export type NativeMenuComponentProps = {
   actionsHash: string;
   title?: string;
   hitSlop?: MenuComponentProps['hitSlop'];
+  ripple?: MenuComponentProps['ripple'];
   isAnchoredToRight?: boolean;
   shouldOpenOnLongPress?: boolean;
   themeVariant?: string;

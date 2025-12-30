@@ -38,6 +38,10 @@ class SykaMenuModule : Module() {
         view.setHitSlop(hitSlop ?: MenuHitSlop())
       }
 
+      Prop("ripple") { view: SykaMenuView, ripple: MenuRippleConfig? ->
+        view.setRippleConfig(ripple ?: MenuRippleConfig())
+      }
+
       Prop("testID") { view: SykaMenuView, testID: String? ->
         view.setTag(R.id.react_test_id, testID)
         view.tag = testID

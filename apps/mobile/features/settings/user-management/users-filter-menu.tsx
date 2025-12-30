@@ -104,6 +104,9 @@ export function UsersFilterMenu({
 
     return (
       <SykaMenuView
+        ripple={{
+          mode: 'circle',
+        }}
         actions={menuActions}
         onPressAction={({nativeEvent}) => handleSelect(nativeEvent.event)}
       >

@@ -247,8 +247,9 @@ export function VaultActionsMenu({
       title="menu"
       actions={menuActions}
       onPressAction={({nativeEvent}) => handleSelect(nativeEvent.event)}
-      isAnchoredToRight={false}
-      themeVariant="light"
+      ripple={{
+        mode: 'circle',
+      }}
     >
       <HeaderButton variant="more" accessibilityLabel="Vault actions" />
     </SykaMenuView>

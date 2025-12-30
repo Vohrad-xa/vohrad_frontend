@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Rect
 import android.graphics.drawable.RippleDrawable
 import android.os.Build
-import android.util.TypedValue
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.TouchDelegate
@@ -16,7 +15,6 @@ import androidx.core.content.ContextCompat
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ExpoView
-import kotlin.math.min
 
 class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context, appContext) {
   private var actions: Array<SykaMenuActionRecord> = emptyArray()
@@ -27,6 +25,7 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
   private var isOnLongPress = false
   private var hitSlopRect: Rect? = null
   private var menuOverlay: ComposeView? = null
+  private var rippleConfig: MenuRippleConfig = MenuRippleConfig()
   private var rippleDrawable: RippleDrawable? = null
 
   val onPressAction by EventDispatcher<MenuOnPressActionEvent>()
@@ -44,7 +43,7 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
 
       override fun onSingleTapUp(e: MotionEvent): Boolean {
         if (!isOnLongPress) {
-          prepareMenu()
+          performClick()
         }
         return true
       }
@@ -54,7 +53,12 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
   init {
     isClickable = true
     isFocusable = true
-    applyNativeRipple()
+    setOnClickListener {
+      if (!isOnLongPress) {
+        prepareMenu()
+      }
+    }
+    rippleDrawable = applyRipple(this, rippleConfig)
   }
 
   fun show() {
@@ -66,15 +70,20 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
   }
 
   override fun onTouchEvent(ev: MotionEvent): Boolean {
+    val rippleEnabled = rippleConfig.enabled
     when (ev.actionMasked) {
       MotionEvent.ACTION_DOWN -> {
-        isPressed = true
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-          drawableHotspotChanged(ev.x, ev.y)
+        if (rippleEnabled) {
+          isPressed = true
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            drawableHotspotChanged(ev.x, ev.y)
+          }
         }
       }
       MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-        isPressed = false
+        if (rippleEnabled) {
+          isPressed = false
+        }
       }
     }
     gestureDetector.onTouchEvent(ev)
@@ -84,7 +93,7 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
   override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
     super.onSizeChanged(w, h, oldw, oldh)
     updateTouchDelegate()
-    updateRippleRadius(w, h)
+    updateRippleRadius(rippleDrawable, rippleConfig, w, h)
   }
 
   override fun onAttachedToWindow() {
@@ -126,6 +135,15 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
       Rect(hitSlop.left, hitSlop.top, hitSlop.right, hitSlop.bottom)
     }
     updateTouchDelegate()
+  }
+
+  fun setRippleConfig(config: MenuRippleConfig) {
+    rippleConfig = config
+    rippleDrawable = applyRipple(this, rippleConfig)
+    if (!rippleConfig.enabled) {
+      isPressed = false
+    }
+    updateRippleRadius(rippleDrawable, rippleConfig, width, height)
   }
 
   private fun prepareMenu() {
@@ -206,37 +224,5 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
 
       (parent as? ViewGroup)?.touchDelegate = TouchDelegate(hitRect, this)
     }
-  }
-
-  private fun applyNativeRipple() {
-    val outValue = TypedValue()
-    val resolved = context.theme.resolveAttribute(
-      android.R.attr.selectableItemBackgroundBorderless,
-      outValue,
-      true
-    )
-    if (!resolved) {
-      return
-    }
-
-    val ripple = ContextCompat.getDrawable(context, outValue.resourceId) ?: return
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      rippleDrawable = ripple as? RippleDrawable
-    }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      foreground = ripple
-    } else {
-      background = ripple
-    }
-  }
-
-  private fun updateRippleRadius(width: Int, height: Int) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-      return
-    }
-    if (width <= 0 || height <= 0) {
-      return
-    }
-    rippleDrawable?.radius = min(width, height) / 2
   }
 }

@@ -5,6 +5,8 @@ import UIMenuView from './UIMenuView';
 import type {
   MenuComponentProps,
   MenuComponentRef,
+  MenuRippleConfig,
+  MenuRippleMode,
   NativeActionEvent,
   ProcessedMenuAction,
   SykaMenuAction,
@@ -58,6 +60,8 @@ export {SykaMenuView};
 export type {
   MenuComponentProps,
   MenuComponentRef,
+  MenuRippleConfig,
+  MenuRippleMode,
   NativeActionEvent,
   SykaMenuAction,
 };

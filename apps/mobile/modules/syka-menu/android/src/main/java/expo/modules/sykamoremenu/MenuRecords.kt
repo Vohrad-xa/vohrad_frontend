@@ -38,6 +38,13 @@ data class MenuHitSlop(
   @Field val right: Int = 0
 ) : Record, Serializable
 
+data class MenuRippleConfig(
+  @Field val mode: String? = null,
+  @Field val radius: Int? = null,
+  @Field val cornerRadius: Int? = null,
+  @Field val enabled: Boolean = true
+) : Record, Serializable
+
 class MenuOnPressActionEvent(
   @Field val event: String
 ) : Record, Serializable

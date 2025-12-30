@@ -17,6 +17,7 @@ const TABS = [
 ] as const;
 
 type TabName = (typeof TABS)[number]['name'];
+type TabsRoute = `/(app)/(tabs)/${TabName}`;
 
 export const unstable_settings = {initialRouteName: 'dashboard'};
 
@@ -27,14 +28,13 @@ function isTabName(v: string | undefined): v is TabName {
 }
 
 export default function TabLayout() {
-  const segments = useSegments();
+  const segments = useSegments<TabsRoute>();
   const {triggerHaptic} = useHaptic();
   const {theme, ds} = useTheme();
   const prev = useRef<TabName | null>(null);
 
   useEffect(() => {
     if (segments[1] !== '(tabs)') return;
-
     const tab = segments[2];
     const active: TabName = isTabName(tab) ? tab : 'dashboard';
 
@@ -47,7 +47,7 @@ export default function TabLayout() {
       <NativeTabs>
         {TABS.map((t) => (
           <NativeTabs.Trigger key={t.name} name={t.name}>
-            <NativeTabIcon sf={t.icon} />
+            <NativeTabIcon sf={t.icon} selectedColor={theme.accentDeepblue} />
             <Label>{t.title}</Label>
           </NativeTabs.Trigger>
         ))}
@@ -59,7 +59,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: theme.accentBlue,
+        tabBarActiveTintColor: theme.accentDeepblue,
         tabBarInactiveTintColor: theme.text,
         tabBarHideOnKeyboard: true,
         tabBarLabelStyle: {
