@@ -182,10 +182,6 @@ type MenuComponentPropsBase = {
    */
   title?: string;
   /**
-   * Android only. Anchors the popup to the right edge.
-   */
-  isAnchoredToRight?: boolean;
-  /**
    * If true, opens on long-press instead of single tap.
    */
   shouldOpenOnLongPress?: boolean;
@@ -251,7 +247,6 @@ export type NativeMenuComponentProps = {
   title?: string;
   hitSlop?: MenuComponentProps['hitSlop'];
   ripple?: MenuComponentProps['ripple'];
-  isAnchoredToRight?: boolean;
   shouldOpenOnLongPress?: boolean;
   themeVariant?: string;
   testID?: string;

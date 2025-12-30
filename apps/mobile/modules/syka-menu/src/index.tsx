@@ -30,7 +30,6 @@ const SykaMenuView = forwardRef<MenuComponentRef, MenuComponentProps>(
       actions,
       hitSlop = defaultHitslop,
       shouldOpenOnLongPress = false,
-      isAnchoredToRight = false,
       ...props
     },
     ref,
@@ -49,7 +48,6 @@ const SykaMenuView = forwardRef<MenuComponentRef, MenuComponentProps>(
         actions={processedActions}
         actionsHash={hash}
         shouldOpenOnLongPress={shouldOpenOnLongPress}
-        isAnchoredToRight={isAnchoredToRight}
         ref={ref}
       />
     );

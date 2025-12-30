@@ -19,7 +19,6 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
   private var actions: Array<SykaMenuActionRecord> = emptyArray()
   private var actionsHash: String? = null
   private var title: String? = null
-  private var isAnchoredToRight = false
   private var isMenuDisplayed = false
   private var isOnLongPress = false
   private var hitSlopRect: Rect? = null
@@ -117,10 +116,6 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
     this.title = title
   }
 
-  fun setIsAnchoredToRight(value: Boolean) {
-    isAnchoredToRight = value
-  }
-
   fun setIsOpenOnLongPress(isLongPress: Boolean) {
     isOnLongPress = isLongPress
   }
@@ -165,7 +160,6 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
             anchor = anchor,
             actions = actions.toList(),
             submenuTitleColor = submenuTitleColor,
-            isAnchoredToRight = isAnchoredToRight,
             menuTitle = title,
             onActionSelected = { action ->
               onPressAction(MenuOnPressActionEvent(action.id ?: ""))

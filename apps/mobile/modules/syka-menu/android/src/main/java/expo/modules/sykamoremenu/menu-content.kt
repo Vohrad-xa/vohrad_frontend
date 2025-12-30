@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -23,76 +21,30 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
-import kotlin.math.min
 
 @Composable
 internal fun SykaDropdownMenu(
   anchor: MenuAnchor,
   actions: List<SykaMenuActionRecord>,
   submenuTitleColor: Color,
-  isAnchoredToRight: Boolean,
   menuTitle: String?,
   onActionSelected: (SykaMenuActionRecord) -> Unit,
   onDismiss: () -> Unit
 ) {
   var menuStack by remember { mutableStateOf(listOf(MenuLevel(null, actions))) }
-  var menuSize by remember { mutableStateOf(IntSize.Zero) }
-  val menuSizes = remember { mutableStateMapOf<String, IntSize>() }
   val currentLevel = menuStack.last()
-  val rootKey = remember(actions) { menuKeyForActions(actions) }
-  val levelKey = remember(currentLevel.actions) { menuKeyForActions(currentLevel.actions) }
-  val rootSize = menuSizes[rootKey]
-  val sizeForOffset = rootSize ?: menuSizes[levelKey] ?: menuSize
   val density = LocalDensity.current
-  val configuration = LocalConfiguration.current
-  val edgeMargin = UiEdgeMargin
-  val edgeMarginPx = with(density) { edgeMargin.toPx() }
-  val screenWidthDp = configuration.screenWidthDp.dp
-  val screenWidthPx = with(density) { screenWidthDp.toPx() }
-  val menuMaxWidthDp = maxOf(screenWidthDp * UiMaxWidthFraction, UiMinWidth)
-  val menuMaxWidthPx = with(density) { menuMaxWidthDp.toPx() }
   val anchorWidth = with(density) { anchor.width.toDp() }
   val anchorHeight = with(density) { anchor.height.toDp() }
-  val menuWidthPx = if (sizeForOffset.width > 0) {
-    min(sizeForOffset.width.toFloat(), menuMaxWidthPx)
-  } else {
-    0f
-  }
-  val menuWidthDp = if (menuWidthPx > 0f) {
-    with(density) { menuWidthPx.toDp() }
-  } else {
-    null
-  }
-  val menuOffsetX = if (menuWidthPx > 0f) {
-    val baseOffsetPx = if (isAnchoredToRight) {
-      anchor.width.toFloat() - menuWidthPx
-    } else {
-      0f
-    }
-    val desiredLeftPx = anchor.x.toFloat() + baseOffsetPx
-    val maxLeftPx = (screenWidthPx - menuWidthPx - edgeMarginPx)
-      .coerceAtLeast(edgeMarginPx)
-    val clampedLeftPx = desiredLeftPx.coerceIn(edgeMarginPx, maxLeftPx)
-    val correctedOffsetPx = baseOffsetPx + (clampedLeftPx - desiredLeftPx)
-    with(density) { correctedOffsetPx.toDp() }
-  } else {
-    0.dp
-  }
 
   Box(modifier = Modifier.fillMaxSize()) {
     Box(
@@ -105,13 +57,6 @@ internal fun SykaDropdownMenu(
         onDismissRequest = onDismiss,
         shape = MaterialTheme.shapes.small,
         containerColor = MenuDefaults.containerColor,
-        offset = DpOffset(menuOffsetX, 0.dp),
-        modifier = (menuWidthDp?.let { Modifier.width(it) } ?: Modifier)
-          .widthIn(max = menuMaxWidthDp)
-          .onSizeChanged { size ->
-            menuSize = size
-            menuSizes[levelKey] = size
-          },
         properties = PopupProperties(focusable = true)
       ) {
         if (menuStack.size == 1) {

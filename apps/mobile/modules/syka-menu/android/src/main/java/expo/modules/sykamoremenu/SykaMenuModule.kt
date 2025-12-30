@@ -26,10 +26,6 @@ class SykaMenuModule : Module() {
         view.setTitle(title)
       }
 
-      Prop("isAnchoredToRight") { view: SykaMenuView, isAnchoredToRight: Boolean? ->
-        view.setIsAnchoredToRight(isAnchoredToRight == true)
-      }
-
       Prop("shouldOpenOnLongPress") { view: SykaMenuView, shouldOpenOnLongPress: Boolean? ->
         view.setIsOpenOnLongPress(shouldOpenOnLongPress == true)
       }

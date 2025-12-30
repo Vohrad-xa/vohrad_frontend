@@ -4,9 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.dp
 
 internal val UiShapeRadius = 20.dp
-internal val UiEdgeMargin = 16.dp
-internal val UiMinWidth = 320.dp
-internal const val UiMaxWidthFraction = 0.5f
 internal val UiSectionTitlePadding = PaddingValues(
   start = 16.dp,
   top = 8.dp,
