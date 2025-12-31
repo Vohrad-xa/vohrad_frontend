@@ -2,11 +2,10 @@ import React, {useMemo} from 'react';
 import {Platform, type StyleProp, type ViewStyle, View} from 'react-native';
 import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
 import {ThemedText} from '@/components/ui';
-import type {ThemePreference} from '@/constants/colors';
+import type {ThemePreference} from '@/constants';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {AppIcons, Icon} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {AppIcons, Icon, makeStyleFactory} from '@/utils';
 import {Button, Host, Picker, pickerStyle} from 'sykamore-ui/ios';
 
 /**
@@ -95,7 +94,7 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
         const next = nativeEvent.event;
         if (isThemePreference(next)) setScheme(next);
       }}
-      style={[styles.triggerContainer, style]}
+      style={[style]}
       accessibilityLabel={a11yLabel}
       accessibilityHint="Opens appearance options"
     >
@@ -109,9 +108,6 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
 
 const createStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) => ({
-    triggerContainer: {
-      justifyContent: 'center',
-    },
     trigger: {
       alignItems: 'center',
       flexDirection: 'row',
