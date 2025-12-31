@@ -25,7 +25,7 @@ const isThemePreference = (v: unknown): v is ThemePreference =>
 
 type AppearanceMenuProps = {
   /**
-   * Style for the trigger view (the Pressable).
+   * Style for the trigger view.
    * Accepts RN style objects, arrays, registered styles, etc.
    */
   style?: StyleProp<ViewStyle>;
@@ -65,25 +65,27 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
 
   if (Platform.OS === 'ios') {
     return (
-      <Host matchContents useViewportSizeMeasurement style={style}>
-        <Picker
-          label="Appearance"
-          selection={preference}
-          onSelectionChange={({nativeEvent}) => {
-            const next = nativeEvent.selection;
-            if (isThemePreference(next)) setScheme(next);
-          }}
-          modifiers={[pickerStyle('menu')]}
-        >
-          {SCHEMES.map((s) => (
-            <Button
-              key={s.id}
-              label={s.label}
-              modifiers={[{$type: 'tag', tag: s.id}]}
-            />
-          ))}
-        </Picker>
-      </Host>
+      <View style={style}>
+        <Host matchContents useViewportSizeMeasurement>
+          <Picker
+            label="Appearance"
+            selection={preference}
+            onSelectionChange={({nativeEvent}) => {
+              const next = nativeEvent.selection;
+              if (isThemePreference(next)) setScheme(next);
+            }}
+            modifiers={[pickerStyle('menu')]}
+          >
+            {SCHEMES.map((s) => (
+              <Button
+                key={s.id}
+                label={s.label}
+                modifiers={[{$type: 'tag', tag: s.id}]}
+              />
+            ))}
+          </Picker>
+        </Host>
+      </View>
     );
   }
 
@@ -94,24 +96,23 @@ export function AppearanceMenu({style}: AppearanceMenuProps) {
         const next = nativeEvent.event;
         if (isThemePreference(next)) setScheme(next);
       }}
-      style={[style]}
       accessibilityLabel={a11yLabel}
       accessibilityHint="Opens appearance options"
+      style={[styles.trigger, style]}
     >
-      <View style={styles.trigger}>
-        <ThemedText variant="value">{selected.label}</ThemedText>
-        <Icon name={AppIcons.ui.chevronUpDown} size="sm" colorToken="muted" />
-      </View>
+      <ThemedText variant="value">{selected.label}</ThemedText>
+      <Icon name={AppIcons.ui.chevronUpDown} size="sm" colorToken="muted" />
     </SykaMenuView>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) => ({
+  (_ds: DSShape, _theme: ThemeShape) => ({
     trigger: {
+      alignSelf: 'center',
       alignItems: 'center',
+      justifyContent: 'center',
       flexDirection: 'row',
-      gap: ds.spacing.xs,
     },
   }),
   (ds, theme) => themeKey(theme, ds),

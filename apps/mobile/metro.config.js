@@ -32,9 +32,8 @@ config.resolver = {
 };
 
 try {
-  const storeRoot = path.resolve(projectRoot, '..', '..', 'packages', 'store');
   const zustandPkg = require.resolve('zustand/package.json', {
-    paths: [storeRoot],
+    paths: [projectRoot, monorepoRoot],
   });
   const zustandDir = path.dirname(zustandPkg);
   const zustandCjs = path.join(zustandDir, 'index.js');
