@@ -25,6 +25,7 @@ AGENTS.md
 CLAUDE.md   
 .cache/
 .claude
+opencode.json
 GEMINI.md
 *.tmp
 *.temp

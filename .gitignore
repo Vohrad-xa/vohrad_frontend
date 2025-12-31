@@ -38,7 +38,8 @@ coverage
 # sensitive files
 *.keystore
 AGENTS.md
-CLAUDE.md   
+CLAUDE.md
+opencode.json   
 *.jks
 *.p8
 *.p12
