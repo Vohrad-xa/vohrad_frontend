@@ -3,7 +3,7 @@ import {Palette, type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {RequiredIconProps, BaseViewProps} from '@/types';
-import {Icon, AppIcons} from '@/utils';
+import {Icon, AppIcons, type IconName} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {ThemedText} from './themed-text';
 
@@ -16,7 +16,7 @@ const getReadableIconName = (iconPath: string): string => {
 };
 
 type VariantConfig = {
-  icon?: string;
+  icon?: IconName;
   text?: string;
   color?: string;
   iconSize?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
@@ -114,7 +114,7 @@ export interface HeaderButtonProps
     Pick<BaseViewProps, 'style' | 'accessibilityLabel' | 'testID'> {
   onPress?: () => void;
   variant?: HeaderButtonVariant;
-  icon?: string;
+  icon?: IconName;
   text?: string;
   textColor?: string;
   textColorToken?: TokenName;

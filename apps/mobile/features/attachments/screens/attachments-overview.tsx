@@ -6,6 +6,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import type {AttachmentKindCount} from '@/features/attachments/utils/attachment-counts';
 import {useTheme} from '@/providers';
 import {makeStyleFactory, Icon, AppIcons} from '@/utils';
+import type {IconName} from '@/utils/icons';
 import {
   Host,
   List as IOSList,
@@ -27,7 +28,7 @@ interface AttachmentKindTile {
   label: string;
   count: number;
   onPress?: () => void;
-  systemImage: string;
+  systemImage: IconName;
 }
 
 type AttachmentKindKey = AttachmentKindTile['kind'];

@@ -124,7 +124,7 @@ export default function VaultDocumentsScreen() {
             label: 'Share',
             accessibilityLabel: 'Share selected documents',
             accessibilityHint: 'Share or download selected documents',
-            iosSymbol: AppIcons.actions.share,
+            iosSymbol: 'square.and.arrow.up',
             icon: AppIcons.actions.share,
             onPress: () => void handleShareSelected(),
             disabled: isProcessing,
@@ -135,7 +135,7 @@ export default function VaultDocumentsScreen() {
             label: 'Delete',
             accessibilityLabel: 'Delete selected documents',
             accessibilityHint: 'Permanently delete selected documents',
-            iosSymbol: AppIcons.actions.delete,
+            iosSymbol: 'trash',
             icon: AppIcons.actions.delete,
             onPress: () => void handleDeleteSelected(),
             disabled: isProcessing,
@@ -179,7 +179,7 @@ export default function VaultDocumentsScreen() {
         wrapperStyle={
           Platform.OS === 'ios'
             ? {bottom: insets.bottom + ds.spacing.md}
-            : undefined
+            : {bottom: insets.bottom + ds.layout.tabBarHeight}
         }
         onDismiss={() => setSnackbarVisible(false)}
         duration={3000}

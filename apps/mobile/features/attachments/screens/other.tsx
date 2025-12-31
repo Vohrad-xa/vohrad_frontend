@@ -55,7 +55,7 @@ export function OtherList({onOtherPress, others}: OtherListProps) {
     if (Platform.OS === 'ios') {
       return (
         <SymbolView
-          name={AppIcons.files.document}
+          name="doc"
           type="hierarchical"
           size={30}
           tintColor={theme.secondary}

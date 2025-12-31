@@ -50,7 +50,7 @@ export default function SettingsModal() {
             }
           />
           <ListSection.Row
-            icon="person.badge.key.fill"
+            icon={AppIcons.features.userManagement}
             iconColorToken="accentGreen"
             title="User Management"
             onPress={() => router.push('/(app)/(tabs)/settings/users')}
@@ -83,8 +83,8 @@ export default function SettingsModal() {
             icon={
               <Icon
                 name={AppIcons.preferences.appearance}
-                useSwiftUI
                 colorToken="accentPurple"
+                useSwiftUI
               />
             }
             selection={preference}

@@ -1,119 +1,93 @@
-import React, {useEffect, useRef} from 'react';
-import {Platform, View, StyleSheet} from 'react-native';
-import {Tabs, useSegments} from 'expo-router';
+import React from 'react';
+import {Platform} from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {
   NativeTabs,
-  Icon as NativeTabIcon,
+  Icon,
   Label,
+  VectorIcon,
 } from 'expo-router/unstable-native-tabs';
-import type {DSShape, ThemeShape} from '@/constants/theme';
-import {themeKey} from '@/constants/theme';
-import {useHaptic, useTheme} from '@/providers';
-import {AppIcons, Icon, makeStyleFactory} from '@/utils';
+import {useTheme} from '@/providers';
+import type {SFSymbol} from 'sf-symbols-typescript';
 
-const TABS = [
-  {name: 'dashboard', title: 'Dashboard', icon: AppIcons.tabs.home},
-  {name: 'items', title: 'Items', icon: AppIcons.tabs.item},
-  {name: 'vault', title: 'Vault', icon: AppIcons.tabs.vault},
-  {name: 'settings', title: 'Settings', icon: AppIcons.tabs.settings},
-] as const;
+type TabName = 'dashboard' | 'items' | 'vault' | 'settings';
 
-type TabName = (typeof TABS)[number]['name'];
-type TabsRoute = `/(app)/(tabs)/${TabName}`;
+type TabConfig = {
+  name: TabName;
+  title: string;
+  androidIcon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  iosSymbol: SFSymbol | {default: SFSymbol; selected: SFSymbol};
+};
 
-export const unstable_settings = {initialRouteName: 'dashboard'};
+type IconSfProp = SFSymbol | {default: SFSymbol; selected: SFSymbol};
 
-function isTabName(v: string | undefined): v is TabName {
-  return (
-    v === 'dashboard' || v === 'items' || v === 'vault' || v === 'settings'
-  );
-}
+const TABS: readonly TabConfig[] = [
+  {
+    name: 'dashboard',
+    title: 'Dashboard',
+    androidIcon: 'home',
+    iosSymbol: {default: 'house', selected: 'house.fill'},
+  },
+  {
+    name: 'items',
+    title: 'Items',
+    androidIcon: 'view-dashboard',
+    iosSymbol: {
+      default: 'rectangle.3.group',
+      selected: 'rectangle.3.offgrid.fill',
+    },
+  },
+  {
+    name: 'vault',
+    title: 'Vault',
+    androidIcon: 'folder',
+    iosSymbol: {default: 'internaldrive', selected: 'internaldrive.fill'},
+  },
+  {
+    name: 'settings',
+    title: 'Settings',
+    androidIcon: 'cog',
+    iosSymbol: {default: 'gear.circle', selected: 'gear'},
+  },
+];
 
 export default function TabLayout() {
-  const segments = useSegments<TabsRoute>();
-  const {triggerHaptic} = useHaptic();
-  const {theme, ds} = useTheme();
-  const prev = useRef<TabName | null>(null);
-  const styles = createStyles(ds, theme);
-
-  useEffect(() => {
-    if (segments[1] !== '(tabs)') return;
-    const tab = segments[2];
-    const active: TabName = isTabName(tab) ? tab : 'dashboard';
-
-    if (prev.current && prev.current !== active) triggerHaptic('light');
-    prev.current = active;
-  }, [segments, triggerHaptic]);
-
-  if (Platform.OS === 'ios') {
-    return (
-      <NativeTabs>
-        {TABS.map((t) => (
-          <NativeTabs.Trigger key={t.name} name={t.name}>
-            <NativeTabIcon sf={t.icon} selectedColor={theme.accentIndigo} />
-            <Label>{t.title}</Label>
-          </NativeTabs.Trigger>
-        ))}
-      </NativeTabs>
-    );
-  }
+  const {theme} = useTheme();
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: theme.accentBlue,
-        tabBarInactiveTintColor: theme.text,
-        tabBarHideOnKeyboard: true,
-        tabBarLabelStyle: styles.label,
-        tabBarStyle: styles.bar,
+    <NativeTabs
+      labelVisibilityMode="labeled"
+      backBehavior="history"
+      backgroundColor={theme.sidebarBackground}
+      iconColor={{default: theme.text}}
+      indicatorColor={theme.ripple}
+      minimizeBehavior="onScrollDown"
+      labelStyle={{
+        default: {color: theme.text},
+        selected: {color: theme.accentBlue, fontWeight: '800'},
       }}
     >
       {TABS.map((t) => (
-        <Tabs.Screen
+        <NativeTabs.Trigger
           key={t.name}
           name={t.name}
-          options={{
-            title: t.title,
-            tabBarIcon: ({color, size, focused}) => (
-              <View style={styles.iconWrap}>
-                {focused && <View style={styles.capsule} />}
-                <Icon name={t.icon} color={color} size={size} />
-              </View>
-            ),
-          }}
-        />
+          options={{selectedIconColor: theme.accentBlue}}
+        >
+          {Platform.OS === 'ios' ? (
+            <Icon sf={t.iosSymbol as IconSfProp} />
+          ) : (
+            <Icon
+              src={
+                <VectorIcon
+                  family={MaterialCommunityIcons}
+                  name={t.androidIcon}
+                />
+              }
+            />
+          )}
+          <Label>{t.title}</Label>
+        </NativeTabs.Trigger>
       ))}
-    </Tabs>
+    </NativeTabs>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) => ({
-    bar: {
-      borderTopWidth: 0,
-      backgroundColor: theme.sidebarBackground,
-      elevation: 8,
-      shadowOpacity: 0.1,
-    },
-    label: {
-      ...ds.typography.caption,
-      marginTop: ds.spacing.xxs,
-      fontWeight: ds.fontWeight.semibold,
-    },
-    iconWrap: {
-      width: ds.spacing.xxxl + ds.spacing.xl,
-      height: ds.spacing.xxl,
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'relative',
-    },
-    capsule: {
-      ...StyleSheet.absoluteFillObject,
-      backgroundColor: theme.border,
-      borderRadius: ds.borderRadius.full,
-      opacity: 0.6,
-    },
-  }),
-  (ds, theme) => themeKey(theme, ds),
-);

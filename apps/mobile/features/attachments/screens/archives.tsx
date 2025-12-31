@@ -55,7 +55,7 @@ export function ArchivesList({onArchivePress, archives}: ArchivesListProps) {
     if (Platform.OS === 'ios') {
       return (
         <SymbolView
-          name={AppIcons.files.archive}
+          name="archivebox"
           type="hierarchical"
           size={30}
           tintColor={theme.secondary}

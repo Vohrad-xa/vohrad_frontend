@@ -2,7 +2,6 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "moduleSuffixes": [".ios", ".native", ""],
     "paths": {
       "@/*": ["./*"],
       "@sykamore/api-client": ["../../packages/api-client/dist"],

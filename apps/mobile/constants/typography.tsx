@@ -8,7 +8,6 @@ import {generateVersion} from '../utils/versioning';
  */
 
 // CONFIGURATION
-
 const BASE_WIDTH = 390;
 
 const PLATFORM_MULTIPLIER: Record<string, number> = {
@@ -20,7 +19,6 @@ const PLATFORM_MULTIPLIER: Record<string, number> = {
 };
 
 // SCALING UTILITIES
-
 const calculateScale = (width: number, fontScale: number): number => {
   const baseScale = width / BASE_WIDTH;
   const clampedScale = Math.max(0.85, Math.min(baseScale, 1.3));
@@ -80,7 +78,6 @@ export const createDesignSystem = (
   fontScale: number = 1.0,
 ) => {
   const scale = calculateScale(screenWidth, fontScale);
-
   const system = {
     fonts: {
       system: 'System',
@@ -96,7 +93,7 @@ export const createDesignSystem = (
         {
           fontSize: 34,
           lineHeight: 41 / 34,
-          fontWeight: '400', // iOS largeTitle default
+          fontWeight: '400',
           letterSpacing: 0.37,
         },
         {
@@ -136,7 +133,7 @@ export const createDesignSystem = (
         {
           fontSize: 22,
           lineHeight: 28 / 22,
-          fontWeight: '500', // M3: Roboto Medium
+          fontWeight: '500',
           letterSpacing: 0,
         },
         scale,
@@ -223,7 +220,7 @@ export const createDesignSystem = (
         {
           fontSize: 14,
           lineHeight: 20 / 14,
-          fontWeight: '500', // M3 labelLarge: Medium
+          fontWeight: '500',
           letterSpacing: 0,
         },
         scale,
@@ -360,14 +357,14 @@ export const createDesignSystem = (
     },
 
     components: {
-      navBar: {
-        statusBarHeight: 59,
-        firstRowHeight: 44,
-        secondRowHeight: 58,
-        thirdRowHeight: 48,
-        totalCompactHeight: 44,
-        totalLargeHeight: 102,
-      },
+      // navBar: {
+      //   statusBarHeight: 59,
+      //   firstRowHeight: 44,
+      //   secondRowHeight: 58,
+      //   thirdRowHeight: 48,
+      //   totalCompactHeight: 44,
+      //   totalLargeHeight: 102,
+      // },
 
       input: {
         borderRadius: 20,
@@ -401,12 +398,6 @@ export const createDesignSystem = (
         paddingHorizontal: 16,
       },
 
-      listItemLarge: {
-        minHeight: 60,
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-      },
-
       separator: {
         height: 0.5,
         marginLeft: 16,
@@ -423,7 +414,7 @@ export const createDesignSystem = (
       },
 
       tabBar: {
-        height: 50,
+        height: Platform.OS === 'android' ? 100 : undefined,
         paddingBottom: 0,
       },
     },
@@ -440,7 +431,7 @@ export const createDesignSystem = (
     layout: {
       headerHeight: 44,
       headerHeightLarge: 102,
-      tabBarHeight: 49,
+      tabBarHeight: 80,
       sidebarWidth: 280,
       maxContentWidth: 1200,
       screenPadding: 16,
@@ -503,8 +494,6 @@ export const getDesignSystem = () => {
 };
 
 export const DesignSystem = getDesignSystem();
-
-// TYPE EXPORTS
 
 export type DesignSystemType = ReturnType<typeof createDesignSystem>;
 export type Typography = keyof DesignSystemType['typography'];

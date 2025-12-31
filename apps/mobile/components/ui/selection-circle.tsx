@@ -3,7 +3,7 @@ import {StyleSheet, View, Platform} from 'react-native';
 import {SymbolView} from 'expo-symbols';
 import type {DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon} from '@/utils';
+import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 interface SelectionCircleProps {
@@ -34,7 +34,7 @@ export function SelectionCircle({selected}: SelectionCircleProps) {
     >
       {selected && (
         <Icon
-          name="checkmark-circle-outline"
+          name={AppIcons.actions.select}
           size={30}
           colorToken="secondary"
           style={styles.icon}

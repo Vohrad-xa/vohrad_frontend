@@ -12,7 +12,7 @@ import {ThemedText, ThemedInput, Card} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
 import {showAlert} from '@/utils/alert';
-import {Icon} from '@/utils/icons';
+import {Icon, AppIcons} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import type {ItemDetail} from '@sykamore/types';
 
@@ -174,7 +174,7 @@ export const SpecificationsForm = forwardRef<
                   >
                     <View style={styles.minusCircle}>
                       <Icon
-                        name="remove-outline"
+                        name={AppIcons.actions.delete}
                         size="sm"
                         colorToken="destructive"
                       />
@@ -228,7 +228,7 @@ export const SpecificationsForm = forwardRef<
             hitSlop={{top: 8, bottom: 8, left: 8, right: 8}}
           >
             <Icon
-              name="add-circle-outline"
+              name={AppIcons.actions.add}
               size="md"
               colorToken="accentDeepblue"
             />

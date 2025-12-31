@@ -1,35 +1,39 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, type StyleProp, type TextStyle} from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import type {TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers/theme-provider';
-import type {IconProps} from './icon-types';
 
-/** Font family used for Material Community Icons glyphs */
-export const IconFontFamily = 'MaterialCommunityIcons' as const;
+export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
-/**
- * Get the raw glyph character for a Material Community Icons icon name.
- * Useful for custom text rendering with icon fonts.
- * @param name - Material Community Icons icon name
- * @returns Unicode glyph character or undefined if not found
- */
-export function getIconGlyph(name: string): string | undefined {
-  const glyph =
-    MaterialCommunityIcons.glyphMap[
-      name as keyof typeof MaterialCommunityIcons.glyphMap
-    ];
+export type IconProps = {
+  name: IconName;
+  size?: number | IconSizeKey;
+  color?: string;
+  colorToken?: TokenName;
+  accessibilityLabel?: string;
+  style?: StyleProp<TextStyle>;
+  withBackground?: boolean;
+  useSwiftUI?: boolean;
+  noContainer?: boolean;
+  symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
+  symbolColorTokens?: TokenName[];
+};
+
+export type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
+
+export function getIconGlyph(name: IconName): string | undefined {
+  // TS-safe indexing (some vector-icons typings are picky here)
+  const glyphMap = MaterialCommunityIcons.glyphMap as unknown as Record<
+    IconName,
+    number | string
+  >;
+
+  const glyph = glyphMap[name];
   if (glyph == null) return undefined;
   return typeof glyph === 'number' ? String.fromCodePoint(glyph) : glyph;
 }
 
-/**
- * Icon component for Android using Material Community Icons.
- * Use `AppIcons` constants for consistent cross-platform icons.
- *
- * @example
- * <Icon name={AppIcons.tabs.home} size="lg" colorToken="primary" />
- * <Icon name="check-circle" size={24} withBackground />
- */
 export const Icon: React.FC<IconProps> = ({
   name,
   size = 'xl',
@@ -37,6 +41,7 @@ export const Icon: React.FC<IconProps> = ({
   colorToken,
   style,
   withBackground,
+  accessibilityLabel,
 }) => {
   const {theme, ds} = useTheme();
 
@@ -44,15 +49,15 @@ export const Icon: React.FC<IconProps> = ({
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
 
   const foreground = color ?? (colorToken ? theme[colorToken] : theme.icon);
-
   const iconColor = withBackground ? '#FFFFFF' : foreground;
 
   const iconElement = (
     <MaterialCommunityIcons
-      name={name as keyof typeof MaterialCommunityIcons.glyphMap}
+      name={name}
       size={resolvedSize}
       color={iconColor}
       style={style}
+      accessibilityLabel={accessibilityLabel}
     />
   );
 
@@ -76,3 +81,98 @@ export const Icon: React.FC<IconProps> = ({
 
   return iconElement;
 };
+
+export const AppIcons = {
+  ui: {
+    close: 'close',
+    back: 'arrow-left',
+    more: 'dots-horizontal',
+    menu: 'menu',
+    chevronRight: 'chevron-right',
+    chevronLeft: 'chevron-left',
+    filter: 'filter-variant',
+    search: 'magnify',
+    chevronUpDown: 'unfold-more-horizontal',
+  },
+
+  tabs: {
+    home: 'home',
+    vault: 'cloud-lock',
+    settings: 'file-cog',
+    profile: 'account-circle',
+    notifications: 'bell-outline',
+    item: 'view-dashboard',
+  },
+
+  actions: {
+    add: 'plus',
+    addUser: 'account-plus-outline',
+    addItem: 'content-duplicate',
+    edit: 'pencil-outline',
+    delete: 'delete',
+    save: 'check',
+    close: 'close',
+    share: 'share-variant',
+    refresh: 'refresh',
+    move: 'arrow-up-right',
+    download: 'cloud-download',
+    scan: 'line-scan',
+    camera: 'camera-outline',
+    input: 'keyboard-outline',
+    select: 'check-circle-outline',
+    logout: 'logout',
+    enableTorch: 'flash',
+    disableTorch: 'flash-off',
+  },
+
+  features: {
+    item: 'card-multiple-outline',
+    category: 'view-grid-outline',
+    location: 'map-marker-radius-outline',
+    search: 'magnify',
+    supplier: 'cart-outline',
+    organization: 'briefcase-variant',
+    maintenance: 'folder-wrench-outline',
+    support: 'help-circle',
+    userManagement: 'account-supervisor',
+    attachments: 'file-document-outline',
+  },
+
+  files: {
+    document: 'file-document-outline',
+    folder: 'folder',
+    file: 'file-outline',
+    image: 'image-outline',
+    imageFallback: 'image-off-outline',
+    archive: 'archive-outline',
+    print: 'printer-outline',
+    list: 'format-list-bulleted',
+    others: 'folder-question-outline',
+    test: 'information-outline',
+    pdf: 'file-document-outline',
+    word: 'file-word-outline',
+    excel: 'file-excel-outline',
+    ppt: 'file-powerpoint-outline',
+    text: 'file-outline',
+  },
+
+  status: {
+    success: 'check-circle-outline',
+    warning: 'alert-outline',
+    error: 'alert-circle-outline',
+    info: 'information-outline',
+    help: 'help-circle-outline',
+    time: 'clock-outline',
+  },
+
+  preferences: {
+    settings: 'tune',
+    appearance: 'theme-light-dark',
+    biometric: 'fingerprint',
+    haptic: 'vibrate',
+    language: 'google-translate',
+    privacy: 'lock-outline',
+    terms: 'file-document-outline',
+    plan: 'credit-card-outline',
+  },
+} as const satisfies Record<string, Record<string, IconName>>;

@@ -9,6 +9,7 @@ import {
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons} from '@/utils';
+import type {IconName} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import type {ItemAttachment, AttachmentKind} from '@sykamore/types';
 
@@ -58,7 +59,7 @@ export function AllAttachmentsList({
   const renderAttachmentIcon = useCallback((attachment: ItemAttachment) => {
     const kind = attachment.kind as AttachmentKind;
 
-    let iconName: string;
+    let iconName: IconName;
     switch (kind) {
       case 'image':
         iconName = AppIcons.files.image;

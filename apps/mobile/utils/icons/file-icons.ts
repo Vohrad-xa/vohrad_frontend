@@ -1,5 +1,6 @@
-import {Platform} from 'react-native';
 import type {TokenName} from '@/constants';
+import {AppIcons} from './icons';
+import type {IconName} from './icons';
 
 type Input = {
   filename?: string | null;
@@ -8,7 +9,7 @@ type Input = {
 };
 
 export type AttachmentIcon = {
-  name: string;
+  name: IconName;
   colorToken?: TokenName;
   symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
   symbolColorTokens?: TokenName[];
@@ -84,93 +85,60 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
 
   const kind = ext ? classify(ext) : 'other';
 
-  // iOS specific icons
-  if (Platform.OS === 'ios') {
-    switch (kind) {
-      case 'pdf':
-        return {
-          name: 'doc.plaintext.fill',
-          symbolType: 'palette',
-          symbolColorTokens: ['destructive', 'docIcon'],
-        };
-      case 'word':
-        return {
-          name: 'doc.plaintext.fill',
-          symbolType: 'palette',
-          symbolColorTokens: ['accentBlue', 'docIcon'],
-        };
-      case 'excel':
-        return {
-          name: 'doc.plaintext.fill',
-          symbolType: 'palette',
-          symbolColorTokens: ['accentGreen', 'docIcon'],
-        };
-      case 'ppt':
-        return {
-          name: 'doc.plaintext.fill',
-          symbolType: 'palette',
-          symbolColorTokens: ['accentOrange', 'docIcon'],
-        };
-      case 'archive':
-        return {name: 'doc.zipper', symbolType: 'hierarchical'};
-      case 'image':
-        return {
-          name: 'photo.fill.on.rectangle.fill',
-          symbolType: 'palette',
-          symbolColorTokens: ['accentIndigo', 'docIcon'],
-        };
-      case 'text':
-        return {
-          name: 'doc.plaintext.fill',
-          symbolType: 'palette',
-          symbolColorTokens: ['text', 'docIcon'],
-        };
-      default:
-        return {name: 'doc', symbolType: 'hierarchical'};
-    }
-  }
-
-  // Android and other platforms
   switch (kind) {
     case 'pdf':
       return {
-        name: 'file-document-outline',
+        name: AppIcons.files.pdf,
         colorToken: 'destructive',
+        symbolType: 'palette',
+        symbolColorTokens: ['destructive', 'docIcon'],
       };
     case 'word':
       return {
-        name: 'file-word-outline',
+        name: AppIcons.files.word,
         colorToken: 'accentBlue',
+        symbolType: 'palette',
+        symbolColorTokens: ['accentBlue', 'docIcon'],
       };
     case 'excel':
       return {
-        name: 'file-excel-outline',
+        name: AppIcons.files.excel,
         colorToken: 'accentGreen',
+        symbolType: 'palette',
+        symbolColorTokens: ['accentGreen', 'docIcon'],
       };
     case 'ppt':
       return {
-        name: 'file-powerpoint-outline',
+        name: AppIcons.files.ppt,
         colorToken: 'accentOrange',
+        symbolType: 'palette',
+        symbolColorTokens: ['accentOrange', 'docIcon'],
       };
     case 'archive':
       return {
-        name: 'file-archive-outline',
+        name: AppIcons.files.archive,
         colorToken: 'muted',
+        symbolType: 'hierarchical',
       };
     case 'image':
       return {
-        name: 'file-image-outline',
+        name: AppIcons.files.image,
         colorToken: 'accentIndigo',
+        symbolType: 'palette',
+        symbolColorTokens: ['accentIndigo', 'docIcon'],
       };
     case 'text':
       return {
-        name: 'file-outline',
+        name: AppIcons.files.text,
         colorToken: 'muted',
+        symbolType: 'palette',
+        symbolColorTokens: ['text', 'docIcon'],
       };
     default:
       return {
-        name: 'file-outline',
+        name: AppIcons.files.file,
         colorToken: 'text',
+        symbolType: 'hierarchical',
       };
   }
 };

@@ -6,7 +6,7 @@ import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
-import {Icon} from '@/utils/icons';
+import {Icon, AppIcons} from '@/utils/icons';
 
 type AttachmentUploadPreviewCardProps = {
   name: string;
@@ -68,7 +68,7 @@ export function AttachmentUploadPreviewCard({
           ) : (
             <View style={styles.iconWrapper}>
               <Icon
-                name="document-text-outline"
+                name={AppIcons.files.document}
                 size="md"
                 color={theme.secondary}
               />
@@ -95,7 +95,7 @@ export function AttachmentUploadPreviewCard({
               accessibilityLabel="Clear attachment"
               accessibilityRole="button"
             >
-              <Icon name="close-outline" size="md" color={theme.muted} />
+              <Icon name={AppIcons.ui.close} size="md" color={theme.muted} />
             </Pressable>
           )}
         </View>

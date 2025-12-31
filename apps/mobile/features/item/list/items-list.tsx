@@ -11,6 +11,7 @@ import {
 } from '@/components/ui';
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
+import {AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import type {Item} from '@sykamore/store';
 
@@ -106,7 +107,7 @@ export function ItemsList({
               ? 'No items match your search.'
               : 'You have no items yet.'
           }
-          icon="albums-outline"
+          icon={AppIcons.features.item}
         />
       </RefreshableScrollView>
     );

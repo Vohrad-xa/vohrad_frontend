@@ -6,13 +6,13 @@ import {type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {BiometricToggle, HapticToggle} from '@/features/settings';
 import {useTheme} from '@/providers';
-import {makeStyleFactory, Icon} from '@/utils';
+import {makeStyleFactory, Icon, AppIcons, type IconName} from '@/utils';
 
 export default function AppSettingsScreen() {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
 
-  const renderIcon = (iconName: string, colorToken?: TokenName) => {
+  const renderIcon = (iconName: IconName, colorToken?: TokenName) => {
     const IconWrapper = () => (
       <View style={styles.iconContainer}>
         <Icon
@@ -37,7 +37,7 @@ export default function AppSettingsScreen() {
         description="Activate fingerprint or facial recognition "
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon('finger-print', 'accentGreen')}
+        left={renderIcon(AppIcons.preferences.biometric, 'accentGreen')}
         right={() => <BiometricToggle />}
       />
 
@@ -50,7 +50,7 @@ export default function AppSettingsScreen() {
             description="Enable haptic feedback to receive tactile responses"
             descriptionStyle={styles.description}
             titleStyle={styles.itemTitle}
-            left={renderIcon('phone-portrait', 'destructive')}
+            left={renderIcon(AppIcons.preferences.haptic, 'destructive')}
             right={() => <HapticToggle />}
           />
         </>

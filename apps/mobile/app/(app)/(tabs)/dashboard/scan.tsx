@@ -87,7 +87,7 @@ export default function ScanScreen() {
               label: 'Close',
               accessibilityLabel: 'Close scanner',
               accessibilityHint: 'Closes the barcode scanner',
-              iosSymbol: AppIcons.actions.close,
+              iosSymbol: 'xmark',
               icon: AppIcons.actions.close,
               onPress: () => router.dismiss(),
             },
@@ -103,9 +103,7 @@ export default function ScanScreen() {
         label: enableTorch ? 'Turn off flash' : 'Turn on flash',
         accessibilityLabel: enableTorch ? 'Turn off flash' : 'Turn on flash',
         accessibilityHint: 'Toggles the camera flash',
-        iosSymbol: enableTorch
-          ? AppIcons.actions.disableTorch
-          : AppIcons.actions.enableTorch,
+        iosSymbol: enableTorch ? 'flashlight.off.fill' : 'flashlight.on.fill',
         icon: enableTorch
           ? AppIcons.actions.disableTorch
           : AppIcons.actions.enableTorch,

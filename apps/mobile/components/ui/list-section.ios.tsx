@@ -2,7 +2,7 @@ import React from 'react';
 import {Section, Label, Spacer, Text, Button, HStack, tint} from 'sykamore-ui';
 import {type TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers';
-import {Icon, AppIcons} from '@/utils/icons';
+import {Icon, AppIcons, type IconName} from '@/utils/icons';
 
 interface ListSectionProps {
   title?: string;
@@ -12,7 +12,7 @@ interface ListSectionProps {
 }
 
 interface ListSectionRowProps {
-  icon: string;
+  icon: IconName;
   iconColorToken: TokenName;
   title?: string;
   onPress?: () => void;

@@ -13,6 +13,7 @@ import {PaperMenu, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils';
+import type {IconName} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 const TEMPLATE_OPTIONS = [
@@ -29,7 +30,7 @@ const TEMPLATE_OPTIONS = [
 type TemplateKey = (typeof TEMPLATE_OPTIONS)[number]['key'];
 
 type AddQuickActionProps = {
-  icon: string;
+  icon: IconName;
   label: string;
   containerRef?: React.RefObject<View | null>;
   actionStyles: QuickActionStyleBundle;

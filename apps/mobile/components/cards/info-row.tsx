@@ -18,6 +18,7 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils/icons';
+import type {IconName} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {DatePickerMobile} from '../ui/date-picker-mobile';
 import {DatePickerWeb} from '../ui/date-picker-web';
@@ -39,7 +40,7 @@ type InfoRowProps = {
   type?: 'text' | 'date' | 'time';
   keyboardType?: TextInputProps['keyboardType'];
   renderAccessory?: React.ReactNode;
-  icon?: string;
+  icon?: IconName;
   iconSize?: number;
   iconColorToken?: TokenName;
 };

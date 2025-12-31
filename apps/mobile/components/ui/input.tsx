@@ -10,10 +10,11 @@ import {
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon, makeStyleFactory} from '@/utils';
+import type {IconName} from '@/utils/icons';
 import {GlassCard} from '../cards/glass-card';
 
 export type InputProps = TextInputProps & {
-  rightIconName?: string;
+  rightIconName?: IconName;
   onRightIconPress?: () => void;
   disableGlass?: boolean;
 };

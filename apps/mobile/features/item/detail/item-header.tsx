@@ -5,7 +5,7 @@ import {ThemedText, ThemedView} from '@/components/ui';
 import {Tokens} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon} from '@/utils';
+import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import type {Item} from '@sykamore/types';
 
@@ -44,7 +44,7 @@ export function ItemHeader({item, imageUrl}: ItemHeaderProps) {
               transition={200}
             />
           ) : (
-            <Icon name="image-outline" size="xxl" />
+            <Icon name={AppIcons.files.image} size="xxl" />
           )}
         </View>
       </View>

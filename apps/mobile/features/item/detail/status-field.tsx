@@ -1,31 +1,63 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ThemedText} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
-import {makeStyleFactory, Icon} from '@/utils';
+import {makeStyleFactory, Icon, AppIcons, type IconName} from '@/utils';
 import type {Status} from '@sykamore/types';
 
 interface StatusFieldProps {
   status?: Status | null;
 }
 
+const STATUS_ICON_BY_KEY = {
+  success: AppIcons.status.success,
+  warning: AppIcons.status.warning,
+  error: AppIcons.status.error,
+  info: AppIcons.status.info,
+  help: AppIcons.status.help,
+  time: AppIcons.status.time,
+} as const;
+
+const STATUS_ICON_VALUES = new Set(Object.values(STATUS_ICON_BY_KEY));
+
+const resolveStatusIcon = (icon?: string | null): IconName => {
+  if (!icon) return AppIcons.status.info;
+
+  const byKey = STATUS_ICON_BY_KEY[icon as keyof typeof STATUS_ICON_BY_KEY];
+  if (byKey) return byKey;
+
+  if (
+    STATUS_ICON_VALUES.has(
+      icon as (typeof STATUS_ICON_BY_KEY)[keyof typeof STATUS_ICON_BY_KEY],
+    )
+  ) {
+    return icon as IconName;
+  }
+
+  return AppIcons.status.info;
+};
+
 const StatusFieldComponent = ({status}: StatusFieldProps) => {
   const {ds, theme: _theme} = useTheme();
   const styles = createStyles(ds, _theme);
+
+  const statusIcon = status?.icon ? resolveStatusIcon(status.icon) : null;
 
   return (
     <View style={styles.fieldRow}>
       <ThemedText variant="label" style={styles.fieldLabel}>
         status
       </ThemedText>
+
       <View style={styles.statusContainer}>
         <ThemedText variant="value">{status?.name ?? 'None'}</ThemedText>
-        {status?.icon && (
+
+        {statusIcon && (
           <Icon
-            name={status.icon}
+            name={statusIcon}
             size="md"
-            style={[styles.statusIcon, {color: status.color}]}
+            style={[styles.statusIcon, {color: status?.color ?? _theme.muted}]}
           />
         )}
       </View>
@@ -34,7 +66,6 @@ const StatusFieldComponent = ({status}: StatusFieldProps) => {
 };
 
 StatusFieldComponent.displayName = 'StatusField';
-
 export const ItemStatusField = React.memo(StatusFieldComponent);
 
 const createStyles = makeStyleFactory(

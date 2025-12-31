@@ -8,9 +8,10 @@ import {
 import {ThemedText} from '@/components/ui';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils';
+import type {IconName} from '@/utils/icons';
 
 type ScanQuickActionProps = {
-  icon: string;
+  icon: IconName;
   label: string;
   actionStyles: {
     actionButton: ViewStyle;

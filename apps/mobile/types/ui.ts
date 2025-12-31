@@ -1,6 +1,7 @@
 import type {ReactNode} from 'react';
 import type {StyleProp, ViewStyle, TextStyle} from 'react-native';
 import type {TokenName} from '@/constants/colors';
+import type {IconName} from '@/utils/icons';
 
 // all components
 export interface BaseComponentProps {
@@ -32,7 +33,7 @@ export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
 // Props for components that optionally include an icon
 export interface IconProps {
-  icon?: string;
+  icon?: IconName;
   iconSize?: IconSize;
   iconColor?: string;
   iconColorToken?: TokenName;
@@ -40,7 +41,7 @@ export interface IconProps {
 
 // Props for components that require an icon
 export interface RequiredIconProps extends Omit<IconProps, 'icon'> {
-  icon: string;
+  icon: IconName;
 }
 
 // Props for interactive components
@@ -76,13 +77,13 @@ export interface LabeledComponentProps {
 export interface TabItem {
   name: string;
   label: string;
-  icon: string;
+  icon: IconName;
 }
 
 // menu card with count display
 export interface MenuCard {
   title: string;
-  icon: string;
+  icon: IconName;
   count: number;
   colorToken: TokenName;
 }

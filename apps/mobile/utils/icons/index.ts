@@ -1,4 +1,3 @@
-export {Icon} from './icons';
-export {AppIcons} from './icon-constants';
-export type {IconProps} from './icon-types';
+export {AppIcons, Icon} from './icons';
+export type {IconName, IconProps, IconSizeKey} from './icons';
 export * from './file-icons';

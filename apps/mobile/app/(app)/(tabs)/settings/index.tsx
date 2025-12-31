@@ -11,7 +11,13 @@ import {
 } from '@/constants';
 import {AppearanceMenu} from '@/features/settings';
 import {useAuth, useTheme} from '@/providers';
-import {AppIcons, Icon, makeStyleFactory, showConfirmAlert} from '@/utils';
+import {
+  AppIcons,
+  Icon,
+  type IconName,
+  makeStyleFactory,
+  showConfirmAlert,
+} from '@/utils';
 
 export default function SettingsModal() {
   const {ds, theme} = useTheme();
@@ -19,7 +25,7 @@ export default function SettingsModal() {
   const styles = createStyles(ds, theme);
 
   const leftIcon = useCallback(
-    (iconName: string, colorToken?: TokenName) => {
+    (iconName: IconName, colorToken?: TokenName) => {
       function IconWrapper() {
         return (
           <View style={styles.iconContainer}>

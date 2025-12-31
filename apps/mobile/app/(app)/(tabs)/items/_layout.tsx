@@ -2,6 +2,7 @@ import type {ReactNode} from 'react';
 import {useCallback, createContext, useContext, useMemo, useState} from 'react';
 import {Platform} from 'react-native';
 import {Stack} from 'expo-router';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {HeaderButton} from '@/components/ui';
 import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme, useSidebar} from '@/providers';
@@ -49,6 +50,7 @@ function ItemChangesProvider({children}: {children: ReactNode}) {
 }
 
 function ItemsStack() {
+  const insets = useSafeAreaInsets();
   const {theme, ds} = useTheme();
   const {toggleSideMenu} = useSidebar();
   const {setSearchQuery} = useSearch();
@@ -96,8 +98,20 @@ function ItemsStack() {
         fontWeight: ds.fontWeight.bold,
         color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
       },
+      contentStyle: {
+        paddingBottom:
+          Platform.OS === 'android'
+            ? insets.bottom + ds.layout.tabBarHeight
+            : 0,
+      },
     }),
-    [ds.typography.title3.fontSize, ds.fontWeight.bold, theme.headerAndroid],
+    [
+      ds.typography.title3.fontSize,
+      ds.fontWeight.bold,
+      theme.headerAndroid,
+      ds.layout.tabBarHeight,
+      insets.bottom,
+    ],
   );
 
   const indexOptions = useMemo(

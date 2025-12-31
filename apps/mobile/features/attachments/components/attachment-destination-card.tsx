@@ -78,7 +78,7 @@ export function AttachmentDestinationCard({
                 accessibilityLabel="Clear destination"
                 accessibilityRole="button"
               >
-                <Icon name="close-outline" size="md" color={theme.muted} />
+                <Icon name={AppIcons.ui.close} size="md" color={theme.muted} />
               </Pressable>
             ) : (
               <Icon
