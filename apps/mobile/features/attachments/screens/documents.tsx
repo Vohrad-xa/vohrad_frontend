@@ -32,6 +32,7 @@ import {
 
 export type DocumentsListRef = {
   clearSelection: () => void;
+  enterSelectionMode: () => void;
 };
 
 type DocumentsListProps = {
@@ -56,8 +57,10 @@ type DocumentItemProps = {
   isSelected: boolean;
   onPressRow: (id: string) => void;
   onLongPressRow: (id: string) => void;
-  animation: Animated.Value;
-  selectionShift: number;
+  opacity: Animated.Value;
+  checkboxColor: string;
+  checkboxTranslateX: Animated.AnimatedInterpolation<number>;
+  contentTranslateX: Animated.AnimatedInterpolation<number>;
 };
 
 const DocumentItem = memo<DocumentItemProps>(
@@ -68,8 +71,10 @@ const DocumentItem = memo<DocumentItemProps>(
     isSelected,
     onPressRow,
     onLongPressRow,
-    animation,
-    selectionShift,
+    opacity,
+    checkboxColor,
+    checkboxTranslateX,
+    contentTranslateX,
   }) => {
     const handlePress = useCallback(() => {
       onPressRow(item.id);
@@ -78,17 +83,6 @@ const DocumentItem = memo<DocumentItemProps>(
     const handleLongPress = useCallback(() => {
       onLongPressRow(item.id);
     }, [item.id, onLongPressRow]);
-
-    const checkboxTranslateX = animation.interpolate({
-      inputRange: [0, 1],
-      outputRange: [-selectionShift, 0],
-    });
-
-    const contentTranslateX = animation.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, selectionShift],
-    });
-    const {theme} = useTheme();
 
     return (
       <TouchableOpacity
@@ -108,14 +102,14 @@ const DocumentItem = memo<DocumentItemProps>(
               style={[
                 styles.checkboxContainer,
                 {
-                  opacity: animation,
+                  opacity,
                   transform: [{translateX: checkboxTranslateX}],
                 },
               ]}
             >
               <Checkbox.Android
                 status={isSelected ? 'checked' : 'unchecked'}
-                color={theme.accentBlue}
+                color={checkboxColor}
               />
             </Animated.View>
           ) : null}
@@ -173,16 +167,21 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
     const {ds, theme} = useTheme();
     const {triggerHaptic} = useHaptic();
     const styles = createStyles(ds, theme);
+
     const [selectedIds, setSelectedIds] = useState<Set<string>>(
       () => new Set(),
     );
     const isSelectionMode = selectedIds.size > 0;
+
+    const [forceSelectionMode, setForceSelectionMode] = useState(false);
+    const effectiveSelectionMode = isSelectionMode || forceSelectionMode;
+
     const [selectionVisible, setSelectionVisible] = useState(false);
     const selectionAnimation = useRef(new Animated.Value(0)).current;
     const selectionShift = ds.spacing.xxl + ds.spacing.md;
 
     useEffect(() => {
-      if (isSelectionMode) {
+      if (effectiveSelectionMode) {
         setSelectionVisible(true);
         Animated.timing(selectionAnimation, {
           toValue: 1,
@@ -199,23 +198,40 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
       }).start(({finished}) => {
         if (finished) setSelectionVisible(false);
       });
-    }, [isSelectionMode, selectionAnimation, selectionShift]);
+    }, [effectiveSelectionMode, selectionAnimation]);
 
     const clearSelection = useCallback(() => {
       const empty = new Set<string>();
       setSelectedIds(empty);
+      setForceSelectionMode(false);
       onSelectionChange?.(empty);
     }, [onSelectionChange]);
 
-    useImperativeHandle(ref, () => ({clearSelection}), [clearSelection]);
+    const enterSelectionMode = useCallback(() => {
+      if (!effectiveSelectionMode) {
+        setForceSelectionMode(true);
+      }
+    }, [effectiveSelectionMode]);
+
+    useImperativeHandle(ref, () => ({clearSelection, enterSelectionMode}), [
+      clearSelection,
+      enterSelectionMode,
+    ]);
 
     const toggleSelected = useCallback(
       (id: string) => {
         triggerHaptic('light');
+
         setSelectedIds((prev) => {
           const next = new Set(prev);
           if (next.has(id)) next.delete(id);
           else next.add(id);
+
+          // Sticky selection mode once selection begins (prevents header/list desync).
+          if (prev.size === 0 && next.size === 1) {
+            setForceSelectionMode(true);
+          }
+
           onSelectionChange?.(next);
           return next;
         });
@@ -225,13 +241,13 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
 
     const handlePressRow = useCallback(
       (id: string) => {
-        if (isSelectionMode) {
+        if (effectiveSelectionMode) {
           toggleSelected(id);
           return;
         }
         onDocumentPress(id);
       },
-      [isSelectionMode, toggleSelected, onDocumentPress],
+      [effectiveSelectionMode, toggleSelected, onDocumentPress],
     );
 
     const handleLongPressRow = useCallback(
@@ -261,6 +277,26 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
       });
     }, [documents]);
 
+    const checkboxTranslateX = useMemo(
+      () =>
+        selectionAnimation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [-selectionShift, 0],
+        }),
+      [selectionAnimation, selectionShift],
+    );
+
+    const contentTranslateX = useMemo(
+      () =>
+        selectionAnimation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, selectionShift],
+        }),
+      [selectionAnimation, selectionShift],
+    );
+
+    const checkboxColor = theme.accentBlue;
+
     const renderItem = useCallback(
       ({item}: {item: DocumentRow}) => (
         <DocumentItem
@@ -270,8 +306,10 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
           isSelected={selectedIds.has(item.id)}
           onPressRow={handlePressRow}
           onLongPressRow={handleLongPressRow}
-          animation={selectionAnimation}
-          selectionShift={selectionShift}
+          opacity={selectionAnimation}
+          checkboxColor={checkboxColor}
+          checkboxTranslateX={checkboxTranslateX}
+          contentTranslateX={contentTranslateX}
         />
       ),
       [
@@ -281,7 +319,9 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
         handlePressRow,
         handleLongPressRow,
         selectionAnimation,
-        selectionShift,
+        checkboxColor,
+        checkboxTranslateX,
+        contentTranslateX,
       ],
     );
 
