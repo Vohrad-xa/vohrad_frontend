@@ -7,3 +7,4 @@ export {useAttachmentNavigation} from './use-attachment-navigation';
 export {useAttachmentSearch} from './use-attachment-search';
 export {useAttachmentPress} from './use-attachment-press';
 export {useAttachmentShare} from './use-attachment-share';
+export {useAttachmentsByKind} from './use-attachments-by-kind';

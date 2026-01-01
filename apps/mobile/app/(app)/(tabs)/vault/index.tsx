@@ -16,9 +16,9 @@ import {
   useAttachmentSearch,
   useAttachmentPress,
   VaultActionsMenu,
+  AllAttachmentsList,
+  useAttachmentContext,
 } from '@/features/attachments';
-import {useAttachmentContext} from '@/features/attachments/providers/attachment-provider';
-import {AllAttachmentsList} from '@/features/attachments/screens/all-attachments-list';
 import {useSearch} from '@/features/dashboard';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, makeStyleFactory} from '@/utils';

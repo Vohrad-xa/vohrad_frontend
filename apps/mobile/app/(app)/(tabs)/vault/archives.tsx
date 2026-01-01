@@ -1,6 +1,9 @@
 import React, {useCallback} from 'react';
-import {useAttachmentsByKind, useAttachmentPress} from '@/features/attachments';
-import {ArchivesList} from '@/features/attachments/screens/archives';
+import {
+  useAttachmentsByKind,
+  useAttachmentPress,
+  ArchivesList,
+} from '@/features/attachments';
 
 export default function VaultArchivesScreen() {
   const {attachments: archiveAttachments, getById: getArchiveById} =

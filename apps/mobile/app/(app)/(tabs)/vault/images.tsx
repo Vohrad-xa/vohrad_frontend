@@ -1,7 +1,10 @@
 import React, {useCallback} from 'react';
 import {useNavigation} from 'expo-router';
-import {useAttachmentImages, useAttachmentPress} from '@/features/attachments';
-import {ImagesGridScreen} from '@/features/attachments/screens/library';
+import {
+  ImagesGridScreen,
+  useAttachmentImages,
+  useAttachmentPress,
+} from '@/features/attachments';
 import {type ImageAttachmentItem} from '@/features/item';
 import {useSettingsHeader} from '@/hooks';
 
