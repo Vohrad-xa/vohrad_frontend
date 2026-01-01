@@ -96,56 +96,54 @@ const DocumentItem = memo<DocumentItemProps>(
         accessibilityRole="button"
         activeOpacity={0.5}
       >
-        <>
-          {selectionVisible ? (
-            <Animated.View
-              style={[
-                styles.checkboxContainer,
-                {
-                  opacity,
-                  transform: [{translateX: checkboxTranslateX}],
-                },
-              ]}
-            >
-              <Checkbox.Android
-                status={isSelected ? 'checked' : 'unchecked'}
-                color={checkboxColor}
-              />
-            </Animated.View>
-          ) : null}
-
+        {selectionVisible ? (
           <Animated.View
             style={[
-              styles.rowContainer,
-              {transform: [{translateX: contentTranslateX}]},
+              styles.checkboxContainer,
+              {
+                opacity,
+                transform: [{translateX: checkboxTranslateX}],
+              },
             ]}
           >
-            <View style={styles.iconContainer}>
-              <Icon
-                name={item.fileIcon.name}
-                size="lg"
-                colorToken={item.fileIcon.colorToken}
-                symbolType={item.fileIcon.symbolType}
-                symbolColorTokens={item.fileIcon.symbolColorTokens}
-              />
-            </View>
-
-            <View style={styles.textContainer}>
-              <ThemedText
-                variant="label"
-                numberOfLines={1}
-                ellipsizeMode="middle"
-                style={styles.title}
-              >
-                {item.uiTitle}
-              </ThemedText>
-
-              <ThemedText variant="caption" numberOfLines={1}>
-                {item.uiDescription}
-              </ThemedText>
-            </View>
+            <Checkbox.Android
+              status={isSelected ? 'checked' : 'unchecked'}
+              color={checkboxColor}
+            />
           </Animated.View>
-        </>
+        ) : null}
+
+        <Animated.View
+          style={[
+            styles.rowContainer,
+            {transform: [{translateX: contentTranslateX}]},
+          ]}
+        >
+          <View style={styles.iconContainer}>
+            <Icon
+              name={item.fileIcon.name}
+              size="lg"
+              colorToken={item.fileIcon.colorToken}
+              symbolType={item.fileIcon.symbolType}
+              symbolColorTokens={item.fileIcon.symbolColorTokens}
+            />
+          </View>
+
+          <View style={styles.textContainer}>
+            <ThemedText
+              variant="label"
+              numberOfLines={1}
+              ellipsizeMode="middle"
+              style={styles.title}
+            >
+              {item.uiTitle}
+            </ThemedText>
+
+            <ThemedText variant="caption" numberOfLines={1}>
+              {item.uiDescription}
+            </ThemedText>
+          </View>
+        </Animated.View>
       </TouchableOpacity>
     );
   },
@@ -208,9 +206,7 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
     }, [onSelectionChange]);
 
     const enterSelectionMode = useCallback(() => {
-      if (!effectiveSelectionMode) {
-        setForceSelectionMode(true);
-      }
+      if (!effectiveSelectionMode) setForceSelectionMode(true);
     }, [effectiveSelectionMode]);
 
     useImperativeHandle(ref, () => ({clearSelection, enterSelectionMode}), [
@@ -340,11 +336,11 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
     return (
       <FlashList
         data={files}
+        extraData={selectedIds.size}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         onEndReached={onEndReached}
         onEndReachedThreshold={onEndReachedThreshold}
-        showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={ItemSeparator}
         ListHeaderComponent={ListHeader}
       />
