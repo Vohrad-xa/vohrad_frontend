@@ -79,7 +79,7 @@ export function UsersFilterMenu({
         id: 'select-user',
         title: 'Select',
         image: Platform.select({
-          ios: AppIcons.actions.select,
+          ios: AppIcons.actions.edit,
           default: 'outlined.Info',
         }),
       },

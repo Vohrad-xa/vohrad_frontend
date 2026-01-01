@@ -203,7 +203,7 @@ export default function VaultDocumentsScreen() {
             label: 'Select',
             accessibilityLabel: 'Enter selection mode',
             accessibilityHint: 'Select documents to share or delete',
-            icon: AppIcons.actions.select,
+            icon: AppIcons.actions.edit,
             onPress: handleSelectModePress,
           },
         ];

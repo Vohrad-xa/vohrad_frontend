@@ -34,7 +34,7 @@ export function SelectionCircle({selected}: SelectionCircleProps) {
     >
       {selected && (
         <Icon
-          name={AppIcons.actions.select}
+          name={AppIcons.status.success}
           size={30}
           colorToken="secondary"
           style={styles.icon}

@@ -119,7 +119,6 @@ export const AppIcons = {
     scan: 'line-scan',
     camera: 'camera-outline',
     input: 'keyboard-outline',
-    select: 'check-circle-outline',
     logout: 'logout',
     enableTorch: 'flash',
     disableTorch: 'flash-off',
