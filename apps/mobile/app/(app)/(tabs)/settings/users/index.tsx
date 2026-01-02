@@ -1,5 +1,4 @@
 import React, {useLayoutEffect, useState, useCallback} from 'react';
-import {Platform, View} from 'react-native';
 import {useNavigation, useRouter} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {useSearch} from '@/features/dashboard';
@@ -19,20 +18,14 @@ export default function UsersScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <View
-          style={{
-            flexDirection: 'row',
-            gap: Platform.OS === 'ios' ? 12 : undefined,
-            paddingHorizontal: Platform.OS === 'ios' ? 4 : 0,
-          }}
-        >
+        <>
           <HeaderButton
             icon={AppIcons.actions.addUser}
             onPress={handleAddUser}
             accessibilityLabel="Add user"
           />
           {filterControl}
-        </View>
+        </>
       ),
     });
   }, [filterControl, navigation, handleAddUser]);

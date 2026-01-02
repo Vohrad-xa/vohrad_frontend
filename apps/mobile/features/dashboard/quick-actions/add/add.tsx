@@ -70,7 +70,9 @@ export function AddQuickAction({
       <View style={actionStyles.iconContainer}>
         <Icon name={icon} size={ds.iconSize.xxl} colorToken="quickActionIcon" />
       </View>
-      <ThemedText style={actionStyles.actionLabel}>{label}</ThemedText>
+      <ThemedText variant="subheadline" style={actionStyles.actionLabel}>
+        {label}
+      </ThemedText>
     </TouchableOpacity>
   );
 

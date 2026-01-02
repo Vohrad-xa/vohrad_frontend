@@ -84,7 +84,9 @@ export function QuickActions({onScanPress}: QuickActionsProps) {
             colorToken="quickActionIcon"
           />
         </View>
-        <ThemedText style={styles.actionLabel}>{item.label}</ThemedText>
+        <ThemedText variant="subheadline" style={styles.actionLabel}>
+          {item.label}
+        </ThemedText>
       </TouchableOpacity>
     );
   };

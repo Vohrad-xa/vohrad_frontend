@@ -54,7 +54,7 @@ function VaultStack() {
       animation: 'ios_from_right' as const,
       headerBackButtonDisplayMode: 'minimal' as const,
       headerTransparent: Platform.OS === 'ios',
-      headerTitleAlign: 'left' as const,
+      headerTitleAlign: 'center' as const,
       headerTitleStyle: {
         fontWeight: ds.fontWeight.bold,
         color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
@@ -77,7 +77,6 @@ function VaultStack() {
   const indexOptions = useMemo(
     () => ({
       headerTitle: 'Vault',
-      headerTitleAlign: 'center' as const,
       headerLeft: headerLeftMenu,
       headerSearchBarOptions,
     }),

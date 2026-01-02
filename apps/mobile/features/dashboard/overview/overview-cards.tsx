@@ -120,11 +120,11 @@ export function OverviewCards({
                     size="lg"
                     colorToken={card.colorToken}
                   />
-                  <ThemedText variant="body" style={styles.cardTitle}>
+                  <ThemedText variant="subheadline" style={styles.cardTitle}>
                     {card.title}
                   </ThemedText>
                 </View>
-                <ThemedText variant="headline" style={styles.cardCount}>
+                <ThemedText variant="subheadline" style={styles.cardCount}>
                   {card.count}
                 </ThemedText>
               </ThemedView>
@@ -228,7 +228,7 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.xs,
       } as ViewStyle,
       cardTitle: {
-        fontWeight: ds.fontWeight.medium,
+        color: theme.muted,
       },
       cardCount: {
         alignSelf: 'flex-start',
