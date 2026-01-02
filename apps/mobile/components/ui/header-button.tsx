@@ -36,7 +36,6 @@ const getVariantConfig = (
       return {
         icon: AppIcons.ui.close,
         color: theme.text,
-        iconSize: 'lg',
       };
     case 'cancel':
       return {
@@ -47,7 +46,6 @@ const getVariantConfig = (
       return {
         icon: AppIcons.actions.save,
         color: Palette.white,
-        iconSize: 'lg',
       };
     case 'success':
       return {
@@ -57,26 +55,33 @@ const getVariantConfig = (
       };
     case 'edit':
       return {
-        text: 'Edit',
-        color: Palette.white,
+        icon: AppIcons.actions.edit,
+        color: theme.text,
       };
     case 'add':
       return {
         icon: AppIcons.actions.add,
         color: theme.text,
-        iconSize: 'lg',
+      };
+    case 'share':
+      return {
+        icon: AppIcons.actions.share,
+        color: theme.text,
+      };
+    case 'delete':
+      return {
+        icon: AppIcons.actions.delete,
+        color: theme.text,
       };
     case 'more':
       return {
         icon: AppIcons.ui.more,
-        iconSize: 'lg',
         color: theme.text,
       };
     case 'back':
       return {
         icon: AppIcons.ui.back,
         color: theme.text,
-        iconSize: 'lg',
       };
     case 'destructive':
       return {
@@ -85,11 +90,10 @@ const getVariantConfig = (
     case 'menu':
       return {
         icon: AppIcons.ui.menu,
-        iconSize: 'lg',
       };
     default:
       return {
-        iconSize: Platform.OS === 'ios' ? 'xl' : 'lg',
+        iconSize: 'lg',
         color: theme.text,
       };
   }
@@ -102,6 +106,8 @@ export type HeaderButtonVariant =
   | 'save'
   | 'edit'
   | 'add'
+  | 'share'
+  | 'delete'
   | 'more'
   | 'success'
   | 'back'
@@ -146,12 +152,9 @@ export const HeaderButton = ({
   style,
 }: HeaderButtonProps) => {
   const {theme, ds} = useTheme();
-  const baseSize = Platform.select({
-    ios: ds.spacing.xxl + ds.spacing.xs,
-    default: ds.spacing.xxl + ds.spacing.md,
-  });
-  const styles = createStyles(ds, baseSize, theme);
+  const styles = createStyles(ds, theme);
   const isDisabled = !onPress;
+  const isTextLike = variant === 'text' || variant === 'cancel';
 
   const variantConfig = getVariantConfig(variant, theme);
 
@@ -188,9 +191,13 @@ export const HeaderButton = ({
         foreground: true,
         borderless: true,
         color: theme.ripple,
-        radius: baseSize / 2,
       }}
-      style={[styles.button, isDisabled && styles.buttonDisabled, style]}
+      style={[
+        styles.button,
+        isTextLike && styles.buttonTextPadding,
+        // isDisabled && styles.buttonDisabled,
+        style,
+      ]}
       accessibilityRole="button"
       accessibilityLabel={
         accessibilityLabel ??
@@ -212,22 +219,27 @@ export const HeaderButton = ({
 };
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, baseSize: number, _theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       button: {
-        minWidth: baseSize,
-        minHeight: baseSize,
+        minWidth: Platform.select({
+          ios: ds.spacing.xxl + ds.spacing.xs,
+          default: ds.spacing.xxl + ds.spacing.sm,
+        }),
+        minHeight: ds.spacing.xxl,
         justifyContent: 'center',
         alignItems: 'center',
-        ...Platform.select({
-          web: {
-            marginHorizontal: ds.spacing.sm,
-          },
-        }),
       },
-      buttonDisabled: {
-        opacity: 0.4,
+
+      buttonTextPadding: {
+        paddingHorizontal: ds.spacing.sm,
+        backgroundColor: Platform.OS !== 'ios' ? theme.ripple : undefined,
+        borderRadius: ds.borderRadius.full,
       },
+
+      // buttonDisabled: {
+      //   opacity: 0.4,
+      // },
     }),
-  (ds, _baseSize, theme) => themeKey(theme, ds),
+  (ds, theme) => themeKey(theme, ds),
 );
