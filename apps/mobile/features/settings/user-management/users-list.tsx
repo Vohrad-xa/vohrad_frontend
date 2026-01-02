@@ -56,13 +56,16 @@ const UserItem = memo<UserItemProps>(({item, onPress, styles}) => {
   return (
     <List.Item
       style={styles.content}
-      title={name}
-      description={description}
       left={left}
       right={UserRightIcon}
-      titleStyle={styles.title}
-      descriptionStyle={styles.description}
       onPress={handlePress}
+      title={<ThemedText variant="body">{name}</ThemedText>}
+      titleStyle={styles.title}
+      description={
+        <ThemedText variant="caption" numberOfLines={1}>
+          {description}
+        </ThemedText>
+      }
     />
   );
 });
@@ -78,9 +81,8 @@ export function UsersList({
 }: UsersListProps) {
   const {ds, theme} = useTheme();
   const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
-  const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({
-    onRefresh,
-  });
+  const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({onRefresh});
+  const fontScaleKey = ds.screen?.fontScale ?? 1;
 
   const renderItem = useCallback(
     ({item}: {item: User}) => (
@@ -108,11 +110,18 @@ export function UsersList({
     [styles.headerText, styles.titleDivider, users.length],
   );
 
+  const extraData = useMemo(
+    () => `${users.length}|${fontScaleKey}`,
+    [users.length, fontScaleKey],
+  );
+
   return (
     <FlashList
+      key={`users-${fontScaleKey}`}
       data={users}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
+      extraData={extraData}
       onEndReached={onEndReached}
       onEndReachedThreshold={onEndReachedThreshold}
       showsVerticalScrollIndicator={false}
@@ -127,7 +136,7 @@ export function UsersList({
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       content: {
         paddingLeft: ds.spacing.lg + ds.spacing.xxs,
@@ -139,13 +148,7 @@ const createStyles = makeStyleFactory(
       },
 
       title: {
-        ...ds.typography.label,
         marginBottom: ds.spacing.xs,
-      },
-
-      description: {
-        ...ds.typography.caption,
-        color: theme.muted,
       },
 
       divider: {

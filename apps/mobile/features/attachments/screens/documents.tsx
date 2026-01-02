@@ -29,6 +29,7 @@ import {
   type AttachmentIcon,
   Icon,
 } from '@/utils';
+import {ListCountFooter} from '../components';
 
 export type DocumentsListRef = {
   clearSelection: () => void;
@@ -76,13 +77,14 @@ const DocumentItem = memo<DocumentItemProps>(
     checkboxTranslateX,
     contentTranslateX,
   }) => {
-    const handlePress = useCallback(() => {
-      onPressRow(item.id);
-    }, [item.id, onPressRow]);
-
-    const handleLongPress = useCallback(() => {
-      onLongPressRow(item.id);
-    }, [item.id, onLongPressRow]);
+    const handlePress = useCallback(
+      () => onPressRow(item.id),
+      [item.id, onPressRow],
+    );
+    const handleLongPress = useCallback(
+      () => onLongPressRow(item.id),
+      [item.id, onLongPressRow],
+    );
 
     return (
       <TouchableOpacity
@@ -131,7 +133,8 @@ const DocumentItem = memo<DocumentItemProps>(
 
           <View style={styles.textContainer}>
             <ThemedText
-              variant="label"
+              allowFontScaling
+              variant="body"
               numberOfLines={1}
               ellipsizeMode="middle"
               style={styles.title}
@@ -139,7 +142,7 @@ const DocumentItem = memo<DocumentItemProps>(
               {item.uiTitle}
             </ThemedText>
 
-            <ThemedText variant="caption" numberOfLines={1}>
+            <ThemedText allowFontScaling variant="caption" numberOfLines={1}>
               {item.uiDescription}
             </ThemedText>
           </View>
@@ -166,20 +169,21 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
     const {triggerHaptic} = useHaptic();
     const styles = createStyles(ds, theme);
 
+    const fontScaleKey = ds.screen?.fontScale ?? 1;
+
     const [selectedIds, setSelectedIds] = useState<Set<string>>(
       () => new Set(),
     );
-    const isSelectionMode = selectedIds.size > 0;
 
     const [forceSelectionMode, setForceSelectionMode] = useState(false);
-    const effectiveSelectionMode = isSelectionMode || forceSelectionMode;
+    const selectionMode = forceSelectionMode || selectedIds.size > 0;
 
     const [selectionVisible, setSelectionVisible] = useState(false);
     const selectionAnimation = useRef(new Animated.Value(0)).current;
     const selectionShift = ds.spacing.xxl + ds.spacing.md;
 
     useEffect(() => {
-      if (effectiveSelectionMode) {
+      if (selectionMode) {
         setSelectionVisible(true);
         Animated.timing(selectionAnimation, {
           toValue: 1,
@@ -196,7 +200,7 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
       }).start(({finished}) => {
         if (finished) setSelectionVisible(false);
       });
-    }, [effectiveSelectionMode, selectionAnimation]);
+    }, [selectionMode, selectionAnimation]);
 
     const clearSelection = useCallback(() => {
       const empty = new Set<string>();
@@ -206,8 +210,8 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
     }, [onSelectionChange]);
 
     const enterSelectionMode = useCallback(() => {
-      if (!effectiveSelectionMode) setForceSelectionMode(true);
-    }, [effectiveSelectionMode]);
+      if (!selectionMode) setForceSelectionMode(true);
+    }, [selectionMode]);
 
     useImperativeHandle(ref, () => ({clearSelection, enterSelectionMode}), [
       clearSelection,
@@ -223,10 +227,7 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
           if (next.has(id)) next.delete(id);
           else next.add(id);
 
-          // Sticky selection mode once selection begins (prevents header/list desync).
-          if (prev.size === 0 && next.size === 1) {
-            setForceSelectionMode(true);
-          }
+          if (prev.size === 0 && next.size === 1) setForceSelectionMode(true);
 
           onSelectionChange?.(next);
           return next;
@@ -237,13 +238,13 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
 
     const handlePressRow = useCallback(
       (id: string) => {
-        if (effectiveSelectionMode) {
+        if (selectionMode) {
           toggleSelected(id);
           return;
         }
         onDocumentPress(id);
       },
-      [effectiveSelectionMode, toggleSelected, onDocumentPress],
+      [selectionMode, toggleSelected, onDocumentPress],
     );
 
     const handleLongPressRow = useCallback(
@@ -263,7 +264,7 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
         return {
           id: d.id,
           uiTitle: title,
-          uiDescription: `${dateAdded} • ${String(fileTypeRaw).toUpperCase()} • ${fileSize}`,
+          uiDescription: `${dateAdded} - ${fileSize} - ${String(fileTypeRaw).toUpperCase()}`,
           fileIcon: getAttachmentFileIcon({
             filename: title,
             extension: d.extension ?? null,
@@ -333,16 +334,32 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
       [styles.titleDivider],
     );
 
+    // Forces FlashList to re-measure when fontScale changes
+    const extraData = useMemo(
+      () => `${selectedIds.size}|${selectionMode ? 1 : 0}|${fontScaleKey}`,
+      [selectedIds.size, selectionMode, fontScaleKey],
+    );
+
     return (
       <FlashList
+        key={`documents-${fontScaleKey}`}
         data={files}
-        extraData={selectedIds.size}
+        extraData={extraData}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         onEndReached={onEndReached}
         onEndReachedThreshold={onEndReachedThreshold}
         ItemSeparatorComponent={ItemSeparator}
         ListHeaderComponent={ListHeader}
+        contentInsetAdjustmentBehavior="automatic"
+        ListFooterComponent={
+          <ListCountFooter
+            count={files.length}
+            dividerStyle={styles.divider}
+            containerStyle={styles.footer}
+            textVariant="callout"
+          />
+        }
       />
     );
   },
@@ -396,7 +413,7 @@ const createStyles = makeStyleFactory(
       },
 
       title: {
-        marginBottom: ds.spacing.xs,
+        paddingBottom: ds.spacing.xs,
       },
 
       divider: {
@@ -405,14 +422,14 @@ const createStyles = makeStyleFactory(
         marginRight: ds.spacing.lg,
       },
 
-      dividerSelected: {
-        backgroundColor: theme.ripple,
-      },
-
       titleDivider: {
         marginRight: ds.spacing.lg,
-        color: theme.ripple,
-        opacity: 0.8,
+      },
+
+      footer: {
+        paddingTop: ds.spacing.xxl,
+        paddingBottom: ds.spacing.xl,
+        alignItems: 'center',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

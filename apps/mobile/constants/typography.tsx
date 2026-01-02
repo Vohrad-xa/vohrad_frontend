@@ -1,6 +1,6 @@
 import {Platform, type TextProps} from 'react-native';
-import type {MD3TypescaleKey} from 'react-native-paper';
 import {generateVersion} from '../utils/versioning';
+import type {MD3TypescaleKey} from 'react-native-paper';
 
 type PaperVariant = `${MD3TypescaleKey}`;
 
