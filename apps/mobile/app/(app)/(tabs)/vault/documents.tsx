@@ -1,15 +1,11 @@
-import React, {
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import {Platform} from 'react-native';
+import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
+import {Platform, StyleSheet, View} from 'react-native';
 import {useDeleteAttachment} from '@sykamore/store';
 import {useNavigation} from 'expo-router';
 import {Snackbar} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {HeaderButton} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {
   useAttachmentsByKind,
   useAttachmentPress,
@@ -20,17 +16,17 @@ import {
 import {useTheme} from '@/providers';
 import {
   showConfirmAlert,
-  getHeaderOptions,
-  type HeaderAction,
   sanitizeInlineText,
   AppIcons,
+  makeStyleFactory,
 } from '@/utils';
 import type {ItemAttachment} from '@sykamore/types';
 
 export default function VaultDocumentsScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const {ds} = useTheme();
+  const {ds, theme} = useTheme();
+  const styles = createStyles(ds, theme);
 
   const {attachments: documentAttachments, getById: getDocumentById} =
     useAttachmentsByKind('document');
@@ -42,8 +38,6 @@ export default function VaultDocumentsScreen() {
   const documentsListRef = useRef<DocumentsListRef>(null);
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
-  const isSelectionMode = selectedIds.size > 0;
-
   const [isInSelectionMode, setIsInSelectionMode] = useState(false);
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -56,7 +50,7 @@ export default function VaultDocumentsScreen() {
 
   const handleSelectionChange = useCallback((ids: Set<string>) => {
     setSelectedIds(new Set(ids));
-    if (ids.size > 0) setIsInSelectionMode(true);
+    setIsInSelectionMode(ids.size > 0);
   }, []);
 
   const handleCancelSelection = useCallback(() => {
@@ -113,7 +107,7 @@ export default function VaultDocumentsScreen() {
   }, [selectedIds, deleteAttachment, getDocumentById, finishSelection]);
 
   const handleShareSelected = useCallback(async () => {
-    if (selectedIds.size === 0 || isProcessing) return;
+    if (selectedIds.size === 0) return;
 
     const ids = Array.from(selectedIds);
     const count = ids.length;
@@ -143,7 +137,6 @@ export default function VaultDocumentsScreen() {
     selectedIds,
     getDocumentById,
     shareAttachments,
-    isProcessing,
     handleCancelSelection,
     finishSelection,
   ]);
@@ -153,76 +146,73 @@ export default function VaultDocumentsScreen() {
     documentsListRef.current?.enterSelectionMode();
   }, []);
 
-  const cancelAction: HeaderAction = useMemo(
-    () => ({
-      type: 'button',
-      key: 'cancel',
-      label: 'Cancel',
-      accessibilityLabel: 'Cancel selection',
-      accessibilityHint: 'Exit selection mode',
-      iosSymbol: 'xmark',
-      icon: AppIcons.actions.close,
-      onPress: handleCancelSelection,
-    }),
-    [handleCancelSelection],
-  );
+  const headerRight = useCallback(() => {
+    const cancelButton = (
+      <HeaderButton
+        variant="close"
+        accessibilityLabel="Cancel selection"
+        accessibilityHint="Exit selection mode"
+        onPress={handleCancelSelection}
+      />
+    );
 
-  useLayoutEffect(() => {
-    const right: HeaderAction[] | undefined = isInSelectionMode
-      ? isSelectionMode
-        ? [
-            {
-              type: 'button',
-              key: 'share',
-              label: 'Share',
-              accessibilityLabel: 'Share selected documents',
-              accessibilityHint: 'Share or download selected documents',
-              iosSymbol: 'square.and.arrow.up',
-              icon: AppIcons.actions.share,
-              onPress: () => void handleShareSelected(),
-              disabled: isProcessing,
-            },
-            {
-              type: 'button',
-              key: 'delete',
-              label: 'Delete',
-              accessibilityLabel: 'Delete selected documents',
-              accessibilityHint: 'Permanently delete selected documents',
-              iosSymbol: 'trash',
-              icon: AppIcons.actions.delete,
-              onPress: () => void handleDeleteSelected(),
-              disabled: isProcessing,
-            },
-            cancelAction,
-          ]
-        : [cancelAction]
-      : [
-          {
-            type: 'button',
-            key: 'select',
-            label: 'Select',
-            accessibilityLabel: 'Enter selection mode',
-            accessibilityHint: 'Select documents to share or delete',
-            icon: AppIcons.actions.edit,
-            onPress: handleSelectModePress,
-          },
-        ];
+    if (isInSelectionMode) {
+      if (selectedIds.size > 0) {
+        const sharePress = isProcessing
+          ? undefined
+          : () => void handleShareSelected();
+        const deletePress = isProcessing
+          ? undefined
+          : () => void handleDeleteSelected();
 
-    navigation.setOptions(
-      getHeaderOptions({
-        right,
-      }),
+        return (
+          <>
+            <View style={styles.headerButtons}>
+              <HeaderButton
+                icon={AppIcons.actions.share}
+                accessibilityLabel="Share selected documents"
+                accessibilityHint="Share or download selected documents"
+                onPress={sharePress}
+              />
+              <HeaderButton
+                icon={AppIcons.actions.delete}
+                accessibilityLabel="Delete selected documents"
+                accessibilityHint="Permanently delete selected documents"
+                onPress={deletePress}
+              />
+            </View>
+            {cancelButton}
+          </>
+        );
+      }
+
+      return cancelButton;
+    }
+
+    return (
+      <HeaderButton
+        icon={AppIcons.actions.edit}
+        accessibilityLabel="Enter selection mode"
+        accessibilityHint="Select documents to share or delete"
+        onPress={handleSelectModePress}
+      />
     );
   }, [
-    navigation,
-    isInSelectionMode,
-    isSelectionMode,
-    handleShareSelected,
+    handleCancelSelection,
     handleDeleteSelected,
-    isProcessing,
     handleSelectModePress,
-    cancelAction,
+    handleShareSelected,
+    isInSelectionMode,
+    isProcessing,
+    selectedIds.size,
+    styles.headerButtons,
   ]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight,
+    });
+  }, [navigation, headerRight]);
 
   const handleDocumentPress = useCallback(
     async (documentId: string) => {
@@ -259,3 +249,15 @@ export default function VaultDocumentsScreen() {
     </>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (ds: DSShape, _theme: ThemeShape) =>
+    StyleSheet.create({
+      headerButtons: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: ds.spacing.xs,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);
