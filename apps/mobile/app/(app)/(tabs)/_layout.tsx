@@ -64,7 +64,7 @@ export default function TabLayout() {
       minimizeBehavior="onScrollDown"
       labelStyle={{
         default: {color: theme.text},
-        selected: {color: theme.accentBlue, fontWeight: '800'},
+        selected: {color: theme.accentBlue},
       }}
     >
       {TABS.map((t) => (

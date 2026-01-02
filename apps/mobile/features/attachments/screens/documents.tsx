@@ -31,9 +31,17 @@ import {
 } from '@/utils';
 import {ListCountFooter} from '../components';
 
+/**
+ * Imperative selection controls consumed by parent navigation/header flows.
+ *
+ * - Always drive both local state and `onSelectionChange` so callers can treat
+ *   the ref as the single entry point for bulk operations.
+ */
 export type DocumentsListRef = {
   clearSelection: () => void;
   enterSelectionMode: () => void;
+  selectAll: () => void;
+  deselectAll: () => void;
 };
 
 type DocumentsListProps = {
@@ -154,6 +162,16 @@ const DocumentItem = memo<DocumentItemProps>(
 
 DocumentItem.displayName = 'DocumentItem';
 
+/**
+ * FlashList-backed document list with animated multi-select UX.
+ *
+ * - Owns selection state + animations; parent reacts via `onSelectionChange`
+ *   and the `DocumentsListRef` contract only.
+ * - Treats `selectionMode` as a derived flag to keep header/layout decisions
+ *   simple while still supporting "empty" selection mode.
+ * - Bakes font scale into `key`/`extraData` so layout re-measures correctly
+ *   when the OS text size changes.
+ */
 export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
   (
     {
@@ -183,6 +201,7 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
     const selectionShift = ds.spacing.xxl + ds.spacing.md;
 
     useEffect(() => {
+      // Delay hiding checkboxes until the closing animation finishes to avoid flicker
       if (selectionMode) {
         setSelectionVisible(true);
         Animated.timing(selectionAnimation, {
@@ -209,14 +228,31 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
       onSelectionChange?.(empty);
     }, [onSelectionChange]);
 
+    const selectAll = useCallback(() => {
+      if (documents.length === 0) return;
+      const all = new Set(documents.map((doc) => doc.id));
+      setSelectedIds(all);
+      setForceSelectionMode(true);
+      onSelectionChange?.(all);
+    }, [documents, onSelectionChange]);
+
+    const deselectAll = useCallback(() => {
+      // Keep forceSelectionMode true so the parent header can offer "Select All" again
+      const empty = new Set<string>();
+      setSelectedIds(empty);
+      setForceSelectionMode(true);
+      onSelectionChange?.(empty);
+    }, [onSelectionChange]);
+
     const enterSelectionMode = useCallback(() => {
       if (!selectionMode) setForceSelectionMode(true);
     }, [selectionMode]);
 
-    useImperativeHandle(ref, () => ({clearSelection, enterSelectionMode}), [
-      clearSelection,
-      enterSelectionMode,
-    ]);
+    useImperativeHandle(
+      ref,
+      () => ({clearSelection, enterSelectionMode, selectAll, deselectAll}),
+      [clearSelection, enterSelectionMode, selectAll, deselectAll],
+    );
 
     const toggleSelected = useCallback(
       (id: string) => {

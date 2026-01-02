@@ -1,11 +1,10 @@
 import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
-import {Platform, StyleSheet, View} from 'react-native';
+import {Platform} from 'react-native';
 import {useDeleteAttachment} from '@sykamore/store';
 import {useNavigation} from 'expo-router';
 import {Snackbar} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {HeaderButton} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {
   useAttachmentsByKind,
   useAttachmentPress,
@@ -14,19 +13,19 @@ import {
   type DocumentsListRef,
 } from '@/features/attachments';
 import {useTheme} from '@/providers';
-import {
-  showConfirmAlert,
-  sanitizeInlineText,
-  AppIcons,
-  makeStyleFactory,
-} from '@/utils';
+import {showConfirmAlert, sanitizeInlineText} from '@/utils';
 import type {ItemAttachment} from '@sykamore/types';
 
+/**
+ * Coordinates the documents list with selection-driven header actions.
+ *
+ * - Mirrors selection state into native headers for share/delete flows
+ * - Centralizes mutation side effects and snackbar feedback
+ */
 export default function VaultDocumentsScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const {ds, theme} = useTheme();
-  const styles = createStyles(ds, theme);
+  const {ds} = useTheme();
 
   const {attachments: documentAttachments, getById: getDocumentById} =
     useAttachmentsByKind('document');
@@ -48,9 +47,13 @@ export default function VaultDocumentsScreen() {
     setSnackbarVisible(true);
   }, []);
 
+  /**
+   * Keeps selection mode latched once entered so the cancel button stays visible
+   * even when the selection temporarily drops to zero.
+   */
   const handleSelectionChange = useCallback((ids: Set<string>) => {
     setSelectedIds(new Set(ids));
-    setIsInSelectionMode(ids.size > 0);
+    setIsInSelectionMode((prev) => prev || ids.size > 0);
   }, []);
 
   const handleCancelSelection = useCallback(() => {
@@ -120,7 +123,7 @@ export default function VaultDocumentsScreen() {
       const shared = await shareAttachments(selectedDocuments);
 
       if (!shared) {
-        // Keep iOS selection if user cancels share sheet; Android needs clean!
+        // For now we iOS selection if user cancels share sheet; Android needs cleanup!
         if (Platform.OS === 'android') {
           handleCancelSelection();
         }
@@ -146,6 +149,17 @@ export default function VaultDocumentsScreen() {
     documentsListRef.current?.enterSelectionMode();
   }, []);
 
+  const handleSelectAll = useCallback(() => {
+    documentsListRef.current?.selectAll();
+  }, []);
+
+  const handleDeselectAll = useCallback(() => {
+    documentsListRef.current?.deselectAll();
+  }, []);
+
+  /**
+   * Renders share/delete/cancel actions in the order the native header expects,
+   */
   const headerRight = useCallback(() => {
     const cancelButton = (
       <HeaderButton
@@ -167,20 +181,18 @@ export default function VaultDocumentsScreen() {
 
         return (
           <>
-            <View style={styles.headerButtons}>
-              <HeaderButton
-                icon={AppIcons.actions.share}
-                accessibilityLabel="Share selected documents"
-                accessibilityHint="Share or download selected documents"
-                onPress={sharePress}
-              />
-              <HeaderButton
-                icon={AppIcons.actions.delete}
-                accessibilityLabel="Delete selected documents"
-                accessibilityHint="Permanently delete selected documents"
-                onPress={deletePress}
-              />
-            </View>
+            <HeaderButton
+              variant="share"
+              accessibilityLabel="Share selected documents"
+              accessibilityHint="Share or download selected documents"
+              onPress={sharePress}
+            />
+            <HeaderButton
+              variant="delete"
+              accessibilityLabel="Delete selected documents"
+              accessibilityHint="Permanently delete selected documents"
+              onPress={deletePress}
+            />
             {cancelButton}
           </>
         );
@@ -191,7 +203,8 @@ export default function VaultDocumentsScreen() {
 
     return (
       <HeaderButton
-        icon={AppIcons.actions.edit}
+        variant={Platform.OS === 'ios' ? 'text' : 'edit'}
+        text="Select"
         accessibilityLabel="Enter selection mode"
         accessibilityHint="Select documents to share or delete"
         onPress={handleSelectModePress}
@@ -205,14 +218,45 @@ export default function VaultDocumentsScreen() {
     isInSelectionMode,
     isProcessing,
     selectedIds.size,
-    styles.headerButtons,
+  ]);
+
+  /**
+   * Surfaces the Select All / Deselect All affordance without adding extra UI,
+   * mirroring whatever bulk action the user triggered last.
+   */
+  const headerLeft = useCallback(() => {
+    if (!isInSelectionMode) return undefined;
+    const totalDocs = documentAttachments.length;
+    const hasAllSelected = totalDocs > 0 && selectedIds.size === totalDocs;
+    return (
+      <HeaderButton
+        variant="text"
+        text={hasAllSelected ? 'Deselect All' : 'Select All'}
+        accessibilityLabel={
+          hasAllSelected ? 'Deselect all documents' : 'Select all documents'
+        }
+        accessibilityHint={
+          hasAllSelected
+            ? 'Clear the current document selection'
+            : 'Select all documents in the list'
+        }
+        onPress={hasAllSelected ? handleDeselectAll : handleSelectAll}
+      />
+    );
+  }, [
+    documentAttachments.length,
+    handleDeselectAll,
+    handleSelectAll,
+    isInSelectionMode,
+    selectedIds.size,
   ]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight,
+      headerLeft,
     });
-  }, [navigation, headerRight]);
+  }, [navigation, headerRight, headerLeft]);
 
   const handleDocumentPress = useCallback(
     async (documentId: string) => {
@@ -249,15 +293,3 @@ export default function VaultDocumentsScreen() {
     </>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      headerButtons: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: ds.spacing.xs,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);
