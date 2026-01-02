@@ -111,7 +111,10 @@ export type HeaderButtonVariant =
 export interface HeaderButtonProps
   extends
     Omit<RequiredIconProps, 'icon'>,
-    Pick<BaseViewProps, 'style' | 'accessibilityLabel' | 'testID'> {
+    Pick<
+      BaseViewProps,
+      'style' | 'accessibilityLabel' | 'accessibilityHint' | 'testID'
+    > {
   onPress?: () => void;
   variant?: HeaderButtonVariant;
   icon?: IconName;
@@ -138,6 +141,7 @@ export const HeaderButton = ({
   symbolType,
   symbolColorTokens,
   accessibilityLabel,
+  accessibilityHint,
   testID,
   style,
 }: HeaderButtonProps) => {
@@ -147,6 +151,7 @@ export const HeaderButton = ({
     default: ds.spacing.xxl + ds.spacing.md,
   });
   const styles = createStyles(ds, baseSize, theme);
+  const isDisabled = !onPress;
 
   const variantConfig = getVariantConfig(variant, theme);
 
@@ -185,7 +190,7 @@ export const HeaderButton = ({
         color: theme.ripple,
         radius: baseSize / 2,
       }}
-      style={[styles.button, style]}
+      style={[styles.button, isDisabled && styles.buttonDisabled, style]}
       accessibilityRole="button"
       accessibilityLabel={
         accessibilityLabel ??
@@ -195,9 +200,11 @@ export const HeaderButton = ({
             ? `${getReadableIconName(useIcon)} button`
             : 'button')
       }
+      accessibilityHint={accessibilityHint}
+      accessibilityState={{disabled: isDisabled}}
       testID={testID}
       onPress={onPress}
-      disabled={!onPress}
+      disabled={isDisabled}
     >
       {buttonContent}
     </Pressable>
@@ -217,6 +224,9 @@ const createStyles = makeStyleFactory(
             marginHorizontal: ds.spacing.sm,
           },
         }),
+      },
+      buttonDisabled: {
+        opacity: 0.4,
       },
     }),
   (ds, _baseSize, theme) => themeKey(theme, ds),
