@@ -58,7 +58,6 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
       },
       message: {
-        ...ds.typography.secondary,
         color: theme.muted,
         marginRight: ds.spacing.sm,
         flexShrink: 1,

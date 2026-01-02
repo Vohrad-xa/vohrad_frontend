@@ -116,12 +116,12 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
       },
       avatarText: {
-        ...ds.typography.heading,
+        // ...ds.typography.heading,
       },
       profileName: {
         flex: 1,
         color: theme.text,
-        ...ds.typography.secondary,
+        // ...ds.typography.secondary,
         fontWeight: ds.fontWeight.medium,
         marginLeft: ds.spacing.md,
       },

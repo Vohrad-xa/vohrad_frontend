@@ -117,7 +117,7 @@ export const DatePickerWeb: React.FC<DatePickerWebProps> = ({
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        font-size: ${ds.typography.body.fontSize}px !important;
+        font-size: ${20}px !important;
       }
       .react-datepicker__time-list-item:hover {
         background: ${theme.card} !important;

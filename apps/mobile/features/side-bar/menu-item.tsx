@@ -1,4 +1,5 @@
-import {TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {TouchableOpacity, StyleSheet} from 'react-native';
+import {ThemedText} from '@/components/ui/themed-text';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {MenuItemProps} from '@/types/ui';
@@ -16,7 +17,9 @@ export function MenuItem({icon, label, onPress, isDestructive}: MenuItemProps) {
         name={icon}
         color={isDestructive ? theme.destructive : theme.muted}
       />
-      <Text style={styles.menuItemText}>{label}</Text>
+      <ThemedText variant="body" style={styles.menuItemText}>
+        {label}
+      </ThemedText>
     </TouchableOpacity>
   );
 }
@@ -34,8 +37,6 @@ const createStyles = makeStyleFactory(
         marginBottom: ds.spacing.xs,
       },
       menuItemText: {
-        color: theme.text,
-        ...ds.typography.body,
         fontWeight: ds.fontWeight.medium,
         marginLeft: ds.spacing.md,
       },

@@ -27,11 +27,11 @@ export function OrganizationHeaderInfo() {
             variant="statusBadge"
             badgeStatus={organization.status as BadgeStatus}
           >
-            <ThemedText variant="badgeText">{organization.status}</ThemedText>
+            <ThemedText variant="footnote">{organization.status}</ThemedText>
           </ThemedView>
         </View>
-        <ThemedText variant="secondary">{organization.email}</ThemedText>
-        <ThemedText variant="secondary" style={styles.headerSupporting}>
+        <ThemedText variant="caption">{organization.email}</ThemedText>
+        <ThemedText variant="caption" style={styles.headerSupporting}>
           Since {formatDate(organization.created_at)}
         </ThemedText>
       </View>
@@ -70,7 +70,6 @@ const createStyles = makeStyleFactory(
         opacity: ds.opacity.muted,
       },
       headerSupporting: {
-        ...ds.typography.caption,
         opacity: ds.opacity.muted,
       },
       headerSeparator: {

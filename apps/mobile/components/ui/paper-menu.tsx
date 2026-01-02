@@ -86,7 +86,6 @@ export function PaperMenu({
             rippleColor={theme.card}
             titleStyle={{
               color: attributes?.destructive ? theme.destructive : theme.text,
-              fontSize: ds.typography.body.fontSize,
               fontWeight: ds.fontWeight.medium,
             }}
           />,

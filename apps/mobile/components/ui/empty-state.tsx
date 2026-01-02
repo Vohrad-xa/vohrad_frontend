@@ -33,7 +33,7 @@ export function EmptyState({message, icon, iconSize = 48}: EmptyStateProps) {
             style={styles.icon}
           />
         )}
-        <ThemedText variant="secondary" style={styles.message}>
+        <ThemedText variant="value" style={styles.message}>
           {message}
         </ThemedText>
       </View>

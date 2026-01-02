@@ -121,7 +121,7 @@ export const PreferencesContentEditable = forwardRef<
     <View style={styles.container}>
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <ThemedText variant="heading" style={styles.sectionTitle}>
+          <ThemedText variant="headline" style={styles.sectionTitle}>
             Localization
           </ThemedText>
         </View>
@@ -187,7 +187,6 @@ const createStyles = makeStyleFactory(
         justifyContent: 'space-between',
       },
       sectionTitle: {
-        ...ds.typography.heading,
         paddingHorizontal: Platform.OS === 'web' ? 0 : ds.spacing.xl,
       },
       disabledText: {

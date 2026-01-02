@@ -68,9 +68,7 @@ const createStyles = makeStyleFactory(
       listItem: {
         paddingRight: 0,
       },
-      itemTitle: {
-        ...ds.typography.label,
-      },
+      itemTitle: {},
       iconContainer: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -79,7 +77,6 @@ const createStyles = makeStyleFactory(
         marginLeft: ds.spacing.xxxl,
       },
       description: {
-        ...ds.typography.value,
         color: theme.muted,
         marginTop: ds.spacing.xs,
       },

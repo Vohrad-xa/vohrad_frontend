@@ -14,6 +14,8 @@ import {
   Appearance,
   Platform,
   useWindowDimensions,
+  AppState,
+  PixelRatio,
 } from 'react-native';
 import {ThemeProvider as NavigationThemeProvider} from '@react-navigation/native';
 import {
@@ -39,9 +41,7 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function useTheme(): ThemeContextValue {
   const ctx = useContext(ThemeContext);
-  if (!ctx) {
-    throw new Error('useTheme must be used within AppThemeProvider');
-  }
+  if (!ctx) throw new Error('useTheme must be used within AppThemeProvider');
   return ctx;
 }
 
@@ -53,15 +53,35 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
   const systemScheme = useRNColorScheme() ?? 'light';
   const [preference, setPreference] = useState<ThemePreference>('system');
   const [hydrated, setHydrated] = useState(false);
+
   const overlayOpacity = useRef(new Animated.Value(0)).current;
   const [overlayColor, setOverlayColor] = useState<string | null>(null);
   const isAnimating = useRef(false);
+
   const scheme: ColorScheme =
     preference === 'system' ? systemScheme : preference;
+
   const {width, height, fontScale} = useWindowDimensions();
+
+  // keeping a reliable “font scale key” for rerenders / caches
+  const [fontScaleKey, setFontScaleKey] = useState(() =>
+    PixelRatio.getFontScale(),
+  );
+
+  useEffect(() => {
+    setFontScaleKey(fontScale);
+  }, [fontScale]);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') setFontScaleKey(PixelRatio.getFontScale());
+    });
+    return () => sub.remove();
+  }, []);
+
   const ds = useMemo(
-    () => createDesignSystem(width, height, fontScale),
-    [width, height, fontScale],
+    () => createDesignSystem(width, height, fontScaleKey),
+    [width, height, fontScaleKey],
   );
 
   const STORAGE_KEY = 'app.theme.scheme';
@@ -80,9 +100,7 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
           setPreference(saved);
         }
       } finally {
-        if (mounted) {
-          setHydrated(true);
-        }
+        if (mounted) setHydrated(true);
       }
     })();
     return () => {
@@ -105,9 +123,7 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
   }, [preference]);
 
   const toggle = useCallback(() => {
-    if (isAnimating.current) {
-      return;
-    }
+    if (isAnimating.current) return;
 
     const nextPreference: ThemePreference =
       scheme === 'light' ? 'dark' : 'light';
@@ -132,6 +148,7 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
   }, [overlayOpacity, scheme]);
 
   const theme = useMemo(() => Tokens[scheme], [scheme]);
+
   const value = useMemo(
     () => ({
       scheme,
@@ -146,14 +163,12 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
 
   const navTheme = NavigationThemes[scheme];
 
-  if (!hydrated) {
-    return null;
-  }
+  if (!hydrated) return null;
 
   return (
     <NavigationThemeProvider value={navTheme}>
       <ThemeContext.Provider value={value}>
-        <React.Fragment>
+        <>
           {children}
           {overlayColor ? (
             <Animated.View
@@ -167,7 +182,7 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
               ]}
             />
           ) : null}
-        </React.Fragment>
+        </>
       </ThemeContext.Provider>
     </NavigationThemeProvider>
   );

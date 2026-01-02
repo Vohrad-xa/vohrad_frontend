@@ -116,7 +116,7 @@ const createStyles = makeStyleFactory(
         paddingVertical: ds.spacing.md,
       },
       itemTitle: {
-        ...ds.typography.label,
+        // ...ds.typography.label,
       },
       itemList: {
         paddingRight: 0,

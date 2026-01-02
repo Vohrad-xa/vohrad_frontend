@@ -230,11 +230,7 @@ export function PersonalEmailForm({
 
       <View style={styles.section}>
         <TouchableOpacity onPress={handleForgotPassword} disabled={isLoading}>
-          <ThemedText
-            variant="secondary"
-            colorToken="muted"
-            style={styles.forgotPasswordLink}
-          >
+          <ThemedText variant="caption" style={styles.forgotPasswordLink}>
             Forgot password?
           </ThemedText>
         </TouchableOpacity>

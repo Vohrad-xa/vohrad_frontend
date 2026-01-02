@@ -75,7 +75,6 @@ const createStyles = makeStyleFactory(
       },
       labelText: {
         flex: 1,
-        ...ds.typography.body,
         fontWeight: ds.fontWeight.medium,
       },
       labelTextDestructive: {

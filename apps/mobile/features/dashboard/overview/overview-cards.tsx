@@ -66,7 +66,7 @@ export function OverviewCards({
   return (
     <>
       <View style={styles.overviewHeader}>
-        <ThemedText variant="heading">Overview</ThemedText>
+        <ThemedText variant="headline">Overview</ThemedText>
         <View style={styles.headerRight}>
           {hasActiveFilters && (
             <ThemedText variant="body" style={styles.filterStatus}>
@@ -120,11 +120,11 @@ export function OverviewCards({
                     size="lg"
                     colorToken={card.colorToken}
                   />
-                  <ThemedText variant="secondary" style={styles.cardTitle}>
+                  <ThemedText variant="body" style={styles.cardTitle}>
                     {card.title}
                   </ThemedText>
                 </View>
-                <ThemedText variant="heading" style={styles.cardCount}>
+                <ThemedText variant="headline" style={styles.cardCount}>
                   {card.count}
                 </ThemedText>
               </ThemedView>
@@ -193,7 +193,6 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.sm,
       },
       filterStatus: {
-        ...ds.typography.caption,
         color: theme.muted,
       },
       cardContainer: {

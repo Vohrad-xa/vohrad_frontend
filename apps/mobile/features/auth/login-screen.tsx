@@ -53,7 +53,7 @@ export default function LoginScreen() {
         >
           <View style={[styles.centered, styles.spacingXl]}>
             <Image source={darkModeImage} style={styles.heroImage} />
-            <ThemedText variant="sectionTitle" style={styles.centered}>
+            <ThemedText variant="headline" style={styles.centered}>
               Sign in
             </ThemedText>
           </View>
@@ -78,7 +78,7 @@ export default function LoginScreen() {
 
             <View style={[styles.divider, buttonStyles]}>
               <View style={styles.dividerLine} />
-              <ThemedText variant="secondary" colorToken="muted">
+              <ThemedText variant="caption" colorToken="muted">
                 OR
               </ThemedText>
               <View style={styles.dividerLine} />

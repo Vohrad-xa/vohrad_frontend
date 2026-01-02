@@ -406,13 +406,11 @@ const createStyles = makeStyleFactory(
         flex: 1,
       },
       valueText: {
-        ...ds.typography.value,
         flexShrink: 1,
         textAlign: 'right',
         color: theme.muted,
       },
       valueTextWeb: {
-        ...ds.typography.body,
         width: '100%',
         textAlign: 'left',
         color: theme.text,

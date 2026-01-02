@@ -181,7 +181,7 @@ const createStyles = makeStyleFactory(
         borderWidth: 0,
       },
       sectionTitleStyle: {
-        ...ds.typography.sectionTitle,
+        // ...ds.typography.sectionTitle,
       },
       itemList: {
         paddingRight: 0,

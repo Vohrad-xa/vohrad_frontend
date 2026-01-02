@@ -53,23 +53,15 @@ const createStyles = makeStyleFactory(
     textAlign: 'left' | 'center' | 'right',
     borderless: boolean,
   ) => {
-    const typographyStyle = ds.typography[variant];
-    const resolvedTypography = typographyStyle ?? ds.typography.body;
-
     // Match ThemedText color logic
     const textColor =
-      variant === 'secondary' || variant === 'caption'
+      variant === 'caption' || variant === 'caption2'
         ? theme.muted
         : theme.text;
 
     return StyleSheet.create({
       input: {
-        fontFamily: ds.fonts.system,
         color: textColor,
-        fontSize: resolvedTypography.fontSize,
-        lineHeight: resolvedTypography.lineHeight,
-        fontWeight: resolvedTypography.fontWeight,
-        letterSpacing: resolvedTypography.letterSpacing,
         padding: 0,
         textAlign,
         minWidth: 100,

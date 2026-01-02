@@ -189,7 +189,6 @@ const createStyles = makeStyleFactory(
         justifyContent: 'center',
       } as ViewStyle,
       actionLabel: {
-        ...ds.typography.footnote,
         textAlign: 'center',
         color: theme.muted,
         fontWeight: ds.fontWeight.semibold,

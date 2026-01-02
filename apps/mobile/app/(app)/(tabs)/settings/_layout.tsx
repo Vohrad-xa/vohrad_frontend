@@ -72,8 +72,6 @@ function SettingsStack() {
       headerTransparent: Platform.OS === 'ios',
       headerTitleAlign: 'left' as const,
       headerTitleStyle: {
-        fontSize:
-          Platform.OS === 'android' ? ds.typography.title3.fontSize : undefined,
         fontWeight: ds.fontWeight.bold,
         color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
       },
@@ -85,7 +83,6 @@ function SettingsStack() {
       },
     }),
     [
-      ds.typography.title3.fontSize,
       ds.fontWeight.bold,
       theme.headerAndroid,
       ds.layout.tabBarHeight,
@@ -95,7 +92,7 @@ function SettingsStack() {
 
   const indexOptions = useMemo(
     () => ({
-      title: 'Settings',
+      headerTitle: 'Settings',
       headerTitleAlign: 'center' as const,
       headerLeft: headerLeftMenu,
       headerRight: headerRightNotifications,
@@ -106,7 +103,7 @@ function SettingsStack() {
 
   const usersIndexOptions = useMemo(
     () => ({
-      title: 'Users',
+      headerTitle: 'Users',
       headerLargeTitle: true,
       headerSearchBarOptions: searchBarOptions,
     }),

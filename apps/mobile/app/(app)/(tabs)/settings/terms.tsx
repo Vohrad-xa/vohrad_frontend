@@ -11,23 +11,19 @@ export default function TermsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.text}>Terms of Use</ThemedText>
+      <ThemedText>Terms of Use</ThemedText>
     </ThemedView>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: ds.spacing.xl,
-      },
-      text: {
-        ...ds.typography.sectionTitle,
-        color: theme.text,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

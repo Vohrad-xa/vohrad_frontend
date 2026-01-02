@@ -93,8 +93,6 @@ function ItemsStack() {
       headerTransparent: Platform.OS === 'ios',
       headerTitleAlign: 'left' as const,
       headerTitleStyle: {
-        fontSize:
-          Platform.OS === 'android' ? ds.typography.title3.fontSize : undefined,
         fontWeight: ds.fontWeight.bold,
         color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
       },
@@ -106,7 +104,6 @@ function ItemsStack() {
       },
     }),
     [
-      ds.typography.title3.fontSize,
       ds.fontWeight.bold,
       theme.headerAndroid,
       ds.layout.tabBarHeight,

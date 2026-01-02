@@ -11,23 +11,19 @@ export default function AboutScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.text}>About</ThemedText>
+      <ThemedText>About</ThemedText>
     </ThemedView>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         paddingHorizontal: ds.spacing.xl,
-      },
-      text: {
-        ...ds.typography.sectionTitle,
-        color: theme.text,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

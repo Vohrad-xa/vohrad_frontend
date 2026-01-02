@@ -19,10 +19,10 @@ export function PlanScreen() {
       <Card>
         <Card.Row hideChevron icon={AppIcons.preferences.plan}>
           <ThemedText variant="label">{license?.name}</ThemedText>
-          <ThemedText variant="secondary" colorToken="muted">
+          <ThemedText variant="caption" colorToken="muted">
             allows {license?.seats} users
           </ThemedText>
-          <ThemedText variant="secondary" colorToken="destructive">
+          <ThemedText variant="caption" colorToken="destructive">
             Expires on {formatDate(license?.ends_at)}
           </ThemedText>
         </Card.Row>

@@ -144,11 +144,9 @@ const createStyles = makeStyleFactory(
         paddingLeft: ds.spacing.xl * 3 + ds.spacing.xs,
       },
       errorText: {
-        fontSize: ds.typography.body.fontSize,
         textAlign: 'center',
       },
       emptyText: {
-        fontSize: ds.typography.body.fontSize,
         textAlign: 'center',
       },
       footerMessage: {

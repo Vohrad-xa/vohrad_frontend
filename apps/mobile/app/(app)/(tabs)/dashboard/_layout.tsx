@@ -22,10 +22,6 @@ export default function HomeLayout() {
         headerTransparent: Platform.OS === 'ios',
         headerTitleAlign: 'left',
         headerTitleStyle: {
-          fontSize:
-            Platform.OS === 'android'
-              ? ds.typography.title3.fontSize
-              : undefined,
           fontWeight: ds.fontWeight.bold,
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },

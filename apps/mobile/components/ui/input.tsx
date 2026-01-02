@@ -111,8 +111,6 @@ const createStyles = makeStyleFactory(
         borderRadius: ds.components.input.borderRadius,
         paddingVertical: ds.spacing.md,
         paddingHorizontal: ds.spacing.md,
-        fontSize: ds.typography.body.fontSize,
-        fontWeight: ds.typography.body.fontWeight,
         minHeight: inputMinHeight,
         ...Platform.select({
           android: {

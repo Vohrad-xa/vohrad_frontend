@@ -117,18 +117,18 @@ export const ProfileContentEditable = forwardRef<
         <View style={styles.metaContent}>
           <View style={styles.metaColumn}>
             <ThemedView variant="roleBadge">
-              <ThemedText variant="badgeText">
+              <ThemedText variant="footnote">
                 {profileDetails.role ?? 'Member'}
               </ThemedText>
             </ThemedView>
             {profileDetails.role_description && (
-              <ThemedText variant="secondary" style={styles.metaSupporting}>
+              <ThemedText variant="caption" style={styles.metaSupporting}>
                 {profileDetails.role_description}
               </ThemedText>
             )}
             {profileDetails.pending_email && (
               <>
-                <ThemedText variant="secondary" style={styles.metaSupporting}>
+                <ThemedText variant="caption" style={styles.metaSupporting}>
                   Pending confirmation: {profileDetails.pending_email}
                 </ThemedText>
                 <ThemedButton
@@ -150,14 +150,14 @@ export const ProfileContentEditable = forwardRef<
 
           <View style={styles.metaColumn}>
             <ThemedText variant="label">Member Since</ThemedText>
-            <ThemedText variant="secondary">
+            <ThemedText variant="caption">
               {formatDate(profileDetails.created_at)}
             </ThemedText>
-            <ThemedText variant="secondary" style={styles.metaSupporting}>
+            <ThemedText variant="caption" style={styles.metaSupporting}>
               Last updated {formatDate(profileDetails.updated_at)}
             </ThemedText>
             {profileDetails.pending_email_expires_at && (
-              <ThemedText variant="secondary" style={styles.metaSupporting}>
+              <ThemedText variant="caption" style={styles.metaSupporting}>
                 Confirmation expires{' '}
                 {formatDate(profileDetails.pending_email_expires_at)}
               </ThemedText>
@@ -168,7 +168,7 @@ export const ProfileContentEditable = forwardRef<
 
       {/* Personal Information */}
       <View style={[styles.section, styles.sectionWithDatePicker]}>
-        <ThemedText variant="heading" style={styles.sectionTitle}>
+        <ThemedText variant="headline" style={styles.sectionTitle}>
           Personal Information
         </ThemedText>
         <InfoRowCard
@@ -182,7 +182,7 @@ export const ProfileContentEditable = forwardRef<
 
       {/* Contact */}
       <View style={styles.section}>
-        <ThemedText variant="heading" style={styles.sectionTitle}>
+        <ThemedText variant="headline" style={styles.sectionTitle}>
           Contact
         </ThemedText>
         <InfoRowCard
@@ -196,7 +196,7 @@ export const ProfileContentEditable = forwardRef<
 
       {/* Address */}
       <View style={styles.section}>
-        <ThemedText variant="heading" style={styles.sectionTitle}>
+        <ThemedText variant="headline" style={styles.sectionTitle}>
           Address
         </ThemedText>
         <InfoRowCard
@@ -228,7 +228,7 @@ const createStyles = makeStyleFactory(
         zIndex: 100,
       },
       sectionTitle: {
-        ...ds.typography.heading,
+        // ...ds.typography.headline,
         paddingHorizontal: Platform.OS === 'web' ? 0 : ds.spacing.xl,
       },
       metaCard: {
@@ -248,7 +248,7 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.xs,
       },
       metaSupporting: {
-        ...ds.typography.caption,
+        // ...ds.typography.caption,
         opacity: ds.opacity.muted,
       },
       metaSeparator: {

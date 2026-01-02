@@ -95,12 +95,10 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.xs,
       },
       itemName: {
-        ...ds.typography.heading,
         textAlign: 'center',
         flexShrink: 0,
       },
       itemCode: {
-        ...ds.typography.caption,
         color: theme.muted,
         flexShrink: 0,
       },

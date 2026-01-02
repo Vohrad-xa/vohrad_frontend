@@ -8,9 +8,9 @@ import Animated, {
   interpolateColor,
   runOnJS,
 } from 'react-native-reanimated';
-import type {DesignSystem} from '@/constants/typography';
+import {type DSShape, type ThemeShape} from '@/constants';
 import {useTheme, useHaptic} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 interface ToggleProps {
   value: boolean;
@@ -125,7 +125,7 @@ export function Toggle({
 }
 
 const createStyles = makeStyleFactory(
-  (ds: typeof DesignSystem, theme: ReturnType<typeof useTheme>['theme']) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       track: {
         width: 50,

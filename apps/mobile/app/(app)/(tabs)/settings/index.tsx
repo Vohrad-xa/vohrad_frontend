@@ -3,6 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {router} from 'expo-router';
 import {ScrollView} from 'react-native-gesture-handler';
 import {Divider, List} from 'react-native-paper';
+import {ThemedText} from '@/components/ui';
 import {
   themeKey,
   type DSShape,
@@ -62,40 +63,36 @@ export default function SettingsModal() {
       showsVerticalScrollIndicator={false}
     >
       <List.Item
-        title="My Profile"
+        title={<ThemedText variant="body">My Profile</ThemedText>}
         description="View and edit your profile"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.tabs.profile, 'destructive')}
         onPress={() => router.push('/(app)/(tabs)/settings/profile')}
       />
       <Divider style={styles.divider} />
 
       <List.Item
-        title="Business Details"
+        title={<ThemedText variant="body">Business Details</ThemedText>}
         description="Manage business information"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.features.organization, 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/business-details')}
       />
       <Divider style={styles.divider} />
 
       <List.Item
-        title="User Management"
+        title={<ThemedText variant="body">User Management</ThemedText>}
         description="Manage users and roles"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.features.userManagement, 'accentGreen')}
         onPress={() => router.push('/(app)/(tabs)/settings/users')}
       />
       <Divider style={styles.divider} />
 
       <List.Item
-        title="App Settings"
+        title={<ThemedText variant="body">App Settings</ThemedText>}
         description="Configure application settings"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.tabs.settings, 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
       />
@@ -103,88 +100,83 @@ export default function SettingsModal() {
 
       <List.Item
         style={styles.appearanceItem}
-        title="Appearance"
+        title={<ThemedText variant="body">Appearance</ThemedText>}
         description="Switch between light and dark mode"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.preferences.appearance, 'accentIndigo')}
         right={(props) => <AppearanceMenu style={props.style} />}
       />
       <Divider style={styles.divider} />
 
       <List.Item
-        title="Preferences"
+        title={<ThemedText variant="body">Preferences</ThemedText>}
         description="Set your app preferences"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.preferences.settings, 'accentOrange')}
         onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
       />
       <Divider style={styles.divider} />
 
       <List.Item
-        title="Plan"
+        title={<ThemedText variant="body">Plan</ThemedText>}
         description="View and manage your plan"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.preferences.plan, 'accentOrange')}
         onPress={() => router.push('/(app)/(tabs)/settings/plan')}
       />
       <Divider style={styles.divider} />
 
       <List.Item
-        title="App Language"
+        title={<ThemedText variant="body">App Language</ThemedText>}
         description="Select your preferred language"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.preferences.language, 'accentIndigo')}
         onPress={() => router.push('/(app)/(tabs)/settings/language')}
       />
       <Divider style={styles.divider} />
 
       <List.Item
-        title="Report an Issue"
+        title={<ThemedText variant="body">Report an Issue</ThemedText>}
         description="Get support or report a problem"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.features.support, 'accentOrange')}
         onPress={() => router.push('/(app)/(tabs)/settings/support')}
       />
       <Divider style={styles.divider} />
 
       <List.Item
-        title="Privacy Policy"
+        title={<ThemedText variant="body">Privacy Policy</ThemedText>}
         description="Read our privacy policy"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.preferences.privacy, 'accentIndigo')}
         onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
       />
       <Divider style={styles.divider} />
 
       <List.Item
-        title="Terms of Use"
-        description="Read the terms of use"
+        title={<ThemedText variant="body">Terms of Use</ThemedText>}
+        description="Read our terms of use"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.preferences.terms, 'accentIndigo')}
         onPress={() => router.push('/(app)/(tabs)/settings/terms')}
       />
       <Divider style={styles.divider} />
 
       <List.Item
-        title="About"
+        title={<ThemedText variant="body">About</ThemedText>}
         description="Learn more about this app"
         descriptionStyle={styles.description}
-        titleStyle={styles.itemTitle}
         left={leftIcon(AppIcons.status.info, 'accentBlue')}
         onPress={() => router.push('/(app)/(tabs)/settings/about')}
       />
       <Divider style={styles.divider} />
 
       <List.Item
-        title="Logout"
-        titleStyle={[styles.itemTitle, {color: theme.destructive}]}
+        title={
+          <ThemedText variant="title1" style={{color: theme.destructive}}>
+            Logout
+          </ThemedText>
+        }
         left={leftIcon(AppIcons.actions.logout, 'destructive')}
         onPress={handleLogout}
       />
@@ -199,9 +191,6 @@ const createStyles = makeStyleFactory(
         paddingHorizontal: ds.spacing.lg,
         paddingVertical: ds.spacing.lg,
       },
-      itemTitle: {
-        ...ds.typography.label,
-      },
       iconContainer: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -214,7 +203,6 @@ const createStyles = makeStyleFactory(
         marginVertical: ds.spacing.xxs,
       },
       description: {
-        ...ds.typography.value,
         marginTop: ds.spacing.xs,
         color: theme.muted,
       },

@@ -122,7 +122,7 @@ export default function EmailConfirmScreen() {
   if (status === 'loading' || status === 'idle') {
     return (
       <ThemedView style={[styles.container, styles.detunedPosition]}>
-        <ThemedText variant="heading" style={styles.title}>
+        <ThemedText variant="headline" style={styles.title}>
           Confirming your email…
         </ThemedText>
         <ThemedText variant="body" colorToken="muted" style={styles.subtitle}>
@@ -135,7 +135,7 @@ export default function EmailConfirmScreen() {
   if (status === 'success') {
     return (
       <ThemedView style={[styles.container, styles.detunedPosition]}>
-        <ThemedText variant="heading" style={styles.title}>
+        <ThemedText variant="headline" style={styles.title}>
           Email confirmed!
         </ThemedText>
         <ThemedText variant="body" colorToken="muted" style={styles.subtitle}>
@@ -161,7 +161,7 @@ export default function EmailConfirmScreen() {
 
   return (
     <ThemedView style={[styles.container, styles.detunedPosition]}>
-      <ThemedText variant="heading" style={styles.title}>
+      <ThemedText variant="headline" style={styles.title}>
         Unable to confirm email
       </ThemedText>
       <ThemedText variant="body" colorToken="muted" style={styles.subtitle}>

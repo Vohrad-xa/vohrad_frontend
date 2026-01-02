@@ -26,7 +26,6 @@ const createStyles = makeStyleFactory(
         paddingHorizontal: ds.spacing.xl,
       },
       text: {
-        ...ds.typography.sectionTitle,
         color: theme.text,
       },
     }),

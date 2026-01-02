@@ -1,7 +1,7 @@
 import React, {useMemo} from 'react';
 import {StyleSheet, View, Platform} from 'react-native';
 import {List, Divider} from 'react-native-paper';
-import {ModalScrollView} from '@/components/ui';
+import {ModalScrollView, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import type {AttachmentKindCount} from '@/features/attachments/utils/attachment-counts';
 import {useTheme} from '@/providers';
@@ -104,7 +104,7 @@ export function AttachmentsOverview({
                   <Text
                     modifiers={[
                       font({
-                        size: ds.typography.secondary.fontSize,
+                        size: ds.typography.ios.callout.baseSize,
                         weight: 'regular',
                       }),
                       foregroundStyle(theme.muted),
@@ -132,7 +132,7 @@ export function AttachmentsOverview({
       {tiles.map((tile, index) => (
         <View key={tile.kind}>
           <List.Item
-            title={tile.label}
+            title={<ThemedText variant="body">{tile.label}</ThemedText>}
             description={
               tile.count > 0
                 ? `${tile.count} ${tile.count === 1 ? 'file' : 'files'}`
@@ -160,11 +160,11 @@ const useStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       title: {
-        ...ds.typography.label,
+        // ...ds.typography.label,
       },
       description: {
         color: theme.muted,
-        ...ds.typography.caption,
+        // ...ds.typography.caption,
       },
       divider: {
         marginLeft: ds.spacing.xxl + ds.spacing.xl,
