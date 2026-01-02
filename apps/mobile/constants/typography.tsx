@@ -1,6 +1,8 @@
 import {Platform, type TextProps} from 'react-native';
-import {generateVersion} from '../utils/versioning';
 import type {MD3TypescaleKey} from 'react-native-paper';
+import {generateVersion} from '../utils/versioning';
+
+type PaperVariant = `${MD3TypescaleKey}`;
 
 export type Typography =
   | 'largeTitle'
@@ -36,7 +38,7 @@ const IOS_TYPOGRAPHY: Record<
   caption2: {dynamicTypeRamp: 'caption2', baseSize: 11},
 };
 
-const PAPER_TYPOGRAPHY: Record<Typography, keyof typeof MD3TypescaleKey> = {
+const PAPER_TYPOGRAPHY: Record<Typography, PaperVariant> = {
   largeTitle: 'displayMedium',
   title1: 'titleLarge',
   title2: 'titleMedium',
@@ -96,9 +98,27 @@ export const createDesignSystem = (
     } as const,
 
     shadows: {
-      sm: {boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.05)'},
-      md: {boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)'},
-      lg: {boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)'},
+      sm: {
+        shadowColor: '#000000',
+        shadowOffset: {width: 0, height: 1},
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+      },
+      md: {
+        shadowColor: '#000000',
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+      },
+      lg: {
+        shadowColor: '#000000',
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        elevation: 4,
+      },
     } as const,
 
     components: {
@@ -171,7 +191,7 @@ export type Opacity = keyof DesignSystem['opacity'];
 
 export type TypographyProps = {
   dynamicTypeRamp?: TextProps['dynamicTypeRamp'];
-  variant?: keyof typeof MD3TypescaleKey;
+  variant?: PaperVariant;
   fontSize?: number;
   allowFontScaling?: boolean;
 };
@@ -195,5 +215,3 @@ export function getTextProps(
     allowFontScaling: true,
   };
 }
-
-export type IOSDynamicTypeRamp = TextProps['dynamicTypeRamp'];

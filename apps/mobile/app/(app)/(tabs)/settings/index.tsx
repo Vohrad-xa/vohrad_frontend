@@ -173,7 +173,7 @@ export default function SettingsModal() {
 
       <List.Item
         title={
-          <ThemedText variant="title1" style={{color: theme.destructive}}>
+          <ThemedText variant="body" style={{color: theme.destructive}}>
             Logout
           </ThemedText>
         }
