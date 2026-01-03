@@ -104,8 +104,7 @@ export function AttachmentsOverview({
                   <Text
                     modifiers={[
                       font({
-                        size: ds.typography.ios.callout.baseSize,
-                        weight: 'regular',
+                        size: ds.typography.ios.footnote.baseSize,
                       }),
                       foregroundStyle(theme.muted),
                       padding({horizontal: ds.spacing.md}),
@@ -117,6 +116,7 @@ export function AttachmentsOverview({
                     name={AppIcons.ui.chevronRight}
                     useSwiftUI
                     noContainer
+                    colorToken="muted"
                   />
                 </HStack>
               </Button>

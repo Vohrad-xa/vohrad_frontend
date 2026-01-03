@@ -23,6 +23,7 @@ export default function UsersScreen() {
             icon={AppIcons.actions.addUser}
             onPress={handleAddUser}
             accessibilityLabel="Add user"
+            isGrouped
           />
           {filterControl}
         </>

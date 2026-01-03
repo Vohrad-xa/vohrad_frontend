@@ -71,6 +71,8 @@ export function UsersFilterMenu({
       <HeaderButton
         icon={AppIcons.ui.filter}
         accessibilityLabel="Filter users"
+        accessibilityHint="Opens user filter menu"
+        isGrouped
       />
     );
 
