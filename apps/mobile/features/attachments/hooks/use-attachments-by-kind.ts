@@ -33,6 +33,7 @@ export function useAttachmentsByKind(kind: AttachmentKind) {
     loadMore,
     hasNext,
     isLoading,
+    refresh,
   } = useFilteredAttachments({
     kind,
     enabled: !targetId,
@@ -63,11 +64,17 @@ export function useAttachmentsByKind(kind: AttachmentKind) {
     [getById, kind],
   );
 
+  const refreshAttachments = useCallback(async () => {
+    if (!refresh) return;
+    await refresh();
+  }, [refresh]);
+
   return {
     attachments: filteredAttachments,
     loadMore,
     hasNext,
     isLoading,
+    refresh: targetId ? undefined : refreshAttachments,
     getById,
     resolveUrlById,
   };

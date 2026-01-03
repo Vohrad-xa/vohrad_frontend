@@ -27,8 +27,11 @@ export default function VaultDocumentsScreen() {
   const insets = useSafeAreaInsets();
   const {ds} = useTheme();
 
-  const {attachments: documentAttachments, getById: getDocumentById} =
-    useAttachmentsByKind('document');
+  const {
+    attachments: documentAttachments,
+    getById: getDocumentById,
+    refresh: refreshDocuments,
+  } = useAttachmentsByKind('document');
 
   const handleAttachmentPress = useAttachmentPress();
   const {shareAttachments, isProcessing} = useAttachmentShare();
@@ -274,6 +277,7 @@ export default function VaultDocumentsScreen() {
         documents={documentAttachments}
         onDocumentPress={handleDocumentPress}
         onSelectionChange={handleSelectionChange}
+        onRefresh={refreshDocuments}
       />
 
       <Snackbar

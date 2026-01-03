@@ -20,6 +20,7 @@ import {type ItemAttachment} from '@sykamore/types';
 import {Checkbox, Divider} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {usePullToRefresh} from '@/hooks';
 import {useTheme, useHaptic} from '@/providers';
 import {
   makeStyleFactory,
@@ -50,6 +51,7 @@ type DocumentsListProps = {
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
   onSelectionChange?: (selectedIds: Set<string>) => void;
+  onRefresh?: () => Promise<void> | void;
 };
 
 type DocumentRow = {
@@ -180,12 +182,16 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
       onEndReached,
       onEndReachedThreshold,
       onSelectionChange,
+      onRefresh,
     },
     ref,
   ) => {
     const {ds, theme} = useTheme();
     const {triggerHaptic} = useHaptic();
     const styles = createStyles(ds, theme);
+    const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({
+      onRefresh,
+    });
 
     const fontScaleKey = ds.screen?.fontScale ?? 1;
 
@@ -388,6 +394,9 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
         ItemSeparatorComponent={ItemSeparator}
         ListHeaderComponent={ListHeader}
         contentInsetAdjustmentBehavior="automatic"
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+        progressViewOffset={ds.spacing.lg}
         ListFooterComponent={
           <ListCountFooter
             count={files.length}
