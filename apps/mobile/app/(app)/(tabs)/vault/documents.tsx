@@ -164,44 +164,44 @@ export default function VaultDocumentsScreen() {
    * Renders share/delete/cancel actions in the order the native header expects,
    */
   const headerRight = useCallback(() => {
-    const cancelButton = (
-      <HeaderButton
-        variant="close"
-        accessibilityLabel="Cancel selection"
-        accessibilityHint="Exit selection mode"
-        onPress={handleCancelSelection}
-      />
-    );
-
     if (isInSelectionMode) {
-      if (selectedIds.size > 0) {
-        const sharePress = isProcessing
-          ? undefined
-          : () => void handleShareSelected();
-        const deletePress = isProcessing
-          ? undefined
-          : () => void handleDeleteSelected();
+      const hasSelection = selectedIds.size > 0;
+      const sharePress = isProcessing
+        ? undefined
+        : () => void handleShareSelected();
+      const deletePress = isProcessing
+        ? undefined
+        : () => void handleDeleteSelected();
 
-        return (
-          <>
-            <HeaderButton
-              variant="share"
-              accessibilityLabel="Share selected documents"
-              accessibilityHint="Share or download selected documents"
-              onPress={sharePress}
-            />
-            <HeaderButton
-              variant="delete"
-              accessibilityLabel="Delete selected documents"
-              accessibilityHint="Permanently delete selected documents"
-              onPress={deletePress}
-            />
-            {cancelButton}
-          </>
-        );
-      }
-
-      return cancelButton;
+      return (
+        <>
+          {hasSelection && (
+            <>
+              <HeaderButton
+                variant="share"
+                accessibilityLabel="Share selected documents"
+                accessibilityHint="Share or download selected documents"
+                onPress={sharePress}
+                isGrouped
+              />
+              <HeaderButton
+                variant="delete"
+                accessibilityLabel="Delete selected documents"
+                accessibilityHint="Permanently delete selected documents"
+                onPress={deletePress}
+                isGrouped
+              />
+            </>
+          )}
+          <HeaderButton
+            variant="close"
+            accessibilityLabel="Cancel selection"
+            accessibilityHint="Exit selection mode"
+            onPress={handleCancelSelection}
+            isGrouped={hasSelection}
+          />
+        </>
+      );
     }
 
     return (
@@ -258,8 +258,19 @@ export default function VaultDocumentsScreen() {
     navigation.setOptions({
       headerRight,
       headerLeft,
+      headerTitle:
+        isInSelectionMode && selectedIds.size > 0
+          ? `${selectedIds.size} selected`
+          : 'Documents',
+      headerTitleAlign: isInSelectionMode ? 'center' : undefined,
     });
-  }, [navigation, headerRight, headerLeft]);
+  }, [
+    navigation,
+    headerRight,
+    headerLeft,
+    isInSelectionMode,
+    selectedIds.size,
+  ]);
 
   const handleDocumentPress = useCallback(
     async (documentId: string) => {

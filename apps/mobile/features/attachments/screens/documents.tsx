@@ -403,6 +403,7 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
             dividerStyle={styles.divider}
             containerStyle={styles.footer}
             textVariant="callout"
+            fontWeight="bold"
           />
         }
       />
