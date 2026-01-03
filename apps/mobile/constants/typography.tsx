@@ -188,6 +188,7 @@ export type DesignSystem = ReturnType<typeof createDesignSystem>;
 export type Spacing = keyof DesignSystem['spacing'];
 export type BorderRadius = keyof DesignSystem['borderRadius'];
 export type Opacity = keyof DesignSystem['opacity'];
+export type FontWeight = keyof DesignSystem['fontWeight'];
 
 export type TypographyProps = {
   dynamicTypeRamp?: TextProps['dynamicTypeRamp'];

@@ -1,18 +1,32 @@
 import React, {memo} from 'react';
-import {View, type StyleProp, type ViewStyle} from 'react-native';
+import {
+  View,
+  type StyleProp,
+  type ViewStyle,
+  type TextStyle,
+} from 'react-native';
 import {Divider} from 'react-native-paper';
-import {ThemedText} from '@/components/ui';
+import {ThemedText, type ThemedTextProps} from '@/components/ui';
 import type {Typography} from '@/constants';
 
 export type ListCountFooterProps = {
   count: number;
   dividerStyle?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
   textVariant?: Typography;
+  fontWeight?: ThemedTextProps['fontWeight'];
 };
 
 export const ListCountFooter = memo<ListCountFooterProps>(
-  ({count, dividerStyle, containerStyle, textVariant = 'value'}) => {
+  ({
+    count,
+    textStyle,
+    dividerStyle,
+    containerStyle,
+    textVariant = 'value',
+    fontWeight,
+  }) => {
     return (
       <View
         accessible
@@ -25,7 +39,11 @@ export const ListCountFooter = memo<ListCountFooterProps>(
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
         >
-          <ThemedText variant={textVariant}>
+          <ThemedText
+            variant={textVariant}
+            fontWeight={fontWeight}
+            style={textStyle}
+          >
             {count === 1 ? '1 item' : `${count} items`}
           </ThemedText>
         </View>

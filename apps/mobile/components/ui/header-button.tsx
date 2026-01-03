@@ -1,10 +1,14 @@
 import {Platform, Pressable, StyleSheet} from 'react-native';
-import {Palette, type TokenName} from '@/constants/colors';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {
+  themeKey,
+  type DSShape,
+  type ThemeShape,
+  Palette,
+  type TokenName,
+} from '@/constants';
 import {useTheme} from '@/providers';
 import type {RequiredIconProps, BaseViewProps} from '@/types';
-import {Icon, AppIcons, type IconName} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {Icon, AppIcons, type IconName, makeStyleFactory} from '@/utils';
 import {ThemedText} from './themed-text';
 
 const getReadableIconName = (iconPath: string): string => {
@@ -221,7 +225,7 @@ const createStyles = makeStyleFactory(
       button: {
         minWidth: Platform.select({
           ios: ds.spacing.xxl,
-          default: ds.spacing.xxl,
+          default: ds.spacing.xxl + ds.spacing.sm,
         }),
         minHeight: ds.spacing.xxl,
         justifyContent: 'center',
@@ -229,7 +233,7 @@ const createStyles = makeStyleFactory(
       },
 
       textButton: {
-        paddingHorizontal: ds.spacing.sm,
+        paddingHorizontal: ds.spacing.md,
         backgroundColor: Platform.OS !== 'ios' ? theme.ripple : undefined,
         borderRadius: ds.borderRadius.full,
       },
