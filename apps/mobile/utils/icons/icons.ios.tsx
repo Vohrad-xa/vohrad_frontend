@@ -51,7 +51,7 @@ export const Icon: React.FC<IconProps> = ({
   const frameSize = resolvedSize * 2;
 
   const resolvedTintColor =
-    color ?? (colorToken ? theme[colorToken] : undefined);
+    color ?? (colorToken ? theme[colorToken] : theme.text);
 
   const resolvedIconColor = Palette.white;
 

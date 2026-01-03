@@ -25,6 +25,9 @@ export default function HomeLayout() {
           fontWeight: ds.fontWeight.bold,
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },
+        headerLargeTitleStyle: {
+          fontWeight: ds.fontWeight.bold,
+        },
       }}
     >
       <Stack.Screen

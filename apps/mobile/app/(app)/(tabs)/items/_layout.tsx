@@ -1,6 +1,13 @@
-import type {ReactNode} from 'react';
-import {useCallback, createContext, useContext, useMemo, useState} from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 import {Platform} from 'react-native';
+import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {Stack} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {HeaderButton} from '@/components/ui';
@@ -74,35 +81,40 @@ function ItemsStack() {
   );
 
   const headerSearchBarOptions = useMemo(
-    () => ({
-      placement: 'integratedButton' as const,
-      hideWhenScrolling: false,
-      placeholder: 'Search...',
-      onChangeText: handleSearchChange,
-    }),
+    () =>
+      ({
+        placement: 'integratedButton' as const,
+        hideWhenScrolling: false,
+        placeholder: 'Search...',
+        onChangeText: handleSearchChange,
+      }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
     [handleSearchChange],
   );
 
   const stackScreenOptions = useMemo(
-    () => ({
-      headerShown: true,
-      headerShadowVisible: false,
-      headerLargeTitle: true,
-      animation: 'ios_from_right' as const,
-      headerBackButtonDisplayMode: 'minimal' as const,
-      headerTransparent: Platform.OS === 'ios',
-      headerTitleAlign: 'left' as const,
-      headerTitleStyle: {
-        fontWeight: ds.fontWeight.bold,
-        color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-      },
-      contentStyle: {
-        paddingBottom:
-          Platform.OS === 'android'
-            ? insets.bottom + ds.layout.tabBarHeight
-            : 0,
-      },
-    }),
+    () =>
+      ({
+        headerShown: true,
+        headerShadowVisible: false,
+        headerLargeTitle: true,
+        animation: 'ios_from_right' as const,
+        headerBackButtonDisplayMode: 'minimal' as const,
+        headerTransparent: Platform.OS === 'ios',
+        headerTitleAlign: 'left' as const,
+        headerTitleStyle: {
+          fontWeight: ds.fontWeight.bold,
+          color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
+        },
+        contentStyle: {
+          paddingBottom:
+            Platform.OS === 'android'
+              ? insets.bottom + ds.layout.tabBarHeight
+              : 0,
+        },
+        headerLargeTitleStyle: {
+          fontWeight: ds.fontWeight.bold,
+        },
+      }) satisfies NativeStackNavigationOptions,
     [
       ds.fontWeight.bold,
       theme.headerAndroid,
@@ -112,12 +124,13 @@ function ItemsStack() {
   );
 
   const indexOptions = useMemo(
-    () => ({
-      headerTitle: 'Items',
-      headerTitleAlign: 'center' as const,
-      headerLeft: headerLeftMenu,
-      headerSearchBarOptions,
-    }),
+    () =>
+      ({
+        headerTitle: 'Items',
+        headerTitleAlign: 'center' as const,
+        headerLeft: headerLeftMenu,
+        headerSearchBarOptions,
+      }) satisfies NativeStackNavigationOptions,
     [headerLeftMenu, headerSearchBarOptions],
   );
 

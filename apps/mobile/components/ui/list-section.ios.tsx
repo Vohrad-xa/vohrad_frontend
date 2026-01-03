@@ -61,7 +61,12 @@ const ListSectionRow: React.FC<ListSectionRowProps> = ({
         {showChevron && (
           <>
             <Spacer />
-            <Icon name={AppIcons.ui.chevronRight} useSwiftUI noContainer />
+            <Icon
+              name={AppIcons.ui.chevronRight}
+              useSwiftUI
+              noContainer
+              color={theme.muted}
+            />
           </>
         )}
       </HStack>

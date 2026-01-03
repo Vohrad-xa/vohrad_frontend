@@ -1,9 +1,7 @@
 import React, {useLayoutEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
 import {useItemsManager} from '@sykamore/store';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useSearch} from '@/features/dashboard';
 import {
   ItemsList,
@@ -11,14 +9,11 @@ import {
   useServerSearchState,
   useItemFilters,
 } from '@/features/item';
-import {useTheme} from '@/providers';
-import {AppIcons, makeStyleFactory} from '@/utils';
+import {AppIcons} from '@/utils';
 
 export default function ItemsScreen() {
-  const {ds, theme} = useTheme();
   const router = useRouter();
   const navigation = useNavigation();
-  const styles = createStyles(ds, theme);
   const {searchQuery: globalSearchQuery} = useSearch();
   const params = useLocalSearchParams<{filters?: string}>();
 
@@ -57,22 +52,20 @@ export default function ItemsScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <View style={styles.headerRightContainer}>
-          <HeaderButton
-            icon={AppIcons.ui.filter}
-            accessibilityLabel="Filter items"
-            onPress={() => {
-              router.push(
-                `/(modals)/items/filters?initialFilters=${encodeURIComponent(
-                  JSON.stringify(filters),
-                )}`,
-              );
-            }}
-          />
-        </View>
+        <HeaderButton
+          icon={AppIcons.ui.filter}
+          accessibilityLabel="Filter items"
+          onPress={() => {
+            router.push(
+              `/(modals)/items/filters?initialFilters=${encodeURIComponent(
+                JSON.stringify(filters),
+              )}`,
+            );
+          }}
+        />
       ),
     });
-  }, [navigation, filters, router, styles.headerRightContainer]);
+  }, [navigation, filters, router]);
 
   const handleItemPress = (itemId: string) => {
     router.push({
@@ -85,37 +78,19 @@ export default function ItemsScreen() {
   const isEmpty = !isLoading && !hasItems && !error;
 
   return (
-    <View style={styles.container}>
-      <ItemsList
-        searchQuery={globalSearchQuery}
-        onItemPress={handleItemPress}
-        onRefresh={refresh}
-        items={items}
-        isLoading={isLoading}
-        error={error?.message ?? null}
-        hasItems={hasItems}
-        isEmpty={isEmpty}
-        getItemImageUrl={getItemImageUrl}
-        onLoadMore={onEndReached}
-        canLoadMore={hasNext}
-        isLoadingMore={isFetchingNextPage}
-      />
-    </View>
+    <ItemsList
+      searchQuery={globalSearchQuery}
+      onItemPress={handleItemPress}
+      onRefresh={refresh}
+      items={items}
+      isLoading={isLoading}
+      error={error?.message ?? null}
+      hasItems={hasItems}
+      isEmpty={isEmpty}
+      getItemImageUrl={getItemImageUrl}
+      onLoadMore={onEndReached}
+      canLoadMore={hasNext}
+      isLoadingMore={isFetchingNextPage}
+    />
   );
 }
-
-const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-      },
-      headerRightContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: ds.spacing.xs,
-        paddingHorizontal: ds.spacing.xs,
-      },
-    }),
-  (ds, theme) => `${themeKey(theme, ds)}`,
-);

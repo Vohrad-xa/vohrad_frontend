@@ -1,4 +1,3 @@
-import React from 'react';
 import {Platform} from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import {
@@ -57,11 +56,10 @@ export default function TabLayout() {
   return (
     <NativeTabs
       labelVisibilityMode="labeled"
-      backBehavior="history"
       backgroundColor={theme.sidebarBackground}
       iconColor={{default: theme.text}}
       indicatorColor={theme.ripple}
-      minimizeBehavior="onScrollDown"
+      minimizeBehavior="automatic"
       labelStyle={{
         default: {color: theme.text},
         selected: {color: theme.accentBlue},

@@ -85,7 +85,7 @@ const getVariantConfig = (
       };
     default:
       return {
-        iconSize: 'lg',
+        iconSize: 'xl',
         color: theme.text,
       };
   }
@@ -124,6 +124,7 @@ export interface HeaderButtonProps
   iconSize?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
   symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
   symbolColorTokens?: TokenName[];
+  isGrouped?: boolean;
 }
 
 export const HeaderButton = ({
@@ -142,6 +143,7 @@ export const HeaderButton = ({
   accessibilityHint,
   testID,
   style,
+  isGrouped,
 }: HeaderButtonProps) => {
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
@@ -188,6 +190,7 @@ export const HeaderButton = ({
       }}
       style={[
         styles.button,
+        isGrouped && styles.groupedButton,
         isTextLike && styles.textButton,
         // isDisabled && styles.buttonDisabled,
         style,
@@ -217,8 +220,8 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       button: {
         minWidth: Platform.select({
-          ios: ds.spacing.xxl + ds.spacing.xs,
-          default: ds.spacing.xxl + ds.spacing.sm,
+          ios: ds.spacing.xxl,
+          default: ds.spacing.xxl,
         }),
         minHeight: ds.spacing.xxl,
         justifyContent: 'center',
@@ -229,6 +232,9 @@ const createStyles = makeStyleFactory(
         paddingHorizontal: ds.spacing.sm,
         backgroundColor: Platform.OS !== 'ios' ? theme.ripple : undefined,
         borderRadius: ds.borderRadius.full,
+      },
+      groupedButton: {
+        marginHorizontal: Platform.OS === 'ios' ? ds.spacing.xs : 0,
       },
 
       // buttonDisabled: {
