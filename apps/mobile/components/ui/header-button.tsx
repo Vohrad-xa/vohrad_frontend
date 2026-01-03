@@ -35,7 +35,6 @@ const getVariantConfig = (
     case 'close':
       return {
         icon: AppIcons.ui.close,
-        color: theme.text,
       };
     case 'cancel':
       return {
@@ -45,7 +44,6 @@ const getVariantConfig = (
     case 'save':
       return {
         icon: AppIcons.actions.save,
-        color: Palette.white,
       };
     case 'success':
       return {
@@ -56,32 +54,26 @@ const getVariantConfig = (
     case 'edit':
       return {
         icon: AppIcons.actions.edit,
-        color: theme.text,
       };
     case 'add':
       return {
         icon: AppIcons.actions.add,
-        color: theme.text,
       };
     case 'share':
       return {
         icon: AppIcons.actions.share,
-        color: theme.text,
       };
     case 'delete':
       return {
         icon: AppIcons.actions.delete,
-        color: theme.text,
       };
     case 'more':
       return {
         icon: AppIcons.ui.more,
-        color: theme.text,
       };
     case 'back':
       return {
         icon: AppIcons.ui.back,
-        color: theme.text,
       };
     case 'destructive':
       return {
@@ -180,7 +172,10 @@ export const HeaderButton = ({
       symbolColorTokens={symbolColorTokens}
     />
   ) : useText ? (
-    <ThemedText variant="body" style={{color: useTextColor}}>
+    <ThemedText
+      variant="body"
+      style={{color: useTextColor, fontWeight: ds.fontWeight.medium}}
+    >
       {useText}
     </ThemedText>
   ) : null;
@@ -190,11 +185,10 @@ export const HeaderButton = ({
       android_ripple={{
         foreground: true,
         borderless: true,
-        color: theme.ripple,
       }}
       style={[
         styles.button,
-        isTextLike && styles.buttonTextPadding,
+        isTextLike && styles.textButton,
         // isDisabled && styles.buttonDisabled,
         style,
       ]}
@@ -231,7 +225,7 @@ const createStyles = makeStyleFactory(
         alignItems: 'center',
       },
 
-      buttonTextPadding: {
+      textButton: {
         paddingHorizontal: ds.spacing.sm,
         backgroundColor: Platform.OS !== 'ios' ? theme.ripple : undefined,
         borderRadius: ds.borderRadius.full,
