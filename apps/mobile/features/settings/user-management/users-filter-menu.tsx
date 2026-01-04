@@ -24,8 +24,6 @@ export function UsersFilterMenu({
 }: UsersFilterMenuProps) {
   const [filters, setFilters] = useState<UsersFilterOptions>({
     role: null,
-    createdFrom: null,
-    createdTo: null,
   });
 
   const {users, refresh, hasNext, onEndReached} = useSearchUsers({

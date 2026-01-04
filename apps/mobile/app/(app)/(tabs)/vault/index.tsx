@@ -103,17 +103,16 @@ export default function VaultScreen() {
   }, [attachmentFilter, attachments, dashboardData]);
 
   const hasActiveFilter = Boolean(attachmentFilter);
-  const filterInfo = useMemo(
-    () =>
-      attachmentFilter
-        ? {
-            targetType: attachmentFilter.targetType,
-            targetId: attachmentFilter.targetId,
-            itemName: attachmentFilter.itemName,
-          }
-        : null,
-    [attachmentFilter],
-  );
+  const filterInfo = useMemo(() => {
+    if (!attachmentFilter?.targetType || !attachmentFilter?.targetId) {
+      return null;
+    }
+    return {
+      targetType: attachmentFilter.targetType,
+      targetId: attachmentFilter.targetId,
+      itemName: attachmentFilter.itemName,
+    };
+  }, [attachmentFilter]);
 
   const handleClearFilter = useCallback(() => {
     clearAttachmentFilter();

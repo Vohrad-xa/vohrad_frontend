@@ -1,5 +1,9 @@
 import {useMemo} from 'react';
-import {useInfiniteAttachments, useAttachmentFilter} from '@sykamore/store';
+import {
+  buildAttachmentODataFilter,
+  useInfiniteAttachments,
+  useAttachmentFilter,
+} from '@sykamore/store';
 import type {AttachmentKind, AttachmentTargetType} from '@sykamore/types';
 
 export interface UseFilteredAttachmentsOptions {
@@ -9,29 +13,31 @@ export interface UseFilteredAttachmentsOptions {
     targetType?: AttachmentTargetType;
     targetId?: string;
   };
+  odataOrderBy?: string;
   enabled?: boolean;
 }
 
 /**
  * Returns a flat list of attachments with infinite pagination.
  *
- * Global filter (store) overrides local initialFilter.
- * Filters are memoized with primitive deps so inline initialFilter objects
- * don’t constantly change the queryKey.
+ * - Global filter (store) overrides local initialFilter.
+ * - Local odataOrderBy (when provided) overrides global sorting.
+ * - Filters are memoized with primitive deps so inline initialFilter objects
+ *   don’t constantly change the queryKey.
  */
 export function useFilteredAttachments(
   options?: UseFilteredAttachmentsOptions,
 ) {
   const globalFilter = useAttachmentFilter();
   const {kind, pageSize, initialFilter, enabled = true} = options ?? {};
-
-  const odataFilter = useMemo(() => {
-    if (globalFilter?.odataFilter) return globalFilter.odataFilter;
-    if (globalFilter?.extension) {
-      return `extension eq '${globalFilter.extension.toLowerCase()}'`;
-    }
-    return undefined;
-  }, [globalFilter?.extension, globalFilter?.odataFilter]);
+  const hasLocalOrderBy = Boolean(
+    options && Object.prototype.hasOwnProperty.call(options, 'odataOrderBy'),
+  );
+  const localOrderBy = options?.odataOrderBy;
+  const resolvedOrderBy = hasLocalOrderBy
+    ? localOrderBy
+    : globalFilter?.odataOrderBy;
+  const odataFilter = buildAttachmentODataFilter(globalFilter);
 
   const filters = useMemo(() => {
     const sourceTargetType =
@@ -43,6 +49,7 @@ export function useFilteredAttachments(
       ...(sourceTargetId ? {targetId: sourceTargetId} : {}),
       ...(kind ? {kind} : {}),
       ...(odataFilter ? {odataFilter} : {}),
+      ...(resolvedOrderBy ? {odataOrderBy: resolvedOrderBy} : {}),
     };
   }, [
     globalFilter?.targetType,
@@ -51,6 +58,7 @@ export function useFilteredAttachments(
     initialFilter?.targetId,
     kind,
     odataFilter,
+    resolvedOrderBy,
   ]);
 
   const {

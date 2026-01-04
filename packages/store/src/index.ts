@@ -70,6 +70,7 @@ export {
   useAttachmentFilter,
   useSetAttachmentFilter,
   useClearAttachmentFilter,
+  useUpdateAttachmentFilter,
 } from './slices/filter/hooks';
 export type {FilterSlice} from './slices/filter';
 export type {AttachmentFilter} from '@sykamore/types';
@@ -95,17 +96,39 @@ export type {
   DashboardVisibilityState,
 } from './slices/system';
 export {defaultDashboardVisibility} from './slices/system';
-export type {AttachmentTargetType, AttachmentKind} from '@sykamore/types';
+export type {
+  AttachmentTargetType,
+  AttachmentKind,
+  AttachmentSortKey,
+  AttachmentSortState,
+  OrderByClause,
+  OrderByDirection,
+} from '@sykamore/types';
 export {
-  buildODataFilter,
+  buildItemODataFilter,
   hasActiveFilters,
   clearAllFilters,
+} from './slices/item/filters';
+export {
   buildAttachmentSearchFilter,
+  buildAttachmentODataFilter,
+  getAttachmentExtension,
+  hasAttachmentExtension,
+} from './slices/attachment/filters';
+export {
   buildUserODataFilter,
   hasActiveUserFilters,
   clearUserFilters,
   type UserFilterOptions,
   type UserFilterState,
-} from './utils/odata-filter-builder';
+} from './slices/user/filters';
+export {
+  buildODataOrderBy,
+  buildCreatedAtOrderBy,
+} from './utils/odata-orderby-builder';
+export {
+  buildAttachmentOrderBy,
+  parseAttachmentOrderBy,
+} from './slices/attachment/sorting';
 export {searchItemsLocally, searchUsersLocally} from './utils/local-search';
 export type {AsyncState, PaginatedState} from './utils/state';

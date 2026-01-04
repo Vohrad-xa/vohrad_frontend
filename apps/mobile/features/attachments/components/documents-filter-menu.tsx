@@ -1,8 +1,16 @@
-import React, {useMemo, useCallback, useState} from 'react';
+import React, {useMemo, useCallback} from 'react';
 import {Platform} from 'react-native';
-import {useAttachmentFilter, useSetAttachmentFilter} from '@sykamore/store';
+import {
+  buildAttachmentOrderBy,
+  getAttachmentExtension,
+  hasAttachmentExtension,
+  parseAttachmentOrderBy,
+  useAttachmentFilter,
+  useUpdateAttachmentFilter,
+} from '@sykamore/store';
 import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
 import {HeaderButton} from '@/components/ui';
+import type {AttachmentSortKey, OrderByDirection} from '@sykamore/types';
 
 type DocumentsFilterMenuProps = {
   onExtensionChange?: (extension: string | undefined) => void;
@@ -18,51 +26,61 @@ export function DocumentsFilterMenu({
   onExtensionChange,
 }: DocumentsFilterMenuProps) {
   const attachmentFilter = useAttachmentFilter();
-  const setAttachmentFilter = useSetAttachmentFilter();
-  const [dateSortOrder, setDateSortOrder] = useState<'newest' | 'oldest'>(
-    'newest',
+  const updateAttachmentFilter = useUpdateAttachmentFilter();
+
+  const normalizedExtension = getAttachmentExtension(attachmentFilter);
+  const hasExtensionFilter = hasAttachmentExtension(attachmentFilter);
+
+  const activeSort = useMemo(
+    () => parseAttachmentOrderBy(attachmentFilter?.odataOrderBy),
+    [attachmentFilter?.odataOrderBy],
   );
 
-  const normalizedExtension = useMemo(
-    () => attachmentFilter?.extension?.trim().toLowerCase() ?? null,
-    [attachmentFilter?.extension],
-  );
+  const dateSortDirection =
+    activeSort.key === 'date' ? activeSort.direction : 'desc';
+  const nameSortDirection =
+    activeSort.key === 'name' ? activeSort.direction : 'asc';
 
   const applyExtensionFilter = useCallback(
     (extension?: string) => {
-      const baseFilter = {
-        targetType: attachmentFilter?.targetType,
-        targetId: attachmentFilter?.targetId,
-        itemName: attachmentFilter?.itemName,
-      };
-
-      const hasBaseFilter = Boolean(
-        baseFilter.targetType ?? baseFilter.targetId ?? baseFilter.itemName,
-      );
-
       if (extension) {
-        setAttachmentFilter({...baseFilter, extension});
+        updateAttachmentFilter({extension});
         onExtensionChange?.(extension);
         return;
       }
 
-      if (hasBaseFilter) {
-        setAttachmentFilter(baseFilter);
-      } else {
-        setAttachmentFilter(null);
-      }
+      updateAttachmentFilter((prev) => {
+        if (!prev) {
+          return null;
+        }
+
+        const {extension: _extension, ...rest} = prev;
+        return rest;
+      });
       onExtensionChange?.(undefined);
     },
-    [
-      attachmentFilter?.itemName,
-      attachmentFilter?.targetId,
-      attachmentFilter?.targetType,
-      onExtensionChange,
-      setAttachmentFilter,
-    ],
+    [onExtensionChange, updateAttachmentFilter],
   );
 
-  const handleExtensionSelect = useCallback(
+  const applySort = useCallback(
+    (key: AttachmentSortKey) => {
+      const isActive = activeSort.key === key;
+      const nextDirection: OrderByDirection = isActive
+        ? activeSort.direction === 'asc'
+          ? 'desc'
+          : 'asc'
+        : key === 'date'
+          ? 'desc'
+          : 'asc';
+
+      updateAttachmentFilter({
+        odataOrderBy: buildAttachmentOrderBy(key, nextDirection),
+      });
+    },
+    [activeSort, updateAttachmentFilter],
+  );
+
+  const handleMenuSelect = useCallback(
     (actionId: string) => {
       if (actionId === 'ext-all') {
         applyExtensionFilter(undefined);
@@ -76,10 +94,15 @@ export function DocumentsFilterMenu({
       }
 
       if (actionId === 'date') {
-        setDateSortOrder((prev) => (prev === 'newest' ? 'oldest' : 'newest'));
+        applySort('date');
+        return;
+      }
+
+      if (actionId === 'name') {
+        applySort('name');
       }
     },
-    [applyExtensionFilter],
+    [applyExtensionFilter, applySort],
   );
 
   const extensionMenuActions = useMemo((): SykaMenuAction[] => {
@@ -95,30 +118,25 @@ export function DocumentsFilterMenu({
             id: 'date',
             title: 'Date                           ',
             subtitle:
-              dateSortOrder === 'newest' ? 'Newest first' : 'Oldest first',
+              dateSortDirection === 'desc' ? 'Newest first' : 'Oldest first',
+            state:
+              activeSort.key === 'date' ? ('on' as const) : ('off' as const),
             image: Platform.select({
               ios: 'clock',
               android: 'outlined.AccessTime',
             }),
           },
           {
-            id: 'Name',
+            id: 'name',
             title: 'Name',
-            subtitle: 'A to Z',
+            subtitle: nameSortDirection === 'asc' ? 'A to Z' : 'Z to A',
+            state:
+              activeSort.key === 'name' ? ('on' as const) : ('off' as const),
             image: Platform.select({
               ios: 'textformat',
               android: 'outlined.SortByAlpha',
             }),
           },
-          // {
-          //   id: 'size',
-          //   title: 'Size',
-          //   subtitle: 'Largest first',
-          //   image: Platform.select({
-          //     ios: 'externaldrive.badge.icloud',
-          //     android: 'outlined.Sort',
-          //   }),
-          // },
         ],
       },
       {
@@ -129,7 +147,7 @@ export function DocumentsFilterMenu({
           {
             id: 'ext-all',
             title: 'All types',
-            state: normalizedExtension ? ('off' as const) : ('on' as const),
+            state: hasExtensionFilter ? ('off' as const) : ('on' as const),
           },
           ...presets.map((ext) => ({
             id: `ext-${ext}`,
@@ -140,15 +158,19 @@ export function DocumentsFilterMenu({
         ],
       },
     ];
-  }, [normalizedExtension, dateSortOrder]);
+  }, [
+    activeSort.key,
+    dateSortDirection,
+    nameSortDirection,
+    hasExtensionFilter,
+    normalizedExtension,
+  ]);
 
   return (
     <SykaMenuView
       ripple={{mode: 'circle'}}
       actions={extensionMenuActions}
-      onPressAction={({nativeEvent}) =>
-        handleExtensionSelect(nativeEvent.event)
-      }
+      onPressAction={({nativeEvent}) => handleMenuSelect(nativeEvent.event)}
       accessibilityLabel="Filter documents"
       accessibilityHint="Filter documents by file type"
     >

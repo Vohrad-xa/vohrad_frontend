@@ -6,7 +6,11 @@ import React, {
   useState,
 } from 'react';
 import {Platform} from 'react-native';
-import {useAttachmentFilter, useDeleteAttachment} from '@sykamore/store';
+import {
+  getAttachmentExtension,
+  useAttachmentFilter,
+  useDeleteAttachment,
+} from '@sykamore/store';
 import {useNavigation} from 'expo-router';
 import {Snackbar} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -174,10 +178,7 @@ export default function VaultDocumentsScreen() {
     documentsListRef.current?.deselectAll();
   }, []);
 
-  const normalizedExtension = useMemo(
-    () => attachmentFilter?.extension?.trim().toLowerCase() ?? null,
-    [attachmentFilter?.extension],
-  );
+  const normalizedExtension = getAttachmentExtension(attachmentFilter);
 
   const rightActions = useMemo<HeaderAction[]>(() => {
     if (!isInSelectionMode) {

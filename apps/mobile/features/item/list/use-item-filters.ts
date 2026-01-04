@@ -2,7 +2,7 @@ import {useEffect, useMemo, useState} from 'react';
 import {
   usePendingFilters,
   useClearPendingFilters,
-  buildODataFilter,
+  buildItemODataFilter,
 } from '@sykamore/store';
 import type {ItemFilterState} from '@sykamore/types';
 
@@ -50,7 +50,7 @@ export function useItemFilters(options?: UseItemFiltersOptions) {
 
   // Build OData filter string
   const odataFilter = useMemo(() => {
-    return buildODataFilter(filters, searchQuery);
+    return buildItemODataFilter(filters, searchQuery);
   }, [filters, searchQuery]);
 
   return {

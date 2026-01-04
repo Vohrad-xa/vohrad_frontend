@@ -13,4 +13,19 @@ export interface AttachmentFilter {
   itemName?: string;
   extension?: string;
   odataFilter?: string;
+  odataOrderBy?: string;
 }
+
+export type OrderByDirection = 'asc' | 'desc';
+
+export type OrderByClause = {
+  field: string;
+  direction?: OrderByDirection;
+};
+
+export type AttachmentSortKey = 'date' | 'name';
+
+export type AttachmentSortState = {
+  key: AttachmentSortKey;
+  direction: OrderByDirection;
+};

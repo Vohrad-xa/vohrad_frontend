@@ -12,3 +12,4 @@ export {
   useItemDetailManager,
   useItemFiltersManager,
 } from './managers';
+export * from './filters';

@@ -33,6 +33,7 @@ export type ListAttachmentsParams = {
   kind?: AttachmentKind;
   includeDeleted?: boolean;
   odataFilter?: string;
+  odataOrderBy?: string;
 };
 
 export class AttachmentApi {
@@ -75,6 +76,9 @@ export class AttachmentApi {
     }
     if (params.odataFilter) {
       search.set('$filter', params.odataFilter);
+    }
+    if (params.odataOrderBy) {
+      search.set('$orderby', params.odataOrderBy);
     }
 
     const queryString = search.toString();

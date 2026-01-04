@@ -67,6 +67,10 @@ export type {
   AttachmentTargetType,
   AttachmentKind,
   AttachmentFilter,
+  OrderByDirection,
+  OrderByClause,
+  AttachmentSortKey,
+  AttachmentSortState,
 } from './attachment';
 
 // Namespaced exports for advanced usage
