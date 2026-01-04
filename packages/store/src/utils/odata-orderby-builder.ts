@@ -1,7 +1,4 @@
-import type {
-  OrderByClause,
-  OrderByDirection,
-} from '@sykamore/types';
+import type {OrderByClause, OrderByDirection} from '@sykamore/types';
 
 /**
  * Build an OData $orderby string from an ordered list of clauses.
@@ -34,13 +31,4 @@ export function buildODataOrderBy(
   });
 
   return segments.length > 0 ? segments.join(', ') : undefined;
-}
-
-/**
- * Build a created_at $orderby string with a default descending order.
- */
-export function buildCreatedAtOrderBy(
-  direction: OrderByDirection = 'desc',
-): string | undefined {
-  return buildODataOrderBy([{field: 'created_at', direction}]);
 }

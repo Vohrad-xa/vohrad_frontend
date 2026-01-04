@@ -4,7 +4,6 @@ import type {
   OrderByDirection,
 } from '@sykamore/types';
 import {
-  buildCreatedAtOrderBy,
   buildODataOrderBy,
 } from '../../utils/odata-orderby-builder';
 
@@ -37,11 +36,11 @@ export function parseAttachmentOrderBy(
   const normalizedDirection: OrderByDirection =
     direction?.toLowerCase() === 'asc' ? 'asc' : 'desc';
 
-  if (field === 'created_at') {
+  if (field === 'date') {
     return {key: 'date', direction: normalizedDirection};
   }
 
-  if (field === 'original_filename' || field === 'filename') {
+  if (field === 'name') {
     return {key: 'name', direction: normalizedDirection};
   }
 
@@ -56,11 +55,8 @@ export function buildAttachmentOrderBy(
   direction: OrderByDirection,
 ): string | undefined {
   if (key === 'date') {
-    return buildCreatedAtOrderBy(direction);
+    return buildODataOrderBy([{field: 'date', direction}]);
   }
 
-  return buildODataOrderBy([
-    {field: 'original_filename', direction},
-    {field: 'filename', direction},
-  ]);
+  return buildODataOrderBy([{field: 'name', direction}]);
 }

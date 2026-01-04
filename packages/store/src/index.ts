@@ -122,10 +122,7 @@ export {
   type UserFilterOptions,
   type UserFilterState,
 } from './slices/user/filters';
-export {
-  buildODataOrderBy,
-  buildCreatedAtOrderBy,
-} from './utils/odata-orderby-builder';
+export {buildODataOrderBy} from './utils/odata-orderby-builder';
 export {
   buildAttachmentOrderBy,
   parseAttachmentOrderBy,
