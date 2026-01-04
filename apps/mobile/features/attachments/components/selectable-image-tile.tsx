@@ -61,8 +61,9 @@ const useStyles = makeStyleFactory(
       },
     }),
     image: {
-      width: '100%',
-      height: '100%',
+      width: '98%',
+      height: '98%',
+      borderRadius: 2,
     },
     overlay: {
       position: 'absolute',

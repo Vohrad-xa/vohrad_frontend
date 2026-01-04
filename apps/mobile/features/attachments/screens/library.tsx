@@ -9,7 +9,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {SelectableImageTile, useAttachmentImages} from '@/features/attachments';
+import {SelectableImageTile} from '@/features/attachments/components';
+import {useAttachmentImages} from '@/features/attachments/hooks';
 import {IMAGE_GRID_COLUMNS, type ImageAttachmentItem} from '@/features/item';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';

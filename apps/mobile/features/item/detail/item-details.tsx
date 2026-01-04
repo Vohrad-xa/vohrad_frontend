@@ -2,7 +2,7 @@ import React, {useCallback} from 'react';
 import {View} from 'react-native';
 import {useRouter} from 'expo-router';
 import {Card} from '@/components/cards/card';
-import {useAttachmentNavigation} from '@/features/attachments';
+import {useAttachmentNavigation} from '@/features/attachments/hooks';
 import {useTheme} from '@/providers';
 import {ActiveField} from './active-field';
 import {AttachmentField} from './attachments/attachment-field';
