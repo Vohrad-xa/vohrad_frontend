@@ -2,12 +2,6 @@ import {useMemo} from 'react';
 import {useInfiniteAttachments, useAttachmentFilter} from '@sykamore/store';
 import type {AttachmentKind, AttachmentTargetType} from '@sykamore/types';
 
-type AttachmentFilterShape = {
-  targetType?: AttachmentTargetType;
-  targetId?: string;
-  kind?: AttachmentKind;
-};
-
 export interface UseFilteredAttachmentsOptions {
   kind?: AttachmentKind;
   pageSize?: number;
@@ -31,7 +25,15 @@ export function useFilteredAttachments(
   const globalFilter = useAttachmentFilter();
   const {kind, pageSize, initialFilter, enabled = true} = options ?? {};
 
-  const filters = useMemo((): AttachmentFilterShape => {
+  const odataFilter = useMemo(() => {
+    if (globalFilter?.odataFilter) return globalFilter.odataFilter;
+    if (globalFilter?.extension) {
+      return `extension eq '${globalFilter.extension.toLowerCase()}'`;
+    }
+    return undefined;
+  }, [globalFilter?.extension, globalFilter?.odataFilter]);
+
+  const filters = useMemo(() => {
     const sourceTargetType =
       globalFilter?.targetType ?? initialFilter?.targetType;
     const sourceTargetId = globalFilter?.targetId ?? initialFilter?.targetId;
@@ -40,6 +42,7 @@ export function useFilteredAttachments(
       ...(sourceTargetType ? {targetType: sourceTargetType} : {}),
       ...(sourceTargetId ? {targetId: sourceTargetId} : {}),
       ...(kind ? {kind} : {}),
+      ...(odataFilter ? {odataFilter} : {}),
     };
   }, [
     globalFilter?.targetType,
@@ -47,6 +50,7 @@ export function useFilteredAttachments(
     initialFilter?.targetType,
     initialFilter?.targetId,
     kind,
+    odataFilter,
   ]);
 
   const {data, error, fetchNextPage, hasNextPage, isFetching, refetch} =

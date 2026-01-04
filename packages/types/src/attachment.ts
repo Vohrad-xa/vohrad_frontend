@@ -8,7 +8,9 @@ export type AttachmentKind =
   | 'other';
 
 export interface AttachmentFilter {
-  targetType: AttachmentTargetType;
-  targetId: string;
+  targetType?: AttachmentTargetType;
+  targetId?: string;
   itemName?: string;
+  extension?: string;
+  odataFilter?: string;
 }
