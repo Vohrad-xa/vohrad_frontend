@@ -34,6 +34,7 @@ export function useAttachmentsByKind(kind: AttachmentKind) {
     hasNext,
     isLoading,
     refresh,
+    lastUpdated,
   } = useFilteredAttachments({
     kind,
     enabled: !targetId,
@@ -75,6 +76,7 @@ export function useAttachmentsByKind(kind: AttachmentKind) {
     hasNext,
     isLoading,
     refresh: targetId ? undefined : refreshAttachments,
+    lastUpdated,
     getById,
     resolveUrlById,
   };

@@ -53,8 +53,15 @@ export function useFilteredAttachments(
     odataFilter,
   ]);
 
-  const {data, error, fetchNextPage, hasNextPage, isFetching, refetch} =
-    useInfiniteAttachments(filters, pageSize, enabled);
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    refetch,
+    dataUpdatedAt,
+  } = useInfiniteAttachments(filters, pageSize, enabled);
 
   const attachments = useMemo(
     () => data?.pages.flatMap((page) => page.items) ?? [],
@@ -64,6 +71,7 @@ export function useFilteredAttachments(
   return {
     attachments,
     total: data?.pages[0]?.total ?? 0,
+    lastUpdated: dataUpdatedAt ? new Date(dataUpdatedAt) : null,
     isLoading: isFetching,
     error,
     hasNext: hasNextPage,
