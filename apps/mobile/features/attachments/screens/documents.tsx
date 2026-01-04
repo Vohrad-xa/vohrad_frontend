@@ -393,10 +393,11 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
         onEndReachedThreshold={onEndReachedThreshold}
         ItemSeparatorComponent={ItemSeparator}
         ListHeaderComponent={ListHeader}
-        contentInsetAdjustmentBehavior="automatic"
+        contentInsetAdjustmentBehavior="always"
         refreshing={refreshing}
         onRefresh={handleRefresh}
         progressViewOffset={ds.spacing.lg}
+        maintainVisibleContentPosition={{disabled: true}}
         ListFooterComponent={
           <ListCountFooter
             count={files.length}

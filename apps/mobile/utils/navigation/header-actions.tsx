@@ -20,6 +20,7 @@ type HeaderButtonVariant = NativeHeaderButtonItem['variant'];
 type HeaderButtonLabelStyle = NativeHeaderButtonItem['labelStyle'];
 type HeaderButtonBadge = NativeHeaderButtonItem['badge'];
 type HeaderMenuConfig = NativeHeaderMenuItem['menu'];
+type NativeHeaderCustomItem = Extract<NativeStackHeaderItem, {type: 'custom'}>;
 
 type IosSfSymbolName = Extract<
   NonNullable<NativeHeaderButtonItem['icon']>,
@@ -139,7 +140,16 @@ export type HeaderMenuAction = {
   accessibilityHint?: string;
 };
 
-export type HeaderAction = HeaderButtonAction | HeaderMenuAction;
+export type HeaderCustomAction = {
+  type: 'custom';
+  key: string;
+  element: React.ReactElement;
+};
+
+export type HeaderAction =
+  | HeaderButtonAction
+  | HeaderMenuAction
+  | HeaderCustomAction;
 
 export type HeaderActionsConfig = {
   /** Left-side actions */
@@ -223,6 +233,10 @@ function ActionsRow({actions}: {actions: HeaderAction[]}) {
   return (
     <View style={styles.row}>
       {actions.map((a) => {
+        if (a.type === 'custom') {
+          return <React.Fragment key={a.key}>{a.element}</React.Fragment>;
+        }
+
         // Android/Web rendering path (ActionsRow is only used off-iOS in getHeaderOptions).
         if (a.type === 'menu') {
           const disabled = !!a.disabled || !a.onPress;
@@ -246,7 +260,7 @@ function ActionsRow({actions}: {actions: HeaderAction[]}) {
 
         const btn = (
           <IconButton
-            icon={a.icon ?? 'dots-horizontal'}
+            icon={a.icon ?? 'dots-vertical'}
             onPress={disabled ? undefined : a.onPress}
             disabled={disabled}
             iconColor={a.tintColor}
@@ -283,6 +297,15 @@ function ActionsRow({actions}: {actions: HeaderAction[]}) {
 }
 
 function toIOSHeaderItem(a: HeaderAction): NativeStackHeaderItem {
+  if (a.type === 'custom') {
+    const item: NativeHeaderCustomItem = {
+      type: 'custom',
+      element: a.element,
+    };
+
+    return item;
+  }
+
   if (a.type === 'menu') {
     const item: NativeHeaderMenuItem = {
       type: 'menu',
