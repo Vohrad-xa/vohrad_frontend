@@ -128,6 +128,7 @@ export function UsersList({
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={ListHeader}
       contentInsetAdjustmentBehavior="automatic"
+      maintainVisibleContentPosition={{disabled: true}}
       refreshing={refreshing}
       onRefresh={handleRefresh}
       progressViewOffset={ds.spacing.lg}

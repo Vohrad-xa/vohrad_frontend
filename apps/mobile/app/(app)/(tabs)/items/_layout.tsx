@@ -89,7 +89,7 @@ function ItemsStack() {
         headerIconColor: theme.icon,
         onChangeText: handleSearchChange,
       }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
-    [handleSearchChange],
+    [handleSearchChange, theme.icon],
   );
 
   const stackScreenOptions = useMemo(

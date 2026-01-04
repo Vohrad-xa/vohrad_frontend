@@ -6,7 +6,6 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme, useSidebar} from '@/providers';
-import {AppIcons} from '@/utils';
 
 export const unstable_settings = {
   initialRouteName: 'index',
