@@ -1,4 +1,4 @@
-import React, {useMemo, useCallback} from 'react';
+import React, {useMemo, useCallback, useState} from 'react';
 import {Platform} from 'react-native';
 import {useAttachmentFilter, useSetAttachmentFilter} from '@sykamore/store';
 import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
@@ -19,6 +19,9 @@ export function DocumentsFilterMenu({
 }: DocumentsFilterMenuProps) {
   const attachmentFilter = useAttachmentFilter();
   const setAttachmentFilter = useSetAttachmentFilter();
+  const [dateSortOrder, setDateSortOrder] = useState<'newest' | 'oldest'>(
+    'newest',
+  );
 
   const normalizedExtension = useMemo(
     () => attachmentFilter?.extension?.trim().toLowerCase() ?? null,
@@ -69,6 +72,11 @@ export function DocumentsFilterMenu({
       if (actionId.startsWith('ext-')) {
         const nextExtension = actionId.replace('ext-', '');
         applyExtensionFilter(nextExtension);
+        return;
+      }
+
+      if (actionId === 'date') {
+        setDateSortOrder((prev) => (prev === 'newest' ? 'oldest' : 'newest'));
       }
     },
     [applyExtensionFilter],
@@ -78,8 +86,44 @@ export function DocumentsFilterMenu({
     const presets = ['pdf', 'docx', 'xlsx', 'csv', 'txt'];
     return [
       {
+        title: 'sorted by',
+        menuOptions: {displayInline: true},
+        id: 'sort-menu',
+        preferredElementSize: 'large',
+        subactions: [
+          {
+            id: 'date',
+            title: 'Date                           ',
+            subtitle:
+              dateSortOrder === 'newest' ? 'Newest first' : 'Oldest first',
+            image: Platform.select({
+              ios: 'clock',
+              android: 'outlined.AccessTime',
+            }),
+          },
+          {
+            id: 'Name',
+            title: 'Name',
+            subtitle: 'A to Z',
+            image: Platform.select({
+              ios: 'textformat',
+              android: 'outlined.SortByAlpha',
+            }),
+          },
+          // {
+          //   id: 'size',
+          //   title: 'Size',
+          //   subtitle: 'Largest first',
+          //   image: Platform.select({
+          //     ios: 'externaldrive.badge.icloud',
+          //     android: 'outlined.Sort',
+          //   }),
+          // },
+        ],
+      },
+      {
         id: 'extensions-menu',
-        title: 'File Type',
+        title: 'Filter by type',
         menuOptions: {displayInline: true},
         subactions: [
           {
@@ -95,30 +139,8 @@ export function DocumentsFilterMenu({
           })),
         ],
       },
-      {
-        title: 'sorted by',
-        menuOptions: {displayInline: true},
-        subactions: [
-          {
-            id: 'ascending',
-            title: 'Ascending',
-            image: Platform.select({
-              ios: 'arrow.up.circle',
-              android: 'outlined.ArrowUpward',
-            }),
-          },
-          {
-            id: 'descending',
-            title: 'Descending',
-            image: Platform.select({
-              ios: 'arrow.down.circle',
-              android: 'outlined.ArrowDownward',
-            }),
-          },
-        ],
-      },
     ];
-  }, [normalizedExtension]);
+  }, [normalizedExtension, dateSortOrder]);
 
   return (
     <SykaMenuView

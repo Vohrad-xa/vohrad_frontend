@@ -30,7 +30,7 @@ import {
   type AttachmentIcon,
   Icon,
 } from '@/utils';
-import {ListCountFooter} from '../components';
+import {ListCountFooter, ListStatusHeader} from '../components';
 
 /**
  * Imperative selection controls consumed by parent navigation/header flows.
@@ -52,6 +52,8 @@ type DocumentsListProps = {
   onEndReachedThreshold?: number;
   onSelectionChange?: (selectedIds: Set<string>) => void;
   onRefresh?: () => Promise<void> | void;
+  isLoading?: boolean;
+  lastUpdated?: Date | null;
 };
 
 type DocumentRow = {
@@ -183,6 +185,8 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
       onEndReachedThreshold,
       onSelectionChange,
       onRefresh,
+      isLoading = false,
+      lastUpdated = null,
     },
     ref,
   ) => {
@@ -372,14 +376,18 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
     );
 
     const ListHeader = useCallback(
-      () => <Divider style={styles.titleDivider} leftInset />,
-      [styles.titleDivider],
+      () => (
+        <ListStatusHeader isLoading={isLoading} lastUpdated={lastUpdated} />
+      ),
+      [isLoading, lastUpdated],
     );
 
-    // Forces FlashList to re-measure when fontScale changes
     const extraData = useMemo(
-      () => `${selectedIds.size}|${selectionMode ? 1 : 0}|${fontScaleKey}`,
-      [selectedIds.size, selectionMode, fontScaleKey],
+      () =>
+        `${selectedIds.size}|${selectionMode ? 1 : 0}|${fontScaleKey}|${
+          isLoading ? 1 : 0
+        }|${lastUpdated ? lastUpdated.getTime() : 0}`,
+      [selectedIds.size, selectionMode, fontScaleKey, isLoading, lastUpdated],
     );
 
     return (
@@ -466,10 +474,6 @@ const createStyles = makeStyleFactory(
       divider: {
         marginLeft:
           ds.spacing.lg + (ds.spacing.xxl + ds.spacing.sm) + ds.spacing.md,
-        marginRight: ds.spacing.lg,
-      },
-
-      titleDivider: {
         marginRight: ds.spacing.lg,
       },
 

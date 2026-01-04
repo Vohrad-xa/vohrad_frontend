@@ -43,6 +43,8 @@ export default function VaultDocumentsScreen() {
     attachments: documentAttachments,
     getById: getDocumentById,
     refresh: refreshDocuments,
+    isLoading,
+    lastUpdated,
   } = useAttachmentsByKind('document');
 
   const handleAttachmentPress = useAttachmentPress();
@@ -332,6 +334,8 @@ export default function VaultDocumentsScreen() {
         onDocumentPress={handleDocumentPress}
         onSelectionChange={handleSelectionChange}
         onRefresh={refreshDocuments}
+        isLoading={isLoading}
+        lastUpdated={lastUpdated}
       />
 
       <Snackbar
