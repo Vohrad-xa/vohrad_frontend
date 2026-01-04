@@ -303,14 +303,13 @@ export const DocumentsList = forwardRef<DocumentsListRef, DocumentsListProps>(
     const files = useMemo<DocumentRow[]>(() => {
       return documents.map((d) => {
         const fileSize = formatBytes(Number(d.size));
-        const fileTypeRaw = d.extension ?? d.file_type ?? 'Unknown';
         const dateAdded = d.created_at ? formatDateShort(d.created_at) : '—';
         const title = d.original_filename ?? d.filename ?? 'Untitled';
 
         return {
           id: d.id,
           uiTitle: title,
-          uiDescription: `${dateAdded} - ${fileSize} - ${String(fileTypeRaw).toUpperCase()}`,
+          uiDescription: `${dateAdded} - ${fileSize}`,
           fileIcon: getAttachmentFileIcon({
             filename: title,
             extension: d.extension ?? null,
