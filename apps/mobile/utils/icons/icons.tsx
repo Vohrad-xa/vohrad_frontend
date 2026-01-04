@@ -36,7 +36,7 @@ export function getIconGlyph(name: IconName): string | undefined {
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 'xl',
+  size = 'lg',
   color,
   colorToken,
   style,
@@ -86,7 +86,7 @@ export const AppIcons = {
   ui: {
     close: 'close',
     back: 'arrow-left',
-    more: 'dots-horizontal',
+    more: 'dots-vertical',
     menu: 'menu',
     chevronRight: 'chevron-right',
     chevronLeft: 'chevron-left',

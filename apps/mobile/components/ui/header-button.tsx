@@ -89,7 +89,7 @@ const getVariantConfig = (
       };
     default:
       return {
-        iconSize: 'xl',
+        iconSize: Platform.OS === 'ios' ? 'xl' : 'lg',
         color: theme.text,
       };
   }
@@ -225,7 +225,7 @@ const createStyles = makeStyleFactory(
       button: {
         minWidth: Platform.select({
           ios: ds.spacing.xxl,
-          default: ds.spacing.xxl + ds.spacing.sm,
+          default: ds.spacing.xxl,
         }),
         minHeight: ds.spacing.xxl,
         justifyContent: 'center',
@@ -238,7 +238,7 @@ const createStyles = makeStyleFactory(
         borderRadius: ds.borderRadius.full,
       },
       groupedButton: {
-        marginHorizontal: Platform.OS === 'ios' ? ds.spacing.xs : 0,
+        marginHorizontal: Platform.OS === 'ios' ? ds.spacing.xs : ds.spacing.sm,
       },
 
       // buttonDisabled: {

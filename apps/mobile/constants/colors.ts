@@ -106,7 +106,7 @@ const _Tokens = {
     selected: Palette.gray[750],
 
     // Icons
-    icon: Palette.white,
+    icon: Palette.gray[200],
     docIcon: Palette.white,
     quickActionIcon: Palette.webDarkBackground,
 

@@ -46,7 +46,7 @@ function SettingsStack() {
   const headerRightNotifications = useCallback(
     () => (
       <HeaderButton
-        icon={AppIcons.tabs.notifications}
+        variant="more"
         accessibilityLabel="Open events"
         onPress={undefined}
       />
@@ -60,9 +60,10 @@ function SettingsStack() {
         placement: 'integratedButton' as const,
         hideWhenScrolling: false,
         placeholder: 'Search...',
+        headerIconColor: theme.icon,
         onChangeText: handleSearchChange,
       }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
-    [handleSearchChange],
+    [handleSearchChange, theme.icon],
   );
 
   const stackScreenOptions = useMemo(

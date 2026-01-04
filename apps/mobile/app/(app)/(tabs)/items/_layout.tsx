@@ -86,6 +86,7 @@ function ItemsStack() {
         placement: 'integratedButton' as const,
         hideWhenScrolling: false,
         placeholder: 'Search...',
+        headerIconColor: theme.icon,
         onChangeText: handleSearchChange,
       }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
     [handleSearchChange],

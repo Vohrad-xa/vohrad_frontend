@@ -43,6 +43,7 @@ function VaultStack() {
         placement: 'automatic' as const,
         hideWhenScrolling: true,
         placeholder: 'Search...',
+        headerIconColor: theme.icon,
         onChangeText: handleSearchChange,
       }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
     [handleSearchChange],
