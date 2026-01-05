@@ -170,7 +170,7 @@ export const AppIcons = {
     file: 'doc.plaintext',
     image: 'photo',
     imageFallback: 'photo.badge.exclamationmark',
-    archive: 'archivebox',
+    archive: 'doc.zipper',
     print: 'printer.inverse',
     list: 'list.bullet',
     others: 'questionmark.folder',

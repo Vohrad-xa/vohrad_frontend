@@ -1,12 +1,11 @@
-import React, {useMemo} from 'react';
+import {useMemo} from 'react';
 import {StyleSheet, View, Platform} from 'react-native';
 import {List, Divider} from 'react-native-paper';
 import {ModalScrollView, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import type {AttachmentKindCount} from '@/features/attachments/utils/attachment-counts';
 import {useTheme} from '@/providers';
-import {makeStyleFactory, Icon, AppIcons} from '@/utils';
-import type {IconName} from '@/utils/icons';
+import {makeStyleFactory, Icon, AppIcons, type IconName} from '@/utils';
 import {
   Host,
   List as IOSList,
@@ -82,12 +81,12 @@ export function AttachmentsOverview({
   if (Platform.OS === 'ios') {
     return (
       <Host style={{flex: 1}}>
-        <IOSList listStyle="automatic" scrollEnabled>
+        <IOSList listStyle="automatic" scrollEnabled showScrollIndicators>
           {tiles.map((tile) => {
             const countText =
               tile.count > 0
                 ? `${tile.count} ${tile.count === 1 ? 'file' : 'files'}`
-                : '0 files';
+                : 'none';
 
             return (
               <Button
@@ -146,7 +145,6 @@ export function AttachmentsOverview({
               />
             )}
             onPress={tile.onPress}
-            titleStyle={styles.title}
             descriptionStyle={styles.description}
           />
           {index < tiles.length - 1 && <Divider style={styles.divider} />}
@@ -159,9 +157,6 @@ export function AttachmentsOverview({
 const useStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      title: {
-        // ...ds.typography.label,
-      },
       description: {
         color: theme.muted,
         // ...ds.typography.caption,

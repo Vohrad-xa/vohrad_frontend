@@ -1,7 +1,7 @@
 import {useMemo} from 'react';
 import {
-  useInfiniteAttachments,
   buildAttachmentSearchFilter,
+  useAttachmentsListManager,
 } from '@sykamore/store';
 
 export interface UseAttachmentSearchOptions {
@@ -20,22 +20,21 @@ export function useAttachmentSearch(options: UseAttachmentSearchOptions) {
 
   const shouldFetch = enabled && Boolean(odataFilter);
 
-  const {data, error, fetchNextPage, hasNextPage, isFetching, refetch} =
-    useInfiniteAttachments({odataFilter}, pageSize, shouldFetch);
-
-  const attachments = useMemo(
-    () => data?.pages.flatMap((page) => page.items) ?? [],
-    [data],
-  );
+  const {attachments, error, hasNext, isLoading, loadMore, refresh, total} =
+    useAttachmentsListManager({
+      filters: odataFilter ? {odataFilter} : {},
+      pageSize,
+      enabled: shouldFetch,
+    });
 
   return {
     attachments,
-    total: data?.pages[0]?.total ?? 0,
-    isLoading: isFetching,
+    total,
+    isLoading,
     error,
-    hasNext: hasNextPage,
-    loadMore: fetchNextPage,
-    refresh: refetch,
+    hasNext,
+    loadMore,
+    refresh,
     isSearchActive: Boolean(odataFilter),
   };
 }

@@ -3,12 +3,10 @@ import {
   useAttachmentFilter,
   useClearAttachmentFilter,
   useDashboardOverview,
+  useFilteredAttachmentsManager,
+  type UseFilteredAttachmentsManagerOptions,
 } from '@sykamore/store';
 import {computeAttachmentCounts} from '../utils';
-import {
-  useFilteredAttachments,
-  type UseFilteredAttachmentsOptions,
-} from './use-filtered-attachments';
 
 /**
  * Overview helper for the vault:
@@ -16,13 +14,13 @@ import {
  * - Otherwise, use dashboard counts (cheap, avoids recomputing on every render).
  */
 export function useAttachmentsOverview(
-  options?: UseFilteredAttachmentsOptions,
+  options?: UseFilteredAttachmentsManagerOptions,
 ) {
   const attachmentFilter = useAttachmentFilter();
   const clearAttachmentFilter = useClearAttachmentFilter();
   const {data: dashboardData} = useDashboardOverview();
 
-  const {attachments, ...rest} = useFilteredAttachments({...options});
+  const {attachments, ...rest} = useFilteredAttachmentsManager({...options});
 
   const counts = useMemo(() => {
     if (attachmentFilter) {

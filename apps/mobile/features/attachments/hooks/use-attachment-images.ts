@@ -1,13 +1,21 @@
 import {useCallback} from 'react';
-import {useDeleteAttachment} from '@sykamore/store';
+import {
+  useDeleteAttachment,
+  useFilteredAttachmentsManager,
+} from '@sykamore/store';
 import {useImageAttachments} from '@/features/attachments/hooks/attachment-images';
 import {useAttachmentContext} from '@/features/attachments/providers/attachment-provider';
 import {showConfirmAlert} from '@/utils';
-import {useFilteredAttachments} from './use-filtered-attachments';
 import {useImageSelection} from './use-image-selection';
 
 export function useAttachmentImages() {
-  const {attachments: contextAttachments, targetId} = useAttachmentContext();
+  const {
+    attachments: contextAttachments,
+    targetId,
+    loadMore: contextLoadMore,
+    hasNext: contextHasNext,
+    isLoading: contextIsLoading,
+  } = useAttachmentContext();
 
   // If we have a targetId, we're in item-specific mode and should use context data
   // Otherwise, fetch images from the server
@@ -16,7 +24,7 @@ export function useAttachmentImages() {
     loadMore,
     hasNext,
     isLoading,
-  } = useFilteredAttachments({
+  } = useFilteredAttachmentsManager({
     kind: 'image',
     enabled: !targetId,
   });
@@ -70,6 +78,8 @@ export function useAttachmentImages() {
     });
   }, [getSelectedImages, deleteAttachment, disableSelectionMode]);
 
+  const noopLoadMore = useCallback(() => {}, []);
+
   return {
     imageAttachments,
     isSelectionMode,
@@ -79,8 +89,8 @@ export function useAttachmentImages() {
     enableSelectionMode,
     disableSelectionMode,
     handleDeleteSelected,
-    loadMore: targetId ? () => {} : loadMore,
-    hasNext: targetId ? false : hasNext,
-    isLoading: targetId ? false : isLoading,
+    loadMore: targetId ? (contextLoadMore ?? noopLoadMore) : loadMore,
+    hasNext: targetId ? contextHasNext : hasNext,
+    isLoading: targetId ? Boolean(contextIsLoading) : isLoading,
   };
 }

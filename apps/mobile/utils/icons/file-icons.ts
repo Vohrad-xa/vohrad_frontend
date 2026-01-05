@@ -117,15 +117,12 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
     case 'archive':
       return {
         name: AppIcons.files.archive,
-        colorToken: 'muted',
-        symbolType: 'hierarchical',
+        colorToken: 'accentBlue',
       };
     case 'image':
       return {
         name: AppIcons.files.image,
-        colorToken: 'accentIndigo',
-        symbolType: 'palette',
-        symbolColorTokens: ['accentIndigo', 'docIcon'],
+        colorToken: 'accentBlue',
       };
     case 'text':
       return {

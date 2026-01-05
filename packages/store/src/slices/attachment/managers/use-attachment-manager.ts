@@ -1,60 +1,76 @@
-import {useCallback} from 'react';
-import type {ItemAttachment, AttachmentTargetType} from '@sykamore/types';
-import {
-  useFetchTargetAttachments,
-  useUploadAttachment,
-  useDeleteAttachment,
-} from '../hooks';
+// import {useCallback, useMemo} from 'react';
+// import type {AttachmentTargetType} from '@sykamore/types';
+// import {useUploadAttachment, useDeleteAttachment} from '../hooks';
+// import {useAttachmentsListManager} from './use-attachments-list-manager';
 
-type UseAttachmentManagerOptions = {
-  enabled?: boolean;
-};
+// type UseAttachmentManagerOptions = {
+//   enabled?: boolean;
+//   pageSize?: number;
+// };
 
-const EMPTY_ATTACHMENTS: ItemAttachment[] = [];
+// export function useAttachmentManager(
+//   targetType: AttachmentTargetType,
+//   targetId: string | null,
+//   options?: UseAttachmentManagerOptions,
+// ) {
+//   const hasTarget = Boolean(targetId && targetType);
+//   const filters = useMemo(
+//     () => (hasTarget ? {targetType, targetId: targetId!} : {}),
+//     [hasTarget, targetType, targetId],
+//   );
 
-export function useAttachmentManager(
-  targetType: AttachmentTargetType,
-  targetId: string | null,
-  options?: UseAttachmentManagerOptions,
-) {
-  const {
-    data: attachments,
-    isLoading,
-    isError,
-    error,
-    refetch,
-  } = useFetchTargetAttachments(targetType, targetId, options?.enabled);
+//   const {
+//     attachments,
+//     isLoading,
+//     error,
+//     refresh,
+//     hasNext,
+//     loadMore,
+//     lastUpdated,
+//   } = useAttachmentsListManager({
+//     filters,
+//     pageSize: options?.pageSize,
+//     enabled: options?.enabled ?? hasTarget,
+//   });
 
-  const uploadMutation = useUploadAttachment();
-  const deleteMutation = useDeleteAttachment();
+//   const uploadMutation = useUploadAttachment();
+//   const deleteMutation = useDeleteAttachment();
 
-  const uploadAttachment = useCallback(
-    (formData: FormData) => {
-      return uploadMutation.mutateAsync(formData);
-    },
-    [uploadMutation],
-  );
+//   const uploadAttachment = useCallback(
+//     (formData: FormData) => {
+//       return uploadMutation.mutateAsync(formData);
+//     },
+//     [uploadMutation],
+//   );
 
-  const deleteAttachment = useCallback(
-    (attachmentId: string, deleteOptions?: {hardDelete?: boolean}) => {
-      return deleteMutation.mutateAsync({
-        attachmentId,
-        hardDelete: deleteOptions?.hardDelete,
-      });
-    },
-    [deleteMutation],
-  );
+//   const deleteAttachment = useCallback(
+//     (attachmentId: string, deleteOptions?: {hardDelete?: boolean}) => {
+//       return deleteMutation.mutateAsync({
+//         attachmentId,
+//         hardDelete: deleteOptions?.hardDelete,
+//       });
+//     },
+//     [deleteMutation],
+//   );
 
-  return {
-    attachments: attachments ?? EMPTY_ATTACHMENTS,
-    isLoading:
-      isLoading || uploadMutation.isPending || deleteMutation.isPending,
-    isUploading: uploadMutation.isPending,
-    isDeleting: deleteMutation.isPending,
-    isError: isError || uploadMutation.isError || deleteMutation.isError,
-    error: error || uploadMutation.error || deleteMutation.error,
-    fetchAttachments: refetch,
-    uploadAttachment,
-    deleteAttachment,
-  };
-}
+//   const fetchAttachments = useCallback(async () => {
+//     if (!hasTarget) return;
+//     await refresh();
+//   }, [hasTarget, refresh]);
+
+//   return {
+//     attachments,
+//     isLoading:
+//       isLoading || uploadMutation.isPending || deleteMutation.isPending,
+//     isUploading: uploadMutation.isPending,
+//     isDeleting: deleteMutation.isPending,
+//     isError: Boolean(error || uploadMutation.isError || deleteMutation.isError),
+//     error: error || uploadMutation.error || deleteMutation.error,
+//     fetchAttachments,
+//     hasNext,
+//     loadMore,
+//     lastUpdated,
+//     uploadAttachment,
+//     deleteAttachment,
+//   };
+// }

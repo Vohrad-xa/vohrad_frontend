@@ -56,12 +56,17 @@ export {
   useCreateUser,
 } from './slices/user';
 export {
-  useAttachmentManager,
   useAttachmentsListManager,
+  useAttachmentsViewManager,
+  useFilteredAttachmentsManager,
   useDeleteAttachment,
   useFetchTargetAttachments,
   useInfiniteAttachments,
   useUploadAttachment,
+} from './slices/attachment';
+export type {
+  UseAttachmentsViewManagerOptions,
+  UseFilteredAttachmentsManagerOptions,
 } from './slices/attachment';
 export {
   usePendingFilters,

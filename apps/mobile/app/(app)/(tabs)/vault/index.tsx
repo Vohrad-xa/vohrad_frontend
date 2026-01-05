@@ -16,7 +16,7 @@ import {
   useAttachmentSearch,
   useAttachmentPress,
   VaultActionsMenu,
-  AllAttachmentsList,
+  AttachmentsList,
   useAttachmentContext,
 } from '@/features/attachments';
 import {useSearch} from '@/features/dashboard';
@@ -171,7 +171,7 @@ export default function VaultScreen() {
   if (isSearchActive && !hasActiveFilter) {
     return (
       <View style={styles.container}>
-        <AllAttachmentsList
+        <AttachmentsList
           attachments={searchResults}
           onAttachmentPress={handleSearchResultPress}
         />

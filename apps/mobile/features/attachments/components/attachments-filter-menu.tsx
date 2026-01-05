@@ -5,35 +5,44 @@ import {
   getAttachmentExtension,
   hasAttachmentExtension,
   parseAttachmentOrderBy,
-  useAttachmentFilter,
-  useUpdateAttachmentFilter,
 } from '@sykamore/store';
 import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
 import {HeaderButton} from '@/components/ui';
 import type {AttachmentSortKey, OrderByDirection} from '@sykamore/types';
 
-type DocumentsFilterMenuProps = {
+type AttachmentsFilterMenuProps = {
+  showExtensionFilter?: boolean;
+  extension?: string | null;
+  odataOrderBy?: string;
   onExtensionChange?: (extension: string | undefined) => void;
+  onOrderByChange?: (orderBy: string | undefined) => void;
 };
 
 /**
- * Header trigger for filtering documents by file extension.
+ * Attachment menu for sorting (and optionally filtering by file extension).
  *
- * - Lives under attachments components to stay reusable across screens
- * - Emits selected extension and mirrors into the global attachment filter
+ * - Extension filter is hidden when not supported by the screen
+ * - Emits local extension/orderby selections to the parent
  */
-export function DocumentsFilterMenu({
+export function AttachmentsFilterMenu({
+  showExtensionFilter = true,
+  extension,
+  odataOrderBy,
   onExtensionChange,
-}: DocumentsFilterMenuProps) {
-  const attachmentFilter = useAttachmentFilter();
-  const updateAttachmentFilter = useUpdateAttachmentFilter();
-
-  const normalizedExtension = getAttachmentExtension(attachmentFilter);
-  const hasExtensionFilter = hasAttachmentExtension(attachmentFilter);
+  onOrderByChange,
+}: AttachmentsFilterMenuProps) {
+  const normalizedExtension = useMemo(
+    () => getAttachmentExtension(extension ? {extension} : null),
+    [extension],
+  );
+  const hasExtensionFilter = useMemo(
+    () => hasAttachmentExtension(extension ? {extension} : null),
+    [extension],
+  );
 
   const activeSort = useMemo(
-    () => parseAttachmentOrderBy(attachmentFilter?.odataOrderBy),
-    [attachmentFilter?.odataOrderBy],
+    () => parseAttachmentOrderBy(odataOrderBy),
+    [odataOrderBy],
   );
 
   const dateSortDirection =
@@ -42,24 +51,15 @@ export function DocumentsFilterMenu({
     activeSort.key === 'name' ? activeSort.direction : 'asc';
 
   const applyExtensionFilter = useCallback(
-    (extension?: string) => {
-      if (extension) {
-        updateAttachmentFilter({extension});
-        onExtensionChange?.(extension);
+    (nextExtension?: string) => {
+      const normalized = nextExtension?.trim().toLowerCase();
+      if (!normalized) {
+        onExtensionChange?.(undefined);
         return;
       }
-
-      updateAttachmentFilter((prev) => {
-        if (!prev) {
-          return null;
-        }
-
-        const {extension: _extension, ...rest} = prev;
-        return rest;
-      });
-      onExtensionChange?.(undefined);
+      onExtensionChange?.(normalized);
     },
-    [onExtensionChange, updateAttachmentFilter],
+    [onExtensionChange],
   );
 
   const applySort = useCallback(
@@ -73,11 +73,10 @@ export function DocumentsFilterMenu({
           ? 'desc'
           : 'asc';
 
-      updateAttachmentFilter({
-        odataOrderBy: buildAttachmentOrderBy(key, nextDirection),
-      });
+      const orderBy = buildAttachmentOrderBy(key, nextDirection);
+      onOrderByChange?.(orderBy);
     },
-    [activeSort, updateAttachmentFilter],
+    [activeSort, onOrderByChange],
   );
 
   const handleMenuSelect = useCallback(
@@ -105,9 +104,9 @@ export function DocumentsFilterMenu({
     [applyExtensionFilter, applySort],
   );
 
-  const extensionMenuActions = useMemo((): SykaMenuAction[] => {
+  const menuActions = useMemo((): SykaMenuAction[] => {
     const presets = ['pdf', 'docx', 'xlsx', 'csv', 'txt'];
-    return [
+    const actions: SykaMenuAction[] = [
       {
         title: 'sorted by',
         menuOptions: {displayInline: true},
@@ -116,7 +115,7 @@ export function DocumentsFilterMenu({
         subactions: [
           {
             id: 'date',
-            title: 'Date                           ',
+            title: 'Date',
             subtitle:
               dateSortDirection === 'desc' ? 'Newest first' : 'Oldest first',
             state:
@@ -139,7 +138,10 @@ export function DocumentsFilterMenu({
           },
         ],
       },
-      {
+    ];
+
+    if (showExtensionFilter) {
+      actions.push({
         id: 'extensions-menu',
         title: 'Filter by type',
         menuOptions: {displayInline: true},
@@ -156,23 +158,33 @@ export function DocumentsFilterMenu({
               normalizedExtension === ext ? ('on' as const) : ('off' as const),
           })),
         ],
-      },
-    ];
+      });
+    }
+
+    return actions;
   }, [
     activeSort.key,
     dateSortDirection,
     nameSortDirection,
     hasExtensionFilter,
     normalizedExtension,
+    showExtensionFilter,
   ]);
+
+  const accessibilityLabel = showExtensionFilter
+    ? 'Filter attachments'
+    : 'Sort attachments';
+  const accessibilityHint = showExtensionFilter
+    ? 'Filter attachments by file type or sort order'
+    : 'Sort attachments by date or name';
 
   return (
     <SykaMenuView
       ripple={{mode: 'circle'}}
-      actions={extensionMenuActions}
+      actions={menuActions}
       onPressAction={({nativeEvent}) => handleMenuSelect(nativeEvent.event)}
-      accessibilityLabel="Filter documents"
-      accessibilityHint="Filter documents by file type"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
     >
       <HeaderButton variant="more" />
     </SykaMenuView>

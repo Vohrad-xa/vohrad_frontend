@@ -1,32 +1,44 @@
 import {useCallback} from 'react';
 import {
-  useDocumentAttachments,
-  useArchiveAttachments,
-  useOtherAttachments,
-} from '../hooks/attachment-images';
+  buildAttachmentODataFilter,
+  useAttachmentsViewManager,
+  useFilteredAttachmentsManager,
+} from '@sykamore/store';
 import {useOptionalAttachmentContext} from '../providers/attachment-provider';
 import {resolveAttachmentItemUrl} from '../utils';
-import {useFilteredAttachments} from './use-filtered-attachments';
 
 type AttachmentKind = 'document' | 'archive' | 'other';
 
-const kindFilterHooks = {
-  document: useDocumentAttachments,
-  archive: useArchiveAttachments,
-  other: useOtherAttachments,
-} as const;
+type UseAttachmentsByKindOptions = {
+  extension?: string;
+  odataOrderBy?: string;
+};
 
 /**
  * Single entry-point to read attachments for one kind.
  *
  * If AttachmentProvider is present, use its attachments (no extra fetch).
- * Otherwise, fetch from the global vault via useFilteredAttachments.
+ * Otherwise, fetch from the global vault via useFilteredAttachmentsManager.
+ *
+ * - When a targetId is present, extension and sorting are applied in-memory.
  *
  * getById/resolveUrlById are meant for user actions (tap/open), not hot paths.
  */
-export function useAttachmentsByKind(kind: AttachmentKind) {
+export function useAttachmentsByKind(
+  kind: AttachmentKind,
+  options?: UseAttachmentsByKindOptions,
+) {
   const attachmentContext = useOptionalAttachmentContext();
   const targetId = attachmentContext?.targetId ?? undefined;
+  const contextLoadMore = attachmentContext?.loadMore;
+  const contextHasNext = attachmentContext?.hasNext;
+  const contextIsLoading = attachmentContext?.isLoading;
+  const contextRefresh = attachmentContext?.refresh;
+  const contextLastUpdated = attachmentContext?.lastUpdated;
+  const {extension, odataOrderBy} = options ?? {};
+  const localOdataFilter = buildAttachmentODataFilter(
+    extension ? {extension} : null,
+  );
 
   const {
     attachments: fetchedAttachments,
@@ -35,17 +47,24 @@ export function useAttachmentsByKind(kind: AttachmentKind) {
     isLoading,
     refresh,
     lastUpdated,
-  } = useFilteredAttachments({
+  } = useFilteredAttachmentsManager({
     kind,
+    odataFilter: localOdataFilter,
+    odataOrderBy,
     enabled: !targetId,
   });
 
   const sourceAttachments = targetId
-    ? attachmentContext?.attachments
+    ? (attachmentContext?.attachments ?? [])
     : fetchedAttachments;
 
-  const filterHook = kindFilterHooks[kind];
-  const filteredAttachments = filterHook(sourceAttachments);
+  const {attachments: filteredAttachments} = useAttachmentsViewManager({
+    attachments: sourceAttachments,
+    kind,
+    extension,
+    odataOrderBy,
+    enabled: Boolean(targetId),
+  });
 
   const getById = useCallback(
     (id: string) => filteredAttachments.find((item) => item.id === id),
@@ -70,13 +89,15 @@ export function useAttachmentsByKind(kind: AttachmentKind) {
     await refresh();
   }, [refresh]);
 
+  const noop = useCallback(() => {}, []);
+
   return {
     attachments: filteredAttachments,
-    loadMore,
-    hasNext,
-    isLoading,
-    refresh: targetId ? undefined : refreshAttachments,
-    lastUpdated,
+    loadMore: targetId ? (contextLoadMore ?? noop) : loadMore,
+    hasNext: targetId ? contextHasNext : hasNext,
+    isLoading: targetId ? Boolean(contextIsLoading) : isLoading,
+    refresh: targetId ? contextRefresh : refreshAttachments,
+    lastUpdated: targetId ? (contextLastUpdated ?? null) : lastUpdated,
     getById,
     resolveUrlById,
   };

@@ -1,7 +1,7 @@
-import React, {createContext, useContext, useMemo} from 'react';
+import React, {createContext, useCallback, useContext, useMemo} from 'react';
 import {
-  useFetchTargetAttachments,
   useAttachmentFilter,
+  useFilteredAttachmentsManager,
   type AttachmentTargetType,
 } from '@sykamore/store';
 import type {ItemAttachment} from '@sykamore/types';
@@ -12,6 +12,10 @@ interface AttachmentContextValue {
   error: Error | null;
   targetId?: string | null;
   targetType?: AttachmentTargetType | null;
+  hasNext?: boolean;
+  loadMore?: () => void;
+  refresh?: () => Promise<void> | void;
+  lastUpdated?: Date | null;
 }
 
 const AttachmentContext = createContext<AttachmentContextValue | undefined>(
@@ -26,25 +30,56 @@ export function AttachmentProvider({children}: AttachmentProviderProps) {
   const attachmentFilter = useAttachmentFilter();
   const targetId = attachmentFilter?.targetId ?? null;
   const targetType = attachmentFilter?.targetType ?? null;
+  const hasActiveTarget = Boolean(targetId && targetType);
+  const initialFilter = useMemo(() => {
+    if (!targetId || !targetType) {
+      return undefined;
+    }
+    return {targetType, targetId};
+  }, [targetId, targetType]);
+
   const {
-    data: attachments,
+    attachments,
     isLoading,
     error,
-  } = useFetchTargetAttachments(
-    targetType!,
-    targetId,
-    !!targetId && !!targetType,
-  );
+    hasNext,
+    loadMore,
+    refresh,
+    lastUpdated,
+  } = useFilteredAttachmentsManager({
+    initialFilter,
+    enabled: hasActiveTarget,
+  });
+
+  const refreshAttachments = useCallback(async () => {
+    if (!refresh) return;
+    await refresh();
+  }, [refresh]);
 
   const value = useMemo(
     () => ({
-      attachments: attachments ?? [],
+      attachments,
       isLoading,
       error: error ?? null,
       targetId,
       targetType,
+      hasNext: hasActiveTarget ? hasNext : undefined,
+      loadMore: hasActiveTarget ? loadMore : undefined,
+      refresh: hasActiveTarget ? refreshAttachments : undefined,
+      lastUpdated: hasActiveTarget ? lastUpdated : null,
     }),
-    [attachments, isLoading, error, targetId, targetType],
+    [
+      attachments,
+      isLoading,
+      error,
+      targetId,
+      targetType,
+      hasActiveTarget,
+      hasNext,
+      loadMore,
+      refreshAttachments,
+      lastUpdated,
+    ],
   );
 
   return (
