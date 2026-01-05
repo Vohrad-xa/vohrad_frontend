@@ -1,11 +1,12 @@
 import {useCallback, useMemo} from 'react';
 import {Platform} from 'react-native';
 import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
-import {Stack} from 'expo-router';
+import {router, Stack} from 'expo-router';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme, useSidebar} from '@/providers';
+import {getHeaderOptions} from '@/utils/navigation/header-actions';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -139,7 +140,24 @@ function SettingsStack() {
         <Stack.Screen name="plan" options={{title: 'Plan'}} />
 
         <Stack.Screen name="users/index" options={usersIndexOptions} />
-        <Stack.Screen name="users/add-user" options={{title: 'Add User'}} />
+        <Stack.Screen
+          name="users/add-user"
+          options={{
+            title: 'Add User',
+            presentation: 'modal',
+            ...getHeaderOptions({
+              left: [
+                {
+                  type: 'button',
+                  key: 'close',
+                  label: 'Close',
+                  iosSymbol: 'xmark',
+                  onPress: () => router.dismiss(),
+                },
+              ],
+            }),
+          }}
+        />
       </Stack>
     </ScreenLoadingWrapper>
   );

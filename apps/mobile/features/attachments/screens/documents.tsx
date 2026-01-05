@@ -20,6 +20,7 @@ import {type ItemAttachment} from '@sykamore/types';
 import {Checkbox, Divider} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme, useHaptic} from '@/providers';
 import {
@@ -30,7 +31,6 @@ import {
   type AttachmentIcon,
   Icon,
 } from '@/utils';
-import {ListCountFooter, ListStatusHeader} from '../components';
 
 /**
  * Imperative selection controls consumed by parent navigation/header flows.
@@ -154,7 +154,12 @@ const DocumentItem = memo<DocumentItemProps>(
               {item.uiTitle}
             </ThemedText>
 
-            <ThemedText allowFontScaling variant="caption" numberOfLines={1}>
+            <ThemedText
+              allowFontScaling
+              variant="footnote"
+              colorToken="muted"
+              numberOfLines={1}
+            >
               {item.uiDescription}
             </ThemedText>
           </View>
@@ -425,7 +430,7 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       content: {
-        paddingVertical: ds.spacing.lg,
+        paddingVertical: ds.spacing.md,
         paddingHorizontal: ds.spacing.lg,
         marginVertical: -0.2,
       },

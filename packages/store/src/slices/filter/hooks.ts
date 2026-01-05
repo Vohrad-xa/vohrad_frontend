@@ -30,11 +30,11 @@ export function useClearAttachmentFilter() {
 const hasAttachmentFilterValues = (filter: AttachmentFilter | null) =>
   Boolean(
     filter?.targetType ||
-      filter?.targetId ||
-      filter?.itemName ||
-      hasAttachmentExtension(filter) ||
-      filter?.odataFilter ||
-      filter?.odataOrderBy,
+    filter?.targetId ||
+    filter?.itemName ||
+    hasAttachmentExtension(filter) ||
+    filter?.odataFilter ||
+    filter?.odataOrderBy,
   );
 
 /**
@@ -42,7 +42,9 @@ const hasAttachmentFilterValues = (filter: AttachmentFilter | null) =>
  */
 export function useUpdateAttachmentFilter() {
   const attachmentFilter = useAuthStore((state) => state.attachmentFilter);
-  const setAttachmentFilter = useAuthStore((state) => state.setAttachmentFilter);
+  const setAttachmentFilter = useAuthStore(
+    (state) => state.setAttachmentFilter,
+  );
 
   return useCallback(
     (

@@ -13,12 +13,20 @@ export class UserApi {
     page: number,
     size: number,
     odataFilter?: string,
+    odataOrderBy?: string,
   ): Promise<ApiResponse<PaginatedResponse<User>>> {
-    const filterParam = odataFilter
-      ? `&$filter=${encodeURIComponent(odataFilter)}`
-      : '';
+    const search = new URLSearchParams();
+    search.set('page', String(page));
+    search.set('size', String(size));
+    if (odataFilter) {
+      search.set('$filter', odataFilter);
+    }
+    if (odataOrderBy) {
+      search.set('$orderby', odataOrderBy);
+    }
+    const queryString = search.toString();
     return httpClient.get<PaginatedResponse<User>>(
-      `${API_ENDPOINTS.USERS.LIST}?page=${page}&size=${size}${filterParam}`,
+      `${API_ENDPOINTS.USERS.LIST}?${queryString}`,
     );
   }
 

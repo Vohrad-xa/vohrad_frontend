@@ -73,6 +73,9 @@ export type {
   AttachmentSortState,
 } from './attachment';
 
+// User sorting types
+export type {UserSortKey, UserSortState} from './user';
+
 // Namespaced exports for advanced usage
 export * as schemas from './schemas';
 export * as validation from './validation';

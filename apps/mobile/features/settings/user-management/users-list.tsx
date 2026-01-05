@@ -3,7 +3,8 @@ import {StyleSheet} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {Avatar, Divider, List} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
 import {AppIcons, Icon, makeStyleFactory} from '@/utils';
@@ -15,6 +16,8 @@ type UsersListProps = {
   onRefresh?: () => Promise<void> | void;
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
+  isLoading?: boolean;
+  lastUpdated?: Date | null;
 };
 
 type UserItemProps = {
@@ -78,6 +81,8 @@ export function UsersList({
   onRefresh,
   onEndReached,
   onEndReachedThreshold = 0.5,
+  isLoading = false,
+  lastUpdated = null,
 }: UsersListProps) {
   const {ds, theme} = useTheme();
   const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
@@ -99,20 +104,16 @@ export function UsersList({
   );
 
   const ListHeader = useCallback(
-    () => (
-      <>
-        <ThemedText variant="caption" style={styles.headerText}>
-          {users.length === 1 ? '1 user found' : `${users.length} users found`}
-        </ThemedText>
-        <Divider style={styles.titleDivider} />
-      </>
-    ),
-    [styles.headerText, styles.titleDivider, users.length],
+    () => <ListStatusHeader isLoading={isLoading} lastUpdated={lastUpdated} />,
+    [isLoading, lastUpdated],
   );
 
   const extraData = useMemo(
-    () => `${users.length}|${fontScaleKey}`,
-    [users.length, fontScaleKey],
+    () =>
+      `${users.length}|${fontScaleKey}|${isLoading ? 1 : 0}|${
+        lastUpdated ? lastUpdated.getTime() : 0
+      }`,
+    [users.length, fontScaleKey, isLoading, lastUpdated],
   );
 
   return (
@@ -132,6 +133,15 @@ export function UsersList({
       refreshing={refreshing}
       onRefresh={handleRefresh}
       progressViewOffset={ds.spacing.lg}
+      ListFooterComponent={
+        <ListCountFooter
+          count={users.length}
+          dividerStyle={styles.divider}
+          containerStyle={styles.footer}
+          textVariant="callout"
+          fontWeight="bold"
+        />
+      }
     />
   );
 }
@@ -144,10 +154,6 @@ const createStyles = makeStyleFactory(
         paddingRight: ds.spacing.lg,
       },
 
-      headerText: {
-        paddingHorizontal: ds.spacing.lg,
-      },
-
       title: {
         marginBottom: ds.spacing.xs,
       },
@@ -157,9 +163,10 @@ const createStyles = makeStyleFactory(
         marginRight: ds.spacing.lg,
       },
 
-      titleDivider: {
-        marginTop: ds.spacing.md,
-        marginHorizontal: ds.spacing.lg,
+      footer: {
+        paddingTop: ds.spacing.xxl,
+        paddingBottom: ds.spacing.xl,
+        alignItems: 'center',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

@@ -34,9 +34,7 @@ export function buildUserODataFilter(
  */
 export function hasActiveUserFilters(filters: UserFilterState): boolean {
   if (!filters) return false;
-  return Boolean(
-    filters.role && filters.role.trim().length > 0,
-  );
+  return Boolean(filters.role && filters.role.trim().length > 0);
 }
 
 /**

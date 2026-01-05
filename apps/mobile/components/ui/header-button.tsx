@@ -238,7 +238,7 @@ const createStyles = makeStyleFactory(
         borderRadius: ds.borderRadius.full,
       },
       groupedButton: {
-        marginHorizontal: Platform.OS === 'ios' ? ds.spacing.xs : ds.spacing.sm,
+        marginHorizontal: Platform.OS === 'ios' ? ds.spacing.sm : ds.spacing.sm,
       },
 
       // buttonDisabled: {

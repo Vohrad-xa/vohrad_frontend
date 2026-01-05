@@ -103,6 +103,8 @@ export type {
   AttachmentSortState,
   OrderByClause,
   OrderByDirection,
+  UserSortKey,
+  UserSortState,
 } from '@sykamore/types';
 export {
   buildItemODataFilter,
@@ -127,5 +129,6 @@ export {
   buildAttachmentOrderBy,
   parseAttachmentOrderBy,
 } from './slices/attachment/sorting';
+export {buildUserOrderBy, parseUserOrderBy} from './slices/user/sorting';
 export {searchItemsLocally, searchUsersLocally} from './utils/local-search';
 export type {AsyncState, PaginatedState} from './utils/state';

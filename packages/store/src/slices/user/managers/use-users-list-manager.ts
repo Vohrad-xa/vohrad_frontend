@@ -4,6 +4,7 @@ import {useInfiniteUsers} from '../hooks/use-infinite-users';
 
 type UseUsersListManagerOptions = {
   odataFilter?: string;
+  odataOrderBy?: string;
   pageSize?: number;
   enabled?: boolean;
 };
@@ -11,6 +12,7 @@ type UseUsersListManagerOptions = {
 export function useUsersListManager(options?: UseUsersListManagerOptions) {
   const {
     data,
+    dataUpdatedAt,
     error,
     isError,
     isSuccess,
@@ -21,6 +23,7 @@ export function useUsersListManager(options?: UseUsersListManagerOptions) {
     refetch,
   } = useInfiniteUsers(
     options?.odataFilter,
+    options?.odataOrderBy,
     options?.pageSize,
     options?.enabled,
   );
@@ -57,6 +60,7 @@ export function useUsersListManager(options?: UseUsersListManagerOptions) {
   return {
     users,
     total: data?.pages[0]?.data.total ?? 0,
+    lastUpdated: dataUpdatedAt ? new Date(dataUpdatedAt) : null,
     isLoading: isFetching,
     isFetchingNextPage,
     error,

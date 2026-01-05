@@ -3,9 +3,7 @@ import type {
   AttachmentSortState,
   OrderByDirection,
 } from '@sykamore/types';
-import {
-  buildODataOrderBy,
-} from '../../utils/odata-orderby-builder';
+import {buildODataOrderBy} from '../../utils/odata-orderby-builder';
 
 const DEFAULT_ATTACHMENT_SORT: AttachmentSortState = {
   key: 'date',
@@ -15,9 +13,7 @@ const DEFAULT_ATTACHMENT_SORT: AttachmentSortState = {
 /**
  * Parses an attachment $orderby string into a UI-friendly sort state.
  */
-export function parseAttachmentOrderBy(
-  orderby?: string,
-): AttachmentSortState {
+export function parseAttachmentOrderBy(orderby?: string): AttachmentSortState {
   if (!orderby) {
     return DEFAULT_ATTACHMENT_SORT;
   }

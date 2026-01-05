@@ -5,6 +5,4 @@ export {AttachmentDestinationCard} from './attachment-destination-card';
 export {AttachmentImagePreview} from './attachment-image-preview';
 export {SelectableImageTile} from './selectable-image-tile';
 export {VaultActionsMenu} from './vault-actions-menu';
-export {ListCountFooter} from './list-count-footer';
-export {ListStatusHeader} from './list-status-header';
 export {DocumentsFilterMenu} from './documents-filter-menu';

@@ -13,6 +13,7 @@ type UseSearchUsersOptions = {
   searchQuery: string;
   pageSize?: number;
   filters?: UserFilterOptions;
+  odataOrderBy?: string;
 };
 
 type UseHybridUserSearchOptions = {
@@ -103,7 +104,7 @@ function useHybridUserSearch({
  * - While in server mode, local search is skipped (role filters still apply on the result set).
  */
 export function useSearchUsers(options: UseSearchUsersOptions) {
-  const {searchQuery, pageSize, filters} = options;
+  const {searchQuery, pageSize, filters, odataOrderBy} = options;
   const {shouldUseServerSearch, enableServerSearch} =
     useUserServerSearchState(searchQuery);
 
@@ -126,6 +127,7 @@ export function useSearchUsers(options: UseSearchUsersOptions) {
 
   const manager = useUsersListManager({
     odataFilter,
+    odataOrderBy,
     pageSize,
     enabled: shouldUseRemote ? Boolean(odataFilter) : true,
   });
