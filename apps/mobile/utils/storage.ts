@@ -9,7 +9,7 @@ const memory = new Map<string, string>();
 const NS = '@sykamore:'; // namespace prefix for all keys
 
 // Keys whose payloads must never be persisted in browser storage.
-const SENSITIVE_KEYS = new Set(['vohrad-auth']);
+const SENSITIVE_KEYS = new Set(['sykamore-auth']);
 
 function ns(key: string) {
   return `${NS}${key}`;

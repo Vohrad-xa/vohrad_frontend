@@ -1,4 +1,11 @@
-import React, {useCallback, useEffect, useLayoutEffect, useMemo} from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {Platform} from 'react-native';
 import {
   useSetAttachmentFilter,
   useClearAttachmentFilter,
@@ -17,7 +24,76 @@ import {
   useAttachmentContext,
 } from '@/features/attachments';
 import {useSearch} from '@/features/dashboard';
+import * as storage from '@/utils/storage';
 import type {ItemAttachment} from '@sykamore/types';
+
+const ATTACHMENT_OVERVIEW_ORDER_KEY = 'attachments.overview.order';
+const DEFAULT_ATTACHMENT_OVERVIEW_ORDER = [
+  'image',
+  'document',
+  'archive',
+  'other',
+] as const;
+
+type AttachmentOverviewKind =
+  (typeof DEFAULT_ATTACHMENT_OVERVIEW_ORDER)[number];
+
+const isAttachmentOverviewKind = (
+  value: string,
+): value is AttachmentOverviewKind =>
+  DEFAULT_ATTACHMENT_OVERVIEW_ORDER.includes(value as AttachmentOverviewKind);
+
+const normalizeAttachmentOverviewOrder = (
+  value: unknown,
+): AttachmentOverviewKind[] => {
+  const order = Array.isArray(value) ? value : [];
+  const normalized: AttachmentOverviewKind[] = [];
+  const seen = new Set<AttachmentOverviewKind>();
+
+  order.forEach((entry) => {
+    if (typeof entry !== 'string') {
+      return;
+    }
+
+    if (!isAttachmentOverviewKind(entry) || seen.has(entry)) {
+      return;
+    }
+
+    seen.add(entry);
+    normalized.push(entry);
+  });
+
+  DEFAULT_ATTACHMENT_OVERVIEW_ORDER.forEach((kind) => {
+    if (!seen.has(kind)) {
+      normalized.push(kind);
+    }
+  });
+
+  return normalized;
+};
+
+const moveAttachmentOverviewItem = (
+  order: AttachmentOverviewKind[],
+  from: number,
+  to: number,
+): AttachmentOverviewKind[] => {
+  if (from === to) {
+    return order;
+  }
+
+  if (from < 0 || from >= order.length) {
+    return order;
+  }
+
+  if (to < 0 || to > order.length) {
+    return order;
+  }
+
+  const next = order.slice();
+  const [moved] = next.splice(from, 1);
+  next.splice(to, 0, moved);
+  return next;
+};
 
 export default function VaultScreen() {
   const router = useRouter();
@@ -40,6 +116,11 @@ export default function VaultScreen() {
     clearVaultParams,
   } = useAttachmentNavigation();
 
+  const [tileOrder, setTileOrder] = useState<AttachmentOverviewKind[]>(() => [
+    ...DEFAULT_ATTACHMENT_OVERVIEW_ORDER,
+  ]);
+  const [tileOrderHydrated, setTileOrderHydrated] = useState(false);
+
   const {attachments} = useAttachmentContext();
   const {data: dashboardData} = useDashboardOverview();
   const attachmentFilter = useAttachmentFilter();
@@ -49,6 +130,48 @@ export default function VaultScreen() {
     searchQuery,
     enabled: !attachmentFilter,
   });
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadTileOrder = async () => {
+      try {
+        const saved = await storage.getItem(ATTACHMENT_OVERVIEW_ORDER_KEY);
+        if (!mounted || !saved) {
+          return;
+        }
+
+        const parsed = JSON.parse(saved);
+        if (mounted) {
+          setTileOrder(normalizeAttachmentOverviewOrder(parsed));
+        }
+      } catch (_error) {
+        // Fall back to the default order.
+      } finally {
+        if (mounted) {
+          setTileOrderHydrated(true);
+        }
+      }
+    };
+
+    void loadTileOrder();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!tileOrderHydrated) {
+      return;
+    }
+
+    storage
+      .setItem(ATTACHMENT_OVERVIEW_ORDER_KEY, JSON.stringify(tileOrder))
+      .catch((error) => {
+        console.warn('Failed to persist attachment overview order:', error);
+      });
+  }, [tileOrder, tileOrderHydrated]);
 
   const initialFilter = useMemo(() => {
     if (params.targetType === 'item' && typeof params.targetId === 'string') {
@@ -135,6 +258,10 @@ export default function VaultScreen() {
     clearVaultParams();
   }, [clearAttachmentFilter, clearVaultParams]);
 
+  const handleMoveTile = useCallback((from: number, to: number) => {
+    setTileOrder((prev) => moveAttachmentOverviewItem(prev, from, to));
+  }, []);
+
   const filterChip =
     hasActiveFilter && filterInfo
       ? {
@@ -206,6 +333,8 @@ export default function VaultScreen() {
     <AttachmentsOverview
       counts={counts}
       filterChip={filterChip}
+      tileOrder={Platform.OS === 'ios' ? tileOrder : undefined}
+      onMoveTile={Platform.OS === 'ios' ? handleMoveTile : undefined}
       onTilePress={{
         image: handleImagesPress,
         document: handleDocumentsPress,
