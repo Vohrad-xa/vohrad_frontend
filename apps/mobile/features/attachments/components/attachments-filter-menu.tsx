@@ -8,6 +8,7 @@ import {
 } from '@sykamore/store';
 import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
 import {HeaderButton} from '@/components/ui';
+import {useTheme} from '@/providers';
 import type {AttachmentSortKey, OrderByDirection} from '@sykamore/types';
 
 type AttachmentsFilterMenuProps = {
@@ -31,6 +32,8 @@ export function AttachmentsFilterMenu({
   onExtensionChange,
   onOrderByChange,
 }: AttachmentsFilterMenuProps) {
+  const {theme} = useTheme();
+
   const normalizedExtension = useMemo(
     () => getAttachmentExtension(extension ? {extension} : null),
     [extension],
@@ -49,6 +52,8 @@ export function AttachmentsFilterMenu({
     activeSort.key === 'date' ? activeSort.direction : 'desc';
   const nameSortDirection =
     activeSort.key === 'name' ? activeSort.direction : 'asc';
+  const sizeSortDirection =
+    activeSort.key === 'size' ? activeSort.direction : 'desc';
 
   const applyExtensionFilter = useCallback(
     (nextExtension?: string) => {
@@ -69,7 +74,7 @@ export function AttachmentsFilterMenu({
         ? activeSort.direction === 'asc'
           ? 'desc'
           : 'asc'
-        : key === 'date'
+        : key === 'date' || key === 'size'
           ? 'desc'
           : 'asc';
 
@@ -99,30 +104,41 @@ export function AttachmentsFilterMenu({
 
       if (actionId === 'name') {
         applySort('name');
+        return;
+      }
+
+      if (actionId === 'size') {
+        applySort('size');
       }
     },
     [applyExtensionFilter, applySort],
   );
 
   const menuActions = useMemo((): SykaMenuAction[] => {
-    const presets = ['pdf', 'docx', 'xlsx', 'csv', 'txt'];
+    const presets = ['docx', 'xlsx', 'csv', 'txt', 'pdf'];
+    const extensionColors: Record<string, string> = {
+      pdf: theme.destructive,
+      docx: theme.accentBlue,
+      xlsx: theme.accentGreen,
+      csv: theme.text,
+      txt: theme.icon,
+    };
     const actions: SykaMenuAction[] = [
       {
         title: 'sorted by',
         menuOptions: {displayInline: true},
         id: 'sort-menu',
-        preferredElementSize: 'large',
         subactions: [
           {
             id: 'date',
-            title: 'Date',
+            title: 'Date                         ',
             subtitle:
               dateSortDirection === 'desc' ? 'Newest first' : 'Oldest first',
             state:
               activeSort.key === 'date' ? ('on' as const) : ('off' as const),
             image: Platform.select({
               ios: 'clock',
-              android: 'outlined.AccessTime',
+              android: undefined,
             }),
           },
           {
@@ -133,7 +149,19 @@ export function AttachmentsFilterMenu({
               activeSort.key === 'name' ? ('on' as const) : ('off' as const),
             image: Platform.select({
               ios: 'textformat',
-              android: 'outlined.SortByAlpha',
+              android: undefined,
+            }),
+          },
+          {
+            id: 'size',
+            title: 'Size',
+            subtitle:
+              sizeSortDirection === 'desc' ? 'Largest first' : 'Smallest first',
+            state:
+              activeSort.key === 'size' ? ('on' as const) : ('off' as const),
+            image: Platform.select({
+              ios: 'externaldrive.badge.icloud',
+              android: undefined,
             }),
           },
         ],
@@ -149,11 +177,24 @@ export function AttachmentsFilterMenu({
           {
             id: 'ext-all',
             title: 'All types',
+            image: Platform.select({
+              ios: 'folder',
+              android: 'outlined.FolderOpen',
+            }),
             state: hasExtensionFilter ? ('off' as const) : ('on' as const),
           },
           ...presets.map((ext) => ({
             id: `ext-${ext}`,
             title: ext,
+            image: Platform.select({
+              ios: 'doc.text',
+              android: 'outlined.Description',
+            }),
+            imageColor: extensionColors[ext] ?? theme.icon,
+            androidTitleColor:
+              Platform.OS === 'android'
+                ? (extensionColors[ext] ?? theme.icon)
+                : undefined,
             state:
               normalizedExtension === ext ? ('on' as const) : ('off' as const),
           })),
@@ -166,9 +207,15 @@ export function AttachmentsFilterMenu({
     activeSort.key,
     dateSortDirection,
     nameSortDirection,
+    sizeSortDirection,
     hasExtensionFilter,
     normalizedExtension,
     showExtensionFilter,
+    theme.accentBlue,
+    theme.accentGreen,
+    theme.destructive,
+    theme.icon,
+    theme.text,
   ]);
 
   const accessibilityLabel = showExtensionFilter
@@ -176,7 +223,7 @@ export function AttachmentsFilterMenu({
     : 'Sort attachments';
   const accessibilityHint = showExtensionFilter
     ? 'Filter attachments by file type or sort order'
-    : 'Sort attachments by date or name';
+    : 'Sort attachments by date, name, or size';
 
   return (
     <SykaMenuView

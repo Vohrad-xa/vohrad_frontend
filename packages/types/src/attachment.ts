@@ -23,7 +23,7 @@ export type OrderByClause = {
   direction?: OrderByDirection;
 };
 
-export type AttachmentSortKey = 'date' | 'name';
+export type AttachmentSortKey = 'date' | 'name' | 'size';
 
 export type AttachmentSortState = {
   key: AttachmentSortKey;

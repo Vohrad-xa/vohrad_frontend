@@ -61,7 +61,7 @@ const _Tokens = {
     accentPurple: Palette.purple,
     white: Palette.white,
     destructive: Palette.red,
-    muted: Palette.gray[600],
+    muted: Palette.gray[500],
     ripple: 'rgba(31, 0, 0, 0.16)',
     selected: Palette.gray[300],
 

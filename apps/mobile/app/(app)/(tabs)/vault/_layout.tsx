@@ -40,8 +40,8 @@ function VaultStack() {
   const headerSearchBarOptions = useMemo(
     () =>
       ({
-        placement: 'automatic' as const,
-        hideWhenScrolling: true,
+        placement: 'stacked' as const,
+        hideWhenScrolling: false,
         placeholder: 'Search...',
         headerIconColor: theme.icon,
         onChangeText: handleSearchChange,

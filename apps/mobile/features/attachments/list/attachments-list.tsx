@@ -147,6 +147,8 @@ const AttachmentItem = memo<AttachmentItemProps>(
         onLongPress={onLongPressRow ? handleLongPress : undefined}
         accessibilityRole="button"
         activeOpacity={0.5}
+        delayLongPress={400}
+        focusable
       >
         {selectionVisible ? (
           <Animated.View
@@ -185,6 +187,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
             <ThemedText
               allowFontScaling
               variant="body"
+              fontWeight="regular"
               numberOfLines={1}
               ellipsizeMode="middle"
               style={styles.title}
@@ -196,6 +199,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
               allowFontScaling
               variant="footnote"
               colorToken="muted"
+              fontWeight="medium"
               numberOfLines={1}
             >
               {uiDescription}
@@ -342,6 +346,7 @@ const AttachmentsListBase = ({
       maintainVisibleContentPosition={{disabled: true}}
       ListFooterComponent={listFooter}
       automaticallyAdjustContentInsets
+      role="listitem"
     />
   );
 };
@@ -587,7 +592,7 @@ const createStyles = makeStyleFactory(
       },
 
       title: {
-        paddingBottom: ds.spacing.xs,
+        paddingBottom: ds.spacing.xs + 2,
       },
 
       divider: {

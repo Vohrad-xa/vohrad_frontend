@@ -40,11 +40,15 @@ export function parseAttachmentOrderBy(orderby?: string): AttachmentSortState {
     return {key: 'name', direction: normalizedDirection};
   }
 
+  if (field === 'size') {
+    return {key: 'size', direction: normalizedDirection};
+  }
+
   return DEFAULT_ATTACHMENT_SORT;
 }
 
 /**
- * Builds an attachment $orderby string for date/name sorting.
+ * Builds an attachment $orderby string for date/name/size sorting.
  */
 export function buildAttachmentOrderBy(
   key: AttachmentSortKey,
@@ -52,6 +56,10 @@ export function buildAttachmentOrderBy(
 ): string | undefined {
   if (key === 'date') {
     return buildODataOrderBy([{field: 'date', direction}]);
+  }
+
+  if (key === 'size') {
+    return buildODataOrderBy([{field: 'size', direction}]);
   }
 
   return buildODataOrderBy([{field: 'name', direction}]);
