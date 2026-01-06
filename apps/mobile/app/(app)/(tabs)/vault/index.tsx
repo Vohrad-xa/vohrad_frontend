@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useLayoutEffect, useMemo} from 'react';
-import {View, StyleSheet, Pressable, Platform} from 'react-native';
 import {
   useSetAttachmentFilter,
   useClearAttachmentFilter,
@@ -7,8 +6,6 @@ import {
   useDashboardOverview,
 } from '@sykamore/store';
 import {useNavigation, useRouter, useLocalSearchParams} from 'expo-router';
-import {RefreshableScrollView, ThemedText} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AttachmentsOverview,
   useAttachmentNavigation,
@@ -20,8 +17,6 @@ import {
   useAttachmentContext,
 } from '@/features/attachments';
 import {useSearch} from '@/features/dashboard';
-import {useTheme} from '@/providers';
-import {Icon, AppIcons, makeStyleFactory} from '@/utils';
 import type {ItemAttachment} from '@sykamore/types';
 
 export default function VaultScreen() {
@@ -34,8 +29,6 @@ export default function VaultScreen() {
   }>();
   const setAttachmentFilter = useSetAttachmentFilter();
   const clearAttachmentFilter = useClearAttachmentFilter();
-  const {theme, ds} = useTheme();
-  const styles = createStyles(ds, theme);
   const {searchQuery} = useSearch();
   const handleAttachmentPress = useAttachmentPress();
   const {
@@ -103,6 +96,7 @@ export default function VaultScreen() {
   }, [attachmentFilter, attachments, dashboardData]);
 
   const hasActiveFilter = Boolean(attachmentFilter);
+
   const filterInfo = useMemo(() => {
     if (!attachmentFilter?.targetType || !attachmentFilter?.targetId) {
       return null;
@@ -114,10 +108,41 @@ export default function VaultScreen() {
     };
   }, [attachmentFilter]);
 
+  const filterLabel = useMemo(() => {
+    if (!filterInfo) return '';
+    const typeLabel =
+      filterInfo.targetType === 'item'
+        ? 'Item'
+        : filterInfo.targetType === 'location'
+          ? 'Location'
+          : 'Item Location';
+    return `${typeLabel} ${filterInfo.itemName ?? filterInfo.targetId}`;
+  }, [filterInfo]);
+
+  const filterAccessibilityLabel = useMemo(() => {
+    if (!filterInfo) return 'Clear filter';
+    const typeLabel =
+      filterInfo.targetType === 'item'
+        ? 'item'
+        : filterInfo.targetType === 'location'
+          ? 'location'
+          : 'item location';
+    return `Clear ${typeLabel} filter for ${filterInfo.itemName ?? filterInfo.targetId}`;
+  }, [filterInfo]);
+
   const handleClearFilter = useCallback(() => {
     clearAttachmentFilter();
     clearVaultParams();
   }, [clearAttachmentFilter, clearVaultParams]);
+
+  const filterChip =
+    hasActiveFilter && filterInfo
+      ? {
+          label: filterLabel,
+          onClear: handleClearFilter,
+          accessibilityLabel: filterAccessibilityLabel,
+        }
+      : undefined;
 
   const handleImagesPress = useCallback(() => {
     openVaultImages();
@@ -170,107 +195,23 @@ export default function VaultScreen() {
   // Show search results when user is typing
   if (isSearchActive && !hasActiveFilter) {
     return (
-      <View style={styles.container}>
-        <AttachmentsList
-          attachments={searchResults}
-          onAttachmentPress={handleSearchResultPress}
-        />
-      </View>
-    );
-  }
-
-  // iOS uses native Host/List which cannot be inside ScrollView
-  if (Platform.OS === 'ios') {
-    return (
-      <View style={styles.container}>
-        {hasActiveFilter && filterInfo && (
-          <View style={styles.filterContainer}>
-            <Pressable
-              style={styles.filterChip}
-              onPress={handleClearFilter}
-              accessibilityRole="button"
-              accessibilityLabel={`Clear filter for ${filterInfo.itemName ?? 'item'}`}
-            >
-              <ThemedText variant="caption" style={styles.filterText}>
-                Filtered: {filterInfo.itemName ?? `Item ${filterInfo.targetId}`}
-              </ThemedText>
-              <Icon name={AppIcons.actions.close} size="sm" colorToken="text" />
-            </Pressable>
-          </View>
-        )}
-        <AttachmentsOverview
-          counts={counts}
-          onTilePress={{
-            image: handleImagesPress,
-            document: handleDocumentsPress,
-            archive: handleArchivesPress,
-            other: handleOtherPress,
-          }}
-        />
-      </View>
+      <AttachmentsList
+        attachments={searchResults}
+        onAttachmentPress={handleSearchResultPress}
+      />
     );
   }
 
   return (
-    <RefreshableScrollView
-      bounces
-      showsVerticalScrollIndicator={false}
-      contentInsetAdjustmentBehavior="automatic"
-    >
-      {hasActiveFilter && filterInfo && (
-        <View style={styles.filterContainer}>
-          <Pressable
-            style={styles.filterChip}
-            onPress={handleClearFilter}
-            accessibilityRole="button"
-            accessibilityLabel={`Clear filter for ${filterInfo.itemName ?? 'item'}`}
-          >
-            <ThemedText variant="caption" style={styles.filterText}>
-              Filtered: {filterInfo.itemName ?? `Item ${filterInfo.targetId}`}
-            </ThemedText>
-            <Icon name={AppIcons.actions.close} size="sm" colorToken="text" />
-          </Pressable>
-        </View>
-      )}
-      <AttachmentsOverview
-        counts={counts}
-        onTilePress={{
-          image: handleImagesPress,
-          document: handleDocumentsPress,
-          archive: handleArchivesPress,
-          other: handleOtherPress,
-        }}
-      />
-    </RefreshableScrollView>
+    <AttachmentsOverview
+      counts={counts}
+      filterChip={filterChip}
+      onTilePress={{
+        image: handleImagesPress,
+        document: handleDocumentsPress,
+        archive: handleArchivesPress,
+        other: handleOtherPress,
+      }}
+    />
   );
 }
-
-const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-      },
-      filterContainer: {
-        paddingHorizontal: ds.spacing.lg,
-        paddingTop: ds.spacing.md,
-        paddingBottom: ds.spacing.sm,
-      },
-      filterChip: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        alignSelf: 'flex-start',
-        backgroundColor: theme.background,
-        borderRadius: ds.borderRadius.full,
-        paddingVertical: ds.spacing.xs,
-        paddingHorizontal: ds.spacing.md,
-        gap: ds.spacing.sm,
-        borderWidth: 1,
-        borderColor: theme.border,
-      },
-      filterText: {
-        color: theme.text,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);
