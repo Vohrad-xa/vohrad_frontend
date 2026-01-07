@@ -33,7 +33,7 @@ export default function AppSettingsScreen() {
 
   return (
     <Host style={{flex: 1}} matchContents>
-      <List listStyle="insetGrouped" showScrollIndicators={false}>
+      <List listStyle="insetGrouped">
         <Section
           footer={
             <Text>

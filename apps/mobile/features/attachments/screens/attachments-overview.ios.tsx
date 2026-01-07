@@ -1,7 +1,4 @@
 import {useMemo} from 'react';
-import {Palette} from '@/constants';
-import {useTheme} from '@/providers';
-import {Icon, AppIcons, type IconName} from '@/utils';
 import {
   Host,
   List as IOSList,
@@ -17,11 +14,10 @@ import {
   tint,
   Section,
   buttonStyle,
-  glassEffect,
-  frame,
-  GlassEffectContainer,
-  opacity,
-} from 'sykamore-ui/ios';
+  controlSize,
+} from 'sykamore-ui';
+import {useTheme} from '@/providers';
+import {Icon, AppIcons, type IconName} from '@/utils';
 import type {AttachmentKindCount} from '../utils/attachment-counts';
 import type {AttachmentKind} from '@sykamore/types';
 import type {SFSymbol} from 'sf-symbols-typescript';
@@ -123,56 +119,26 @@ export function AttachmentsOverview({
   }, [tileOrder, tiles]);
 
   const filterHeader = filterChip ? (
-    <GlassEffectContainer
-      modifiers={[
-        padding({
-          vertical: ds.spacing.lg,
-          leading: ds.spacing.lg,
-          trailing: ds.spacing.sm,
-        }),
-        frame({
-          alignment: 'center',
-          minWidth: ds.screen.width - ds.spacing.lg * 2,
-          maxHeight: 45,
-          idealHeight: 45,
-        }),
-        glassEffect({
-          glass: {
-            variant: 'regular',
-            interactive: true,
-            tint: theme.accentBlue,
-          },
-          shape: 'roundedRectangle',
-          cornerRadius: ds.borderRadius.full,
-        }),
-        foregroundStyle(Palette.white),
-        opacity(0.9),
-      ]}
-    >
-      <HStack alignment="center">
-        <Text>{filterChip.label}</Text>
-        <Spacer />
-        <Button
-          onPress={filterChip.onClear}
-          label="clear filter"
-          modifiers={[
-            buttonStyle('glass'),
-            font({
-              size: ds.typography.ios.callout.baseSize,
-              weight: 'medium',
-            }),
-            accessibilityLabel(filterChip.accessibilityLabel ?? 'Clear filter'),
-          ]}
-        />
-      </HStack>
-    </GlassEffectContainer>
+    <HStack alignment="center">
+      <Text>{filterChip.label}</Text>
+      <Spacer />
+      <Button
+        onPress={filterChip.onClear}
+        label="clear filter"
+        systemImage="x.circle"
+        modifiers={[
+          buttonStyle('automatic'),
+          controlSize('small'),
+          accessibilityLabel(filterChip.accessibilityLabel ?? 'Clear filter'),
+        ]}
+      />
+    </HStack>
   ) : undefined;
 
   return (
     <Host style={{flex: 1}} matchContents>
       <IOSList
         listStyle="automatic"
-        scrollEnabled
         refreshEnabled
         moveEnabled={Boolean(onMoveTile)}
         onMoveItem={onMoveTile}

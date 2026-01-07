@@ -48,7 +48,7 @@ export const AddUserScreen = forwardRef<
 
   return (
     <Host style={{flex: 1}} matchContents>
-      <List listStyle="insetGrouped" showScrollIndicators={false}>
+      <List listStyle="insetGrouped">
         {activeRoles.length > 0 && (
           <Section
             title="Select Role"

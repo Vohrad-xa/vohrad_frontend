@@ -14,6 +14,7 @@ import {
   Text,
 } from 'sykamore-ui/ios';
 import {useDashboardCardControls} from './filter-context';
+import type {SFSymbol} from 'sf-symbols-typescript';
 
 export function FilterContent() {
   const {ds, theme} = useTheme();
@@ -25,8 +26,9 @@ export function FilterContent() {
   if (Platform.OS === 'ios') {
     return (
       <Host style={styles.container} matchContents>
-        <IOSList listStyle="insetGrouped" showScrollIndicators={false}>
+        <IOSList listStyle="automatic">
           <Section
+            title="Overview Cards"
             footer={
               <Text>
                 You can choose your preferred overview cards to be displayed on
@@ -46,9 +48,8 @@ export function FilterContent() {
                     setCardVisibility(visibilityKey, value)
                   }
                   label={card.title}
-                >
-                  <Icon name={card.icon} />
-                </IOSToggle>
+                  systemImage={card.icon as SFSymbol}
+                />
               );
             })}
           </Section>

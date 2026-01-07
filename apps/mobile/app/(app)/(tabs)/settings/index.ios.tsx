@@ -1,6 +1,6 @@
 import {useCallback} from 'react';
 import {router} from 'expo-router';
-import {Host, Picker, List, Button} from 'sykamore-ui';
+import {Host, Picker, List, Button, listSectionSpacing} from 'sykamore-ui';
 import {ListSection} from '@/components/ui/list-section.ios';
 import {useTheme, useAuth} from '@/providers';
 import {showConfirmAlert} from '@/utils';
@@ -27,8 +27,7 @@ export default function SettingsModal() {
     <Host style={{flex: 1}} matchContents>
       <List
         listStyle="automatic"
-        showScrollIndicators={false}
-        sectionSpacing={ds.spacing.xxl}
+        modifiers={[listSectionSpacing(ds.spacing.xl + ds.spacing.xs)]}
       >
         {/* Account Section */}
         <ListSection>
