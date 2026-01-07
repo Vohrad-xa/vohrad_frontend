@@ -9,7 +9,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
-import {PaperMenu, ThemedText} from '@/components/ui';
+import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils';
@@ -77,20 +77,12 @@ export function AddQuickAction({
   );
 
   return (
-    <View style={componentStyles.wrapper}>
-      {Platform.OS === 'web' ? (
-        <PaperMenu actions={menuActions} onSelect={handleSelect}>
-          {trigger}
-        </PaperMenu>
-      ) : (
-        <SykaMenuView
-          actions={menuActions}
-          onPressAction={({nativeEvent}) => handleSelect(nativeEvent.event)}
-        >
-          {trigger}
-        </SykaMenuView>
-      )}
-    </View>
+    <SykaMenuView
+      actions={menuActions}
+      onPressAction={({nativeEvent}) => handleSelect(nativeEvent.event)}
+    >
+      {trigger}
+    </SykaMenuView>
   );
 }
 
