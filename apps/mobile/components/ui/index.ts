@@ -6,7 +6,6 @@ export {HeaderButton} from './header-button';
 export {EmptyState} from './empty-state';
 export {AnimatedBlurView} from './animated-blur-view';
 export * from './themed-components';
-export {default as ListItem} from './list-item';
 export {LoadingOverlay} from './loading-overlay';
 export {BannerTop, type Banner} from './banner';
 export {ScreenLoadingWrapper} from './screen-loading-wrapper';
