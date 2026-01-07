@@ -109,16 +109,12 @@ const createStyles = makeStyleFactory(
         borderRadius: ds.components.card.borderRadius,
         flex: 1,
         backgroundColor: theme.card,
-        // borderWidth: 0.5,
-        // borderColor: theme.border,
         overflow: 'visible',
       },
       fallbackCardWeb: {
         borderRadius: ds.components.card.borderRadius,
         flex: 1,
         backgroundColor: theme.card,
-        // borderWidth: 0.5,
-        // // borderColor: theme.border,
       },
       glassView: {
         borderRadius: ds.components.card.borderRadius,
