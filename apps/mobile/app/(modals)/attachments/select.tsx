@@ -5,10 +5,10 @@ import {useLocalSearchParams, router, useNavigation} from 'expo-router';
 import {
   ModalFlatList,
   ListRow,
-  Divider,
   SelectionCircle,
   type ListRowData,
 } from '@/components/ui';
+import {Divider} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useSettingsHeader} from '@/hooks';
 import {useTheme} from '@/providers';

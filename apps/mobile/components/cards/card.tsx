@@ -11,7 +11,7 @@ import {type DSShape, themeKey, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {AppIcons, Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {Divider} from '../ui/divider';
+import {Divider} from 'react-native-paper';
 
 interface CardProps {
   children: React.ReactNode;

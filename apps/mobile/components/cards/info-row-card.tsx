@@ -7,7 +7,7 @@ import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import type {IconName} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {Divider} from '../ui/divider';
+import {Divider} from 'react-native-paper';
 import {InfoRow} from './info-row';
 
 export type InfoField = {

@@ -3,7 +3,6 @@ export {RefreshableScrollView} from './refreshable-scroll-view';
 export {Toggle} from './toggle';
 export {Slider} from './slider';
 export {HeaderButton} from './header-button';
-export {Divider} from './divider';
 export {EmptyState} from './empty-state';
 export {AnimatedBlurView} from './animated-blur-view';
 export * from './themed-components';

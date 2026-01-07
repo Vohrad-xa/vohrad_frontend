@@ -4,11 +4,11 @@ import {
   ThemedText,
   ModalFlatList,
   ListRow,
-  Divider,
   EmptyState,
   RefreshableScrollView,
   type ListRowData,
 } from '@/components/ui';
+import {Divider} from 'react-native-paper';
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
