@@ -1,17 +1,17 @@
-import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  Platform,
-  StatusBar,
-} from 'react-native';
+import React from 'react';
+import {View, StyleSheet, Platform, StatusBar} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {SearchBar, GlassCard, AnimatedBlurView} from '@/components/ui';
+import {Searchbar} from 'react-native-paper';
+import type {SharedValue} from 'react-native-reanimated';
+import {
+  GlassView,
+  GlassContainer,
+  isLiquidGlassAvailable,
+} from 'expo-glass-effect';
+import {AnimatedBlurView, HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import type {SharedValue} from 'react-native-reanimated';
 
 interface SideMenuHeaderProps {
   onClose: () => void;
@@ -27,55 +27,91 @@ export function SideMenuHeader({onClose, blurIntensity}: SideMenuHeaderProps) {
       ? (StatusBar.currentHeight ?? 0) + ds.spacing.lg
       : Math.max(insets.top, ds.spacing.xl);
 
-  const styles = createStyles(theme, ds, topPadding);
+  const isDark = scheme === 'dark';
+  const styles = createStyles(theme, ds, topPadding, isDark);
+  const hasLiquidGlass = Platform.OS === 'ios' && isLiquidGlassAvailable();
+
+  const Search = (
+    <Searchbar style={styles.searchBar} placeholder="Search" value="" />
+  );
+
+  const Close = (
+    <HeaderButton
+      variant="close"
+      onPress={onClose}
+      accessibilityLabel="Close side menu"
+    />
+  );
 
   return (
     <AnimatedBlurView
       blurIntensity={blurIntensity}
-      tint={scheme === 'dark' ? 'dark' : 'light'}
+      tint={isDark ? 'dark' : 'light'}
       style={styles.headerBlurView}
     >
-      <View style={styles.headerContent}>
-        <SearchBar style={styles.searchBar} placeholder="Search" />
-        <GlassCard isInteractive>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={onClose}
-            accessibilityLabel="Close sidebar"
+      {hasLiquidGlass ? (
+        <GlassContainer spacing={10} style={styles.row}>
+          <GlassView
+            isInteractive
+            glassEffectStyle="regular"
+            style={styles.pill}
           >
-            <Icon name={AppIcons.ui.close} />
-          </TouchableOpacity>
-        </GlassCard>
-      </View>
+            {Search}
+          </GlassView>
+
+          <GlassView
+            isInteractive
+            glassEffectStyle="regular"
+            style={styles.square}
+          >
+            {Close}
+          </GlassView>
+        </GlassContainer>
+      ) : (
+        <View style={styles.row}>
+          <View style={[styles.pill, styles.fallbackSurface]}>{Search}</View>
+          <View style={[styles.square, styles.fallbackSurface]}>{Close}</View>
+        </View>
+      )}
     </AnimatedBlurView>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (_theme: ThemeShape, ds: DSShape, topPadding: number) =>
+  (theme: ThemeShape, ds: DSShape, topPadding: number, isDark: boolean) =>
     StyleSheet.create({
       headerBlurView: {
-        paddingLeft: ds.spacing.lg,
-        paddingRight: ds.spacing.lg,
-        paddingVertical: ds.spacing.md,
+        paddingHorizontal: ds.spacing.lg,
         paddingTop: topPadding,
+        paddingBottom: ds.spacing.md,
+        borderBottomWidth: StyleSheet.hairlineWidth,
       },
-      headerContent: {
+
+      row: {
         flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        gap: ds.spacing.sm,
       },
-      searchBar: {
+      pill: {
         flex: 1,
+        borderRadius: 50,
       },
-      closeButton: {
-        width: 36,
-        height: 36,
+      square: {
+        borderRadius: 50,
+        width: 44,
+        height: 44,
         justifyContent: 'center',
-        alignItems: 'center',
+      },
+
+      fallbackSurface: {
+        backgroundColor: theme.card,
+        borderWidth: StyleSheet.hairlineWidth,
+      },
+
+      searchBar: {
+        height: 44,
+        backgroundColor: 'transparent',
+        elevation: 0,
       },
     }),
-  (theme, ds, topPadding) => `${themeKey(theme, ds)}|${topPadding}`,
+  (theme, ds, topPadding, isDark) =>
+    `${themeKey(theme, ds)}|${topPadding}|${isDark ? 'd' : 'l'}`,
 );
