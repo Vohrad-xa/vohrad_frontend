@@ -2,13 +2,8 @@ import React, {useState, useCallback, useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {useItemsManager, type Item} from '@sykamore/store';
 import {useLocalSearchParams, router, useNavigation} from 'expo-router';
-import {
-  ModalFlatList,
-  ListRow,
-  SelectionCircle,
-  type ListRowData,
-} from '@/components/ui';
-import {Divider} from 'react-native-paper';
+import {ModalFlatList, ListRow, type ListRowData} from '@/components/ui';
+import {Divider, Checkbox} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useSettingsHeader} from '@/hooks';
 import {useTheme} from '@/providers';
@@ -95,7 +90,9 @@ export default function ResourceSelectorModal() {
             item={item}
             showImage
             showChevron={false}
-            customLeftIcon={<SelectionCircle selected={isSelected} />}
+            customLeftIcon={
+              <Checkbox status={isSelected ? 'checked' : 'unchecked'} />
+            }
           />
           {index < listData.length - 1 && (
             <View style={styles.dividerContainer}>

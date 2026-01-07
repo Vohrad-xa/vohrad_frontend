@@ -25,5 +25,4 @@ export {
 export {type BadgeStatus} from './themed-view';
 export {Card} from '../cards/card';
 export {SelectionOverlay} from './selection-overlay';
-export {SelectionCircle} from './selection-circle';
 export {ThemedStatusBar} from './themed-status-bar';
