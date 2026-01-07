@@ -1,17 +1,17 @@
 import React from 'react';
 import {View, StyleSheet, Platform, StatusBar} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Searchbar} from 'react-native-paper';
-import type {SharedValue} from 'react-native-reanimated';
 import {
   GlassView,
   GlassContainer,
   isLiquidGlassAvailable,
 } from 'expo-glass-effect';
+import {Searchbar} from 'react-native-paper';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {AnimatedBlurView, HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
+import type {SharedValue} from 'react-native-reanimated';
 
 interface SideMenuHeaderProps {
   onClose: () => void;
@@ -78,7 +78,7 @@ export function SideMenuHeader({onClose, blurIntensity}: SideMenuHeaderProps) {
 }
 
 const createStyles = makeStyleFactory(
-  (theme: ThemeShape, ds: DSShape, topPadding: number, isDark: boolean) =>
+  (theme: ThemeShape, ds: DSShape, topPadding: number, _isDark: boolean) =>
     StyleSheet.create({
       headerBlurView: {
         paddingHorizontal: ds.spacing.lg,

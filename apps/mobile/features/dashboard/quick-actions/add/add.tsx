@@ -1,7 +1,5 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {
-  Platform,
-  StyleSheet,
   TouchableOpacity,
   View,
   type StyleProp,
@@ -10,11 +8,8 @@ import {
 } from 'react-native';
 import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
 import {ThemedText} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon} from '@/utils';
-import type {IconName} from '@/utils/icons';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {Icon, type IconName} from '@/utils';
 
 const TEMPLATE_OPTIONS = [
   {label: 'Item', key: 'item'},
@@ -42,8 +37,7 @@ export function AddQuickAction({
   containerRef: _containerRef,
   actionStyles,
 }: AddQuickActionProps) {
-  const {ds, theme} = useTheme();
-  const componentStyles = useMemo(() => createStyles(ds, theme), [ds, theme]);
+  const {ds} = useTheme();
 
   const [_activeTemplate, setActiveTemplate] = useState<TemplateKey>('item');
 
@@ -91,14 +85,3 @@ type QuickActionStyleBundle = {
   iconContainer: StyleProp<ViewStyle>;
   actionLabel: StyleProp<TextStyle>;
 };
-
-const createStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      wrapper: {
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);

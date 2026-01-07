@@ -7,11 +7,11 @@ import {
   type ViewStyle,
 } from 'react-native';
 import {isLiquidGlassAvailable, GlassView} from 'expo-glass-effect';
+import {Divider} from 'react-native-paper';
 import {type DSShape, themeKey, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {AppIcons, Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {Divider} from 'react-native-paper';
 
 interface CardProps {
   children: React.ReactNode;

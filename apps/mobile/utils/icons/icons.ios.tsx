@@ -12,6 +12,7 @@ import {
   foregroundStyle,
   frame,
   Image,
+  glassEffect,
 } from 'sykamore-ui/ios';
 
 export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
@@ -34,7 +35,7 @@ export type IconProps = {
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 14,
+  size = 15,
   color,
   colorToken,
   useSwiftUI = false,
@@ -48,7 +49,7 @@ export const Icon: React.FC<IconProps> = ({
   const resolvedSize =
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.sm);
   const sizeNoContainer = typeof size === 'number' ? size : ds.iconSize.sm;
-  const frameSize = resolvedSize * 2;
+  const frameSize = resolvedSize * 1.9;
 
   const resolvedTintColor =
     color ?? (colorToken ? theme[colorToken] : theme.text);
@@ -104,6 +105,13 @@ export const Icon: React.FC<IconProps> = ({
         frame({width: frameSize, height: frameSize}),
         background(resolvedTintColor ?? theme.card),
         clipShape('roundedRectangle'),
+        glassEffect({
+          glass: {
+            variant: 'clear',
+          },
+          shape: 'roundedRectangle',
+          cornerRadius: ds.borderRadius.lg,
+        }),
         ...a11yModifier,
       ]}
     />

@@ -1,5 +1,6 @@
 import React, {useCallback, useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
+import {Divider} from 'react-native-paper';
 import {
   ThemedText,
   ModalFlatList,
@@ -8,7 +9,6 @@ import {
   RefreshableScrollView,
   type ListRowData,
 } from '@/components/ui';
-import {Divider} from 'react-native-paper';
 import {type DSShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';

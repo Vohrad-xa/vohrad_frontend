@@ -1,9 +1,9 @@
 import React from 'react';
 import {FlatList, View, StyleSheet} from 'react-native';
+import {Divider} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {Divider} from 'react-native-paper';
 
 type FormCardProps<T> = {
   data: T[];

@@ -1,13 +1,13 @@
 import React, {useEffect, useRef} from 'react';
 import type {TextInput, TextInputProps} from 'react-native';
 import {StyleSheet, View, Platform} from 'react-native';
+import {Divider} from 'react-native-paper';
 import {type TokenName} from '@/constants/colors';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {usePlatformStyles} from '@/hooks';
 import {useTheme} from '@/providers';
 import type {IconName} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {Divider} from 'react-native-paper';
 import {InfoRow} from './info-row';
 
 export type InfoField = {
