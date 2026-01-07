@@ -15,6 +15,7 @@ internal struct SwipeActionsModifier: ViewModifier, Record {
     self.eventDispatcher = eventDispatcher
   }
 
+  @ViewBuilder
   func body(content: Content) -> some View {
     if #available(iOS 15.0, *) {
       let horizontalEdge: HorizontalEdge = edge == "leading" ? .leading : .trailing

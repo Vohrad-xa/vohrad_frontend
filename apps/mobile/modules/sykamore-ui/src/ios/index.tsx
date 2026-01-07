@@ -15,7 +15,6 @@ export * from './Popover';
 export * from './GlassEffectContainer';
 export * from './ContentUnavailableView';
 export * from './modifiers';
-export * from './Picker';
 export * from './Section';
 export * from './types';
 export * from './Form';

@@ -4,6 +4,9 @@ import {background} from './background';
 import {containerShape} from './containerShape';
 import {createModifier, ModifierConfig} from './createModifier';
 import {datePickerStyle} from './datePickerStyle';
+import {pickerStyle} from './pickerStyle';
+import {swipeActions} from './swipeActions';
+import {tag} from './tag';
 import {type Color} from './types';
 
 const SykamoreUi = requireNativeModule('SykamoreUi');
@@ -240,15 +243,6 @@ export const rotationEffect = (angle: number) =>
  */
 export const offset = (params: {x?: number; y?: number}) =>
   createModifier('offset', params);
-
-/**
- * Sets the foreground color/tint of a view.
- * @param color - The foreground color (hex string).
- * @deprecated Use `foregroundStyle` instead.
- * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/foregroundcolor(_:)).
- */
-export const foregroundColor = (color: Color) =>
-  createModifier('foregroundColor', {color});
 
 /**
  * Sets the foreground style of a view with comprehensive styling options.
@@ -511,7 +505,7 @@ export const textFieldStyle = (
 ) => createModifier('textFieldStyle', {style});
 
 /**
- * Controls how the keyboard is dismissed when scrolling.
+ * Controls how keyboard is dismissed when scrolling.
  * @param mode - The keyboard dismiss mode.
  * @platform ios 16.0+
  * @platform tvos 16.0+
@@ -522,7 +516,39 @@ export const scrollDismissesKeyboard = (
 ) => createModifier('scrollDismissesKeyboard', {mode});
 
 /**
- * Controls the dismissal behavior of menu actions.
+ * Controls whether users can scroll of view.
+ * @param disabled - Whether scrolling is disabled.
+ * @platform ios 16.0+
+ * @platform tvos 16.0+
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/scrolldisabled(_:)).
+ */
+export const scrollDisabled = (disabled: boolean) =>
+  createModifier('scrollDisabled', {disabled});
+
+/**
+ * Controls visibility of scroll indicators.
+ * @param visible - Whether to show scroll indicators.
+ * @platform ios 16.0+
+ * @platform tvos 16.0+
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/scrollindicators(_:axes:)).
+ */
+export const scrollIndicators = (visible: boolean) =>
+  createModifier('scrollIndicators', {visible});
+
+/**
+ * Controls visibility and tint of separators between sections in a list.
+ * @param visibility - The visibility to apply.
+ * @param tint - The tint color for section separators (hex string).
+ * @platform ios 15.0+
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/listsectionseparator(_:edges:)).
+ */
+export const listSectionSeparator = (params: {
+  visibility: 'automatic' | 'visible' | 'hidden';
+  tint?: string;
+}) => createModifier('listSectionSeparator', params);
+
+/**
+ * Controls dismissal behavior of menu actions.
  * @param behavior - The menu action dismiss behavior.
  * @platform ios 16.4+
  * @platform tvos 17.0+
@@ -777,21 +803,29 @@ export const badgeProminence = (
  */
 export const badge = (value?: string) => createModifier('badge', {value});
 /**
- * Allows a view to ignore safe area constraints.
+ * Sets the margins for sections in a List.
+ * Supports different lengths per edge for fine-grained control.
  * @platform iOS 26+
- * @param params - The margins to apply to the section in a list.
+ * @param params - The margins to apply per edge.
  * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/listsectionmargins(_:_:)).
+ * @example
+ * // Different margins per edge:
+ * listSectionMargins({ top: 10, bottom: 20 })
+ * // Horizontal and vertical:
+ * listSectionMargins({ horizontal: 16, vertical: 8 })
+ * // All edges same:
+ * listSectionMargins({ all: 10 })
+ * // Mix:
+ * listSectionMargins({ all: 10, top: 20 }) // 20 top, 10 others
  */
-export const listSectionMargins = (params?: {
-  length?: number;
-  edges?:
-    | 'all'
-    | 'top'
-    | 'bottom'
-    | 'leading'
-    | 'trailing'
-    | 'horizontal'
-    | 'vertical';
+export const listSectionMargins = (params: {
+  top?: number;
+  bottom?: number;
+  leading?: number;
+  trailing?: number;
+  horizontal?: number;
+  vertical?: number;
+  all?: number;
 }) => createModifier('listSectionMargins', params);
 
 /**
@@ -939,6 +973,7 @@ export type BuiltInModifier =
   | ReturnType<typeof background>
   | ReturnType<typeof cornerRadius>
   | ReturnType<typeof shadow>
+  | ReturnType<typeof matchedGeometryEffect>
   | ReturnType<typeof frame>
   | ReturnType<typeof padding>
   | ReturnType<typeof fixedSize>
@@ -947,13 +982,13 @@ export type BuiltInModifier =
   | ReturnType<typeof onLongPressGesture>
   | ReturnType<typeof onAppear>
   | ReturnType<typeof onDisappear>
+  | ReturnType<typeof refreshable>
   | ReturnType<typeof opacity>
   | ReturnType<typeof clipShape>
   | ReturnType<typeof border>
   | ReturnType<typeof scaleEffect>
   | ReturnType<typeof rotationEffect>
   | ReturnType<typeof offset>
-  | ReturnType<typeof foregroundColor>
   | ReturnType<typeof foregroundStyle>
   | ReturnType<typeof tint>
   | ReturnType<typeof hidden>
@@ -989,6 +1024,10 @@ export type BuiltInModifier =
   | ReturnType<typeof scrollContentBackground>
   | ReturnType<typeof listRowBackground>
   | ReturnType<typeof listRowSeparator>
+  | ReturnType<typeof listSectionSeparator>
+  | ReturnType<typeof scrollIndicators>
+  | ReturnType<typeof scrollDismissesKeyboard>
+  | ReturnType<typeof scrollDisabled>
   | ReturnType<typeof truncationMode>
   | ReturnType<typeof allowsTightening>
   | ReturnType<typeof kerning>
@@ -1009,7 +1048,10 @@ export type BuiltInModifier =
   | ReturnType<typeof gridColumnAlignment>
   | ReturnType<typeof gridCellAnchor>
   | ReturnType<typeof submitLabel>
-  | ReturnType<typeof datePickerStyle>;
+  | ReturnType<typeof datePickerStyle>
+  | ReturnType<typeof tag>
+  | ReturnType<typeof pickerStyle>
+  | ReturnType<typeof swipeActions>;
 
 /**
  * Main ViewModifier type that supports both built-in and 3rd party modifiers.

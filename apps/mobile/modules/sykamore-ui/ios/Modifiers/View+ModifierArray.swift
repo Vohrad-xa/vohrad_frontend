@@ -3,6 +3,18 @@ import SwiftUI
 
 internal extension View {
   /**
+   * Conditionally applies a transformation to a view.
+   */
+  @ViewBuilder
+  func applyIf<T: View>(_ condition: Bool, transform: (Self) -> T) -> some View {
+    if condition {
+      transform(self)
+    } else {
+      self
+    }
+  }
+
+  /**
    * Applies an array of modifiers to a view using the ViewModifierRegistry.
    */
   @ViewBuilder

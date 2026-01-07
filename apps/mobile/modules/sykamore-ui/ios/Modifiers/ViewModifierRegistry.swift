@@ -3,36 +3,6 @@ import SwiftUI
 
 // MARK: - Individual ViewModifier Structs
 
-internal enum ListSectionSpacingType: String, Enumerable {
-  case `default`
-  case compact
-  case custom
-}
-
-internal struct ListSectionSpacingModifier: ViewModifier, Record {
-  @Field var spacing: ListSectionSpacingType = .default
-  @Field var value: CGFloat = 0
-
-  func body(content: Content) -> some View {
-#if os(tvOS)
-    content
-#else
-    if #available(iOS 17.0, *) {
-      switch spacing {
-      case .compact:
-        content.listSectionSpacing(.compact)
-      case .custom:
-        content.listSectionSpacing(value)
-      default:
-        content.listSectionSpacing(.default)
-      }
-    } else {
-      content
-    }
-#endif
-  }
-}
-
 internal struct CornerRadiusModifier: ViewModifier, Record {
   @Field var radius: CGFloat = 0
 
@@ -143,18 +113,6 @@ internal struct OffsetModifier: ViewModifier, Record {
   }
 }
 
-internal struct ForegroundColorModifier: ViewModifier, Record {
-  @Field var color: Color?
-
-  func body(content: Content) -> some View {
-    if let color = color {
-      content.foregroundColor(color)
-    } else {
-      content
-    }
-  }
-}
-
 internal enum ForegroundStyleType: String, Enumerable {
   case color
   case hierarchical
@@ -182,6 +140,7 @@ internal struct ForegroundStyleModifier: ViewModifier, Record {
   @Field var startRadius: CGFloat?
   @Field var endRadius: CGFloat?
 
+  @ViewBuilder
   func body(content: Content) -> some View {
     switch styleType {
     case .color:
@@ -447,34 +406,6 @@ internal struct HueRotationModifier: ViewModifier, Record {
 
   func body(content: Content) -> some View {
     content.hueRotation(.degrees(angle))
-  }
-}
-
-internal enum ScrollDismissesKeyboardMode: String, Enumerable {
-  case automatic
-  case never
-  case interactively
-  case immediately
-}
-
-internal struct ScrollDismissesKeyboardModifier: ViewModifier, Record {
-  @Field var mode: ScrollDismissesKeyboardMode = .automatic
-
-  func body(content: Content) -> some View {
-    if #available(iOS 16.0, macOS 13.0, tvOS 16.0, *) {
-      switch mode {
-      case .interactively:
-        content.scrollDismissesKeyboard(.interactively)
-      case .immediately:
-        content.scrollDismissesKeyboard(.immediately)
-      case .never:
-        content.scrollDismissesKeyboard(.never)
-      case .automatic:
-        content.scrollDismissesKeyboard(.automatic)
-      }
-    } else {
-      content
-    }
   }
 }
 
@@ -788,98 +719,6 @@ internal struct AnimationModifier: ViewModifier, Record {
   }
 }
 
-internal enum ScrollContentBackgroundTypes: String, Enumerable {
-  case automatic
-  case hidden
-  case visible
-}
-
-internal struct ScrollContentBackground: ViewModifier, Record {
-  @Field var visible: ScrollContentBackgroundTypes = .visible
-
-  func body(content: Content) -> some View {
-#if os(tvOS)
-    content
-#else
-    if #available(iOS 16.0, *) {
-      switch visible {
-      case .visible:
-        content.scrollContentBackground(.visible)
-      case .hidden:
-        content.scrollContentBackground(.hidden)
-      case .automatic:
-        content.scrollContentBackground(.automatic)
-      }
-    } else {
-      content
-    }
-#endif
-  }
-}
-
-internal struct ListRowBackground: ViewModifier, Record {
-  @Field var color: Color?
-
-  func body(content: Content) -> some View {
-    if let color = color {
-      content.listRowBackground(color)
-    } else {
-      content
-    }
-  }
-}
-
-internal enum ListRowSeparatorVisibility: String, Enumerable {
-  case automatic
-  case visible
-  case hidden
-
-  func toVisibility() -> Visibility {
-    switch self {
-    case .visible:
-      return .visible
-    case .hidden:
-      return .hidden
-    default:
-      return .automatic
-    }
-  }
-}
-
-internal enum VerticalEdgeOptions: String, Enumerable {
-  case all
-  case top
-  case bottom
-
-  func toVerticalEdges() -> VerticalEdge.Set {
-    switch self {
-    case .all:
-      return .all
-    case .top:
-      return .top
-    case .bottom:
-      return .bottom
-    }
-  }
-}
-
-internal struct ListRowSeparator: ViewModifier, Record {
-  @Field var visibility: ListRowSeparatorVisibility = .automatic
-  @Field var edges: VerticalEdgeOptions?
-
-  func body(content: Content) -> some View {
-#if os(tvOS)
-    content
-#else
-    if let edges {
-      content.listRowSeparator(visibility.toVisibility(), edges: edges.toVerticalEdges())
-    } else {
-      content.listRowSeparator(visibility.toVisibility())
-    }
-#endif
-  }
-}
-
 internal enum TextTruncationModeTypes: String, Enumerable {
   case head
   case middle
@@ -1057,26 +896,6 @@ internal struct HeaderProminence: ViewModifier, Record {
   }
 }
 
-internal struct ListRowInsets: ViewModifier, Record {
-  @Field var top: CGFloat = 0
-  @Field var leading: CGFloat = 0
-  @Field var bottom: CGFloat = 0
-  @Field var trailing: CGFloat = 0
-
-  func body(content: Content) -> some View {
-    if top != 0 || leading != 0 || bottom != 0 || trailing != 0 {
-      content.listRowInsets(.init(
-        top: top,
-        leading: leading,
-        bottom: bottom,
-        trailing: trailing
-      ))
-    } else {
-      content
-    }
-  }
-}
-
 internal enum BadgeProminenceType: String, Enumerable {
   case standard
   case increased
@@ -1118,27 +937,6 @@ internal struct Badge: ViewModifier, Record {
     } else {
       content
     }
-#endif
-  }
-}
-
-internal struct ListSectionMargins: ViewModifier, Record {
-  @Field var length: CGFloat?
-  @Field var edges: EdgeOptions?
-
-  func body(content: Content) -> some View {
-#if compiler(>=6.2) && !os(tvOS) // Xcode 26
-    if #available(iOS 26.0, *) {
-      if let edges {
-        content.listSectionMargins(edges.toEdge(), length ?? 0)
-      } else {
-        content
-      }
-    } else {
-      content
-    }
-#else
-    content
 #endif
   }
 }
@@ -1336,59 +1134,6 @@ internal struct MatchedGeometryEffectModifier: ViewModifier, Record {
   }
 }
 
-internal enum ButtonStyle: String, Enumerable {
-  case automatic
-  case bordered
-  case borderedProminent
-  case borderless
-  case glass
-  case glassProminent
-  case plain
-}
-
-internal struct ButtonStyleModifier: ViewModifier, Record {
-  @Field var style: ButtonStyle = .automatic
-
-  func body(content: Content) -> some View {
-    switch style {
-    case .bordered:
-      content.buttonStyle(.bordered)
-    case .borderedProminent:
-      content.buttonStyle(.borderedProminent)
-    case .borderless:
-      if #available(iOS 13.0, macOS 10.15, tvOS 17.0, *) {
-        content.buttonStyle(.borderless)
-      } else {
-        content.buttonStyle(.automatic)
-      }
-    case .glass:
-      if #available(iOS 26.0, macOS 26.0, tvOS 26.0, *) {
-#if compiler(>=6.2) // Xcode 26
-        content.buttonStyle(.glass)
-#else
-        content.buttonStyle(.automatic)
-#endif
-      } else {
-        content.buttonStyle(.automatic)
-      }
-    case .glassProminent:
-      if #available(iOS 26.0, macOS 26.0, tvOS 26.0, *) {
-#if compiler(>=6.2) // Xcode 26
-        content.buttonStyle(.glassProminent)
-#else
-        content.buttonStyle(.automatic)
-#endif
-      } else {
-        content.buttonStyle(.automatic)
-      }
-    case .plain:
-      content.buttonStyle(.plain)
-    default:
-      content.buttonStyle(.automatic)
-    }
-  }
-}
-
 internal enum TextFieldStyle: String, Enumerable {
   case automatic
   case plain
@@ -1419,10 +1164,6 @@ internal struct TextFieldStyleModifier: ViewModifier, Record {
 // swiftlint:disable:next no_grouping_extension
 extension ViewModifierRegistry {
   private func registerBuiltInModifiers() {
-    register("listSectionSpacing") { params, appContext, _ in
-      return try ListSectionSpacingModifier(from: params, appContext: appContext)
-    }
-
     register("background") { params, appContext, _ in
       return try BackgroundModifier(from: params, appContext: appContext)
     }
@@ -1457,10 +1198,6 @@ extension ViewModifierRegistry {
 
     register("offset") { params, appContext, _ in
       return try OffsetModifier(from: params, appContext: appContext)
-    }
-
-    register("foregroundColor") { params, appContext, _ in
-      return try ForegroundColorModifier(from: params, appContext: appContext)
     }
 
     register("foregroundStyle") { params, appContext, _ in
@@ -1627,6 +1364,10 @@ extension ViewModifierRegistry {
       return try TextFieldStyleModifier(from: params, appContext: appContext)
     }
 
+    register("listSectionSpacing") { params, appContext, _ in
+      return try ListSectionSpacing(from: params, appContext: appContext)
+    }
+
     register("scrollContentBackground") { params, appContext, _ in
       return try ScrollContentBackground(from: params, appContext: appContext)
     }
@@ -1637,6 +1378,30 @@ extension ViewModifierRegistry {
 
     register("listRowSeparator") { params, appContext, _ in
       return try ListRowSeparator(from: params, appContext: appContext)
+    }
+
+    register("listRowInsets") { params, appContext, _ in
+      return try ListRowInsets(from: params, appContext: appContext)
+    }
+
+    register("listSectionSeparator") { params, appContext, _ in
+      return try ListSectionSeparator(from: params, appContext: appContext)
+    }
+
+    register("scrollIndicators") { params, appContext, _ in
+      return try ScrollIndicators(from: params, appContext: appContext)
+    }
+
+    register("scrollDisabled") { params, appContext, _ in
+      return try ScrollDisabled(from: params, appContext: appContext)
+    }
+
+    register("scrollDismissesKeyboard") { params, appContext, _ in
+      return try ScrollDismissesKeyboard(from: params, appContext: appContext)
+    }
+
+    register("listSectionMargins") { params, appContext, _ in
+      return try ListSectionMargins(from: params, appContext: appContext)
     }
 
     register("truncationMode") { params, appContext, _ in
@@ -1673,26 +1438,6 @@ extension ViewModifierRegistry {
 
     register("lineSpacing") { params, appContext, _ in
       return try LineSpacing(from: params, appContext: appContext)
-    }
-
-    register("listRowInsets") { params, appContext, _ in
-      return try ListRowInsets(from: params, appContext: appContext)
-    }
-
-    register("badgeProminence") { params, appContext, _ in
-      return try BadgeProminence(from: params, appContext: appContext)
-    }
-
-    register("badge") { params, appContext, _ in
-      return try Badge(from: params, appContext: appContext)
-    }
-
-    register("listSectionMargins") { params, appContext, _ in
-      return try ListSectionMargins(from: params, appContext: appContext)
-    }
-
-    register("scrollDismissesKeyboard") { params, appContext, _ in
-      return try ScrollDismissesKeyboardModifier(from: params, appContext: appContext)
     }
 
     register("menuActionDismissBehavior") { params, appContext, _ in
