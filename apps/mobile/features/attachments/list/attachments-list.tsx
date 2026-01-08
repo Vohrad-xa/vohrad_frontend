@@ -270,7 +270,9 @@ const AttachmentsListBase = ({
       : {};
 
   const fontScaleKey = ds.screen?.fontScale ?? 1;
+
   const zeroAnimation = useRef(new Animated.Value(0)).current;
+
   const zeroTranslate = useMemo(
     () =>
       zeroAnimation.interpolate({
@@ -281,11 +283,16 @@ const AttachmentsListBase = ({
   );
 
   const selectionVisible = selectionState?.isVisible ?? false;
+
   const onLongPressRow = selectionState?.onLongPress;
+
   const checkboxTranslateX =
     selectionState?.checkboxTranslateX ?? zeroTranslate;
+
   const contentTranslateX = selectionState?.contentTranslateX ?? zeroTranslate;
+
   const selectionOpacity = selectionState?.opacity ?? zeroAnimation;
+
   const checkboxColor = theme.accentBlue;
 
   const isSelected = useCallback(
@@ -414,17 +421,44 @@ export const SelectableAttachmentsList = forwardRef<
     ref,
   ) => {
     const {ds} = useTheme();
+
     const {triggerHaptic} = useHaptic();
 
     const [selectedIds, setSelectedIds] = useState<Set<string>>(
       () => new Set(),
     );
+    const [selectionRevision, setSelectionRevision] = useState(0);
 
     const [forceSelectionMode, setForceSelectionMode] = useState(false);
+
     const selectionMode = forceSelectionMode || selectedIds.size > 0;
+
     const [selectionVisible, setSelectionVisible] = useState(false);
+
     const selectionAnimation = useRef(new Animated.Value(0)).current;
+
     const selectionShift = ds.spacing.xxxl + ds.spacing.xxs;
+
+    const selectionDidMountRef = useRef(false);
+
+    const onSelectionChangeRef = useRef(onSelectionChange);
+
+    useEffect(() => {
+      onSelectionChangeRef.current = onSelectionChange;
+    }, [onSelectionChange]);
+
+    useEffect(() => {
+      if (!selectionDidMountRef.current) {
+        selectionDidMountRef.current = true;
+        return;
+      }
+
+      onSelectionChangeRef.current?.(selectedIds);
+
+      if (selectedIds.size > 0) {
+        setForceSelectionMode(true);
+      }
+    }, [selectedIds]);
 
     useEffect(() => {
       // Delay hiding checkboxes until the closing animation finishes to avoid flicker
@@ -448,22 +482,22 @@ export const SelectableAttachmentsList = forwardRef<
 
     const clearSelection = useCallback(() => {
       setSelectedIds(new Set());
+      setSelectionRevision((prev) => prev + 1);
       setForceSelectionMode(false);
-      onSelectionChange?.(new Set());
-    }, [onSelectionChange]);
+    }, []);
 
     const selectAll = useCallback(() => {
       const next = new Set(attachments.map((doc) => doc.id));
       setSelectedIds(next);
+      setSelectionRevision((prev) => prev + 1);
       setForceSelectionMode(true);
-      onSelectionChange?.(next);
-    }, [attachments, onSelectionChange]);
+    }, [attachments]);
 
     const deselectAll = useCallback(() => {
       setSelectedIds(new Set());
+      setSelectionRevision((prev) => prev + 1);
       setForceSelectionMode(true);
-      onSelectionChange?.(new Set());
-    }, [onSelectionChange]);
+    }, []);
 
     const enterSelectionMode = useCallback(() => {
       if (!selectionMode) setForceSelectionMode(true);
@@ -483,14 +517,11 @@ export const SelectableAttachmentsList = forwardRef<
           const next = new Set(prev);
           if (next.has(id)) next.delete(id);
           else next.add(id);
-
-          if (prev.size === 0 && next.size === 1) setForceSelectionMode(true);
-
-          onSelectionChange?.(next);
           return next;
         });
+        setSelectionRevision((prev) => prev + 1);
       },
-      [onSelectionChange, triggerHaptic],
+      [triggerHaptic],
     );
 
     const handlePressRow = useCallback(
@@ -564,7 +595,7 @@ export const SelectableAttachmentsList = forwardRef<
         isLoading={isLoading}
         lastUpdated={lastUpdated}
         selectionState={selectionState}
-        extraDataKey={`${selectedIds.size}|${selectionMode ? 1 : 0}`}
+        extraDataKey={`${selectionRevision}|${selectionMode ? 1 : 0}`}
       />
     );
   },
