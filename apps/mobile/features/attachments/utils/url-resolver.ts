@@ -1,9 +1,9 @@
 import {attachmentApi, resolveAttachmentUrl} from '@sykamore/api-client';
 import type {ItemAttachment} from '@sykamore/types';
 
-export async function resolveAttachmentItemUrl(
+export function resolveAttachmentPreviewUrl(
   attachment: ItemAttachment,
-): Promise<string> {
+): string | null {
   const {download_url: downloadUrl, file_path: filePath} = attachment;
 
   if (downloadUrl?.startsWith('http')) {
@@ -18,6 +18,34 @@ export async function resolveAttachmentItemUrl(
   const relativeFromFilePath = normalizeFilePath(filePath);
   if (relativeFromFilePath) {
     return resolveAttachmentUrl(relativeFromFilePath);
+  }
+
+  return null;
+}
+
+export function resolveAttachmentThumbnailUrl(
+  attachment: ItemAttachment,
+): string | null {
+  const thumbnailUrl = attachment.thumbnail_url;
+
+  if (thumbnailUrl?.startsWith('http')) {
+    return thumbnailUrl;
+  }
+
+  const relativeFromThumbnail = normalizeRelativePath(thumbnailUrl);
+  if (relativeFromThumbnail) {
+    return resolveAttachmentUrl(relativeFromThumbnail);
+  }
+
+  return null;
+}
+
+export async function resolveAttachmentItemUrl(
+  attachment: ItemAttachment,
+): Promise<string> {
+  const previewUrl = resolveAttachmentPreviewUrl(attachment);
+  if (previewUrl) {
+    return previewUrl;
   }
 
   return attachmentApi.getAttachmentUrl(attachment.id);

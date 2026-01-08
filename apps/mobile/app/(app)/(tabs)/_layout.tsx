@@ -7,7 +7,7 @@ import {
   VectorIcon,
 } from 'expo-router/unstable-native-tabs';
 import {useTheme} from '@/providers';
-import {SFSymbol} from 'expo-symbols';
+import type {SFSymbol} from 'expo-symbols';
 
 type TabName = 'dashboard' | 'items' | 'vault' | 'settings';
 

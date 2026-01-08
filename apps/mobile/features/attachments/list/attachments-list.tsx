@@ -1,4 +1,4 @@
-import React, {
+import {
   useCallback,
   useMemo,
   memo,
@@ -8,19 +8,15 @@ import React, {
   useRef,
   useEffect,
 } from 'react';
-import {
-  Animated,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Animated, Platform, StyleSheet, View, Pressable} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {type ItemAttachment} from '@sykamore/types';
+import {Image} from 'expo-image';
 import {Checkbox, Divider} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedText} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
+import {resolveAttachmentThumbnailUrl} from '@/features/attachments/utils';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme, useHaptic} from '@/providers';
@@ -100,12 +96,31 @@ const AttachmentItem = memo<AttachmentItemProps>(
     checkboxTranslateX,
     contentTranslateX,
   }) => {
-    const {uiTitle, uiDescription, fileIcon} = useMemo(() => {
+    const {uiTitle, uiDescription, fileIcon, thumbnailSource} = useMemo(() => {
       const title = item.original_filename ?? item.filename ?? 'Untitled';
+
       const fileSize = formatBytes(Number(item.size));
+
       const dateAdded = item.created_at
         ? formatDateShort(item.created_at)
         : '—';
+
+      const fileType = item.file_type?.toLowerCase() ?? '';
+
+      const normalizedExtension = (item.extension ?? '')
+        .toLowerCase()
+        .replace(/^\./, '');
+
+      const isPdf =
+        fileType === 'application/pdf' || normalizedExtension === 'pdf';
+
+      const isImage =
+        (item.kind ?? '').toLowerCase() === 'image' ||
+        fileType.startsWith('image/');
+
+      const thumbnailUrl =
+        isPdf || isImage ? resolveAttachmentThumbnailUrl(item) : null;
+
       const icon = getAttachmentFileIcon({
         filename: title,
         extension: item.extension ?? null,
@@ -116,20 +131,15 @@ const AttachmentItem = memo<AttachmentItemProps>(
         uiTitle: title,
         uiDescription: `${dateAdded} - ${fileSize}`,
         fileIcon: icon,
+        thumbnailSource: thumbnailUrl ?? null,
       };
-    }, [
-      item.original_filename,
-      item.filename,
-      item.size,
-      item.created_at,
-      item.extension,
-      item.file_type,
-    ]);
+    }, [item]);
 
     const handlePress = useCallback(
       () => onPressRow(item.id),
       [item.id, onPressRow],
     );
+
     const handleLongPress = useCallback(() => {
       if (onLongPressRow) {
         onLongPressRow(item.id);
@@ -137,18 +147,21 @@ const AttachmentItem = memo<AttachmentItemProps>(
     }, [item.id, onLongPressRow]);
 
     return (
-      <TouchableOpacity
-        style={[
-          styles.content,
-          selectionVisible ? styles.contentSelection : null,
-          isSelected ? styles.contentSelected : null,
-        ]}
+      <Pressable
         onPress={handlePress}
         onLongPress={onLongPressRow ? handleLongPress : undefined}
         accessibilityRole="button"
-        activeOpacity={0.5}
-        delayLongPress={400}
+        delayLongPress={500}
         focusable
+        style={({pressed}) => [
+          styles.content,
+          selectionVisible ? styles.contentSelection : null,
+          isSelected ? styles.contentSelected : null,
+          pressed && Platform.OS === 'ios' && !selectionVisible
+            ? styles.contentPressed
+            : null,
+        ]}
+        android_ripple={{color: Palette.ripple, foreground: true}}
       >
         {selectionVisible ? (
           <Animated.View
@@ -174,13 +187,27 @@ const AttachmentItem = memo<AttachmentItemProps>(
           ]}
         >
           <View style={styles.iconContainer}>
-            <Icon
-              name={fileIcon.name}
-              size="lg"
-              colorToken={fileIcon.colorToken}
-              symbolType={fileIcon.symbolType}
-              symbolColorTokens={fileIcon.symbolColorTokens}
-            />
+            {thumbnailSource ? (
+              <Image
+                source={{uri: thumbnailSource, cacheKey: `${item.id}:thumb`}}
+                style={styles.thumbnail}
+                contentFit="cover"
+                cachePolicy="memory-disk"
+                recyclingKey={item.id}
+                decodeFormat="argb"
+                enforceEarlyResizing
+              />
+            ) : (
+              <View style={styles.iconScale}>
+                <Icon
+                  name={fileIcon.name}
+                  size="lg"
+                  colorToken={fileIcon.colorToken}
+                  symbolType={fileIcon.symbolType}
+                  symbolColorTokens={fileIcon.symbolColorTokens}
+                />
+              </View>
+            )}
           </View>
 
           <View style={styles.textContainer}>
@@ -206,7 +233,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
             </ThemedText>
           </View>
         </Animated.View>
-      </TouchableOpacity>
+      </Pressable>
     );
   },
 );
@@ -395,10 +422,9 @@ export const SelectableAttachmentsList = forwardRef<
 
     const [forceSelectionMode, setForceSelectionMode] = useState(false);
     const selectionMode = forceSelectionMode || selectedIds.size > 0;
-
     const [selectionVisible, setSelectionVisible] = useState(false);
     const selectionAnimation = useRef(new Animated.Value(0)).current;
-    const selectionShift = ds.spacing.xxl + ds.spacing.md;
+    const selectionShift = ds.spacing.xxxl + ds.spacing.xxs;
 
     useEffect(() => {
       // Delay hiding checkboxes until the closing animation finishes to avoid flicker
@@ -556,11 +582,7 @@ const createStyles = makeStyleFactory(
       },
 
       contentSelection: {
-        paddingRight: ds.spacing.lg + ds.spacing.xxl + ds.spacing.sm,
-      },
-
-      contentSelected: {
-        backgroundColor: theme.selected,
+        paddingRight: ds.spacing.xxxl + ds.spacing.sm,
       },
 
       rowContainer: {
@@ -579,10 +601,26 @@ const createStyles = makeStyleFactory(
       },
 
       iconContainer: {
-        width: ds.spacing.xxl + ds.spacing.sm,
+        width: ds.spacing.xxl + ds.spacing.md,
         alignItems: 'center',
         justifyContent: 'center',
-        transform: Platform.OS === 'android' ? [{scale: 1.4}] : [{scale: 1.7}],
+        elevation: 1,
+        shadowColor: Palette.gray[600],
+        shadowOffset: {width: 0, height: 0},
+        shadowOpacity: 0.2,
+        shadowRadius: 1,
+      },
+
+      iconScale: {
+        transform: Platform.OS === 'android' ? [{scale: 1.4}] : [{scale: 1.8}],
+      },
+
+      thumbnail: {
+        width: ds.spacing.xxl,
+        height: ds.spacing.xxl + 10,
+        borderRadius: ds.borderRadius.xs,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderColor: theme.border,
       },
 
       textContainer: {
@@ -596,15 +634,21 @@ const createStyles = makeStyleFactory(
       },
 
       divider: {
-        marginLeft:
-          ds.spacing.lg + (ds.spacing.xxl + ds.spacing.sm) + ds.spacing.md,
-        marginRight: ds.spacing.lg,
+        marginLeft: ds.spacing.xxxl + ds.spacing.xl + ds.spacing.xs,
       },
 
       footer: {
         paddingTop: ds.spacing.xxl,
         paddingBottom: ds.spacing.xl,
         alignItems: 'center',
+      },
+
+      contentPressed: {
+        backgroundColor: theme.ripple,
+      },
+
+      contentSelected: {
+        backgroundColor: theme.selected,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

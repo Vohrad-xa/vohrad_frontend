@@ -1,5 +1,8 @@
 import {useMemo} from 'react';
-import {resolveAttachmentUrl} from '@sykamore/api-client';
+import {
+  resolveAttachmentPreviewUrl,
+  resolveAttachmentThumbnailUrl,
+} from '@/features/attachments/utils/url-resolver';
 import type {ItemAttachment} from '@sykamore/types';
 
 export const IMAGE_GRID_COLUMNS = 5;
@@ -7,24 +10,6 @@ export const IMAGE_GRID_COLUMNS = 5;
 export interface ImageAttachmentItem extends ItemAttachment {
   resolvedUrl: string;
   thumbnailUrl?: string;
-}
-
-function resolveImageUrl(attachment: ItemAttachment): string | null {
-  const rawUrl =
-    attachment.download_url ??
-    (attachment.file_path
-      ? `/attachments/${attachment.file_path.replace(/^\/+/, '')}`
-      : null);
-
-  if (!rawUrl) return null;
-
-  return rawUrl.startsWith('http') ? rawUrl : resolveAttachmentUrl(rawUrl);
-}
-
-function resolveThumbnailUrl(attachment: ItemAttachment): string | null {
-  const rawUrl = attachment.thumbnail_url;
-  if (!rawUrl) return null;
-  return rawUrl.startsWith('http') ? rawUrl : resolveAttachmentUrl(rawUrl);
 }
 
 export function useImageAttachments(
@@ -36,8 +21,9 @@ export function useImageAttachments(
     const images: ImageAttachmentItem[] = [];
     for (const attachment of attachments) {
       if (attachment.kind === 'image') {
-        const resolvedUrl = resolveImageUrl(attachment);
-        const thumbnailUrl = resolveThumbnailUrl(attachment) ?? undefined;
+        const resolvedUrl = resolveAttachmentPreviewUrl(attachment);
+        const thumbnailUrl =
+          resolveAttachmentThumbnailUrl(attachment) ?? undefined;
         if (resolvedUrl) {
           images.push({...attachment, resolvedUrl, thumbnailUrl});
         }

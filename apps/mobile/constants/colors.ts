@@ -28,6 +28,7 @@ export const Palette = {
   bluepurple: '#10385bff',
   teal: '#14B8A6',
   white: '#FFFFFE',
+  offWhite: '#f5f5f4',
   Greige: '#C2C0B6',
   black: '#000000',
   webDarkBackground: '#262624',
@@ -38,6 +39,7 @@ export const Palette = {
   cardLight: 'rgba(97, 94, 94, 0.16)',
   glassTintLight: 'rgba(20, 20, 20, 0.27)',
   glassTintDark: 'rgba(186, 185, 185, 0.72)',
+  ripple: 'rgba(0,0,0,0.10)',
 } as const;
 
 const _Tokens = {
@@ -60,14 +62,14 @@ const _Tokens = {
     accentIndigo: Palette.indigo,
     accentPurple: Palette.purple,
     white: Palette.white,
+    offWhite: Palette.offWhite,
     destructive: Palette.red,
     muted: Palette.gray[500],
-    ripple: 'rgba(31, 0, 0, 0.16)',
+    ripple: Palette.ripple,
     selected: Palette.gray[300],
 
     // Icons
     icon: Palette.gray[600],
-    docIcon: Palette.gray[200],
     quickActionIcon: Palette.gray[700],
 
     // Components
@@ -100,6 +102,7 @@ const _Tokens = {
     accentIndigo: Palette.indigo,
     accentPurple: Palette.purple,
     white: Palette.white,
+    offWhite: Palette.offWhite,
     destructive: Palette.redDark,
     muted: Palette.gray[500],
     ripple: 'rgba(79, 77, 77, 0.45)',
@@ -107,7 +110,6 @@ const _Tokens = {
 
     // Icons
     icon: Palette.gray[200],
-    docIcon: Palette.white,
     quickActionIcon: Palette.webDarkBackground,
 
     // Components

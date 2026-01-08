@@ -91,28 +91,28 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
         name: AppIcons.files.pdf,
         colorToken: 'destructive',
         symbolType: 'palette',
-        symbolColorTokens: ['destructive', 'docIcon'],
+        symbolColorTokens: ['destructive', 'offWhite'],
       };
     case 'word':
       return {
         name: AppIcons.files.word,
         colorToken: 'accentBlue',
         symbolType: 'palette',
-        symbolColorTokens: ['accentBlue', 'docIcon'],
+        symbolColorTokens: ['accentBlue', 'offWhite'],
       };
     case 'excel':
       return {
         name: AppIcons.files.excel,
         colorToken: 'accentGreen',
         symbolType: 'palette',
-        symbolColorTokens: ['accentGreen', 'docIcon'],
+        symbolColorTokens: ['accentGreen', 'offWhite'],
       };
     case 'ppt':
       return {
         name: AppIcons.files.ppt,
         colorToken: 'accentOrange',
         symbolType: 'palette',
-        symbolColorTokens: ['accentOrange', 'docIcon'],
+        symbolColorTokens: ['accentOrange', 'offWhite'],
       };
     case 'archive':
       return {
@@ -129,7 +129,7 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
         name: AppIcons.files.text,
         colorToken: 'muted',
         symbolType: 'palette',
-        symbolColorTokens: ['text', 'docIcon'],
+        symbolColorTokens: ['text', 'offWhite'],
       };
     default:
       return {
