@@ -18,28 +18,31 @@ import {
 export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 export type IconName = SFSymbol;
 type SymbolType = NonNullable<SymbolViewProps['type']>;
+type SwiftUIFontWeight = NonNullable<Parameters<typeof font>[0]['weight']>;
 
 export type IconProps = {
   name: IconName;
   size?: number | IconSizeKey;
   color?: string;
   colorToken?: TokenName;
+  fontWeight?: SwiftUIFontWeight;
   accessibilityLabel?: string;
   style?: StyleProp<TextStyle>;
   withBackground?: boolean;
   useSwiftUI?: boolean;
-  noContainer?: boolean;
+  container?: boolean;
   symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
   symbolColorTokens?: TokenName[];
 };
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 16,
+  size = 15,
   color,
   colorToken,
+  fontWeight = 'regular',
   useSwiftUI = false,
-  noContainer = false,
+  container = false,
   accessibilityLabel: a11yLabel,
   symbolType,
   symbolColorTokens,
@@ -57,7 +60,7 @@ export const Icon: React.FC<IconProps> = ({
   const resolvedIconColor = Palette.white;
 
   if (!useSwiftUI) {
-    const resolvedType: SymbolType = symbolType ?? 'monochrome';
+    const resolvedType: SymbolType = symbolType ?? 'hierarchical';
     const resolvedPaletteColors = symbolColorTokens
       ? symbolColorTokens.map((t) => theme[t])
       : undefined;
@@ -83,13 +86,23 @@ export const Icon: React.FC<IconProps> = ({
 
   const a11yModifier = a11yLabel ? [accessibilityLabel(a11yLabel)] : [];
 
-  if (noContainer) {
+  if (container && useSwiftUI) {
     return (
       <Image
         systemName={name}
         modifiers={[
-          font({size: sizeNoContainer}),
-          foregroundStyle(resolvedTintColor ?? theme.icon),
+          font({size: resolvedSize, weight: fontWeight}),
+          foregroundStyle(resolvedIconColor),
+          frame({width: frameSize, height: frameSize}),
+          background(resolvedTintColor ?? theme.card),
+          clipShape('roundedRectangle'),
+          glassEffect({
+            glass: {
+              variant: 'clear',
+            },
+            shape: 'roundedRectangle',
+            cornerRadius: ds.borderRadius.lg,
+          }),
           ...a11yModifier,
         ]}
       />
@@ -100,18 +113,8 @@ export const Icon: React.FC<IconProps> = ({
     <Image
       systemName={name}
       modifiers={[
-        font({size: resolvedSize}),
-        foregroundStyle(resolvedIconColor),
-        frame({width: frameSize, height: frameSize}),
-        background(resolvedTintColor ?? theme.card),
-        clipShape('roundedRectangle'),
-        glassEffect({
-          glass: {
-            variant: 'clear',
-          },
-          shape: 'roundedRectangle',
-          cornerRadius: ds.borderRadius.lg,
-        }),
+        font({size: sizeNoContainer, weight: fontWeight}),
+        foregroundStyle(resolvedTintColor ?? theme.icon),
         ...a11yModifier,
       ]}
     />

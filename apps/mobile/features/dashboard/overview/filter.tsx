@@ -25,7 +25,7 @@ export function FilterContent() {
 
   if (Platform.OS === 'ios') {
     return (
-      <Host style={styles.container} matchContents>
+      <Host style={styles.container}>
         <IOSList listStyle="automatic">
           <Section
             title="Overview Cards"

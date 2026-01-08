@@ -32,8 +32,8 @@ export default function AppSettingsScreen() {
   );
 
   return (
-    <Host style={{flex: 1}} matchContents>
-      <List listStyle="insetGrouped">
+    <Host style={{flex: 1}}>
+      <List listStyle="automatic">
         <Section
           footer={
             <Text>

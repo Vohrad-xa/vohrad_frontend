@@ -24,9 +24,9 @@ export default function SettingsModal() {
   }, [logout]);
 
   return (
-    <Host style={{flex: 1}} matchContents>
+    <Host style={{flex: 1}}>
       <List
-        listStyle="automatic"
+        listStyle="sidebar"
         modifiers={[listSectionSpacing(ds.spacing.xl + ds.spacing.xs)]}
       >
         {/* Account Section */}
@@ -84,6 +84,7 @@ export default function SettingsModal() {
                 name={AppIcons.preferences.appearance}
                 colorToken="accentPurple"
                 useSwiftUI
+                container
               />
             }
             selection={preference}

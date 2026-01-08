@@ -32,7 +32,7 @@ const ListSectionComponent: React.FC<ListSectionProps> = ({
       title={title}
       header={header ? <Text>{header}</Text> : undefined}
       footer={footer ? <Text>{footer}</Text> : undefined}
-      collapsible={!!header}
+      collapsible={!!header || !!title}
     >
       {children}
     </Section>
@@ -51,11 +51,18 @@ const ListSectionRow: React.FC<ListSectionRowProps> = ({
   const {theme} = useTheme();
 
   return (
-    <Button onPress={onPress} modifiers={[tint(theme.text)]}>
+    <Button role="default" onPress={onPress} modifiers={[tint(theme.text)]}>
       <HStack>
         <Label
           title={title}
-          icon={<Icon name={icon} colorToken={iconColorToken} useSwiftUI />}
+          icon={
+            <Icon
+              name={icon}
+              colorToken={iconColorToken}
+              useSwiftUI
+              container
+            />
+          }
         />
 
         {rightComponent}
@@ -64,9 +71,10 @@ const ListSectionRow: React.FC<ListSectionRowProps> = ({
             <Spacer />
             <Icon
               name={AppIcons.ui.chevronRight}
+              colorToken="muted"
+              fontWeight="semibold"
               useSwiftUI
-              noContainer
-              color={theme.muted}
+              size={13}
             />
           </>
         )}

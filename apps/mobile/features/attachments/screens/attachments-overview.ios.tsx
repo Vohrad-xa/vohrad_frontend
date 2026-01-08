@@ -20,7 +20,6 @@ import {useTheme} from '@/providers';
 import {Icon, AppIcons, type IconName} from '@/utils';
 import type {AttachmentKindCount} from '../utils/attachment-counts';
 import type {AttachmentKind} from '@sykamore/types';
-import type {SFSymbol} from 'sf-symbols-typescript';
 
 interface AttachmentKindTile {
   kind: AttachmentKind;
@@ -136,7 +135,7 @@ export function AttachmentsOverview({
   ) : undefined;
 
   return (
-    <Host style={{flex: 1}} matchContents>
+    <Host style={{flex: 1}}>
       <IOSList
         listStyle="automatic"
         refreshEnabled
@@ -156,7 +155,7 @@ export function AttachmentsOverview({
                   <Label
                     modifiers={[tint(theme.text)]}
                     title={tile.label}
-                    systemImage={tile.systemImage as SFSymbol}
+                    systemImage={tile.systemImage}
                   />
                   <Spacer />
 
@@ -175,9 +174,10 @@ export function AttachmentsOverview({
 
                   <Icon
                     name={AppIcons.ui.chevronRight}
-                    noContainer
-                    useSwiftUI
                     colorToken="muted"
+                    useSwiftUI
+                    fontWeight="semibold"
+                    size={13}
                   />
                 </HStack>
               </Button>
