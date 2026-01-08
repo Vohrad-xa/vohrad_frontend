@@ -70,5 +70,6 @@ public final class SykamoreUiModule: Module {
     ExpoUIView(ToggleView.self)
     ExpoUIView(StepperView.self)
     ExpoUIView(ConcentricRectangleView.self)
+    ExpoUIView(ZStackView.self)
   }
 }

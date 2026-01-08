@@ -1,6 +1,6 @@
 import {requireNativeView} from 'expo';
 import type {SFSymbol} from 'sf-symbols-typescript';
-import {HStack} from '../HStack';
+import {HStack} from '../Layout';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 

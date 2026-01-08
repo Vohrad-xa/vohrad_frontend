@@ -32,6 +32,7 @@ const ListSectionComponent: React.FC<ListSectionProps> = ({
       title={title}
       header={header ? <Text>{header}</Text> : undefined}
       footer={footer ? <Text>{footer}</Text> : undefined}
+      collapsible={!!header}
     >
       {children}
     </Section>

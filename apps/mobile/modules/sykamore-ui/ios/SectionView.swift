@@ -4,7 +4,6 @@ import ExpoModulesCore
 final class SectionProps: UIBaseViewProps {
   @Field var title: String?
   @Field var collapsible: Bool = false
-  @Field var initiallyExpanded: Bool = true
 }
 
 internal final class SectionHeaderProps: ExpoSwiftUI.ViewProps {}
@@ -39,7 +38,7 @@ internal struct SectionView: ExpoSwiftUI.View {
   @State private var isExpanded: Bool = true
 
   var body: some View {
-    if props.collapsible {
+    if #available(iOS 17.0, macOS 14.0, tvOS 17.0, *), props.collapsible {
       collapsibleSection
     } else {
       regularSection
@@ -86,36 +85,12 @@ internal struct SectionView: ExpoSwiftUI.View {
     }
   }
 
-  @ViewBuilder
+  @available(iOS 17.0, macOS 14.0, tvOS 17.0, *)
   private var collapsibleSection: some View {
-    Section {
-      if isExpanded {
-        contentChildren
-      }
+    Section(isExpanded: $isExpanded) {
+      contentChildren
     } header: {
-      SwiftUI.Button {
-        withAnimation(.easeInOut(duration: 0.25)) {
-          isExpanded.toggle()
-        }
-      } label: {
-        HStack {
-          headerView
-          Spacer()
-          Image(systemName: "chevron.right")
-            .font(.system(size: 13, weight: .semibold))
-            .foregroundStyle(.secondary)
-            .rotationEffect(.degrees(isExpanded ? 90 : 0))
-        }
-        .contentShape(Rectangle())
-      }
-      .buttonStyle(.plain)
-    } footer: {
-      if isExpanded {
-        footerView
-      }
-    }
-    .onAppear {
-      isExpanded = props.initiallyExpanded
+      headerView
     }
   }
 }

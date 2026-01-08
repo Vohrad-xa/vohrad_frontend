@@ -35,7 +35,7 @@ export type IconProps = {
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 15,
+  size = 16,
   color,
   colorToken,
   useSwiftUI = false,
@@ -49,7 +49,7 @@ export const Icon: React.FC<IconProps> = ({
   const resolvedSize =
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.sm);
   const sizeNoContainer = typeof size === 'number' ? size : ds.iconSize.sm;
-  const frameSize = resolvedSize * 1.9;
+  const frameSize = resolvedSize * 1.8;
 
   const resolvedTintColor =
     color ?? (colorToken ? theme[colorToken] : theme.text);
