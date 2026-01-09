@@ -268,37 +268,23 @@ export function AttachmentKindScreen({
   }, [displayedHasNext, displayedIsLoading, displayedLoadMore]);
 
   const rightActions = useMemo<HeaderAction[]>(() => {
-    const resolvedFilterMenu = (
-      <AttachmentsFilterMenu
-        showExtensionFilter={resolvedShowExtensionFilter}
-        extension={extension}
-        odataOrderBy={odataOrderBy}
-        onExtensionChange={setExtension}
-        onOrderByChange={setOdataOrderBy}
-      />
-    );
-
     if (!isInSelectionMode) {
-      const actions: HeaderAction[] = [];
-      actions.push({
-        type: 'custom',
-        key: 'filter',
-        element: resolvedFilterMenu,
-      });
-
-      actions.push({
-        type: 'button',
-        key: 'select',
-        label: 'Select',
-        labelStyle: {fontWeight: ds.fontWeight.medium},
-        icon: AppIcons.actions.edit,
-        accessibilityLabel: `Select ${labelPlural}`,
-        accessibilityHint: `Enter ${labelSingular} selection mode`,
-        sharesBackground: false,
-        onPress: handleSelectModePress,
-      });
-
-      return actions;
+      return [
+        {
+          type: 'custom',
+          key: 'filter',
+          element: (
+            <AttachmentsFilterMenu
+              showExtensionFilter={resolvedShowExtensionFilter}
+              extension={extension}
+              odataOrderBy={odataOrderBy}
+              onExtensionChange={setExtension}
+              onOrderByChange={setOdataOrderBy}
+              onSelectPress={handleSelectModePress}
+            />
+          ),
+        },
+      ];
     }
 
     const hasSelection = selectedIds.size > 0;
@@ -361,12 +347,10 @@ export function AttachmentKindScreen({
     isInSelectionMode,
     isProcessing,
     selectedIds.size,
-    ds.fontWeight.medium,
     extension,
     odataOrderBy,
     resolvedShowExtensionFilter,
     labelPlural,
-    labelSingular,
   ]);
 
   /**

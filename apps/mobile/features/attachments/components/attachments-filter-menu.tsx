@@ -17,6 +17,7 @@ type AttachmentsFilterMenuProps = {
   odataOrderBy?: string;
   onExtensionChange?: (extension: string | undefined) => void;
   onOrderByChange?: (orderBy: string | undefined) => void;
+  onSelectPress?: () => void;
 };
 
 /**
@@ -31,6 +32,7 @@ export function AttachmentsFilterMenu({
   odataOrderBy,
   onExtensionChange,
   onOrderByChange,
+  onSelectPress,
 }: AttachmentsFilterMenuProps) {
   const {theme} = useTheme();
 
@@ -109,9 +111,14 @@ export function AttachmentsFilterMenu({
 
       if (actionId === 'size') {
         applySort('size');
+        return;
+      }
+
+      if (actionId === 'select') {
+        onSelectPress?.();
       }
     },
-    [applyExtensionFilter, applySort],
+    [applyExtensionFilter, applySort, onSelectPress],
   );
 
   const menuActions = useMemo((): SykaMenuAction[] => {
@@ -201,6 +208,16 @@ export function AttachmentsFilterMenu({
         ],
       });
     }
+    if (onSelectPress) {
+      actions.unshift({
+        id: 'select',
+        title: 'Select',
+        image: Platform.select({
+          ios: 'checkmark.circle',
+          android: 'outlined.CheckCircle',
+        }),
+      });
+    }
 
     return actions;
   }, [
@@ -211,6 +228,7 @@ export function AttachmentsFilterMenu({
     hasExtensionFilter,
     normalizedExtension,
     showExtensionFilter,
+    onSelectPress,
     theme.accentBlue,
     theme.accentGreen,
     theme.destructive,
