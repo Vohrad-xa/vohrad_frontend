@@ -17,7 +17,7 @@ function VaultStack() {
   const insets = useSafeAreaInsets();
   const {theme, ds} = useTheme();
   const {toggleSideMenu} = useSidebar();
-  const {setSearchQuery, isSearchEnabled} = useSearch();
+  const {setSearchQuery} = useSearch();
 
   const handleSearchChange = useCallback(
     (event: SearchChangeEvent) => {
@@ -39,17 +39,15 @@ function VaultStack() {
 
   const headerSearchBarOptions = useMemo(
     () =>
-      isSearchEnabled
-        ? ({
-            placement: 'stacked' as const,
-            hideWhenScrolling: false,
-            placeholder: 'Search...',
-            headerIconColor: theme.icon,
-            hintTextColor: theme.icon,
-            onChangeText: handleSearchChange,
-          } satisfies NativeStackNavigationOptions['headerSearchBarOptions'])
-        : undefined,
-    [handleSearchChange, theme.icon, isSearchEnabled],
+      ({
+        placement: 'integrated',
+        hideWhenScrolling: false,
+        inputType: 'text',
+        headerIconColor: theme.icon,
+        hintTextColor: theme.icon,
+        onChangeText: handleSearchChange,
+      }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
+    [handleSearchChange, theme.icon],
   );
 
   const stackScreenOptions = useMemo(
@@ -86,9 +84,12 @@ function VaultStack() {
   const indexOptions = useMemo(
     () => ({
       headerTitle: 'Vault',
-      headerLeft: headerLeftMenu,
-      headerSearchBarOptions,
       headerLargeTitle: true,
+      headerLeft: headerLeftMenu,
+      headerSearchBarOptions: {
+        ...headerSearchBarOptions,
+        placement: 'stacked' as const,
+      },
     }),
     [headerLeftMenu, headerSearchBarOptions],
   );
@@ -102,8 +103,9 @@ function VaultStack() {
         name="documents"
         options={{
           headerTitle: 'Documents',
+          headerLargeTitle: true,
+
           headerSearchBarOptions,
-          headerLargeTitle: false,
         }}
       />
       <Stack.Screen

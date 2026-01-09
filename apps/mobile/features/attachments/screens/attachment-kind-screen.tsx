@@ -1,6 +1,5 @@
 import React, {
   useCallback,
-  useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -69,7 +68,7 @@ export function AttachmentKindScreen({
 
   const [extension, setExtension] = useState<string | undefined>();
   const [odataOrderBy, setOdataOrderBy] = useState<string | undefined>();
-  const {searchQuery, setSearchEnabled} = useSearch();
+  const {searchQuery} = useSearch();
 
   const {
     attachments: searchAttachments,
@@ -109,12 +108,6 @@ export function AttachmentKindScreen({
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [isInSelectionMode, setIsInSelectionMode] = useState(false);
-
-  // Sync selection mode with search bar visibility
-  useEffect(() => {
-    setSearchEnabled(!isInSelectionMode);
-    return () => setSearchEnabled(true);
-  }, [isInSelectionMode, setSearchEnabled]);
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -351,6 +344,7 @@ export function AttachmentKindScreen({
     odataOrderBy,
     resolvedShowExtensionFilter,
     labelPlural,
+    labelSingular,
   ]);
 
   /**
