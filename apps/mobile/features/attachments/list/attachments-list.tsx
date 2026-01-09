@@ -668,6 +668,7 @@ const createStyles = makeStyleFactory(
 
       divider: {
         marginLeft: ds.spacing.xxxl + ds.spacing.xl + ds.spacing.xs,
+        marginRight: ds.spacing.lg,
       },
 
       footer: {

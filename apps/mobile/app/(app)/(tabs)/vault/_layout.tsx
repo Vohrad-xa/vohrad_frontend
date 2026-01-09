@@ -55,6 +55,7 @@ function VaultStack() {
       ({
         headerShown: true,
         headerShadowVisible: false,
+        headerLargeTitle: true,
         animation: 'ios_from_right' as const,
         headerBackButtonDisplayMode: 'minimal' as const,
         headerTransparent: Platform.OS === 'ios',
@@ -84,7 +85,6 @@ function VaultStack() {
   const indexOptions = useMemo(
     () => ({
       headerTitle: 'Vault',
-      headerLargeTitle: true,
       headerLeft: headerLeftMenu,
       headerSearchBarOptions: {
         ...headerSearchBarOptions,
@@ -103,7 +103,6 @@ function VaultStack() {
         name="documents"
         options={{
           headerTitle: 'Documents',
-          headerLargeTitle: true,
 
           headerSearchBarOptions,
         }}
