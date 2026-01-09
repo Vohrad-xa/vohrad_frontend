@@ -26,7 +26,7 @@
     "lint": "eslint --config ../../eslint.packages.config.js \"src/**/*.{ts,tsx}\""
   },
   "devDependencies": {
-    "tsup": "^8.3.0",
+    "tsup": "~8.5.1",
     "typescript": "~5.9.2"
   },
   "dependencies": {

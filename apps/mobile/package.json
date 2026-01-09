@@ -36,7 +36,7 @@
     "@sykamore/store": "workspace:*",
     "@sykamore/types": "workspace:*",
     "@tanstack/react-query": "^5.90.7",
-    "expo": "~54.0.29",
+    "expo": "~54.0.31",
     "expo-blur": "~15.0.8",
     "expo-build-properties": "~1.0.10",
     "expo-camera": "~17.0.10",
