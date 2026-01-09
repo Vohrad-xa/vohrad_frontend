@@ -30,9 +30,9 @@
     "test": "jest",
     "typecheck": "turbo run typecheck",
     "format": "prettier . --write",
-    "format:check": "prettier . --check"
+    "check:all": "turbo run lint && turbo run typecheck && turbo run format"
   },
-  "packageManager": "pnpm@10.25.0",
+  "packageManager": "pnpm@10.27.0",
   "pnpm": {
     "overrides": {
       "glob": "^10.4.5",

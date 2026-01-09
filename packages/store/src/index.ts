@@ -2,6 +2,7 @@ export {useAuthStore} from './store';
 export type {StoreState} from './store';
 export {setAuthPersistStorage} from './utils/storage';
 export {shallow} from 'zustand/shallow';
+
 export {
   authSelectors,
   useProfileDetails,
@@ -9,7 +10,9 @@ export {
   useUpdateProfile,
   useEmailConfirmation,
   useProfileManager,
+  type AuthSlice,
 } from './slices/auth';
+
 export {
   tenantSelectors,
   useOrganizationDetails,
@@ -20,14 +23,21 @@ export {
   useTenantLicenseInfo,
   useFetchTenantLicenseInfo,
   useLicenseInfoManager,
+  type TenantSlice,
 } from './slices/tenant';
+
 export {
   systemSelectors,
   useDashboardOverview,
   useDashboardVisibility,
   useSetDashboardVisibility,
   useResetDashboardVisibility,
+  defaultDashboardVisibility,
+  type SystemSlice,
+  type DashboardCardKey,
+  type DashboardVisibilityState,
 } from './slices/system';
+
 export {
   useFetchItem,
   useCreateItem,
@@ -38,6 +48,7 @@ export {
   useItemDetailManager,
   useItemFiltersManager,
 } from './slices/item';
+
 export {
   useInfiniteRoles,
   useFetchRole,
@@ -50,11 +61,15 @@ export {
   useRolesListManager,
   useRoleDetailManager,
 } from './slices/role';
+
 export {
   useInfiniteUsers,
   useUsersListManager,
   useCreateUser,
+  buildUserOrderBy,
+  parseUserOrderBy,
 } from './slices/user';
+
 export {
   useAttachmentsListManager,
   useAttachmentsViewManager,
@@ -63,11 +78,17 @@ export {
   useFetchTargetAttachments,
   useInfiniteAttachments,
   useUploadAttachment,
+  buildAttachmentSearchFilter,
+  buildAttachmentSearchODataFilter,
+  buildAttachmentODataFilter,
+  getAttachmentExtension,
+  hasAttachmentExtension,
+  buildAttachmentOrderBy,
+  parseAttachmentOrderBy,
+  type UseAttachmentsViewManagerOptions,
+  type UseFilteredAttachmentsManagerOptions,
 } from './slices/attachment';
-export type {
-  UseAttachmentsViewManagerOptions,
-  UseFilteredAttachmentsManagerOptions,
-} from './slices/attachment';
+
 export {
   usePendingFilters,
   useSetPendingFilters,
@@ -76,9 +97,27 @@ export {
   useSetAttachmentFilter,
   useClearAttachmentFilter,
   useUpdateAttachmentFilter,
-} from './slices/filter/hooks';
-export type {FilterSlice} from './slices/filter';
-export type {AttachmentFilter} from '@sykamore/types';
+  type FilterSlice,
+} from './slices/filter';
+
+export {
+  buildItemODataFilter,
+  hasActiveFilters,
+  clearAllFilters,
+} from './slices/item';
+
+export {
+  buildUserODataFilter,
+  hasActiveUserFilters,
+  clearUserFilters,
+  type UserFilterOptions,
+  type UserFilterState,
+} from './slices/user';
+
+export {buildODataOrderBy} from './utils/odata-orderby-builder';
+export {searchItemsLocally, searchUsersLocally} from './utils/local-search';
+export type {AsyncState, PaginatedState} from './utils/state';
+
 export type {
   User,
   AuthTokens,
@@ -92,48 +131,13 @@ export type {
   RoleType,
   RoleScope,
   RoleStage,
-} from '@sykamore/types';
-export type {AuthSlice} from './slices/auth';
-export type {TenantSlice} from './slices/tenant';
-export type {
-  SystemSlice,
-  DashboardCardKey,
-  DashboardVisibilityState,
-} from './slices/system';
-export {defaultDashboardVisibility} from './slices/system';
-export type {
   AttachmentTargetType,
   AttachmentKind,
   AttachmentSortKey,
   AttachmentSortState,
+  AttachmentFilter,
   OrderByClause,
   OrderByDirection,
   UserSortKey,
   UserSortState,
 } from '@sykamore/types';
-export {
-  buildItemODataFilter,
-  hasActiveFilters,
-  clearAllFilters,
-} from './slices/item/filters';
-export {
-  buildAttachmentSearchFilter,
-  buildAttachmentODataFilter,
-  getAttachmentExtension,
-  hasAttachmentExtension,
-} from './slices/attachment/filters';
-export {
-  buildUserODataFilter,
-  hasActiveUserFilters,
-  clearUserFilters,
-  type UserFilterOptions,
-  type UserFilterState,
-} from './slices/user/filters';
-export {buildODataOrderBy} from './utils/odata-orderby-builder';
-export {
-  buildAttachmentOrderBy,
-  parseAttachmentOrderBy,
-} from './slices/attachment/sorting';
-export {buildUserOrderBy, parseUserOrderBy} from './slices/user/sorting';
-export {searchItemsLocally, searchUsersLocally} from './utils/local-search';
-export type {AsyncState, PaginatedState} from './utils/state';

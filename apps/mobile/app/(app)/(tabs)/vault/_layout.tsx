@@ -44,6 +44,7 @@ function VaultStack() {
         hideWhenScrolling: false,
         placeholder: 'Search...',
         headerIconColor: theme.icon,
+        hintTextColor: theme.icon,
         onChangeText: handleSearchChange,
       }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
     [handleSearchChange, theme.icon],
@@ -54,7 +55,6 @@ function VaultStack() {
       ({
         headerShown: true,
         headerShadowVisible: false,
-        headerLargeTitle: true,
         animation: 'ios_from_right' as const,
         headerBackButtonDisplayMode: 'minimal' as const,
         headerTransparent: Platform.OS === 'ios',
@@ -86,6 +86,7 @@ function VaultStack() {
       headerTitle: 'Vault',
       headerLeft: headerLeftMenu,
       headerSearchBarOptions,
+      headerLargeTitle: true,
     }),
     [headerLeftMenu, headerSearchBarOptions],
   );
@@ -93,14 +94,24 @@ function VaultStack() {
   return (
     <Stack screenOptions={stackScreenOptions}>
       <Stack.Screen name="index" options={indexOptions} />
-      <Stack.Screen
-        name="add"
-        options={{headerTitle: 'Add Attachment', headerLargeTitle: false}}
-      />
+      <Stack.Screen name="add" options={{headerTitle: 'Add Attachment'}} />
       <Stack.Screen name="images" options={{headerTitle: 'Library'}} />
-      <Stack.Screen name="documents" options={{headerTitle: 'Documents'}} />
-      <Stack.Screen name="archives" options={{headerTitle: 'Archives'}} />
-      <Stack.Screen name="other" options={{headerTitle: 'Other Attachments'}} />
+      <Stack.Screen
+        name="documents"
+        options={{
+          headerTitle: 'Documents',
+          headerSearchBarOptions,
+          headerLargeTitle: false,
+        }}
+      />
+      <Stack.Screen
+        name="archives"
+        options={{headerTitle: 'Archives', headerSearchBarOptions}}
+      />
+      <Stack.Screen
+        name="other"
+        options={{headerTitle: 'Other Attachments', headerSearchBarOptions}}
+      />
     </Stack>
   );
 }

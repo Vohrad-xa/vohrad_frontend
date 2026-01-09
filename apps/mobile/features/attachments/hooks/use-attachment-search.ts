@@ -1,31 +1,52 @@
 import {useMemo} from 'react';
 import {
-  buildAttachmentSearchFilter,
-  useAttachmentsListManager,
+  buildAttachmentSearchODataFilter,
+  useFilteredAttachmentsManager,
 } from '@sykamore/store';
+import type {AttachmentKind} from '@sykamore/types';
 
 export interface UseAttachmentSearchOptions {
   searchQuery: string;
   pageSize?: number;
   enabled?: boolean;
+  kind?: AttachmentKind;
+  extension?: string;
+  odataOrderBy?: string;
 }
 
 export function useAttachmentSearch(options: UseAttachmentSearchOptions) {
-  const {searchQuery, pageSize = 50, enabled = true} = options;
+  const {
+    searchQuery,
+    pageSize = 50,
+    enabled = true,
+    kind,
+    extension,
+    odataOrderBy,
+  } = options;
 
   const odataFilter = useMemo(
-    () => buildAttachmentSearchFilter(searchQuery),
-    [searchQuery],
+    () => buildAttachmentSearchODataFilter(searchQuery, extension),
+    [searchQuery, extension],
   );
+  const isSearchActive = Boolean(odataFilter);
+  const shouldFetch = enabled && isSearchActive;
 
-  const shouldFetch = enabled && Boolean(odataFilter);
-
-  const {attachments, error, hasNext, isLoading, loadMore, refresh, total} =
-    useAttachmentsListManager({
-      filters: odataFilter ? {odataFilter} : {},
-      pageSize,
-      enabled: shouldFetch,
-    });
+  const {
+    attachments,
+    error,
+    hasNext,
+    isLoading,
+    loadMore,
+    refresh,
+    total,
+    lastUpdated,
+  } = useFilteredAttachmentsManager({
+    kind,
+    odataFilter,
+    odataOrderBy,
+    pageSize,
+    enabled: shouldFetch,
+  });
 
   return {
     attachments,
@@ -35,6 +56,7 @@ export function useAttachmentSearch(options: UseAttachmentSearchOptions) {
     hasNext,
     loadMore,
     refresh,
-    isSearchActive: Boolean(odataFilter),
+    lastUpdated,
+    isSearchActive,
   };
 }

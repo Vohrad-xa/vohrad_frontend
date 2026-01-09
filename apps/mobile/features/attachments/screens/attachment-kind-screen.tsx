@@ -6,12 +6,14 @@ import React, {
   useState,
 } from 'react';
 import {Platform} from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
 import {getAttachmentExtension, useDeleteAttachment} from '@sykamore/store';
 import {type ItemAttachment} from '@sykamore/types';
 import {useNavigation} from 'expo-router';
 import {Snackbar} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {HeaderButton} from '@/components/ui';
+import {useSearch} from '@/features/dashboard';
 import {useTheme} from '@/providers';
 import {AppIcons, sanitizeInlineText, showConfirmAlert} from '@/utils';
 import {
@@ -20,6 +22,7 @@ import {
 } from '@/utils/navigation/header-actions';
 import {AttachmentsFilterMenu} from '../components';
 import {
+  useAttachmentSearch,
   useAttachmentsByKind,
   useAttachmentPress,
   useAttachmentShare,
@@ -61,19 +64,41 @@ export function AttachmentKindScreen({
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const {ds} = useTheme();
+  const isFocused = useIsFocused();
 
   const [extension, setExtension] = useState<string | undefined>();
   const [odataOrderBy, setOdataOrderBy] = useState<string | undefined>();
+  const {searchQuery} = useSearch();
 
   const {
-    attachments,
-    getById,
-    refresh,
-    isLoading,
-    lastUpdated,
-    hasNext,
-    loadMore,
-  } = useAttachmentsByKind(kind, {extension, odataOrderBy});
+    attachments: searchAttachments,
+    refresh: searchRefresh,
+    isLoading: searchIsLoading,
+    lastUpdated: searchLastUpdated,
+    hasNext: searchHasNext,
+    loadMore: searchLoadMore,
+    isSearchActive,
+  } = useAttachmentSearch({
+    searchQuery,
+    kind,
+    extension,
+    odataOrderBy,
+    enabled: isFocused,
+  });
+
+  const {attachments, refresh, isLoading, lastUpdated, hasNext, loadMore} =
+    useAttachmentsByKind(kind, {
+      extension,
+      odataOrderBy,
+      enabled: !isSearchActive,
+    });
+
+  const displayedAttachments = isSearchActive ? searchAttachments : attachments;
+  const displayedRefresh = isSearchActive ? searchRefresh : refresh;
+  const displayedIsLoading = isSearchActive ? searchIsLoading : isLoading;
+  const displayedLastUpdated = isSearchActive ? searchLastUpdated : lastUpdated;
+  const displayedHasNext = isSearchActive ? searchHasNext : hasNext;
+  const displayedLoadMore = isSearchActive ? searchLoadMore : loadMore;
 
   const handleAttachmentPress = useAttachmentPress();
   const {shareAttachments, isProcessing} = useAttachmentShare();
@@ -98,6 +123,11 @@ export function AttachmentKindScreen({
     setSnackbarMessage(message);
     setSnackbarVisible(true);
   }, []);
+
+  const getAttachmentById = useCallback(
+    (id: string) => displayedAttachments.find((item) => item.id === id),
+    [displayedAttachments],
+  );
 
   /**
    * Keeps selection mode latched once entered so the cancel button stays visible
@@ -130,7 +160,7 @@ export function AttachmentKindScreen({
     const message =
       count === 1
         ? (() => {
-            const attachment = getById(ids[0]);
+            const attachment = getAttachmentById(ids[0]);
             const fallbackLabel = `this ${labelSingular}`;
             const fileName = sanitizeInlineText(
               attachment?.original_filename ?? attachment?.filename,
@@ -165,7 +195,7 @@ export function AttachmentKindScreen({
   }, [
     selectedIds,
     deleteAttachment,
-    getById,
+    getAttachmentById,
     finishSelection,
     labelSingular,
     labelPlural,
@@ -179,7 +209,7 @@ export function AttachmentKindScreen({
     const count = ids.length;
 
     const selectedAttachments = ids
-      .map((id) => getById(id))
+      .map((id) => getAttachmentById(id))
       .filter((item): item is ItemAttachment => item != null);
 
     try {
@@ -203,7 +233,7 @@ export function AttachmentKindScreen({
     }
   }, [
     selectedIds,
-    getById,
+    getAttachmentById,
     shareAttachments,
     handleCancelSelection,
     finishSelection,
@@ -225,10 +255,10 @@ export function AttachmentKindScreen({
   }, []);
 
   const handleLoadMore = useCallback(() => {
-    if (hasNext && !isLoading) {
-      loadMore();
+    if (displayedHasNext && !displayedIsLoading) {
+      displayedLoadMore();
     }
-  }, [hasNext, isLoading, loadMore]);
+  }, [displayedHasNext, displayedIsLoading, displayedLoadMore]);
 
   const rightActions = useMemo<HeaderAction[]>(() => {
     const resolvedFilterMenu = (
@@ -338,7 +368,7 @@ export function AttachmentKindScreen({
    */
   const headerLeft = useCallback(() => {
     if (!isInSelectionMode) return undefined;
-    const totalItems = attachments.length;
+    const totalItems = displayedAttachments.length;
     const hasAllSelected = totalItems > 0 && selectedIds.size === totalItems;
     return (
       <HeaderButton
@@ -358,7 +388,7 @@ export function AttachmentKindScreen({
       />
     );
   }, [
-    attachments.length,
+    displayedAttachments.length,
     handleDeselectAll,
     handleSelectAll,
     isInSelectionMode,
@@ -392,11 +422,11 @@ export function AttachmentKindScreen({
 
   const handleItemPress = useCallback(
     async (attachmentId: string) => {
-      const attachment = getById(attachmentId);
+      const attachment = getAttachmentById(attachmentId);
       if (!attachment) return;
       await handleAttachmentPress(attachment);
     },
-    [getById, handleAttachmentPress],
+    [getAttachmentById, handleAttachmentPress],
   );
 
   return (
@@ -404,14 +434,14 @@ export function AttachmentKindScreen({
       <SelectableAttachmentsList
         ref={listRef}
         listKey={listKey ?? kind}
-        attachments={attachments}
+        attachments={displayedAttachments}
         onAttachmentPress={handleItemPress}
         onSelectionChange={handleSelectionChange}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
-        onRefresh={refresh}
-        isLoading={isLoading}
-        lastUpdated={lastUpdated}
+        onRefresh={displayedRefresh}
+        isLoading={displayedIsLoading}
+        lastUpdated={displayedLastUpdated}
       />
 
       <Snackbar

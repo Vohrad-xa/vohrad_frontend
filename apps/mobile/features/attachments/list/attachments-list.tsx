@@ -146,6 +146,8 @@ const AttachmentItem = memo<AttachmentItemProps>(
       }
     }, [item.id, onLongPressRow]);
 
+    const {theme} = useTheme();
+
     return (
       <Pressable
         onPress={handlePress}
@@ -161,7 +163,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
             ? styles.contentPressed
             : null,
         ]}
-        android_ripple={{color: Palette.ripple, foreground: true}}
+        android_ripple={{color: theme.ripple, foreground: true}}
       >
         {selectionVisible ? (
           <Animated.View

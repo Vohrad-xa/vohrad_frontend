@@ -1,4 +1,5 @@
 import type {AttachmentFilter} from '@sykamore/types';
+import {escapeString} from '../../utils/odata-filter-builder';
 
 /**
  * Build an attachment search $filter segment.
@@ -10,7 +11,7 @@ export function buildAttachmentSearchFilter(
     return undefined;
   }
 
-  const term = searchTerm.trim();
+  const term = escapeString(searchTerm.trim());
   return `contains(filename,'${term}') or contains(original_filename,'${term}') or contains(description,'${term}')`;
 }
 
@@ -50,4 +51,28 @@ export function hasAttachmentExtension(
   filter?: AttachmentFilter | null,
 ): boolean {
   return Boolean(getAttachmentExtension(filter));
+}
+
+/**
+ * Build an attachment search $filter segment scoped by extension.
+ *
+ * - Combines search and extension with AND when both are present.
+ */
+export function buildAttachmentSearchODataFilter(
+  searchTerm: string,
+  extension?: string | null,
+): string | undefined {
+  const searchFilter = buildAttachmentSearchFilter(searchTerm);
+  if (!searchFilter) {
+    return undefined;
+  }
+
+  const extensionFilter = buildAttachmentODataFilter(
+    extension ? {extension} : null,
+  );
+  if (!extensionFilter) {
+    return searchFilter;
+  }
+
+  return `(${searchFilter}) and (${extensionFilter})`;
 }

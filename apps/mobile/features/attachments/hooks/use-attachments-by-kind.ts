@@ -12,6 +12,7 @@ type AttachmentKind = 'document' | 'archive' | 'other';
 type UseAttachmentsByKindOptions = {
   extension?: string;
   odataOrderBy?: string;
+  enabled?: boolean;
 };
 
 /**
@@ -35,7 +36,7 @@ export function useAttachmentsByKind(
   const contextIsLoading = attachmentContext?.isLoading;
   const contextRefresh = attachmentContext?.refresh;
   const contextLastUpdated = attachmentContext?.lastUpdated;
-  const {extension, odataOrderBy} = options ?? {};
+  const {extension, odataOrderBy, enabled = true} = options ?? {};
   const localOdataFilter = buildAttachmentODataFilter(
     extension ? {extension} : null,
   );
@@ -51,7 +52,7 @@ export function useAttachmentsByKind(
     kind,
     odataFilter: localOdataFilter,
     odataOrderBy,
-    enabled: !targetId,
+    enabled: enabled && !targetId,
   });
 
   const sourceAttachments = targetId

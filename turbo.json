@@ -9,6 +9,7 @@
     "lint": {"cache": false, "outputs": []},
     "test": {"cache": false, "outputs": []},
     "format": {"cache": false, "outputs": []},
-    "typecheck": {"cache": false, "outputs": []}
+    "typecheck": {"cache": false, "outputs": []},
+    "check:all": {"cache": false, "outputs": []}
   }
 }

@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import {Platform} from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
 import {
   useSetAttachmentFilter,
   useClearAttachmentFilter,
@@ -106,6 +107,7 @@ export default function VaultScreen() {
   const setAttachmentFilter = useSetAttachmentFilter();
   const clearAttachmentFilter = useClearAttachmentFilter();
   const {searchQuery} = useSearch();
+  const isFocused = useIsFocused();
   const handleAttachmentPress = useAttachmentPress();
   const {
     openVaultImages,
@@ -128,7 +130,7 @@ export default function VaultScreen() {
   // Search functionality
   const {attachments: searchResults, isSearchActive} = useAttachmentSearch({
     searchQuery,
-    enabled: !attachmentFilter,
+    enabled: !attachmentFilter && isFocused,
   });
 
   useEffect(() => {
