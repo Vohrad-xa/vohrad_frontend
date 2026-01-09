@@ -1,6 +1,8 @@
 import React, {useCallback, useMemo, useState} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet} from 'react-native';
+import {useHeaderHeight} from '@react-navigation/elements';
 import {Image} from 'expo-image';
+import {ScrollView} from 'react-native-gesture-handler';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import type {ImageAttachmentItem} from '@/features/attachments/hooks/attachment-images';
 import {useTheme} from '@/providers';
@@ -17,7 +19,8 @@ export function AttachmentImagePreview({
   initialAttachmentId,
 }: AttachmentImagePreviewProps) {
   const {ds, theme} = useTheme();
-  const styles = useStyles(ds, theme);
+  const headerHeight = useHeaderHeight();
+  const styles = useStyles(ds, theme, headerHeight);
 
   const initialIndex = useMemo(() => {
     if (!initialAttachmentId) {
@@ -50,8 +53,12 @@ export function AttachmentImagePreview({
   const currentAttachment = attachments[currentIndex];
 
   return (
-    <View style={styles.container}>
-      <View style={styles.imageContainer}>
+    <>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.imageContainer}
+        maximumZoomScale={5}
+      >
         <Image
           key={currentAttachment.id}
           source={{uri: currentAttachment.resolvedUrl}}
@@ -59,7 +66,7 @@ export function AttachmentImagePreview({
           contentFit="contain"
           cachePolicy="memory-disk"
         />
-      </View>
+      </ScrollView>
       {attachments.length > 1 && (
         <>
           <Pressable
@@ -71,8 +78,8 @@ export function AttachmentImagePreview({
           >
             <Icon
               name={AppIcons.ui.chevronLeft}
-              size="xxl"
-              colorToken={currentIndex === 0 ? 'muted' : 'accentBlue'}
+              size="xl"
+              colorToken={currentIndex === 0 ? 'muted' : 'white'}
             />
           </Pressable>
           <Pressable
@@ -84,23 +91,24 @@ export function AttachmentImagePreview({
           >
             <Icon
               name={AppIcons.ui.chevronRight}
-              size="xxl"
+              size="xl"
               colorToken={
-                currentIndex === attachments.length - 1 ? 'muted' : 'accentBlue'
+                currentIndex === attachments.length - 1 ? 'muted' : 'white'
               }
             />
           </Pressable>
         </>
       )}
-    </View>
+    </>
   );
 }
 
 const useStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape, headerHeight: number) =>
     StyleSheet.create({
       container: {
         flex: 1,
+        paddingTop: headerHeight,
       },
       imageContainer: {
         flex: 1,
@@ -114,7 +122,6 @@ const useStyles = makeStyleFactory(
       arrowButton: {
         position: 'absolute',
         top: '50%',
-        transform: [{translateY: -ds.spacing.xl}],
       },
       leftArrow: {
         left: ds.spacing.md,
@@ -123,5 +130,5 @@ const useStyles = makeStyleFactory(
         right: ds.spacing.md,
       },
     }),
-  (ds, theme) => themeKey(theme, ds),
+  (ds, _theme) => themeKey(_theme, ds),
 );

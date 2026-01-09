@@ -104,12 +104,12 @@ const createStyles = makeStyleFactory(
       container: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingBottom: ds.spacing.lg,
+        paddingBottom: ds.spacing.md,
         paddingHorizontal: ds.spacing.lg + 1,
       },
       indicator: {
         transform: [{scale: 0.75}],
-        marginLeft: ds.spacing.xxxl,
+        marginLeft: ds.spacing.xs,
       },
       divider: {
         marginHorizontal: ds.spacing.lg,

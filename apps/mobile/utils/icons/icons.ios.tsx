@@ -60,7 +60,7 @@ export const Icon: React.FC<IconProps> = ({
   const resolvedIconColor = Palette.white;
 
   if (!useSwiftUI) {
-    const resolvedType: SymbolType = symbolType ?? 'hierarchical';
+    const resolvedType: SymbolType = symbolType ?? 'monochrome';
     const resolvedPaletteColors = symbolColorTokens
       ? symbolColorTokens.map((t) => theme[t])
       : undefined;

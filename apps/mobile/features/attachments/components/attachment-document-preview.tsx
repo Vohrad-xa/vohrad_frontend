@@ -1,9 +1,8 @@
 import React, {useEffect} from 'react';
-import {Linking, Platform, StyleSheet, View} from 'react-native';
+import {Linking, Platform} from 'react-native';
+import {useHeaderHeight} from '@react-navigation/elements';
 import WebView from 'react-native-webview';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils';
+
 type DocumentFields = {
   sourceUrl?: string;
   originalFilename?: string;
@@ -19,49 +18,37 @@ type AttachmentDocumentPreviewProps = {
 export function AttachmentDocumentPreview({
   attachment,
 }: AttachmentDocumentPreviewProps) {
-  const {ds, theme} = useTheme();
-  const styles = useStyles(ds, theme);
+  const headerHeight = useHeaderHeight();
 
   const previewUrl = attachment.sourceUrl;
 
-  // Handle web/android linking
   useEffect(() => {
-    if ((Platform.OS === 'web' || Platform.OS === 'android') && previewUrl) {
+    if (Platform.OS === 'web' && previewUrl) {
       Linking.openURL(previewUrl);
     }
   }, [previewUrl]);
 
-  if (!previewUrl) {
-    return null;
-  }
+  if (!previewUrl) return null;
 
-  if (Platform.OS === 'web' || Platform.OS === 'android') {
-    return null;
-  }
+  if (Platform.OS === 'web' || Platform.OS === 'android') return null;
 
-  // iOS rendering with WebView
   return (
-    <View style={styles.container}>
-      <WebView
-        source={{uri: previewUrl}}
-        originWhitelist={['*']}
-        allowsBackForwardNavigationGestures
-        style={styles.webview}
-        contentInsetAdjustmentBehavior="automatic"
-      />
-    </View>
+    <WebView
+      source={{uri: previewUrl}}
+      originWhitelist={['*']}
+      javaScriptEnabled
+      removeClippedSubviews
+      allowsBackForwardNavigationGestures
+      contentInset={{top: headerHeight}}
+      scrollIndicatorInsets={{
+        top: headerHeight,
+        left: 0,
+        right: 0,
+        bottom: 0,
+      }}
+      contentInsetAdjustmentBehavior="never"
+      automaticallyAdjustContentInsets={false}
+      automaticallyAdjustsScrollIndicatorInsets={false}
+    />
   );
 }
-
-const useStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-      },
-      webview: {
-        flex: 1,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);

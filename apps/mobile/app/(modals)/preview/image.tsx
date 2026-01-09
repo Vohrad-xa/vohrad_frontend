@@ -86,6 +86,7 @@ export default function AttachmentImagePreviewModal() {
           icon={AppIcons.actions.download}
           onPress={isDownloading ? undefined : handleDownload}
           accessibilityLabel={isDownloading ? 'Sharing image' : 'Share image'}
+          iconColorToken="accentBlue"
         />
       ),
     });

@@ -85,6 +85,7 @@ export default function DocumentPreviewModal() {
           accessibilityLabel={
             isDownloading ? 'Sharing document' : 'Share document'
           }
+          iconColorToken="accentBlue"
         />
       ),
     });
