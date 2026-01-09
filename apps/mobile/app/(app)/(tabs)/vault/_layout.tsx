@@ -17,7 +17,7 @@ function VaultStack() {
   const insets = useSafeAreaInsets();
   const {theme, ds} = useTheme();
   const {toggleSideMenu} = useSidebar();
-  const {setSearchQuery} = useSearch();
+  const {setSearchQuery, isSearchEnabled} = useSearch();
 
   const handleSearchChange = useCallback(
     (event: SearchChangeEvent) => {
@@ -39,15 +39,17 @@ function VaultStack() {
 
   const headerSearchBarOptions = useMemo(
     () =>
-      ({
-        placement: 'stacked' as const,
-        hideWhenScrolling: false,
-        placeholder: 'Search...',
-        headerIconColor: theme.icon,
-        hintTextColor: theme.icon,
-        onChangeText: handleSearchChange,
-      }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
-    [handleSearchChange, theme.icon],
+      isSearchEnabled
+        ? ({
+            placement: 'stacked' as const,
+            hideWhenScrolling: false,
+            placeholder: 'Search...',
+            headerIconColor: theme.icon,
+            hintTextColor: theme.icon,
+            onChangeText: handleSearchChange,
+          } satisfies NativeStackNavigationOptions['headerSearchBarOptions'])
+        : undefined,
+    [handleSearchChange, theme.icon, isSearchEnabled],
   );
 
   const stackScreenOptions = useMemo(

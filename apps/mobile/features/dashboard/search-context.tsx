@@ -1,20 +1,33 @@
-import type {ReactNode} from 'react';
-import React, {createContext, useContext, useState} from 'react';
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 
 type SearchContextType = {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  isSearchEnabled: boolean;
+  setSearchEnabled: (enabled: boolean) => void;
 };
 
 const SearchContext = createContext<SearchContextType | null>(null);
 
 export function SearchProvider({children}: {children: ReactNode}) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchEnabled, setSearchEnabled] = useState(true);
 
-  const contextValue: SearchContextType = {
-    searchQuery,
-    setSearchQuery,
-  };
+  const contextValue = useMemo<SearchContextType>(
+    () => ({
+      searchQuery,
+      setSearchQuery,
+      isSearchEnabled,
+      setSearchEnabled,
+    }),
+    [searchQuery, isSearchEnabled],
+  );
 
   return (
     <SearchContext.Provider value={contextValue}>
