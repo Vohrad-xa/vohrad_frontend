@@ -10,7 +10,7 @@ type DocumentsListProps = {
   documents: ItemAttachment[];
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
-  onSelectionChange?: (selectedIds: Set<string>) => void;
+  onSelectionChange?: (selectedIds: ReadonlySet<string>) => void;
   onRefresh?: () => Promise<void> | void;
   isLoading?: boolean;
   lastUpdated?: Date | null;

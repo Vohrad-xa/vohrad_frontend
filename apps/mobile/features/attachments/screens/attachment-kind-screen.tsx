@@ -133,7 +133,7 @@ export function AttachmentKindScreen({
    * Keeps selection mode latched once entered so the cancel button stays visible
    * even when the selection temporarily drops to zero.
    */
-  const handleSelectionChange = useCallback((ids: Set<string>) => {
+  const handleSelectionChange = useCallback((ids: ReadonlySet<string>) => {
     setSelectedIds(new Set(ids));
     setIsInSelectionMode((prev) => prev || ids.size > 0);
   }, []);

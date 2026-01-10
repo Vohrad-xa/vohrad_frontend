@@ -53,7 +53,7 @@ type AttachmentsListProps = {
 };
 
 type SelectableAttachmentsListProps = AttachmentsListProps & {
-  onSelectionChange?: (selectedIds: Set<string>) => void;
+  onSelectionChange?: (selectedIds: ReadonlySet<string>) => void;
 };
 
 type AttachmentListSelectionState = {
@@ -81,6 +81,7 @@ type AttachmentItemProps = {
   checkboxColor: string;
   checkboxTranslateX: Animated.AnimatedInterpolation<number>;
   contentTranslateX: Animated.AnimatedInterpolation<number>;
+  rippleColor: string;
 };
 
 const AttachmentItem = memo<AttachmentItemProps>(
@@ -95,6 +96,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
     checkboxColor,
     checkboxTranslateX,
     contentTranslateX,
+    rippleColor,
   }) => {
     const {uiTitle, uiDescription, fileIcon, thumbnailSource} = useMemo(() => {
       const title = item.original_filename ?? item.filename ?? 'Untitled';
@@ -146,8 +148,6 @@ const AttachmentItem = memo<AttachmentItemProps>(
       }
     }, [item.id, onLongPressRow]);
 
-    const {theme} = useTheme();
-
     return (
       <Pressable
         onPress={handlePress}
@@ -163,7 +163,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
             ? styles.contentPressed
             : null,
         ]}
-        android_ripple={{color: theme.ripple, foreground: true}}
+        android_ripple={{color: rippleColor, foreground: true}}
       >
         {selectionVisible ? (
           <Animated.View
@@ -315,6 +315,7 @@ const AttachmentsListBase = ({
         checkboxColor={checkboxColor}
         checkboxTranslateX={checkboxTranslateX}
         contentTranslateX={contentTranslateX}
+        rippleColor={theme.ripple}
       />
     ),
     [
@@ -327,6 +328,7 @@ const AttachmentsListBase = ({
       checkboxColor,
       checkboxTranslateX,
       contentTranslateX,
+      theme.ripple,
     ],
   );
 
@@ -423,7 +425,6 @@ export const SelectableAttachmentsList = forwardRef<
     ref,
   ) => {
     const {ds} = useTheme();
-
     const {triggerHaptic} = useHaptic();
 
     const [selectedIds, setSelectedIds] = useState<Set<string>>(
@@ -432,13 +433,11 @@ export const SelectableAttachmentsList = forwardRef<
     const [selectionRevision, setSelectionRevision] = useState(0);
 
     const [forceSelectionMode, setForceSelectionMode] = useState(false);
-
     const selectionMode = forceSelectionMode || selectedIds.size > 0;
 
     const [selectionVisible, setSelectionVisible] = useState(false);
 
     const selectionAnimation = useRef(new Animated.Value(0)).current;
-
     const selectionShift = ds.spacing.xxxl + ds.spacing.xxs;
 
     const selectionDidMountRef = useRef(false);
@@ -455,7 +454,8 @@ export const SelectableAttachmentsList = forwardRef<
         return;
       }
 
-      onSelectionChangeRef.current?.(selectedIds);
+      // To avoid mutation issues we send a copy of the Set
+      onSelectionChangeRef.current?.(new Set(selectedIds));
 
       if (selectedIds.size > 0) {
         setForceSelectionMode(true);
