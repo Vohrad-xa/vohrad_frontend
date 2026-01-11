@@ -14,7 +14,7 @@ import {type ItemAttachment} from '@sykamore/types';
 import {Image} from 'expo-image';
 import {Checkbox, Divider} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {ThemedText} from '@/components/ui';
+import {ThemedText, EmptyState} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
 import {resolveAttachmentThumbnailUrl} from '@/features/attachments/utils';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
@@ -26,6 +26,7 @@ import {
   formatBytes,
   getAttachmentFileIcon,
   Icon,
+  AppIcons,
 } from '@/utils';
 
 /**
@@ -207,6 +208,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
                   colorToken={fileIcon.colorToken}
                   symbolType={fileIcon.symbolType}
                   symbolColorTokens={fileIcon.symbolColorTokens}
+                  fontWeight={fileIcon.fontWeight}
                 />
               </View>
             )}
@@ -265,8 +267,8 @@ const AttachmentsListBase = ({
       ? {
           automaticallyAdjustsScrollIndicatorInsets: false as const,
           scrollIndicatorInsets: {
-            top: insets.top + 106, // large title height
-            bottom: 80,
+            top: insets.top + 106,
+            bottom: insets.bottom + 45,
           },
         }
       : {};
@@ -344,6 +346,11 @@ const AttachmentsListBase = ({
     [isLoading, lastUpdated],
   );
 
+  const ListEmpty = useCallback(
+    () => <EmptyState message="No Records Found" icon={AppIcons.files.empty} />,
+    [],
+  );
+
   const listFooter = useMemo(
     () => (
       <ListCountFooter
@@ -377,14 +384,15 @@ const AttachmentsListBase = ({
       onEndReachedThreshold={onEndReachedThreshold}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={ListHeader}
-      contentInsetAdjustmentBehavior="always"
+      ListEmptyComponent={
+        attachments.length === 0 && !isLoading ? ListEmpty : null
+      }
+      ListFooterComponent={attachments.length > 0 ? listFooter : null}
+      maintainVisibleContentPosition={{disabled: true}}
+      automaticallyAdjustContentInsets={false}
       refreshing={refreshing}
       onRefresh={handleRefresh}
       progressViewOffset={ds.spacing.lg}
-      maintainVisibleContentPosition={{disabled: true}}
-      ListFooterComponent={listFooter}
-      automaticallyAdjustContentInsets
-      role="listitem"
     />
   );
 };

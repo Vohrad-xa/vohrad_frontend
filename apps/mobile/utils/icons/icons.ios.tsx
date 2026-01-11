@@ -19,6 +19,10 @@ export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 export type IconName = SFSymbol;
 type SymbolType = NonNullable<SymbolViewProps['type']>;
 type SwiftUIFontWeight = NonNullable<Parameters<typeof font>[0]['weight']>;
+type animation = NonNullable<SymbolViewProps['animationSpec']>;
+type ContentMode = NonNullable<SymbolViewProps['resizeMode']>;
+type SymbolScale = NonNullable<SymbolViewProps['scale']>;
+type SymbolWeight = NonNullable<SymbolViewProps['weight']>;
 
 export type IconProps = {
   name: IconName;
@@ -31,8 +35,12 @@ export type IconProps = {
   withBackground?: boolean;
   useSwiftUI?: boolean;
   container?: boolean;
-  symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
+  symbolType?: SymbolType;
   symbolColorTokens?: TokenName[];
+  animationSpec?: animation;
+  resizeMode?: ContentMode;
+  scale?: SymbolScale;
+  fallback?: React.ReactNode;
 };
 
 export const Icon: React.FC<IconProps> = ({
@@ -46,6 +54,10 @@ export const Icon: React.FC<IconProps> = ({
   accessibilityLabel: a11yLabel,
   symbolType,
   symbolColorTokens,
+  animationSpec,
+  resizeMode = 'scaleAspectFit',
+  scale,
+  fallback,
 }) => {
   const {theme, ds} = useTheme();
 
@@ -70,6 +82,8 @@ export const Icon: React.FC<IconProps> = ({
         name={name}
         size={resolvedSize}
         type={resolvedType}
+        scale={scale}
+        weight={fontWeight as SymbolWeight}
         colors={
           resolvedType === 'palette' || resolvedType === 'multicolor'
             ? resolvedPaletteColors
@@ -78,8 +92,11 @@ export const Icon: React.FC<IconProps> = ({
         tintColor={
           resolvedType === 'palette' || resolvedType === 'multicolor'
             ? undefined
-            : (resolvedTintColor ?? theme.icon)
+            : (resolvedTintColor ?? undefined)
         }
+        resizeMode={resizeMode}
+        animationSpec={animationSpec}
+        fallback={fallback}
       />
     );
   }
@@ -181,7 +198,7 @@ export const AppIcons = {
     file: 'doc.plaintext',
     image: 'photo',
     imageFallback: 'photo.badge.exclamationmark',
-    archive: 'doc.zipper',
+    archive: 'archivebox',
     print: 'printer.inverse',
     list: 'list.bullet',
     others: 'questionmark.folder',
@@ -190,6 +207,7 @@ export const AppIcons = {
     excel: 'doc.plaintext.fill',
     ppt: 'doc.plaintext.fill',
     text: 'doc.plaintext.fill',
+    empty: 'folder.badge.questionmark',
   },
 
   status: {

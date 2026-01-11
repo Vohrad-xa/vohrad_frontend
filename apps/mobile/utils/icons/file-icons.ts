@@ -1,18 +1,10 @@
-import type {TokenName} from '@/constants';
 import {AppIcons} from './icons';
-import type {IconName} from './icons';
+import type { IconProps} from './icons';
 
 type Input = {
   filename?: string | null;
   extension?: string | null;
   fileType?: string | null;
-};
-
-export type AttachmentIcon = {
-  name: IconName;
-  colorToken?: TokenName;
-  symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
-  symbolColorTokens?: TokenName[];
 };
 
 const normalizeExt = (v?: string | null): string | null => {
@@ -77,7 +69,7 @@ const classify = (ext: string) => {
   return 'other';
 };
 
-export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
+export const getAttachmentFileIcon = (input: Input): IconProps => {
   const ext =
     normalizeExt(input.extension) ??
     extFromFilename(input.filename) ??
@@ -92,6 +84,7 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
         colorToken: 'destructive',
         symbolType: 'palette',
         symbolColorTokens: ['destructive', 'offWhite'],
+        fontWeight: 'ultraLight',
       };
     case 'word':
       return {
@@ -99,6 +92,7 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
         colorToken: 'accentBlue',
         symbolType: 'palette',
         symbolColorTokens: ['accentBlue', 'offWhite'],
+        fontWeight: 'ultraLight',
       };
     case 'excel':
       return {
@@ -106,6 +100,7 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
         colorToken: 'accentGreen',
         symbolType: 'palette',
         symbolColorTokens: ['accentGreen', 'offWhite'],
+        fontWeight: 'ultraLight',
       };
     case 'ppt':
       return {
@@ -117,12 +112,15 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
     case 'archive':
       return {
         name: AppIcons.files.archive,
+        symbolType: 'palette',
         colorToken: 'accentBlue',
+        fontWeight: 'thin',
       };
     case 'image':
       return {
         name: AppIcons.files.image,
         colorToken: 'accentBlue',
+        fontWeight: 'thin',
       };
     case 'text':
       return {
@@ -130,6 +128,7 @@ export const getAttachmentFileIcon = (input: Input): AttachmentIcon => {
         colorToken: 'muted',
         symbolType: 'palette',
         symbolColorTokens: ['text', 'offWhite'],
+        fontWeight: 'ultraLight',
       };
     default:
       return {

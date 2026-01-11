@@ -19,6 +19,7 @@ export const Palette = {
   blue: '#0A84FF',
   deepblue: '#1251D3',
   lightBlue: '#DDE7FB',
+  seaBlue: '#67abffa8',
   indigo: '#4F46E5',
   green: '#36ba06ff',
   orange: '#FF9500',
@@ -28,7 +29,7 @@ export const Palette = {
   bluepurple: '#10385bff',
   teal: '#14B8A6',
   white: '#FFFFFE',
-  offWhite: '#f5f5f4',
+  offWhite: '#f0f0ef',
   Greige: '#C2C0B6',
   black: '#000000',
   webDarkBackground: '#262624',
@@ -47,6 +48,7 @@ const _Tokens = {
     // Base
     primary: Palette.deepblue,
     secondary: Palette.lightBlue,
+    tertiary: Palette.seaBlue,
     background: Palette.white,
     modalBackground: Palette.modalground,
     webbackground: Palette.webLightBackground,
@@ -87,6 +89,7 @@ const _Tokens = {
     // Base
     primary: Palette.Greige,
     secondary: Palette.Greige,
+    tertiary: Palette.mushroom,
     background: Palette.black,
     modalBackground: Palette.gray[900],
     webbackground: Palette.Greige,
