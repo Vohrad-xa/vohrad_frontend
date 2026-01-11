@@ -73,6 +73,7 @@ export function ImagesGridScreen({
       onRefresh={handleRefresh}
       removeClippedSubviews
       ListFooterComponent={listFooter}
+      showsVerticalScrollIndicator={false}
     />
   );
 }
