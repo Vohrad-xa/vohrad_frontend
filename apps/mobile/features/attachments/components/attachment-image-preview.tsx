@@ -1,10 +1,10 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import {Pressable, StyleSheet} from 'react-native';
 import {useHeaderHeight} from '@react-navigation/elements';
 import {Image} from 'expo-image';
 import {ScrollView} from 'react-native-gesture-handler';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import type {ImageAttachmentItem} from '@/features/attachments/hooks/attachment-images';
+import type {ImageAttachmentItem} from '@/features/attachments';
 import {useTheme} from '@/providers';
 import {AppIcons, Icon} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';

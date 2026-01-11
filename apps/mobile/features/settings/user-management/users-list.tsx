@@ -137,7 +137,6 @@ export function UsersList({
         <ListCountFooter
           count={users.length}
           dividerStyle={styles.divider}
-          containerStyle={styles.footer}
           textVariant="callout"
           fontWeight="bold"
         />
@@ -161,12 +160,6 @@ const createStyles = makeStyleFactory(
       divider: {
         marginLeft: ds.spacing.xxl * 2 + ds.spacing.md,
         marginRight: ds.spacing.lg,
-      },
-
-      footer: {
-        paddingTop: ds.spacing.xxl,
-        paddingBottom: ds.spacing.xl,
-        alignItems: 'center',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

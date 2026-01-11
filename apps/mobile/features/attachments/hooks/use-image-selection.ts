@@ -1,5 +1,5 @@
 import {useState, useCallback, useMemo} from 'react';
-import type {ImageAttachmentItem} from './attachment-images';
+import type {ImageAttachmentItem} from './use-image-items';
 
 export function useImageSelection(images: ImageAttachmentItem[]) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());

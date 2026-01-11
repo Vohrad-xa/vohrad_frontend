@@ -356,12 +356,11 @@ const AttachmentsListBase = ({
       <ListCountFooter
         count={attachments.length}
         dividerStyle={styles.divider}
-        containerStyle={styles.footer}
         textVariant="callout"
         fontWeight="bold"
       />
     ),
-    [attachments.length, styles.divider, styles.footer],
+    [attachments.length, styles.divider],
   );
 
   const extraData = useMemo(
@@ -677,12 +676,6 @@ const createStyles = makeStyleFactory(
       divider: {
         marginLeft: ds.spacing.xxxl + ds.spacing.xl + ds.spacing.xs,
         marginRight: ds.spacing.lg,
-      },
-
-      footer: {
-        paddingTop: ds.spacing.xxl,
-        paddingBottom: ds.spacing.xl,
-        alignItems: 'center',
       },
 
       contentPressed: {

@@ -1,11 +1,11 @@
-import React, {memo} from 'react';
+import {memo} from 'react';
 import {Platform, Pressable, View, useWindowDimensions} from 'react-native';
 import {Image} from 'expo-image';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   IMAGE_GRID_COLUMNS,
   type ImageAttachmentItem,
-} from '@/features/attachments/hooks/attachment-images';
+} from '@/features/attachments';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 

@@ -1,5 +1,4 @@
-import {AppIcons} from './icons';
-import type { IconProps} from './icons';
+import {AppIcons, type IconProps} from './icons';
 
 type Input = {
   filename?: string | null;

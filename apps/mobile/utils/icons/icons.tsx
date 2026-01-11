@@ -1,8 +1,7 @@
-import React from 'react';
 import {View, type StyleProp, type TextStyle} from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import type {TokenName} from '@/constants/colors';
-import {useTheme} from '@/providers/theme-provider';
+import type {TokenName} from '@/constants';
+import {useTheme} from '@/providers';
 
 export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
@@ -11,6 +10,7 @@ export type IconProps = {
   size?: number | IconSizeKey;
   color?: string;
   colorToken?: TokenName;
+  fontWeight?: string;
   accessibilityLabel?: string;
   style?: StyleProp<TextStyle>;
   withBackground?: boolean;
@@ -18,6 +18,9 @@ export type IconProps = {
   noContainer?: boolean;
   symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
   symbolColorTokens?: TokenName[];
+  scale?: number | string;
+  resizeMode?: string;
+  animationSpec?: Record<string, unknown>;
 };
 
 export type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
@@ -147,6 +150,7 @@ export const AppIcons = {
     print: 'printer-outline',
     list: 'format-list-bulleted',
     others: 'folder-question-outline',
+    empty: 'folder-question-outline',
     test: 'information-outline',
     pdf: 'file-document-outline',
     word: 'file-word-outline',

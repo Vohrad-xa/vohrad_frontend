@@ -17,7 +17,7 @@ export {ItemsList} from './list/items-list';
 // Hooks
 export {useItemForm} from './detail/use-item-form';
 export {useItemAttachmentUpload} from './detail/attachments/use-item-attachment-upload';
-export {useImageAttachments} from '../attachments/hooks/attachment-images';
+export {useImageAttachments} from '../attachments/hooks/use-image-items';
 export {useItemLocation} from './detail/locations/use-item-location';
 export {
   useHybridItemSearch,
@@ -27,10 +27,10 @@ export {useItemFilters} from './list/use-item-filters';
 
 // Types
 export type {UseItemFormReturn} from './detail/use-item-form';
-export type {ImageAttachmentItem} from '../attachments/hooks/attachment-images';
+export type {ImageAttachmentItem} from '../attachments/hooks/use-image-items';
 
 // Constants
-export {IMAGE_GRID_COLUMNS} from '../attachments/hooks/attachment-images';
+export {IMAGE_GRID_COLUMNS} from '../attachments/hooks/use-image-items';
 
 // Filters
 export {StatusFilter} from './filter/status-filter';

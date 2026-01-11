@@ -3,9 +3,9 @@ import {
   useDeleteAttachment,
   useFilteredAttachmentsManager,
 } from '@sykamore/store';
-import {useImageAttachments} from '@/features/attachments/hooks/attachment-images';
-import {useAttachmentContext} from '@/features/attachments/providers/attachment-provider';
 import {showConfirmAlert} from '@/utils';
+import {useAttachmentContext} from '../providers/attachment-provider';
+import {useImageAttachments} from './use-image-items';
 import {useImageSelection} from './use-image-selection';
 
 export function useAttachmentImages() {
@@ -15,6 +15,7 @@ export function useAttachmentImages() {
     loadMore: contextLoadMore,
     hasNext: contextHasNext,
     isLoading: contextIsLoading,
+    refresh: contextRefresh,
   } = useAttachmentContext();
 
   // If we have a targetId, we're in item-specific mode and should use context data
@@ -24,6 +25,7 @@ export function useAttachmentImages() {
     loadMore,
     hasNext,
     isLoading,
+    refresh,
   } = useFilteredAttachmentsManager({
     kind: 'image',
     enabled: !targetId,
@@ -92,5 +94,6 @@ export function useAttachmentImages() {
     loadMore: targetId ? (contextLoadMore ?? noopLoadMore) : loadMore,
     hasNext: targetId ? contextHasNext : hasNext,
     isLoading: targetId ? Boolean(contextIsLoading) : isLoading,
+    refresh: targetId ? contextRefresh : refresh,
   };
 }
