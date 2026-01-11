@@ -5,10 +5,30 @@ import {
 } from '@sykamore/store';
 import {showConfirmAlert} from '@/utils';
 import {useAttachmentContext} from '../providers/attachment-provider';
+import {useAttachmentSearch} from './use-attachment-search';
 import {useImageAttachments} from './use-image-items';
 import {useImageSelection} from './use-image-selection';
 
-export function useAttachmentImages() {
+type UseAttachmentImagesOptions = {
+  odataOrderBy?: string;
+  searchQuery?: string;
+  enabled?: boolean;
+  onDeleteSuccess?: (count: number) => void;
+};
+
+/**
+ * Images list adapter with optional search/sort and selection actions.
+ *
+ * - When a targetId is present, uses context attachments instead of fetching.
+ * - Calls `onDeleteSuccess` after confirmed deletions complete.
+ */
+export function useAttachmentImages(options?: UseAttachmentImagesOptions) {
+  const {
+    odataOrderBy,
+    searchQuery = '',
+    enabled = true,
+    onDeleteSuccess,
+  } = options ?? {};
   const {
     attachments: contextAttachments,
     targetId,
@@ -21,6 +41,20 @@ export function useAttachmentImages() {
   // If we have a targetId, we're in item-specific mode and should use context data
   // Otherwise, fetch images from the server
   const {
+    attachments: searchAttachments,
+    loadMore: searchLoadMore,
+    hasNext: searchHasNext,
+    isLoading: searchIsLoading,
+    refresh: searchRefresh,
+    isSearchActive,
+  } = useAttachmentSearch({
+    searchQuery,
+    kind: 'image',
+    odataOrderBy,
+    enabled: enabled && !targetId,
+  });
+
+  const {
     attachments: fetchedAttachments,
     loadMore,
     hasNext,
@@ -28,11 +62,16 @@ export function useAttachmentImages() {
     refresh,
   } = useFilteredAttachmentsManager({
     kind: 'image',
-    enabled: !targetId,
+    odataOrderBy,
+    enabled: enabled && !targetId && !isSearchActive,
   });
 
   // Use context attachments if available, otherwise use fetched attachments
-  const attachments = targetId ? contextAttachments : fetchedAttachments;
+  const attachments = targetId
+    ? contextAttachments
+    : isSearchActive
+      ? searchAttachments
+      : fetchedAttachments;
   const imageAttachments = useImageAttachments(attachments);
   const {mutateAsync: deleteAttachment} = useDeleteAttachment();
 
@@ -41,6 +80,8 @@ export function useAttachmentImages() {
     selectedCount,
     toggleSelection,
     isSelected,
+    selectAll,
+    clearSelection,
     enableSelectionMode,
     disableSelectionMode,
     getSelectedImages,
@@ -51,6 +92,7 @@ export function useAttachmentImages() {
     if (selectedImages.length === 0) {
       return;
     }
+    const deletedCount = selectedImages.length;
 
     const message =
       selectedImages.length === 1
@@ -73,12 +115,18 @@ export function useAttachmentImages() {
             ),
           );
           disableSelectionMode();
+          onDeleteSuccess?.(deletedCount);
         } catch (error) {
           console.error('Failed to delete images:', error);
         }
       },
     });
-  }, [getSelectedImages, deleteAttachment, disableSelectionMode]);
+  }, [
+    getSelectedImages,
+    deleteAttachment,
+    disableSelectionMode,
+    onDeleteSuccess,
+  ]);
 
   const noopLoadMore = useCallback(() => {}, []);
 
@@ -88,12 +136,31 @@ export function useAttachmentImages() {
     selectedCount,
     isSelected,
     toggleSelection,
+    selectAll,
+    clearSelection,
     enableSelectionMode,
     disableSelectionMode,
+    getSelectedImages,
     handleDeleteSelected,
-    loadMore: targetId ? (contextLoadMore ?? noopLoadMore) : loadMore,
-    hasNext: targetId ? contextHasNext : hasNext,
-    isLoading: targetId ? Boolean(contextIsLoading) : isLoading,
-    refresh: targetId ? contextRefresh : refresh,
+    loadMore: targetId
+      ? (contextLoadMore ?? noopLoadMore)
+      : isSearchActive
+        ? searchLoadMore
+        : loadMore,
+    hasNext: targetId
+      ? contextHasNext
+      : isSearchActive
+        ? searchHasNext
+        : hasNext,
+    isLoading: targetId
+      ? Boolean(contextIsLoading)
+      : isSearchActive
+        ? searchIsLoading
+        : isLoading,
+    refresh: targetId
+      ? contextRefresh
+      : isSearchActive
+        ? searchRefresh
+        : refresh,
   };
 }

@@ -2,7 +2,10 @@ import {memo} from 'react';
 import {Platform, Pressable, View, useWindowDimensions} from 'react-native';
 import {Image} from 'expo-image';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {type ImageAttachmentItem} from '@/features/attachments';
+import {
+  IMAGE_GRID_COLUMNS,
+  type ImageAttachmentItem,
+} from '@/features/attachments';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
@@ -53,8 +56,8 @@ const useStyles = makeStyleFactory(
         aspectRatio: 1,
       },
       default: {
-        width: width / 5,
-        height: width / 5,
+        width: width / IMAGE_GRID_COLUMNS,
+        height: width / IMAGE_GRID_COLUMNS,
       },
     }),
     image: {

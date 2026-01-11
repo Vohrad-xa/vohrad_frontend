@@ -1,27 +1,14 @@
-import React, {
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {Platform} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 import {getAttachmentExtension, useDeleteAttachment} from '@sykamore/store';
 import {type ItemAttachment} from '@sykamore/types';
 import {useNavigation} from 'expo-router';
-import {Snackbar} from 'react-native-paper';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {HeaderButton} from '@/components/ui';
 import {useSearch} from '@/features/dashboard';
-import {useTheme} from '@/providers';
-import {AppIcons, sanitizeInlineText, showConfirmAlert} from '@/utils';
+import {sanitizeInlineText, showConfirmAlert} from '@/utils';
 import {
-  getHeaderOptions,
-  type HeaderAction,
-} from '@/utils/navigation/header-actions';
-import {AttachmentsFilterMenu} from '../components';
-import {
+  useAttachmentsHeader,
+  useAttachmentsSnackbar,
   useAttachmentSearch,
   useAttachmentsByKind,
   useAttachmentPress,
@@ -62,8 +49,6 @@ export function AttachmentKindScreen({
   listKey,
 }: AttachmentKindScreenProps) {
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
-  const {ds} = useTheme();
   const isFocused = useIsFocused();
 
   const [extension, setExtension] = useState<string | undefined>();
@@ -109,8 +94,7 @@ export function AttachmentKindScreen({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [isInSelectionMode, setIsInSelectionMode] = useState(false);
 
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const {showSnack, snackbar} = useAttachmentsSnackbar();
 
   const normalizedExtension = getAttachmentExtension(
     extension ? {extension} : null,
@@ -118,11 +102,9 @@ export function AttachmentKindScreen({
   const deleteTitleText = deleteTitle ?? capitalizeLabel(labelPlural);
   const resolvedShowExtensionFilter =
     showExtensionFilter ?? kind === 'document';
-
-  const showSnack = useCallback((message: string) => {
-    setSnackbarMessage(message);
-    setSnackbarVisible(true);
-  }, []);
+  const headerTitle = normalizedExtension
+    ? `${title} (.${normalizedExtension})`
+    : title;
 
   const getAttachmentById = useCallback(
     (id: string) => displayedAttachments.find((item) => item.id === id),
@@ -254,156 +236,35 @@ export function AttachmentKindScreen({
     listRef.current?.deselectAll();
   }, []);
 
+  useAttachmentsHeader({
+    navigation,
+    title: headerTitle,
+    labelSingular,
+    labelPlural,
+    isSelectionMode: isInSelectionMode,
+    selectedCount: selectedIds.size,
+    totalCount: displayedAttachments.length,
+    onSelectAll: handleSelectAll,
+    onDeselectAll: handleDeselectAll,
+    onCancelSelection: handleCancelSelection,
+    onShareSelected: handleShareSelected,
+    onDeleteSelected: handleDeleteSelected,
+    isProcessing,
+    filter: {
+      showExtensionFilter: resolvedShowExtensionFilter,
+      extension,
+      odataOrderBy,
+      onExtensionChange: setExtension,
+      onOrderByChange: setOdataOrderBy,
+      onSelectPress: handleSelectModePress,
+    },
+  });
+
   const handleLoadMore = useCallback(() => {
     if (displayedHasNext && !displayedIsLoading) {
       displayedLoadMore();
     }
   }, [displayedHasNext, displayedIsLoading, displayedLoadMore]);
-
-  const rightActions = useMemo<HeaderAction[]>(() => {
-    if (!isInSelectionMode) {
-      return [
-        {
-          type: 'custom',
-          key: 'filter',
-          element: (
-            <AttachmentsFilterMenu
-              showExtensionFilter={resolvedShowExtensionFilter}
-              extension={extension}
-              odataOrderBy={odataOrderBy}
-              onExtensionChange={setExtension}
-              onOrderByChange={setOdataOrderBy}
-              onSelectPress={handleSelectModePress}
-            />
-          ),
-        },
-      ];
-    }
-
-    const hasSelection = selectedIds.size > 0;
-    const sharePress = isProcessing
-      ? undefined
-      : () => void handleShareSelected();
-    const deletePress = isProcessing
-      ? undefined
-      : () => void handleDeleteSelected();
-
-    const actions: HeaderAction[] = [];
-    if (hasSelection) {
-      actions.push(
-        {
-          type: 'custom',
-          key: 'share',
-          element: (
-            <HeaderButton
-              variant="share"
-              accessibilityLabel={`Share selected ${labelPlural}`}
-              accessibilityHint={`Share or download selected ${labelPlural}`}
-              onPress={sharePress}
-            />
-          ),
-        },
-        {
-          type: 'custom',
-          key: 'delete',
-          element: (
-            <HeaderButton
-              variant="delete"
-              accessibilityLabel={`Delete selected ${labelPlural}`}
-              accessibilityHint={`Permanently delete selected ${labelPlural}`}
-              onPress={deletePress}
-            />
-          ),
-        },
-      );
-    }
-
-    actions.push({
-      type: 'button',
-      key: 'cancel',
-      label: 'Cancel',
-      variant: 'done',
-      icon: AppIcons.actions.close,
-      iosSymbol: 'checkmark',
-      accessibilityLabel: 'Cancel selection',
-      accessibilityHint: `Exit ${labelSingular} selection mode`,
-      sharesBackground: false,
-      onPress: handleCancelSelection,
-    });
-
-    return actions;
-  }, [
-    handleCancelSelection,
-    handleDeleteSelected,
-    handleSelectModePress,
-    handleShareSelected,
-    isInSelectionMode,
-    isProcessing,
-    selectedIds.size,
-    extension,
-    odataOrderBy,
-    resolvedShowExtensionFilter,
-    labelPlural,
-    labelSingular,
-  ]);
-
-  /**
-   * Surfaces the Select All / Deselect All affordance without adding extra UI,
-   * mirroring whatever bulk action the user triggered last.
-   */
-  const headerLeft = useCallback(() => {
-    if (!isInSelectionMode) return undefined;
-    const totalItems = displayedAttachments.length;
-    const hasAllSelected = totalItems > 0 && selectedIds.size === totalItems;
-    return (
-      <HeaderButton
-        variant="text"
-        text={hasAllSelected ? 'Deselect All' : 'Select All'}
-        accessibilityLabel={
-          hasAllSelected
-            ? `Deselect all ${labelPlural}`
-            : `Select all ${labelPlural}`
-        }
-        accessibilityHint={
-          hasAllSelected
-            ? `Clear the current ${labelSingular} selection`
-            : `Select all ${labelPlural} in the list`
-        }
-        onPress={hasAllSelected ? handleDeselectAll : handleSelectAll}
-      />
-    );
-  }, [
-    displayedAttachments.length,
-    handleDeselectAll,
-    handleSelectAll,
-    isInSelectionMode,
-    selectedIds.size,
-    labelPlural,
-    labelSingular,
-  ]);
-
-  useLayoutEffect(() => {
-    const headerActionsOptions = getHeaderOptions({right: rightActions});
-    navigation.setOptions({
-      ...headerActionsOptions,
-      headerLeft,
-      headerTitle:
-        isInSelectionMode && selectedIds.size > 0
-          ? `${selectedIds.size} selected`
-          : normalizedExtension
-            ? `${title} (.${normalizedExtension})`
-            : title,
-      headerTitleAlign: isInSelectionMode ? 'center' : 'left',
-    });
-  }, [
-    navigation,
-    rightActions,
-    headerLeft,
-    isInSelectionMode,
-    selectedIds.size,
-    normalizedExtension,
-    title,
-  ]);
 
   const handleItemPress = useCallback(
     async (attachmentId: string) => {
@@ -429,20 +290,7 @@ export function AttachmentKindScreen({
         lastUpdated={displayedLastUpdated}
       />
 
-      <Snackbar
-        visible={snackbarVisible}
-        wrapperStyle={
-          Platform.OS === 'ios'
-            ? {bottom: insets.bottom + ds.spacing.md}
-            : {bottom: insets.bottom + ds.layout.tabBarHeight}
-        }
-        onDismiss={() => setSnackbarVisible(false)}
-        duration={3000}
-        style={{borderRadius: ds.borderRadius.full}}
-        action={{label: 'OK', onPress: () => setSnackbarVisible(false)}}
-      >
-        {snackbarMessage}
-      </Snackbar>
+      {snackbar}
     </>
   );
 }

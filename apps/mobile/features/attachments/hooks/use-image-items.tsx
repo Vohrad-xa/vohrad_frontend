@@ -5,6 +5,8 @@ import {
 } from '@/features/attachments/utils/url-resolver';
 import type {ItemAttachment} from '@sykamore/types';
 
+export const IMAGE_GRID_COLUMNS = 5;
+
 export interface ImageAttachmentItem extends ItemAttachment {
   resolvedUrl: string;
   thumbnailUrl?: string;

@@ -98,12 +98,14 @@ function VaultStack() {
     <Stack screenOptions={stackScreenOptions}>
       <Stack.Screen name="index" options={indexOptions} />
       <Stack.Screen name="add" options={{headerTitle: 'Add Attachment'}} />
-      <Stack.Screen name="images" options={{headerTitle: 'Library'}} />
+      <Stack.Screen
+        name="images"
+        options={{headerTitle: 'Library', headerSearchBarOptions}}
+      />
       <Stack.Screen
         name="documents"
         options={{
           headerTitle: 'Documents',
-
           headerSearchBarOptions,
         }}
       />

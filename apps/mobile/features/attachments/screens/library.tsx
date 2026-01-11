@@ -1,13 +1,17 @@
 import {useCallback, useMemo} from 'react';
 import {useWindowDimensions} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
-import {type ImageAttachmentItem} from '@/features/item';
 import {ListCountFooter} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {SelectableImageTile} from '../components';
-import {useAttachmentImages} from '../hooks';
+import {IMAGE_GRID_COLUMNS, type ImageAttachmentItem} from '../hooks';
 
 interface ImagesGridScreenProps {
+  imageAttachments: ImageAttachmentItem[];
+  loadMore: () => void;
+  hasNext?: boolean;
+  isLoading: boolean;
+  refresh?: () => void | Promise<void>;
   onImagePress: (attachment: ImageAttachmentItem) => void;
   isSelected: (attachment: ImageAttachmentItem) => boolean;
 }
@@ -15,12 +19,15 @@ interface ImagesGridScreenProps {
 const keyExtractor = (item: ImageAttachmentItem) => item.id;
 
 export function ImagesGridScreen({
+  imageAttachments,
+  loadMore,
+  hasNext,
+  isLoading,
+  refresh,
   onImagePress,
   isSelected,
 }: ImagesGridScreenProps) {
   const {width, height} = useWindowDimensions();
-  const {imageAttachments, loadMore, hasNext, isLoading, refresh} =
-    useAttachmentImages();
   const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({
     onRefresh: refresh,
   });
@@ -64,7 +71,7 @@ export function ImagesGridScreen({
       extraData={extraData}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      numColumns={5}
+      numColumns={IMAGE_GRID_COLUMNS}
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.5}
       drawDistance={drawDistance}

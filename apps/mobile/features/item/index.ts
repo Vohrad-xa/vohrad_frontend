@@ -29,9 +29,6 @@ export {useItemFilters} from './list/use-item-filters';
 export type {UseItemFormReturn} from './detail/use-item-form';
 export type {ImageAttachmentItem} from '../attachments/hooks/use-image-items';
 
-// Constants
-export {IMAGE_GRID_COLUMNS} from '../attachments/hooks/use-image-items';
-
 // Filters
 export {StatusFilter} from './filter/status-filter';
 export {TrackingModeFilter} from './filter/tracking-mode-filter';

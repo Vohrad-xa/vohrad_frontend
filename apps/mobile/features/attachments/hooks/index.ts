@@ -1,4 +1,6 @@
 export {useAttachmentUpload} from './use-attachment-upload';
+export {useAttachmentsHeader} from './use-attachments-header';
+export {useAttachmentsSnackbar} from './use-attachments-snackbar';
 export {useImageSelection} from './use-image-selection';
 export {useAttachmentsOverview} from './use-attachments-overview';
 export {useAttachmentImages} from './use-attachment-images';
