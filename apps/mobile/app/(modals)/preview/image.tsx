@@ -2,13 +2,15 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {useFilteredAttachmentsManager} from '@sykamore/store';
 import {useNavigation, useLocalSearchParams} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
-import {AttachmentImagePreview} from '@/features/attachments';
-import {useOptionalAttachmentContext} from '@/features/attachments/providers/attachment-provider';
+import {
+  AttachmentImagePreview,
+  useImageAttachments,
+  useOptionalAttachmentContext,
+} from '@/features/attachments';
 import {
   downloadDocumentFile,
   shareDownloadedFile,
 } from '@/features/attachments/utils/file-download';
-import {useImageAttachments} from '@/features/item';
 import {AppIcons, showAlert} from '@/utils';
 
 export default function AttachmentImagePreviewModal() {

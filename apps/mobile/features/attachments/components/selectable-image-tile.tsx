@@ -1,22 +1,25 @@
 import {memo} from 'react';
 import {Platform, Pressable, View, useWindowDimensions} from 'react-native';
 import {Image} from 'expo-image';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {
-  IMAGE_GRID_COLUMNS,
-  type ImageAttachmentItem,
-} from '@/features/attachments';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
+import {IMAGE_GRID_COLUMNS, type ImageAttachmentItem} from '../hooks';
 
 interface SelectableImageTileProps {
   attachment: ImageAttachmentItem;
   onPress: (attachment: ImageAttachmentItem) => void;
+  onLongPress?: (attachment: ImageAttachmentItem) => void;
   isSelected: boolean;
 }
 
 export const SelectableImageTile = memo(
-  ({attachment, onPress, isSelected}: SelectableImageTileProps) => {
+  ({
+    attachment,
+    onPress,
+    onLongPress,
+    isSelected,
+  }: SelectableImageTileProps) => {
     const {theme, ds} = useTheme();
     const {width} = useWindowDimensions();
     const styles = useStyles(ds, theme, width);
@@ -24,6 +27,7 @@ export const SelectableImageTile = memo(
     return (
       <Pressable
         onPress={() => onPress(attachment)}
+        onLongPress={onLongPress ? () => onLongPress(attachment) : undefined}
         style={styles.tile}
         accessibilityRole="button"
         accessibilityLabel={

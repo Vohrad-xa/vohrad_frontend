@@ -1,13 +1,4 @@
-import {
-  useCallback,
-  useMemo,
-  memo,
-  useState,
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-  useEffect,
-} from 'react';
+import {useCallback, useMemo, memo, useState, useRef, useEffect} from 'react';
 import {Animated, Platform, StyleSheet, View, Pressable} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {type ItemAttachment} from '@sykamore/types';
@@ -16,7 +7,6 @@ import {Checkbox, Divider} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedText, EmptyState} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
-import {resolveAttachmentThumbnailUrl} from '@/features/attachments/utils';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme, useHaptic} from '@/providers';
@@ -28,20 +18,12 @@ import {
   Icon,
   AppIcons,
 } from '@/utils';
+import {resolveAttachmentThumbnailUrl} from '../utils';
+import type {AttachmentsSelectionController} from '../hooks';
 
 /**
- * Imperative selection controls consumed by parent navigation/header flows.
- *
- * - Always drive both local state and `onSelectionChange` so callers can treat
- *   the ref as the single entry point for bulk operations.
+ * Shared attachment list view with optional selection state.
  */
-export type SelectableAttachmentsListRef = {
-  clearSelection: () => void;
-  enterSelectionMode: () => void;
-  selectAll: () => void;
-  deselectAll: () => void;
-};
-
 type AttachmentsListProps = {
   onAttachmentPress: (attachmentId: string) => void;
   attachments: ItemAttachment[];
@@ -54,7 +36,7 @@ type AttachmentsListProps = {
 };
 
 type SelectableAttachmentsListProps = AttachmentsListProps & {
-  onSelectionChange?: (selectedIds: ReadonlySet<string>) => void;
+  selection: AttachmentsSelectionController<ItemAttachment>;
 };
 
 type AttachmentListSelectionState = {
@@ -405,212 +387,120 @@ export function AttachmentsList(props: AttachmentsListProps) {
 
 /**
  * FlashList-backed attachment list with animated multi-select UX.
- *
- * - Owns selection state + animations; parent reacts via `onSelectionChange`
- *   and the `SelectableAttachmentsListRef` contract only.
- * - Treats `selectionMode` as a derived flag to keep header/layout decisions
- *   simple while still supporting "empty" selection mode.
- * - Bakes font scale into `key`/`extraData` so layout re-measures correctly
- *   when the OS text size changes.
  */
-export const SelectableAttachmentsList = forwardRef<
-  SelectableAttachmentsListRef,
-  SelectableAttachmentsListProps
->(
-  (
-    {
-      onAttachmentPress,
-      attachments,
-      onEndReached,
-      onEndReachedThreshold,
-      onSelectionChange,
-      onRefresh,
-      isLoading = false,
-      lastUpdated = null,
-      listKey = 'attachments',
-    },
-    ref,
-  ) => {
-    const {ds} = useTheme();
-    const {triggerHaptic} = useHaptic();
+export function SelectableAttachmentsList({
+  onAttachmentPress,
+  attachments,
+  onEndReached,
+  onEndReachedThreshold,
+  onRefresh,
+  isLoading = false,
+  lastUpdated = null,
+  listKey = 'attachments',
+  selection,
+}: SelectableAttachmentsListProps) {
+  const {ds} = useTheme();
+  const {triggerHaptic} = useHaptic();
 
-    const [selectedIds, setSelectedIds] = useState<Set<string>>(
-      () => new Set(),
-    );
-    const [selectionRevision, setSelectionRevision] = useState(0);
+  const selectionMode = selection.isSelectionMode;
+  const [selectionVisible, setSelectionVisible] = useState(false);
 
-    const [forceSelectionMode, setForceSelectionMode] = useState(false);
-    const selectionMode = forceSelectionMode || selectedIds.size > 0;
+  const selectionAnimation = useRef(new Animated.Value(0)).current;
+  const selectionShift = ds.spacing.xxxl + ds.spacing.xxs;
 
-    const [selectionVisible, setSelectionVisible] = useState(false);
+  useEffect(() => {
+    // Delay hiding checkboxes until the closing animation finishes to avoid flicker
+    if (selectionMode) {
+      setSelectionVisible(true);
+      Animated.timing(selectionAnimation, {
+        toValue: 1,
+        duration: 160,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(selectionAnimation, {
+        toValue: 0,
+        duration: 160,
+        useNativeDriver: true,
+      }).start(({finished}) => {
+        if (finished) setSelectionVisible(false);
+      });
+    }
+  }, [selectionMode, selectionAnimation]);
 
-    const selectionAnimation = useRef(new Animated.Value(0)).current;
-    const selectionShift = ds.spacing.xxxl + ds.spacing.xxs;
-
-    const selectionDidMountRef = useRef(false);
-
-    const onSelectionChangeRef = useRef(onSelectionChange);
-
-    useEffect(() => {
-      onSelectionChangeRef.current = onSelectionChange;
-    }, [onSelectionChange]);
-
-    useEffect(() => {
-      if (!selectionDidMountRef.current) {
-        selectionDidMountRef.current = true;
+  const handlePressRow = useCallback(
+    (id: string) => {
+      if (selectionMode) {
+        triggerHaptic('light');
+        selection.toggleSelection(id);
         return;
       }
+      onAttachmentPress(id);
+    },
+    [selectionMode, selection, triggerHaptic, onAttachmentPress],
+  );
 
-      // To avoid mutation issues we send a copy of the Set
-      onSelectionChangeRef.current?.(new Set(selectedIds));
+  const handleLongPressRow = useCallback(
+    (id: string) => {
+      selection.enableSelectionMode();
+      triggerHaptic('light');
+      selection.toggleSelection(id);
+    },
+    [selection, triggerHaptic],
+  );
 
-      if (selectedIds.size > 0) {
-        setForceSelectionMode(true);
-      }
-    }, [selectedIds]);
-
-    useEffect(() => {
-      // Delay hiding checkboxes until the closing animation finishes to avoid flicker
-      if (selectionMode) {
-        setSelectionVisible(true);
-        Animated.timing(selectionAnimation, {
-          toValue: 1,
-          duration: 160,
-          useNativeDriver: true,
-        }).start();
-      } else {
-        Animated.timing(selectionAnimation, {
-          toValue: 0,
-          duration: 160,
-          useNativeDriver: true,
-        }).start(({finished}) => {
-          if (finished) setSelectionVisible(false);
-        });
-      }
-    }, [selectionMode, selectionAnimation]);
-
-    const clearSelection = useCallback(() => {
-      setSelectedIds(new Set());
-      setSelectionRevision((prev) => prev + 1);
-      setForceSelectionMode(false);
-    }, []);
-
-    const selectAll = useCallback(() => {
-      const next = new Set(attachments.map((doc) => doc.id));
-      setSelectedIds(next);
-      setSelectionRevision((prev) => prev + 1);
-      setForceSelectionMode(true);
-    }, [attachments]);
-
-    const deselectAll = useCallback(() => {
-      setSelectedIds(new Set());
-      setSelectionRevision((prev) => prev + 1);
-      setForceSelectionMode(true);
-    }, []);
-
-    const enterSelectionMode = useCallback(() => {
-      if (!selectionMode) setForceSelectionMode(true);
-    }, [selectionMode]);
-
-    useImperativeHandle(
-      ref,
-      () => ({clearSelection, enterSelectionMode, selectAll, deselectAll}),
-      [clearSelection, enterSelectionMode, selectAll, deselectAll],
-    );
-
-    const toggleSelected = useCallback(
-      (id: string) => {
-        triggerHaptic('light');
-
-        setSelectedIds((prev) => {
-          const next = new Set(prev);
-          if (next.has(id)) next.delete(id);
-          else next.add(id);
-          return next;
-        });
-        setSelectionRevision((prev) => prev + 1);
-      },
-      [triggerHaptic],
-    );
-
-    const handlePressRow = useCallback(
-      (id: string) => {
-        if (selectionMode) {
-          toggleSelected(id);
-          return;
-        }
-        onAttachmentPress(id);
-      },
-      [selectionMode, toggleSelected, onAttachmentPress],
-    );
-
-    const handleLongPressRow = useCallback(
-      (id: string) => {
-        toggleSelected(id);
-      },
-      [toggleSelected],
-    );
-
-    const isSelected = useCallback(
-      (id: string) => selectedIds.has(id),
-      [selectedIds],
-    );
-
-    const checkboxTranslateX = useMemo(
-      () =>
-        selectionAnimation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [-selectionShift, 0],
-        }),
-      [selectionAnimation, selectionShift],
-    );
-
-    const contentTranslateX = useMemo(
-      () =>
-        selectionAnimation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, selectionShift],
-        }),
-      [selectionAnimation, selectionShift],
-    );
-
-    const selectionState = useMemo<AttachmentListSelectionState>(
-      () => ({
-        isVisible: selectionVisible,
-        isSelected,
-        onLongPress: handleLongPressRow,
-        opacity: selectionAnimation,
-        checkboxTranslateX,
-        contentTranslateX,
+  const checkboxTranslateX = useMemo(
+    () =>
+      selectionAnimation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [-selectionShift, 0],
       }),
-      [
-        selectionVisible,
-        isSelected,
-        handleLongPressRow,
-        selectionAnimation,
-        checkboxTranslateX,
-        contentTranslateX,
-      ],
-    );
+    [selectionAnimation, selectionShift],
+  );
 
-    return (
-      <AttachmentsListBase
-        attachments={attachments}
-        listKey={listKey}
-        onAttachmentPress={handlePressRow}
-        onEndReached={onEndReached}
-        onEndReachedThreshold={onEndReachedThreshold}
-        onRefresh={onRefresh}
-        isLoading={isLoading}
-        lastUpdated={lastUpdated}
-        selectionState={selectionState}
-        extraDataKey={`${selectionRevision}|${selectionMode ? 1 : 0}`}
-      />
-    );
-  },
-);
+  const contentTranslateX = useMemo(
+    () =>
+      selectionAnimation.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, selectionShift],
+      }),
+    [selectionAnimation, selectionShift],
+  );
 
-SelectableAttachmentsList.displayName = 'SelectableAttachmentsList';
+  const selectionState = useMemo<AttachmentListSelectionState>(
+    () => ({
+      isVisible: selectionVisible,
+      isSelected: selection.isSelected,
+      onLongPress: handleLongPressRow,
+      opacity: selectionAnimation,
+      checkboxTranslateX,
+      contentTranslateX,
+    }),
+    [
+      selectionVisible,
+      selection.isSelected,
+      handleLongPressRow,
+      selectionAnimation,
+      checkboxTranslateX,
+      contentTranslateX,
+    ],
+  );
+
+  return (
+    <AttachmentsListBase
+      attachments={attachments}
+      listKey={listKey}
+      onAttachmentPress={handlePressRow}
+      onEndReached={onEndReached}
+      onEndReachedThreshold={onEndReachedThreshold}
+      onRefresh={onRefresh}
+      isLoading={isLoading}
+      lastUpdated={lastUpdated}
+      selectionState={selectionState}
+      extraDataKey={`${selection.selectionVersion}|${selectionMode ? 1 : 0}`}
+    />
+  );
+}
 
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>

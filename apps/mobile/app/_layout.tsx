@@ -7,7 +7,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
 import {LoadingOverlay} from '@/components/ui';
-import {AttachmentProvider} from '@/features/attachments/providers/attachment-provider';
+import {AttachmentProvider} from '@/features/attachments';
 import {NetworkProvider} from '@/features/network';
 import {NetworkBanner} from '@/features/network/components/network-banner';
 import {useBootstrap} from '@/hooks/use-bootstrap';

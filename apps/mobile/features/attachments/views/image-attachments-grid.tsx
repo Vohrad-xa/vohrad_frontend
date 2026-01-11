@@ -3,71 +3,103 @@ import {useWindowDimensions} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {ListCountFooter} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
-import {SelectableImageTile} from '../components';
-import {IMAGE_GRID_COLUMNS, type ImageAttachmentItem} from '../hooks';
+import {useHaptic} from '@/providers';
+import {SelectableImageTile} from '../components/selectable-image-tile';
+import {
+  IMAGE_GRID_COLUMNS,
+  type ImageAttachmentItem,
+  type AttachmentsSelectionController,
+} from '../hooks';
 
-interface ImagesGridScreenProps {
-  imageAttachments: ImageAttachmentItem[];
+interface ImageAttachmentsGridProps {
+  attachments: ImageAttachmentItem[];
   loadMore: () => void;
   hasNext?: boolean;
   isLoading: boolean;
   refresh?: () => void | Promise<void>;
   onImagePress: (attachment: ImageAttachmentItem) => void;
-  isSelected: (attachment: ImageAttachmentItem) => boolean;
+  selection: AttachmentsSelectionController<ImageAttachmentItem>;
 }
 
 const keyExtractor = (item: ImageAttachmentItem) => item.id;
 
-export function ImagesGridScreen({
-  imageAttachments,
+export function ImageAttachmentsGrid({
+  attachments,
   loadMore,
   hasNext,
   isLoading,
   refresh,
   onImagePress,
-  isSelected,
-}: ImagesGridScreenProps) {
+  selection,
+}: ImageAttachmentsGridProps) {
   const {width, height} = useWindowDimensions();
   const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({
     onRefresh: refresh,
   });
+  const {triggerHaptic} = useHaptic();
 
   const drawDistance = useMemo(() => Math.round(height * 1.2), [height]);
 
-  const extraData = useMemo(() => [isSelected, width], [isSelected, width]);
+  const extraData = useMemo(
+    () =>
+      `${selection.selectionVersion}|${selection.isSelectionMode ? 1 : 0}|${width}`,
+    [selection.selectionVersion, selection.isSelectionMode, width],
+  );
 
   const handleLoadMore = useCallback(() => {
     if (hasNext && !isLoading) loadMore();
   }, [hasNext, isLoading, loadMore]);
 
+  const handlePress = useCallback(
+    async (attachment: ImageAttachmentItem) => {
+      if (selection.isSelectionMode) {
+        triggerHaptic('light');
+        selection.toggleSelection(attachment.id);
+        return;
+      }
+      await onImagePress(attachment);
+    },
+    [selection, triggerHaptic, onImagePress],
+  );
+
+  const handleLongPress = useCallback(
+    (attachment: ImageAttachmentItem) => {
+      selection.enableSelectionMode();
+      triggerHaptic('light');
+      selection.toggleSelection(attachment.id);
+    },
+    [selection, triggerHaptic],
+  );
+
   const renderItem = useCallback(
     ({item}: {item: ImageAttachmentItem}) => (
       <SelectableImageTile
         attachment={item}
-        onPress={onImagePress}
-        isSelected={isSelected(item)}
+        onPress={handlePress}
+        onLongPress={handleLongPress}
+        isSelected={selection.isSelected(item.id)}
       />
     ),
-    [onImagePress, isSelected],
+    [handlePress, handleLongPress, selection],
   );
 
   const getItemType = useCallback(() => 'image', []);
 
   const listFooter = useMemo(
     () =>
-      imageAttachments.length > 0 ? (
+      attachments.length > 0 ? (
         <ListCountFooter
-          count={imageAttachments.length}
+          count={attachments.length}
           textVariant="callout"
           fontWeight="bold"
         />
       ) : null,
-    [imageAttachments.length],
+    [attachments.length],
   );
 
   return (
     <FlashList
-      data={imageAttachments}
+      data={attachments}
       extraData={extraData}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
