@@ -1,7 +1,7 @@
 import {useCallback, useMemo} from 'react';
 import {useWindowDimensions} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
-import {IMAGE_GRID_COLUMNS, type ImageAttachmentItem} from '@/features/item';
+import {type ImageAttachmentItem} from '@/features/item';
 import {ListCountFooter} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {SelectableImageTile} from '../components';
@@ -64,7 +64,7 @@ export function ImagesGridScreen({
       extraData={extraData}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      numColumns={IMAGE_GRID_COLUMNS}
+      numColumns={5}
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.5}
       drawDistance={drawDistance}

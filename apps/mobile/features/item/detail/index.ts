@@ -9,8 +9,5 @@ export {useItemForm} from './use-item-form';
 export type {UseItemFormReturn} from './use-item-form';
 export {AttachmentField} from './attachments/attachment-field';
 export {useItemAttachmentUpload} from './attachments/use-item-attachment-upload';
-export {
-  useImageAttachments,
-  IMAGE_GRID_COLUMNS,
-} from '../../attachments/hooks/use-image-items';
+export {useImageAttachments} from '../../attachments/hooks/use-image-items';
 export type {ImageAttachmentItem} from '../../attachments/hooks/use-image-items';
