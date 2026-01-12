@@ -48,12 +48,10 @@ export const SelectableImageTile = memo(
           priority="normal"
         />
         {selectionVisible ? (
-          <Checkbox.Android
+          <Checkbox
             status={isSelected ? 'checked' : 'unchecked'}
             color={theme.accentBlue}
             onPress={() => onPress(attachment)}
-            rippleColor={theme.ripple}
-            cancelable
           />
         ) : null}
       </Pressable>

@@ -1,9 +1,11 @@
 import {useCallback, useMemo} from 'react';
 import {useWindowDimensions} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
+import {EmptyState} from '@/components/ui';
 import {ListCountFooter} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useHaptic} from '@/providers';
+import {AppIcons} from '@/utils';
 import {SelectableImageTile} from '../components/selectable-image-tile';
 import {
   IMAGE_GRID_COLUMNS,
@@ -97,23 +99,31 @@ export function ImageAttachmentsGrid({
       ) : null,
     [attachments.length],
   );
+  const ListEmpty = useCallback(
+    () => <EmptyState message="No Records Found" icon={AppIcons.files.empty} />,
+    [],
+  );
 
   return (
     <FlashList
       data={attachments}
       extraData={extraData}
       renderItem={renderItem}
-      keyExtractor={keyExtractor}
       numColumns={IMAGE_GRID_COLUMNS}
-      onEndReached={handleLoadMore}
-      onEndReachedThreshold={0.5}
-      drawDistance={drawDistance}
-      getItemType={getItemType}
+      keyExtractor={keyExtractor}
       refreshing={refreshing}
       onRefresh={handleRefresh}
+      onEndReached={handleLoadMore}
+      onEndReachedThreshold={0.2}
+      drawDistance={drawDistance}
+      getItemType={getItemType}
       removeClippedSubviews
       ListFooterComponent={listFooter}
+      maintainVisibleContentPosition={{disabled: true}}
       showsVerticalScrollIndicator={false}
+      ListEmptyComponent={
+        attachments.length === 0 && !isLoading ? ListEmpty : undefined
+      }
     />
   );
 }

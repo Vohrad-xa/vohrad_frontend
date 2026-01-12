@@ -358,7 +358,10 @@ const AttachmentsListBase = ({
       extraData={extraData}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
+      refreshing={refreshing}
+      onRefresh={handleRefresh}
       onEndReached={onEndReached}
+      onStartReachedThreshold={0.2}
       onEndReachedThreshold={onEndReachedThreshold}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={ListHeader}
@@ -368,8 +371,6 @@ const AttachmentsListBase = ({
       ListFooterComponent={attachments.length > 0 ? listFooter : null}
       maintainVisibleContentPosition={{disabled: true}}
       automaticallyAdjustContentInsets={false}
-      refreshing={refreshing}
-      onRefresh={handleRefresh}
       progressViewOffset={ds.spacing.lg}
     />
   );
