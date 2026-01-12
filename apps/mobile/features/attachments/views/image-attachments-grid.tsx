@@ -78,6 +78,7 @@ export function ImageAttachmentsGrid({
         onPress={handlePress}
         onLongPress={handleLongPress}
         isSelected={selection.isSelected(item.id)}
+        selectionVisible={selection.isSelectionMode}
       />
     ),
     [handlePress, handleLongPress, selection],

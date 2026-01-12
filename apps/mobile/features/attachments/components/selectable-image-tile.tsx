@@ -1,6 +1,7 @@
 import {memo} from 'react';
-import {Platform, Pressable, View, useWindowDimensions} from 'react-native';
+import {Pressable, useWindowDimensions} from 'react-native';
 import {Image} from 'expo-image';
+import {Checkbox} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
@@ -11,6 +12,7 @@ interface SelectableImageTileProps {
   onPress: (attachment: ImageAttachmentItem) => void;
   onLongPress?: (attachment: ImageAttachmentItem) => void;
   isSelected: boolean;
+  selectionVisible: boolean;
 }
 
 export const SelectableImageTile = memo(
@@ -19,6 +21,7 @@ export const SelectableImageTile = memo(
     onPress,
     onLongPress,
     isSelected,
+    selectionVisible,
   }: SelectableImageTileProps) => {
     const {theme, ds} = useTheme();
     const {width} = useWindowDimensions();
@@ -28,7 +31,7 @@ export const SelectableImageTile = memo(
       <Pressable
         onPress={() => onPress(attachment)}
         onLongPress={onLongPress ? () => onLongPress(attachment) : undefined}
-        style={styles.tile}
+        style={[styles.tile, styles.tileContent]}
         accessibilityRole="button"
         accessibilityLabel={
           attachment.original_filename ?? 'View image attachment'
@@ -44,7 +47,15 @@ export const SelectableImageTile = memo(
           transition={200}
           priority="normal"
         />
-        {isSelected && <View style={styles.overlay} />}
+        {selectionVisible ? (
+          <Checkbox.Android
+            status={isSelected ? 'checked' : 'unchecked'}
+            color={theme.accentBlue}
+            onPress={() => onPress(attachment)}
+            rippleColor={theme.ripple}
+            cancelable
+          />
+        ) : null}
       </Pressable>
     );
   },
@@ -53,31 +64,24 @@ export const SelectableImageTile = memo(
 SelectableImageTile.displayName = 'SelectableImageTile';
 
 const useStyles = makeStyleFactory(
-  (_ds: DSShape, theme: ThemeShape, width: number) => ({
-    tile: Platform.select({
-      web: {
-        width: '100%',
-        aspectRatio: 1,
-      },
-      default: {
-        width: width / IMAGE_GRID_COLUMNS,
-        height: width / IMAGE_GRID_COLUMNS,
-      },
-    }),
-    image: {
-      width: '98%',
-      height: '98%',
-      borderRadius: 2,
+  (ds: DSShape, _theme: ThemeShape, width: number) => ({
+    tile: {
+      width: width / IMAGE_GRID_COLUMNS,
+      height: width / IMAGE_GRID_COLUMNS,
     },
-    overlay: {
+    tileContent: {
+      position: 'relative',
+      justifyContent: 'flex-end',
+      alignItems: 'flex-start',
+      padding: ds.spacing.xxs,
+    },
+    image: {
       position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      opacity: 0.5,
-      backgroundColor: theme.accentBlue,
-      pointerEvents: 'none',
+      top: 1,
+      right: 1,
+      bottom: 1,
+      left: 1,
+      borderRadius: 2,
     },
   }),
   (ds, theme, width) => `${themeKey(theme, ds)}|${width}`,
