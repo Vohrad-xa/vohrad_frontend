@@ -32,7 +32,7 @@ export const ListCountFooter = memo<ListCountFooterProps>(
     textStyle,
     dividerStyle,
     containerStyle,
-    textVariant = 'value',
+    textVariant = 'callout',
     fontWeight,
   }) => {
     const {ds, theme} = useTheme();
@@ -52,7 +52,7 @@ export const ListCountFooter = memo<ListCountFooterProps>(
         >
           <ThemedText
             variant={textVariant}
-            fontWeight={fontWeight}
+            fontWeight={fontWeight ?? 'semibold'}
             style={textStyle}
           >
             {count === 1 ? '1 item' : `${count} items`}

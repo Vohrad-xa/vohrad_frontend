@@ -15,14 +15,16 @@ import {
   glassEffect,
 } from 'sykamore-ui/ios';
 
-export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
+
 export type IconName = SFSymbol;
+
 type SymbolType = NonNullable<SymbolViewProps['type']>;
 type SwiftUIFontWeight = NonNullable<Parameters<typeof font>[0]['weight']>;
 type animation = NonNullable<SymbolViewProps['animationSpec']>;
 type ContentMode = NonNullable<SymbolViewProps['resizeMode']>;
 type SymbolScale = NonNullable<SymbolViewProps['scale']>;
-type SymbolWeight = NonNullable<SymbolViewProps['weight']>;
+// type SymbolWeight = NonNullable<SymbolViewProps['weight']>;
 
 export type IconProps = {
   name: IconName;
@@ -83,7 +85,7 @@ export const Icon: React.FC<IconProps> = ({
         size={resolvedSize}
         type={resolvedType}
         scale={scale}
-        weight={fontWeight as SymbolWeight}
+        weight={fontWeight as SwiftUIFontWeight}
         colors={
           resolvedType === 'palette' || resolvedType === 'multicolor'
             ? resolvedPaletteColors

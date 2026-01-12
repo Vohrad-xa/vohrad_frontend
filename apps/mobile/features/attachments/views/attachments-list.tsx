@@ -161,6 +161,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
             <Checkbox.Android
               status={isSelected ? 'checked' : 'unchecked'}
               color={checkboxColor}
+              rippleColor={rippleColor}
             />
           </Animated.View>
         ) : null}
@@ -183,16 +184,14 @@ const AttachmentItem = memo<AttachmentItemProps>(
                 enforceEarlyResizing
               />
             ) : (
-              <View style={styles.iconScale}>
-                <Icon
-                  name={fileIcon.name}
-                  size="lg"
-                  colorToken={fileIcon.colorToken}
-                  symbolType={fileIcon.symbolType}
-                  symbolColorTokens={fileIcon.symbolColorTokens}
-                  fontWeight={fileIcon.fontWeight}
-                />
-              </View>
+              <Icon
+                name={fileIcon.name}
+                size="xxxl"
+                colorToken={fileIcon.colorToken}
+                symbolType={fileIcon.symbolType}
+                symbolColorTokens={fileIcon.symbolColorTokens}
+                fontWeight={fileIcon.fontWeight}
+              />
             )}
           </View>
 
@@ -338,8 +337,6 @@ const AttachmentsListBase = ({
       <ListCountFooter
         count={attachments.length}
         dividerStyle={styles.divider}
-        textVariant="callout"
-        fontWeight="bold"
       />
     ),
     [attachments.length, styles.divider],
@@ -539,10 +536,6 @@ const createStyles = makeStyleFactory(
         shadowOffset: {width: 0, height: 0},
         shadowOpacity: 0.2,
         shadowRadius: 1,
-      },
-
-      iconScale: {
-        transform: Platform.OS === 'android' ? [{scale: 1.4}] : [{scale: 1.8}],
       },
 
       thumbnail: {
