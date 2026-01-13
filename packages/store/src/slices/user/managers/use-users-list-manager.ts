@@ -59,7 +59,6 @@ export function useUsersListManager(options?: UseUsersListManagerOptions) {
 
   return {
     users,
-    total: data?.pages[0]?.data.total ?? 0,
     lastUpdated: dataUpdatedAt ? new Date(dataUpdatedAt) : null,
     isLoading: isFetching,
     isFetchingNextPage,

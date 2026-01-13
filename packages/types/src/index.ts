@@ -6,7 +6,8 @@ export type {
   ApiResponse,
   ApiResponseMetadata,
   PaginatedResponse,
-  PaginationLinks,
+  CursorDirection,
+  CursorOrder,
 } from './api';
 
 export {ApiError} from './api';

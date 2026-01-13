@@ -4,30 +4,49 @@ import type {
   UserUpdateData,
   ApiResponse,
   PaginatedResponse,
+  CursorDirection,
+  CursorOrder,
 } from '@sykamore/types';
 import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';
 
+export type ListUsersParams = {
+  limit?: number;
+  cursor?: string;
+  direction?: CursorDirection;
+  order?: CursorOrder;
+  odataFilter?: string;
+  odataOrderBy?: string;
+};
+
 export class UserApi {
   async getUsers(
-    page: number,
-    size: number,
-    odataFilter?: string,
-    odataOrderBy?: string,
+    params: ListUsersParams = {},
   ): Promise<ApiResponse<PaginatedResponse<User>>> {
     const search = new URLSearchParams();
-    search.set('page', String(page));
-    search.set('size', String(size));
-    if (odataFilter) {
-      search.set('$filter', odataFilter);
+    if (typeof params.limit === 'number') {
+      search.set('limit', String(params.limit));
     }
-    if (odataOrderBy) {
-      search.set('$orderby', odataOrderBy);
+    if (params.cursor) {
+      search.set('cursor', params.cursor);
+    }
+    if (params.direction) {
+      search.set('direction', params.direction);
+    }
+    if (params.order) {
+      search.set('order', params.order);
+    }
+    if (params.odataFilter) {
+      search.set('$filter', params.odataFilter);
+    }
+    if (params.odataOrderBy) {
+      search.set('$orderby', params.odataOrderBy);
     }
     const queryString = search.toString();
-    return httpClient.get<PaginatedResponse<User>>(
-      `${API_ENDPOINTS.USERS.LIST}?${queryString}`,
-    );
+    const endpoint = queryString
+      ? `${API_ENDPOINTS.USERS.LIST}?${queryString}`
+      : API_ENDPOINTS.USERS.LIST;
+    return httpClient.get<PaginatedResponse<User>>(endpoint);
   }
 
   async createUser(data: UserCreateData): Promise<User> {

@@ -69,7 +69,7 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
-        paddingVertical: ds.spacing.xxl,
+        paddingVertical: ds.spacing.xl,
         alignItems: 'center',
       },
       divider: {

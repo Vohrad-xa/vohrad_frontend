@@ -57,7 +57,6 @@ export function useRolesListManager(options?: UseRolesListManagerOptions) {
 
   return {
     roles,
-    total: data?.pages[0]?.data.total ?? 0,
     isLoading: isFetching,
     isFetchingNextPage,
     error,

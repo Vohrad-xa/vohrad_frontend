@@ -6,29 +6,46 @@ import type {
   ItemLocationUpdate,
   ApiResponse,
   PaginatedResponse,
+  CursorDirection,
+  CursorOrder,
 } from '@sykamore/types';
 import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';
 
+export type ListItemsParams = {
+  limit?: number;
+  cursor?: string;
+  direction?: CursorDirection;
+  order?: CursorOrder;
+  odataFilter?: string;
+};
+
 export class ItemApi {
   async getItems(
-    urlOrPage: string | number,
-    size?: number,
-    odataFilter?: string,
+    params: ListItemsParams = {},
   ): Promise<ApiResponse<PaginatedResponse<Item>>> {
-    // If it's a URL string, use it directly
-    if (typeof urlOrPage === 'string') {
-      return httpClient.get<PaginatedResponse<Item>>(urlOrPage);
+    const search = new URLSearchParams();
+    if (typeof params.limit === 'number') {
+      search.set('limit', String(params.limit));
+    }
+    if (params.cursor) {
+      search.set('cursor', params.cursor);
+    }
+    if (params.direction) {
+      search.set('direction', params.direction);
+    }
+    if (params.order) {
+      search.set('order', params.order);
+    }
+    if (params.odataFilter) {
+      search.set('odata_filter', params.odataFilter);
     }
 
-    // Otherwise, build the URL from page/size/filter
-    const page = urlOrPage;
-    const filterParam = odataFilter
-      ? `&odata_filter=${encodeURIComponent(odataFilter)}`
-      : '';
-    return httpClient.get<PaginatedResponse<Item>>(
-      `${API_ENDPOINTS.ITEMS.LIST}?page=${page}&size=${size}${filterParam}`,
-    );
+    const queryString = search.toString();
+    const endpoint = queryString
+      ? `${API_ENDPOINTS.ITEMS.LIST}?${queryString}`
+      : API_ENDPOINTS.ITEMS.LIST;
+    return httpClient.get<PaginatedResponse<Item>>(endpoint);
   }
 
   async getItemById(id: string): Promise<ItemDetail> {

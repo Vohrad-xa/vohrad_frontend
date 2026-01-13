@@ -38,7 +38,6 @@ export function useAttachmentSearch(options: UseAttachmentSearchOptions) {
     isLoading,
     loadMore,
     refresh,
-    total,
     lastUpdated,
   } = useFilteredAttachmentsManager({
     kind,
@@ -50,7 +49,6 @@ export function useAttachmentSearch(options: UseAttachmentSearchOptions) {
 
   return {
     attachments,
-    total,
     isLoading,
     error,
     hasNext,

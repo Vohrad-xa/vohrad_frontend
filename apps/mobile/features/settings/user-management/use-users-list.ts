@@ -5,7 +5,6 @@ export function useUsersList() {
 
   return {
     users: manager.users,
-    total: manager.total,
     isLoading: manager.isLoading,
     isFetchingNextPage: manager.isFetchingNextPage,
     hasNext: manager.hasNext,

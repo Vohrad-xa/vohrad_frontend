@@ -12,13 +12,18 @@ export function useInfiniteItems(
 
   return useInfiniteQuery({
     queryKey,
-    queryFn: async ({pageParam = 1}) => {
-      return itemApi.getItems(pageParam, pageSize, odataFilter);
+    queryFn: async ({pageParam}) => {
+      return itemApi.getItems({
+        limit: pageSize,
+        cursor: pageParam ?? undefined,
+        direction: 'before',
+        odataFilter,
+      });
     },
-    initialPageParam: 1,
+    initialPageParam: null,
     getNextPageParam: (lastPage) => {
-      if (lastPage.data.has_next) {
-        return lastPage.data.page + 1;
+      if (lastPage.data.has_previous_page) {
+        return lastPage.data.start_cursor;
       }
       return undefined;
     },

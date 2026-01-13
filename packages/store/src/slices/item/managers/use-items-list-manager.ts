@@ -67,7 +67,6 @@ export function useItemsListManager(options?: UseItemsListManagerOptions) {
 
   return {
     items,
-    total: data?.pages[0]?.data.total ?? 0,
     isLoading: isFetching,
     isFetchingNextPage,
     error,

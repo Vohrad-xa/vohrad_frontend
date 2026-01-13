@@ -1,7 +1,10 @@
 import {useInfiniteQuery} from '@tanstack/react-query';
 import {attachmentApi, type ListAttachmentsParams} from '@sykamore/api-client';
 
-type AttachmentListFilters = Omit<ListAttachmentsParams, 'page' | 'size'>;
+type AttachmentListFilters = Omit<
+  ListAttachmentsParams,
+  'limit' | 'cursor' | 'direction' | 'order'
+>;
 
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
@@ -14,20 +17,19 @@ export function useInfiniteAttachments(
 
   return useInfiniteQuery({
     queryKey,
-    queryFn: async ({pageParam = 1}) => {
+    queryFn: async ({pageParam}) => {
       const response = await attachmentApi.listAttachments({
         ...filters,
-        page: pageParam,
-        size: pageSize,
+        limit: pageSize,
+        cursor: pageParam ?? undefined,
+        direction: 'before',
       });
       return response.data;
     },
-    initialPageParam: 1,
+    initialPageParam: null,
     getNextPageParam: (lastPage) => {
-      if (lastPage.has_next) {
-        // API returns a standard pagination structure
-        // that includes the current page number.
-        return lastPage.page + 1;
+      if (lastPage.has_previous_page) {
+        return lastPage.start_cursor;
       }
       return undefined;
     },

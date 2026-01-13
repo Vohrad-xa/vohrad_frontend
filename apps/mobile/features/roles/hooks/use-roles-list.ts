@@ -5,7 +5,6 @@ export function useRolesList() {
 
   return {
     roles: manager.roles,
-    total: manager.total,
     isLoading: manager.isLoading,
     isFetchingNextPage: manager.isFetchingNextPage,
     hasNext: manager.hasNext,

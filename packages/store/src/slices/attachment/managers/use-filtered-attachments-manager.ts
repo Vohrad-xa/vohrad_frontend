@@ -80,7 +80,6 @@ export function useFilteredAttachmentsManager(
 
   return {
     attachments: manager.attachments,
-    total: manager.total,
     lastUpdated: manager.lastUpdated,
     isLoading: manager.isLoading,
     error: manager.error,

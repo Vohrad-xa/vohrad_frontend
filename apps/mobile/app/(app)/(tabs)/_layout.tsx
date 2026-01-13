@@ -59,11 +59,12 @@ export default function TabLayout() {
       backgroundColor={theme.sidebarBackground}
       iconColor={{default: theme.text}}
       indicatorColor={theme.ripple}
-      minimizeBehavior="automatic"
+      minimizeBehavior="onScrollDown"
       labelStyle={{
         default: {color: theme.text},
         selected: {color: theme.accentBlue},
       }}
+      backBehavior="initialRoute"
     >
       {TABS.map((t) => (
         <NativeTabs.Trigger

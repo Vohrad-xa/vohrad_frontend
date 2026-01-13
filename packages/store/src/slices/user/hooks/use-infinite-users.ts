@@ -13,13 +13,19 @@ export function useInfiniteUsers(
 
   return useInfiniteQuery({
     queryKey,
-    queryFn: async ({pageParam = 1}) => {
-      return userApi.getUsers(pageParam, pageSize, odataFilter, odataOrderBy);
+    queryFn: async ({pageParam}) => {
+      return userApi.getUsers({
+        limit: pageSize,
+        cursor: pageParam ?? undefined,
+        direction: 'before',
+        odataFilter,
+        odataOrderBy,
+      });
     },
-    initialPageParam: 1,
+    initialPageParam: null,
     getNextPageParam: (lastPage) => {
-      if (lastPage.data.has_next) {
-        return lastPage.data.page + 1;
+      if (lastPage.data.has_previous_page) {
+        return lastPage.data.start_cursor;
       }
       return undefined;
     },

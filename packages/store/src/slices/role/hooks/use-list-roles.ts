@@ -18,16 +18,24 @@ export function useInfiniteRoles(options?: UseInfiniteRolesOptions) {
 
   return useInfiniteQuery({
     queryKey,
-    queryFn: async ({pageParam = 1}) => {
+    queryFn: async ({pageParam}) => {
       if (hasValidSearch) {
-        return roleApi.searchRoles(normalizedSearch, pageParam, pageSize);
+        return roleApi.searchRoles(normalizedSearch, {
+          limit: pageSize,
+          cursor: pageParam ?? undefined,
+          direction: 'before',
+        });
       }
-      return roleApi.getRoles(pageParam, pageSize);
+      return roleApi.getRoles({
+        limit: pageSize,
+        cursor: pageParam ?? undefined,
+        direction: 'before',
+      });
     },
-    initialPageParam: 1,
+    initialPageParam: null,
     getNextPageParam: (lastPage) => {
-      if (lastPage.data.has_next) {
-        return lastPage.data.page + 1;
+      if (lastPage.data.has_previous_page) {
+        return lastPage.data.start_cursor;
       }
       return undefined;
     },

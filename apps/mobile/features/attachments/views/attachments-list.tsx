@@ -184,14 +184,16 @@ const AttachmentItem = memo<AttachmentItemProps>(
                 enforceEarlyResizing
               />
             ) : (
-              <Icon
-                name={fileIcon.name}
-                size="xxxl"
-                colorToken={fileIcon.colorToken}
-                symbolType={fileIcon.symbolType}
-                symbolColorTokens={fileIcon.symbolColorTokens}
-                fontWeight={fileIcon.fontWeight}
-              />
+              <View style={styles.iconScale}>
+                <Icon
+                  name={fileIcon.name}
+                  size="lg"
+                  colorToken={fileIcon.colorToken}
+                  symbolType={fileIcon.symbolType}
+                  symbolColorTokens={fileIcon.symbolColorTokens}
+                  fontWeight={fileIcon.fontWeight}
+                />
+              </View>
             )}
           </View>
 
@@ -568,6 +570,9 @@ const createStyles = makeStyleFactory(
 
       contentSelected: {
         backgroundColor: theme.selected,
+      },
+      iconScale: {
+        transform: Platform.OS === 'android' ? [{scale: 1.4}] : [{scale: 1.8}],
       },
     }),
   (ds, theme) => themeKey(theme, ds),

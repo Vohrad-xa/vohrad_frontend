@@ -20,7 +20,7 @@ export function useFetchTargetAttachments(
       const response = await attachmentApi.listAttachments({
         targetType,
         targetId,
-        size: 50, // Note: Default size. We can makethis configurable if needed.
+        limit: 50,
       });
       return response.data.items ?? [];
     },

@@ -54,8 +54,6 @@ export function UsersFilterMenu({
     activeSort.key === 'date' ? activeSort.direction : 'desc';
   const nameSortDirection =
     activeSort.key === 'name' ? activeSort.direction : 'asc';
-  const roleSortDirection =
-    activeSort.key === 'role' ? activeSort.direction : 'asc';
 
   useEffect(() => {
     if (filters.role === null) {
@@ -118,11 +116,6 @@ export function UsersFilterMenu({
         return;
       }
 
-      if (id === 'sort-role') {
-        applySort('role');
-        return;
-      }
-
       if (id === 'add-user') {
         router.push('/settings/users/add-user');
       }
@@ -179,17 +172,6 @@ export function UsersFilterMenu({
               android: 'outlined.SortByAlpha',
             }),
           },
-          {
-            id: 'sort-role',
-            title: 'Role',
-            subtitle: roleSortDirection === 'asc' ? 'A to Z' : 'Z to A',
-            state:
-              activeSort.key === 'role' ? ('on' as const) : ('off' as const),
-            image: Platform.select({
-              ios: 'person.2',
-              android: 'outlined.People',
-            }),
-          },
         ],
       },
       {
@@ -231,7 +213,6 @@ export function UsersFilterMenu({
     activeSort.key,
     dateSortDirection,
     nameSortDirection,
-    roleSortDirection,
   ]);
 
   React.useEffect(() => {

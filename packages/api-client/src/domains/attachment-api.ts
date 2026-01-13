@@ -7,6 +7,8 @@ import type {
   AttachmentTargetType,
   AttachmentKind,
   ApiResponse,
+  CursorDirection,
+  CursorOrder,
 } from '@sykamore/types';
 
 export type AttachmentCounts = {
@@ -28,8 +30,10 @@ export type AttachmentWithCounts = {
 export type ListAttachmentsParams = {
   targetType?: AttachmentTargetType;
   targetId?: string;
-  page?: number;
-  size?: number;
+  limit?: number;
+  cursor?: string;
+  direction?: CursorDirection;
+  order?: CursorOrder;
   kind?: AttachmentKind;
   includeDeleted?: boolean;
   odataFilter?: string;
@@ -46,15 +50,8 @@ export class AttachmentApi {
   }
 
   async listAttachments(
-    urlOrParams: string | ListAttachmentsParams = {},
+    params: ListAttachmentsParams = {},
   ): Promise<ApiResponse<PaginatedResponse<ItemAttachment>>> {
-    // If it's a URL string, use it directly
-    if (typeof urlOrParams === 'string') {
-      return httpClient.get<PaginatedResponse<ItemAttachment>>(urlOrParams);
-    }
-
-    // Otherwise, build the URL from params
-    const params = urlOrParams;
     const search = new URLSearchParams();
     if (params.targetType) {
       search.set('target_type', params.targetType);
@@ -65,11 +62,17 @@ export class AttachmentApi {
     if (params.kind) {
       search.set('kind', params.kind);
     }
-    if (typeof params.page === 'number') {
-      search.set('page', String(params.page));
+    if (typeof params.limit === 'number') {
+      search.set('limit', String(params.limit));
     }
-    if (typeof params.size === 'number') {
-      search.set('size', String(params.size));
+    if (params.cursor) {
+      search.set('cursor', params.cursor);
+    }
+    if (params.direction) {
+      search.set('direction', params.direction);
+    }
+    if (params.order) {
+      search.set('order', params.order);
     }
     if (params.includeDeleted) {
       search.set('include_deleted', 'true');

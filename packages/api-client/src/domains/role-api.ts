@@ -4,38 +4,64 @@ import type {
   Role,
   RoleCreate,
   RoleUpdate,
+  CursorDirection,
+  CursorOrder,
 } from '@sykamore/types';
 import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';
 
+export type ListRolesParams = {
+  limit?: number;
+  cursor?: string;
+  direction?: CursorDirection;
+  order?: CursorOrder;
+};
+
 export class RoleApi {
   async getRoles(
-    urlOrPage: string | number,
-    size = 20,
+    params: ListRolesParams = {},
   ): Promise<ApiResponse<PaginatedResponse<Role>>> {
-    if (typeof urlOrPage === 'string') {
-      return httpClient.get<PaginatedResponse<Role>>(urlOrPage);
+    const search = new URLSearchParams();
+    if (typeof params.limit === 'number') {
+      search.set('limit', String(params.limit));
+    }
+    if (params.cursor) {
+      search.set('cursor', params.cursor);
+    }
+    if (params.direction) {
+      search.set('direction', params.direction);
+    }
+    if (params.order) {
+      search.set('order', params.order);
     }
 
-    const page = urlOrPage;
-    return httpClient.get<PaginatedResponse<Role>>(
-      `${API_ENDPOINTS.ROLES.LIST}?page=${page}&size=${size}`,
-    );
+    const queryString = search.toString();
+    const endpoint = queryString
+      ? `${API_ENDPOINTS.ROLES.LIST}?${queryString}`
+      : API_ENDPOINTS.ROLES.LIST;
+    return httpClient.get<PaginatedResponse<Role>>(endpoint);
   }
 
   async searchRoles(
     query: string,
-    page = 1,
-    size = 20,
+    params: ListRolesParams = {},
   ): Promise<ApiResponse<PaginatedResponse<Role>>> {
-    const params = new URLSearchParams({
-      q: query,
-      page: String(page),
-      size: String(size),
-    });
+    const search = new URLSearchParams({q: query});
+    if (typeof params.limit === 'number') {
+      search.set('limit', String(params.limit));
+    }
+    if (params.cursor) {
+      search.set('cursor', params.cursor);
+    }
+    if (params.direction) {
+      search.set('direction', params.direction);
+    }
+    if (params.order) {
+      search.set('order', params.order);
+    }
 
     return httpClient.get<PaginatedResponse<Role>>(
-      `${API_ENDPOINTS.ROLES.SEARCH}?${params.toString()}`,
+      `${API_ENDPOINTS.ROLES.SEARCH}?${search.toString()}`,
     );
   }
 

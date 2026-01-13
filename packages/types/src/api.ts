@@ -1,10 +1,6 @@
-export interface PaginationLinks {
-  self: string | null;
-  first: string | null;
-  prev: string | null;
-  next: string | null;
-  last: string | null;
-}
+export type CursorDirection = 'before' | 'after';
+
+export type CursorOrder = 'asc' | 'desc';
 
 export interface ApiResponseMetadata {
   timestamp?: string;
@@ -15,13 +11,6 @@ export interface ApiResponseMetadata {
   url?: string;
   client_ip?: string | null;
   user_agent?: string | null;
-  page?: number;
-  size?: number;
-  total?: number;
-  total_pages?: number;
-  has_next?: boolean;
-  has_previous?: boolean;
-  links?: PaginationLinks;
   [key: string]: unknown;
 }
 
@@ -34,12 +23,11 @@ export interface ApiResponse<T> {
 
 export interface PaginatedResponse<T> {
   items: T[];
-  total: number;
-  page: number;
-  size: number;
-  total_pages: number;
-  has_next: boolean;
-  has_previous: boolean;
+  limit: number;
+  start_cursor: string | null;
+  end_cursor: string | null;
+  has_next_page: boolean;
+  has_previous_page: boolean;
 }
 
 export class ApiError extends Error {

@@ -40,11 +40,12 @@ function VaultStack() {
   const headerSearchBarOptions = useMemo(
     () =>
       ({
-        placement: 'integrated',
+        placement: 'inline' as const,
         hideWhenScrolling: false,
         inputType: 'text',
         headerIconColor: theme.icon,
         hintTextColor: theme.icon,
+        placeholder: 'Search',
         onChangeText: handleSearchChange,
       }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
     [handleSearchChange, theme.icon],

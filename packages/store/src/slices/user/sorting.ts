@@ -32,38 +32,27 @@ export function parseUserOrderBy(orderby?: string): UserSortState {
   const normalizedDirection: OrderByDirection =
     direction?.toLowerCase() === 'asc' ? 'asc' : 'desc';
 
-  if (field === 'created_at') {
+  if (field === 'date') {
     return {key: 'date', direction: normalizedDirection};
   }
 
-  if (field === 'first_name' || field === 'last_name') {
+  if (field === 'name') {
     return {key: 'name', direction: normalizedDirection};
-  }
-
-  if (field === 'role') {
-    return {key: 'role', direction: normalizedDirection};
   }
 
   return DEFAULT_USER_SORT;
 }
 
 /**
- * Builds a user $orderby string for date/name/role sorting.
+ * Builds a user $orderby string for date/name sorting.
  */
 export function buildUserOrderBy(
   key: UserSortKey,
   direction: OrderByDirection,
 ): string | undefined {
   if (key === 'date') {
-    return buildODataOrderBy([{field: 'created_at', direction}]);
+    return buildODataOrderBy([{field: 'date', direction}]);
   }
 
-  if (key === 'role') {
-    return buildODataOrderBy([{field: 'role', direction}]);
-  }
-
-  return buildODataOrderBy([
-    {field: 'first_name', direction},
-    {field: 'last_name', direction},
-  ]);
+  return buildODataOrderBy([{field: 'name', direction}]);
 }
