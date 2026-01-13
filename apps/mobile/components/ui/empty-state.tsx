@@ -11,7 +11,7 @@ type EmptyStateProps = {
   iconSize?: number;
 };
 
-export function EmptyState({message, icon, iconSize = 60}: EmptyStateProps) {
+export function EmptyState({message, icon, iconSize = 55}: EmptyStateProps) {
   const {ds} = useTheme();
   const styles = createStyles(ds);
 
@@ -28,12 +28,11 @@ export function EmptyState({message, icon, iconSize = 60}: EmptyStateProps) {
           fontWeight="ultraLight"
           animationSpec={{
             effect: {
-              type: 'bounce',
+              type: 'scale',
               direction: 'up',
             },
             repeating: false,
-
-            speed: 0.7,
+            speed: 0.6,
           }}
         />
       )}

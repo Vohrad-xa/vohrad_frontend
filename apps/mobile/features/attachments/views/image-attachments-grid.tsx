@@ -100,7 +100,9 @@ export function ImageAttachmentsGrid({
     [attachments.length],
   );
   const ListEmpty = useCallback(
-    () => <EmptyState message="No Records Found" icon={AppIcons.files.empty} />,
+    () => (
+      <EmptyState message="No Records Found" icon={AppIcons.emptyStates.file} />
+    ),
     [],
   );
 

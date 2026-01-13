@@ -150,7 +150,6 @@ export const AppIcons = {
     print: 'printer-outline',
     list: 'format-list-bulleted',
     others: 'folder-question-outline',
-    empty: 'folder-question-outline',
     test: 'information-outline',
     pdf: 'file-document-outline',
     word: 'file-word-outline',
@@ -177,5 +176,10 @@ export const AppIcons = {
     privacy: 'lock-outline',
     terms: 'file-document-outline',
     plan: 'credit-card-outline',
+  },
+
+  emptyStates: {
+    user: 'account-multiple-outline',
+    file: 'folder-question-outline',
   },
 } as const satisfies Record<string, Record<string, IconName>>;

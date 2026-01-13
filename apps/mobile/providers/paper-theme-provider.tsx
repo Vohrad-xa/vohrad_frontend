@@ -13,7 +13,7 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
       ...base,
       colors: {
         ...base.colors,
-        primary: theme.primary,
+        primary: theme.tertiary,
         onPrimary: theme.text,
         primaryContainer: theme.secondary,
         onPrimaryContainer: theme.input,

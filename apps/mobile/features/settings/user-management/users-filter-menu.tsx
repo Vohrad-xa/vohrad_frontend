@@ -128,14 +128,6 @@ export function UsersFilterMenu({
 
     const menuActions: SykaMenuAction[] = [
       {
-        id: 'select-user',
-        title: 'Select',
-        image: Platform.select({
-          ios: AppIcons.status.success,
-          default: 'outlined.CheckCircle',
-        }),
-      },
-      {
         id: 'add-user',
         title: 'Add user',
         image: Platform.select({

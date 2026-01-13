@@ -1,8 +1,8 @@
 import React, {memo, useCallback, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
-import {Avatar, Divider, List} from 'react-native-paper';
-import {ThemedText} from '@/components/ui';
+import {Avatar, Divider, List, type ListItemProps} from 'react-native-paper';
+import {ThemedText, EmptyState} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
@@ -35,44 +35,60 @@ const getUserInitials = (user: User): string => {
   return user.email?.[0]?.toUpperCase() ?? '?';
 };
 
-const UserRightIcon = () => (
-  <List.Icon
-    icon={() => (
-      <Icon name={AppIcons.ui.chevronRight} size="sm" colorToken="muted" />
-    )}
-  />
+const renderChevron = () => (
+  <Icon name={AppIcons.ui.chevronRight} size="sm" colorToken="muted" />
 );
 
 const UserItem = memo<UserItemProps>(({item, onPress, styles}) => {
-  const handlePress = useCallback(() => onPress(item.id), [item.id, onPress]);
+  const handlePress = useCallback(() => onPress(item.id), [onPress, item.id]);
 
   const name =
     `${item.first_name ?? ''} ${item.last_name ?? ''}`.trim() || 'No name';
+
   const description = `${item.email}${item.role ? ` - ${item.role}` : ''}`;
+
   const initials = getUserInitials(item);
 
-  const left = useCallback(
-    () => <Avatar.Text size={42} label={initials} />,
+  const left = useCallback<NonNullable<ListItemProps['left']>>(
+    ({style}) => <Avatar.Text size={40} label={initials} style={style} />,
     [initials],
+  );
+
+  const right = useCallback<NonNullable<ListItemProps['right']>>(
+    (props) => <List.Icon {...props} icon={renderChevron} />,
+    [],
   );
 
   return (
     <List.Item
       style={styles.content}
       left={left}
-      right={UserRightIcon}
+      right={right}
       onPress={handlePress}
-      title={<ThemedText variant="body">{name}</ThemedText>}
+      title={
+        <ThemedText
+          variant="body"
+          fontWeight="regular"
+          ellipsizeMode="tail"
+          numberOfLines={1}
+        >
+          {name}
+        </ThemedText>
+      }
       titleStyle={styles.title}
       description={
-        <ThemedText variant="caption" numberOfLines={1}>
+        <ThemedText
+          variant="footnote"
+          fontWeight="medium"
+          colorToken="muted"
+          numberOfLines={1}
+        >
           {description}
         </ThemedText>
       }
     />
   );
 });
-
 UserItem.displayName = 'UserItem';
 
 export function UsersList({
@@ -86,8 +102,10 @@ export function UsersList({
 }: UsersListProps) {
   const {ds, theme} = useTheme();
   const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
+
   const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({onRefresh});
   const fontScaleKey = ds.screen?.fontScale ?? 1;
+  const userCount = users.length;
 
   const renderItem = useCallback(
     ({item}: {item: User}) => (
@@ -108,12 +126,31 @@ export function UsersList({
     [isLoading, lastUpdated],
   );
 
+  const ListFooter = useCallback(
+    () => (
+      <ListCountFooter
+        count={userCount}
+        dividerStyle={styles.divider}
+        textVariant="callout"
+        fontWeight="bold"
+      />
+    ),
+    [userCount, styles.divider],
+  );
+
+  const ListEmpty = useCallback(
+    () => (
+      <EmptyState message="No Users Found" icon={AppIcons.emptyStates.user} />
+    ),
+    [],
+  );
+
   const extraData = useMemo(
     () =>
-      `${users.length}|${fontScaleKey}|${isLoading ? 1 : 0}|${
+      `${userCount}|${fontScaleKey}|${isLoading ? 1 : 0}|${
         lastUpdated ? lastUpdated.getTime() : 0
       }`,
-    [users.length, fontScaleKey, isLoading, lastUpdated],
+    [userCount, fontScaleKey, isLoading, lastUpdated],
   );
 
   return (
@@ -128,19 +165,13 @@ export function UsersList({
       showsVerticalScrollIndicator={false}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={ListHeader}
+      ListEmptyComponent={userCount === 0 && !isLoading ? ListEmpty : null}
+      ListFooterComponent={userCount > 0 ? ListFooter : undefined}
       contentInsetAdjustmentBehavior="automatic"
       maintainVisibleContentPosition={{disabled: true}}
       refreshing={refreshing}
       onRefresh={handleRefresh}
       progressViewOffset={ds.spacing.lg}
-      ListFooterComponent={
-        <ListCountFooter
-          count={users.length}
-          dividerStyle={styles.divider}
-          textVariant="callout"
-          fontWeight="bold"
-        />
-      }
     />
   );
 }
@@ -149,16 +180,14 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       content: {
-        paddingLeft: ds.spacing.lg + ds.spacing.xxs,
+        paddingLeft: ds.spacing.xxs,
         paddingRight: ds.spacing.lg,
       },
-
       title: {
         marginBottom: ds.spacing.xs,
       },
-
       divider: {
-        marginLeft: ds.spacing.xxl * 2 + ds.spacing.md,
+        marginLeft: ds.spacing.xxl * 2 + ds.spacing.sm + ds.spacing.xxs,
         marginRight: ds.spacing.lg,
       },
     }),

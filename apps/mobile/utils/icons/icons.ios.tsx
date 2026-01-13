@@ -209,7 +209,6 @@ export const AppIcons = {
     excel: 'doc.plaintext.fill',
     ppt: 'doc.plaintext.fill',
     text: 'doc.plaintext.fill',
-    empty: 'folder.badge.questionmark',
   },
 
   status: {
@@ -230,5 +229,10 @@ export const AppIcons = {
     privacy: 'hand.raised.fill',
     terms: 'doc.text.fill',
     plan: 'creditcard.circle.fill',
+  },
+
+  emptyStates: {
+    user: 'rectangle.stack.badge.person.crop',
+    file: 'folder.badge.questionmark',
   },
 } as const satisfies Record<string, Record<string, IconName>>;
