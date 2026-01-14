@@ -10,7 +10,7 @@ const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
 export function useInfiniteAttachments(
   filters: AttachmentListFilters,
-  pageSize = 50,
+  pageSize = 30,
   enabled = true,
 ) {
   const queryKey = ['attachments', 'list', filters, pageSize];
@@ -22,14 +22,14 @@ export function useInfiniteAttachments(
         ...filters,
         limit: pageSize,
         cursor: pageParam ?? undefined,
-        direction: 'before',
+        direction: 'after',
       });
       return response.data;
     },
     initialPageParam: null,
     getNextPageParam: (lastPage) => {
-      if (lastPage.has_previous_page) {
-        return lastPage.start_cursor;
+      if (lastPage.has_next_page) {
+        return lastPage.end_cursor;
       }
       return undefined;
     },

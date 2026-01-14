@@ -39,7 +39,7 @@ export function useAttachmentsSource(
     searchQuery = '',
     extension,
     odataOrderBy,
-    pageSize, // defaults to 50, can be overridden
+    pageSize, // defaults to 30, can be overridden
     enabled = true,
   } = options;
   const attachmentContext = useOptionalAttachmentContext();

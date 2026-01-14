@@ -16,7 +16,7 @@ export interface UseFilteredAttachmentsManagerOptions {
   enabled?: boolean;
 }
 
-const DEFAULT_ATTACHMENTS_PAGE_SIZE = 50;
+const DEFAULT_ATTACHMENTS_PAGE_SIZE = 30;
 
 /**
  * Attachment list manager that merges global filter state with local overrides.

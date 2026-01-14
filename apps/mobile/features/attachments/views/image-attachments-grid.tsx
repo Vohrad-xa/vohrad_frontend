@@ -116,7 +116,7 @@ export function ImageAttachmentsGrid({
       refreshing={refreshing}
       onRefresh={handleRefresh}
       onEndReached={handleLoadMore}
-      onEndReachedThreshold={0.2}
+      onEndReachedThreshold={0.5}
       drawDistance={drawDistance}
       getItemType={getItemType}
       removeClippedSubviews

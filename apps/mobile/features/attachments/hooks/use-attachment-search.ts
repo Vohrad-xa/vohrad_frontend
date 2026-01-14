@@ -17,7 +17,7 @@ export interface UseAttachmentSearchOptions {
 export function useAttachmentSearch(options: UseAttachmentSearchOptions) {
   const {
     searchQuery,
-    pageSize = 50,
+    pageSize,
     enabled = true,
     kind,
     extension,
