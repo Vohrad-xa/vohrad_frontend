@@ -1,5 +1,6 @@
 import {useCallback, useMemo, memo, useState, useRef, useEffect} from 'react';
 import {Animated, Platform, StyleSheet, View, Pressable} from 'react-native';
+import {useHeaderHeight} from '@react-navigation/elements';
 import {FlashList} from '@shopify/flash-list';
 import {type ItemAttachment} from '@sykamore/types';
 import {Image} from 'expo-image';
@@ -245,13 +246,22 @@ const AttachmentsListBase = ({
 
   // iOS (transparent + large title): keep scroll indicator stable by forcing a fixed inset.
   const insets = useSafeAreaInsets();
+  const headerHeight = useHeaderHeight();
   const iosIndicatorProps =
     Platform.OS === 'ios'
       ? {
           automaticallyAdjustsScrollIndicatorInsets: false as const,
           scrollIndicatorInsets: {
-            top: insets.top + 106,
+            top: headerHeight,
             bottom: insets.bottom + 45,
+          },
+          contentInset: {
+            top: headerHeight,
+            bottom: insets.bottom + 45,
+          },
+          contentOffset: {
+            x: 0,
+            y: -headerHeight,
           },
         }
       : {};
