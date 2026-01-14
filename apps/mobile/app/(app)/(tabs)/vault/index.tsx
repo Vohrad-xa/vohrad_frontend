@@ -327,6 +327,7 @@ export default function VaultScreen() {
       <AttachmentsList
         attachments={searchResults}
         onAttachmentPress={handleSearchResultPress}
+        applyHeaderContentInset
       />
     );
   }

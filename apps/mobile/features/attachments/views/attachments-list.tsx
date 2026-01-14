@@ -34,6 +34,7 @@ type AttachmentsListProps = {
   isLoading?: boolean;
   lastUpdated?: Date | null;
   listKey?: string;
+  applyHeaderContentInset?: boolean;
 };
 
 type SelectableAttachmentsListProps = AttachmentsListProps & {
@@ -52,6 +53,7 @@ type AttachmentListSelectionState = {
 type AttachmentsListBaseProps = AttachmentsListProps & {
   selectionState?: AttachmentListSelectionState | null;
   extraDataKey?: string;
+  applyHeaderContentInset?: boolean;
 };
 
 type AttachmentItemProps = {
@@ -239,6 +241,7 @@ const AttachmentsListBase = ({
   listKey = 'attachments',
   selectionState = null,
   extraDataKey,
+  applyHeaderContentInset = false,
 }: AttachmentsListBaseProps) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
@@ -248,7 +251,7 @@ const AttachmentsListBase = ({
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const iosIndicatorProps =
-    Platform.OS === 'ios'
+    Platform.OS === 'ios' && applyHeaderContentInset
       ? {
           automaticallyAdjustsScrollIndicatorInsets: false as const,
           scrollIndicatorInsets: {
