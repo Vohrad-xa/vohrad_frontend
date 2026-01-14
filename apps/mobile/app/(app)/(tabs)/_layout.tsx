@@ -59,7 +59,7 @@ export default function TabLayout() {
       backgroundColor={theme.sidebarBackground}
       iconColor={{default: theme.text}}
       indicatorColor={theme.ripple}
-      minimizeBehavior="onScrollDown"
+      minimizeBehavior="automatic"
       labelStyle={{
         default: {color: theme.text},
         selected: {color: theme.accentBlue},
