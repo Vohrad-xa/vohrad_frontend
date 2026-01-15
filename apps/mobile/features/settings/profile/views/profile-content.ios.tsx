@@ -1,22 +1,31 @@
-import React, {forwardRef, useImperativeHandle, useEffect} from 'react';
-import {View} from 'react-native';
-import {ThemedText} from '@/components/ui';
+import {forwardRef, useImperativeHandle, useEffect, useMemo} from 'react';
+import {Palette} from '@/constants';
+import {
+  Host,
+  List,
+  Section,
+  VStack,
+  ZStack,
+  Text,
+  Circle,
+  scrollDismissesKeyboard,
+  frame,
+  foregroundStyle,
+  font,
+  padding,
+} from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers';
+import {getInitials, formatDate, capitalizeName} from '@/utils';
 import {useProfileForm, useProfileActions} from '../hooks';
 import type {ProfileContentHandle, ProfileContentProps} from '../types';
 
-/**
- * iOS-specific profile UI using native modules
- * TODO: iOS native modules
- */
 export const ProfileContentEditable = forwardRef<
   ProfileContentHandle,
   ProfileContentProps
->(({isEditing, onSaveComplete, onFieldChange}, ref) => {
-  const {ds} = useTheme();
-
-  const {profile} = useProfileForm();
+>(({isEditing: _isEditing, onSaveComplete, onFieldChange}, ref) => {
+  const {profile, profileDetails} = useProfileForm();
   const {hasChanges, handleSaveProfile} = useProfileActions({onSaveComplete});
+  const {ds} = useTheme();
 
   useImperativeHandle(ref, () => ({
     saveProfile: handleSaveProfile,
@@ -27,16 +36,106 @@ export const ProfileContentEditable = forwardRef<
     onFieldChange?.();
   }, [profile, onFieldChange]);
 
+  // Get full name and initials
+  const {fullName, initials} = useMemo(() => {
+    const name = profileDetails
+      ? `${profileDetails.first_name ?? ''} ${profileDetails.last_name ?? ''}`.trim()
+      : '';
+    return {
+      fullName: capitalizeName(name) ?? 'No Name',
+      initials: getInitials(name) ?? 'U',
+    };
+  }, [profileDetails]);
+
   return (
-    <View style={{padding: ds.spacing.xl, alignItems: 'center'}}>
-      <ThemedText variant="headline">iOS Native Profile UI</ThemedText>
-      <ThemedText variant="body" style={{marginTop: ds.spacing.md}}>
-        To do
-      </ThemedText>
-      <ThemedText variant="caption" style={{marginTop: ds.spacing.sm}}>
-        Editing: {isEditing ? 'Yes' : 'No'}
-      </ThemedText>
-    </View>
+    <Host style={{flex: 1}}>
+      <List
+        listStyle="insetGrouped"
+        selectionMode="none"
+        selectEnabled={false}
+        scrollEnabled
+        modifiers={[scrollDismissesKeyboard('interactively')]}
+      >
+        <Section>
+          <VStack
+            alignment="center"
+            spacing={ds.spacing.xxs * 3}
+            modifiers={[
+              frame({maxWidth: ds.screen.width, alignment: 'center'}),
+            ]}
+          >
+            <ZStack alignment="center">
+              <Circle
+                modifiers={[
+                  frame({width: 100, height: 100}),
+                  foregroundStyle({
+                    styleType: 'linearGradient',
+                    colors: [Palette.blue, Palette.indigo],
+                    startPoint: {x: 0.08, y: 0.02},
+                    endPoint: {x: 0.92, y: 0.98},
+                  }),
+                  padding({bottom: ds.spacing.sm}),
+                ]}
+              />
+
+              <Text
+                modifiers={[
+                  foregroundStyle({styleType: 'color', color: 'white'}),
+                  font({
+                    size: ds.typography.ios.largeTitle.baseSize,
+                    design: 'rounded',
+                    weight: 'semibold',
+                  }),
+                ]}
+              >
+                {initials}
+              </Text>
+            </ZStack>
+
+            <Text
+              modifiers={[
+                font({
+                  size: ds.typography.ios.title1.baseSize,
+                  weight: 'semibold',
+                }),
+              ]}
+            >
+              {fullName}
+            </Text>
+
+            <Text
+              modifiers={[
+                foregroundStyle({
+                  styleType: 'hierarchical',
+                  hierarchicalStyle: 'secondary',
+                }),
+                font({
+                  size: ds.typography.ios.footnote.baseSize,
+                }),
+              ]}
+            >
+              Since {formatDate(profileDetails?.created_at)}
+            </Text>
+
+            <Text
+              modifiers={[
+                foregroundStyle({
+                  styleType: 'angularGradient',
+                  colors: [Palette.blue, Palette.indigo],
+                  center: {x: 0.8, y: 0.4},
+                }),
+                font({
+                  size: ds.typography.ios.body.baseSize,
+                  weight: 'medium',
+                }),
+              ]}
+            >
+              {profileDetails?.role || 'member'}
+            </Text>
+          </VStack>
+        </Section>
+      </List>
+    </Host>
   );
 });
 

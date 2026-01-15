@@ -1,7 +1,6 @@
 import React, {useRef, useState, useCallback} from 'react';
 import {Platform} from 'react-native';
 import {useNavigation} from 'expo-router';
-import {ModalScrollView} from '@/components/ui';
 import {ProfileContent, type ProfileContentHandle} from '@/features/settings';
 import {useSettingsHeader} from '@/hooks';
 
@@ -38,13 +37,11 @@ export default function ProfileScreen() {
   }, [triggerSuccess]);
 
   return (
-    <ModalScrollView>
-      <ProfileContent
-        ref={profileContentRef}
-        isEditing={isEditing}
-        onSaveComplete={handleSaveComplete}
-        onFieldChange={checkForChanges}
-      />
-    </ModalScrollView>
+    <ProfileContent
+      ref={profileContentRef}
+      isEditing={isEditing}
+      onSaveComplete={handleSaveComplete}
+      onFieldChange={checkForChanges}
+    />
   );
 }

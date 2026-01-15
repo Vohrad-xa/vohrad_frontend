@@ -25,3 +25,5 @@ export * from './formate-bytes';
 export * from './name-sanitizer';
 export * from './navigation/dynamic-hedaer';
 export * from './navigation/header-actions';
+export * from './get-initials';
+export * from './capitalize-name';

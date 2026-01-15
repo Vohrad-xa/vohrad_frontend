@@ -291,32 +291,30 @@ export const offset = (params: {x?: number; y?: number}) =>
  *   endRadius: 100                 // Outer radius
  * }
  * ```
+ * Applies a foreground style (color, hierarchical semantic colors, or gradient) to text and shapes.
  *
- * **Angular Gradient (Conic):**
- * ```ts
- * {
- *   type: 'angularGradient',
- *   colors: ['#FF0000', '#00FF00', '#0000FF'],
- *   center: { x: 0.5, y: 0.5 }     // Rotation center
- * }
+ * @example Simple color
+ * ```tsx
+ * <Text modifiers={[foregroundStyle('#FF0000')]}>Red Text</Text>
  * ```
  *
- * @example
+ * @example Hierarchical semantic colors (adapts to light/dark mode)
  * ```tsx
- * // Simple usage
- * <Text modifiers={[foregroundStyle('#FF0000')]}>Red Text</Text>
- *
- * // Adaptive hierarchical styling
- * <Text modifiers={[foregroundStyle({ type: 'hierarchical', style: 'secondary' })]}>
+ * <Text modifiers={[foregroundStyle({
+ *   styleType: 'hierarchical',
+ *   hierarchicalStyle: 'secondary'
+ * })]}>
  *   Supporting Text
  * </Text>
+ * ```
  *
- * // Linear gradient
+ * @example Linear gradient
+ * ```tsx
  * <Text modifiers={[foregroundStyle({
- *   type: 'linearGradient',
- *   colors: ['#FF6B35', '#F7931E', '#FFD23F'],
- *   startPoint: { x: 0, y: 0 },
- *   endPoint: { x: 1, y: 0 }
+ *   styleType: 'linearGradient',
+ *   colors: ['#FF0000', '#0000FF'],
+ *   startPoint: {x: 0, y: 0},
+ *   endPoint: {x: 1, y: 1}
  * })]}>
  *   Gradient Text
  * </Text>
@@ -329,37 +327,45 @@ export const offset = (params: {x?: number; y?: number}) =>
 export const foregroundStyle = (
   style:
     | string // Simple color (hex string, color name, or Apple system color name)
-    | {type: 'color'; color: string}
+    | {styleType: 'color'; color: string}
     | {
-        type: 'hierarchical';
-        style: 'primary' | 'secondary' | 'tertiary' | 'quaternary' | 'quinary';
+        styleType: 'hierarchical';
+        hierarchicalStyle:
+          | 'primary'
+          | 'secondary'
+          | 'tertiary'
+          | 'quaternary'
+          | 'quinary';
       }
     | {
-        type: 'linearGradient';
+        styleType: 'linearGradient';
         colors: string[];
         startPoint: {x: number; y: number};
         endPoint: {x: number; y: number};
       }
     | {
-        type: 'radialGradient';
+        styleType: 'radialGradient';
         colors: string[];
         center: {x: number; y: number};
         startRadius: number;
         endRadius: number;
       }
     | {
-        type: 'angularGradient';
+        styleType: 'angularGradient';
         colors: string[];
         center: {x: number; y: number};
       },
 ) => {
+  // Handle string color
   if (typeof style === 'string') {
     return createModifier('foregroundStyle', {
       styleType: 'color',
       color: style,
     });
   }
-  return createModifier('foregroundStyle', {styleType: style.type, ...style});
+
+  // All other types can be passed directly - names match Swift exactly
+  return createModifier('foregroundStyle', style);
 };
 
 /**
@@ -640,12 +646,20 @@ export const clipped = (clipped: boolean = true) =>
 
 /**
  * Applies a glass effect to a view.
- * @param params - The glass effect parameters. Variant, interactive, tint and shape.
- * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/glasseffect(_:in:)).
+ *
+ * @param params - The glass effect parameters.
+ * @param params.glass - Glass configuration.
+ * @param params.glass.variant - Glass style variant. Defaults to `'regular'`.
+ * @param params.glass.interactive - Whether glass responds to user interaction. Defaults to `false`.
+ * @param params.glass.tint - Optional tint color for the glass.
+ * @param params.shape - Shape of the glass effect. Defaults to `'capsule'`.
+ * @param params.cornerRadius - Corner radius for `'roundedRectangle'` shape.
+ *
+ * @platform iOS 26.0+, macOS 26.0+, tvOS 26.0+
  */
 export const glassEffect = (params?: {
   glass?: {
-    variant: 'regular' | 'clear' | 'identity';
+    variant?: 'regular' | 'clear' | 'identity';
     interactive?: boolean;
     tint?: Color;
   };
