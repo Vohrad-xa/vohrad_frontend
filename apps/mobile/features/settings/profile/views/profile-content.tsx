@@ -1,6 +1,5 @@
 import React, {forwardRef, useImperativeHandle, useEffect} from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
-import {useEmailConfirmation} from '@sykamore/store';
 import {
   ThemedButton,
   ThemedText,
@@ -11,28 +10,14 @@ import {
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {showConfirmAlert, showAlert, formatDate} from '@/utils';
+import {formatDate} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {useProfileForm} from './use-profile-form';
-
-export type SaveProfileOptions = {
-  skipConfirm?: boolean;
-};
-
-export type ProfileContentHandle = {
-  saveProfile: (options?: SaveProfileOptions) => void;
-  hasChanges: () => boolean;
-};
-
-type ProfileContentEditableProps = {
-  isEditing: boolean;
-  onSaveComplete?: () => void;
-  onFieldChange?: () => void;
-};
+import {useProfileForm, useProfileActions} from '../hooks';
+import type {ProfileContentHandle, ProfileContentProps} from '../types';
 
 export const ProfileContentEditable = forwardRef<
   ProfileContentHandle,
-  ProfileContentEditableProps
+  ProfileContentProps
 >(({isEditing, onSaveComplete, onFieldChange}, ref) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
@@ -44,43 +29,14 @@ export const ProfileContentEditable = forwardRef<
     contactFields,
     addressFields,
     updateField,
-    hasChanges,
-    submitUpdate,
   } = useProfileForm();
 
-  const {resendPendingEmail, isProcessing: isResendingEmail} =
-    useEmailConfirmation();
-
-  const performUpdate = async () => {
-    if (!hasChanges()) {
-      showAlert({
-        title: 'No Changes Detected',
-        message: 'Update a field before saving your profile.',
-      });
-      return;
-    }
-
-    await submitUpdate();
-    onSaveComplete?.();
-  };
-
-  const handleSaveProfile = (options?: SaveProfileOptions) => {
-    if (options?.skipConfirm) {
-      void performUpdate();
-      return;
-    }
-
-    showConfirmAlert({
-      title: 'Update Profile',
-      message: 'Are you sure you want to save these changes?',
-      confirmText: 'Save',
-      cancelText: 'Discard',
-      cancelIsDestructive: true,
-      onConfirm: () => {
-        void performUpdate();
-      },
-    });
-  };
+  const {
+    hasChanges,
+    handleSaveProfile,
+    handleResendPendingEmail,
+    isResendingEmail,
+  } = useProfileActions({onSaveComplete});
 
   useImperativeHandle(ref, () => ({
     saveProfile: handleSaveProfile,
@@ -90,21 +46,6 @@ export const ProfileContentEditable = forwardRef<
   useEffect(() => {
     onFieldChange?.();
   }, [profile, onFieldChange]);
-
-  const handleResendPendingEmail = async () => {
-    const succeeded = await resendPendingEmail();
-    if (succeeded) {
-      showAlert({
-        title: 'Verification Email Sent',
-        message: 'Check your inbox to confirm the new address.',
-      });
-    } else {
-      showAlert({
-        title: 'Unable to Resend',
-        message: 'Please try again in a moment.',
-      });
-    }
-  };
 
   if (!profileDetails) {
     return <EmptyState message="No profile information available" />;
