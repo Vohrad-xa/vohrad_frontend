@@ -9,8 +9,10 @@ import {
   Text,
   Circle,
   scrollDismissesKeyboard,
-  frame,
   foregroundStyle,
+  listRowBackground,
+  listSectionMargins,
+  frame,
   font,
   padding,
 } from '@/modules/sykamore-ui';
@@ -56,7 +58,9 @@ export const ProfileContentEditable = forwardRef<
         scrollEnabled
         modifiers={[scrollDismissesKeyboard('interactively')]}
       >
-        <Section>
+        <Section
+          modifiers={[listRowBackground('clear'), listSectionMargins({top: 0})]}
+        >
           <VStack
             alignment="center"
             spacing={ds.spacing.xxs * 3}
