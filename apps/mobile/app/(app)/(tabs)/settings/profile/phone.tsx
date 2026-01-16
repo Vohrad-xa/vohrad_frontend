@@ -1,9 +1,12 @@
-import {Host, Text} from '@/modules/sykamore-ui';
+import {useRef} from 'react';
+import {
+  PhoneContent,
+  useProfileHeader,
+  type PhoneContentHandle,
+} from '@/features/settings/profile';
 
 export default function PhoneModal() {
-  return (
-    <Host style={{flex: 1}}>
-      <Text>Phone Number</Text>
-    </Host>
-  );
+  const contentRef = useRef<PhoneContentHandle>(null);
+  useProfileHeader({contentRef});
+  return <PhoneContent ref={contentRef} />;
 }
