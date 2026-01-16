@@ -297,7 +297,9 @@ struct TextFieldView: ExpoSwiftUI.View, ExpoSwiftUI.FocusableView {
       .onAppear {
         textManager.text = props.defaultValue
         if props.autoFocus {
-          isFocused = true
+          DispatchQueue.main.async {
+            isFocused = true
+          }
         }
       }
       .onChange(of: textManager.text) { newValue in
