@@ -45,7 +45,7 @@ export const NameContent = forwardRef<NameContentHandle>((_, ref) => {
             autoFocus
             modifiers={[
               accessibilityLabel('First name input field'),
-              frame({maxWidth: ds.screen.width / 2}),
+              frame({maxWidth: ds.screen.width / 1.8}),
             ]}
           />
         </LabeledContent>
@@ -62,7 +62,7 @@ export const NameContent = forwardRef<NameContentHandle>((_, ref) => {
             numberOfLines={1}
             modifiers={[
               accessibilityLabel('Last name input field'),
-              frame({maxWidth: ds.screen.width / 2}),
+              frame({maxWidth: ds.screen.width / 1.8}),
             ]}
           />
         </LabeledContent>

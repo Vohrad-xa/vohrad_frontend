@@ -18,16 +18,21 @@ export const formatDateInput = (date?: Date | null): string => {
   return `${year}-${month}-${day}`;
 };
 
-export const formatDate = (isoString?: string | null): string => {
+export const formatDate = (
+  isoString?: string | null,
+  options?: {includeTime?: boolean},
+): string => {
   if (!isoString) return 'N/A';
 
   try {
     const date = new Date(isoString);
-    return date.toLocaleDateString('en-GB', {
+    const formatOptions: Intl.DateTimeFormatOptions = {
       day: '2-digit',
       month: 'long',
       year: 'numeric',
-    });
+      ...(options?.includeTime && {hour: '2-digit', minute: '2-digit'}),
+    };
+    return date.toLocaleDateString('en-GB', formatOptions);
   } catch {
     return 'Invalid date';
   }

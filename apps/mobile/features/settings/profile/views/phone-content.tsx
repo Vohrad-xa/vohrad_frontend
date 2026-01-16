@@ -51,14 +51,13 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
               useSwiftUI
               name={'phone.badge.checkmark' as IconName}
               color={Palette.blue}
-              size="xxxl"
+              size="xxl"
             />
             <Text
               modifiers={[
                 font({
                   size: ds.typography.ios.title2.baseSize,
                   weight: 'semibold',
-                  design: 'default',
                 }),
               ]}
             >
@@ -68,8 +67,7 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
               baselineOffset={ds.spacing.xs}
               modifiers={[
                 font({
-                  size: ds.typography.ios.callout.baseSize,
-                  design: 'rounded',
+                  family: 'system',
                 }),
                 foregroundStyle('secondary'),
               ]}

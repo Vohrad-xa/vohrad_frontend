@@ -20,11 +20,11 @@ import {
   foregroundStyle,
   disabled,
   VStack,
-  Image,
   type TextFieldRef,
+  LabeledContent,
 } from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers';
-import {AppIcons, Icon} from '@/utils';
+import {AppIcons, Icon, formatDate, type IconName} from '@/utils';
 import {useProfile} from '../hooks';
 
 export type EmailContentHandle = {
@@ -32,12 +32,15 @@ export type EmailContentHandle = {
 };
 
 export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
-  const {email, pendingEmail, updateEmail} = useProfile();
-  const isEmailVerified = !pendingEmail;
+  const {email, pendingEmail, pendingEmailExpiresAt, updateEmail} =
+    useProfile();
+
   const {ds} = useTheme();
+
   const textFieldRef = useRef<TextFieldRef>(null);
 
   const [emailValue, setEmailValue] = useState(email);
+
   const [isEditing, setIsEditing] = useState(false);
 
   const save = useCallback(async () => {
@@ -50,7 +53,6 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
 
   const handleEditPress = useCallback(() => {
     setIsEditing(true);
-    // Small delay to ensure state updates before focus
     setTimeout(() => {
       textFieldRef.current?.focus();
     }, 100);
@@ -67,68 +69,32 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
     <Host style={{flex: 1}}>
       <Form>
         <Section>
-          <VStack alignment="leading" spacing={ds.spacing.lg}>
-            <Image
-              systemName="envelope.badge.person.crop"
-              size={ds.iconSize.xxxl}
+          <VStack alignment="leading" spacing={ds.spacing.xl}>
+            <Icon
+              useSwiftUI
+              name={'envelope' as IconName}
+              size="xxl"
               color={Palette.blue}
             />
-            <HStack spacing={ds.spacing.lg}>
-              <Text
-                modifiers={[
-                  font({
-                    size: ds.typography.ios.title2.baseSize,
-                    weight: 'semibold',
-                    design: 'default',
-                  }),
-                ]}
-              >
-                Email Address
-              </Text>
-              <HStack spacing={ds.spacing.xs}>
-                <Icon
-                  useSwiftUI
-                  name={
-                    isEmailVerified
-                      ? AppIcons.status.success
-                      : AppIcons.status.pending
-                  }
-                  color={isEmailVerified ? Palette.green : Palette.orange}
-                  size="xs"
-                />
-                <Text
-                  italic
-                  modifiers={[
-                    font({
-                      size: ds.typography.ios.caption.baseSize,
-                      weight: 'medium',
-                    }),
-                    foregroundStyle(isEmailVerified ? 'green' : 'orange'),
-                  ]}
-                >
-                  {isEmailVerified ? 'Verified' : 'Verification Pending'}
-                </Text>
-              </HStack>
-            </HStack>
+
             <Text
               baselineOffset={ds.spacing.xs}
               modifiers={[
                 font({
-                  size: ds.typography.ios.callout.baseSize,
+                  size: ds.typography.ios.body.baseSize,
+                  family: 'system',
                   design: 'rounded',
                 }),
                 foregroundStyle('secondary'),
               ]}
             >
-              Your Email is used for account login, account recovery, and
-              important notifications.
-              {'\n'}You can change your email address at any time by tapping the
-              edit button.
+              This Email will be used to support account security, including,
+              login, identity verification and account recovery.
             </Text>
           </VStack>
         </Section>
 
-        <Section>
+        <Section title="Email Address">
           <HStack>
             <TextField
               ref={textFieldRef}
@@ -153,6 +119,42 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
             />
           </HStack>
         </Section>
+
+        {pendingEmail && (
+          <Section
+            title="New Email"
+            footer={
+              <Text>
+                A verification link has been sent to {pendingEmail}
+                {'\n'}The link will expire on{' '}
+                {formatDate(pendingEmailExpiresAt, {includeTime: true})}.{'\n'}
+                In case you did not receive a link, you can request a new one.
+              </Text>
+            }
+          >
+            <LabeledContent label={pendingEmail}>
+              <HStack spacing={ds.spacing.sm}>
+                <Text
+                  modifiers={[
+                    font({
+                      size: ds.typography.ios.footnote.baseSize,
+                      family: 'system',
+                    }),
+                    foregroundStyle('orange'),
+                  ]}
+                >
+                  Pending
+                </Text>
+                <Icon
+                  useSwiftUI
+                  name={AppIcons.status.pending}
+                  color={Palette.orange}
+                  size="xs"
+                />
+              </HStack>
+            </LabeledContent>
+          </Section>
+        )}
       </Form>
     </Host>
   );
