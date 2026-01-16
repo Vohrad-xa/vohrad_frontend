@@ -1,9 +1,12 @@
-import {Host, Text} from '@/modules/sykamore-ui';
+import {useRef} from 'react';
+import {
+  EmailContent,
+  useProfileHeader,
+  type EmailContentHandle,
+} from '@/features/settings/profile';
 
 export default function EmailModal() {
-  return (
-    <Host style={{flex: 1}}>
-      <Text>Email</Text>
-    </Host>
-  );
+  const contentRef = useRef<EmailContentHandle>(null);
+  useProfileHeader({contentRef});
+  return <EmailContent ref={contentRef} />;
 }

@@ -57,8 +57,8 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
             <Text
               modifiers={[
                 font({
-                  size: ds.typography.ios.title1.baseSize,
-                  weight: 'heavy',
+                  size: ds.typography.ios.title2.baseSize,
+                  weight: 'semibold',
                   design: 'default',
                 }),
               ]}

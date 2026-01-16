@@ -3,6 +3,7 @@ export type {
   NameContentHandle,
   AddressContentHandle,
   PhoneContentHandle,
+  EmailContentHandle,
 } from './views';
 export {
   useProfile,
@@ -17,4 +18,5 @@ export {
   NameContent,
   AddressContent,
   PhoneContent,
+  EmailContent,
 } from './views';

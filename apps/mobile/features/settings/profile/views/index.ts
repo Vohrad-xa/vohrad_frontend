@@ -7,3 +7,5 @@ export {AddressContent} from './address-content';
 export type {AddressContentHandle} from './address-content';
 export {PhoneContent} from './phone-content';
 export type {PhoneContentHandle} from './phone-content';
+export {EmailContent} from './email-content';
+export type {EmailContentHandle} from './email-content';
