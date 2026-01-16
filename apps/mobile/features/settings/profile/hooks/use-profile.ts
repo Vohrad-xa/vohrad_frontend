@@ -22,6 +22,8 @@ export function useProfile() {
   const postalCode = profileDetails?.postal_code ?? '';
   const country = profileDetails?.country ?? '';
   const pendingEmail = profileDetails?.pending_email ?? null;
+  const pendingEmailExpiresAt =
+    profileDetails?.pending_email_expires_at ?? null;
 
   // Update methods for modals
   const updateDateOfBirth = useCallback(
@@ -74,6 +76,7 @@ export function useProfile() {
     dateOfBirth,
     email,
     pendingEmail,
+    pendingEmailExpiresAt,
     phoneNumber,
     address,
     city,
