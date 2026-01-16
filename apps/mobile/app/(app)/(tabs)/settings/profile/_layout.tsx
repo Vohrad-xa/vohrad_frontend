@@ -18,6 +18,7 @@ export default function ProfileLayout() {
         <HeaderButton
           variant="close"
           accessibilityLabel="Close"
+          accessibilityHint="Closes the modal"
           onPress={() => router.dismiss()}
         />
       ),
