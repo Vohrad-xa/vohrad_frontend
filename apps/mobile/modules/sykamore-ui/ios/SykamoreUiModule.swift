@@ -16,8 +16,10 @@ public final class SykamoreUiModule: Module {
     View(SectionHeader.self)
     View(SectionFooter.self)
     View(SectionContent.self)
-    ExpoUIView(LabelView.self)
     View(LabelIcon.self)
+    View(LabeledContentLabel.self)
+    View(LabeledContentContent.self)
+    ExpoUIView(LabelView.self)
     ExpoUIView(ContextMenu.self)
     View(ContextMenuPreview.self)
     View(ContextMenuActivationElement.self)
@@ -71,5 +73,6 @@ public final class SykamoreUiModule: Module {
     ExpoUIView(StepperView.self)
     ExpoUIView(ConcentricRectangleView.self)
     ExpoUIView(ZStackView.self)
+    ExpoUIView(LabeledContentView.self)
   }
 }

@@ -1,32 +1,18 @@
 import {requireNativeView} from 'expo';
-import type {ColorValue} from 'react-native';
-import {type ViewEvent} from '../../types';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
-
-type TapEvent = ViewEvent<'onTap', object> & {
-  useTapGesture?: boolean;
-};
 
 interface StackBaseProps extends CommonViewModifierProps {
   children: React.ReactNode;
   spacing?: number;
-  backgroundColor?: ColorValue;
-
-  /**
-   * Callback triggered when the view is pressed.
-   */
-  onPress?: () => void;
 }
-export type NativeStackProps = Omit<StackBaseProps, 'onPress'> | TapEvent;
 
-function transformNativeProps(props: StackBaseProps): NativeStackProps {
-  const {onPress, modifiers, ...restProps} = props;
+function transformNativeProps(props: StackBaseProps) {
+  const {modifiers, ...restProps} = props;
   return {
     modifiers,
     ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
     ...restProps,
-    ...(onPress ? {useTapGesture: true, onTap: () => onPress()} : null),
   };
 }
 
@@ -40,8 +26,10 @@ export interface HStackProps extends StackBaseProps {
     | 'lastTextBaseline';
 }
 
-const HStackNativeView: React.ComponentType<NativeStackProps> =
-  requireNativeView('SykamoreUi', 'HStackView');
+const HStackNativeView: React.ComponentType<HStackProps> = requireNativeView(
+  'SykamoreUi',
+  'HStackView',
+);
 
 export function HStack(props: HStackProps) {
   return <HStackNativeView {...transformNativeProps(props)} />;
@@ -53,8 +41,10 @@ export interface VStackProps extends StackBaseProps {
   alignment?: 'leading' | 'center' | 'trailing';
 }
 
-const VStackNativeView: React.ComponentType<NativeStackProps> =
-  requireNativeView('SykamoreUi', 'VStackView');
+const VStackNativeView: React.ComponentType<VStackProps> = requireNativeView(
+  'SykamoreUi',
+  'VStackView',
+);
 
 export function VStack(props: VStackProps) {
   return <VStackNativeView {...transformNativeProps(props)} />;
@@ -64,24 +54,19 @@ export function VStack(props: VStackProps) {
 //#region Group Component
 export interface GroupProps extends CommonViewModifierProps {
   children: React.ReactNode;
-
-  /**
-   * Callback triggered when the view is pressed.
-   */
-  onPress?: () => void;
 }
 
-type NativeGroupProps = Omit<GroupProps, 'onPress'> | TapEvent;
-const GroupNativeView: React.ComponentType<NativeGroupProps> =
-  requireNativeView('SykamoreUi', 'GroupView');
+const GroupNativeView: React.ComponentType<GroupProps> = requireNativeView(
+  'SykamoreUi',
+  'GroupView',
+);
 
-function transformGroupProps(props: GroupProps): NativeGroupProps {
-  const {onPress, modifiers, ...restProps} = props;
+function transformGroupProps(props: GroupProps) {
+  const {modifiers, ...restProps} = props;
   return {
     modifiers,
     ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
     ...restProps,
-    ...(onPress ? {useTapGesture: true, onTap: () => onPress()} : null),
   };
 }
 
@@ -110,8 +95,10 @@ export interface ZStackProps extends StackBaseProps {
     | 'trailingLastTextBaseline';
 }
 
-const ZStackNativeView: React.ComponentType<NativeStackProps> =
-  requireNativeView('SykamoreUi', 'ZStackView');
+const ZStackNativeView: React.ComponentType<ZStackProps> = requireNativeView(
+  'SykamoreUi',
+  'ZStackView',
+);
 
 export function ZStack(props: ZStackProps) {
   return <ZStackNativeView {...transformNativeProps(props)} />;

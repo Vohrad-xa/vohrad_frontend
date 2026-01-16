@@ -24,3 +24,4 @@ export * from './Stepper';
 export * from './ContextMenu';
 export * from './Namespace';
 export * from './Layout';
+export * from './LabeledContent';
