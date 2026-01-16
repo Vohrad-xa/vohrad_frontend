@@ -35,6 +35,7 @@ type ProfileRowModel = Readonly<{
   systemImage?: SystemImageName;
   valueText?: string;
   valuePaddingX?: number;
+  trailingIcon?: React.ReactNode;
   a11yLabel: string;
   a11yHint?: string;
   href: Href;
@@ -92,6 +93,7 @@ const ProfileRow = React.memo(
     systemImage,
     valueText,
     valuePaddingX,
+    trailingIcon,
     a11yLabel,
     a11yHint,
     href,
@@ -129,7 +131,7 @@ const ProfileRow = React.memo(
               {valueText}
             </Text>
           ) : null}
-
+          {trailingIcon}
           <ChevronRight />
         </HStack>
       </Button>
@@ -139,7 +141,7 @@ const ProfileRow = React.memo(
 
 export function ProfileContent() {
   const {ds} = useTheme();
-  const {profileDetails, fullName, dateOfBirth} = useProfile();
+  const {profileDetails, fullName, dateOfBirth, pendingEmail} = useProfile();
 
   const initials = getInitials(fullName) ?? 'U';
   const roleText = profileDetails?.role ?? 'member';
@@ -149,6 +151,16 @@ export function ProfileContent() {
   const birthDateText = dateOfBirth ? formatDate(dateOfBirth) : 'Not set';
 
   const valuePaddingX = ds.spacing.sm;
+
+  const pendingIcon = pendingEmail ? (
+    <Icon
+      useSwiftUI
+      name={AppIcons.status.pending}
+      color={Palette.orange}
+      size="xs"
+      modifiers={[padding({trailing: ds.spacing.sm})]}
+    />
+  ) : undefined;
 
   return (
     <Host style={{flex: 1}}>
@@ -262,7 +274,11 @@ export function ProfileContent() {
         {/* Contact Information */}
         <Section>
           {CONTACT_ROWS.map((row) => (
-            <ProfileRow key={row.href} {...row} />
+            <ProfileRow
+              key={row.href}
+              {...row}
+              trailingIcon={row.title === 'Email' ? pendingIcon : undefined}
+            />
           ))}
         </Section>
 

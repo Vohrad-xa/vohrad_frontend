@@ -165,6 +165,7 @@ export const AppIcons = {
     info: 'information-outline',
     help: 'help-circle-outline',
     time: 'clock-outline',
+    pending: 'clock-outline',
   },
 
   preferences: {

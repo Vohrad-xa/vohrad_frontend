@@ -21,6 +21,7 @@ export function useProfile() {
   const province = profileDetails?.province ?? '';
   const postalCode = profileDetails?.postal_code ?? '';
   const country = profileDetails?.country ?? '';
+  const pendingEmail = profileDetails?.pending_email ?? null;
 
   // Update methods for modals
   const updateDateOfBirth = useCallback(
@@ -72,6 +73,7 @@ export function useProfile() {
     fullName,
     dateOfBirth,
     email,
+    pendingEmail,
     phoneNumber,
     address,
     city,

@@ -1,7 +1,7 @@
 import React from 'react';
 import type {StyleProp, TextStyle} from 'react-native';
 import {SymbolView, type SFSymbol, type SymbolViewProps} from 'expo-symbols';
-import type {TokenName} from '@/constants/colors';
+import {Palette, type TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers/theme-provider';
 import {
   accessibilityLabel,
@@ -9,8 +9,9 @@ import {
   clipShape,
   Image,
   padding,
+  type ViewModifier,
+  type font,
 } from 'sykamore-ui/ios';
-import type {font} from 'sykamore-ui/ios';
 
 export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
 
@@ -40,6 +41,7 @@ export type IconProps = {
   resizeMode?: ContentMode;
   scale?: SymbolScale;
   fallback?: React.ReactNode;
+  modifiers?: ViewModifier[];
 };
 
 export const Icon: React.FC<IconProps> = ({
@@ -57,6 +59,7 @@ export const Icon: React.FC<IconProps> = ({
   resizeMode = 'scaleAspectFit',
   scale,
   fallback,
+  modifiers: externalModifiers,
 }) => {
   const {theme, ds} = useTheme();
 
@@ -101,6 +104,7 @@ export const Icon: React.FC<IconProps> = ({
   if (container && useSwiftUI) {
     return (
       <Image
+        color={Palette.white}
         size={resolvedSize}
         systemName={name}
         modifiers={[
@@ -115,9 +119,10 @@ export const Icon: React.FC<IconProps> = ({
 
   return (
     <Image
+      color={resolvedTintColor}
       systemName={name}
       size={resolvedSize}
-      modifiers={[...a11yModifier]}
+      modifiers={[...a11yModifier, ...(externalModifiers ?? [])]}
     />
   );
 };
@@ -200,6 +205,7 @@ export const AppIcons = {
     info: 'info.circle.fill',
     help: 'questionmark.circle.fill',
     time: 'clock',
+    pending: 'clock',
   },
 
   preferences: {

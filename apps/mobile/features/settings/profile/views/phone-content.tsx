@@ -13,11 +13,10 @@ import {
   font,
   foregroundStyle,
   frame,
-  tint,
   buttonStyle,
 } from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers';
-import {AppIcons, Icon} from '@/utils';
+import {Icon, type IconName} from '@/utils';
 import {useProfile} from '../hooks';
 
 export type PhoneContentHandle = {
@@ -26,7 +25,7 @@ export type PhoneContentHandle = {
 
 export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
   const {phoneNumber, updatePhoneNumber} = useProfile();
-  const {theme, ds} = useTheme();
+  const {ds} = useTheme();
 
   const [phoneValue, setPhoneValue] = useState(phoneNumber);
   const [isEditing, setIsEditing] = useState(false);
@@ -50,9 +49,9 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
           <VStack alignment="leading" spacing={ds.spacing.md}>
             <Icon
               useSwiftUI
-              name="phone.badge.waveform"
+              name={'phone.badge.checkmark' as IconName}
+              color={Palette.blue}
               size="xxxl"
-              color={Palette.green}
             />
             <Text
               modifiers={[
@@ -69,28 +68,25 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
               baselineOffset={ds.spacing.xs}
               modifiers={[
                 font({
-                  size: ds.typography.ios.body.baseSize,
+                  size: ds.typography.ios.callout.baseSize,
                   design: 'rounded',
                 }),
                 foregroundStyle('secondary'),
               ]}
             >
               This phone number will be used to support account security,
-              including identity verification and account recovery. It will not
-              be used for marketing unless explicit consent is provided. The
+              including identity verification and account recovery. {'\n'}The
               number can be updated or removed at any time.
             </Text>
           </VStack>
 
           {!isEditing && (
             <Button
-              systemImage={AppIcons.actions.edit}
-              label="Modify Phone Number"
+              label="Edit phone number"
               onPress={handleModifyPress}
               modifiers={[
                 buttonStyle('automatic'),
-                tint(theme.text),
-                accessibilityLabel('Modify phone number button'),
+                accessibilityLabel('Edit phone number button'),
               ]}
             />
           )}

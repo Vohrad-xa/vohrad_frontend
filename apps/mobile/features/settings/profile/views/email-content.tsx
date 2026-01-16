@@ -24,6 +24,7 @@ import {
   type TextFieldRef,
 } from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers';
+import {AppIcons, Icon} from '@/utils';
 import {useProfile} from '../hooks';
 
 export type EmailContentHandle = {
@@ -31,7 +32,8 @@ export type EmailContentHandle = {
 };
 
 export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
-  const {email, updateEmail} = useProfile();
+  const {email, pendingEmail, updateEmail} = useProfile();
+  const isEmailVerified = !pendingEmail;
   const {ds} = useTheme();
   const textFieldRef = useRef<TextFieldRef>(null);
 
@@ -84,10 +86,15 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
                 Email Address
               </Text>
               <HStack spacing={ds.spacing.xs}>
-                <Image
-                  systemName="checkmark.circle"
-                  color={Palette.green}
-                  size={ds.iconSize.xs}
+                <Icon
+                  useSwiftUI
+                  name={
+                    isEmailVerified
+                      ? AppIcons.status.success
+                      : AppIcons.status.pending
+                  }
+                  color={isEmailVerified ? Palette.green : Palette.orange}
+                  size="xs"
                 />
                 <Text
                   italic
@@ -96,10 +103,10 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
                       size: ds.typography.ios.caption.baseSize,
                       weight: 'medium',
                     }),
-                    foregroundStyle('green'),
+                    foregroundStyle(isEmailVerified ? 'green' : 'orange'),
                   ]}
                 >
-                  Verified
+                  {isEmailVerified ? 'Verified' : 'Verification Pending'}
                 </Text>
               </HStack>
             </HStack>
