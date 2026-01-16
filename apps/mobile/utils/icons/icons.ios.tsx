@@ -1,19 +1,16 @@
 import React from 'react';
 import type {StyleProp, TextStyle} from 'react-native';
 import {SymbolView, type SFSymbol, type SymbolViewProps} from 'expo-symbols';
-import {Palette} from '@/constants';
 import type {TokenName} from '@/constants/colors';
 import {useTheme} from '@/providers/theme-provider';
 import {
   accessibilityLabel,
   background,
   clipShape,
-  font,
-  foregroundStyle,
-  frame,
   Image,
-  glassEffect,
+  padding,
 } from 'sykamore-ui/ios';
+import type {font} from 'sykamore-ui/ios';
 
 export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
 
@@ -47,7 +44,7 @@ export type IconProps = {
 
 export const Icon: React.FC<IconProps> = ({
   name,
-  size = 15,
+  size = 16,
   color,
   colorToken,
   fontWeight = 'regular',
@@ -65,13 +62,9 @@ export const Icon: React.FC<IconProps> = ({
 
   const resolvedSize =
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.sm);
-  const sizeNoContainer = typeof size === 'number' ? size : ds.iconSize.sm;
-  const frameSize = resolvedSize * 1.8;
 
   const resolvedTintColor =
     color ?? (colorToken ? theme[colorToken] : theme.text);
-
-  const resolvedIconColor = Palette.white;
 
   if (!useSwiftUI) {
     const resolvedType: SymbolType = symbolType ?? 'monochrome';
@@ -108,20 +101,12 @@ export const Icon: React.FC<IconProps> = ({
   if (container && useSwiftUI) {
     return (
       <Image
+        size={resolvedSize}
         systemName={name}
         modifiers={[
-          font({size: resolvedSize, weight: fontWeight}),
-          foregroundStyle(resolvedIconColor),
-          frame({width: frameSize, height: frameSize}),
+          padding({all: 2}),
           background(resolvedTintColor ?? theme.card),
           clipShape('roundedRectangle'),
-          glassEffect({
-            glass: {
-              variant: 'clear',
-            },
-            shape: 'roundedRectangle',
-            cornerRadius: ds.borderRadius.lg,
-          }),
           ...a11yModifier,
         ]}
       />
@@ -131,11 +116,8 @@ export const Icon: React.FC<IconProps> = ({
   return (
     <Image
       systemName={name}
-      modifiers={[
-        font({size: sizeNoContainer, weight: fontWeight}),
-        foregroundStyle(resolvedTintColor ?? theme.icon),
-        ...a11yModifier,
-      ]}
+      size={resolvedSize}
+      modifiers={[...a11yModifier]}
     />
   );
 };

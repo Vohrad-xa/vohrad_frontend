@@ -2,11 +2,12 @@ import {useState, forwardRef, useImperativeHandle, useCallback} from 'react';
 import {
   Host,
   Form,
-  HStack,
   TextField,
-  Label,
+  LabeledContent,
   accessibilityLabel,
+  frame,
 } from '@/modules/sykamore-ui';
+import {useTheme} from '@/providers';
 import {useProfile} from '../hooks';
 
 export type NameContentHandle = {
@@ -26,11 +27,12 @@ export const NameContent = forwardRef<NameContentHandle>((_, ref) => {
 
   useImperativeHandle(ref, () => ({save}), [save]);
 
+  const {ds} = useTheme();
+
   return (
     <Host style={{flex: 1}}>
       <Form>
-        <HStack spacing={80}>
-          <Label title="First" />
+        <LabeledContent label="First">
           <TextField
             placeholder="First"
             defaultValue={firstName}
@@ -41,12 +43,14 @@ export const NameContent = forwardRef<NameContentHandle>((_, ref) => {
             onChangeText={setFirstNameValue}
             numberOfLines={1}
             autoFocus
-            modifiers={[accessibilityLabel('First name input field')]}
+            modifiers={[
+              accessibilityLabel('First name input field'),
+              frame({maxWidth: ds.screen.width / 2}),
+            ]}
           />
-        </HStack>
+        </LabeledContent>
 
-        <HStack spacing={80}>
-          <Label title="Last" />
+        <LabeledContent label="Last">
           <TextField
             placeholder="Last"
             defaultValue={lastName}
@@ -56,9 +60,12 @@ export const NameContent = forwardRef<NameContentHandle>((_, ref) => {
             autocapitalization="words"
             onChangeText={setLastNameValue}
             numberOfLines={1}
-            modifiers={[accessibilityLabel('Last name input field')]}
+            modifiers={[
+              accessibilityLabel('Last name input field'),
+              frame({maxWidth: ds.screen.width / 2}),
+            ]}
           />
-        </HStack>
+        </LabeledContent>
       </Form>
     </Host>
   );

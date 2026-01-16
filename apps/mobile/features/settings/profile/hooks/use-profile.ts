@@ -16,6 +16,11 @@ export function useProfile() {
   const dateOfBirth = profileDetails?.date_of_birth ?? null;
   const email = profileDetails?.email ?? '';
   const phoneNumber = profileDetails?.phone_number ?? '';
+  const address = profileDetails?.address ?? '';
+  const city = profileDetails?.city ?? '';
+  const province = profileDetails?.province ?? '';
+  const postalCode = profileDetails?.postal_code ?? '';
+  const country = profileDetails?.country ?? '';
 
   // Update methods for modals
   const updateDateOfBirth = useCallback(
@@ -68,6 +73,11 @@ export function useProfile() {
     dateOfBirth,
     email,
     phoneNumber,
+    address,
+    city,
+    province,
+    postalCode,
+    country,
     isLoading,
 
     // Update methods for modals
