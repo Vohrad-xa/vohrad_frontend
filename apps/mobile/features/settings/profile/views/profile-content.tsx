@@ -1,4 +1,3 @@
-import React, {forwardRef, useImperativeHandle, useEffect} from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
 import {
   ThemedButton,
@@ -13,12 +12,8 @@ import {useTheme} from '@/providers';
 import {formatDate} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {useProfileForm, useProfileActions} from '../hooks';
-import type {ProfileContentHandle, ProfileContentProps} from '../types';
 
-export const ProfileContentEditable = forwardRef<
-  ProfileContentHandle,
-  ProfileContentProps
->(({isEditing, onSaveComplete, onFieldChange}, ref) => {
+export function ProfileContent() {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
 
@@ -28,24 +23,9 @@ export const ProfileContentEditable = forwardRef<
     personalInfoFields,
     contactFields,
     addressFields,
-    updateField,
   } = useProfileForm();
 
-  const {
-    hasChanges,
-    handleSaveProfile,
-    handleResendPendingEmail,
-    isResendingEmail,
-  } = useProfileActions({onSaveComplete});
-
-  useImperativeHandle(ref, () => ({
-    saveProfile: handleSaveProfile,
-    hasChanges,
-  }));
-
-  useEffect(() => {
-    onFieldChange?.();
-  }, [profile, onFieldChange]);
+  const {handleResendPendingEmail, isResendingEmail} = useProfileActions({});
 
   if (!profileDetails) {
     return <EmptyState message="No profile information available" />;
@@ -114,10 +94,8 @@ export const ProfileContentEditable = forwardRef<
         </ThemedText>
         <InfoRowCard
           fields={personalInfoFields}
-          editable={isEditing}
+          editable={false}
           values={profile}
-          onFieldChange={updateField}
-          autoFocus
         />
       </View>
 
@@ -126,13 +104,7 @@ export const ProfileContentEditable = forwardRef<
         <ThemedText variant="headline" style={styles.sectionTitle}>
           Contact
         </ThemedText>
-        <InfoRowCard
-          fields={contactFields}
-          editable={isEditing}
-          values={profile}
-          onFieldChange={updateField}
-          autoFocus={false}
-        />
+        <InfoRowCard fields={contactFields} editable={false} values={profile} />
       </View>
 
       {/* Address */}
@@ -140,19 +112,11 @@ export const ProfileContentEditable = forwardRef<
         <ThemedText variant="headline" style={styles.sectionTitle}>
           Address
         </ThemedText>
-        <InfoRowCard
-          fields={addressFields}
-          editable={isEditing}
-          values={profile}
-          onFieldChange={updateField}
-          autoFocus={false}
-        />
+        <InfoRowCard fields={addressFields} editable={false} values={profile} />
       </View>
     </View>
   );
-});
-
-ProfileContentEditable.displayName = 'ProfileContentEditable';
+}
 
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
@@ -169,7 +133,6 @@ const createStyles = makeStyleFactory(
         zIndex: 100,
       },
       sectionTitle: {
-        // ...ds.typography.headline,
         paddingHorizontal: Platform.OS === 'web' ? 0 : ds.spacing.xl,
       },
       metaCard: {
@@ -189,7 +152,6 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.xs,
       },
       metaSupporting: {
-        // ...ds.typography.caption,
         opacity: ds.opacity.muted,
       },
       metaSeparator: {
