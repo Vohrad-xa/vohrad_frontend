@@ -1,7 +1,3 @@
-export type {
-  ProfileContentHandle,
-  ProfileContentProps,
-  SaveProfileOptions,
-} from './types';
-export {useProfileForm, useProfileActions} from './hooks';
-export {ProfileContentEditable as ProfileContent} from './views';
+export type {DatePickerContentHandle} from './views';
+export {useProfile, useProfileForm, useProfileActions} from './hooks';
+export {ProfileContent, DatePickerContent} from './views';
