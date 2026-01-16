@@ -122,7 +122,6 @@ function SettingsStack() {
     <ScreenLoadingWrapper>
       <Stack screenOptions={stackScreenOptions}>
         <Stack.Screen name="index" options={indexOptions} />
-        <Stack.Screen name="profile" options={{title: 'Profile'}} />
         <Stack.Screen
           name="preferences"
           options={{title: 'Preferences', headerBackButtonMenuEnabled: false}}
@@ -158,6 +157,8 @@ function SettingsStack() {
             }),
           }}
         />
+
+        <Stack.Screen name="profile" />
       </Stack>
     </ScreenLoadingWrapper>
   );
