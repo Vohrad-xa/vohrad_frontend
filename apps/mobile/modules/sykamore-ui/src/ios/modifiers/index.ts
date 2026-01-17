@@ -861,12 +861,17 @@ export const listSectionMargins = (params: {
  */
 export const font = (params: {
   /**
-   * Custom font family name.
-   * If provided, uses `Font.custom()`.
+   * Custom font family name (e.g., "Helvetica").
+   * When provided, uses Font.custom().
    */
   family?: string;
-  /** Font size in points. */
+
+  /**
+   * Font size in points.
+   * Note: Fixed sizes do NOT scale with Dynamic Type unless textStyle is also provided.
+   */
   size?: number;
+
   /** Font weight for system fonts. */
   weight?:
     | 'ultraLight'
@@ -878,8 +883,27 @@ export const font = (params: {
     | 'bold'
     | 'heavy'
     | 'black';
-  /** Font design for system fonts */
+
+  /** Font design for system fonts. */
   design?: 'default' | 'rounded' | 'serif' | 'monospaced';
+
+  /**
+   * Text style for Dynamic Type scaling.
+   * When provided without family: uses system font that scales with accessibility settings.
+   * When provided with family: used as relativeTo for custom font scaling.
+   */
+  textStyle?:
+    | 'largeTitle'
+    | 'title1'
+    | 'title2'
+    | 'title3'
+    | 'headline'
+    | 'subheadline'
+    | 'body'
+    | 'callout'
+    | 'footnote'
+    | 'caption'
+    | 'caption2';
 }) => createModifier('font', params);
 /**
  * Asks grid layouts not to offer the view extra size in the specified axes.

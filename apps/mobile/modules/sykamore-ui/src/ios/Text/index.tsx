@@ -11,7 +11,6 @@ export interface TextProps extends CommonViewModifierProps {
   children?: React.ReactNode;
   lineLimit?: number;
   textCase?: 'uppercase' | 'lowercase';
-  bold?: boolean;
   italic?: boolean;
   underline?: boolean;
   strikethrough?: boolean;

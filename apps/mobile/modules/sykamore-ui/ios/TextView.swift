@@ -2,34 +2,17 @@ import SwiftUI
 import ExpoModulesCore
 
 enum TextCase: String, Enumerable {
-  case uppercase = "uppercase"
-  case lowercase = "lowercase"
+  case uppercase, lowercase
 
   func toSwiftUI() -> SwiftUI.Text.Case {
     switch self {
-    case .uppercase: return .uppercase
-    case .lowercase: return .lowercase
+    case .uppercase: .uppercase
+    case .lowercase: .lowercase
     }
   }
 }
 
-// ViewModifiers for iOS 16+ text features
-struct BoldTextModifier: ViewModifier {
-  var enabled: Bool
-
-  @ViewBuilder
-  func body(content: Content) -> some View {
-    if enabled {
-      if #available(iOS 16.0, *) {
-        content.bold()
-      } else {
-        content
-      }
-    } else {
-      content
-    }
-  }
-}
+// MARK: - Text Modifiers
 
 struct ItalicTextModifier: ViewModifier {
   var enabled: Bool
@@ -150,11 +133,12 @@ struct BaselineOffsetTextModifier: ViewModifier {
   }
 }
 
+// MARK: - TextView
+
 internal final class TextViewProps: UIBaseViewProps {
   @Field var text: String = ""
   @Field var lineLimit: Int?
   @Field var textCase: TextCase?
-  @Field var bold: Bool = false
   @Field var italic: Bool = false
   @Field var underline: Bool = false
   @Field var strikethrough: Bool = false
@@ -174,7 +158,6 @@ internal struct TextView: ExpoSwiftUI.View {
       .if(props.textCase != nil) { text in
         text.textCase(props.textCase?.toSwiftUI())
       }
-      .modifier(BoldTextModifier(enabled: props.bold))
       .modifier(ItalicTextModifier(enabled: props.italic))
       .modifier(UnderlineTextModifier(enabled: props.underline))
       .modifier(StrikethroughTextModifier(enabled: props.strikethrough))
