@@ -1,3 +1,4 @@
+import {tint} from '@/modules/sykamore-ui/src';
 import {generateVersion} from '../utils/versioning';
 
 export const Palette = {
@@ -22,7 +23,7 @@ export const Palette = {
   seaBlue: '#67abffa8',
   indigo: '#4F46E5',
   green: '#36ba06ff',
-  orange: '#FF9500',
+  orange: '#ffaa00',
   red: '#ef4444',
   redDark: '#dc2626',
   purple: '#6a24c4ff',
@@ -55,6 +56,7 @@ const _Tokens = {
     sidebarBackground: Palette.modalground,
     backdrop: 'rgba(0, 0, 0, 0.5)',
     text: '#11181C',
+    tint: Palette.blue,
 
     // Accents
     accentBlue: Palette.blue,
@@ -96,6 +98,7 @@ const _Tokens = {
     sidebarBackground: '#0e0d0dff',
     backdrop: 'rgba(0, 0, 0, 0.5)',
     text: '#ECEDEE',
+    tint: Palette.mushroom,
 
     // Accents
     accentBlue: Palette.blue,

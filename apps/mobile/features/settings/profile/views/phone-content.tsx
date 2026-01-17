@@ -25,7 +25,7 @@ export type PhoneContentHandle = {
 
 export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
   const {phoneNumber, updatePhoneNumber} = useProfile();
-  const {ds} = useTheme();
+  const {ds, theme} = useTheme();
 
   const [phoneValue, setPhoneValue] = useState(phoneNumber);
   const [isEditing, setIsEditing] = useState(false);
@@ -46,11 +46,11 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
     <Host style={{flex: 1}}>
       <Form>
         <Section>
-          <VStack alignment="leading" spacing={ds.spacing.md}>
+          <VStack alignment="leading" spacing={ds.spacing.lg}>
             <Icon
               useSwiftUI
               name={'phone.badge.checkmark' as IconName}
-              color={Palette.blue}
+              color={theme.tint}
               size="xxl"
             />
             <Text

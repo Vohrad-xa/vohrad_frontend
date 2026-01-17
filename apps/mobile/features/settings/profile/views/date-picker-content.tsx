@@ -1,5 +1,4 @@
 import {useState, forwardRef, useImperativeHandle, useCallback} from 'react';
-import {Palette} from '@/constants';
 import {
   Host,
   HStack,
@@ -39,11 +38,7 @@ export const DatePickerContent = forwardRef<DatePickerContentHandle>(
             <HStack>
               <Text>Date of Birth</Text>
               <Spacer />
-              <Text
-                modifiers={[
-                  foregroundStyle({styleType: 'color', color: Palette.blue}),
-                ]}
-              >
+              <Text modifiers={[foregroundStyle('secondary')]}>
                 {formatDate(selectedDate.toISOString())}
               </Text>
             </HStack>

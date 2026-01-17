@@ -2,6 +2,7 @@ import {type RefObject, useCallback, useLayoutEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {router} from 'expo-router';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';
+import {Palette} from '@/constants';
 
 /**
  * Generic handle interface for profile content components.
@@ -43,7 +44,8 @@ export function useProfileHeader({contentRef}: UseProfileHeaderOptions) {
           label: 'Save',
           iosSymbol: 'checkmark',
           icon: 'content-save',
-          variant: 'prominent',
+          variant: 'done',
+          tintColor: Palette.orange,
           onPress: handleSave,
         },
       ],

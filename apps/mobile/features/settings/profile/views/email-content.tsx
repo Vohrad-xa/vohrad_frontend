@@ -22,6 +22,7 @@ import {
   VStack,
   type TextFieldRef,
   LabeledContent,
+  tint,
 } from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers';
 import {AppIcons, Icon, formatDate, type IconName} from '@/utils';
@@ -35,7 +36,7 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
   const {email, pendingEmail, pendingEmailExpiresAt, updateEmail} =
     useProfile();
 
-  const {ds} = useTheme();
+  const {ds, theme} = useTheme();
 
   const textFieldRef = useRef<TextFieldRef>(null);
 
@@ -69,13 +70,23 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
     <Host style={{flex: 1}}>
       <Form>
         <Section>
-          <VStack alignment="leading" spacing={ds.spacing.xl}>
+          <VStack alignment="leading" spacing={ds.spacing.lg}>
             <Icon
               useSwiftUI
               name={'envelope' as IconName}
               size="xxl"
-              color={Palette.blue}
+              color={theme.tint}
             />
+            <Text
+              modifiers={[
+                font({
+                  size: ds.typography.ios.title3.baseSize,
+                  weight: 'semibold',
+                }),
+              ]}
+            >
+              Email Address
+            </Text>
 
             <Text
               baselineOffset={ds.spacing.xs}
@@ -94,7 +105,7 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
           </VStack>
         </Section>
 
-        <Section title="Email Address">
+        <Section title="Primary">
           <HStack>
             <TextField
               ref={textFieldRef}
@@ -122,7 +133,7 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
 
         {pendingEmail && (
           <Section
-            title="New Email"
+            title="New"
             footer={
               <Text>
                 A verification link has been sent to {pendingEmail}
@@ -137,10 +148,10 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
                 <Text
                   modifiers={[
                     font({
-                      size: ds.typography.ios.footnote.baseSize,
+                      size: ds.typography.ios.subheadline.baseSize,
                       family: 'system',
                     }),
-                    foregroundStyle('orange'),
+                    foregroundStyle(Palette.mushroom),
                   ]}
                 >
                   Pending
@@ -148,7 +159,7 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
                 <Icon
                   useSwiftUI
                   name={AppIcons.status.pending}
-                  color={Palette.orange}
+                  color={Palette.mushroom}
                   size="xs"
                 />
               </HStack>

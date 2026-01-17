@@ -8,6 +8,7 @@ import {
 } from 'expo-router/unstable-native-tabs';
 import {useTheme} from '@/providers';
 import type {SFSymbol} from 'expo-symbols';
+import {Palette} from '@/constants';
 
 type TabName = 'dashboard' | 'items' | 'vault' | 'settings';
 
@@ -62,15 +63,18 @@ export default function TabLayout() {
       minimizeBehavior="automatic"
       labelStyle={{
         default: {color: theme.text},
-        selected: {color: theme.accentBlue},
+        selected: {color: Palette.blue},
       }}
       backBehavior="initialRoute"
+      tintColor={theme.tint}
     >
       {TABS.map((t) => (
         <NativeTabs.Trigger
           key={t.name}
           name={t.name}
-          options={{selectedIconColor: theme.accentBlue}}
+          options={{
+            selectedIconColor: Palette.blue,
+          }}
         >
           {Platform.OS === 'ios' ? (
             <Icon sf={t.iosSymbol as IconSfProp} />
