@@ -8,9 +8,10 @@ import {
   background,
   clipShape,
   Image,
-  padding,
+  font,
+  foregroundStyle,
+  frame,
   type ViewModifier,
-  type font,
 } from 'sykamore-ui/ios';
 
 export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
@@ -100,15 +101,16 @@ export const Icon: React.FC<IconProps> = ({
   }
 
   const a11yModifier = a11yLabel ? [accessibilityLabel(a11yLabel)] : [];
+  const tile = 28;
 
   if (container && useSwiftUI) {
     return (
       <Image
-        color={Palette.white}
-        size={resolvedSize}
         systemName={name}
         modifiers={[
-          padding({all: 2}),
+          font({size: resolvedSize, weight: fontWeight}),
+          foregroundStyle(Palette.white),
+          frame({width: tile, height: tile}),
           background(resolvedTintColor ?? theme.card),
           clipShape('roundedRectangle'),
           ...a11yModifier,
@@ -119,10 +121,13 @@ export const Icon: React.FC<IconProps> = ({
 
   return (
     <Image
-      color={resolvedTintColor}
       systemName={name}
-      size={resolvedSize}
-      modifiers={[...a11yModifier, ...(externalModifiers ?? [])]}
+      modifiers={[
+        font({size: resolvedSize, weight: fontWeight}),
+        foregroundStyle(resolvedTintColor ?? theme.icon),
+        ...a11yModifier,
+        ...(externalModifiers ?? []),
+      ]}
     />
   );
 };
@@ -143,7 +148,7 @@ export const AppIcons = {
     home: 'house.fill',
     vault: 'tray.full.fill',
     settings: 'gear',
-    profile: 'person.crop.circle.fill',
+    profile: 'person.crop.circle',
     item: 'square.grid.2x2.fill',
     notifications: 'bell',
   },
@@ -176,10 +181,10 @@ export const AppIcons = {
     vault: 'internaldrive',
     search: 'magnifyingglass',
     supplier: 'cart',
-    organization: 'briefcase.circle.fill',
+    organization: 'briefcase.circle',
     maintenance: 'wrench',
     support: 'questionmark.circle',
-    userManagement: 'person.2.circle.fill',
+    userManagement: 'person.2.circle',
   },
 
   files: {
@@ -203,20 +208,20 @@ export const AppIcons = {
     success: 'checkmark.circle',
     warning: 'exclamationmark.triangle',
     error: 'exclamationmark.circle',
-    info: 'info.circle.fill',
-    help: 'questionmark.circle.fill',
+    info: 'info.circle',
+    help: 'questionmark.circle',
     time: 'clock',
     pending: 'clock',
   },
 
   preferences: {
-    settings: 'slider.horizontal.2.square',
+    settings: 'slider.horizontal.2.gobackward',
     appearance: 'circle.lefthalf.filled',
     biometric: 'faceid',
     haptic: 'hand.tap.fill',
-    language: 'globe.europe.africa.fill',
+    language: 'globe.europe.africa',
     privacy: 'hand.raised.fill',
-    terms: 'doc.text.fill',
+    terms: 'doc.circle',
     plan: 'creditcard.circle.fill',
   },
 

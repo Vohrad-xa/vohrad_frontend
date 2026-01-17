@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "sykamore",
-    "slug": "sykamore-app",
+    "slug": "sykamore",
     "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icons/android/playstore-512.png",
@@ -71,7 +71,9 @@
         }
       ]
     ],
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "developmentClient": {
       "silentLaunch": true
     },
@@ -83,10 +85,10 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "82b7131e-841a-46c9-970b-4426291c6480"
+        "projectId": "f447d0d9-933a-4b9e-a34f-e76682887ab4"
       }
     },
-    "owner": "sykamore-app",
+    "owner": "amineabb",
     "updates": {
       "url": "https://u.expo.dev/82b7131e-841a-46c9-970b-4426291c6480"
     }

@@ -196,8 +196,7 @@ export function ProfileContent() {
                 modifiers={[
                   foregroundStyle({styleType: 'color', color: 'white'}),
                   font({
-                    size: ds.typography.ios.largeTitle.baseSize,
-                    design: 'rounded',
+                    textStyle: 'largeTitle',
                     weight: 'semibold',
                   }),
                   accessibilityLabel(`Profile initials: ${initials}`),
@@ -210,7 +209,7 @@ export function ProfileContent() {
             <Text
               modifiers={[
                 font({
-                  size: ds.typography.ios.title1.baseSize,
+                  textStyle: 'title1',
                   weight: 'semibold',
                 }),
               ]}
@@ -221,13 +220,10 @@ export function ProfileContent() {
             <Text
               modifiers={[
                 font({
-                  size: ds.typography.ios.subheadline.baseSize,
+                  textStyle: 'subheadline',
                   weight: 'medium',
                 }),
-                foregroundStyle({
-                  styleType: 'hierarchical',
-                  hierarchicalStyle: 'secondary',
-                }),
+                foregroundStyle('secondary'),
               ]}
             >
               Since {memberSinceText}
@@ -236,13 +232,10 @@ export function ProfileContent() {
             <Text
               modifiers={[
                 font({
-                  size: ds.typography.ios.subheadline.baseSize,
+                  textStyle: 'subheadline',
                   weight: 'medium',
                 }),
-                foregroundStyle({
-                  styleType: 'hierarchical',
-                  hierarchicalStyle: 'secondary',
-                }),
+                foregroundStyle('secondary'),
               ]}
             >
               {roleText}

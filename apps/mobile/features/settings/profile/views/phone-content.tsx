@@ -1,5 +1,4 @@
 import {useState, forwardRef, useImperativeHandle, useCallback} from 'react';
-import {Palette} from '@/constants';
 import {
   Host,
   Form,
@@ -50,8 +49,8 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
             <Icon
               useSwiftUI
               name={'phone.badge.checkmark' as IconName}
-              color={theme.tint}
-              size="xxl"
+              colorToken="tint"
+              size="xxxl"
             />
             <Text
               modifiers={[
@@ -64,10 +63,9 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
               {phoneNumber || 'No phone number'}
             </Text>
             <Text
-              baselineOffset={ds.spacing.xs}
               modifiers={[
                 font({
-                  family: 'system',
+                  textStyle: 'body',
                 }),
                 foregroundStyle('secondary'),
               ]}

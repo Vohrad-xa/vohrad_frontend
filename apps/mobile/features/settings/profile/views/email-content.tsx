@@ -22,7 +22,6 @@ import {
   VStack,
   type TextFieldRef,
   LabeledContent,
-  tint,
 } from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers';
 import {AppIcons, Icon, formatDate, type IconName} from '@/utils';
@@ -74,13 +73,13 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
             <Icon
               useSwiftUI
               name={'envelope' as IconName}
-              size="xxl"
-              color={theme.tint}
+              size="xxxl"
+              colorToken="tint"
             />
             <Text
               modifiers={[
                 font({
-                  size: ds.typography.ios.title3.baseSize,
+                  textStyle: 'title2',
                   weight: 'semibold',
                 }),
               ]}
@@ -89,12 +88,9 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
             </Text>
 
             <Text
-              baselineOffset={ds.spacing.xs}
               modifiers={[
                 font({
-                  size: ds.typography.ios.body.baseSize,
-                  family: 'system',
-                  design: 'rounded',
+                  textStyle: 'body',
                 }),
                 foregroundStyle('secondary'),
               ]}

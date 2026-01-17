@@ -48,7 +48,7 @@ export function FilterContent() {
                     setCardVisibility(visibilityKey, value)
                   }
                   label={card.title}
-                  systemImage={card.icon as SFSymbol}
+                  systemImage={card.icon}
                 />
               );
             })}
