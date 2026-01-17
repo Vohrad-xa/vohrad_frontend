@@ -40,17 +40,17 @@ const TABS: readonly TabConfig[] = [
     },
   },
   {
+    name: 'settings',
+    title: 'Settings',
+    androidIcon: 'cog',
+    iosSymbol: {default: 'gear.circle', selected: 'gear'},
+  },
+  {
     name: 'vault',
     title: 'Vault',
     androidIcon: 'folder',
     iosSymbol: {default: 'internaldrive', selected: 'internaldrive.fill'},
     role: 'search',
-  },
-  {
-    name: 'settings',
-    title: 'Settings',
-    androidIcon: 'cog',
-    iosSymbol: {default: 'gear.circle', selected: 'gear'},
   },
 ];
 

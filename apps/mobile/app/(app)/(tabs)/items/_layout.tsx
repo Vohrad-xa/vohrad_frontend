@@ -103,7 +103,6 @@ function ItemsStack() {
         headerTransparent: Platform.OS === 'ios',
         headerTitleAlign: 'left' as const,
         headerTitleStyle: {
-          fontWeight: ds.fontWeight.bold,
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },
         contentStyle: {
@@ -112,16 +111,8 @@ function ItemsStack() {
               ? insets.bottom + ds.layout.tabBarHeight
               : 0,
         },
-        headerLargeTitleStyle: {
-          fontWeight: ds.fontWeight.bold,
-        },
       }) satisfies NativeStackNavigationOptions,
-    [
-      ds.fontWeight.bold,
-      theme.headerAndroid,
-      ds.layout.tabBarHeight,
-      insets.bottom,
-    ],
+    [theme.headerAndroid, ds.layout.tabBarHeight, insets.bottom],
   );
 
   const indexOptions = useMemo(

@@ -147,8 +147,8 @@ export type ThemeColorTokenName = Exclude<TokenName, 'version'>;
 const NavigationFonts = {
   regular: {fontFamily: 'System', fontWeight: '400' as const},
   medium: {fontFamily: 'System', fontWeight: '500' as const},
-  bold: {fontFamily: 'System', fontWeight: '700' as const},
-  heavy: {fontFamily: 'System', fontWeight: '800' as const},
+  bold: {fontFamily: 'System', fontWeight: '600' as const},
+  heavy: {fontFamily: 'System', fontWeight: '700' as const},
 } as const;
 
 export const NavigationThemes = {
