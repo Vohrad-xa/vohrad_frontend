@@ -5,6 +5,7 @@ import {
   Icon,
   Label,
   VectorIcon,
+  type NativeTabTriggerProps,
 } from 'expo-router/unstable-native-tabs';
 import {useTheme} from '@/providers';
 import type {SFSymbol} from 'expo-symbols';
@@ -16,7 +17,8 @@ type TabConfig = {
   name: TabName;
   title: string;
   androidIcon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
-  iosSymbol: SFSymbol | {default: SFSymbol; selected: SFSymbol};
+  iosSymbol?: SFSymbol | {default: SFSymbol; selected: SFSymbol};
+  role?: NativeTabTriggerProps['role'];
 };
 
 type IconSfProp = SFSymbol | {default: SFSymbol; selected: SFSymbol};
@@ -42,6 +44,7 @@ const TABS: readonly TabConfig[] = [
     title: 'Vault',
     androidIcon: 'folder',
     iosSymbol: {default: 'internaldrive', selected: 'internaldrive.fill'},
+    role: 'search',
   },
   {
     name: 'settings',
@@ -60,7 +63,7 @@ export default function TabLayout() {
       backgroundColor={theme.sidebarBackground}
       iconColor={{default: theme.text}}
       indicatorColor={theme.ripple}
-      minimizeBehavior="automatic"
+      minimizeBehavior="onScrollDown"
       labelStyle={{
         default: {color: theme.text},
         selected: {color: Palette.blue},
@@ -75,6 +78,7 @@ export default function TabLayout() {
           options={{
             selectedIconColor: Palette.blue,
           }}
+          role={t.role}
         >
           {Platform.OS === 'ios' ? (
             <Icon sf={t.iosSymbol as IconSfProp} />

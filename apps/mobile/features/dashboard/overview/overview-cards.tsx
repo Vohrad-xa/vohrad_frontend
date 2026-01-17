@@ -44,7 +44,7 @@ export function OverviewCards({
         case 'Items':
           router.push('/(app)/(tabs)/items');
           break;
-        case 'Attachments':
+        case 'Vault':
           router.push('/(app)/(tabs)/vault');
           break;
         // Other navigation cases
@@ -66,7 +66,9 @@ export function OverviewCards({
   return (
     <>
       <View style={styles.overviewHeader}>
-        <ThemedText variant="headline">Overview</ThemedText>
+        <ThemedText variant="title3" fontWeight="semibold">
+          Overview
+        </ThemedText>
         <View style={styles.headerRight}>
           {hasActiveFilters && (
             <ThemedText variant="body" style={styles.filterStatus}>
@@ -219,7 +221,7 @@ const createStyles = makeStyleFactory(
       },
       cardContent: {
         flex: 1,
-        padding: ds.spacing.md,
+        padding: ds.spacing.lg,
         flexDirection: 'column',
         justifyContent: 'space-between',
       },
@@ -238,8 +240,8 @@ const createStyles = makeStyleFactory(
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: ds.components.card.borderRadius,
-        width: ds.iconSize.md * 2,
-        height: ds.iconSize.md * 2,
+        width: ds.iconSize.md * 2.2,
+        height: ds.iconSize.md * 2.2,
       },
     });
   },

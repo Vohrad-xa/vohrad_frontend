@@ -128,9 +128,10 @@ export const AppIcons = {
   },
 
   features: {
-    item: 'card-multiple-outline',
+    item: 'view-dashboard',
     category: 'view-grid-outline',
     location: 'map-marker-radius-outline',
+    vault: 'folder-outline',
     search: 'magnify',
     supplier: 'cart-outline',
     organization: 'briefcase-variant',

@@ -51,9 +51,9 @@ const CARD_CONFIG: DashboardCardConfig[] = [
   },
   {
     key: 'attachments',
-    title: 'Attachments',
-    icon: AppIcons.files.document,
-    colorToken: 'accentOrange',
+    title: 'Vault',
+    icon: AppIcons.features.vault,
+    colorToken: 'accentBlue',
   },
 ];
 

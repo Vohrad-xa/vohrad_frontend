@@ -170,9 +170,10 @@ export const AppIcons = {
   },
 
   features: {
-    item: 'rectangle.stack',
+    item: 'rectangle.3.group',
     category: 'square.grid.2x2',
     location: 'location',
+    vault: 'internaldrive',
     search: 'magnifyingglass',
     supplier: 'cart',
     organization: 'briefcase.circle.fill',
