@@ -47,7 +47,7 @@ const menuItems: MenuItemType[] = [
   {icon: AppIcons.features.location, label: 'Locations'},
   {icon: AppIcons.files.document, label: 'Documents'},
   {icon: AppIcons.features.supplier, label: 'Suppliers'},
-  {icon: AppIcons.tabs.notifications, label: 'Events'},
+  {icon: AppIcons.ui.notifications, label: 'Events'},
   {icon: AppIcons.files.print, label: 'Labels'},
   {icon: AppIcons.features.category, label: 'Categories'},
 ];

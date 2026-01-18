@@ -142,15 +142,19 @@ export const AppIcons = {
     chevronLeft: 'chevron.left',
     filter: 'equal',
     chevronUpDown: 'chevron.up.chevron.down',
+    notifications: 'bell',
   },
 
   tabs: {
     home: 'house.fill',
-    vault: 'tray.full.fill',
+    homeOutline: 'house',
+    vault: 'internaldrive',
+    vaultOutline: 'internaldrive.fill',
     settings: 'gear',
+    settingsOutline: 'gear.circle',
     profile: 'person.crop.circle',
-    item: 'square.grid.2x2.fill',
-    notifications: 'bell',
+    item: 'rectangle.3.group',
+    itemOutline: 'rectangle.3.offgrid.fill',
   },
 
   actions: {

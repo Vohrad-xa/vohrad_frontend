@@ -199,7 +199,6 @@ export function useAttachmentsHeader({
         isSelectionMode && selectedCount > 0
           ? `${selectedCount} selected`
           : title,
-      headerTitleAlign: isSelectionMode ? 'center' : 'left',
     });
   }, [
     navigation,

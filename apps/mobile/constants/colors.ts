@@ -57,6 +57,7 @@ const _Tokens = {
     backdrop: 'rgba(0, 0, 0, 0.5)',
     text: '#11181C',
     tint: Palette.blue,
+    tint2: Palette.bluepurple,
 
     // Accents
     accentBlue: Palette.blue,
@@ -99,6 +100,7 @@ const _Tokens = {
     backdrop: 'rgba(0, 0, 0, 0.5)',
     text: '#ECEDEE',
     tint: Palette.mushroom,
+    tint2: Palette.lightBlue,
 
     // Accents
     accentBlue: Palette.blue,

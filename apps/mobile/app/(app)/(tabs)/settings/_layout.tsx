@@ -78,14 +78,8 @@ function SettingsStack() {
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },
-        contentStyle: {
-          paddingBottom:
-            Platform.OS === 'android'
-              ? insets.bottom + ds.layout.tabBarHeight
-              : 0,
-        },
       }) satisfies NativeStackNavigationOptions,
-    [theme.headerAndroid, ds.layout.tabBarHeight, insets.bottom],
+    [theme.headerAndroid],
   );
 
   const indexOptions = useMemo(
