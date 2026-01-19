@@ -101,7 +101,7 @@ export default function TabLayout() {
           show: {animation: 'spring', config: {stiffness: 400, damping: 40}},
         },
         animation: 'fade',
-        transitionSpec: {animation: 'timing', config: {duration: 160}},
+        transitionSpec: {animation: 'timing', config: {duration: 80}},
         lazy: true,
         freezeOnBlur: true,
       }}
