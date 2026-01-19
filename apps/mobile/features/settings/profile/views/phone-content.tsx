@@ -24,7 +24,7 @@ export type PhoneContentHandle = {
 
 export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
   const {phoneNumber, updatePhoneNumber} = useProfile();
-  const {ds, theme} = useTheme();
+  const {ds} = useTheme();
 
   const [phoneValue, setPhoneValue] = useState(phoneNumber);
   const [isEditing, setIsEditing] = useState(false);

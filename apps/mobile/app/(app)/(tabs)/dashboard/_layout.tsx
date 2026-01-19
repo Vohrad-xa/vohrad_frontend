@@ -8,7 +8,7 @@ export const unstable_settings = {
 };
 
 export default function HomeLayout() {
-  const {theme, ds} = useTheme();
+  const {theme} = useTheme();
   const {toggleSideMenu} = useSidebar();
 
   return (

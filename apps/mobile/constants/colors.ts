@@ -1,4 +1,3 @@
-import {tint} from '@/modules/sykamore-ui/src';
 import {generateVersion} from '../utils/versioning';
 
 export const Palette = {

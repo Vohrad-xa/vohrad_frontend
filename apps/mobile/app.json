@@ -7,6 +7,7 @@
     "icon": "./assets/icons/android/playstore-512.png",
     "scheme": "mobile",
     "userInterfaceStyle": "automatic",
+    "jsEngine": "hermes",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
@@ -47,6 +48,16 @@
       "expo-router",
       "expo-camera",
       [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true,
+            "buildArchs": ["arm64-v8a", "x86_64"]
+          }
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/icons/web/icon-512x512.png",
@@ -65,15 +76,18 @@
       [
         "react-native-share",
         {
-          "ios": [],
-          "android": [],
+          "ios": ["fb", "tg", "telegram", "ms-outlook", "mailto", "sgnl"],
+          "android": [
+            "com.facebook.katana",
+            "org.telegram.messenger",
+            "com.microsoft.office.outlook",
+            "org.thoughtcrime.securesms"
+          ],
           "enableBase64ShareAndroid": true
         }
       ]
     ],
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "developmentClient": {
       "silentLaunch": true
     },
@@ -90,7 +104,9 @@
     },
     "owner": "amineabb",
     "updates": {
-      "url": "https://u.expo.dev/82b7131e-841a-46c9-970b-4426291c6480"
+      "url": "https://u.expo.dev/82b7131e-841a-46c9-970b-4426291c6480",
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
     }
   }
 }

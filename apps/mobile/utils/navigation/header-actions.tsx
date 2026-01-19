@@ -1,6 +1,7 @@
 import React from 'react';
 import {Platform, View, StyleSheet} from 'react-native';
 import {IconButton, Badge} from 'react-native-paper';
+import {useTheme} from '@/providers/theme-provider';
 import type {ParamListBase} from '@react-navigation/native';
 import type {
   NativeStackHeaderItem,
@@ -166,7 +167,7 @@ export type HeaderActionsConfig = {
 };
 
 const styles = StyleSheet.create({
-  row: {flexDirection: 'row', alignItems: 'center', gap: 4},
+  row: {flexDirection: 'row', alignItems: 'center', gap: 2},
   iconBtn: {margin: 0},
   selected: {opacity: 0.5},
   badgeWrap: {position: 'relative'},
@@ -230,6 +231,8 @@ function assertValidActions(left?: HeaderAction[], right?: HeaderAction[]) {
 }
 
 function ActionsRow({actions}: {actions: HeaderAction[]}) {
+  const {theme} = useTheme();
+
   return (
     <View style={styles.row}>
       {actions.map((a) => {
@@ -247,7 +250,7 @@ function ActionsRow({actions}: {actions: HeaderAction[]}) {
               icon={a.icon ?? 'dots-vertical'}
               onPress={disabled ? undefined : a.onPress}
               disabled={disabled}
-              iconColor={a.tintColor}
+              iconColor={a.tintColor ?? theme.icon}
               style={styles.iconBtn}
               accessibilityLabel={a.accessibilityLabel ?? a.label}
               accessibilityHint={a.accessibilityHint}
@@ -263,7 +266,7 @@ function ActionsRow({actions}: {actions: HeaderAction[]}) {
             icon={a.icon ?? 'dots-vertical'}
             onPress={disabled ? undefined : a.onPress}
             disabled={disabled}
-            iconColor={a.tintColor}
+            iconColor={a.tintColor ?? theme.icon}
             style={[styles.iconBtn, a.selected && styles.selected]}
             accessibilityLabel={a.accessibilityLabel ?? a.label}
             accessibilityHint={a.accessibilityHint}

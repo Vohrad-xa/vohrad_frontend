@@ -1,100 +1,145 @@
-import {Platform} from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {useEffect, useRef} from 'react';
+import {Platform, StyleSheet} from 'react-native';
+import {Tabs, useSegments} from 'expo-router';
 import {
   NativeTabs,
-  Icon,
+  Icon as SFSymbol,
   Label,
-  VectorIcon,
-  type NativeTabTriggerProps,
+  type IconProps,
 } from 'expo-router/unstable-native-tabs';
-import {useTheme} from '@/providers';
-import type {SFSymbol} from 'expo-symbols';
-import {Palette} from '@/constants';
 
-type TabName = 'dashboard' | 'items' | 'vault' | 'settings';
+import {Palette} from '@/constants';
+import {type DSShape, type ThemeShape, themeKey} from '@/constants';
+import {useHaptic, useTheme} from '@/providers';
+import {AppIcons, Icon, makeStyleFactory, type IconName} from '@/utils';
+
+const TAB_NAMES = ['dashboard', 'items', 'vault', 'settings'] as const;
+type TabName = (typeof TAB_NAMES)[number];
+type TabsRoute = `/(app)/(tabs)/${TabName}`;
 
 type TabConfig = {
   name: TabName;
   title: string;
-  androidIcon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
-  iosSymbol?: SFSymbol | {default: SFSymbol; selected: SFSymbol};
-  role?: NativeTabTriggerProps['role'];
+  icon: {default: IconName; selected: IconName};
 };
 
-type IconSfProp = SFSymbol | {default: SFSymbol; selected: SFSymbol};
+type Sf = IconProps['sf'];
+
+const INITIAL_TAB: TabName = 'dashboard';
+export const unstable_settings = {initialRouteName: INITIAL_TAB} as const;
+
+const TAB_SET = new Set<string>(TAB_NAMES);
+function isTabName(v: string | undefined): v is TabName {
+  return typeof v === 'string' && TAB_SET.has(v);
+}
 
 const TABS: readonly TabConfig[] = [
   {
     name: 'dashboard',
     title: 'Dashboard',
-    androidIcon: 'home',
-    iosSymbol: {default: 'house', selected: 'house.fill'},
+    icon: {default: AppIcons.tabs.homeOutline, selected: AppIcons.tabs.home},
   },
   {
     name: 'items',
     title: 'Items',
-    androidIcon: 'view-dashboard',
-    iosSymbol: {
-      default: 'rectangle.3.group',
-      selected: 'rectangle.3.offgrid.fill',
-    },
-  },
-  {
-    name: 'settings',
-    title: 'Settings',
-    androidIcon: 'cog',
-    iosSymbol: {default: 'gear.circle', selected: 'gear'},
+    icon: {default: AppIcons.tabs.itemOutline, selected: AppIcons.tabs.item},
   },
   {
     name: 'vault',
     title: 'Vault',
-    androidIcon: 'folder',
-    iosSymbol: {default: 'internaldrive', selected: 'internaldrive.fill'},
-    role: 'search',
+    icon: {default: AppIcons.tabs.vaultOutline, selected: AppIcons.tabs.vault},
+  },
+  {
+    name: 'settings',
+    title: 'Settings',
+    icon: {
+      default: AppIcons.tabs.settingsOutline,
+      selected: AppIcons.tabs.settings,
+    },
   },
 ];
 
 export default function TabLayout() {
-  const {theme} = useTheme();
+  const segments = useSegments<TabsRoute>();
+  const {triggerHaptic} = useHaptic();
+  const {theme, ds} = useTheme();
+  const prev = useRef<TabName | null>(null);
+  const styles = createStyles(ds, theme);
+
+  useEffect(() => {
+    if (segments[1] !== '(tabs)') return;
+
+    const active: TabName = isTabName(segments[2]) ? segments[2] : INITIAL_TAB;
+
+    if (prev.current && prev.current !== active) triggerHaptic('light');
+    prev.current = active;
+  }, [segments, triggerHaptic]);
+
+  if (Platform.OS === 'ios') {
+    return (
+      <NativeTabs minimizeBehavior="automatic" tintColor={theme.tint}>
+        {TABS.map((t) => (
+          <NativeTabs.Trigger key={t.name} name={t.name}>
+            <SFSymbol sf={t.icon as Sf} selectedColor={Palette.blue} />
+            <Label>{t.title}</Label>
+          </NativeTabs.Trigger>
+        ))}
+      </NativeTabs>
+    );
+  }
 
   return (
-    <NativeTabs
-      labelVisibilityMode="labeled"
-      backgroundColor={theme.sidebarBackground}
-      iconColor={{default: theme.text}}
-      indicatorColor={theme.ripple}
-      minimizeBehavior="onScrollDown"
-      labelStyle={{
-        default: {color: theme.text},
-        selected: {color: Palette.blue},
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: theme.tint2,
+        tabBarInactiveTintColor: theme.text,
+        tabBarLabelStyle: styles.label,
+        tabBarStyle: styles.bar,
+        tabBarHideOnKeyboard: true,
+        tabBarVisibilityAnimationConfig: {
+          show: {animation: 'spring', config: {stiffness: 400, damping: 40}},
+        },
+        animation: 'fade',
+        transitionSpec: {animation: 'timing', config: {duration: 160}},
+        lazy: true,
+        freezeOnBlur: true,
       }}
-      backBehavior="initialRoute"
-      tintColor={theme.tint}
     >
       {TABS.map((t) => (
-        <NativeTabs.Trigger
+        <Tabs.Screen
           key={t.name}
           name={t.name}
           options={{
-            selectedIconColor: Palette.blue,
+            title: t.title,
+            tabBarIcon: ({color, focused}) => (
+              <Icon
+                name={focused ? t.icon.selected : t.icon.default}
+                color={color}
+                size={ds.iconSize.md}
+              />
+            ),
           }}
-          role={t.role}
-        >
-          {Platform.OS === 'ios' ? (
-            <Icon sf={t.iosSymbol as IconSfProp} />
-          ) : (
-            <Icon
-              src={
-                <VectorIcon
-                  family={MaterialCommunityIcons}
-                  name={t.androidIcon}
-                />
-              }
-            />
-          )}
-          <Label>{t.title}</Label>
-        </NativeTabs.Trigger>
+        />
       ))}
-    </NativeTabs>
+    </Tabs>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      bar: {
+        backgroundColor: theme.background,
+        elevation: 0,
+        shadowOpacity: 0,
+        paddingHorizontal: ds.spacing.lg,
+      },
+      label: {
+        fontSize: 10,
+        fontWeight: ds.fontWeight.medium,
+        letterSpacing: 0.2,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);

@@ -35,7 +35,7 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
   const {email, pendingEmail, pendingEmailExpiresAt, updateEmail} =
     useProfile();
 
-  const {ds, theme} = useTheme();
+  const {ds} = useTheme();
 
   const textFieldRef = useRef<TextFieldRef>(null);
 

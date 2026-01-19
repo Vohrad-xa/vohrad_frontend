@@ -9,7 +9,6 @@ import {
 import {Platform} from 'react-native';
 import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {Stack} from 'expo-router';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {HeaderButton} from '@/components/ui';
 import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme, useSidebar} from '@/providers';
@@ -57,8 +56,7 @@ function ItemChangesProvider({children}: {children: ReactNode}) {
 }
 
 function ItemsStack() {
-  const insets = useSafeAreaInsets();
-  const {theme, ds} = useTheme();
+  const {theme} = useTheme();
   const {toggleSideMenu} = useSidebar();
   const {setSearchQuery} = useSearch();
 

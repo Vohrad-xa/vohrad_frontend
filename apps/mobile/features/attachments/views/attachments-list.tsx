@@ -1,5 +1,5 @@
 import {useCallback, useMemo, memo, useState, useRef, useEffect} from 'react';
-import {Animated, Platform, StyleSheet, View, Pressable} from 'react-native';
+import {Animated, Platform, Pressable, StyleSheet, View} from 'react-native';
 import {useHeaderHeight} from '@react-navigation/elements';
 import {FlashList} from '@shopify/flash-list';
 import {type ItemAttachment} from '@sykamore/types';
@@ -82,7 +82,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
     checkboxColor,
     checkboxTranslateX,
     contentTranslateX,
-    rippleColor,
+    // rippleColor,
   }) => {
     const {uiTitle, uiDescription, fileIcon, thumbnailSource} = useMemo(() => {
       const title = item.original_filename ?? item.filename ?? 'Untitled';
@@ -139,17 +139,15 @@ const AttachmentItem = memo<AttachmentItemProps>(
         onPress={handlePress}
         onLongPress={onLongPressRow ? handleLongPress : undefined}
         accessibilityRole="button"
-        delayLongPress={500}
+        // delayLongPress={500}
         focusable
         style={({pressed}) => [
           styles.content,
           selectionVisible ? styles.contentSelection : null,
           isSelected ? styles.contentSelected : null,
-          pressed && Platform.OS === 'ios' && !selectionVisible
-            ? styles.contentPressed
-            : null,
+          pressed && !selectionVisible ? styles.contentPressed : null,
         ]}
-        android_ripple={{color: rippleColor, foreground: true}}
+        // android_ripple={{color: rippleColor, foreground: true}}
       >
         {selectionVisible ? (
           <Animated.View
@@ -164,7 +162,6 @@ const AttachmentItem = memo<AttachmentItemProps>(
             <Checkbox.Android
               status={isSelected ? 'checked' : 'unchecked'}
               color={checkboxColor}
-              rippleColor={rippleColor}
             />
           </Animated.View>
         ) : null}
@@ -181,16 +178,14 @@ const AttachmentItem = memo<AttachmentItemProps>(
                 source={{uri: thumbnailSource, cacheKey: `${item.id}:thumb`}}
                 style={styles.thumbnail}
                 contentFit="cover"
-                cachePolicy="memory-disk"
                 recyclingKey={item.id}
-                decodeFormat="argb"
-                enforceEarlyResizing
+                cachePolicy="memory-disk"
               />
             ) : (
-              <View style={styles.iconScale}>
+              <View>
                 <Icon
                   name={fileIcon.name}
-                  size="lg"
+                  size="xxl"
                   colorToken={fileIcon.colorToken}
                   symbolType={fileIcon.symbolType}
                   symbolColorTokens={fileIcon.symbolColorTokens}
@@ -378,7 +373,7 @@ const AttachmentsListBase = ({
       refreshing={refreshing}
       onRefresh={handleRefresh}
       onEndReached={onEndReached}
-      onStartReachedThreshold={0.2}
+      onStartReachedThreshold={0.3}
       onEndReachedThreshold={onEndReachedThreshold}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={ListHeader}
@@ -421,7 +416,7 @@ export function SelectableAttachmentsList({
   const [selectionVisible, setSelectionVisible] = useState(false);
 
   const selectionAnimation = useRef(new Animated.Value(0)).current;
-  const selectionShift = ds.spacing.xxxl + ds.spacing.xxs;
+  const selectionShift = ds.spacing.xxxl;
 
   useEffect(() => {
     // Delay hiding checkboxes until the closing animation finishes to avoid flicker
@@ -546,7 +541,7 @@ const createStyles = makeStyleFactory(
       },
 
       iconContainer: {
-        width: ds.spacing.xxl + ds.spacing.md,
+        width: ds.spacing.xxl + ds.spacing.sm,
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 1,
@@ -557,8 +552,8 @@ const createStyles = makeStyleFactory(
       },
 
       thumbnail: {
-        width: ds.spacing.xxl,
-        height: ds.spacing.xxl + 10,
+        width: 28,
+        height: ds.spacing.xxl + 8,
         borderRadius: ds.borderRadius.xs,
         borderWidth: StyleSheet.hairlineWidth,
         borderColor: theme.border,
@@ -575,7 +570,7 @@ const createStyles = makeStyleFactory(
       },
 
       divider: {
-        marginLeft: ds.spacing.xxxl + ds.spacing.xl + ds.spacing.xs,
+        marginLeft: ds.spacing.xxxl + ds.spacing.xl + ds.spacing.xxs,
         marginRight: ds.spacing.lg,
       },
 
@@ -585,9 +580,6 @@ const createStyles = makeStyleFactory(
 
       contentSelected: {
         backgroundColor: theme.selected,
-      },
-      iconScale: {
-        transform: Platform.OS === 'android' ? [{scale: 1.4}] : [{scale: 1.8}],
       },
     }),
   (ds, theme) => themeKey(theme, ds),

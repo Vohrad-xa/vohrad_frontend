@@ -1,8 +1,8 @@
 import {type RefObject, useCallback, useLayoutEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {router} from 'expo-router';
-import {getHeaderOptions} from '@/utils/navigation/header-actions';
 import {Palette} from '@/constants';
+import {getHeaderOptions} from '@/utils/navigation/header-actions';
 
 /**
  * Generic handle interface for profile content components.

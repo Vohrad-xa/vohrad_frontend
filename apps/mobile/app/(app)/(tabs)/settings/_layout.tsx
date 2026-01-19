@@ -2,7 +2,6 @@ import {useCallback, useMemo} from 'react';
 import {Platform} from 'react-native';
 import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {router, Stack} from 'expo-router';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme, useSidebar} from '@/providers';
@@ -19,8 +18,7 @@ interface SearchChangeEvent {
 }
 
 function SettingsStack() {
-  const insets = useSafeAreaInsets();
-  const {theme, ds} = useTheme();
+  const {theme} = useTheme();
   const {setSearchQuery} = useSearch();
   const {toggleSideMenu} = useSidebar();
 

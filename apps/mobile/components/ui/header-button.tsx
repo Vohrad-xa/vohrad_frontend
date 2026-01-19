@@ -89,7 +89,7 @@ const getVariantConfig = (
       };
     default:
       return {
-        iconSize: Platform.OS === 'ios' ? 'xl' : 'lg',
+        iconSize: Platform.OS === 'ios' ? 'xl' : 'md',
         color: theme.text,
       };
   }
@@ -159,7 +159,8 @@ export const HeaderButton = ({
   // Variant config as defaults
   const useIcon = icon ?? variantConfig.icon;
   const useText = text ?? variantConfig.text;
-  const useIconSize = iconSize ?? variantConfig.iconSize ?? 'lg';
+  const useIconSize =
+    (iconSize ?? variantConfig.iconSize ?? Platform.OS === 'ios') ? 'xl' : 'md';
   const useIconColorToken = iconColor ? undefined : iconColorToken;
   const useIconColor =
     iconColor ?? (useIconColorToken ? undefined : variantConfig.color);
@@ -191,6 +192,8 @@ export const HeaderButton = ({
       android_ripple={{
         foreground: true,
         borderless: true,
+        radius: 20,
+        color: theme.ripple,
       }}
       style={[
         styles.button,
@@ -225,11 +228,15 @@ const createStyles = makeStyleFactory(
       button: {
         minWidth: Platform.select({
           ios: ds.spacing.xxl,
-          default: ds.spacing.xxl,
+          default: ds.spacing.xxl + ds.spacing.sm,
         }),
-        minHeight: ds.spacing.xxl,
+        minHeight: Platform.select({
+          ios: ds.spacing.xxl,
+          default: ds.spacing.xxl + ds.spacing.sm,
+        }),
         justifyContent: 'center',
         alignItems: 'center',
+        borderRadius: ds.borderRadius.full,
       },
 
       textButton: {

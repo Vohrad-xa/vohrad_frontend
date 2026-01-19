@@ -22,20 +22,10 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
         onSecondary: theme.text,
         secondaryContainer: theme.accentDeepblue, // bottom tab buttons container
         onSecondaryContainer: Palette.white,
-
-        // tertiary: theme.accentBlue,
-        // onTertiary: theme.accentBlue,
-        // tertiaryContainer: theme.accentBlue,
-        // onTertiaryContainer: theme.accentGreen,
-
         surface: theme.background, // outlined cards backgrounds
         onSurface: theme.text, // main text color
         surfaceVariant: theme.surface, // button backgrounds, input backgrounds
         onSurfaceVariant: theme.muted,
-
-        // outline: theme.border,
-        // outlineVariant: theme.divider,
-
         errorContainer: Palette.white,
         error: theme.destructive,
         onError: theme.background,
@@ -44,5 +34,9 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
     };
   }, [scheme, theme]);
 
-  return <PaperProvider theme={paperTheme}>{children}</PaperProvider>;
+  return (
+    <PaperProvider theme={paperTheme} settings={{rippleEffectEnabled: true}}>
+      {children}
+    </PaperProvider>
+  );
 }

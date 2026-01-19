@@ -114,7 +114,7 @@ export const AppIcons = {
     addUser: 'person-add-outline',
     addItem: 'duplicate-outline',
     edit: 'pencil',
-    delete: 'trash',
+    delete: 'trash-outline',
     save: 'checkmark',
     close: 'close',
     share: 'share-outline',
