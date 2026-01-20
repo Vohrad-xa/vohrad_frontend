@@ -37,7 +37,7 @@ export default function LocationModal() {
     return (
       <EmptyState
         message="No locations found for this item"
-        icon={AppIcons.features.location}
+        icon={AppIcons.domain.location}
       />
     );
   }

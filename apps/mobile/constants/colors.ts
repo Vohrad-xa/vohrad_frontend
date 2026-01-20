@@ -1,3 +1,4 @@
+import {Platform} from 'react-native';
 import {generateVersion} from '../utils/versioning';
 
 export const Palette = {
@@ -41,6 +42,7 @@ export const Palette = {
   glassTintLight: 'rgba(20, 20, 20, 0.27)',
   glassTintDark: 'rgba(186, 185, 185, 0.72)',
   ripple: 'rgba(0,0,0,0.10)',
+  androidBackground: '#0F0F0F',
 } as const;
 
 const _Tokens = {
@@ -169,8 +171,14 @@ export const NavigationThemes = {
     dark: true,
     colors: {
       primary: Palette.blue,
-      background: Palette.black,
-      card: _Tokens.dark.background,
+      background:
+        Platform.OS === 'android'
+          ? Palette.androidBackground
+          : _Tokens.dark.background,
+      card:
+        Platform.OS === 'android'
+          ? Palette.androidBackground
+          : _Tokens.dark.background,
       text: _Tokens.dark.text,
       border: _Tokens.dark.border,
       notification: Palette.red,

@@ -15,7 +15,7 @@ export function OrganizationHeaderInfo() {
   return (
     <View style={styles.header}>
       <View style={styles.logoCircle}>
-        <Icon name={AppIcons.features.organization} size="xxl" />
+        <Icon name={AppIcons.domain.organization} size="xxl" />
       </View>
 
       <View style={styles.headerSeparator} />

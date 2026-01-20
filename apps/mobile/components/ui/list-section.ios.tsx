@@ -70,7 +70,7 @@ const ListSectionRow: React.FC<ListSectionRowProps> = ({
           <>
             <Spacer />
             <Icon
-              name={AppIcons.ui.chevronRight}
+              name={AppIcons.actions.forward}
               colorToken="muted"
               fontWeight="semibold"
               useSwiftUI

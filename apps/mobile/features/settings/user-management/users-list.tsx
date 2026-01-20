@@ -36,7 +36,7 @@ const getUserInitials = (user: User): string => {
 };
 
 const renderChevron = () => (
-  <Icon name={AppIcons.ui.chevronRight} size="sm" colorToken="muted" />
+  <Icon name={AppIcons.actions.forward} size="sm" colorToken="muted" />
 );
 
 const UserItem = memo<UserItemProps>(({item, onPress, styles}) => {

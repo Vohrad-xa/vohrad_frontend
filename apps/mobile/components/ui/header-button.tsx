@@ -38,7 +38,7 @@ const getVariantConfig = (
       };
     case 'close':
       return {
-        icon: AppIcons.ui.close,
+        icon: AppIcons.actions.close,
       };
     case 'cancel':
       return {
@@ -77,7 +77,7 @@ const getVariantConfig = (
       };
     case 'back':
       return {
-        icon: AppIcons.ui.back,
+        icon: AppIcons.actions.back,
       };
     case 'destructive':
       return {
@@ -90,7 +90,7 @@ const getVariantConfig = (
     default:
       return {
         iconSize: Platform.OS === 'ios' ? 'xl' : 'md',
-        color: theme.text,
+        color: theme.icon,
       };
   }
 };
@@ -179,10 +179,7 @@ export const HeaderButton = ({
       symbolColorTokens={symbolColorTokens}
     />
   ) : useText ? (
-    <ThemedText
-      variant="body"
-      style={{color: useTextColor, fontWeight: ds.fontWeight.medium}}
-    >
+    <ThemedText variant="body" color={useTextColor} fontWeight="medium">
       {useText}
     </ThemedText>
   ) : null;

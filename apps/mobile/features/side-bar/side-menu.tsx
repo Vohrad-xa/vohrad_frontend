@@ -40,16 +40,16 @@ type SideMenuProps = {
 };
 
 const menuItems: MenuItemType[] = [
-  {icon: AppIcons.tabs.home, label: 'Home'},
-  {icon: AppIcons.features.maintenance, label: 'Maintenances'},
+  {icon: AppIcons.domain.home, label: 'Home'},
+  {icon: AppIcons.domain.maintenance, label: 'Maintenances'},
   {icon: AppIcons.actions.move, label: 'Check In/Out'},
-  {icon: AppIcons.features.item, label: 'Items'},
-  {icon: AppIcons.features.location, label: 'Locations'},
+  {icon: AppIcons.domain.item, label: 'Items'},
+  {icon: AppIcons.domain.location, label: 'Locations'},
   {icon: AppIcons.files.document, label: 'Documents'},
-  {icon: AppIcons.features.supplier, label: 'Suppliers'},
+  {icon: AppIcons.domain.supplier, label: 'Suppliers'},
   {icon: AppIcons.ui.notifications, label: 'Events'},
   {icon: AppIcons.files.print, label: 'Labels'},
-  {icon: AppIcons.features.category, label: 'Categories'},
+  {icon: AppIcons.domain.category, label: 'Categories'},
 ];
 
 const ROUTE_BY_LABEL: Partial<Record<string, Href>> = {

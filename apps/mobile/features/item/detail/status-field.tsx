@@ -14,15 +14,15 @@ const STATUS_ICON_BY_KEY = {
   success: AppIcons.status.success,
   warning: AppIcons.status.warning,
   error: AppIcons.status.error,
-  info: AppIcons.status.info,
-  help: AppIcons.status.help,
-  time: AppIcons.status.time,
+  info: AppIcons.ui.info,
+  help: AppIcons.ui.help,
+  time: AppIcons.ui.time,
 } as const;
 
 const STATUS_ICON_VALUES = new Set(Object.values(STATUS_ICON_BY_KEY));
 
 const resolveStatusIcon = (icon?: string | null): IconName => {
-  if (!icon) return AppIcons.status.info;
+  if (!icon) return AppIcons.ui.info;
 
   const byKey = STATUS_ICON_BY_KEY[icon as keyof typeof STATUS_ICON_BY_KEY];
   if (byKey) return byKey;
@@ -35,7 +35,7 @@ const resolveStatusIcon = (icon?: string | null): IconName => {
     return icon as IconName;
   }
 
-  return AppIcons.status.info;
+  return AppIcons.ui.info;
 };
 
 const StatusFieldComponent = ({status}: StatusFieldProps) => {

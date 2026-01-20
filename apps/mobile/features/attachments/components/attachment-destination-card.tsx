@@ -58,7 +58,7 @@ export function AttachmentDestinationCard({
           <View style={styles.cardContent}>
             <View style={styles.iconWrapper}>
               <Icon
-                name={AppIcons.tabs.vault}
+                name={AppIcons.domain.vaultOutline}
                 size="md"
                 color={theme.secondary}
               />
@@ -78,11 +78,15 @@ export function AttachmentDestinationCard({
                 accessibilityLabel="Clear destination"
                 accessibilityRole="button"
               >
-                <Icon name={AppIcons.ui.close} size="md" color={theme.muted} />
+                <Icon
+                  name={AppIcons.actions.close}
+                  size="md"
+                  color={theme.muted}
+                />
               </Pressable>
             ) : (
               <Icon
-                name={AppIcons.ui.chevronRight}
+                name={AppIcons.actions.forward}
                 colorToken="muted"
                 style={styles.chevron}
               />

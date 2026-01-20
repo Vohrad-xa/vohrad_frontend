@@ -36,25 +36,34 @@ function isTabName(v: string | undefined): v is TabName {
 const TABS: readonly TabConfig[] = [
   {
     name: 'dashboard',
-    title: 'Dashboard',
-    icon: {default: AppIcons.tabs.homeOutline, selected: AppIcons.tabs.home},
+    title: 'Home',
+    icon: {
+      default: AppIcons.domain.homeOutline,
+      selected: AppIcons.domain.home,
+    },
   },
   {
     name: 'items',
     title: 'Items',
-    icon: {default: AppIcons.tabs.itemOutline, selected: AppIcons.tabs.item},
+    icon: {
+      default: AppIcons.domain.itemOutline,
+      selected: AppIcons.domain.item,
+    },
   },
   {
     name: 'vault',
     title: 'Vault',
-    icon: {default: AppIcons.tabs.vaultOutline, selected: AppIcons.tabs.vault},
+    icon: {
+      default: AppIcons.domain.vaultOutline,
+      selected: AppIcons.domain.vault,
+    },
   },
   {
     name: 'settings',
     title: 'Settings',
     icon: {
-      default: AppIcons.tabs.settingsOutline,
-      selected: AppIcons.tabs.settings,
+      default: AppIcons.domain.settingsOutline,
+      selected: AppIcons.domain.settings,
     },
   },
 ];
@@ -116,7 +125,7 @@ export default function TabLayout() {
               <Icon
                 name={focused ? t.icon.selected : t.icon.default}
                 color={color}
-                size={ds.iconSize.md}
+                size={ds.iconSize.lg}
               />
             ),
           }}
@@ -130,7 +139,7 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       bar: {
-        backgroundColor: theme.background,
+        // backgroundColor: theme.background,
         elevation: 0,
         shadowOpacity: 0,
         paddingHorizontal: ds.spacing.lg,

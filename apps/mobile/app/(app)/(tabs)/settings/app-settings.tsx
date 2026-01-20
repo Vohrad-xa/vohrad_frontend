@@ -37,7 +37,7 @@ export default function AppSettingsScreen() {
         description="Activate fingerprint or facial recognition "
         descriptionStyle={styles.description}
         titleStyle={styles.itemTitle}
-        left={renderIcon(AppIcons.preferences.biometric, 'accentGreen')}
+        left={renderIcon(AppIcons.ui.biometric, 'accentGreen')}
         right={() => <BiometricToggle />}
       />
 
@@ -50,7 +50,7 @@ export default function AppSettingsScreen() {
             description="Enable haptic feedback to receive tactile responses"
             descriptionStyle={styles.description}
             titleStyle={styles.itemTitle}
-            left={renderIcon(AppIcons.preferences.haptic, 'destructive')}
+            left={renderIcon(AppIcons.ui.haptic, 'destructive')}
             right={() => <HapticToggle />}
           />
         </>

@@ -49,7 +49,7 @@ function ChevronRight() {
   return (
     <Icon
       useSwiftUI
-      name={AppIcons.ui.chevronRight}
+      name={AppIcons.actions.forward}
       colorToken="muted"
       fontWeight="medium"
       size={12}

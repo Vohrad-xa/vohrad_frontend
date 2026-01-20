@@ -78,7 +78,7 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
                     transition={150}
                   />
                 ) : (
-                  <Icon name={AppIcons.files.imageFallback} size="xl" />
+                  <Icon name={AppIcons.files.image} size="xl" />
                 )}
               </View>
               {showBadge && item.badge && (
@@ -121,7 +121,7 @@ export const ListRow: React.FC<ListRowProps> = React.memo(
         </View>
 
         {item.onPress && showChevron && !item.loading && (
-          <Icon name={AppIcons.ui.chevronRight} size="md" />
+          <Icon name={AppIcons.actions.forward} size="md" />
         )}
         {item.onPress && item.loading && (
           <ActivityIndicator size="small" color={theme.accentBlue} />

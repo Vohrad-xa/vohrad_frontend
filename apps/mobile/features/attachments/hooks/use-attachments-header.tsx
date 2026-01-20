@@ -1,4 +1,5 @@
 import {useCallback, useLayoutEffect, useMemo} from 'react';
+import {Platform} from 'react-native';
 import {HeaderButton} from '@/components/ui';
 import {AppIcons} from '@/utils';
 import {
@@ -64,6 +65,33 @@ export function useAttachmentsHeader({
     onSelectPress,
   } = filter ?? {};
 
+  const selectAllButton = useMemo(() => {
+    const hasAllSelected = totalCount > 0 && selectedCount === totalCount;
+    return (
+      <HeaderButton
+        text={hasAllSelected ? 'Deselect All' : 'Select All'}
+        accessibilityLabel={
+          hasAllSelected
+            ? `Deselect all ${labelPlural}`
+            : `Select all ${labelPlural}`
+        }
+        accessibilityHint={
+          hasAllSelected
+            ? `Clear the current ${labelSingular} selection`
+            : `Select all ${labelPlural} in the list`
+        }
+        onPress={hasAllSelected ? onDeselectAll : onSelectAll}
+      />
+    );
+  }, [
+    totalCount,
+    selectedCount,
+    labelPlural,
+    labelSingular,
+    onDeselectAll,
+    onSelectAll,
+  ]);
+
   const rightActions = useMemo<HeaderAction[]>(() => {
     if (!isSelectionMode) {
       if (!filter) return [];
@@ -97,6 +125,15 @@ export function useAttachmentsHeader({
         : () => void onDeleteSelected();
 
     const actions: HeaderAction[] = [];
+
+    if (Platform.OS === 'android') {
+      actions.push({
+        type: 'custom',
+        key: 'select-all',
+        element: selectAllButton,
+      });
+    }
+
     if (hasSelection && onShareSelected) {
       actions.push({
         type: 'custom',
@@ -127,18 +164,20 @@ export function useAttachmentsHeader({
       });
     }
 
-    actions.push({
-      type: 'button',
-      key: 'cancel',
-      label: 'Cancel',
-      variant: 'done',
-      icon: AppIcons.actions.close,
-      iosSymbol: 'checkmark',
-      accessibilityLabel: 'Cancel selection',
-      accessibilityHint: `Exit ${labelSingular} selection mode`,
-      sharesBackground: false,
-      onPress: onCancelSelection,
-    });
+    if (Platform.OS !== 'android') {
+      actions.push({
+        type: 'button',
+        key: 'cancel',
+        label: 'Cancel',
+        variant: 'done',
+        icon: AppIcons.actions.close,
+        iosSymbol: 'checkmark',
+        accessibilityLabel: 'Cancel selection',
+        accessibilityHint: `Exit ${labelSingular} selection mode`,
+        sharesBackground: false,
+        onPress: onCancelSelection,
+      });
+    }
 
     return actions;
   }, [
@@ -157,38 +196,25 @@ export function useAttachmentsHeader({
     labelPlural,
     labelSingular,
     onCancelSelection,
+    selectAllButton,
   ]);
 
   const headerLeft = useCallback(() => {
     if (!isSelectionMode) return undefined;
-    const hasAllSelected = totalCount > 0 && selectedCount === totalCount;
 
-    return (
-      <HeaderButton
-        variant="text"
-        text={hasAllSelected ? 'Deselect All' : 'Select All'}
-        accessibilityLabel={
-          hasAllSelected
-            ? `Deselect all ${labelPlural}`
-            : `Select all ${labelPlural}`
-        }
-        accessibilityHint={
-          hasAllSelected
-            ? `Clear the current ${labelSingular} selection`
-            : `Select all ${labelPlural} in the list`
-        }
-        onPress={hasAllSelected ? onDeselectAll : onSelectAll}
-      />
-    );
-  }, [
-    isSelectionMode,
-    totalCount,
-    selectedCount,
-    labelPlural,
-    labelSingular,
-    onDeselectAll,
-    onSelectAll,
-  ]);
+    if (Platform.OS === 'android') {
+      return (
+        <HeaderButton
+          icon={AppIcons.actions.close}
+          accessibilityLabel="Cancel selection"
+          accessibilityHint={`Exit ${labelSingular} selection mode`}
+          onPress={onCancelSelection}
+        />
+      );
+    }
+
+    return selectAllButton;
+  }, [isSelectionMode, onCancelSelection, labelSingular, selectAllButton]);
 
   useLayoutEffect(() => {
     const headerActionsOptions = getHeaderOptions({right: rightActions});

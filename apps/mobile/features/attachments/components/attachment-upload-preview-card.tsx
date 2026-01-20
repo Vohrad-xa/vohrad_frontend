@@ -95,7 +95,11 @@ export function AttachmentUploadPreviewCard({
               accessibilityLabel="Clear attachment"
               accessibilityRole="button"
             >
-              <Icon name={AppIcons.ui.close} size="md" color={theme.muted} />
+              <Icon
+                name={AppIcons.actions.close}
+                size="md"
+                color={theme.muted}
+              />
             </Pressable>
           )}
         </View>

@@ -107,7 +107,7 @@ export function ItemsList({
               ? 'No items match your search.'
               : 'You have no items yet.'
           }
-          icon={AppIcons.features.item}
+          icon={AppIcons.domain.itemOutline}
         />
       </RefreshableScrollView>
     );

@@ -31,8 +31,8 @@ export function useAttachmentsSnackbar(): UseAttachmentsSnackbarResult {
     () =>
       Platform.OS === 'ios'
         ? {bottom: insets.bottom + ds.spacing.md}
-        : {bottom: insets.bottom + ds.layout.tabBarHeight},
-    [ds.layout.tabBarHeight, ds.spacing.md, insets.bottom],
+        : undefined,
+    [ds.spacing.md, insets.bottom],
   );
 
   const snackbar = (

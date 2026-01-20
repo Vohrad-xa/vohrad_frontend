@@ -71,7 +71,7 @@ function CardRow({
       <View style={styles.content}>{children}</View>
       {!hideChevron && (
         <Icon
-          name={AppIcons.ui.chevronRight}
+          name={AppIcons.actions.forward}
           colorToken="muted"
           size={Platform.OS === 'ios' ? 14 : 'sm'}
           style={styles.chevron}

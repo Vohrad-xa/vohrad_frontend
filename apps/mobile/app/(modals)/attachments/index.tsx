@@ -13,7 +13,7 @@ export default function AttachmentDestinationSelectorModal() {
     <ModalScrollView>
       <Card>
         <Card.Row
-          icon={AppIcons.features.item}
+          icon={AppIcons.domain.item}
           accessibilityLabel="Select item"
           onPress={() =>
             router.push({
@@ -28,7 +28,7 @@ export default function AttachmentDestinationSelectorModal() {
         </Card.Row>
         <Card.Divider withIconOffset />
         <Card.Row
-          icon={AppIcons.features.location}
+          icon={AppIcons.domain.location}
           accessibilityLabel="Select location"
           onPress={() =>
             router.push({

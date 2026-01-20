@@ -95,13 +95,7 @@ export function AttachmentsOverview({
                 ? `${tile.count} ${tile.count === 1 ? 'file' : 'files'}`
                 : undefined
             }
-            left={() => (
-              <Icon
-                name={AppIcons.tabs.vault}
-                size="xxl"
-                colorToken="accentBlue"
-              />
-            )}
+            left={() => <Icon name={AppIcons.files.folder} size="xxl" />}
             onPress={tile.onPress}
             descriptionStyle={styles.description}
           />

@@ -47,7 +47,7 @@ export default function AppSettingsScreen() {
             label="Face ID"
           >
             <Icon
-              name={AppIcons.preferences.biometric}
+              name={AppIcons.ui.biometric}
               useSwiftUI
               colorToken="accentGreen"
             />
@@ -68,7 +68,7 @@ export default function AppSettingsScreen() {
             label="Haptic Feedback"
           >
             <Icon
-              name={AppIcons.preferences.haptic}
+              name={AppIcons.ui.haptic}
               useSwiftUI
               colorToken="destructive"
             />

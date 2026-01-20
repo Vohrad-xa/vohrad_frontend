@@ -17,7 +17,7 @@ export function PlanScreen() {
         Active
       </ThemedText>
       <Card>
-        <Card.Row hideChevron icon={AppIcons.preferences.plan}>
+        <Card.Row hideChevron icon={AppIcons.ui.plan}>
           <ThemedText variant="label">{license?.name}</ThemedText>
           <ThemedText variant="caption" colorToken="muted">
             allows {license?.seats} users

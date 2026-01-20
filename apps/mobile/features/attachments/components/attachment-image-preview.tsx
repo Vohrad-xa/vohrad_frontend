@@ -76,7 +76,7 @@ export function AttachmentImagePreview({
             disabled={currentIndex === 0}
           >
             <Icon
-              name={AppIcons.ui.chevronLeft}
+              name={AppIcons.actions.forward}
               size="xl"
               colorToken={currentIndex === 0 ? 'muted' : 'white'}
             />
@@ -89,7 +89,7 @@ export function AttachmentImagePreview({
             disabled={currentIndex === attachments.length - 1}
           >
             <Icon
-              name={AppIcons.ui.chevronRight}
+              name={AppIcons.actions.forward}
               size="xl"
               colorToken={
                 currentIndex === attachments.length - 1 ? 'muted' : 'white'

@@ -124,7 +124,7 @@ export function useSettingsHeader({
           accessibilityRole="button"
           accessibilityLabel="Close"
         >
-          <Icon name={AppIcons.ui.close} />
+          <Icon name={AppIcons.actions.close} />
         </Pressable>
       );
     } else if (Platform.OS === 'web') {
@@ -135,7 +135,7 @@ export function useSettingsHeader({
           accessibilityRole="button"
           accessibilityLabel="Back"
         >
-          <Icon name={AppIcons.ui.chevronLeft} />
+          <Icon name={AppIcons.actions.back} />
         </Pressable>
       );
     }
