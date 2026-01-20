@@ -69,6 +69,7 @@ export function useAttachmentsHeader({
     const hasAllSelected = totalCount > 0 && selectedCount === totalCount;
     return (
       <HeaderButton
+        variant="text"
         text={hasAllSelected ? 'Deselect All' : 'Select All'}
         accessibilityLabel={
           hasAllSelected
@@ -205,7 +206,7 @@ export function useAttachmentsHeader({
     if (Platform.OS === 'android') {
       return (
         <HeaderButton
-          icon={AppIcons.actions.close}
+          variant="close"
           accessibilityLabel="Cancel selection"
           accessibilityHint={`Exit ${labelSingular} selection mode`}
           onPress={onCancelSelection}

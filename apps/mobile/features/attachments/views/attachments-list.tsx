@@ -6,7 +6,7 @@ import {Image} from 'expo-image';
 import {Checkbox, Divider} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedText, EmptyState} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
+import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme, useHaptic} from '@/providers';
@@ -59,7 +59,6 @@ type AttachmentItemProps = {
   checkboxColor: string;
   checkboxTranslateX: Animated.AnimatedInterpolation<number>;
   contentTranslateX: Animated.AnimatedInterpolation<number>;
-  rippleColor: string;
 };
 
 const AttachmentItem = memo<AttachmentItemProps>(
@@ -70,11 +69,9 @@ const AttachmentItem = memo<AttachmentItemProps>(
     isSelected,
     onPressRow,
     onLongPressRow,
-    opacity,
     checkboxColor,
     checkboxTranslateX,
     contentTranslateX,
-    // rippleColor,
   }) => {
     const {uiTitle, uiDescription, thumbnailUrl, iconKey} = item;
     const fileIcon = getAttachmentFileIcon(iconKey);
@@ -95,22 +92,18 @@ const AttachmentItem = memo<AttachmentItemProps>(
         onPress={handlePress}
         onLongPress={onLongPressRow ? handleLongPress : undefined}
         accessibilityRole="button"
-        // delayLongPress={500}
-        focusable
         style={({pressed}) => [
           styles.content,
           selectionVisible ? styles.contentSelection : null,
           isSelected ? styles.contentSelected : null,
           pressed && !selectionVisible ? styles.contentPressed : null,
         ]}
-        android_ripple={{foreground: false}}
       >
         {selectionVisible ? (
           <Animated.View
             style={[
               styles.checkboxContainer,
               {
-                opacity,
                 transform: [{translateX: checkboxTranslateX}],
               },
             ]}
@@ -132,14 +125,13 @@ const AttachmentItem = memo<AttachmentItemProps>(
             {thumbnailUrl ? (
               <Image
                 source={{uri: thumbnailUrl}}
-                style={styles.thumbnail}
-                contentFit="cover"
                 recyclingKey={item.id}
                 cachePolicy="memory-disk"
-                priority="low"
+                contentFit="cover"
+                style={styles.thumbnail}
               />
             ) : (
-              <View>
+              <View style={styles.iconContainer}>
                 <Icon
                   name={fileIcon.name}
                   size="xxl"
@@ -155,8 +147,6 @@ const AttachmentItem = memo<AttachmentItemProps>(
           <View style={styles.textContainer}>
             <ThemedText
               allowFontScaling
-              variant="body"
-              fontWeight="regular"
               numberOfLines={1}
               ellipsizeMode="middle"
               style={styles.title}
@@ -166,10 +156,10 @@ const AttachmentItem = memo<AttachmentItemProps>(
 
             <ThemedText
               allowFontScaling
+              numberOfLines={1}
               variant="footnote"
               colorToken="muted"
               fontWeight="medium"
-              numberOfLines={1}
             >
               {uiDescription}
             </ThemedText>
@@ -245,8 +235,6 @@ const AttachmentsListBase = ({
 
   const selectionOpacity = selectionState?.opacity ?? zeroAnimation;
 
-  const checkboxColor = theme.accentBlue;
-
   const isSelected = useCallback(
     (id: string) => selectionState?.isSelected(id) ?? false,
     [selectionState],
@@ -262,10 +250,9 @@ const AttachmentsListBase = ({
         onPressRow={onAttachmentPress}
         onLongPressRow={onLongPressRow}
         opacity={selectionOpacity}
-        checkboxColor={checkboxColor}
         checkboxTranslateX={checkboxTranslateX}
         contentTranslateX={contentTranslateX}
-        rippleColor={theme.ripple}
+        checkboxColor={Palette.blue}
       />
     ),
     [
@@ -275,10 +262,9 @@ const AttachmentsListBase = ({
       onAttachmentPress,
       onLongPressRow,
       selectionOpacity,
-      checkboxColor,
       checkboxTranslateX,
       contentTranslateX,
-      theme.ripple,
+      Palette.blue,
     ],
   );
 
@@ -333,8 +319,11 @@ const AttachmentsListBase = ({
       refreshing={refreshing}
       onRefresh={handleRefresh}
       onEndReached={onEndReached}
-      onStartReachedThreshold={0.3}
+      onStartReachedThreshold={0.5}
       onEndReachedThreshold={onEndReachedThreshold}
+      drawDistance={
+        Platform.OS === 'android' ? ds.screen.height * 1.5 : undefined
+      }
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={ListHeader}
       ListEmptyComponent={
@@ -343,7 +332,6 @@ const AttachmentsListBase = ({
       ListFooterComponent={attachments.length > 0 ? listFooter : null}
       maintainVisibleContentPosition={{disabled: true}}
       automaticallyAdjustContentInsets={false}
-      progressViewOffset={ds.spacing.lg}
     />
   );
 };
@@ -492,28 +480,24 @@ const createStyles = makeStyleFactory(
 
       checkboxContainer: {
         position: 'absolute',
+        justifyContent: 'center',
+        alignItems: 'center',
         left: ds.spacing.lg,
         top: 0,
         bottom: 0,
-        justifyContent: 'center',
         width: ds.spacing.xxl + ds.spacing.sm,
-        alignItems: 'center',
       },
 
       iconContainer: {
+        height: ds.spacing.xl * 2 + ds.spacing.xxs,
         width: ds.spacing.xxl + ds.spacing.sm,
         alignItems: 'center',
         justifyContent: 'center',
-        elevation: 1,
-        shadowColor: Palette.gray[600],
-        shadowOffset: {width: 0, height: 0},
-        shadowOpacity: 0.2,
-        shadowRadius: 1,
       },
 
       thumbnail: {
-        width: 28,
-        height: ds.spacing.xxl + 8,
+        width: ds.spacing.xl + ds.spacing.sm,
+        height: ds.spacing.xl * 2 + ds.spacing.xxs,
         borderRadius: ds.borderRadius.xs,
         borderWidth: StyleSheet.hairlineWidth,
         borderColor: theme.border,

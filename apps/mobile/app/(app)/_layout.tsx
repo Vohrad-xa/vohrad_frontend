@@ -81,7 +81,10 @@ function AppStack() {
 
 export default function AppLayout() {
   const segments = useSegments();
-  const isRootTabScreen = segments[1] === '(tabs)' && segments.length === 3;
+  const isRootTabScreen =
+    segments.at(1) === '(tabs)' &&
+    segments.at(2) !== undefined &&
+    segments.at(3) === undefined;
 
   return (
     <SidebarProvider edgeGestureEnabled={isRootTabScreen}>

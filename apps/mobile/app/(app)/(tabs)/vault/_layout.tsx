@@ -18,7 +18,7 @@ function VaultStack() {
   const {toggleSideMenu} = useSidebar();
   const segments = useSegments();
   const activeSearchScope = useMemo(() => {
-    const screen = segments[3];
+    const screen = segments.at(3);
     if (screen === 'images') return VAULT_SEARCH_SCOPES.images;
     if (screen === 'documents') return VAULT_SEARCH_SCOPES.documents;
     if (screen === 'archives') return VAULT_SEARCH_SCOPES.archives;
@@ -74,7 +74,7 @@ function VaultStack() {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },
       }) satisfies NativeStackNavigationOptions,
-    [theme.headerAndroid],
+    [theme.headerAndroid, theme.icon],
   );
 
   const indexOptions = useMemo(

@@ -4,12 +4,7 @@ import {router} from 'expo-router';
 import {ScrollView} from 'react-native-gesture-handler';
 import {List} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
-import {
-  themeKey,
-  type DSShape,
-  type ThemeShape,
-  type TokenName,
-} from '@/constants';
+import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {AppearanceMenu} from '@/features/settings';
 import {useAuth, useTheme} from '@/providers';
 import {
@@ -168,7 +163,7 @@ export default function SettingsModal() {
 
       <List.Item
         title={
-          <ThemedText variant="body" style={{color: theme.destructive}}>
+          <ThemedText variant="body" style={{color: Palette.red}}>
             Logout
           </ThemedText>
         }
@@ -181,7 +176,7 @@ export default function SettingsModal() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       contentContainer: {
         paddingHorizontal: ds.spacing.lg + 2,

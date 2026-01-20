@@ -106,12 +106,6 @@ export default function TabLayout() {
         tabBarLabelStyle: styles.label,
         tabBarStyle: styles.bar,
         tabBarHideOnKeyboard: true,
-        tabBarVisibilityAnimationConfig: {
-          show: {animation: 'spring', config: {stiffness: 400, damping: 40}},
-        },
-        animation: 'fade',
-        transitionSpec: {animation: 'timing', config: {duration: 80}},
-        lazy: true,
         freezeOnBlur: true,
       }}
     >
@@ -136,10 +130,9 @@ export default function TabLayout() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       bar: {
-        // backgroundColor: theme.background,
         elevation: 0,
         shadowOpacity: 0,
         paddingHorizontal: ds.spacing.lg,

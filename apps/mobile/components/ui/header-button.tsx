@@ -237,7 +237,7 @@ const createStyles = makeStyleFactory(
       },
 
       textButton: {
-        paddingHorizontal: ds.spacing.md,
+        paddingHorizontal: ds.spacing.sm,
         backgroundColor: Platform.OS !== 'ios' ? theme.ripple : undefined,
         borderRadius: ds.borderRadius.full,
       },
