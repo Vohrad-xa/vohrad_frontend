@@ -2,6 +2,7 @@ import React, {useCallback, useState} from 'react';
 import {useIsFocused} from '@react-navigation/native';
 import {getAttachmentExtension} from '@sykamore/store';
 import {useNavigation} from 'expo-router';
+import {VAULT_SEARCH_SCOPES} from '@/features/attachments/utils';
 import {useSearch} from '@/features/dashboard';
 import {
   useAttachmentsBulkActions,
@@ -47,7 +48,13 @@ export function AttachmentKindScreen({
 
   const [extension, setExtension] = useState<string | undefined>();
   const [odataOrderBy, setOdataOrderBy] = useState<string | undefined>();
-  const {searchQuery} = useSearch();
+  const searchScope =
+    kind === 'document'
+      ? VAULT_SEARCH_SCOPES.documents
+      : kind === 'archive'
+        ? VAULT_SEARCH_SCOPES.archives
+        : VAULT_SEARCH_SCOPES.other;
+  const {searchQuery} = useSearch(searchScope);
 
   const {attachments, refresh, isLoading, lastUpdated, hasNext, loadMore} =
     useAttachmentsSource({

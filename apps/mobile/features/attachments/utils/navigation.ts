@@ -13,6 +13,14 @@ type VaultDocumentsPath = '/(app)/(tabs)/vault/documents';
 type VaultArchivesPath = '/(app)/(tabs)/vault/archives';
 type VaultOtherPath = '/(app)/(tabs)/vault/other';
 
+export const VAULT_SEARCH_SCOPES = {
+  index: 'vault.index',
+  images: 'vault.images',
+  documents: 'vault.documents',
+  archives: 'vault.archives',
+  other: 'vault.other',
+} as const;
+
 export interface AttachmentRoute<Path extends string> {
   pathname: Path;
   params: Record<string, string>;

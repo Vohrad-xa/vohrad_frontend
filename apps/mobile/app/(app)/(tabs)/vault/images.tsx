@@ -12,13 +12,14 @@ import {
   useImageAttachments,
   type ImageAttachmentItem,
 } from '@/features/attachments';
+import {VAULT_SEARCH_SCOPES} from '@/features/attachments/utils';
 import {useSearch} from '@/features/dashboard';
 
 export default function VaultImagesScreen() {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const handleAttachmentPress = useAttachmentPress();
-  const {searchQuery} = useSearch();
+  const {searchQuery} = useSearch(VAULT_SEARCH_SCOPES.images);
   const [odataOrderBy, setOdataOrderBy] = useState<string | undefined>();
   const {showSnack, snackbar} = useAttachmentsSnackbar();
 

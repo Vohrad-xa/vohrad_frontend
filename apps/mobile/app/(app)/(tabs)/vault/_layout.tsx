@@ -1,8 +1,9 @@
 import {useCallback, useMemo} from 'react';
 import {Platform} from 'react-native';
 import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
-import {Stack} from 'expo-router';
+import {Stack, useSegments} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
+import {VAULT_SEARCH_SCOPES} from '@/features/attachments/utils';
 import {SearchProvider, useSearch} from '@/features/dashboard';
 import {useTheme, useSidebar} from '@/providers';
 
@@ -15,7 +16,16 @@ interface SearchChangeEvent {
 function VaultStack() {
   const {theme} = useTheme();
   const {toggleSideMenu} = useSidebar();
-  const {setSearchQuery} = useSearch();
+  const segments = useSegments();
+  const activeSearchScope = useMemo(() => {
+    const screen = segments[3];
+    if (screen === 'images') return VAULT_SEARCH_SCOPES.images;
+    if (screen === 'documents') return VAULT_SEARCH_SCOPES.documents;
+    if (screen === 'archives') return VAULT_SEARCH_SCOPES.archives;
+    if (screen === 'other') return VAULT_SEARCH_SCOPES.other;
+    return VAULT_SEARCH_SCOPES.index;
+  }, [segments]);
+  const {setSearchQuery} = useSearch(activeSearchScope);
 
   const handleSearchChange = useCallback(
     (event: SearchChangeEvent) => {
@@ -45,6 +55,7 @@ function VaultStack() {
         hintTextColor: theme.icon,
         textColor: theme.text,
         placeholder: 'Search',
+        shouldShowHintSearchIcon: true,
         onChangeText: handleSearchChange,
       }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
     [handleSearchChange, theme.icon, theme.text],
@@ -58,7 +69,7 @@ function VaultStack() {
         headerLargeTitle: true,
         headerBackButtonDisplayMode: 'minimal' as const,
         headerTransparent: Platform.OS === 'ios',
-        headerTitleAlign: 'center' as const,
+        headerTintColor: theme.icon,
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },
@@ -69,6 +80,7 @@ function VaultStack() {
   const indexOptions = useMemo(
     () => ({
       headerTitle: 'Vault',
+      headerTitleAlign: 'center' as const,
       headerLeft: headerLeftMenu,
       headerSearchBarOptions: {
         ...headerSearchBarOptions,

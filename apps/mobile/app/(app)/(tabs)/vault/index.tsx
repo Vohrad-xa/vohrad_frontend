@@ -24,6 +24,7 @@ import {
   AttachmentsList,
   useAttachmentContext,
 } from '@/features/attachments';
+import {VAULT_SEARCH_SCOPES} from '@/features/attachments/utils';
 import {useSearch} from '@/features/dashboard';
 import * as storage from '@/utils/storage';
 
@@ -105,7 +106,7 @@ export default function VaultScreen() {
   }>();
   const setAttachmentFilter = useSetAttachmentFilter();
   const clearAttachmentFilter = useClearAttachmentFilter();
-  const {searchQuery} = useSearch();
+  const {searchQuery} = useSearch(VAULT_SEARCH_SCOPES.index);
   const isFocused = useIsFocused();
   const handleAttachmentPress = useAttachmentPress();
   const {
