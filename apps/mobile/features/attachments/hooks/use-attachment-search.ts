@@ -2,6 +2,7 @@ import {useMemo} from 'react';
 import {
   buildAttachmentSearchODataFilter,
   useFilteredAttachmentsManager,
+  type AttachmentDisplayItem,
 } from '@sykamore/store';
 import type {AttachmentKind} from '@sykamore/types';
 
@@ -14,7 +15,20 @@ export interface UseAttachmentSearchOptions {
   odataOrderBy?: string;
 }
 
-export function useAttachmentSearch(options: UseAttachmentSearchOptions) {
+type UseAttachmentSearchResult = {
+  attachments: AttachmentDisplayItem[];
+  isLoading: boolean;
+  error: unknown;
+  hasNext?: boolean;
+  loadMore?: () => void;
+  refresh?: () => void | Promise<void>;
+  lastUpdated?: Date | null;
+  isSearchActive: boolean;
+};
+
+export function useAttachmentSearch(
+  options: UseAttachmentSearchOptions,
+): UseAttachmentSearchResult {
   const {
     searchQuery,
     pageSize,

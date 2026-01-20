@@ -3,11 +3,11 @@ import {
   useAttachmentFilter,
   useFilteredAttachmentsManager,
   type AttachmentTargetType,
+  type AttachmentDisplayItem,
 } from '@sykamore/store';
-import type {ItemAttachment} from '@sykamore/types';
 
 interface AttachmentContextValue {
-  attachments: ItemAttachment[];
+  attachments: AttachmentDisplayItem[];
   isLoading: boolean;
   error: Error | null;
   targetId?: string | null;

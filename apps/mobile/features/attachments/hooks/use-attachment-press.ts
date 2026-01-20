@@ -1,6 +1,7 @@
 import {useCallback} from 'react';
 import {Linking, Platform} from 'react-native';
 import {errorManager} from '@sykamore/api-client';
+import {resolveAttachmentItemUrl} from '@sykamore/store';
 import {useRouter} from 'expo-router';
 import {
   downloadDocumentFile,
@@ -8,7 +9,6 @@ import {
 } from '@/features/attachments/utils/file-download';
 import {useNetworkConnectivity} from '@/features/network';
 import {showAlert} from '@/utils';
-import {resolveAttachmentItemUrl} from '../utils';
 import type {ItemAttachment} from '@sykamore/types';
 
 // handling the opening of attachments

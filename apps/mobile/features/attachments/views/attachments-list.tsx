@@ -2,7 +2,6 @@ import {useCallback, useMemo, memo, useState, useRef, useEffect} from 'react';
 import {Animated, Platform, Pressable, StyleSheet, View} from 'react-native';
 import {useHeaderHeight} from '@react-navigation/elements';
 import {FlashList} from '@shopify/flash-list';
-import {type ItemAttachment} from '@sykamore/types';
 import {Image} from 'expo-image';
 import {Checkbox, Divider} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -11,23 +10,16 @@ import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme, useHaptic} from '@/providers';
-import {
-  makeStyleFactory,
-  formatDateShort,
-  formatBytes,
-  getAttachmentFileIcon,
-  Icon,
-  AppIcons,
-} from '@/utils';
-import {resolveAttachmentThumbnailUrl} from '../utils';
+import {makeStyleFactory, Icon, AppIcons, getAttachmentFileIcon} from '@/utils';
 import type {AttachmentsSelectionController} from '../hooks';
+import type {AttachmentDisplayItem} from '@sykamore/store';
 
 /**
  * Shared attachment list view with optional selection state.
  */
 type AttachmentsListProps = {
   onAttachmentPress: (attachmentId: string) => void;
-  attachments: ItemAttachment[];
+  attachments: AttachmentDisplayItem[];
   onEndReached?: () => void;
   onEndReachedThreshold?: number;
   onRefresh?: () => Promise<void> | void;
@@ -38,7 +30,7 @@ type AttachmentsListProps = {
 };
 
 type SelectableAttachmentsListProps = AttachmentsListProps & {
-  selection: AttachmentsSelectionController<ItemAttachment>;
+  selection: AttachmentsSelectionController<AttachmentDisplayItem>;
 };
 
 type AttachmentListSelectionState = {
@@ -57,7 +49,7 @@ type AttachmentsListBaseProps = AttachmentsListProps & {
 };
 
 type AttachmentItemProps = {
-  item: ItemAttachment;
+  item: AttachmentDisplayItem;
   styles: ReturnType<typeof createStyles>;
   selectionVisible: boolean;
   isSelected: boolean;
@@ -84,44 +76,8 @@ const AttachmentItem = memo<AttachmentItemProps>(
     contentTranslateX,
     // rippleColor,
   }) => {
-    const {uiTitle, uiDescription, fileIcon, thumbnailSource} = useMemo(() => {
-      const title = item.original_filename ?? item.filename ?? 'Untitled';
-
-      const fileSize = formatBytes(Number(item.size));
-
-      const dateAdded = item.created_at
-        ? formatDateShort(item.created_at)
-        : '—';
-
-      const fileType = item.file_type?.toLowerCase() ?? '';
-
-      const normalizedExtension = (item.extension ?? '')
-        .toLowerCase()
-        .replace(/^\./, '');
-
-      const isPdf =
-        fileType === 'application/pdf' || normalizedExtension === 'pdf';
-
-      const isImage =
-        (item.kind ?? '').toLowerCase() === 'image' ||
-        fileType.startsWith('image/');
-
-      const thumbnailUrl =
-        isPdf || isImage ? resolveAttachmentThumbnailUrl(item) : null;
-
-      const icon = getAttachmentFileIcon({
-        filename: title,
-        extension: item.extension ?? null,
-        fileType: item.file_type ?? null,
-      });
-
-      return {
-        uiTitle: title,
-        uiDescription: `${dateAdded} - ${fileSize}`,
-        fileIcon: icon,
-        thumbnailSource: thumbnailUrl ?? null,
-      };
-    }, [item]);
+    const {uiTitle, uiDescription, thumbnailUrl, iconKey} = item;
+    const fileIcon = getAttachmentFileIcon(iconKey);
 
     const handlePress = useCallback(
       () => onPressRow(item.id),
@@ -147,7 +103,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
           isSelected ? styles.contentSelected : null,
           pressed && !selectionVisible ? styles.contentPressed : null,
         ]}
-        // android_ripple={{color: rippleColor, foreground: true}}
+        android_ripple={{foreground: false}}
       >
         {selectionVisible ? (
           <Animated.View
@@ -173,13 +129,14 @@ const AttachmentItem = memo<AttachmentItemProps>(
           ]}
         >
           <View style={styles.iconContainer}>
-            {thumbnailSource ? (
+            {thumbnailUrl ? (
               <Image
-                source={{uri: thumbnailSource, cacheKey: `${item.id}:thumb`}}
+                source={{uri: thumbnailUrl}}
                 style={styles.thumbnail}
                 contentFit="cover"
                 recyclingKey={item.id}
                 cachePolicy="memory-disk"
+                priority="low"
               />
             ) : (
               <View>
@@ -296,7 +253,7 @@ const AttachmentsListBase = ({
   );
 
   const renderItem = useCallback(
-    ({item}: {item: ItemAttachment}) => (
+    ({item}: {item: AttachmentDisplayItem}) => (
       <AttachmentItem
         item={item}
         styles={styles}
@@ -325,7 +282,10 @@ const AttachmentsListBase = ({
     ],
   );
 
-  const keyExtractor = useCallback((item: ItemAttachment) => item.id, []);
+  const keyExtractor = useCallback(
+    (item: AttachmentDisplayItem) => item.id,
+    [],
+  );
 
   const ItemSeparator = useCallback(
     () => <Divider style={styles.divider} />,

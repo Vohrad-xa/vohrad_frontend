@@ -45,7 +45,7 @@ export const SelectableImageTile = memo(
           cachePolicy="memory-disk"
           recyclingKey={attachment.id}
           transition={200}
-          priority="normal"
+          priority="high"
         />
         {selectionVisible ? (
           <Checkbox

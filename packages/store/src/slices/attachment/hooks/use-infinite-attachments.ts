@@ -1,10 +1,14 @@
-import {useInfiniteQuery} from '@tanstack/react-query';
-import {attachmentApi, type ListAttachmentsParams} from '@sykamore/api-client';
-
-type AttachmentListFilters = Omit<
-  ListAttachmentsParams,
-  'limit' | 'cursor' | 'direction' | 'order'
->;
+import {useInfiniteQuery, type InfiniteData} from '@tanstack/react-query';
+import {attachmentApi} from '@sykamore/api-client';
+import type {PaginatedResponse} from '@sykamore/types';
+import {
+  buildAttachmentDisplayItems,
+  type AttachmentDisplayItem,
+} from '../utils';
+import {
+  buildAttachmentListQueryKey,
+  type AttachmentListFilters,
+} from '../utils/query-keys';
 
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
@@ -13,9 +17,15 @@ export function useInfiniteAttachments(
   pageSize = 30,
   enabled = true,
 ) {
-  const queryKey = ['attachments', 'list', filters, pageSize];
+  const queryKey = buildAttachmentListQueryKey(filters, pageSize);
 
-  return useInfiniteQuery({
+  return useInfiniteQuery<
+    PaginatedResponse<AttachmentDisplayItem>,
+    Error,
+    InfiniteData<PaginatedResponse<AttachmentDisplayItem>, string | null>,
+    typeof queryKey,
+    string | null
+  >({
     queryKey,
     queryFn: async ({pageParam}) => {
       const response = await attachmentApi.listAttachments({
@@ -24,7 +34,11 @@ export function useInfiniteAttachments(
         cursor: pageParam ?? undefined,
         direction: 'after',
       });
-      return response.data;
+      const data = response.data;
+      return {
+        ...data,
+        items: buildAttachmentDisplayItems(data.items),
+      };
     },
     initialPageParam: null,
     getNextPageParam: (lastPage) => {

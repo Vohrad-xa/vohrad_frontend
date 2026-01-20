@@ -1,6 +1,11 @@
 import {useQuery} from '@tanstack/react-query';
 import {attachmentApi} from '@sykamore/api-client';
 import type {AttachmentTargetType} from '@sykamore/types';
+import {
+  buildAttachmentDisplayItems,
+  type AttachmentDisplayItem,
+} from '../utils/attachment-display';
+import {buildAttachmentTargetQueryKey} from '../utils/query-keys';
 
 const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
@@ -9,9 +14,9 @@ export function useFetchTargetAttachments(
   targetId: string | null,
   enabled = true,
 ) {
-  const queryKey = ['attachments', targetType, targetId];
+  const queryKey = buildAttachmentTargetQueryKey(targetType, targetId);
 
-  return useQuery({
+  return useQuery<AttachmentDisplayItem[]>({
     queryKey,
     queryFn: async () => {
       if (!targetId) {
@@ -22,7 +27,7 @@ export function useFetchTargetAttachments(
         targetId,
         limit: 30,
       });
-      return response.data.items ?? [];
+      return buildAttachmentDisplayItems(response.data.items ?? []);
     },
     enabled: enabled && !!targetId,
     staleTime: STALE_TIME,

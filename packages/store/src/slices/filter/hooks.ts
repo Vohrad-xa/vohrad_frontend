@@ -1,7 +1,7 @@
 import {useCallback} from 'react';
 import type {AttachmentFilter} from '@sykamore/types';
 import {useAuthStore} from '../../store';
-import {hasAttachmentExtension} from '../attachment/filters';
+import {hasAttachmentExtension} from '../attachment/utils/filters';
 
 export function usePendingFilters() {
   return useAuthStore((state) => state.pendingFilters);

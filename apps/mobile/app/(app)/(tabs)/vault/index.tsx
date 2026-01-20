@@ -26,7 +26,6 @@ import {
 } from '@/features/attachments';
 import {useSearch} from '@/features/dashboard';
 import * as storage from '@/utils/storage';
-import type {ItemAttachment} from '@sykamore/types';
 
 const ATTACHMENT_OVERVIEW_ORDER_KEY = 'attachments.overview.order';
 const DEFAULT_ATTACHMENT_OVERVIEW_ORDER = [
@@ -304,9 +303,7 @@ export default function VaultScreen() {
 
   const handleSearchResultPress = useCallback(
     async (attachmentId: string) => {
-      const attachment = searchResults.find(
-        (a: ItemAttachment) => a.id === attachmentId,
-      );
+      const attachment = searchResults.find((a) => a.id === attachmentId);
       if (!attachment) {
         return;
       }

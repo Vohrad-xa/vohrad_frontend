@@ -1,7 +1,7 @@
 import {useMemo} from 'react';
 import type {AttachmentKind, AttachmentTargetType} from '@sykamore/types';
 import {useAttachmentFilter} from '../../filter/hooks';
-import {buildAttachmentODataFilter} from '../filters';
+import {buildAttachmentODataFilter} from '../utils';
 import {useAttachmentsListManager} from './use-attachments-list-manager';
 
 export interface UseFilteredAttachmentsManagerOptions {

@@ -4,11 +4,12 @@ import type {
   ItemAttachment,
   OrderByDirection,
 } from '@sykamore/types';
-import {getAttachmentExtension} from '../filters';
-import {parseAttachmentOrderBy} from '../sorting';
+import {getAttachmentExtension, parseAttachmentOrderBy} from '../utils';
 
-export type UseAttachmentsViewManagerOptions = {
-  attachments?: ItemAttachment[] | null;
+export type UseAttachmentsViewManagerOptions<
+  T extends ItemAttachment = ItemAttachment,
+> = {
+  attachments?: T[] | null;
   kind?: AttachmentKind;
   extension?: string;
   odataOrderBy?: string;
@@ -18,10 +19,10 @@ export type UseAttachmentsViewManagerOptions = {
 const resolveAttachmentName = (attachment: ItemAttachment): string =>
   (attachment.original_filename || attachment.filename || '').toLowerCase();
 
-const sortByName = (
-  attachments: ItemAttachment[],
+const sortByName = <T extends ItemAttachment>(
+  attachments: T[],
   direction: OrderByDirection,
-): ItemAttachment[] => {
+): T[] => {
   return [...attachments].sort((first, second) => {
     const firstName = resolveAttachmentName(first);
     const secondName = resolveAttachmentName(second);
@@ -30,10 +31,10 @@ const sortByName = (
   });
 };
 
-const sortByDate = (
-  attachments: ItemAttachment[],
+const sortByDate = <T extends ItemAttachment>(
+  attachments: T[],
   direction: OrderByDirection,
-): ItemAttachment[] => {
+): T[] => {
   return [...attachments].sort((first, second) => {
     const firstDate = first.created_at ? Date.parse(first.created_at) : 0;
     const secondDate = second.created_at ? Date.parse(second.created_at) : 0;
@@ -48,9 +49,9 @@ const sortByDate = (
  *
  * - Applies kind/extension filters and optional orderBy sorting when enabled.
  */
-export function useAttachmentsViewManager(
-  options?: UseAttachmentsViewManagerOptions,
-) {
+export function useAttachmentsViewManager<
+  T extends ItemAttachment = ItemAttachment,
+>(options?: UseAttachmentsViewManagerOptions<T>) {
   const {
     attachments,
     kind,
@@ -63,7 +64,7 @@ export function useAttachmentsViewManager(
     [extension],
   );
 
-  const viewAttachments = useMemo(() => {
+  const viewAttachments = useMemo<T[]>(() => {
     if (!attachments || attachments.length === 0) {
       return [];
     }

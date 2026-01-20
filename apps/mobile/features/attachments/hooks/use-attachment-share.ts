@@ -1,10 +1,10 @@
 import {useCallback, useState} from 'react';
+import {resolveAttachmentItemUrl} from '@sykamore/store';
 import {showAlert} from '@/utils';
 import {
   downloadDocumentFile,
   shareDownloadedFile,
   shareDownloadedFiles,
-  resolveAttachmentItemUrl,
 } from '../utils';
 import type {ItemAttachment} from '@sykamore/types';
 

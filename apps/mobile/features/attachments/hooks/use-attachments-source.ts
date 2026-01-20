@@ -3,10 +3,11 @@ import {
   buildAttachmentODataFilter,
   useAttachmentsViewManager,
   useFilteredAttachmentsManager,
+  type AttachmentDisplayItem,
 } from '@sykamore/store';
 import {useOptionalAttachmentContext} from '../providers/attachment-provider';
 import {useAttachmentSearch} from './use-attachment-search';
-import type {AttachmentKind, ItemAttachment} from '@sykamore/types';
+import type {AttachmentKind} from '@sykamore/types';
 
 type UseAttachmentsSourceOptions = {
   kind?: AttachmentKind;
@@ -18,7 +19,7 @@ type UseAttachmentsSourceOptions = {
 };
 
 type UseAttachmentsSourceResult = {
-  attachments: ItemAttachment[];
+  attachments: AttachmentDisplayItem[];
   loadMore: () => void;
   hasNext?: boolean;
   isLoading: boolean;

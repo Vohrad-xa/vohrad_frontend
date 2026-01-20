@@ -15,7 +15,7 @@ const formatDecimal = (
   return text.replace('.', ',');
 };
 
-export const formatBytes = (bytes: number): string => {
+export function formatBytes(bytes: number): string {
   if (!Number.isFinite(bytes) || bytes < 0) return 'Unknown size';
   if (bytes < 1024) return `${bytes} ${bytes === 1 ? 'byte' : 'bytes'}`;
   const kb = bytes / 1024;
@@ -24,4 +24,4 @@ export const formatBytes = (bytes: number): string => {
   if (mb < 1024) return `${formatDecimal(mb, 1, 'round')} MB`;
   const gb = mb / 1024;
   return `${formatDecimal(gb, 1, 'round')} GB`;
-};
+}

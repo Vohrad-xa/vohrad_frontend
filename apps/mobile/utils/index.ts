@@ -21,7 +21,6 @@ export * from './sorting';
 export * from './haptics';
 export * from './versioning';
 export * from './bootstrap';
-export * from './formate-bytes';
 export * from './name-sanitizer';
 export * from './navigation/dynamic-hedaer';
 export * from './navigation/header-actions';

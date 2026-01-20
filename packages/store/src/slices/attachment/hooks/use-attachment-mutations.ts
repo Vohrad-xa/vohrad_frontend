@@ -5,17 +5,18 @@ import {
   type AttachmentCounts,
   type DashboardOverview,
 } from '@sykamore/api-client';
-import type {ItemAttachment} from '@sykamore/types';
-
-interface InfiniteAttachmentsPage {
-  items: ItemAttachment[];
-  nextCursor?: string | null;
-}
-
-interface InfiniteAttachmentsData {
-  pages: InfiniteAttachmentsPage[];
-  pageParams: unknown[];
-}
+import {buildAttachmentDisplayData, type AttachmentDisplayItem} from '../utils';
+import {
+  type InfiniteAttachmentsData,
+  updateInfiniteAttachmentsCacheForUpload,
+} from '../utils/cache-updates';
+import {normalizeAttachmentTargetType} from '../utils/normalizers';
+import {
+  parseAttachmentListQueryKey,
+  type AttachmentListQueryKey,
+  buildAttachmentTargetQueryKey,
+  parseAttachmentTargetQueryKey,
+} from '../utils/query-keys';
 
 export function useUploadAttachment() {
   const queryClient = useQueryClient();
@@ -25,32 +26,45 @@ export function useUploadAttachment() {
       attachmentApi.uploadAttachment(formData),
     onSuccess: (response: AttachmentWithCounts) => {
       const {attachment, counts} = response;
+      const displayAttachment: AttachmentDisplayItem = {
+        ...attachment,
+        ...buildAttachmentDisplayData(attachment),
+      };
 
       // 1. Update item-specific cache (e.g., ['attachments', 'item', '123'])
-      if (attachment.attachable_type && attachment.attachable_id) {
-        queryClient.setQueryData<ItemAttachment[]>(
-          [
-            'attachments',
-            attachment.attachable_type,
+      const normalizedTargetType = normalizeAttachmentTargetType(
+        attachment.attachable_type,
+      );
+      if (normalizedTargetType && attachment.attachable_id) {
+        queryClient.setQueryData<AttachmentDisplayItem[]>(
+          buildAttachmentTargetQueryKey(
+            normalizedTargetType,
             String(attachment.attachable_id),
-          ],
-          (old) => (old ? [attachment, ...old] : [attachment]),
+          ),
+          (old) => (old ? [displayAttachment, ...old] : [displayAttachment]),
         );
       }
 
-      // 2. Update global vault infinite query cache (newest first)
-      queryClient.setQueriesData<InfiniteAttachmentsData>(
-        {queryKey: ['attachments', 'list']},
-        (old) => {
-          if (!old) return old;
-          return {
-            ...old,
-            pages: old.pages.map((page, idx) =>
-              idx === 0 ? {...page, items: [attachment, ...page.items]} : page,
-            ),
-          };
-        },
-      );
+      // 2. Update global vault infinite query caches when filters/sort allow.
+      const listQueries = queryClient.getQueriesData<InfiniteAttachmentsData>({
+        queryKey: ['attachments', 'list'],
+      });
+      listQueries.forEach(([queryKey, data]) => {
+        if (!data) return;
+        const parsed = parseAttachmentListQueryKey(queryKey);
+        if (!parsed) return;
+
+        const next = updateInfiniteAttachmentsCacheForUpload(
+          data,
+          displayAttachment,
+          parsed.filters,
+          parsed.pageSize,
+        );
+
+        if (next) {
+          queryClient.setQueryData(queryKey as AttachmentListQueryKey, next);
+        }
+      });
 
       // 3. Update dashboard counts (from backend, no refetch)
       queryClient.setQueryData<DashboardOverview>(
@@ -82,14 +96,23 @@ export function useDeleteAttachment() {
     onSuccess: (counts: AttachmentCounts, variables) => {
       const {attachmentId} = variables;
 
-      // 1. Remove from all item-specific caches (arrays)
-      queryClient.setQueriesData<ItemAttachment[]>(
-        {queryKey: ['attachments'], exact: false},
-        (old) => {
-          if (!Array.isArray(old)) return old;
-          return old.filter((item) => item.id !== attachmentId);
-        },
+      // 1. Remove from target-specific caches (arrays)
+      const targetQueries = queryClient.getQueriesData<AttachmentDisplayItem[]>(
+        {queryKey: ['attachments']},
       );
+      targetQueries.forEach(([queryKey, data]) => {
+        if (!Array.isArray(data)) return;
+        const parsed = parseAttachmentTargetQueryKey(queryKey);
+        if (!parsed) return;
+
+        const next = data.filter((item) => item.id !== attachmentId);
+        if (next.length === data.length) return;
+
+        queryClient.setQueryData(
+          buildAttachmentTargetQueryKey(parsed.targetType, parsed.targetId),
+          next,
+        );
+      });
 
       // 2. Remove from global vault infinite query cache
       queryClient.setQueriesData<InfiniteAttachmentsData>(

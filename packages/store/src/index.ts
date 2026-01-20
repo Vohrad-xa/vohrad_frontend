@@ -87,6 +87,8 @@ export {
   parseAttachmentOrderBy,
   type UseAttachmentsViewManagerOptions,
   type UseFilteredAttachmentsManagerOptions,
+  type AttachmentDisplayItem,
+  type AttachmentIconKey,
 } from './slices/attachment';
 
 export {
@@ -117,6 +119,11 @@ export {
 export {buildODataOrderBy} from './utils/odata-orderby-builder';
 export {searchItemsLocally, searchUsersLocally} from './utils/local-search';
 export type {AsyncState, PaginatedState} from './utils/state';
+export {
+  resolveAttachmentPreviewUrl,
+  resolveAttachmentThumbnailUrl,
+  resolveAttachmentItemUrl,
+} from './utils/attachment-urls';
 
 export type {
   User,

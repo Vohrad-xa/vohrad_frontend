@@ -1,19 +1,14 @@
 import {useMemo} from 'react';
-import {
-  resolveAttachmentPreviewUrl,
-  resolveAttachmentThumbnailUrl,
-} from '@/features/attachments/utils/url-resolver';
-import type {ItemAttachment} from '@sykamore/types';
+import {type AttachmentDisplayItem} from '@sykamore/store';
 
 export const IMAGE_GRID_COLUMNS = 5;
 
-export interface ImageAttachmentItem extends ItemAttachment {
+export interface ImageAttachmentItem extends AttachmentDisplayItem {
   resolvedUrl: string;
-  thumbnailUrl?: string;
 }
 
 export function useImageAttachments(
-  attachments?: ItemAttachment[] | null,
+  attachments?: AttachmentDisplayItem[] | null,
 ): ImageAttachmentItem[] {
   return useMemo(() => {
     if (!attachments || attachments.length === 0) return [];
@@ -21,11 +16,9 @@ export function useImageAttachments(
     const images: ImageAttachmentItem[] = [];
     for (const attachment of attachments) {
       if (attachment.kind === 'image') {
-        const resolvedUrl = resolveAttachmentPreviewUrl(attachment);
-        const thumbnailUrl =
-          resolveAttachmentThumbnailUrl(attachment) ?? undefined;
+        const resolvedUrl = attachment.previewUrl;
         if (resolvedUrl) {
-          images.push({...attachment, resolvedUrl, thumbnailUrl});
+          images.push({...attachment, resolvedUrl});
         }
       }
     }

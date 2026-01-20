@@ -1,11 +1,7 @@
 import {useCallback, useMemo} from 'react';
-import {type ListAttachmentsParams} from '@sykamore/api-client';
+import type {AttachmentDisplayItem} from '../utils';
 import {useInfiniteAttachments} from '../hooks/use-infinite-attachments';
-
-type AttachmentListFilters = Omit<
-  ListAttachmentsParams,
-  'limit' | 'cursor' | 'direction' | 'order'
->;
+import type {AttachmentListFilters} from '../utils/query-keys';
 
 type UseAttachmentsListManagerOptions = {
   pageSize?: number;
@@ -33,7 +29,7 @@ export function useAttachmentsListManager(
 
   const pages = data?.pages ?? [];
 
-  const attachments = useMemo(
+  const attachments = useMemo<AttachmentDisplayItem[]>(
     () => pages.flatMap((page) => page.items),
     [pages],
   );
