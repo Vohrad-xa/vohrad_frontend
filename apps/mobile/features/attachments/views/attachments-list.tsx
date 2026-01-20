@@ -264,7 +264,6 @@ const AttachmentsListBase = ({
       selectionOpacity,
       checkboxTranslateX,
       contentTranslateX,
-      Palette.blue,
     ],
   );
 

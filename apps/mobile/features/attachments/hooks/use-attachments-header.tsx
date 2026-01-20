@@ -65,8 +65,31 @@ export function useAttachmentsHeader({
     onSelectPress,
   } = filter ?? {};
 
+  const hasFilter = filter != null;
+
+  const hasSelection = selectedCount > 0;
+
+  const hasAllSelected = totalCount > 0 && selectedCount === totalCount;
+
+  const handleSelectAllPress = useCallback(() => {
+    if (hasAllSelected) {
+      onDeselectAll();
+      return;
+    }
+    onSelectAll();
+  }, [hasAllSelected, onDeselectAll, onSelectAll]);
+
+  const sharePress = useCallback(
+    () => void onShareSelected?.(),
+    [onShareSelected],
+  );
+
+  const deletePress = useCallback(
+    () => void onDeleteSelected?.(),
+    [onDeleteSelected],
+  );
+
   const selectAllButton = useMemo(() => {
-    const hasAllSelected = totalCount > 0 && selectedCount === totalCount;
     return (
       <HeaderButton
         variant="text"
@@ -81,21 +104,14 @@ export function useAttachmentsHeader({
             ? `Clear the current ${labelSingular} selection`
             : `Select all ${labelPlural} in the list`
         }
-        onPress={hasAllSelected ? onDeselectAll : onSelectAll}
+        onPress={handleSelectAllPress}
       />
     );
-  }, [
-    totalCount,
-    selectedCount,
-    labelPlural,
-    labelSingular,
-    onDeselectAll,
-    onSelectAll,
-  ]);
+  }, [hasAllSelected, labelPlural, labelSingular, handleSelectAllPress]);
 
   const rightActions = useMemo<HeaderAction[]>(() => {
     if (!isSelectionMode) {
-      if (!filter) return [];
+      if (!hasFilter) return [];
 
       return [
         {
@@ -115,16 +131,6 @@ export function useAttachmentsHeader({
       ];
     }
 
-    const hasSelection = selectedCount > 0;
-    const sharePress =
-      isProcessing || !onShareSelected
-        ? undefined
-        : () => void onShareSelected();
-    const deletePress =
-      isProcessing || !onDeleteSelected
-        ? undefined
-        : () => void onDeleteSelected();
-
     const actions: HeaderAction[] = [];
 
     if (Platform.OS === 'android') {
@@ -135,7 +141,8 @@ export function useAttachmentsHeader({
       });
     }
 
-    if (hasSelection && onShareSelected) {
+    if (onShareSelected) {
+      const shareDisabled = !hasSelection || isProcessing;
       actions.push({
         type: 'custom',
         key: 'share',
@@ -144,13 +151,15 @@ export function useAttachmentsHeader({
             variant="share"
             accessibilityLabel={`Share selected ${labelPlural}`}
             accessibilityHint={`Share or download selected ${labelPlural}`}
-            onPress={sharePress}
+            disabled={shareDisabled}
+            onPress={shareDisabled ? undefined : sharePress}
           />
         ),
       });
     }
 
-    if (hasSelection && onDeleteSelected) {
+    if (onDeleteSelected) {
+      const deleteDisabled = !hasSelection || isProcessing;
       actions.push({
         type: 'custom',
         key: 'delete',
@@ -159,7 +168,8 @@ export function useAttachmentsHeader({
             variant="delete"
             accessibilityLabel={`Delete selected ${labelPlural}`}
             accessibilityHint={`Permanently delete selected ${labelPlural}`}
-            onPress={deletePress}
+            disabled={deleteDisabled}
+            onPress={deleteDisabled ? undefined : deletePress}
           />
         ),
       });
@@ -183,17 +193,19 @@ export function useAttachmentsHeader({
     return actions;
   }, [
     isSelectionMode,
-    filter,
+    hasFilter,
     showExtensionFilter,
     extension,
     odataOrderBy,
     onExtensionChange,
     onOrderByChange,
     onSelectPress,
-    selectedCount,
+    hasSelection,
     isProcessing,
     onShareSelected,
     onDeleteSelected,
+    sharePress,
+    deletePress,
     labelPlural,
     labelSingular,
     onCancelSelection,
@@ -217,22 +229,25 @@ export function useAttachmentsHeader({
     return selectAllButton;
   }, [isSelectionMode, onCancelSelection, labelSingular, selectAllButton]);
 
+  const headerActionsOptions = useMemo(
+    () => getHeaderOptions({right: rightActions}),
+    [rightActions],
+  );
+
+  const headerTitle = useMemo(
+    () =>
+      isSelectionMode && hasSelection ? `${selectedCount} selected` : title,
+    [isSelectionMode, hasSelection, selectedCount, title],
+  );
+
   useLayoutEffect(() => {
-    const headerActionsOptions = getHeaderOptions({right: rightActions});
     navigation.setOptions({
       ...headerActionsOptions,
       headerLeft,
-      headerTitle:
-        isSelectionMode && selectedCount > 0
-          ? `${selectedCount} selected`
-          : title,
     });
-  }, [
-    navigation,
-    rightActions,
-    headerLeft,
-    isSelectionMode,
-    selectedCount,
-    title,
-  ]);
+  }, [navigation, headerActionsOptions, headerLeft]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({headerTitle});
+  }, [navigation, headerTitle]);
 }

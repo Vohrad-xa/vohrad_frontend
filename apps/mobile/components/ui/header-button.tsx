@@ -118,6 +118,7 @@ export interface HeaderButtonProps
       'style' | 'accessibilityLabel' | 'accessibilityHint' | 'testID'
     > {
   onPress?: () => void;
+  disabled?: boolean;
   variant?: HeaderButtonVariant;
   icon?: IconName;
   text?: string;
@@ -136,6 +137,7 @@ export const HeaderButton = ({
   icon,
   text,
   onPress,
+  disabled,
   iconColor,
   iconColorToken,
   textColor,
@@ -151,7 +153,7 @@ export const HeaderButton = ({
 }: HeaderButtonProps) => {
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
-  const isDisabled = !onPress;
+  const isDisabled = !!disabled || !onPress;
   const isTextLike = variant === 'text' || variant === 'cancel';
 
   const variantConfig = getVariantConfig(variant, theme);
@@ -196,7 +198,7 @@ export const HeaderButton = ({
         styles.button,
         isGrouped && styles.groupedButton,
         isTextLike && styles.textButton,
-        // isDisabled && styles.buttonDisabled,
+        isDisabled && styles.buttonDisabled,
         style,
       ]}
       accessibilityRole="button"
@@ -245,9 +247,9 @@ const createStyles = makeStyleFactory(
         marginHorizontal: Platform.OS === 'ios' ? ds.spacing.sm : ds.spacing.sm,
       },
 
-      // buttonDisabled: {
-      //   opacity: 0.4,
-      // },
+      buttonDisabled: {
+        opacity: 0.5,
+      },
     }),
   (ds, theme) => themeKey(theme, ds),
 );
