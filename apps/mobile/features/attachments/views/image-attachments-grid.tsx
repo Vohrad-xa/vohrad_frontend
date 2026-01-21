@@ -18,6 +18,7 @@ interface ImageAttachmentsGridProps {
   loadMore: () => void;
   hasNext?: boolean;
   isLoading: boolean;
+  isFetchingNextPage: boolean;
   refresh?: () => void | Promise<void>;
   onImagePress: (attachment: ImageAttachmentItem) => void;
   selection: AttachmentsSelectionController<ImageAttachmentItem>;
@@ -30,6 +31,7 @@ export function ImageAttachmentsGrid({
   loadMore,
   hasNext,
   isLoading,
+  isFetchingNextPage,
   refresh,
   onImagePress,
   selection,
@@ -49,8 +51,8 @@ export function ImageAttachmentsGrid({
   );
 
   const handleLoadMore = useCallback(() => {
-    if (hasNext && !isLoading) loadMore();
-  }, [hasNext, isLoading, loadMore]);
+    if (hasNext && !isFetchingNextPage) loadMore();
+  }, [hasNext, isFetchingNextPage, loadMore]);
 
   const handlePress = useCallback(
     async (attachment: ImageAttachmentItem) => {

@@ -18,6 +18,7 @@ export interface UseAttachmentSearchOptions {
 type UseAttachmentSearchResult = {
   attachments: AttachmentDisplayItem[];
   isLoading: boolean;
+  isFetchingNextPage: boolean;
   error: unknown;
   hasNext?: boolean;
   loadMore?: () => void;
@@ -50,6 +51,7 @@ export function useAttachmentSearch(
     error,
     hasNext,
     isLoading,
+    isFetchingNextPage,
     loadMore,
     refresh,
     lastUpdated,
@@ -64,6 +66,7 @@ export function useAttachmentSearch(
   return {
     attachments,
     isLoading,
+    isFetchingNextPage,
     error,
     hasNext,
     loadMore,

@@ -9,6 +9,7 @@ import {
 interface AttachmentContextValue {
   attachments: AttachmentDisplayItem[];
   isLoading: boolean;
+  isFetchingNextPage?: boolean;
   error: Error | null;
   targetId?: string | null;
   targetType?: AttachmentTargetType | null;
@@ -41,6 +42,7 @@ export function AttachmentProvider({children}: AttachmentProviderProps) {
   const {
     attachments,
     isLoading,
+    isFetchingNextPage,
     error,
     hasNext,
     loadMore,
@@ -60,6 +62,7 @@ export function AttachmentProvider({children}: AttachmentProviderProps) {
     () => ({
       attachments,
       isLoading,
+      isFetchingNextPage,
       error: error ?? null,
       targetId,
       targetType,
@@ -79,6 +82,7 @@ export function AttachmentProvider({children}: AttachmentProviderProps) {
       loadMore,
       refreshAttachments,
       lastUpdated,
+      isFetchingNextPage,
     ],
   );
 

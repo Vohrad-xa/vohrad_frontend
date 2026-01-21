@@ -23,6 +23,7 @@ type UseAttachmentsSourceResult = {
   loadMore: () => void;
   hasNext?: boolean;
   isLoading: boolean;
+  isFetchingNextPage: boolean;
   refresh: () => void | Promise<void>;
   lastUpdated?: Date | null;
 };
@@ -52,6 +53,7 @@ export function useAttachmentsSource(
     loadMore: searchLoadMore,
     hasNext: searchHasNext,
     isLoading: searchIsLoading,
+    isFetchingNextPage: searchIsFetchingNextPage,
     refresh: searchRefresh,
     lastUpdated: searchLastUpdated,
     isSearchActive,
@@ -73,6 +75,7 @@ export function useAttachmentsSource(
     loadMore,
     hasNext,
     isLoading,
+    isFetchingNextPage,
     refresh,
     lastUpdated,
   } = useFilteredAttachmentsManager({
@@ -99,6 +102,7 @@ export function useAttachmentsSource(
       loadMore: searchLoadMore ?? noop,
       hasNext: searchHasNext,
       isLoading: searchIsLoading,
+      isFetchingNextPage: searchIsFetchingNextPage,
       refresh: searchRefresh ?? noop,
       lastUpdated: searchLastUpdated,
     };
@@ -110,6 +114,7 @@ export function useAttachmentsSource(
       loadMore: attachmentContext?.loadMore ?? noop,
       hasNext: attachmentContext?.hasNext,
       isLoading: Boolean(attachmentContext?.isLoading),
+      isFetchingNextPage: Boolean(attachmentContext?.isFetchingNextPage),
       refresh: attachmentContext?.refresh ?? noop,
       lastUpdated: attachmentContext?.lastUpdated ?? null,
     };
@@ -120,6 +125,7 @@ export function useAttachmentsSource(
     loadMore,
     hasNext,
     isLoading,
+    isFetchingNextPage,
     refresh,
     lastUpdated,
   };

@@ -315,7 +315,6 @@ const AttachmentsListBase = ({
       refreshing={refreshing}
       onRefresh={handleRefresh}
       onEndReached={onEndReached}
-      onStartReachedThreshold={0.2}
       onEndReachedThreshold={onEndReachedThreshold}
       drawDistance={Platform.OS === 'android' ? ds.screen.height : undefined}
       ItemSeparatorComponent={ItemSeparator}
@@ -523,3 +522,5 @@ const createStyles = makeStyleFactory(
     }),
   (ds, theme) => themeKey(theme, ds),
 );
+
+//codex resume 019bdd02-192a-7a22-be2b-0fefb07389a1

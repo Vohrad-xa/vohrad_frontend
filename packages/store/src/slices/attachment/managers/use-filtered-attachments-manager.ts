@@ -82,6 +82,7 @@ export function useFilteredAttachmentsManager(
     attachments: manager.attachments,
     lastUpdated: manager.lastUpdated,
     isLoading: manager.isLoading,
+    isFetchingNextPage: manager.isFetchingNextPage,
     error: manager.error,
     hasNext: manager.hasNext,
     loadMore: manager.loadMore,

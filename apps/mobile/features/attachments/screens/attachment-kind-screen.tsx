@@ -56,14 +56,21 @@ export function AttachmentKindScreen({
         : VAULT_SEARCH_SCOPES.other;
   const {searchQuery} = useSearch(searchScope);
 
-  const {attachments, refresh, isLoading, lastUpdated, hasNext, loadMore} =
-    useAttachmentsSource({
-      kind,
-      searchQuery,
-      extension,
-      odataOrderBy,
-      enabled: isFocused,
-    });
+  const {
+    attachments,
+    refresh,
+    isLoading,
+    isFetchingNextPage,
+    lastUpdated,
+    hasNext,
+    loadMore,
+  } = useAttachmentsSource({
+    kind,
+    searchQuery,
+    extension,
+    odataOrderBy,
+    enabled: isFocused,
+  });
 
   const selection = useAttachmentsSelection(attachments);
   const {showSnack, snackbar} = useAttachmentsSnackbar();
@@ -86,10 +93,10 @@ export function AttachmentKindScreen({
     : title;
 
   const handleLoadMore = useCallback(() => {
-    if (hasNext && !isLoading) {
+    if (hasNext && !isFetchingNextPage) {
       loadMore();
     }
-  }, [hasNext, isLoading, loadMore]);
+  }, [hasNext, isFetchingNextPage, loadMore]);
 
   const handleItemPress = useCallback(
     async (attachmentId: string) => {
@@ -132,7 +139,7 @@ export function AttachmentKindScreen({
         onAttachmentPress={handleItemPress}
         selection={selection}
         onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={1.5}
         onRefresh={refresh}
         isLoading={isLoading}
         lastUpdated={lastUpdated}

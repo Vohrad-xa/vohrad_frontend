@@ -23,13 +23,19 @@ export default function VaultImagesScreen() {
   const [odataOrderBy, setOdataOrderBy] = useState<string | undefined>();
   const {showSnack, snackbar} = useAttachmentsSnackbar();
 
-  const {attachments, loadMore, hasNext, isLoading, refresh} =
-    useAttachmentsSource({
-      kind: 'image',
-      searchQuery,
-      odataOrderBy,
-      enabled: isFocused,
-    });
+  const {
+    attachments,
+    loadMore,
+    hasNext,
+    isLoading,
+    isFetchingNextPage,
+    refresh,
+  } = useAttachmentsSource({
+    kind: 'image',
+    searchQuery,
+    odataOrderBy,
+    enabled: isFocused,
+  });
 
   const imageAttachments = useImageAttachments(attachments);
   const selection = useAttachmentsSelection(imageAttachments);
@@ -77,6 +83,7 @@ export default function VaultImagesScreen() {
         loadMore={loadMore}
         hasNext={hasNext}
         isLoading={isLoading}
+        isFetchingNextPage={isFetchingNextPage}
         refresh={refresh}
         onImagePress={handleImagePress}
         selection={selection}
