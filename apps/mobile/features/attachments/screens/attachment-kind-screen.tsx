@@ -139,7 +139,7 @@ export function AttachmentKindScreen({
         onAttachmentPress={handleItemPress}
         selection={selection}
         onEndReached={handleLoadMore}
-        onEndReachedThreshold={1.5}
+        onEndReachedThreshold={0.5}
         onRefresh={refresh}
         isLoading={isLoading}
         lastUpdated={lastUpdated}
