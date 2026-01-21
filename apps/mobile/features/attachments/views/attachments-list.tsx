@@ -2,11 +2,12 @@ import {useCallback, useMemo, memo, useState, useRef, useEffect} from 'react';
 import {Animated, Platform, Pressable, StyleSheet, View} from 'react-native';
 import {useHeaderHeight} from '@react-navigation/elements';
 import {FlashList} from '@shopify/flash-list';
+import {Checkbox} from 'expo-checkbox';
 import {Image} from 'expo-image';
-import {Checkbox, Divider} from 'react-native-paper';
+import {Divider} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedText, EmptyState} from '@/components/ui';
-import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme, useHaptic} from '@/providers';
@@ -55,10 +56,9 @@ type AttachmentItemProps = {
   isSelected: boolean;
   onPressRow: (id: string) => void;
   onLongPressRow?: (id: string) => void;
-  opacity: Animated.Value;
-  checkboxColor: string;
   checkboxTranslateX: Animated.AnimatedInterpolation<number>;
   contentTranslateX: Animated.AnimatedInterpolation<number>;
+  rippleColor: string;
 };
 
 const AttachmentItem = memo<AttachmentItemProps>(
@@ -69,9 +69,9 @@ const AttachmentItem = memo<AttachmentItemProps>(
     isSelected,
     onPressRow,
     onLongPressRow,
-    checkboxColor,
     checkboxTranslateX,
     contentTranslateX,
+    rippleColor,
   }) => {
     const {uiTitle, uiDescription, thumbnailUrl, iconKey} = item;
     const fileIcon = getAttachmentFileIcon(iconKey);
@@ -96,8 +96,11 @@ const AttachmentItem = memo<AttachmentItemProps>(
           styles.content,
           selectionVisible ? styles.contentSelection : null,
           isSelected ? styles.contentSelected : null,
-          pressed && !selectionVisible ? styles.contentPressed : null,
+          pressed && Platform.OS === 'ios' && !selectionVisible
+            ? styles.contentPressed
+            : null,
         ]}
+        android_ripple={{color: rippleColor, foreground: true}}
       >
         {selectionVisible ? (
           <Animated.View
@@ -108,10 +111,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
               },
             ]}
           >
-            <Checkbox.Android
-              status={isSelected ? 'checked' : 'unchecked'}
-              color={checkboxColor}
-            />
+            <Checkbox value={isSelected} onValueChange={handlePress} />
           </Animated.View>
         ) : null}
 
@@ -128,19 +128,19 @@ const AttachmentItem = memo<AttachmentItemProps>(
                 recyclingKey={item.id}
                 cachePolicy="memory-disk"
                 contentFit="cover"
+                transition={0}
                 style={styles.thumbnail}
+                decodeFormat={Platform.OS === 'android' ? 'rgb' : undefined}
               />
             ) : (
-              <View style={styles.iconContainer}>
-                <Icon
-                  name={fileIcon.name}
-                  size="xxl"
-                  colorToken={fileIcon.colorToken}
-                  symbolType={fileIcon.symbolType}
-                  symbolColorTokens={fileIcon.symbolColorTokens}
-                  fontWeight={fileIcon.fontWeight}
-                />
-              </View>
+              <Icon
+                name={fileIcon.name}
+                size="xxl"
+                colorToken={fileIcon.colorToken}
+                symbolType={fileIcon.symbolType}
+                symbolColorTokens={fileIcon.symbolColorTokens}
+                fontWeight={fileIcon.fontWeight}
+              />
             )}
           </View>
 
@@ -233,8 +233,6 @@ const AttachmentsListBase = ({
 
   const contentTranslateX = selectionState?.contentTranslateX ?? zeroTranslate;
 
-  const selectionOpacity = selectionState?.opacity ?? zeroAnimation;
-
   const isSelected = useCallback(
     (id: string) => selectionState?.isSelected(id) ?? false,
     [selectionState],
@@ -249,10 +247,9 @@ const AttachmentsListBase = ({
         isSelected={isSelected(item.id)}
         onPressRow={onAttachmentPress}
         onLongPressRow={onLongPressRow}
-        opacity={selectionOpacity}
         checkboxTranslateX={checkboxTranslateX}
         contentTranslateX={contentTranslateX}
-        checkboxColor={Palette.blue}
+        rippleColor={theme.ripple}
       />
     ),
     [
@@ -261,9 +258,9 @@ const AttachmentsListBase = ({
       isSelected,
       onAttachmentPress,
       onLongPressRow,
-      selectionOpacity,
       checkboxTranslateX,
       contentTranslateX,
+      theme.ripple,
     ],
   );
 
@@ -318,11 +315,9 @@ const AttachmentsListBase = ({
       refreshing={refreshing}
       onRefresh={handleRefresh}
       onEndReached={onEndReached}
-      onStartReachedThreshold={0.5}
+      onStartReachedThreshold={0.2}
       onEndReachedThreshold={onEndReachedThreshold}
-      drawDistance={
-        Platform.OS === 'android' ? ds.screen.height * 1.5 : undefined
-      }
+      drawDistance={Platform.OS === 'android' ? ds.screen.height : undefined}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={ListHeader}
       ListEmptyComponent={
@@ -466,6 +461,7 @@ const createStyles = makeStyleFactory(
         paddingVertical: ds.spacing.md,
         paddingHorizontal: ds.spacing.lg,
         marginVertical: -0.2,
+        backgroundColor: 'transparent',
       },
 
       contentSelection: {
