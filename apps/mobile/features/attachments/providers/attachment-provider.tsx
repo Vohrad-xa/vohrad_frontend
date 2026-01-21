@@ -32,12 +32,6 @@ export function AttachmentProvider({children}: AttachmentProviderProps) {
   const targetId = attachmentFilter?.targetId ?? null;
   const targetType = attachmentFilter?.targetType ?? null;
   const hasActiveTarget = Boolean(targetId && targetType);
-  const initialFilter = useMemo(() => {
-    if (!targetId || !targetType) {
-      return undefined;
-    }
-    return {targetType, targetId};
-  }, [targetId, targetType]);
 
   const {
     attachments,
@@ -49,7 +43,6 @@ export function AttachmentProvider({children}: AttachmentProviderProps) {
     refresh,
     lastUpdated,
   } = useFilteredAttachmentsManager({
-    initialFilter,
     enabled: hasActiveTarget,
   });
 
