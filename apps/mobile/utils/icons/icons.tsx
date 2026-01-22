@@ -1,7 +1,7 @@
 import {View, type StyleProp, type TextStyle} from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type {TokenName} from '@/constants';
-import {useTheme} from '@/providers';
+import {useTheme} from '@/providers/theme-provider';
 
 export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
 
@@ -43,7 +43,6 @@ export const Icon: React.FC<IconProps> = ({
   color,
   colorToken,
   style,
-  withBackground,
   accessibilityLabel,
 }) => {
   const {theme, ds} = useTheme();
@@ -52,7 +51,7 @@ export const Icon: React.FC<IconProps> = ({
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
 
   const foreground = color ?? (colorToken ? theme[colorToken] : theme.icon);
-  const iconColor = withBackground ? '#FFFFFF' : foreground;
+  const iconColor = foreground ?? theme.icon;
 
   const iconElement = (
     <MaterialCommunityIcons
@@ -63,24 +62,6 @@ export const Icon: React.FC<IconProps> = ({
       accessibilityLabel={accessibilityLabel}
     />
   );
-
-  if (withBackground) {
-    const containerSize = resolvedSize * 2;
-    return (
-      <View
-        style={{
-          width: containerSize / 1.4,
-          height: containerSize / 1.4,
-          borderRadius: containerSize / 2,
-          backgroundColor: foreground,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        {iconElement}
-      </View>
-    );
-  }
 
   return iconElement;
 };
@@ -101,8 +82,8 @@ export const AppIcons = {
   tabs: {
     home: 'home',
     vault: 'cloud-lock',
-    settings: 'file-cog',
-    profile: 'account-circle',
+    settings: 'file-cog-outline',
+    profile: 'account-outline',
     notifications: 'bell-outline',
     item: 'view-dashboard',
   },
@@ -122,7 +103,7 @@ export const AppIcons = {
     scan: 'line-scan',
     camera: 'camera-outline',
     input: 'keyboard-outline',
-    logout: 'logout',
+    logout: 'logout-variant',
     enableTorch: 'flash',
     disableTorch: 'flash-off',
   },
@@ -133,10 +114,10 @@ export const AppIcons = {
     location: 'map-marker-radius-outline',
     search: 'magnify',
     supplier: 'cart-outline',
-    organization: 'briefcase-variant',
+    organization: 'briefcase-variant-outline',
     maintenance: 'folder-wrench-outline',
-    support: 'help-circle',
-    userManagement: 'account-supervisor',
+    support: 'help-circle-outline',
+    userManagement: 'account-supervisor-outline',
     attachments: 'file-document-outline',
   },
 
@@ -173,7 +154,7 @@ export const AppIcons = {
     appearance: 'theme-light-dark',
     biometric: 'fingerprint',
     haptic: 'vibrate',
-    language: 'google-translate',
+    language: 'translate',
     privacy: 'lock-outline',
     terms: 'file-document-outline',
     plan: 'credit-card-outline',

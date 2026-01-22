@@ -26,10 +26,10 @@
     "lint": "eslint --config ../../eslint.packages.config.js \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@sykamore/types": "workspace:*"
+    "@sykamore/types": "workspace:^0.0.0"
   },
   "devDependencies": {
     "tsup": "~8.5.1",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.3"
   }
 }

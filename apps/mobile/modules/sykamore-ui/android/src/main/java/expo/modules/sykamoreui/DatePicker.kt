@@ -15,12 +15,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.records.Field
 import expo.modules.kotlin.records.Record
 import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ComposeProps
+import expo.modules.kotlin.views.ComposableScope
 import expo.modules.kotlin.views.ExpoComposeView
 import java.util.Date
 
@@ -44,7 +44,7 @@ class DatePickerView(context: Context, appContext: AppContext) :
   private val onDismiss by EventDispatcher()
 
   @Composable
-  override fun Content(modifier: Modifier) {
+  override fun ComposableScope.Content() {
     var showDialog by remember { mutableStateOf(true) }
     val datePickerState = rememberDatePickerState(
       initialSelectedDateMillis = props.initialDate.value ?: Date().time

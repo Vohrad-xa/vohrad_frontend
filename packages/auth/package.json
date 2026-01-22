@@ -26,14 +26,14 @@
     "lint": "eslint --config ../../eslint.packages.config.js \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@sykamore/store": "workspace:*",
-    "@sykamore/api-client": "workspace:*",
-    "@sykamore/types": "workspace:*"
+    "@sykamore/api-client": "workspace:^0.0.0",
+    "@sykamore/store": "workspace:^0.0.0",
+    "@sykamore/types": "workspace:^0.0.0"
   },
   "devDependencies": {
+    "@types/react": "^19.2.9",
     "tsup": "~8.5.1",
-    "typescript": "~5.9.2",
-    "@types/react": "^19.1.13"
+    "typescript": "~5.9.3"
   },
   "peerDependencies": {
     "react": ">=18.0.0"

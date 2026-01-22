@@ -37,6 +37,7 @@ import expo.modules.sykamoreui.ThemedHybridSwitch
 import expo.modules.sykamoreui.compose
 import expo.modules.sykamoreui.composeOrNull
 import expo.modules.sykamoreui.getImageVector
+import expo.modules.kotlin.views.ComposableScope
 
 @Composable
 private fun SectionTitle(text: String) {
@@ -171,7 +172,7 @@ class ContextMenu(context: Context, appContext: AppContext) :
   }
 
   @Composable
-  override fun Content(modifier: Modifier) {
+  override fun ComposableScope.Content() {
     var elements by remember { props.elements }
     val color by remember { props.color }
 

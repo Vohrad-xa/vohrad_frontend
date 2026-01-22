@@ -13,11 +13,11 @@
     "README.md"
   ],
   "peerDependencies": {
-    "expo": "*",
+    "expo": "55.0.0-canary-20260121-a63c0dd",
     "react": "*",
     "react-native": "*"
   },
   "dependencies": {
-    "expo-modules-core": "*"
+    "expo-modules-core": "4.0.0-canary-20260121-a63c0dd"
   }
 }

@@ -18,12 +18,12 @@
     "expo-module.config.json"
   ],
   "peerDependencies": {
-    "expo": "*",
+    "expo": "55.0.0-canary-20260121-a63c0dd",
     "react": "*",
     "react-native": "*"
   },
   "dependencies": {
-    "expo-modules-core": "*",
-    "sf-symbols-typescript": "^2.1.0"
+    "expo-modules-core": "4.0.0-canary-20260121-a63c0dd",
+    "sf-symbols-typescript": "^2.2.0"
   }
 }

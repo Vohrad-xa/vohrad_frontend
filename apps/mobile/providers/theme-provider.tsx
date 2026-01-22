@@ -50,7 +50,9 @@ interface AppThemeProviderProps {
 }
 
 export function AppThemeProvider({children}: AppThemeProviderProps) {
-  const systemScheme = useRNColorScheme() ?? 'light';
+  const systemScheme = useRNColorScheme();
+  const resolvedSystemScheme: ColorScheme =
+    systemScheme === 'dark' ? 'dark' : 'light';
   const [preference, setPreference] = useState<ThemePreference>('system');
   const [hydrated, setHydrated] = useState(false);
 
@@ -59,7 +61,7 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
   const isAnimating = useRef(false);
 
   const scheme: ColorScheme =
-    preference === 'system' ? systemScheme : preference;
+    preference === 'system' ? resolvedSystemScheme : preference;
 
   const {width, height, fontScale} = useWindowDimensions();
 
@@ -118,7 +120,8 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
 
   useEffect(() => {
     if (Platform.OS !== 'web') {
-      Appearance.setColorScheme(preference === 'system' ? null : preference);
+      const override = preference === 'system' ? 'unspecified' : preference;
+      Appearance.setColorScheme(override);
     }
   }, [preference]);
 
