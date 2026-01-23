@@ -45,54 +45,27 @@ export function useTheme(): ThemeContextValue {
   return ctx;
 }
 
+const STORAGE_KEY = 'app.theme.scheme';
+
 function normalizeScheme(v: unknown): ColorScheme | null {
   return v === 'light' || v === 'dark' ? v : null;
 }
 
-const STORAGE_KEY = 'app.theme.scheme';
-
 export function AppThemeProvider({children}: {children: React.ReactNode}) {
-  const rnScheme = useColorScheme();
+  const cs = useColorScheme();
+
+  const [systemScheme, setSystemScheme] = useState<ColorScheme>(() => {
+    return normalizeScheme(Appearance.getColorScheme()) ?? 'light';
+  });
+
+  useEffect(() => {
+    const next =
+      normalizeScheme(cs) ?? normalizeScheme(Appearance.getColorScheme());
+    if (next) setSystemScheme(next);
+  }, [cs]);
 
   const [preference, setPreference] = useState<ThemePreference>('system');
-
   const [hydrated, setHydrated] = useState(false);
-
-  const overlayOpacity = useRef(new Animated.Value(0)).current;
-
-  const [overlayColor, setOverlayColor] = useState<string | null>(null);
-
-  const isAnimating = useRef(false);
-
-  const {width, height, fontScale} = useWindowDimensions();
-
-  const [fontScaleKey, setFontScaleKey] = useState(() =>
-    PixelRatio.getFontScale(),
-  );
-
-  useEffect(() => {
-    setFontScaleKey(fontScale);
-  }, [fontScale]);
-
-  useEffect(() => {
-    const sub = AppState.addEventListener('change', (state) => {
-      if (state === 'active') setFontScaleKey(PixelRatio.getFontScale());
-    });
-    return () => sub.remove();
-  }, []);
-
-  const ds = useMemo(
-    () => createDesignSystem(width, height, fontScaleKey),
-    [width, height, fontScaleKey],
-  );
-
-  const rawSystemScheme =
-    normalizeScheme(rnScheme) ?? normalizeScheme(Appearance.getColorScheme());
-
-  const effectiveSystemScheme: ColorScheme = rawSystemScheme ?? 'light';
-
-  const scheme: ColorScheme =
-    preference === 'system' ? effectiveSystemScheme : preference;
 
   useEffect(() => {
     let mounted = true;
@@ -118,8 +91,10 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
 
   useEffect(() => {
     if (!hydrated) return;
-    storage.setItem(STORAGE_KEY, preference).catch(() => {});
-  }, [hydrated, preference]);
+    storage.setItem(STORAGE_KEY, preference).catch((error) => {
+      console.warn('Failed to save theme preference:', error);
+    });
+  }, [preference, hydrated]);
 
   useEffect(() => {
     if (Platform.OS === 'web') return;
@@ -127,11 +102,40 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
     Appearance.setColorScheme(override);
   }, [preference]);
 
+  const scheme: ColorScheme =
+    preference === 'system' ? systemScheme : preference;
+
+  const {width, height, fontScale} = useWindowDimensions();
+  const [fontScaleKey, setFontScaleKey] = useState(() =>
+    PixelRatio.getFontScale(),
+  );
+
+  useEffect(() => {
+    setFontScaleKey(fontScale);
+  }, [fontScale]);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') setFontScaleKey(PixelRatio.getFontScale());
+    });
+    return () => sub.remove();
+  }, []);
+
+  const ds = useMemo(
+    () => createDesignSystem(width, height, fontScaleKey),
+    [width, height, fontScaleKey],
+  );
+
+  const overlayOpacity = useRef(new Animated.Value(0)).current;
+  const [overlayColor, setOverlayColor] = useState<string | null>(null);
+  const isAnimating = useRef(false);
+
   const toggle = useCallback(() => {
     if (isAnimating.current) return;
 
     const nextPreference: ThemePreference =
       scheme === 'light' ? 'dark' : 'light';
+
     const currentBackground = Tokens[scheme].background;
 
     isAnimating.current = true;
@@ -150,7 +154,7 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
       isAnimating.current = false;
       setOverlayColor(null);
     });
-  }, [scheme, overlayOpacity]);
+  }, [overlayOpacity, scheme]);
 
   const theme = useMemo(() => Tokens[scheme], [scheme]);
   const navTheme = NavigationThemes[scheme];
@@ -167,9 +171,7 @@ export function AppThemeProvider({children}: {children: React.ReactNode}) {
     [scheme, preference, toggle, theme, ds],
   );
 
-  const ready =
-    hydrated && (preference !== 'system' || rawSystemScheme !== null);
-  if (!ready) return null;
+  if (!hydrated) return null;
 
   return (
     <NavigationThemeProvider value={navTheme}>
