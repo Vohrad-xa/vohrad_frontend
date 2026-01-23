@@ -61,7 +61,7 @@ function SettingsStack() {
         headerTransparent: Platform.OS === 'ios',
         headerTitleAlign: 'left' as const,
         headerTitleStyle: {
-          fontWeight: ds.fontWeight.bold,
+          fontSize: Platform.OS !== 'ios' ? 24 : undefined,
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },
         headerLargeTitleStyle: {

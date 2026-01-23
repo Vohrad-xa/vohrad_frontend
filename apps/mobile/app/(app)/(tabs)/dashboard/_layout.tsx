@@ -20,6 +20,7 @@ export default function HomeLayout() {
         headerTitleAlign: 'left',
         headerTitleStyle: {
           fontWeight: ds.fontWeight.bold,
+          fontSize: Platform.OS !== 'ios' ? 24 : undefined,
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },
         headerLargeTitleStyle: {

@@ -85,9 +85,8 @@ function ItemsStack() {
         headerLargeTitle: true,
         headerBackButtonDisplayMode: 'minimal' as const,
         headerTransparent: Platform.OS === 'ios',
-        headerTitleAlign: 'left' as const,
         headerTitleStyle: {
-          fontWeight: ds.fontWeight.bold,
+          fontSize: Platform.OS !== 'ios' ? 24 : undefined,
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },
         headerLargeTitleStyle: {
@@ -101,7 +100,6 @@ function ItemsStack() {
     () =>
       ({
         headerTitle: 'Items',
-        headerTitleAlign: 'center' as const,
         headerSearchBarOptions,
       }) satisfies NativeStackNavigationOptions,
     [headerSearchBarOptions],

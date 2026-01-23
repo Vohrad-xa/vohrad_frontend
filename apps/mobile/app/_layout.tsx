@@ -1,12 +1,10 @@
-import {useEffect} from 'react';
 import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {Stack, useRootNavigationState} from 'expo-router';
+import {Stack} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {KeyboardProvider} from 'react-native-keyboard-controller';
-import {LoadingOverlay} from '@/components/ui';
 import {AttachmentProvider} from '@/features/attachments';
 import {NetworkProvider} from '@/features/network';
 import {NetworkBanner} from '@/features/network/components/network-banner';
@@ -25,18 +23,11 @@ SplashScreen.preventAutoHideAsync();
 const queryClient = new QueryClient();
 
 function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
-  const {isAuthenticated} = useAuth();
-  const navigationState = useRootNavigationState();
+  const {isAuthenticated, authReady} = useAuth();
 
-  useEffect(() => {
-    if (navigationState?.key && isBootstrapComplete) {
-      SplashScreen.hideAsync().catch(() => {});
-    }
-  }, [navigationState?.key, isBootstrapComplete]);
+  const ready = isBootstrapComplete && authReady;
 
-  if (!isBootstrapComplete) {
-    return <LoadingOverlay fullScreen />;
-  }
+  if (!ready) return null;
 
   return (
     <Stack screenOptions={{headerShown: false}}>
@@ -61,7 +52,7 @@ export default function RootLayout() {
   const isBootstrapComplete = useBootstrap();
 
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
+    <GestureHandlerRootView>
       <KeyboardProvider>
         <QueryClientProvider client={queryClient}>
           <AppThemeProvider>

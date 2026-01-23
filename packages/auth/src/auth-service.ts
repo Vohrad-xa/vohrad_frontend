@@ -14,6 +14,16 @@ export class AuthService {
   private constructor() {
     this.setupAutoRefresh();
     httpClient.setTokenRefreshHandler(() => this.refreshToken());
+
+    // To Keep refresh scheduling in sync with persisted token hydration and later updates.
+    let lastTokens = useAuthStore.getState().tokens;
+    this.syncRefreshSchedule(lastTokens);
+    useAuthStore.subscribe((state) => {
+      if (state.tokens !== lastTokens) {
+        lastTokens = state.tokens;
+        this.syncRefreshSchedule(lastTokens);
+      }
+    });
   }
 
   static getInstance(): AuthService {
@@ -305,11 +315,16 @@ export class AuthService {
     return user;
   }
 
-  private setupAutoRefresh(): void {
-    const {tokens} = useAuthStore.getState();
-    if (tokens?.access_token && tokens.expires_in) {
+  private syncRefreshSchedule(tokens: AuthTokens | null | undefined): void {
+    if (tokens?.access_token) {
       this.scheduleTokenRefresh(tokens);
+      return;
     }
+    this.clearRefreshTimer();
+  }
+
+  private setupAutoRefresh(): void {
+    this.syncRefreshSchedule(useAuthStore.getState().tokens);
   }
 
   private scheduleNetworkRetry(): void {

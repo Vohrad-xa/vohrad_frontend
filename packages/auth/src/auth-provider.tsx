@@ -14,9 +14,8 @@ export function useAuth() {
 }
 
 export function AuthProvider({children}: {children: React.ReactNode}) {
-  const {isAuthenticated, user, isLoading, error, clearError} = useAuthStore();
-
-  // Auto-refresh is now handled automatically by AuthService
+  const {isAuthenticated, user, isLoading, error, clearError, _hasHydrated} =
+    useAuthStore();
 
   const loginUser = async (
     email: string,
@@ -39,6 +38,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     user,
     isLoading,
     error,
+    authReady: _hasHydrated,
     loginUser,
     loginAdmin,
     logout,
