@@ -26,7 +26,7 @@ export const Palette = {
   red: '#ef4444',
   redDark: '#dc2626',
   purple: '#6a24c4ff',
-  bluepurple: '#10385bff',
+  bluepurple: '#135489',
   teal: '#14B8A6',
   white: '#FFFFFE',
   offWhite: '#f0f0ef',
