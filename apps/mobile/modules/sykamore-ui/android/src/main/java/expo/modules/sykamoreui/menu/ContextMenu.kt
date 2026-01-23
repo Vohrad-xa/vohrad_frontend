@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemColors
 import expo.modules.kotlin.views.ExpoComposeView
+import expo.modules.kotlin.views.ComposableScope
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -171,7 +172,7 @@ class ContextMenu(context: Context, appContext: AppContext) :
   }
 
   @Composable
-  override fun Content(modifier: Modifier) {
+  override fun ComposableScope.Content() {
     var elements by remember { props.elements }
     val color by remember { props.color }
 

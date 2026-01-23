@@ -24,7 +24,6 @@ config.resolver = {
       '@tanstack/react-query',
     ),
   },
-  unstable_enableSymlinks: true,
   unstable_conditionsByPlatform: {
     ...(config.resolver?.unstable_conditionsByPlatform || {}),
     web: ['default', 'browser', 'react-native'],

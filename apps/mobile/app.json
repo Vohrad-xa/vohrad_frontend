@@ -7,8 +7,6 @@
     "icon": "./assets/icons/android/playstore-512.png",
     "scheme": "mobile",
     "userInterfaceStyle": "automatic",
-    "jsEngine": "hermes",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "sykamore.mobile",
@@ -53,7 +51,9 @@
           "android": {
             "enableMinifyInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true,
-            "buildArchs": ["arm64-v8a", "x86_64"]
+            "buildArchs": ["arm64-v8a", "x86_64"],
+            "buildReactNativeFromSource": true,
+            "useHermesV1": true
           }
         }
       ],

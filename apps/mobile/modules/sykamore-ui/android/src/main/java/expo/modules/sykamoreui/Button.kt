@@ -24,6 +24,7 @@ import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.records.Field
 import expo.modules.kotlin.records.Record
 import expo.modules.kotlin.views.ComposeProps
+import expo.modules.kotlin.views.ComposableScope
 import java.io.Serializable
 import expo.modules.kotlin.types.Enumerable
 
@@ -142,7 +143,7 @@ class Button(context: Context, appContext: AppContext) :
   }
 
   @Composable
-  override fun Content(modifier: Modifier) {
+  override fun ComposableScope.Content() {
     val (variant) = props.variant
     val (text) = props.text
     val (colors) = props.elementColors

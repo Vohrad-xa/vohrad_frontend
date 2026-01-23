@@ -18,6 +18,7 @@ import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.AutoSizingComposable
 import expo.modules.kotlin.views.ComposeProps
 import expo.modules.kotlin.views.ExpoComposeView
+import expo.modules.kotlin.views.ComposableScope
 import java.io.Serializable
 
 open class ValueChangeEvent(
@@ -123,7 +124,7 @@ class SwitchView(context: Context, appContext: AppContext) :
   private val onValueChange by EventDispatcher<ValueChangeEvent>()
 
   @Composable
-  override fun Content(modifier: Modifier) {
+  override fun ComposableScope.Content() {
     val (checked) = props.value
     val (variant) = props.variant
     val (colors) = props.elementColors
@@ -131,7 +132,7 @@ class SwitchView(context: Context, appContext: AppContext) :
     val onCheckedChange = { checked: Boolean ->
       onValueChange(ValueChangeEvent(checked))
     }
-    val composedModifier = modifier.fromExpoModifiers(props.modifiers.value)
+    val composedModifier = Modifier.fromExpoModifiers(props.modifiers.value)
     val scaledModifier = scaleFactor?.let { composedModifier.scale(it) } ?: composedModifier
 
     AutoSizingComposable(shadowNodeProxy) {

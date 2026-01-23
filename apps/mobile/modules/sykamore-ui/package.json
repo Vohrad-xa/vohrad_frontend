@@ -23,7 +23,7 @@
     "react-native": "*"
   },
   "dependencies": {
-    "expo-modules-core": "*",
+    "expo-modules-core": "~55.0.3",
     "sf-symbols-typescript": "^2.1.0"
   }
 }
