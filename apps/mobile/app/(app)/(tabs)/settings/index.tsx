@@ -26,7 +26,7 @@ export default function SettingsModal() {
   const styles = createStyles(ds, theme);
 
   const leftIcon = useCallback(
-    (iconName: IconName, colorToken?: TokenName) => {
+    (iconName: IconName, _colorToken?: TokenName) => {
       function IconWrapper() {
         return (
           <View style={styles.iconContainer}>

@@ -1,4 +1,4 @@
-import {View, type StyleProp, type TextStyle} from 'react-native';
+import {type StyleProp, type TextStyle} from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type {TokenName} from '@/constants';
 import {useTheme} from '@/providers/theme-provider';

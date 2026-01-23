@@ -57,7 +57,7 @@ export default function TabLayout() {
         default: {color: theme.text},
         selected: {color: '#0773a5'},
       }}
-      backBehavior="initialRoute"
+      backBehavior="history"
     >
       {TABS.map((t) => (
         <NativeTabs.Trigger key={t.name} name={t.name}>

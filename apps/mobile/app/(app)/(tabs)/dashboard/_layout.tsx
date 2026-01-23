@@ -1,7 +1,6 @@
 import {Platform} from 'react-native';
 import {Stack} from 'expo-router';
-import {HeaderButton} from '@/components/ui';
-import {useTheme, useSidebar} from '@/providers';
+import {useTheme} from '@/providers';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -9,7 +8,6 @@ export const unstable_settings = {
 
 export default function HomeLayout() {
   const {theme, ds} = useTheme();
-  const {toggleSideMenu} = useSidebar();
 
   return (
     <Stack
@@ -17,7 +15,6 @@ export default function HomeLayout() {
         headerShown: true,
         headerShadowVisible: false,
         headerLargeTitle: true,
-        animation: 'ios_from_right',
         headerBackButtonDisplayMode: 'minimal',
         headerTransparent: Platform.OS === 'ios',
         headerTitleAlign: 'left',
@@ -34,14 +31,6 @@ export default function HomeLayout() {
         name="index"
         options={{
           headerTitle: 'Dashboard',
-          headerTitleAlign: 'center',
-          headerLeft: () => (
-            <HeaderButton
-              variant="menu"
-              accessibilityLabel="Open side bar menu"
-              onPress={toggleSideMenu}
-            />
-          ),
         }}
       />
       <Stack.Screen

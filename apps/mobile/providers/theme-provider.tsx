@@ -16,16 +16,16 @@ import {
   useWindowDimensions,
   AppState,
   PixelRatio,
+  useColorScheme,
 } from 'react-native';
 import {ThemeProvider as NavigationThemeProvider} from '@react-navigation/native';
 import {
   NavigationThemes,
   Tokens,
+  createDesignSystem,
   type ColorScheme,
   type ThemePreference,
-} from '@/constants/colors';
-import {createDesignSystem} from '@/constants/typography';
-import {useColorScheme as useRNColorScheme} from '@/hooks/use-color-scheme';
+} from '@/constants';
 import * as storage from '@/utils/storage';
 
 type ThemeContextValue = {
@@ -45,27 +45,27 @@ export function useTheme(): ThemeContextValue {
   return ctx;
 }
 
-interface AppThemeProviderProps {
-  children: React.ReactNode;
+function normalizeScheme(v: unknown): ColorScheme | null {
+  return v === 'light' || v === 'dark' ? v : null;
 }
 
-export function AppThemeProvider({children}: AppThemeProviderProps) {
-  const systemScheme = useRNColorScheme();
-  const resolvedSystemScheme: ColorScheme =
-    systemScheme === 'dark' ? 'dark' : 'light';
+const STORAGE_KEY = 'app.theme.scheme';
+
+export function AppThemeProvider({children}: {children: React.ReactNode}) {
+  const rnScheme = useColorScheme();
+
   const [preference, setPreference] = useState<ThemePreference>('system');
+
   const [hydrated, setHydrated] = useState(false);
 
   const overlayOpacity = useRef(new Animated.Value(0)).current;
-  const [overlayColor, setOverlayColor] = useState<string | null>(null);
-  const isAnimating = useRef(false);
 
-  const scheme: ColorScheme =
-    preference === 'system' ? resolvedSystemScheme : preference;
+  const [overlayColor, setOverlayColor] = useState<string | null>(null);
+
+  const isAnimating = useRef(false);
 
   const {width, height, fontScale} = useWindowDimensions();
 
-  // keeping a reliable “font scale key” for rerenders / caches
   const [fontScaleKey, setFontScaleKey] = useState(() =>
     PixelRatio.getFontScale(),
   );
@@ -86,7 +86,13 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
     [width, height, fontScaleKey],
   );
 
-  const STORAGE_KEY = 'app.theme.scheme';
+  const rawSystemScheme =
+    normalizeScheme(rnScheme) ?? normalizeScheme(Appearance.getColorScheme());
+
+  const effectiveSystemScheme: ColorScheme = rawSystemScheme ?? 'light';
+
+  const scheme: ColorScheme =
+    preference === 'system' ? effectiveSystemScheme : preference;
 
   useEffect(() => {
     let mounted = true;
@@ -111,18 +117,14 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
   }, []);
 
   useEffect(() => {
-    if (hydrated) {
-      storage.setItem(STORAGE_KEY, preference).catch((error) => {
-        console.warn('Failed to save theme preference:', error);
-      });
-    }
-  }, [preference, hydrated]);
+    if (!hydrated) return;
+    storage.setItem(STORAGE_KEY, preference).catch(() => {});
+  }, [hydrated, preference]);
 
   useEffect(() => {
-    if (Platform.OS !== 'web') {
-      const override = preference === 'system' ? 'unspecified' : preference;
-      Appearance.setColorScheme(override);
-    }
+    if (Platform.OS === 'web') return;
+    const override = preference === 'system' ? 'unspecified' : preference;
+    Appearance.setColorScheme(override);
   }, [preference]);
 
   const toggle = useCallback(() => {
@@ -148,9 +150,10 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
       isAnimating.current = false;
       setOverlayColor(null);
     });
-  }, [overlayOpacity, scheme]);
+  }, [scheme, overlayOpacity]);
 
   const theme = useMemo(() => Tokens[scheme], [scheme]);
+  const navTheme = NavigationThemes[scheme];
 
   const value = useMemo(
     () => ({
@@ -164,9 +167,9 @@ export function AppThemeProvider({children}: AppThemeProviderProps) {
     [scheme, preference, toggle, theme, ds],
   );
 
-  const navTheme = NavigationThemes[scheme];
-
-  if (!hydrated) return null;
+  const ready =
+    hydrated && (preference !== 'system' || rawSystemScheme !== null);
+  if (!ready) return null;
 
   return (
     <NavigationThemeProvider value={navTheme}>
