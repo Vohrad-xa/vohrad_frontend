@@ -1,17 +1,75 @@
-import {Platform, StyleSheet, View} from 'react-native';
-import {
-  ThemedButton,
-  ThemedText,
-  ThemedView,
-  GlassCard,
-  InfoRowCard,
-  EmptyState,
-} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import React, {memo, useCallback} from 'react';
+import {ScrollView, StyleSheet} from 'react-native';
+import {useRouter, type Href} from 'expo-router';
+import {Surface, Avatar, List} from 'react-native-paper';
+import {ThemedText} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
-import {formatDate} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
-import {useProfileForm, useProfileActions} from '../hooks';
+import {
+  makeStyleFactory,
+  getInitials,
+  formatDate,
+  AppIcons,
+  Icon,
+} from '@/utils';
+import {useProfile} from '../hooks';
+import {PROFILE_FIELDS} from '../constants/profile-constants';
+
+const NOT_SET = 'Not set';
+
+type ProfileRowModel = Readonly<{
+  title: string;
+  valueText: string;
+  a11yLabel: string;
+  a11yHint: string;
+  href: Href;
+  descriptionProps?: Pick<
+    React.ComponentProps<typeof List.Item>,
+    'descriptionNumberOfLines' | 'descriptionEllipsizeMode'
+  >;
+}>;
+
+function ChevronRight() {
+  return (
+    <Icon
+      name={AppIcons.actions.forward}
+      colorToken="muted"
+      fontWeight="regular"
+    />
+  );
+}
+
+const ProfileRow = memo(
+  ({
+    title,
+    valueText,
+    a11yLabel,
+    a11yHint,
+    href,
+    descriptionProps,
+  }: ProfileRowModel) => {
+    const router = useRouter();
+
+    const onPress = useCallback(() => {
+      router.push(href);
+    }, [router, href]);
+
+    const renderRight = useCallback(() => <ChevronRight />, []);
+
+    return (
+      <List.Item
+        title={title}
+        description={valueText}
+        right={renderRight}
+        onPress={onPress}
+        accessibilityRole="button"
+        accessibilityLabel={a11yLabel}
+        accessibilityHint={a11yHint}
+        {...descriptionProps}
+      />
+    );
+  },
+);
 
 export function ProfileContent() {
   const {ds, theme} = useTheme();
@@ -19,147 +77,114 @@ export function ProfileContent() {
 
   const {
     profileDetails,
-    profile,
-    personalInfoFields,
-    contactFields,
-    addressFields,
-  } = useProfileForm();
+    fullName,
+    dateOfBirth,
+    email,
+    phoneNumber,
+    city,
+    postalCode,
+    country,
+  } = useProfile();
 
-  const {handleResendPendingEmail, isResendingEmail} = useProfileActions({});
+  const displayName = fullName?.trim() || 'User';
+  const initials = getInitials(displayName) ?? 'U';
 
-  if (!profileDetails) {
-    return <EmptyState message="No profile information available" />;
-  }
+  const memberSince = profileDetails?.created_at
+    ? formatDate(profileDetails.created_at)
+    : '—';
+
+  const roleText = profileDetails?.role ?? 'Member';
+  const birthDateText = dateOfBirth ? formatDate(dateOfBirth) : NOT_SET;
+
+  const emailText = email || NOT_SET;
+  const phoneText = phoneNumber || NOT_SET;
+  const shortAddress =
+    [city, postalCode, country].filter(Boolean).join(' ') || NOT_SET;
+
+  const PERSONAL_ROWS = [
+    {
+      ...PROFILE_FIELDS.name,
+      valueText: displayName,
+    },
+    {
+      ...PROFILE_FIELDS.dateOfBirth,
+      valueText: birthDateText,
+    },
+  ] as const satisfies ReadonlyArray<Omit<ProfileRowModel, 'descriptionProps'>>;
+
+  const CONTACT_ROWS = [
+    {
+      ...PROFILE_FIELDS.email,
+      valueText: emailText,
+    },
+    {
+      ...PROFILE_FIELDS.phoneNumber,
+      valueText: phoneText,
+    },
+  ] as const satisfies ReadonlyArray<Omit<ProfileRowModel, 'descriptionProps'>>;
+
+  const ADDRESS_ROWS = [
+    {
+      ...PROFILE_FIELDS.address,
+      valueText: shortAddress,
+      descriptionProps: {
+        descriptionNumberOfLines: 1,
+        descriptionEllipsizeMode: 'middle',
+      },
+    },
+  ] as const satisfies readonly ProfileRowModel[];
 
   return (
-    <View style={styles.container}>
-      {/* Profile Meta Card */}
-      <GlassCard style={styles.metaCard} isInteractive>
-        <View style={styles.metaContent}>
-          <View style={styles.metaColumn}>
-            <ThemedView variant="roleBadge">
-              <ThemedText variant="footnote">
-                {profileDetails.role ?? 'Member'}
-              </ThemedText>
-            </ThemedView>
-            {profileDetails.role_description && (
-              <ThemedText variant="caption" style={styles.metaSupporting}>
-                {profileDetails.role_description}
-              </ThemedText>
-            )}
-            {profileDetails.pending_email && (
-              <>
-                <ThemedText variant="caption" style={styles.metaSupporting}>
-                  Pending confirmation: {profileDetails.pending_email}
-                </ThemedText>
-                <ThemedButton
-                  title={
-                    isResendingEmail
-                      ? 'Resending…'
-                      : 'Resend confirmation email'
-                  }
-                  variant="ghost"
-                  fullWidth={false}
-                  onPress={handleResendPendingEmail}
-                  disabled={isResendingEmail}
-                />
-              </>
-            )}
-          </View>
-
-          <View style={styles.metaSeparator} />
-
-          <View style={styles.metaColumn}>
-            <ThemedText variant="label">Member Since</ThemedText>
-            <ThemedText variant="caption">
-              {formatDate(profileDetails.created_at)}
-            </ThemedText>
-            <ThemedText variant="caption" style={styles.metaSupporting}>
-              Last updated {formatDate(profileDetails.updated_at)}
-            </ThemedText>
-            {profileDetails.pending_email_expires_at && (
-              <ThemedText variant="caption" style={styles.metaSupporting}>
-                Confirmation expires{' '}
-                {formatDate(profileDetails.pending_email_expires_at)}
-              </ThemedText>
-            )}
-          </View>
-        </View>
-      </GlassCard>
-
-      {/* Personal Information */}
-      <View style={[styles.section, styles.sectionWithDatePicker]}>
-        <ThemedText variant="headline" style={styles.sectionTitle}>
-          Personal Information
-        </ThemedText>
-        <InfoRowCard
-          fields={personalInfoFields}
-          editable={false}
-          values={profile}
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+    >
+      <Surface style={styles.surface} mode="flat">
+        <Avatar.Text
+          label={initials}
+          accessibilityLabel={`${displayName} avatar`}
         />
-      </View>
+        <ThemedText>{roleText}</ThemedText>
+        <ThemedText variant="footnote">Since {memberSince}</ThemedText>
+      </Surface>
 
-      {/* Contact */}
-      <View style={styles.section}>
-        <ThemedText variant="headline" style={styles.sectionTitle}>
-          Contact
-        </ThemedText>
-        <InfoRowCard fields={contactFields} editable={false} values={profile} />
-      </View>
+      <Surface style={styles.sectionSurface} elevation={1} mode="flat">
+        {PERSONAL_ROWS.map((row) => (
+          <ProfileRow key={row.title} {...row} />
+        ))}
+      </Surface>
 
-      {/* Address */}
-      <View style={styles.section}>
-        <ThemedText variant="headline" style={styles.sectionTitle}>
-          Address
-        </ThemedText>
-        <InfoRowCard fields={addressFields} editable={false} values={profile} />
-      </View>
-    </View>
+      <Surface style={styles.sectionSurface} elevation={1} mode="flat">
+        {CONTACT_ROWS.map((row) => (
+          <ProfileRow key={row.title} {...row} />
+        ))}
+        {ADDRESS_ROWS.map((row) => (
+          <ProfileRow key={row.title} {...row} />
+        ))}
+      </Surface>
+    </ScrollView>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
-      container: {
-        gap: ds.spacing.xl,
-        paddingTop: ds.spacing.md,
+      container: {flex: 1},
+      contentContainer: {gap: ds.spacing.lg},
+      surface: {
+        paddingVertical: ds.spacing.lg,
+        gap: ds.spacing.sm,
+        borderRadius: ds.borderRadius.xxxl,
+        alignItems: 'center',
+        overflow: 'hidden',
+        backgroundColor: 'transparent',
       },
-      section: {
-        gap: ds.spacing.md,
-      },
-      sectionWithDatePicker: {
-        position: 'relative',
-        zIndex: 100,
-      },
-      sectionTitle: {
-        paddingHorizontal: Platform.OS === 'web' ? 0 : ds.spacing.xl,
-      },
-      metaCard: {
-        width: '100%',
-        borderRadius: ds.components.card.borderRadius,
-        alignSelf: 'stretch',
-      },
-      metaContent: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        paddingVertical: ds.spacing.md,
-        paddingHorizontal: ds.spacing.lg,
-        gap: ds.spacing.lg,
-      },
-      metaColumn: {
-        flex: 1,
-        gap: ds.spacing.xs,
-      },
-      metaSupporting: {
-        opacity: ds.opacity.muted,
-      },
-      metaSeparator: {
-        width: StyleSheet.hairlineWidth,
-        alignSelf: 'stretch',
-        backgroundColor: theme.divider,
-        opacity: ds.opacity.muted,
+      sectionSurface: {
+        borderRadius: ds.borderRadius.xxxl,
+        overflow: 'hidden',
       },
     }),
   (ds, theme) => themeKey(theme, ds),
 );
+
+ProfileRow.displayName = 'ProfileRow';

@@ -1,4 +1,6 @@
 import {useState, forwardRef, useImperativeHandle, useCallback} from 'react';
+import {Platform, View} from 'react-native';
+import {TextInput} from 'react-native-paper';
 import {
   Host,
   Form,
@@ -15,10 +17,10 @@ export type NameContentHandle = {
 };
 
 export const NameContent = forwardRef<NameContentHandle>((_, ref) => {
+  const {ds} = useTheme();
   const {firstName, lastName, updateName} = useProfile();
 
   const [firstNameValue, setFirstNameValue] = useState(firstName);
-
   const [lastNameValue, setLastNameValue] = useState(lastName);
 
   const save = useCallback(async () => {
@@ -27,7 +29,33 @@ export const NameContent = forwardRef<NameContentHandle>((_, ref) => {
 
   useImperativeHandle(ref, () => ({save}), [save]);
 
-  const {ds} = useTheme();
+  if (Platform.OS === 'android') {
+    return (
+      <View style={{gap: ds.spacing.md, flex: 1}}>
+        <TextInput
+          value={firstNameValue}
+          onChangeText={setFirstNameValue}
+          label="First Name"
+          placeholder="Enter First Name"
+          autoCapitalize="words"
+          keyboardType="default"
+          numberOfLines={1}
+          mode="outlined"
+          autoFocus
+        />
+        <TextInput
+          value={lastNameValue}
+          onChangeText={setLastNameValue}
+          label="Last Name"
+          placeholder="Enter Last Name"
+          autoCapitalize="words"
+          keyboardType="default"
+          numberOfLines={1}
+          mode="outlined"
+        />
+      </View>
+    );
+  }
 
   return (
     <Host style={{flex: 1}}>

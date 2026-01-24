@@ -27,6 +27,7 @@ import {
 import {useTheme} from '@/providers';
 import {getInitials, formatDate, AppIcons, Icon, type IconName} from '@/utils';
 import {useProfile} from '../hooks';
+import {PROFILE_FIELDS} from '../constants/profile-constants';
 
 type SystemImageName = IconName;
 
@@ -43,35 +44,23 @@ type ProfileRowModel = Readonly<{
 
 const CONTACT_ROWS = [
   {
-    title: 'Email',
-    systemImage: 'envelope',
-    a11yLabel: 'Email',
-    a11yHint: 'Opens the email editor',
-    href: '/(app)/(tabs)/settings/profile/email',
+    ...PROFILE_FIELDS.email,
+    systemImage: 'envelope' as const,
   },
   {
-    title: 'Phone Number',
-    systemImage: 'phone',
-    a11yLabel: 'Phone number',
-    a11yHint: 'Opens the phone number editor',
-    href: '/(app)/(tabs)/settings/profile/phone',
+    ...PROFILE_FIELDS.phoneNumber,
+    systemImage: 'phone' as const,
   },
   {
-    title: 'Password',
-    systemImage: 'key.horizontal',
-    a11yLabel: 'Change password',
-    a11yHint: 'Opens the password change screen',
-    href: '/(app)/(tabs)/settings/profile/password',
+    ...PROFILE_FIELDS.password,
+    systemImage: 'key.horizontal' as const,
   },
 ] as const satisfies readonly ProfileRowModel[];
 
 const ADDRESS_ROWS = [
   {
-    title: 'Address',
-    systemImage: 'building.2',
-    a11yLabel: 'Address',
-    a11yHint: 'Opens the address editor',
-    href: '/(app)/(tabs)/settings/profile/address',
+    ...PROFILE_FIELDS.address,
+    systemImage: 'building.2' as const,
   },
 ] as const satisfies readonly ProfileRowModel[];
 
@@ -246,21 +235,15 @@ export function ProfileContent() {
         {/* Personal Information */}
         <Section>
           <ProfileRow
-            title="Name"
+            {...PROFILE_FIELDS.name}
             valueText={fullName}
             valuePaddingX={valuePaddingX}
-            a11yLabel={`Name, ${fullName}`}
-            a11yHint="Opens the name editor"
-            href="/(app)/(tabs)/settings/profile/name"
           />
 
           <ProfileRow
-            title="Date of Birth"
+            {...PROFILE_FIELDS.dateOfBirth}
             valueText={birthDateText}
             valuePaddingX={valuePaddingX}
-            a11yLabel={`Date of Birth, ${birthDateText}`}
-            a11yHint="Opens the date picker"
-            href="/(app)/(tabs)/settings/profile/birth-date"
           />
         </Section>
 

@@ -49,7 +49,7 @@ export const Icon: React.FC<IconProps> = ({
   const foreground = color ?? (colorToken ? theme[colorToken] : theme.icon);
 
   return (
-    <View style={style}>
+    <View style={[style, {justifyContent: 'center', alignItems: 'center'}]}>
       <SymbolView
         name={{
           android: name,
