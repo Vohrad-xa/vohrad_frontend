@@ -174,7 +174,7 @@ const createStyles = makeStyleFactory(
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: ds.borderRadius.full,
-        backgroundColor: theme.surface,
+        backgroundColor: theme.background,
       },
       imageBadge: {
         position: 'absolute',

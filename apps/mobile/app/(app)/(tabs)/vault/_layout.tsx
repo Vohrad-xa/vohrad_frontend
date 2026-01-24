@@ -2,10 +2,9 @@ import {useCallback, useMemo} from 'react';
 import {Platform} from 'react-native';
 import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {Stack, useSegments} from 'expo-router';
-import {HeaderButton} from '@/components/ui';
 import {VAULT_SEARCH_SCOPES} from '@/features/attachments/utils';
 import {SearchProvider, useSearch} from '@/features/dashboard';
-import {useTheme, useSidebar} from '@/providers';
+import {useTheme} from '@/providers';
 
 interface SearchChangeEvent {
   nativeEvent: {
@@ -15,7 +14,6 @@ interface SearchChangeEvent {
 
 function VaultStack() {
   const {theme} = useTheme();
-  const {toggleSideMenu} = useSidebar();
   const segments = useSegments();
   const activeSearchScope = useMemo(() => {
     const screen = segments.at(3);
@@ -32,17 +30,6 @@ function VaultStack() {
       setSearchQuery(event.nativeEvent.text);
     },
     [setSearchQuery],
-  );
-
-  const headerLeftMenu = useCallback(
-    () => (
-      <HeaderButton
-        variant="menu"
-        accessibilityLabel="Open menu"
-        onPress={toggleSideMenu}
-      />
-    ),
-    [toggleSideMenu],
   );
 
   const headerSearchBarOptions = useMemo(
@@ -80,14 +67,12 @@ function VaultStack() {
   const indexOptions = useMemo(
     () => ({
       headerTitle: 'Vault',
-      headerTitleAlign: 'center' as const,
-      headerLeft: headerLeftMenu,
       headerSearchBarOptions: {
         ...headerSearchBarOptions,
         placement: 'stacked' as const,
       },
     }),
-    [headerLeftMenu, headerSearchBarOptions],
+    [headerSearchBarOptions],
   );
 
   return (

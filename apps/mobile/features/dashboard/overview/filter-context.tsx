@@ -23,37 +23,37 @@ const CARD_CONFIG: DashboardCardConfig[] = [
     key: 'items',
     title: 'Items',
     icon: AppIcons.domain.itemOutline,
-    colorToken: 'accentBlue',
+    colorToken: 'tint2',
   },
   {
     key: 'locations',
     title: 'Locations',
     icon: AppIcons.domain.location,
-    colorToken: 'accentGreen',
+    colorToken: 'tint2',
   },
   {
     key: 'maintenance',
     title: 'Maintenance',
     icon: AppIcons.domain.maintenance,
-    colorToken: 'accentOrange',
+    colorToken: 'tint2',
   },
   {
     key: 'suppliers',
     title: 'Suppliers',
     icon: AppIcons.domain.supplier,
-    colorToken: 'accentDeepblue',
+    colorToken: 'tint2',
   },
   {
     key: 'checkInOut',
     title: 'Check In/Out',
     icon: AppIcons.actions.move,
-    colorToken: 'destructive',
+    colorToken: 'tint2',
   },
   {
     key: 'attachments',
     title: 'Vault',
     icon: AppIcons.domain.vaultOutline,
-    colorToken: 'accentBlue',
+    colorToken: 'tint2',
   },
 ];
 

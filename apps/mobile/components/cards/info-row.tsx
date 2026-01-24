@@ -398,7 +398,7 @@ const createStyles = makeStyleFactory(
         marginRight: ds.spacing.xl,
         borderRadius: ds.borderRadius.lg,
         padding: 4,
-        backgroundColor: theme.glassTint,
+        backgroundColor: theme.input,
       },
       labelWithIcon: {
         flexDirection: 'row',

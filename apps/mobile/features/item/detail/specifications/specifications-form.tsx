@@ -9,6 +9,7 @@ import type {TextInput} from 'react-native';
 import {Pressable, StyleSheet, View} from 'react-native';
 import {useUpdateItem} from '@sykamore/store';
 import {ThemedText, ThemedInput, Card} from '@/components/ui';
+import {Palette} from '@/constants';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
 import {showAlert} from '@/utils/alert';
@@ -176,7 +177,7 @@ export const SpecificationsForm = forwardRef<
                       <Icon
                         name={AppIcons.actions.delete}
                         size="sm"
-                        colorToken="destructive"
+                        colorToken="accentRed"
                       />
                     </View>
                   </Pressable>
@@ -230,7 +231,7 @@ export const SpecificationsForm = forwardRef<
             <Icon
               name={AppIcons.actions.add}
               size="md"
-              colorToken="accentDeepblue"
+              colorToken="accentBlue"
             />
           </Pressable>
           <Pressable onPress={handleAddField} style={styles.addTextButton}>
@@ -245,7 +246,7 @@ export const SpecificationsForm = forwardRef<
 SpecificationsForm.displayName = 'SpecificationsForm';
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       row: {
         flexDirection: 'row',
@@ -260,7 +261,7 @@ const createStyles = makeStyleFactory(
         width: ds.iconSize.md,
         height: ds.iconSize.md,
         borderRadius: ds.borderRadius.full,
-        backgroundColor: theme.destructive,
+        backgroundColor: Palette.red,
         justifyContent: 'center',
         alignItems: 'center',
       },

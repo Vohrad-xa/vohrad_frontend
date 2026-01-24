@@ -202,7 +202,7 @@ export function PersonalEmailForm({
                 <View style={styles.inlineHelper}>
                   {showEmailError && (
                     <TouchableOpacity onPress={handleEmailErrorPress}>
-                      <ThemedText variant="caption" colorToken="destructive">
+                      <ThemedText variant="caption" color="red">
                         {emailValidation.error ?? 'Invalid email'}
                       </ThemedText>
                     </TouchableOpacity>

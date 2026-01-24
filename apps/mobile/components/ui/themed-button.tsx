@@ -102,7 +102,7 @@ const createStyles = makeStyleFactory(
 
       switch (variant) {
         case 'primary':
-          return scheme === 'dark' ? Palette.black : Palette.webLightBackground;
+          return scheme === 'dark' ? Palette.black : Palette.charcoalA45;
         case 'secondary':
           return theme.text;
         case 'destructive':
@@ -157,7 +157,7 @@ const createStyles = makeStyleFactory(
     }
 
     if (disabled || loading) {
-      buttonStyle.backgroundColor = theme.surface;
+      buttonStyle.backgroundColor = theme.background;
       buttonStyle.borderColor = theme.border;
       buttonStyle.borderWidth = 1;
       buttonStyle.opacity = 0.6;
@@ -165,21 +165,16 @@ const createStyles = makeStyleFactory(
       switch (variant) {
         case 'primary':
           buttonStyle.backgroundColor =
-            scheme === 'dark' ? Palette.webLightBackground : Palette.black;
+            scheme === 'dark' ? Palette.charcoalA45 : Palette.black;
           buttonStyle.borderColor =
-            scheme === 'dark'
-              ? Palette.webLightBackground
-              : Palette.webDarkBackground;
+            scheme === 'dark' ? Palette.charcoalA45 : Palette.charcoalA45;
           buttonStyle.borderWidth = 1;
           break;
         case 'secondary':
-          buttonStyle.backgroundColor = theme.surface;
           buttonStyle.borderColor = theme.border;
           buttonStyle.borderWidth = 1;
           break;
         case 'destructive':
-          buttonStyle.backgroundColor = theme.destructive;
-          buttonStyle.borderColor = theme.destructive;
           buttonStyle.borderWidth = 1;
           break;
         case 'ghost':

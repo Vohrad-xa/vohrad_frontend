@@ -4,7 +4,7 @@ import {type NativeStackNavigationOptions} from '@react-navigation/native-stack'
 import {router, Stack} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
 import {SearchProvider, useSearch} from '@/features/dashboard';
-import {useTheme, useSidebar} from '@/providers';
+import {useTheme} from '@/providers';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';
 
 export const unstable_settings = {
@@ -20,24 +20,12 @@ interface SearchChangeEvent {
 function SettingsStack() {
   const {theme} = useTheme();
   const {setSearchQuery} = useSearch();
-  const {toggleSideMenu} = useSidebar();
 
   const handleSearchChange = useCallback(
     (event: SearchChangeEvent) => {
       setSearchQuery(event.nativeEvent.text);
     },
     [setSearchQuery],
-  );
-
-  const headerLeftMenu = useCallback(
-    () => (
-      <HeaderButton
-        variant="menu"
-        accessibilityLabel="Open menu"
-        onPress={toggleSideMenu}
-      />
-    ),
-    [toggleSideMenu],
   );
 
   // TODO: wire up notifications screen
@@ -72,7 +60,6 @@ function SettingsStack() {
         animation: 'ios_from_right' as const,
         headerBackButtonDisplayMode: 'minimal' as const,
         headerTransparent: Platform.OS === 'ios',
-        headerTitleAlign: 'left' as const,
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },
@@ -84,12 +71,10 @@ function SettingsStack() {
     () =>
       ({
         headerTitle: 'Settings',
-        headerTitleAlign: 'center' as const,
-        headerLeft: headerLeftMenu,
         headerRight: headerRightNotifications,
         headerSearchBarOptions: searchBarOptions,
       }) satisfies NativeStackNavigationOptions,
-    [headerLeftMenu, headerRightNotifications, searchBarOptions],
+    [headerRightNotifications, searchBarOptions],
   );
 
   const usersIndexOptions = useMemo(

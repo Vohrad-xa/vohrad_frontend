@@ -18,18 +18,18 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
         primaryContainer: theme.secondary,
         onPrimaryContainer: theme.input,
         background: theme.background,
-        secondary: theme.webbackground,
+        secondary: theme.tertiary,
         onSecondary: theme.text,
-        secondaryContainer: theme.accentDeepblue, // bottom tab buttons container
+        secondaryContainer: theme.accentBlue, // bottom tab buttons container
         onSecondaryContainer: Palette.white,
         surface: theme.background, // outlined cards backgrounds
         onSurface: theme.text, // main text color
-        surfaceVariant: theme.surface, // button backgrounds, input backgrounds
+        surfaceVariant: theme.modalBackground, // button backgrounds, input backgrounds
         onSurfaceVariant: theme.muted,
         errorContainer: Palette.white,
-        error: theme.destructive,
-        onError: theme.background,
-        backdrop: theme.backdrop,
+        error: theme.accentRed,
+        onError: theme.modalBackground,
+        backdrop: theme.modalBackground,
       },
     };
   }, [scheme, theme]);

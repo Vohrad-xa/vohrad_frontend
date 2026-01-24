@@ -43,7 +43,7 @@ const getVariantConfig = (
     case 'cancel':
       return {
         text: 'Cancel',
-        color: theme.destructive,
+        color: theme.accentRed,
       };
     case 'save':
       return {
@@ -81,7 +81,7 @@ const getVariantConfig = (
       };
     case 'destructive':
       return {
-        color: theme.destructive,
+        color: theme.accentRed,
       };
     case 'menu':
       return {

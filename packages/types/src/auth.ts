@@ -33,6 +33,7 @@ export interface AuthContextValue {
   user: User | null;
   isLoading: boolean;
   error: string | null;
+  authReady: boolean;
   loginUser: (
     email: string,
     password: string,

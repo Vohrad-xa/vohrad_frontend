@@ -5,8 +5,6 @@ import {
   type SFSymbolIcon,
   type MaterialIcon,
 } from 'expo-router/unstable-native-tabs';
-
-import {Palette} from '@/constants';
 import {useHaptic, useTheme} from '@/providers';
 
 const TAB_NAMES = ['dashboard', 'items', 'vault', 'settings'] as const;
@@ -70,7 +68,7 @@ const TABS: readonly TabConfig[] = [
 export default function TabLayout() {
   const segments = useSegments<TabsRoute>();
   const {triggerHaptic} = useHaptic();
-  const {theme, ds} = useTheme();
+  const {theme} = useTheme();
   const prev = useRef<TabName | null>(null);
 
   useEffect(() => {
@@ -85,20 +83,16 @@ export default function TabLayout() {
   return (
     <NativeTabs
       minimizeBehavior="automatic"
-      tintColor={theme.tint}
-      indicatorColor={theme.secondary}
-      rippleColor={'transparent'}
-      backgroundColor={theme.sidebarBackground}
-      labelVisibilityMode="labeled"
       backBehavior="history"
+      rippleColor="transparent"
+      labelVisibilityMode="labeled"
+      tintColor={theme.tint2}
+      indicatorColor={theme.tabIndicator}
+      backgroundColor={theme.tabBar}
     >
       {TABS.map((t) => (
         <NativeTabs.Trigger key={t.name} name={t.name}>
-          <NativeTabs.Trigger.Icon
-            selectedColor={Palette.blue}
-            sf={t.sf}
-            md={t.md}
-          />
+          <NativeTabs.Trigger.Icon sf={t.sf} md={t.md} />
           <NativeTabs.Trigger.Label>{t.title}</NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>
       ))}

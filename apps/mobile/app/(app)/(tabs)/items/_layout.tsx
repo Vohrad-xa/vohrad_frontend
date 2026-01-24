@@ -9,9 +9,8 @@ import {
 import {Platform} from 'react-native';
 import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {Stack} from 'expo-router';
-import {HeaderButton} from '@/components/ui';
 import {SearchProvider, useSearch} from '@/features/dashboard';
-import {useTheme, useSidebar} from '@/providers';
+import {useTheme} from '@/providers';
 
 interface SearchChangeEvent {
   nativeEvent: {
@@ -57,7 +56,6 @@ function ItemChangesProvider({children}: {children: ReactNode}) {
 
 function ItemsStack() {
   const {theme} = useTheme();
-  const {toggleSideMenu} = useSidebar();
   const {setSearchQuery} = useSearch();
 
   const handleSearchChange = useCallback(
@@ -65,17 +63,6 @@ function ItemsStack() {
       setSearchQuery(event.nativeEvent.text);
     },
     [setSearchQuery],
-  );
-
-  const headerLeftMenu = useCallback(
-    () => (
-      <HeaderButton
-        variant="menu"
-        accessibilityLabel="Open menu"
-        onPress={toggleSideMenu}
-      />
-    ),
-    [toggleSideMenu],
   );
 
   const headerSearchBarOptions = useMemo(
@@ -99,7 +86,6 @@ function ItemsStack() {
         animation: 'ios_from_right' as const,
         headerBackButtonDisplayMode: 'minimal' as const,
         headerTransparent: Platform.OS === 'ios',
-        headerTitleAlign: 'left' as const,
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },
@@ -111,11 +97,9 @@ function ItemsStack() {
     () =>
       ({
         headerTitle: 'Items',
-        headerTitleAlign: 'center' as const,
-        headerLeft: headerLeftMenu,
         headerSearchBarOptions,
       }) satisfies NativeStackNavigationOptions,
-    [headerLeftMenu, headerSearchBarOptions],
+    [headerSearchBarOptions],
   );
 
   return (

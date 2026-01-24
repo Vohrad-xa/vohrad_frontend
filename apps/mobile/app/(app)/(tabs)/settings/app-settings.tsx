@@ -50,7 +50,7 @@ export default function AppSettingsScreen() {
             description="Enable haptic feedback to receive tactile responses"
             descriptionStyle={styles.description}
             titleStyle={styles.itemTitle}
-            left={renderIcon(AppIcons.ui.haptic, 'destructive')}
+            left={renderIcon(AppIcons.ui.haptic, 'accentRed')}
             right={() => <HapticToggle />}
           />
         </>

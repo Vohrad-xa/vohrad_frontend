@@ -33,7 +33,7 @@ export default function SettingsModal() {
         <ListSection>
           <ListSection.Row
             icon={AppIcons.ui.profile}
-            iconColorToken="destructive"
+            iconColorToken="accentRed"
             title="My Profile"
             onPress={() => router.push('/(app)/(tabs)/settings/profile')}
           />
@@ -72,7 +72,7 @@ export default function SettingsModal() {
         <ListSection>
           <ListSection.Row
             icon={AppIcons.ui.settings}
-            iconColorToken="glassTint"
+            iconColorToken="muted"
             title="App Settings"
             onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
           />
@@ -123,7 +123,7 @@ export default function SettingsModal() {
           />
           <ListSection.Row
             icon={AppIcons.ui.info}
-            iconColorToken="glassTint"
+            iconColorToken="muted"
             title="About"
             onPress={() => router.push('/(app)/(tabs)/settings/about')}
           />
@@ -139,7 +139,7 @@ export default function SettingsModal() {
         <ListSection>
           <ListSection.Row
             icon={AppIcons.actions.logout}
-            iconColorToken="destructive"
+            iconColorToken="accentRed"
             title="Logout"
             onPress={handleLogout}
             hideChevron

@@ -22,7 +22,7 @@ export function PlanScreen() {
           <ThemedText variant="caption" colorToken="muted">
             allows {license?.seats} users
           </ThemedText>
-          <ThemedText variant="caption" colorToken="destructive">
+          <ThemedText variant="caption" colorToken="accentRed">
             Expires on {formatDate(license?.ends_at)}
           </ThemedText>
         </Card.Row>

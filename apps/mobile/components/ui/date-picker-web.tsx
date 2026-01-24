@@ -46,7 +46,7 @@ export const DatePickerWeb: React.FC<DatePickerWebProps> = ({
     }
 
     const selectionColor =
-      scheme === 'light' ? theme.primary : theme.accentDeepblue;
+      scheme === 'light' ? theme.primary : theme.accentBlue;
 
     styleElement.textContent = `
       .react-datepicker {

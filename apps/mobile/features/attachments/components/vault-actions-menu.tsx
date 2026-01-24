@@ -52,7 +52,7 @@ export function VaultActionsMenu({
             ios: 'trash',
             android: 'outlined.Delete',
           }),
-          imageColor: theme.destructive,
+          imageColor: theme.accentRed,
           separator: true,
           attributes: {destructive: true},
         },
@@ -101,7 +101,7 @@ export function VaultActionsMenu({
       }),
       imageColor: theme.icon,
       attributes: {keepsMenuPresented: true},
-      androidTitleColor: theme.accentDeepblue,
+      androidTitleColor: theme.accentBlue,
     },
     {
       id: 'support-email',

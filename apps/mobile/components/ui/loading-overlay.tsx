@@ -14,7 +14,7 @@ export function LoadingOverlay({fullScreen = false}: LoadingOverlayProps) {
   return (
     <View style={styles.container}>
       <View style={styles.overlay}>
-        <ActivityIndicator size="large" color={theme.accentDeepblue} />
+        <ActivityIndicator size="large" color={theme.accentBlue} />
       </View>
     </View>
   );

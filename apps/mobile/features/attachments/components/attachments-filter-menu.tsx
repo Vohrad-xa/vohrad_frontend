@@ -124,7 +124,7 @@ export function AttachmentsFilterMenu({
   const menuActions = useMemo((): SykaMenuAction[] => {
     const presets = ['docx', 'xlsx', 'csv', 'txt', 'pdf'];
     const extensionColors: Record<string, string> = {
-      pdf: theme.destructive,
+      pdf: theme.accentRed,
       docx: theme.accentBlue,
       xlsx: theme.accentGreen,
       csv: theme.text,
@@ -231,7 +231,7 @@ export function AttachmentsFilterMenu({
     onSelectPress,
     theme.accentBlue,
     theme.accentGreen,
-    theme.destructive,
+    theme.accentRed,
     theme.icon,
     theme.text,
   ]);

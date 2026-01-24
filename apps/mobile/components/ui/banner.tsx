@@ -120,7 +120,7 @@ const useStyles = makeStyleFactory(
       backgroundColor: theme.accentGreen,
     },
     bannerOffline: {
-      backgroundColor: theme.destructive,
+      backgroundColor: theme.accentRed,
     },
     content: {
       flexDirection: 'row',

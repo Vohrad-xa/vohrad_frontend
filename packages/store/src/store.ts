@@ -25,7 +25,7 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
       _hasHydrated: false,
     }),
     {
-      name: 'vohrad-auth',
+      name: 'sykamore-auth',
       storage: createJSONStorage(() => ({
         getItem: (key: string) => getPersistBackend().getItem(key),
         setItem: (key: string, value: string) =>

@@ -9,13 +9,7 @@ export function Slider(props: SliderProps) {
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
 
-  return (
-    <RNSlider
-      maximumTrackTintColor={theme.surface}
-      style={styles.slider}
-      {...props}
-    />
-  );
+  return <RNSlider style={styles.slider} {...props} />;
 }
 
 const createStyles = makeStyleFactory(

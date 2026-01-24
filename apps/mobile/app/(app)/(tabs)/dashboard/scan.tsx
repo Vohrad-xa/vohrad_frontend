@@ -9,7 +9,7 @@ import {StyleSheet, View, Alert, Linking, Platform} from 'react-native';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import {useNavigation, router} from 'expo-router';
 import {ThemedView, EmptyState} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme, useHaptic} from '@/providers';
 import {
   AppIcons,
@@ -98,7 +98,7 @@ export default function ScanScreen() {
       {
         type: 'button',
         variant: 'prominent',
-        tintColor: enableTorch ? theme.accentOrange : 'transparent',
+        tintColor: enableTorch ? Palette.orange : theme.icon,
         key: 'enable-torch',
         label: enableTorch ? 'Turn off flash' : 'Turn on flash',
         accessibilityLabel: enableTorch ? 'Turn off flash' : 'Turn on flash',
@@ -117,7 +117,7 @@ export default function ScanScreen() {
         right,
       }),
     );
-  }, [navigation, enableTorch, handleToggleTorch, theme.accentOrange]);
+  }, [navigation, enableTorch, handleToggleTorch, theme.icon]);
 
   if (!permission?.granted) {
     return (
@@ -154,7 +154,7 @@ export default function ScanScreen() {
         <Icon
           name={AppIcons.actions.scan}
           size={180}
-          colorToken="white"
+          color={Palette.white}
           style={styles.scanIcon}
         />
       </View>

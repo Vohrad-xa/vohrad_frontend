@@ -17,136 +17,122 @@ export const Palette = {
     900: '#1C1C1E',
     950: '#0B0B0B',
   },
+
   blue: '#0A84FF',
   deepblue: '#1251D3',
   lightBlue: '#DDE7FB',
-  seaBlue: '#67abffa8',
+  bluepurple: '#135489',
+  teal: '#14B8A6',
   indigo: '#4F46E5',
+  purple: '#6a24c4ff',
   green: '#36ba06ff',
   orange: '#ffaa00',
-  red: '#ef4444',
-  redDark: '#dc2626',
-  purple: '#6a24c4ff',
-  bluepurple: '#10385bff',
-  teal: '#14B8A6',
+  red: '#f00909ff',
+
   white: '#FFFFFE',
   offWhite: '#f0f0ef',
+  fog: '#F2F2F6',
+  cloud: '#ECEDEE',
   Greige: '#C2C0B6',
-  black: '#000000',
-  webDarkBackground: '#262624',
-  webLightBackground: '#FAF9F5',
-  modalground: '#F2F2F6',
   mushroom: '#9C9A92',
-  cardDark: 'rgba(255, 255, 255, 0.1)',
-  cardLight: 'rgba(97, 94, 94, 0.16)',
-  glassTintLight: 'rgba(20, 20, 20, 0.27)',
-  glassTintDark: 'rgba(186, 185, 185, 0.72)',
-  ripple: 'rgba(0,0,0,0.10)',
-  androidBackground: '#0F0F0F',
+  iceA83: '#b4d6e6d3',
+  whiteA10: 'rgba(255, 255, 255, 0.1)',
+
+  black: '#000000',
+  blackA10: 'rgba(0,0,0,0.10)',
+  slate: '#11181C',
+  obsidian: '#0f1012ff',
+  midnight: '#15171aff',
+  steelA65: '#677d92a5',
+  graphite: '#262624',
+  charcoalA45: 'rgba(79, 77, 77, 0.45)',
+  graphiteA16: 'rgba(97, 94, 94, 0.16)',
 } as const;
 
 const _Tokens = {
   light: {
-    // Base
     primary: Palette.deepblue,
     secondary: Palette.lightBlue,
-    tertiary: Palette.seaBlue,
-    background: Palette.white,
-    modalBackground: Palette.modalground,
-    webbackground: Palette.webLightBackground,
-    sidebarBackground: Palette.modalground,
-    backdrop: 'rgba(0, 0, 0, 0.5)',
-    text: '#11181C',
+    tertiary: Palette.bluepurple,
     tint: Palette.blue,
     tint2: Palette.bluepurple,
-
-    // Accents
-    accentBlue: Palette.blue,
-    accentDeepblue: Palette.deepblue,
-    accentGreen: Palette.green,
-    accentOrange: Palette.orange,
-    accentIndigo: Palette.indigo,
-    accentPurple: Palette.purple,
-    white: Palette.white,
-    offWhite: Palette.offWhite,
-    destructive: Palette.red,
     muted: Palette.gray[500],
-    ripple: Palette.ripple,
-    selected: Palette.gray[300],
 
-    // Icons
+    background: Palette.white,
+    modalBackground: Palette.fog,
+    card: Palette.graphiteA16,
+    text: Palette.slate,
     icon: Palette.gray[600],
-    quickActionIcon: Palette.gray[700],
+    tabBar: Palette.fog,
+    tabIndicator: Palette.lightBlue,
+    ripple: Palette.blackA10,
 
-    // Components
-    surface: Palette.gray[50],
+    quickActionIcon: Palette.gray[700],
+    selected: Palette.gray[300],
     border: Palette.gray[200],
     divider: Palette.gray[300],
     inputPlaceholder: Palette.gray[400],
-    glassTint: Palette.glassTintLight,
-    card: Palette.cardLight,
     headerAndroid: Palette.bluepurple,
     input: Palette.white,
+
+    accentBlue: Palette.blue,
+    accentGreen: Palette.green,
+    accentOrange: Palette.orange,
+    accentRed: Palette.red,
+    accentPurple: Palette.purple,
+    accentTeal: Palette.teal,
+    accentIndigo: Palette.indigo,
+    white: Palette.white,
+    offWhite: Palette.fog,
   },
 
   dark: {
-    // Base
     primary: Palette.Greige,
     secondary: Palette.Greige,
     tertiary: Palette.mushroom,
+    tint: Palette.mushroom,
+    tint2: Palette.iceA83,
+    muted: Palette.gray[500],
+
     background: Palette.black,
     modalBackground: Palette.gray[900],
-    webbackground: Palette.Greige,
-    sidebarBackground: '#0e0d0dff',
-    backdrop: 'rgba(0, 0, 0, 0.5)',
-    text: '#ECEDEE',
-    tint: Palette.mushroom,
-    tint2: Palette.lightBlue,
-
-    // Accents
-    accentBlue: Palette.blue,
-    accentDeepblue: Palette.deepblue,
-    accentGreen: Palette.green,
-    accentOrange: Palette.orange,
-    accentIndigo: Palette.indigo,
-    accentPurple: Palette.purple,
-    white: Palette.white,
-    offWhite: Palette.offWhite,
-    destructive: Palette.redDark,
-    muted: Palette.gray[500],
-    ripple: 'rgba(79, 77, 77, 0.45)',
-    selected: Palette.gray[750],
-
-    // Icons
+    card: Palette.whiteA10,
+    text: Palette.cloud,
     icon: Palette.gray[200],
-    quickActionIcon: Palette.webDarkBackground,
+    tabBar: Palette.midnight,
+    tabIndicator: Palette.steelA65,
+    ripple: Palette.charcoalA45,
 
-    // Components
+    quickActionIcon: Palette.graphite,
     inputPlaceholder: Palette.gray[600],
     border: Palette.gray[700],
     input: Palette.gray[800],
     divider: Palette.gray[700],
-    surface: Palette.gray[800],
-    glassTint: Palette.glassTintDark,
-    card: Palette.cardDark,
     headerAndroid: Palette.white,
+    selected: Palette.gray[750],
+
+    accentBlue: Palette.blue,
+    accentGreen: Palette.green,
+    accentOrange: Palette.orange,
+    accentRed: Palette.red,
+    accentPurple: Palette.purple,
+    accentTeal: Palette.teal,
+    accentIndigo: Palette.indigo,
+    white: Palette.white,
+    offWhite: Palette.white,
   },
 } as const;
 
-const lightVersion = generateVersion(_Tokens.light);
-const darkVersion = generateVersion(_Tokens.dark);
-
 export const Tokens = {
-  light: {..._Tokens.light, version: lightVersion},
-  dark: {..._Tokens.dark, version: darkVersion},
+  light: {..._Tokens.light, version: generateVersion(_Tokens.light)},
+  dark: {..._Tokens.dark, version: generateVersion(_Tokens.dark)},
 } as const;
 
-export type ColorScheme = keyof typeof _Tokens; // 'light' | 'dark'
-export type ThemePreference = ColorScheme | 'system'; // 'light' | 'dark' | 'system'
+export type ColorScheme = keyof typeof _Tokens;
+export type ThemePreference = ColorScheme | 'system';
 export type TokenName = keyof typeof _Tokens.light;
 export type ThemeColorTokenName = Exclude<TokenName, 'version'>;
 
-// React Navigation compatible themes
 const NavigationFonts = {
   regular: {fontFamily: 'System', fontWeight: '400' as const},
   medium: {fontFamily: 'System', fontWeight: '500' as const},
@@ -158,11 +144,11 @@ export const NavigationThemes = {
   light: {
     dark: false,
     colors: {
-      primary: Palette.lightBlue,
-      background: _Tokens.light.background,
-      card: _Tokens.light.background,
-      text: _Tokens.light.text,
-      border: _Tokens.light.border,
+      primary: Tokens.light.secondary,
+      background: Tokens.light.background,
+      card: Tokens.light.background,
+      text: Tokens.light.text,
+      border: Tokens.light.border,
       notification: Palette.red,
     },
     fonts: NavigationFonts,
@@ -172,15 +158,11 @@ export const NavigationThemes = {
     colors: {
       primary: Palette.blue,
       background:
-        Platform.OS === 'android'
-          ? Palette.androidBackground
-          : _Tokens.dark.background,
+        Platform.OS === 'android' ? Palette.obsidian : Tokens.dark.background,
       card:
-        Platform.OS === 'android'
-          ? Palette.androidBackground
-          : _Tokens.dark.background,
-      text: _Tokens.dark.text,
-      border: _Tokens.dark.border,
+        Platform.OS === 'android' ? Palette.obsidian : Tokens.dark.background,
+      text: Tokens.dark.text,
+      border: Tokens.dark.border,
       notification: Palette.red,
     },
     fonts: NavigationFonts,

@@ -67,11 +67,7 @@ export default function AppSettingsScreen() {
             onIsOnChange={handleHapticChange}
             label="Haptic Feedback"
           >
-            <Icon
-              name={AppIcons.ui.haptic}
-              useSwiftUI
-              colorToken="destructive"
-            />
+            <Icon name={AppIcons.ui.haptic} useSwiftUI colorToken="accentRed" />
           </Toggle>
         </Section>
       </List>

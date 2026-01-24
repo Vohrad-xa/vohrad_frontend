@@ -65,7 +65,7 @@ const getStatusColor = (status: BadgeStatus, theme: ThemeShape): string => {
     case 'active':
       return theme.accentGreen;
     case 'error':
-      return theme.destructive;
+      return theme.accentRed;
     case 'inactive':
       return theme.muted;
     case 'maintenance':

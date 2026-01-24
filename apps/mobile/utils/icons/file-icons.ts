@@ -4,9 +4,9 @@ import type {AttachmentIconKey} from '@sykamore/store';
 const attachmentIconMap: Record<AttachmentIconKey, IconProps> = {
   pdf: {
     name: AppIcons.files.pdf,
-    colorToken: 'destructive',
+    colorToken: 'accentRed',
     symbolType: 'palette',
-    symbolColorTokens: ['destructive', 'offWhite'],
+    symbolColorTokens: ['accentRed', 'offWhite'],
     fontWeight: 'ultraLight',
   },
   word: {
