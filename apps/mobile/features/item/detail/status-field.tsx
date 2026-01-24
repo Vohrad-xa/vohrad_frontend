@@ -57,7 +57,8 @@ const StatusFieldComponent = ({status}: StatusFieldProps) => {
           <Icon
             name={statusIcon}
             size="md"
-            style={[styles.statusIcon, {color: status?.color ?? _theme.muted}]}
+            style={styles.statusIcon}
+            color={status?.color ?? _theme.muted}
           />
         )}
       </View>

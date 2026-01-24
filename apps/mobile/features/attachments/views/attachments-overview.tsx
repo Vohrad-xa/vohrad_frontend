@@ -29,6 +29,8 @@ interface AttachmentsOverviewProps {
   counts: AttachmentKindCount;
   onTilePress?: Partial<Record<AttachmentKindKey, () => void>>;
   filterChip?: AttachmentFilterChip;
+  tileOrder?: AttachmentKind[];
+  onMoveTile?: (from: number, to: number) => void;
 }
 
 export function AttachmentsOverview({
