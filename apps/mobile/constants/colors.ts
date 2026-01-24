@@ -35,7 +35,7 @@ export const Palette = {
   cloud: '#ECEDEE',
   Greige: '#C2C0B6',
   mushroom: '#9C9A92',
-  iceA83: '#bbe1f190',
+  iceA83: '#dfeff3f2',
   whiteA10: 'rgba(255, 255, 255, 0.1)',
 
   black: '#000000',
@@ -43,7 +43,7 @@ export const Palette = {
   slate: '#11181C',
   obsidian: '#0a0a0bff',
   midnight: '#121315ff',
-  steelA65: '#76b6d54c',
+  steelA65: '#89afc343',
   graphite: '#262624',
   charcoalA45: 'rgba(79, 77, 77, 0.45)',
   graphiteA16: 'rgba(97, 94, 94, 0.16)',
