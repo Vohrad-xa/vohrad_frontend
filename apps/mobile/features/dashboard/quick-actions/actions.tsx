@@ -14,7 +14,6 @@ import {useTheme} from '@/providers';
 import type {MenuItem} from '@/types';
 import {Icon, AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {AddQuickAction} from './add/add';
 import {ScanQuickAction} from './scan-action';
 
 type QuickActionsProps = {
@@ -27,7 +26,6 @@ export function QuickActions({onScanPress}: QuickActionsProps) {
 
   const quickActions: MenuItem[] = useMemo(
     () => [
-      {label: 'Add', icon: AppIcons.actions.add},
       {label: 'Move', icon: AppIcons.actions.move},
       {label: 'Scan', icon: AppIcons.actions.scan},
       {label: 'Maintain', icon: AppIcons.domain.maintenance},
@@ -53,17 +51,6 @@ export function QuickActions({onScanPress}: QuickActionsProps) {
   );
 
   const renderAction = ({item}: {item: MenuItem}) => {
-    if (item.label === 'Add') {
-      return (
-        <AddQuickAction
-          icon={item.icon}
-          label={item.label}
-          containerRef={containerRef}
-          actionStyles={addActionStyles}
-        />
-      );
-    }
-
     if (item.label === 'Scan') {
       return (
         <ScanQuickAction
@@ -96,18 +83,6 @@ export function QuickActions({onScanPress}: QuickActionsProps) {
       {Platform.OS === 'web' ? (
         <View style={styles.webGrid}>
           {quickActions.map((item) => {
-            if (item.label === 'Add') {
-              return (
-                <AddQuickAction
-                  key={item.label}
-                  icon={item.icon}
-                  label={item.label}
-                  containerRef={containerRef}
-                  actionStyles={addActionStyles}
-                />
-              );
-            }
-
             if (item.label === 'Scan') {
               return (
                 <ScanQuickAction
