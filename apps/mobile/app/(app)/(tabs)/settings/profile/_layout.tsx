@@ -14,14 +14,15 @@ export default function ProfileLayout() {
   const modalOptions = useMemo(
     () => ({
       presentation: 'modal' as const,
-      headerLeft: () => (
-        <HeaderButton
-          variant="close"
-          accessibilityLabel="Close"
-          accessibilityHint="Closes the modal"
-          onPress={() => router.dismiss()}
-        />
-      ),
+      headerLeft: () =>
+        Platform.OS === 'ios' ? (
+          <HeaderButton
+            variant="close"
+            accessibilityLabel="Close"
+            accessibilityHint="Closes the modal"
+            onPress={() => router.dismiss()}
+          />
+        ) : undefined,
     }),
     [],
   );
@@ -35,18 +36,18 @@ export default function ProfileLayout() {
         headerBackButtonDisplayMode: 'minimal',
         headerTransparent: Platform.OS === 'ios',
         headerTitleStyle: {
-          fontWeight: ds.fontWeight.bold,
+          fontSize: Platform.OS !== 'ios' ? 26 : undefined,
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
         },
         headerLargeTitleStyle: {
           fontWeight: ds.fontWeight.bold,
         },
+        contentStyle: {
+          padding: Platform.OS !== 'ios' ? ds.spacing.md : undefined,
+        },
       }}
     >
-      <Stack.Screen
-        name="index"
-        options={{title: 'Profile', headerShown: false}}
-      />
+      <Stack.Screen name="index" options={{title: 'Profile'}} />
       <Stack.Screen
         name="birth-date"
         options={{title: 'Date of Birth', ...modalOptions}}

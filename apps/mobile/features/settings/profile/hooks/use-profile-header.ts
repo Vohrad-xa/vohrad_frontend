@@ -1,4 +1,5 @@
 import {type RefObject, useCallback, useLayoutEffect} from 'react';
+import {Platform} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {router} from 'expo-router';
 import {Palette} from '@/constants';
@@ -45,7 +46,7 @@ export function useProfileHeader({contentRef}: UseProfileHeaderOptions) {
           iosSymbol: 'checkmark',
           icon: 'content-save',
           variant: 'done',
-          tintColor: Palette.orange,
+          tintColor: Platform.OS === 'ios' ? Palette.orange : undefined,
           onPress: handleSave,
         },
       ],
