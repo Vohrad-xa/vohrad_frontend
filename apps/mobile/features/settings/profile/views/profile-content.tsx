@@ -1,5 +1,10 @@
 import React, {memo, useCallback} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import {useRouter, type Href} from 'expo-router';
 import {Surface, Avatar, List} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
@@ -12,8 +17,8 @@ import {
   AppIcons,
   Icon,
 } from '@/utils';
-import {useProfile} from '../hooks';
 import {PROFILE_FIELDS} from '../constants/profile-constants';
+import {useProfile} from '../hooks';
 
 const NOT_SET = 'Not set';
 
@@ -47,7 +52,8 @@ const ProfileRow = memo(
     a11yHint,
     href,
     descriptionProps,
-  }: ProfileRowModel) => {
+    style,
+  }: ProfileRowModel & {style?: StyleProp<ViewStyle>}) => {
     const router = useRouter();
 
     const onPress = useCallback(() => {
@@ -58,6 +64,7 @@ const ProfileRow = memo(
 
     return (
       <List.Item
+        style={style}
         title={title}
         description={valueText}
         right={renderRight}
@@ -150,16 +157,16 @@ export function ProfileContent() {
 
       <Surface style={styles.sectionSurface} elevation={1} mode="flat">
         {PERSONAL_ROWS.map((row) => (
-          <ProfileRow key={row.title} {...row} />
+          <ProfileRow key={row.href} {...row} style={styles.listItem} />
         ))}
       </Surface>
 
       <Surface style={styles.sectionSurface} elevation={1} mode="flat">
         {CONTACT_ROWS.map((row) => (
-          <ProfileRow key={row.title} {...row} />
+          <ProfileRow key={row.href} {...row} style={styles.listItem} />
         ))}
         {ADDRESS_ROWS.map((row) => (
-          <ProfileRow key={row.title} {...row} />
+          <ProfileRow key={row.href} {...row} style={styles.listItem} />
         ))}
       </Surface>
     </ScrollView>
@@ -172,7 +179,7 @@ const createStyles = makeStyleFactory(
       container: {flex: 1},
       contentContainer: {gap: ds.spacing.lg},
       surface: {
-        paddingVertical: ds.spacing.lg,
+        paddingVertical: ds.spacing.md,
         gap: ds.spacing.sm,
         borderRadius: ds.borderRadius.xxxl,
         alignItems: 'center',
@@ -182,6 +189,11 @@ const createStyles = makeStyleFactory(
       sectionSurface: {
         borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
+      },
+      listItem: {
+        paddingRight: ds.spacing.sm,
+        paddingTop: ds.spacing.xs,
+        paddingBottom: ds.spacing.xs,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

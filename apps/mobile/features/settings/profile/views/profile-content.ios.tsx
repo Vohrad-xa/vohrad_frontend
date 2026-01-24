@@ -26,8 +26,8 @@ import {
 } from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers';
 import {getInitials, formatDate, AppIcons, Icon, type IconName} from '@/utils';
-import {useProfile} from '../hooks';
 import {PROFILE_FIELDS} from '../constants/profile-constants';
+import {useProfile} from '../hooks';
 
 type SystemImageName = IconName;
 
