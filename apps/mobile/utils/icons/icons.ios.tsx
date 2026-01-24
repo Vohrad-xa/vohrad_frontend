@@ -41,7 +41,6 @@ export type IconProps = {
   animationSpec?: animation;
   resizeMode?: ContentMode;
   scale?: SymbolScale;
-  fallback?: React.ReactNode;
   modifiers?: ViewModifier[];
 };
 
@@ -59,7 +58,6 @@ export const Icon: React.FC<IconProps> = ({
   animationSpec,
   resizeMode = 'scaleAspectFit',
   scale,
-  fallback,
   modifiers: externalModifiers,
 }) => {
   const {theme, ds} = useTheme();
@@ -95,7 +93,6 @@ export const Icon: React.FC<IconProps> = ({
         }
         resizeMode={resizeMode}
         animationSpec={animationSpec}
-        fallback={fallback}
       />
     );
   }

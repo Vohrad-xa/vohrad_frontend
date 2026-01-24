@@ -59,9 +59,10 @@ function VaultStack() {
         headerTintColor: theme.icon,
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
+          fontSize: Platform.OS !== 'ios' ? 26 : undefined,
         },
       }) satisfies NativeStackNavigationOptions,
-    [theme.headerAndroid, theme.icon],
+    [theme.icon, theme.headerAndroid],
   );
 
   const indexOptions = useMemo(

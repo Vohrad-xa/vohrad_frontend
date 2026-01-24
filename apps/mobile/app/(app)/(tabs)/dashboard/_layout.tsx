@@ -21,7 +21,7 @@ export default function HomeLayout() {
         headerTitleAlign: 'left',
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          fontWeight: Platform.OS === 'android' ? 'bold' : undefined,
+          fontSize: Platform.OS !== 'ios' ? 26 : undefined,
         },
       }}
     >
@@ -29,12 +29,16 @@ export default function HomeLayout() {
         name="index"
         options={{
           headerTitle: 'Dashboard',
+          headerTitleStyle: {
+            fontWeight: Platform.OS === 'android' ? 'bold' : undefined,
+            color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
+            fontSize: Platform.OS !== 'ios' ? 26 : undefined,
+          },
         }}
       />
       <Stack.Screen
         name="scan"
         options={{
-          headerTitleAlign: 'center',
           headerLargeTitle: false,
           presentation: 'fullScreenModal',
         }}

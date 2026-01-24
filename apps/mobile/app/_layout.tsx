@@ -37,7 +37,8 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
         <Stack.Screen
           name="(modals)"
           options={{
-            presentation: Platform.OS === 'ios' ? 'modal' : 'transparentModal',
+            presentation:
+              Platform.OS === 'ios' ? 'modal' : 'containedTransparentModal',
           }}
         />
       </Stack.Protected>

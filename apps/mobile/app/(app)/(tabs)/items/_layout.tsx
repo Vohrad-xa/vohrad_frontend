@@ -88,6 +88,7 @@ function ItemsStack() {
         headerTransparent: Platform.OS === 'ios',
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
+          fontSize: Platform.OS !== 'ios' ? 26 : undefined,
         },
       }) satisfies NativeStackNavigationOptions,
     [theme.headerAndroid],

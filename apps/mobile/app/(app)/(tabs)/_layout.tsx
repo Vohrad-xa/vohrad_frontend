@@ -89,6 +89,7 @@ export default function TabLayout() {
       tintColor={theme.tint2}
       indicatorColor={theme.tabIndicator}
       backgroundColor={theme.tabBar}
+      iconColor={theme.text}
     >
       {TABS.map((t) => (
         <NativeTabs.Trigger key={t.name} name={t.name}>

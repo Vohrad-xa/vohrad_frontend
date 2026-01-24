@@ -67,7 +67,7 @@ export function QuickActions({onScanPress}: QuickActionsProps) {
         <View style={styles.iconContainer}>
           <Icon
             name={item.icon}
-            size={ds.iconSize.xxl}
+            size={ds.iconSize.xl}
             colorToken="quickActionIcon"
           />
         </View>
@@ -153,7 +153,7 @@ const createStyles = makeStyleFactory(
       actionButton: {
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: Platform.OS === 'ios' ? ds.spacing.xs : ds.spacing.md,
+        paddingVertical: Platform.OS === 'ios' ? ds.spacing.xs : undefined,
         gap: ds.spacing.sm,
         minWidth: 78.5,
       } as ViewStyle,

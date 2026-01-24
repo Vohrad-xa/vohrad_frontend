@@ -32,7 +32,7 @@ export function ScanQuickAction({
   return (
     <TouchableOpacity style={actionStyles.actionButton} onPress={onScanPress}>
       <View style={actionStyles.iconContainer}>
-        <Icon name={icon} size={ds.iconSize.xxl} colorToken="quickActionIcon" />
+        <Icon name={icon} size={ds.iconSize.xl} colorToken="quickActionIcon" />
       </View>
       <ThemedText variant="subheadline" style={actionStyles.actionLabel}>
         {label}

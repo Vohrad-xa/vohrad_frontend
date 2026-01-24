@@ -1,5 +1,11 @@
-import {type StyleProp, type TextStyle} from 'react-native';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import React from 'react';
+import {type StyleProp, type ViewStyle, View} from 'react-native';
+import {
+  SymbolView,
+  type AndroidSymbol,
+  type SymbolWeight,
+  type ContentMode,
+} from 'expo-symbols';
 import type {TokenName} from '@/constants';
 import {useTheme} from '@/providers/theme-provider';
 
@@ -10,31 +16,20 @@ export type IconProps = {
   size?: number | IconSizeKey;
   color?: string;
   colorToken?: TokenName;
-  fontWeight?: string;
+  fontWeight?: SymbolWeight;
   accessibilityLabel?: string;
-  style?: StyleProp<TextStyle>;
+  style?: StyleProp<ViewStyle>;
   withBackground?: boolean;
   useSwiftUI?: boolean;
   noContainer?: boolean;
   symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
   symbolColorTokens?: TokenName[];
   scale?: number | string;
-  resizeMode?: string;
+  resizeMode?: ContentMode;
   animationSpec?: Record<string, unknown>;
 };
 
-export type IconName = keyof typeof Ionicons.glyphMap;
-
-export function getIconGlyph(name: IconName): string | undefined {
-  const glyphMap = Ionicons.glyphMap as unknown as Record<
-    IconName,
-    number | string
-  >;
-
-  const glyph = glyphMap[name];
-  if (glyph == null) return undefined;
-  return typeof glyph === 'number' ? String.fromCodePoint(glyph) : glyph;
-}
+export type IconName = AndroidSymbol;
 
 export const Icon: React.FC<IconProps> = ({
   name,
@@ -42,7 +37,9 @@ export const Icon: React.FC<IconProps> = ({
   color,
   colorToken,
   style,
+  fontWeight = 'regular',
   accessibilityLabel,
+  resizeMode,
 }) => {
   const {theme, ds} = useTheme();
 
@@ -50,108 +47,113 @@ export const Icon: React.FC<IconProps> = ({
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
 
   const foreground = color ?? (colorToken ? theme[colorToken] : theme.icon);
-  const iconColor = foreground;
 
-  const iconElement = (
-    <Ionicons
-      name={name}
-      size={resolvedSize}
-      color={iconColor}
-      style={style}
-      accessibilityLabel={accessibilityLabel}
-    />
+  return (
+    <View style={style}>
+      <SymbolView
+        name={{
+          android: name,
+          web: name,
+        }}
+        size={resolvedSize}
+        tintColor={foreground}
+        weight={fontWeight}
+        resizeMode={resizeMode}
+        accessibilityLabel={accessibilityLabel}
+      />
+    </View>
   );
-
-  return iconElement;
 };
 
 export const AppIcons = {
   ui: {
-    more: 'ellipsis-vertical',
+    more: 'more_vert',
     menu: 'menu',
-    filter: 'filter',
-    search: 'search-outline',
-    chevronUpDown: 'chevron-expand',
-    notifications: 'notifications-outline',
-    settings: 'settings-outline',
-    appearance: 'contrast-outline',
-    biometric: 'finger-print-outline',
-    haptic: 'phone-portrait-outline',
-    language: 'globe-outline',
-    privacy: 'lock-closed-outline',
-    terms: 'document-text-outline',
-    plan: 'card-outline',
-    info: 'information-circle-outline',
-    help: 'help-circle-outline',
-    time: 'time-outline',
-    profile: 'person-outline',
-    userManagement: 'people-outline',
-    support: 'help-circle-outline',
-    preference: 'options-outline',
+    filter: 'filter_list',
+    search: 'search',
+    chevronUpDown: 'unfold_more',
+    notifications: 'notifications',
+    settings: 'settings',
+    appearance: 'contrast',
+    biometric: 'fingerprint',
+    haptic: 'vibration',
+    language: 'language',
+    privacy: 'lock',
+    terms: 'description',
+    plan: 'credit_card',
+    info: 'info',
+    help: 'help',
+    time: 'schedule',
+    profile: 'person',
+    userManagement: 'people',
+    support: 'support',
+    preference: 'tune',
   },
 
   actions: {
     close: 'close',
-    forward: 'chevron-forward',
-    back: 'chevron-back',
+    forward: 'chevron_right',
+    back: 'chevron_left',
     add: 'add',
-    save: 'checkmark',
-    share: 'share-outline',
-    delete: 'trash-outline',
+    save: 'check',
+    share: 'share',
+    delete: 'delete',
     refresh: 'refresh',
-    logout: 'arrow-forward-circle-outline',
-    download: 'cloud-download-outline',
-    edit: 'pencil',
-    addUser: 'person-add-outline',
-    addItem: 'duplicate-outline',
-    move: 'return-down-forward',
-    scan: 'scan-outline',
-    camera: 'camera-outline',
-    input: 'keypad-outline',
-    enableTorch: 'flash',
-    disableTorch: 'flash-off',
+    logout: 'logout',
+    download: 'download',
+    edit: 'edit',
+    addUser: 'person_add',
+    addItem: 'library_add',
+    move: 'subdirectory_arrow_right',
+    scan: 'qr_code_scanner',
+    camera: 'photo_camera',
+    input: 'keyboard',
+    select: 'check_circle',
+    enableTorch: 'flash_on',
+    disableTorch: 'flash_off',
   },
 
   domain: {
-    item: 'grid',
-    itemOutline: 'grid-outline',
-    vault: 'folder-open',
-    vaultOutline: 'folder-outline',
+    item: 'grid_view',
+    itemOutline: 'grid_view',
+    vault: 'folder_open',
+    vaultOutline: 'folder_open',
     home: 'home',
-    homeOutline: 'home-outline',
+    homeOutline: 'home',
     settings: 'settings',
-    settingsOutline: 'settings-outline',
-    category: 'apps-outline',
-    location: 'location-outline',
-    supplier: 'cart-outline',
-    organization: 'business-outline',
-    maintenance: 'build-outline',
+    settingsOutline: 'settings',
+    category: 'category',
+    location: 'location_on',
+    supplier: 'shopping_cart',
+    organization: 'domain',
+    maintenance: 'build',
   },
 
   files: {
-    document: 'document-text-outline',
-    folder: 'folder-open-outline',
-    file: 'document-outline',
-    image: 'image-outline',
-    archive: 'archive-outline',
-    print: 'print-outline',
+    document: 'description',
+    folder: 'folder_open',
+    file: 'insert_drive_file',
+    image: 'image',
+    archive: 'archive',
+    print: 'print',
     list: 'list',
-    pdf: 'document-text-outline',
-    word: 'document-outline',
-    excel: 'document-outline',
-    ppt: 'document-outline',
-    text: 'document-outline',
+    others: 'folder',
+    pdf: 'picture_as_pdf',
+    word: 'description',
+    excel: 'grid_on',
+    ppt: 'slideshow',
+    text: 'text_snippet',
   },
 
   status: {
-    success: 'checkmark-circle-outline',
-    warning: 'warning-outline',
-    error: 'alert-circle-outline',
-    pending: 'time-outline',
+    success: 'check_circle',
+    warning: 'warning',
+    error: 'error',
+    pending: 'pending',
   },
 
   emptyStates: {
-    user: 'people-outline',
-    file: 'folder-open-outline',
+    user: 'people',
+    file: 'folder_open',
   },
 } as const satisfies Record<string, Record<string, IconName>>;

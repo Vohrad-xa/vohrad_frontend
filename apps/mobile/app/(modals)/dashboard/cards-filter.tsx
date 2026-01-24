@@ -14,7 +14,7 @@ const CloseHeaderLeft = () => (
 );
 
 export default function FilterModal() {
-  const {ds, theme} = useTheme();
+  const {theme} = useTheme();
 
   return (
     <>
@@ -26,8 +26,8 @@ export default function FilterModal() {
           headerTransparent: Platform.OS === 'ios',
           headerLeft: Platform.OS === 'ios' ? CloseHeaderLeft : undefined,
           headerTitleStyle: {
-            fontWeight: ds.fontWeight.bold,
-            color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
+            fontSize: Platform.OS !== 'ios' ? 28 : undefined,
+            color: Platform.OS !== 'ios' ? theme.tint2 : undefined,
           },
         }}
       />

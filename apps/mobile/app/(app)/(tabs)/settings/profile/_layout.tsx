@@ -34,7 +34,6 @@ export default function ProfileLayout() {
         animation: 'ios_from_right',
         headerBackButtonDisplayMode: 'minimal',
         headerTransparent: Platform.OS === 'ios',
-        headerTitleAlign: 'left',
         headerTitleStyle: {
           fontWeight: ds.fontWeight.bold,
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,

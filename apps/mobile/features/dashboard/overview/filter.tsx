@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Platform, View} from 'react-native';
-import {List, Divider} from 'react-native-paper';
+import {List, Surface} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils/icons';
@@ -60,48 +60,34 @@ export function FilterContent() {
 
   return (
     <View style={styles.container}>
-      {cardConfig.map((card, index) => {
-        const visibilityKey = card.key;
-        const isVisible = visibility[visibilityKey];
+      <Surface elevation={1} mode="flat" style={styles.surface}>
+        {cardConfig.map((card) => {
+          const visibilityKey = card.key;
+          const isVisible = visibility[visibilityKey];
 
-        return (
-          <React.Fragment key={visibilityKey}>
+          return (
             <List.Item
+              key={visibilityKey}
               style={styles.itemList}
               title={card.title}
-              titleStyle={styles.itemTitle}
               accessibilityLabel={`Toggle ${card.title} card`}
               left={() => (
-                <View style={styles.iconContainer}>
-                  <Icon name={card.icon} />
-                </View>
+                <Icon name={card.icon} style={styles.iconContainer} />
               )}
-              right={() =>
-                Platform.OS === 'android' ? (
-                  <AndroidSwitch
-                    value={isVisible}
-                    onValueChange={(value) =>
-                      setCardVisibility(visibilityKey, value)
-                    }
-                    variant="switch"
-                    scale={0.8}
-                  />
-                ) : (
-                  <IOSToggle
-                    isOn={isVisible}
-                    onIsOnChange={(value) =>
-                      setCardVisibility(visibilityKey, value)
-                    }
-                  />
-                )
-              }
+              right={() => (
+                <AndroidSwitch
+                  value={isVisible}
+                  onValueChange={(value) =>
+                    setCardVisibility(visibilityKey, value)
+                  }
+                  variant="switch"
+                  scale={0.8}
+                />
+              )}
             />
-            {index < cardConfig.length - 1 && (
-              <Divider style={styles.divider} />
-            )}
-          </React.Fragment>
-        );
-      })}
+          );
+        })}
+      </Surface>
     </View>
   );
 }
@@ -113,23 +99,20 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {
         flex: 1,
-        paddingHorizontal: ds.spacing.lg,
-        paddingVertical: ds.spacing.md,
+        padding: ds.spacing.md,
       },
-      itemTitle: {
-        // ...ds.typography.label,
+      surface: {
+        borderRadius: ds.borderRadius.xxxl,
       },
       itemList: {
-        paddingRight: 0,
+        paddingRight: ds.spacing.sm,
         paddingTop: 0,
         paddingBottom: 0,
       },
       iconContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-      },
-      divider: {
-        marginLeft: ds.spacing.xxl + ds.iconSize.xs,
+        marginLeft: ds.spacing.md,
       },
     }),
   (ds, _theme) => themeKey(_theme, ds),

@@ -1,5 +1,5 @@
 import {useCallback} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {router} from 'expo-router';
 import {ScrollView} from 'react-native-gesture-handler';
 import {List} from 'react-native-paper';
@@ -23,11 +23,7 @@ export default function SettingsModal() {
   const leftIcon = useCallback(
     (iconName: IconName) => {
       function IconWrapper() {
-        return (
-          <View style={styles.iconContainer}>
-            <Icon name={iconName} size={24} />
-          </View>
-        );
+        return <Icon name={iconName} size={24} style={styles.iconContainer} />;
       }
 
       IconWrapper.displayName = `SettingsLeftIcon(${iconName})`;
@@ -154,8 +150,8 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       contentContainer: {
-        paddingHorizontal: ds.spacing.lg + 2,
-        paddingVertical: ds.spacing.lg,
+        paddingHorizontal: ds.spacing.lg,
+        paddingVertical: ds.spacing.md,
       },
       iconContainer: {
         justifyContent: 'center',
