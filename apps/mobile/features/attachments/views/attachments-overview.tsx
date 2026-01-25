@@ -123,6 +123,8 @@ export function AttachmentsOverview({
               />
             )}
             onPress={tile.onPress}
+            rippleColor={theme.ripple}
+            borderless
           />
         ))}
       </Surface>
