@@ -2,6 +2,9 @@ import {useState, forwardRef, useImperativeHandle, useCallback} from 'react';
 import {Platform, Pressable, View} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
+import {useTheme} from '@/providers';
+import {formatDate} from '@/utils';
+import {DatePicker as AndroidDatePicker} from 'sykamore-ui/android';
 import {
   Host,
   HStack,
@@ -13,9 +16,6 @@ import {
   Section,
   Spacer,
 } from 'sykamore-ui/ios';
-import {useTheme} from '@/providers';
-import {formatDate} from '@/utils';
-import {DatePicker as AndroidDatePicker} from 'sykamore-ui/android';
 import {useProfile} from '../hooks';
 
 export type DatePickerContentHandle = {
