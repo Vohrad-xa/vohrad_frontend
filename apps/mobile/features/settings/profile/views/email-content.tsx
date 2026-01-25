@@ -5,6 +5,8 @@ import {
   useState,
   useRef,
 } from 'react';
+import {Platform, ScrollView} from 'react-native';
+import {TextInput, HelperText, List} from 'react-native-paper';
 import {Palette} from '@/constants';
 import {
   Host,
@@ -31,6 +33,9 @@ export type EmailContentHandle = {
   save: () => Promise<void>;
 };
 
+const SUPPORTING_TEXT =
+  'This email will be used to support account security, including login, identity verification and account recovery.';
+
 export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
   const {email, pendingEmail, pendingEmailExpiresAt, updateEmail} =
     useProfile();
@@ -40,11 +45,11 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
   const textFieldRef = useRef<TextFieldRef>(null);
 
   const [emailValue, setEmailValue] = useState(email);
-
   const [isEditing, setIsEditing] = useState(false);
 
   const save = useCallback(async () => {
-    if (isEditing && emailValue !== email) {
+    const canSave = Platform.OS === 'ios' ? isEditing : true;
+    if (canSave && emailValue !== email) {
       await updateEmail(emailValue);
     }
   }, [isEditing, emailValue, email, updateEmail]);
@@ -65,105 +70,153 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
     textFieldRef.current?.blur();
   }, [email]);
 
-  return (
-    <Host style={{flex: 1}}>
-      <Form>
-        <Section>
-          <VStack alignment="leading" spacing={ds.spacing.lg}>
-            <Icon
-              useSwiftUI
-              name={'envelope' as IconName}
-              size="xxxl"
-              colorToken="tint"
-            />
-            <Text
-              modifiers={[
-                font({
-                  textStyle: 'title2',
-                  weight: 'semibold',
-                }),
-              ]}
-            >
-              Email Address
-            </Text>
-
-            <Text
-              modifiers={[
-                font({
-                  textStyle: 'body',
-                }),
-                foregroundStyle('secondary'),
-              ]}
-            >
-              This Email will be used to support account security, including,
-              login, identity verification and account recovery.
-            </Text>
-          </VStack>
-        </Section>
-
-        <Section title="Primary">
-          <HStack>
-            <TextField
-              ref={textFieldRef}
-              defaultValue={email}
-              placeholder="Email address"
-              textContentType="email-address"
-              keyboardType="email-address"
-              onChangeText={setEmailValue}
-              modifiers={[
-                disabled(!isEditing),
-                accessibilityLabel('Email address'),
-              ]}
-            />
-            <Spacer />
-            <Button
-              label={isEditing ? 'Cancel' : 'Edit'}
-              role={isEditing ? 'destructive' : 'default'}
-              onPress={isEditing ? handleCancelPress : handleEditPress}
-              modifiers={[
-                accessibilityLabel(isEditing ? 'Cancel editing' : 'Edit email'),
-              ]}
-            />
-          </HStack>
-        </Section>
-
-        {pendingEmail && (
-          <Section
-            title="New"
-            footer={
-              <Text>
-                A verification link has been sent to {pendingEmail}
-                {'\n'}The link will expire on{' '}
-                {formatDate(pendingEmailExpiresAt, {includeTime: true})}.{'\n'}
-                In case you did not receive a link, you can request a new one.
+  // iOS
+  if (Platform.OS === 'ios') {
+    return (
+      <Host style={{flex: 1}}>
+        <Form>
+          <Section>
+            <VStack alignment="leading" spacing={ds.spacing.lg}>
+              <Icon
+                useSwiftUI
+                name={'envelope' as IconName}
+                size="xxxl"
+                colorToken="tint"
+              />
+              <Text
+                modifiers={[
+                  font({
+                    textStyle: 'title2',
+                    weight: 'semibold',
+                  }),
+                ]}
+              >
+                Email Address
               </Text>
-            }
-          >
-            <LabeledContent label={pendingEmail}>
-              <HStack spacing={ds.spacing.sm}>
-                <Text
-                  modifiers={[
-                    font({
-                      size: ds.typography.ios.subheadline.baseSize,
-                      family: 'system',
-                    }),
-                    foregroundStyle(Palette.mushroom),
-                  ]}
-                >
-                  Pending
-                </Text>
-                <Icon
-                  useSwiftUI
-                  name={AppIcons.status.pending}
-                  color={Palette.mushroom}
-                  size="xs"
-                />
-              </HStack>
-            </LabeledContent>
+
+              <Text
+                modifiers={[
+                  font({textStyle: 'body'}),
+                  foregroundStyle('secondary'),
+                ]}
+              >
+                {SUPPORTING_TEXT}
+              </Text>
+            </VStack>
           </Section>
-        )}
-      </Form>
-    </Host>
+
+          <Section title="Primary">
+            <HStack>
+              <TextField
+                ref={textFieldRef}
+                defaultValue={email}
+                placeholder="Email address"
+                textContentType="email-address"
+                keyboardType="email-address"
+                onChangeText={setEmailValue}
+                modifiers={[
+                  disabled(!isEditing),
+                  accessibilityLabel('Email address'),
+                ]}
+              />
+              <Spacer />
+              <Button
+                label={isEditing ? 'Cancel' : 'Edit'}
+                role={isEditing ? 'destructive' : 'default'}
+                onPress={isEditing ? handleCancelPress : handleEditPress}
+                modifiers={[
+                  accessibilityLabel(
+                    isEditing ? 'Cancel editing' : 'Edit email',
+                  ),
+                ]}
+              />
+            </HStack>
+          </Section>
+
+          {pendingEmail && (
+            <Section
+              title="New"
+              footer={
+                <Text>
+                  A verification link has been sent to {pendingEmail}
+                  {'\n'}The link will expire on{' '}
+                  {formatDate(pendingEmailExpiresAt, {includeTime: true})}.
+                  {'\n'}In case you did not receive a link, you can request a
+                  new one.
+                </Text>
+              }
+            >
+              <LabeledContent label={pendingEmail}>
+                <HStack spacing={ds.spacing.sm}>
+                  <Text
+                    modifiers={[
+                      font({
+                        size: ds.typography.ios.subheadline.baseSize,
+                        family: 'system',
+                      }),
+                      foregroundStyle(Palette.mushroom),
+                    ]}
+                  >
+                    Pending
+                  </Text>
+                  <Icon
+                    useSwiftUI
+                    name={AppIcons.status.pending}
+                    color={Palette.mushroom}
+                    size="xs"
+                  />
+                </HStack>
+              </LabeledContent>
+            </Section>
+          )}
+        </Form>
+      </Host>
+    );
+  }
+
+  // Android
+  return (
+    <ScrollView
+      style={{flex: 1, gap: ds.spacing.md}}
+      keyboardShouldPersistTaps="handled"
+    >
+      <List.Section title="Primary Email" titleStyle={{paddingTop: 0}}>
+        <TextInput
+          mode="outlined"
+          label="Email"
+          placeholder="Email address"
+          value={emailValue}
+          onChangeText={setEmailValue}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoComplete="email"
+          returnKeyType="done"
+          right={<TextInput.Icon icon="email-outline" />}
+        />
+      </List.Section>
+
+      <List.Section title="Pending Request">
+        {pendingEmail ? (
+          <>
+            <TextInput
+              mode="outlined"
+              label="New email"
+              value={pendingEmail}
+              textColor={Palette.gray[500]}
+              editable={false}
+              right={
+                <TextInput.Icon icon="clock-outline" color={Palette.orange} />
+              }
+            />
+            <HelperText type="info" visible>
+              You have requested to change your email.{'\n'}A verification link
+              has been sent. Expires on{' '}
+              {formatDate(pendingEmailExpiresAt, {includeTime: true})}.
+            </HelperText>
+          </>
+        ) : null}
+      </List.Section>
+    </ScrollView>
   );
 });
 

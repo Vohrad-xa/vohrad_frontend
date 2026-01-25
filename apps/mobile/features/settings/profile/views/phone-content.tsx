@@ -117,24 +117,22 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
   }
 
   return (
-    <View style={{flex: 1}}>
-      <View style={{gap: ds.spacing.md}}>
-        <TextInput
-          mode="outlined"
-          label="Phone"
-          placeholder="Phone number"
-          value={phoneValue}
-          onChangeText={setPhoneValue}
-          keyboardType="phone-pad"
-          autoComplete="tel"
-          returnKeyType="done"
-          autoFocus
-          left={<TextInput.Icon icon="phone" />}
-        />
-        <HelperText type="info" visible>
-          {SUPPORTING_TEXT}
-        </HelperText>
-      </View>
+    <View style={{flex: 1, gap: ds.spacing.md}}>
+      <TextInput
+        mode="outlined"
+        label="Phone"
+        placeholder="Phone number"
+        value={phoneValue}
+        onChangeText={setPhoneValue}
+        keyboardType="phone-pad"
+        autoComplete="tel"
+        returnKeyType="done"
+        autoFocus
+        left={<TextInput.Icon icon="phone" />}
+      />
+      <HelperText type="info" visible>
+        {SUPPORTING_TEXT}
+      </HelperText>
     </View>
   );
 });

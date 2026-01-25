@@ -1,22 +1,11 @@
 import React, {memo, useCallback} from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import {ScrollView, StyleSheet} from 'react-native';
 import {useRouter, type Href} from 'expo-router';
-import {Surface, Avatar, List} from 'react-native-paper';
+import {Surface, Avatar, List, type ListItemProps} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
-import {
-  makeStyleFactory,
-  getInitials,
-  formatDate,
-  AppIcons,
-  Icon,
-} from '@/utils';
+import {makeStyleFactory, getInitials, formatDate} from '@/utils';
 import {PROFILE_FIELDS} from '../constants/profile-constants';
 import {useProfile} from '../hooks';
 
@@ -34,15 +23,8 @@ type ProfileRowModel = Readonly<{
   >;
 }>;
 
-function ChevronRight() {
-  return (
-    <Icon
-      name={AppIcons.actions.forward}
-      colorToken="muted"
-      fontWeight="regular"
-    />
-  );
-}
+type LeftProps = Parameters<NonNullable<ListItemProps['left']>>[0];
+type RightProps = Parameters<NonNullable<ListItemProps['right']>>[0];
 
 const ProfileRow = memo(
   ({
@@ -52,19 +34,20 @@ const ProfileRow = memo(
     a11yHint,
     href,
     descriptionProps,
-    style,
-  }: ProfileRowModel & {style?: StyleProp<ViewStyle>}) => {
+  }: ProfileRowModel) => {
     const router = useRouter();
 
     const onPress = useCallback(() => {
       router.push(href);
     }, [router, href]);
 
-    const renderRight = useCallback(() => <ChevronRight />, []);
+    const renderRight = useCallback(
+      (props: RightProps) => <List.Icon {...props} icon="chevron-right" />,
+      [],
+    );
 
     return (
       <List.Item
-        style={style}
         title={title}
         description={valueText}
         right={renderRight}
@@ -73,6 +56,7 @@ const ProfileRow = memo(
         accessibilityLabel={a11yLabel}
         accessibilityHint={a11yHint}
         {...descriptionProps}
+        style={{paddingRight: 8}}
       />
     );
   },
@@ -109,25 +93,13 @@ export function ProfileContent() {
     [city, postalCode, country].filter(Boolean).join(' ') || NOT_SET;
 
   const PERSONAL_ROWS = [
-    {
-      ...PROFILE_FIELDS.name,
-      valueText: displayName,
-    },
-    {
-      ...PROFILE_FIELDS.dateOfBirth,
-      valueText: birthDateText,
-    },
+    {...PROFILE_FIELDS.name, valueText: displayName},
+    {...PROFILE_FIELDS.dateOfBirth, valueText: birthDateText},
   ] as const satisfies ReadonlyArray<Omit<ProfileRowModel, 'descriptionProps'>>;
 
   const CONTACT_ROWS = [
-    {
-      ...PROFILE_FIELDS.email,
-      valueText: emailText,
-    },
-    {
-      ...PROFILE_FIELDS.phoneNumber,
-      valueText: phoneText,
-    },
+    {...PROFILE_FIELDS.email, valueText: emailText},
+    {...PROFILE_FIELDS.phoneNumber, valueText: phoneText},
   ] as const satisfies ReadonlyArray<Omit<ProfileRowModel, 'descriptionProps'>>;
 
   const ADDRESS_ROWS = [
@@ -141,32 +113,45 @@ export function ProfileContent() {
     },
   ] as const satisfies readonly ProfileRowModel[];
 
+  const renderAvatar = useCallback(
+    (props: LeftProps) => (
+      <Avatar.Text
+        label={initials}
+        accessibilityLabel={`${displayName} avatar`}
+        style={props.style}
+      />
+    ),
+    [displayName, initials],
+  );
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
     >
       <Surface style={styles.surface} mode="flat">
-        <Avatar.Text
-          label={initials}
-          accessibilityLabel={`${displayName} avatar`}
+        <List.Item
+          title={<ThemedText variant="title1">{displayName}</ThemedText>}
+          description={
+            <ThemedText variant="caption">
+              {roleText} • Since {memberSince}
+            </ThemedText>
+          }
+          left={renderAvatar}
         />
-        <ThemedText>{roleText}</ThemedText>
-        <ThemedText variant="footnote">Since {memberSince}</ThemedText>
       </Surface>
 
       <Surface style={styles.sectionSurface} elevation={1} mode="flat">
         {PERSONAL_ROWS.map((row) => (
-          <ProfileRow key={row.href} {...row} style={styles.listItem} />
+          <ProfileRow key={row.href} {...row} />
         ))}
       </Surface>
 
       <Surface style={styles.sectionSurface} elevation={1} mode="flat">
         {CONTACT_ROWS.map((row) => (
-          <ProfileRow key={row.href} {...row} style={styles.listItem} />
+          <ProfileRow key={row.href} {...row} />
         ))}
         {ADDRESS_ROWS.map((row) => (
-          <ProfileRow key={row.href} {...row} style={styles.listItem} />
+          <ProfileRow key={row.href} {...row} />
         ))}
       </Surface>
     </ScrollView>
@@ -178,22 +163,15 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {flex: 1},
       contentContainer: {gap: ds.spacing.lg},
+
       surface: {
-        paddingVertical: ds.spacing.md,
-        gap: ds.spacing.sm,
         borderRadius: ds.borderRadius.xxxl,
-        alignItems: 'center',
         overflow: 'hidden',
-        backgroundColor: 'transparent',
       },
+
       sectionSurface: {
         borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
-      },
-      listItem: {
-        paddingRight: ds.spacing.sm,
-        paddingTop: ds.spacing.xs,
-        paddingBottom: ds.spacing.xs,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

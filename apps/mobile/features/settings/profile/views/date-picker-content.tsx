@@ -1,7 +1,6 @@
 import {useState, forwardRef, useImperativeHandle, useCallback} from 'react';
 import {Platform, Pressable, View} from 'react-native';
-import {TextInput} from 'react-native-paper';
-import {ThemedText} from '@/components/ui';
+import {TextInput, HelperText} from 'react-native-paper';
 import {useTheme} from '@/providers';
 import {formatDate} from '@/utils';
 import {DatePicker as AndroidDatePicker} from 'sykamore-ui/android';
@@ -76,7 +75,6 @@ export const DatePickerContent = forwardRef<DatePickerContentHandle>(
 
     return (
       <View style={{flex: 1, gap: ds.spacing.md}}>
-        <ThemedText>Select your date of birth</ThemedText>
         <Pressable
           onPress={() => setShowDatePicker(true)}
           accessibilityLabel="Select Date of Birth"
@@ -97,12 +95,16 @@ export const DatePickerContent = forwardRef<DatePickerContentHandle>(
             }
           />
         </Pressable>
+        <HelperText type="info" visible variant="bodySmall">
+          Please do not forget to save your changes after selecting your date of
+          birth.
+        </HelperText>
         {showDatePicker && (
           <AndroidDatePicker
             initialDate={selectedDate.toISOString()}
             onDateSelected={handleDateSelected}
             onDismiss={handleDismiss}
-            confirmText="OK"
+            confirmText="Select"
             dismissText="Cancel"
           />
         )}

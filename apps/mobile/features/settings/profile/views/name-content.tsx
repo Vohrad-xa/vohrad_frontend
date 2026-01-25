@@ -1,5 +1,5 @@
 import {useState, forwardRef, useImperativeHandle, useCallback} from 'react';
-import {Platform, View} from 'react-native';
+import {Platform, ScrollView} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {
   Host,
@@ -31,7 +31,11 @@ export const NameContent = forwardRef<NameContentHandle>((_, ref) => {
 
   if (Platform.OS === 'android') {
     return (
-      <View style={{gap: ds.spacing.lg, flex: 1}}>
+      <ScrollView
+        style={{flex: 1}}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{gap: ds.spacing.lg}}
+      >
         <TextInput
           value={firstNameValue}
           onChangeText={setFirstNameValue}
@@ -53,7 +57,7 @@ export const NameContent = forwardRef<NameContentHandle>((_, ref) => {
           numberOfLines={1}
           mode="outlined"
         />
-      </View>
+      </ScrollView>
     );
   }
 
