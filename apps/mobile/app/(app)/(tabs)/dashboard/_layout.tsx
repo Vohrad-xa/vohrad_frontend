@@ -15,7 +15,6 @@ export default function HomeLayout() {
         headerShown: true,
         headerShadowVisible: false,
         headerLargeTitle: true,
-        animation: 'ios_from_right',
         headerBackButtonDisplayMode: 'minimal',
         headerTransparent: Platform.OS === 'ios',
         headerTitleAlign: 'left',

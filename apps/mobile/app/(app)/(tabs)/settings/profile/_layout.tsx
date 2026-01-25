@@ -32,7 +32,6 @@ export default function ProfileLayout() {
       screenOptions={{
         headerShown: true,
         headerShadowVisible: false,
-        animation: 'ios_from_right',
         headerBackButtonDisplayMode: 'minimal',
         headerTransparent: Platform.OS === 'ios',
         headerTitleStyle: {
