@@ -92,6 +92,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
         onPress={handlePress}
         onLongPress={onLongPressRow ? handleLongPress : undefined}
         accessibilityRole="button"
+        unstable_pressDelay={60}
         style={({pressed}) => [
           styles.content,
           selectionVisible ? styles.contentSelection : null,
@@ -130,7 +131,6 @@ const AttachmentItem = memo<AttachmentItemProps>(
                 contentFit="cover"
                 transition={0}
                 style={styles.thumbnail}
-                decodeFormat={Platform.OS === 'android' ? 'rgb' : undefined}
               />
             ) : (
               <Icon
@@ -269,6 +269,10 @@ const AttachmentsListBase = ({
     [],
   );
 
+  const getItemType = useCallback((item: AttachmentDisplayItem) => {
+    return item.thumbnailUrl ? 1 : 0;
+  }, []);
+
   const ItemSeparator = useCallback(
     () => <Divider style={styles.divider} />,
     [styles.divider],
@@ -312,6 +316,7 @@ const AttachmentsListBase = ({
       extraData={extraData}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
+      getItemType={getItemType}
       refreshing={refreshing}
       onRefresh={handleRefresh}
       onEndReached={onEndReached}
@@ -479,12 +484,12 @@ const createStyles = makeStyleFactory(
         left: ds.spacing.lg,
         top: 0,
         bottom: 0,
-        width: ds.spacing.xxl + ds.spacing.sm,
+        width: ds.spacing.xxl + ds.spacing.md,
       },
 
       iconContainer: {
         height: ds.spacing.xl * 2 + ds.spacing.xxs,
-        width: ds.spacing.xxl + ds.spacing.sm,
+        width: ds.spacing.xxl + ds.spacing.md,
         alignItems: 'center',
         justifyContent: 'center',
       },
@@ -508,7 +513,7 @@ const createStyles = makeStyleFactory(
       },
 
       divider: {
-        marginLeft: ds.spacing.xxxl + ds.spacing.xl + ds.spacing.xxs,
+        marginLeft: ds.spacing.xxxl + ds.spacing.xl + ds.spacing.xs,
         marginRight: ds.spacing.lg,
       },
 
@@ -522,5 +527,3 @@ const createStyles = makeStyleFactory(
     }),
   (ds, theme) => themeKey(theme, ds),
 );
-
-//codex resume 019bdd02-192a-7a22-be2b-0fefb07389a1
