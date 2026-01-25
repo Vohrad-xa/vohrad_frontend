@@ -1,10 +1,15 @@
+import {useCallback} from 'react';
 import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
+import {useNavigationState} from '@react-navigation/native';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import {Stack} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {KeyboardProvider} from 'react-native-keyboard-controller';
+import {
+  KeyboardProvider,
+  KeyboardController,
+} from 'react-native-keyboard-controller';
 import {AttachmentProvider} from '@/features/attachments';
 import {NetworkProvider} from '@/features/network';
 import {NetworkBanner} from '@/features/network/components/network-banner';
@@ -27,6 +32,13 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
 
   const ready = isBootstrapComplete && authReady;
 
+  useNavigationState(
+    useCallback((state) => {
+      KeyboardController.dismiss({animated: true});
+      return state;
+    }, []),
+  );
+
   if (!ready) return null;
 
   return (
@@ -37,8 +49,7 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
         <Stack.Screen
           name="(modals)"
           options={{
-            presentation:
-              Platform.OS === 'ios' ? 'modal' : 'containedTransparentModal',
+            presentation: Platform.OS === 'ios' ? 'modal' : 'transparentModal',
           }}
         />
       </Stack.Protected>
