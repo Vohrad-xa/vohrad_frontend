@@ -31,7 +31,7 @@ export const NameContent = forwardRef<NameContentHandle>((_, ref) => {
 
   if (Platform.OS === 'android') {
     return (
-      <View style={{gap: ds.spacing.md, flex: 1}}>
+      <View style={{gap: ds.spacing.lg, flex: 1}}>
         <TextInput
           value={firstNameValue}
           onChangeText={setFirstNameValue}
