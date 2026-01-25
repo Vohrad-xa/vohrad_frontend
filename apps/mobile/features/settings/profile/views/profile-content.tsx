@@ -1,11 +1,16 @@
 import React, {memo, useCallback} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
-import {useRouter, type Href} from 'expo-router';
+import {type Href} from 'expo-router';
 import {Surface, Avatar, List, type ListItemProps} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
-import {makeStyleFactory, getInitials, formatDate} from '@/utils';
+import {
+  makeStyleFactory,
+  getInitials,
+  formatDate,
+  useSafeRouter,
+} from '@/utils';
 import {PROFILE_FIELDS} from '../constants/profile-constants';
 import {useProfile} from '../hooks';
 
@@ -35,7 +40,7 @@ const ProfileRow = memo(
     href,
     descriptionProps,
   }: ProfileRowModel) => {
-    const router = useRouter();
+    const router = useSafeRouter();
 
     const onPress = useCallback(() => {
       router.push(href);

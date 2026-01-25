@@ -1,10 +1,11 @@
-import React, {memo, useCallback, useMemo} from 'react';
+import {memo, useCallback, useMemo} from 'react';
 import {ScrollView, StyleSheet, View} from 'react-native';
-import {useRouter, type Href} from 'expo-router';
+import {type Href} from 'expo-router';
 import {List, type ListItemProps} from 'react-native-paper';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {AppearanceMenu} from '@/features/settings';
 import {useAuth, useTheme} from '@/providers';
+import {useSafeRouter} from '@/utils';
 import {
   AppIcons,
   Icon,
@@ -28,7 +29,7 @@ type SettingsRowModel = Readonly<{
 }>;
 
 const SettingsRow = memo((row: SettingsRowModel) => {
-  const router = useRouter();
+  const router = useSafeRouter();
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
 
@@ -70,7 +71,6 @@ const SettingsRow = memo((row: SettingsRowModel) => {
 SettingsRow.displayName = 'SettingsRow';
 
 export default function SettingsModal() {
-  const {ds, theme} = useTheme();
   const {logout} = useAuth();
 
   const handleLogout = useCallback(() => {

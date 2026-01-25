@@ -22,7 +22,6 @@ export * from './haptics';
 export * from './versioning';
 export * from './bootstrap';
 export * from './name-sanitizer';
-export * from './navigation/dynamic-hedaer';
-export * from './navigation/header-actions';
+export * from './navigation';
 export * from './get-initials';
 export * from './capitalize-name';
