@@ -86,6 +86,7 @@ const UserItem = memo<UserItemProps>(({item, onPress, styles}) => {
           {description}
         </ThemedText>
       }
+      borderless
     />
   );
 });

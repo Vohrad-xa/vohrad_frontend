@@ -49,7 +49,7 @@ export const Icon: React.FC<IconProps> = ({
   const foreground = color ?? (colorToken ? theme[colorToken] : theme.icon);
 
   return (
-    <View style={[style, {justifyContent: 'center', alignItems: 'center'}]}>
+    <View style={[style]}>
       <SymbolView
         name={{
           android: name,
@@ -139,8 +139,8 @@ export const AppIcons = {
     list: 'list',
     others: 'folder',
     pdf: 'picture_as_pdf',
-    word: 'description',
-    excel: 'grid_on',
+    word: 'docs',
+    excel: 'docs',
     ppt: 'slideshow',
     text: 'text_snippet',
   },

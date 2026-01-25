@@ -57,6 +57,7 @@ const ProfileRow = memo(
         accessibilityHint={a11yHint}
         {...descriptionProps}
         style={{paddingRight: 8}}
+        borderless
       />
     );
   },

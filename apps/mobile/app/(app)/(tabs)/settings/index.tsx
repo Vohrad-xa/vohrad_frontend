@@ -1,9 +1,7 @@
-import {useCallback} from 'react';
-import {StyleSheet} from 'react-native';
-import {router} from 'expo-router';
-import {ScrollView} from 'react-native-gesture-handler';
-import {List} from 'react-native-paper';
-import {ThemedText} from '@/components/ui';
+import React, {memo, useCallback, useMemo} from 'react';
+import {ScrollView, StyleSheet, View} from 'react-native';
+import {useRouter, type Href} from 'expo-router';
+import {List, type ListItemProps} from 'react-native-paper';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {AppearanceMenu} from '@/features/settings';
 import {useAuth, useTheme} from '@/providers';
@@ -15,22 +13,65 @@ import {
   showConfirmAlert,
 } from '@/utils';
 
+type LeftProps = Parameters<NonNullable<ListItemProps['left']>>[0];
+type RightProps = Parameters<NonNullable<ListItemProps['right']>>[0];
+
+type SettingsRowModel = Readonly<{
+  id: string;
+  title: string;
+  description?: string;
+  icon: IconName;
+  href?: Href;
+  onPress?: () => void;
+  right?: 'appearance';
+  danger?: boolean;
+}>;
+
+const SettingsRow = memo((row: SettingsRowModel) => {
+  const router = useRouter();
+  const {ds, theme} = useTheme();
+  const styles = createStyles(ds, theme);
+
+  const onPress = useCallback(() => {
+    if (row.onPress) return row.onPress();
+    if (row.href) router.push(row.href);
+  }, [router, row]);
+
+  const renderLeft = useCallback(
+    (_props: LeftProps) => <Icon name={row.icon} size={24} />,
+    [row.icon],
+  );
+
+  const renderRight = useCallback(
+    (props: RightProps) => (
+      <View style={[props.style, styles.rightSlot]}>
+        <AppearanceMenu />
+      </View>
+    ),
+    [styles.rightSlot],
+  );
+
+  const pressable = Boolean(row.onPress ?? row.href);
+
+  return (
+    <List.Item
+      title={row.title}
+      titleStyle={row.danger ? styles.dangerTitle : undefined}
+      description={row.description}
+      left={renderLeft}
+      right={row.right === 'appearance' ? renderRight : undefined}
+      onPress={pressable ? onPress : undefined}
+      borderless
+      style={styles.row}
+    />
+  );
+});
+
+SettingsRow.displayName = 'SettingsRow';
+
 export default function SettingsModal() {
   const {ds, theme} = useTheme();
   const {logout} = useAuth();
-  const styles = createStyles(ds, theme);
-
-  const leftIcon = useCallback(
-    (iconName: IconName) => {
-      function IconWrapper() {
-        return <Icon name={iconName} size={24} style={styles.iconContainer} />;
-      }
-
-      IconWrapper.displayName = `SettingsLeftIcon(${iconName})`;
-      return IconWrapper;
-    },
-    [styles.iconContainer],
-  );
 
   const handleLogout = useCallback(() => {
     showConfirmAlert({
@@ -43,105 +84,109 @@ export default function SettingsModal() {
     });
   }, [logout]);
 
+  const ROWS = useMemo<readonly SettingsRowModel[]>(
+    () => [
+      {
+        id: 'profile',
+        title: 'My Profile',
+        description: 'View and edit your profile',
+        icon: AppIcons.ui.profile,
+        href: '/(app)/(tabs)/settings/profile',
+      },
+      {
+        id: 'business-details',
+        title: 'Business Details',
+        description: 'Manage business information',
+        icon: AppIcons.domain.organization,
+        href: '/(app)/(tabs)/settings/business-details',
+      },
+      {
+        id: 'users',
+        title: 'User Management',
+        description: 'Manage users and roles',
+        icon: AppIcons.ui.userManagement,
+        href: '/(app)/(tabs)/settings/users',
+      },
+      {
+        id: 'app-settings',
+        title: 'App Settings',
+        description: 'Configure application settings',
+        icon: AppIcons.ui.settings,
+        href: '/(app)/(tabs)/settings/app-settings',
+      },
+      {
+        id: 'appearance',
+        title: 'Appearance',
+        description: 'Change app theme',
+        icon: AppIcons.ui.appearance,
+        right: 'appearance',
+      },
+      {
+        id: 'preferences',
+        title: 'Preferences',
+        description: 'Set your app preferences',
+        icon: AppIcons.ui.preference,
+        href: '/(app)/(tabs)/settings/preferences',
+      },
+      {
+        id: 'plan',
+        title: 'Plan',
+        description: 'View and manage your plan',
+        icon: AppIcons.ui.plan,
+        href: '/(app)/(tabs)/settings/plan',
+      },
+      {
+        id: 'language',
+        title: 'App Language',
+        description: 'Select your preferred language',
+        icon: AppIcons.ui.language,
+        href: '/(app)/(tabs)/settings/language',
+      },
+      {
+        id: 'support',
+        title: 'Report an Issue',
+        description: 'Get support or report a problem',
+        icon: AppIcons.ui.support,
+        href: '/(app)/(tabs)/settings/support',
+      },
+      {
+        id: 'privacy',
+        title: 'Privacy Policy',
+        description: 'Read our privacy policy',
+        icon: AppIcons.ui.privacy,
+        href: '/(app)/(tabs)/settings/privacy',
+      },
+      {
+        id: 'terms',
+        title: 'Terms of Use',
+        description: 'Read our terms of use',
+        icon: AppIcons.ui.terms,
+        href: '/(app)/(tabs)/settings/terms',
+      },
+      {
+        id: 'about',
+        title: 'About',
+        description: 'Learn more about this app',
+        icon: AppIcons.ui.info,
+        href: '/(app)/(tabs)/settings/about',
+      },
+      {
+        id: 'logout',
+        title: 'Logout',
+        description: 'Sign out of your account',
+        icon: AppIcons.actions.logout,
+        onPress: handleLogout,
+        danger: true,
+      },
+    ],
+    [handleLogout],
+  );
+
   return (
-    <ScrollView
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}
-    >
-      <List.Item
-        title={<ThemedText variant="body">My Profile</ThemedText>}
-        description="View and edit your profile"
-        left={leftIcon(AppIcons.ui.profile)}
-        onPress={() => router.push('/(app)/(tabs)/settings/profile')}
-      />
-
-      <List.Item
-        title={<ThemedText variant="body">Business Details</ThemedText>}
-        description="Manage business information"
-        left={leftIcon(AppIcons.domain.organization)}
-        onPress={() => router.push('/(app)/(tabs)/settings/business-details')}
-      />
-
-      <List.Item
-        title={<ThemedText variant="body">User Management</ThemedText>}
-        description="Manage users and roles"
-        left={leftIcon(AppIcons.ui.userManagement)}
-        onPress={() => router.push('/(app)/(tabs)/settings/users')}
-      />
-
-      <List.Item
-        title={<ThemedText variant="body">App Settings</ThemedText>}
-        description="Configure application settings"
-        left={leftIcon(AppIcons.ui.settings)}
-        onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
-      />
-
-      <List.Item
-        style={styles.appearanceItem}
-        title={<ThemedText variant="body">Appearance</ThemedText>}
-        description="Switch between light and dark mode"
-        left={leftIcon(AppIcons.ui.appearance)}
-        right={(props) => <AppearanceMenu style={props.style} />}
-      />
-
-      <List.Item
-        title={<ThemedText variant="body">Preferences</ThemedText>}
-        description="Set your app preferences"
-        left={leftIcon(AppIcons.ui.preference)}
-        onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
-      />
-
-      <List.Item
-        title={<ThemedText variant="body">Plan</ThemedText>}
-        description="View and manage your plan"
-        left={leftIcon(AppIcons.ui.plan)}
-        onPress={() => router.push('/(app)/(tabs)/settings/plan')}
-      />
-
-      <List.Item
-        title={<ThemedText variant="body">App Language</ThemedText>}
-        description="Select your preferred language"
-        left={leftIcon(AppIcons.ui.language)}
-        onPress={() => router.push('/(app)/(tabs)/settings/language')}
-      />
-
-      <List.Item
-        title={<ThemedText variant="body">Report an Issue</ThemedText>}
-        description="Get support or report a problem"
-        left={leftIcon(AppIcons.ui.support)}
-        onPress={() => router.push('/(app)/(tabs)/settings/support')}
-      />
-
-      <List.Item
-        title={<ThemedText variant="body">Privacy Policy</ThemedText>}
-        description="Read our privacy policy"
-        left={leftIcon(AppIcons.ui.privacy)}
-        onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
-      />
-
-      <List.Item
-        title={<ThemedText variant="body">Terms of Use</ThemedText>}
-        description="Read our terms of use"
-        left={leftIcon(AppIcons.ui.terms)}
-        onPress={() => router.push('/(app)/(tabs)/settings/terms')}
-      />
-
-      <List.Item
-        title={<ThemedText variant="body">About</ThemedText>}
-        description="Learn more about this app"
-        left={leftIcon(AppIcons.ui.info)}
-        onPress={() => router.push('/(app)/(tabs)/settings/about')}
-      />
-
-      <List.Item
-        title={
-          <ThemedText variant="body" style={{color: Palette.red}}>
-            Logout
-          </ThemedText>
-        }
-        left={leftIcon(AppIcons.actions.logout)}
-        onPress={handleLogout}
-      />
+    <ScrollView>
+      {ROWS.map((row) => (
+        <SettingsRow key={row.id} {...row} />
+      ))}
     </ScrollView>
   );
 }
@@ -149,16 +194,16 @@ export default function SettingsModal() {
 const createStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
-      contentContainer: {
+      row: {
         paddingHorizontal: ds.spacing.lg,
-        paddingVertical: ds.spacing.md,
       },
-      iconContainer: {
+      rightSlot: {
+        alignSelf: 'stretch',
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-end',
       },
-      appearanceItem: {
-        paddingRight: 0,
+      dangerTitle: {
+        color: Palette.red,
       },
     }),
   (ds, theme) => themeKey(theme, ds),
