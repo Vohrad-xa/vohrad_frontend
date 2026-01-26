@@ -32,10 +32,6 @@ export type DatePickerProps = {
    */
   is24Hour?: boolean;
   /**
-   * Tint color for date/time picker highlights.
-   */
-  color?: string;
-  /**
    * Modifiers for the component.
    */
   modifiers?: ExpoModifier[];

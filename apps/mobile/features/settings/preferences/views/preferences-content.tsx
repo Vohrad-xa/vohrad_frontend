@@ -3,11 +3,11 @@ import {StyleSheet} from 'react-native';
 import {usePreferencesManager} from '@sykamore/store';
 import {ScrollView} from 'react-native-gesture-handler';
 import {List, Surface} from 'react-native-paper';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
 import {useTheme, useHaptic} from '@/providers';
-import {showConfirmAlert, showAlert} from '@/utils';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {showConfirmAlert, showAlert, makeStyleFactory} from '@/utils';
 import {DatePicker, Switch} from 'sykamore-ui/android';
+import {dialogBackground, tintColor} from 'sykamore-ui/android/modifiers';
 
 export type SavePreferencesOptions = {
   skipConfirm?: boolean;
@@ -226,6 +226,10 @@ export const PreferencesContentEditable = forwardRef<
           onDismiss={handleTimeDismiss}
           confirmText="Select"
           dismissText="Cancel"
+          modifiers={[
+            dialogBackground(theme.modalBackground),
+            tintColor(Palette.bluepurple),
+          ]}
         />
       )}
     </ScrollView>

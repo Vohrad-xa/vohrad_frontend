@@ -82,6 +82,14 @@ class SykamoreUiModule : Module() {
       return@Function ExpoModifier(Modifier.background(color.compose))
     }
 
+    Function("dialogBackground") { color: Color ->
+      return@Function ExpoModifier(Modifier.dialogBackgroundColor(color))
+    }
+
+    Function("tintColor") { color: Color ->
+      return@Function ExpoModifier(Modifier.tintColor(color))
+    }
+
     Function("border") { borderWidth: Int, borderColor: Color ->
       return@Function ExpoModifier(Modifier.border(BorderStroke(borderWidth.dp, borderColor.compose)))
     }

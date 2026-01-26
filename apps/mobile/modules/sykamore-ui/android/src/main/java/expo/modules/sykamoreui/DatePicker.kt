@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.text.format.DateFormat
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DisplayMode
@@ -31,7 +32,6 @@ import expo.modules.kotlin.views.ComposableScope
 import expo.modules.kotlin.views.ExpoComposeView
 import java.util.Calendar
 import java.util.Date
-import android.graphics.Color
 
 @Composable
 private fun DialogActionButton(label: String, onClick: () -> Unit) {
@@ -51,13 +51,15 @@ private fun PickerDialog(
   dismissText: String,
   onConfirm: () -> Unit,
   onDismissRequest: () -> Unit,
+  containerColor: androidx.compose.ui.graphics.Color?,
   content: @Composable () -> Unit
 ) {
   AlertDialog(
     onDismissRequest = onDismissRequest,
     confirmButton = { DialogActionButton(confirmText, onConfirm) },
     dismissButton = { DialogActionButton(dismissText, onDismissRequest) },
-    text = content
+    text = content,
+    containerColor = containerColor ?: AlertDialogDefaults.containerColor
   )
 }
 
@@ -74,7 +76,6 @@ data class DatePickerProps(
   val variant: MutableState<String> = mutableStateOf("picker"),
   val showVariantToggle: MutableState<Boolean> = mutableStateOf(true),
   val is24Hour: MutableState<Boolean?> = mutableStateOf(null),
-  val color: MutableState<Color?> = mutableStateOf(null),
   val modifiers: MutableState<List<ExpoModifier>> = mutableStateOf(emptyList())
 ) : ComposeProps
 
@@ -101,8 +102,10 @@ class DatePickerView(context: Context, appContext: AppContext) :
     val context = LocalContext.current
     val confirmText = props.confirmText.value
     val dismissText = props.dismissText.value
-    val tintColor = props.color.value.composeOrNull
-    val modifiers = Modifier.fromExpoModifiers(props.modifiers.value)
+    val composedModifier = Modifier.fromExpoModifiers(props.modifiers.value)
+    val dialogStyle = composedModifier.extractDialogStyleColors()
+    val tintColor = dialogStyle.tintColor
+    val dialogBackgroundColor = dialogStyle.dialogBackgroundColor
 
     LaunchedEffect(showDialog) {
       if (!showDialog) {
@@ -140,7 +143,8 @@ class DatePickerView(context: Context, appContext: AppContext) :
             },
             onDismissRequest = {
               showDialog = false
-            }
+            },
+            containerColor = dialogBackgroundColor
           ) {
             val timePickerColors = tintColor?.let {
               TimePickerDefaults.colors(
@@ -151,7 +155,7 @@ class DatePickerView(context: Context, appContext: AppContext) :
             } ?: TimePickerDefaults.colors()
             TimePicker(
               state = timePickerState,
-              modifier = modifiers,
+              modifier = composedModifier,
               colors = timePickerColors
             )
           }
@@ -165,7 +169,8 @@ class DatePickerView(context: Context, appContext: AppContext) :
             },
             onDismissRequest = {
               showDialog = false
-            }
+            },
+            containerColor = dialogBackgroundColor
           ) {
             val datePickerColors = tintColor?.let {
               DatePickerDefaults.colors(
@@ -177,7 +182,7 @@ class DatePickerView(context: Context, appContext: AppContext) :
             } ?: DatePickerDefaults.colors()
             DatePicker(
               state = datePickerState,
-              modifier = modifiers,
+              modifier = composedModifier,
               showModeToggle = props.showVariantToggle.value,
               colors = datePickerColors
             )

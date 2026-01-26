@@ -13,6 +13,10 @@ export const offset: (x: number, y: number) => ExpoModifier =
   nativeExpoUIModule.offset;
 export const background: (color: string) => ExpoModifier =
   nativeExpoUIModule.background;
+export const dialogBackground: (color: string) => ExpoModifier =
+  nativeExpoUIModule.dialogBackground;
+export const tintColor: (color: string) => ExpoModifier =
+  nativeExpoUIModule.tintColor;
 export const border: (
   borderWidth: number,
   borderColor: string,
