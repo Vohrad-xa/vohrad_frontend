@@ -34,12 +34,14 @@ type SelectableAttachmentsListProps = AttachmentsListProps & {
   selection: AttachmentsSelectionController<AttachmentDisplayItem>;
 };
 
+type AnimatedNumber = Animated.Value | Animated.AnimatedInterpolation<number> | number;
+
 type AttachmentListSelectionState = {
   isVisible: boolean;
   isSelected: (id: string) => boolean;
   onLongPress: (id: string) => void;
-  opacity: Animated.Value;
-  checkboxTranslateX: Animated.AnimatedInterpolation<number>;
+  checkboxOpacity: Animated.Value;
+  checkboxScale: Animated.AnimatedInterpolation<number>;
   contentTranslateX: Animated.AnimatedInterpolation<number>;
 };
 
@@ -53,11 +55,13 @@ type AttachmentItemProps = {
   item: AttachmentDisplayItem;
   styles: ReturnType<typeof createStyles>;
   selectionVisible: boolean;
+  showCheckbox: boolean;
   isSelected: boolean;
   onPressRow: (id: string) => void;
   onLongPressRow?: (id: string) => void;
-  checkboxTranslateX: Animated.AnimatedInterpolation<number>;
-  contentTranslateX: Animated.AnimatedInterpolation<number>;
+  checkboxOpacity: AnimatedNumber;
+  checkboxScale: AnimatedNumber;
+  contentTranslateX: AnimatedNumber;
   rippleColor: string;
 };
 
@@ -66,10 +70,12 @@ const AttachmentItem = memo<AttachmentItemProps>(
     item,
     styles,
     selectionVisible,
+    showCheckbox,
     isSelected,
     onPressRow,
     onLongPressRow,
-    checkboxTranslateX,
+    checkboxOpacity,
+    checkboxScale,
     contentTranslateX,
     rippleColor,
   }) => {
@@ -103,12 +109,17 @@ const AttachmentItem = memo<AttachmentItemProps>(
         ]}
         android_ripple={{color: rippleColor, foreground: true}}
       >
-        {selectionVisible ? (
+        {showCheckbox ? (
           <Animated.View
+            pointerEvents={selectionVisible ? 'auto' : 'none'}
+            importantForAccessibility={
+              selectionVisible ? 'auto' : 'no-hide-descendants'
+            }
             style={[
               styles.checkboxContainer,
               {
-                transform: [{translateX: checkboxTranslateX}],
+                opacity: checkboxOpacity,
+                transform: [{scale: checkboxScale}],
               },
             ]}
           >
@@ -213,25 +224,17 @@ const AttachmentsListBase = ({
 
   const fontScaleKey = ds.screen?.fontScale ?? 1;
 
-  const zeroAnimation = useRef(new Animated.Value(0)).current;
-
-  const zeroTranslate = useMemo(
-    () =>
-      zeroAnimation.interpolate({
-        inputRange: [0, 1],
-        outputRange: [0, 0],
-      }),
-    [zeroAnimation],
-  );
-
+  const hasSelection = selectionState != null;
   const selectionVisible = selectionState?.isVisible ?? false;
 
   const onLongPressRow = selectionState?.onLongPress;
 
-  const checkboxTranslateX =
-    selectionState?.checkboxTranslateX ?? zeroTranslate;
+  const checkboxOpacity: AnimatedNumber = selectionState?.checkboxOpacity ?? 0;
 
-  const contentTranslateX = selectionState?.contentTranslateX ?? zeroTranslate;
+  const checkboxScale: AnimatedNumber = selectionState?.checkboxScale ?? 1;
+
+  const contentTranslateX: AnimatedNumber =
+    selectionState?.contentTranslateX ?? 0;
 
   const isSelected = useCallback(
     (id: string) => selectionState?.isSelected(id) ?? false,
@@ -244,10 +247,12 @@ const AttachmentsListBase = ({
         item={item}
         styles={styles}
         selectionVisible={selectionVisible}
+        showCheckbox={hasSelection}
         isSelected={isSelected(item.id)}
         onPressRow={onAttachmentPress}
         onLongPressRow={onLongPressRow}
-        checkboxTranslateX={checkboxTranslateX}
+        checkboxOpacity={checkboxOpacity}
+        checkboxScale={checkboxScale}
         contentTranslateX={contentTranslateX}
         rippleColor={theme.ripple}
       />
@@ -255,10 +260,12 @@ const AttachmentsListBase = ({
     [
       styles,
       selectionVisible,
+      hasSelection,
       isSelected,
       onAttachmentPress,
       onLongPressRow,
-      checkboxTranslateX,
+      checkboxOpacity,
+      checkboxScale,
       contentTranslateX,
       theme.ripple,
     ],
@@ -397,13 +404,13 @@ export function SelectableAttachmentsList({
     [selection, triggerHaptic],
   );
 
-  const checkboxTranslateX = useMemo(
+  const checkboxScale = useMemo(
     () =>
       selectionAnimation.interpolate({
         inputRange: [0, 1],
-        outputRange: [-selectionShift, 0],
+        outputRange: [0.96, 1],
       }),
-    [selectionAnimation, selectionShift],
+    [selectionAnimation],
   );
 
   const contentTranslateX = useMemo(
@@ -420,8 +427,8 @@ export function SelectableAttachmentsList({
       isVisible: selectionVisible,
       isSelected: selection.isSelected,
       onLongPress: handleLongPressRow,
-      opacity: selectionAnimation,
-      checkboxTranslateX,
+      checkboxOpacity: selectionAnimation,
+      checkboxScale,
       contentTranslateX,
     }),
     [
@@ -429,7 +436,7 @@ export function SelectableAttachmentsList({
       selection.isSelected,
       handleLongPressRow,
       selectionAnimation,
-      checkboxTranslateX,
+      checkboxScale,
       contentTranslateX,
     ],
   );
@@ -445,7 +452,7 @@ export function SelectableAttachmentsList({
       isLoading={isLoading}
       lastUpdated={lastUpdated}
       selectionState={selectionState}
-      extraDataKey={`${selection.selectionVersion}|${selectionMode ? 1 : 0}`}
+      extraDataKey={`${selection.selectionVersion}`}
     />
   );
 }
