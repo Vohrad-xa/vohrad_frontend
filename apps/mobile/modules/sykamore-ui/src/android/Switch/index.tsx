@@ -1,5 +1,5 @@
 import {requireNativeView} from 'expo';
-import {NativeSyntheticEvent, StyleProp, ViewStyle} from 'react-native';
+import {NativeSyntheticEvent} from 'react-native';
 
 import {ExpoModifier} from '../types';
 
@@ -48,14 +48,6 @@ export type SwitchProps = {
    * Callback function that is called when the checked state changes.
    */
   onValueChange?: (value: boolean) => void;
-  /**
-   * Optional style for the switch component.
-   */
-  style?: StyleProp<ViewStyle>;
-  /**
-   * Picker color. On iOS, it only applies to the `menu` variant.
-   */
-  color?: string;
 
   /** Modifiers for the component */
   modifiers?: ExpoModifier[];
@@ -101,17 +93,6 @@ function getElementColors(props: SwitchProps) {
   if (props.variant === 'button') {
     return undefined;
   }
-  if (!props.elementColors) {
-    if (props.variant === 'switch') {
-      return {
-        checkedTrackColor: props.color,
-      };
-    } else {
-      return {
-        checkedColor: props.color,
-      };
-    }
-  }
   return props.elementColors;
 }
 
@@ -123,7 +104,6 @@ export function transformSwitchProps(props: SwitchProps): NativeSwitchProps {
     ...props,
     variant: props.variant ?? 'switch',
     elementColors: getElementColors(props),
-    color: props.color,
     onValueChange: ({nativeEvent: {value}}) => {
       props?.onValueChange?.(value);
     },

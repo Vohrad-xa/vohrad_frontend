@@ -11,6 +11,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color as ComposeColor
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.records.Field
 import expo.modules.kotlin.records.Record
@@ -66,7 +67,14 @@ data class SwitchProps(
 ) : ComposeProps
 
 @Composable
-fun SwitchComposable(checked: Boolean, onCheckedChange: ((Boolean) -> Unit)?, colors: SwitchColors, modifier: Modifier = Modifier) {
+fun SwitchComposable(
+  checked: Boolean,
+  onCheckedChange: ((Boolean) -> Unit)?,
+  colors: SwitchColors,
+  modifier: Modifier = Modifier,
+  tintColor: ComposeColor? = null
+) {
+  val defaultColors = SwitchDefaults.colors()
   Switch(
     checked = checked,
     onCheckedChange = onCheckedChange,
@@ -74,25 +82,36 @@ fun SwitchComposable(checked: Boolean, onCheckedChange: ((Boolean) -> Unit)?, co
     colors = SwitchDefaults.colors(
       // For some reason the default way of passing colors using `compose` results in a transparent view
       checkedThumbColor = colors.checkedThumbColor.composeOrNull
-        ?: SwitchDefaults.colors().checkedThumbColor,
+        ?: tintColor
+        ?: defaultColors.checkedThumbColor,
       checkedTrackColor = colors.checkedTrackColor.composeOrNull
-        ?: SwitchDefaults.colors().checkedTrackColor,
+        ?: tintColor
+        ?: defaultColors.checkedTrackColor,
       uncheckedThumbColor = colors.uncheckedThumbColor.composeOrNull
-        ?: SwitchDefaults.colors().uncheckedThumbColor,
+        ?: defaultColors.uncheckedThumbColor,
       uncheckedTrackColor = colors.uncheckedTrackColor.composeOrNull
-        ?: SwitchDefaults.colors().uncheckedTrackColor
+        ?: defaultColors.uncheckedTrackColor
     )
   )
 }
 
 @Composable
-fun CheckboxComposable(checked: Boolean, onCheckedChange: ((Boolean) -> Unit)?, colors: SwitchColors, modifier: Modifier) {
+fun CheckboxComposable(
+  checked: Boolean,
+  onCheckedChange: ((Boolean) -> Unit)?,
+  colors: SwitchColors,
+  modifier: Modifier,
+  tintColor: ComposeColor? = null
+) {
+  val checkedColor = colors.checkedColor.composeOrNull
+    ?: tintColor
+    ?: colors.checkedColor.compose
   Checkbox(
     checked = checked,
     onCheckedChange = onCheckedChange,
     modifier = modifier,
     colors = CheckboxDefaults.colors(
-      checkedColor = colors.checkedColor.compose,
+      checkedColor = checkedColor,
       disabledCheckedColor = colors.disabledCheckedColor.compose,
       uncheckedColor = colors.uncheckedColor.compose,
       disabledUncheckedColor = colors.disabledUncheckedColor.compose,
@@ -108,12 +127,13 @@ fun ThemedHybridSwitch(
   checked: Boolean,
   onCheckedChange: ((Boolean) -> Unit)?,
   colors: SwitchColors,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  tintColor: ComposeColor? = null
 ) {
   DynamicTheme {
     when (variant) {
-      "switch" -> SwitchComposable(checked, onCheckedChange, colors, modifier)
-      else -> CheckboxComposable(checked, onCheckedChange, colors, modifier)
+      "switch" -> SwitchComposable(checked, onCheckedChange, colors, modifier, tintColor)
+      else -> CheckboxComposable(checked, onCheckedChange, colors, modifier, tintColor)
     }
   }
 }
@@ -135,10 +155,11 @@ class SwitchView(context: Context, appContext: AppContext) :
       onValueChange(ValueChangeEvent(checked))
     }
     val composedModifier = Modifier.fromExpoModifiers(props.modifiers.value)
+    val tintColor = composedModifier.extractDialogStyleColors().tintColor
     val scaledModifier = scaleFactor?.let { composedModifier.scale(it) } ?: composedModifier
 
     AutoSizingComposable(shadowNodeProxy) {
-      ThemedHybridSwitch(variant, checked, onCheckedChange, colors, scaledModifier)
+      ThemedHybridSwitch(variant, checked, onCheckedChange, colors, scaledModifier, tintColor)
     }
   }
 }

@@ -154,12 +154,7 @@ export const PreferencesContentEditable = forwardRef<
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Surface style={styles.surface} elevation={1} mode="flat">
-        <List.Item
-          title="Timezone"
-          description={timezoneLabel}
-          disabled
-          borderless
-        />
+        <List.Item title="Timezone" description={timezoneLabel} disabled />
 
         <List.Item
           title="Business Hours"
@@ -176,6 +171,9 @@ export const PreferencesContentEditable = forwardRef<
                       void handleToggleBusinessHours(value);
                     }
               }
+              elementColors={{
+                checkedTrackColor: Palette.bluepurple,
+              }}
             />
           )}
           borderless
