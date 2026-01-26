@@ -302,10 +302,8 @@ const AttachmentsListBase = ({
 
   const extraData = useMemo(
     () =>
-      `${extraDataKey ?? ''}|${selectionVisible ? 1 : 0}|${fontScaleKey}|${
-        isLoading ? 1 : 0
-      }|${lastUpdated ? lastUpdated.getTime() : 0}`,
-    [extraDataKey, selectionVisible, fontScaleKey, isLoading, lastUpdated],
+      `${extraDataKey ?? ''}|${selectionVisible ? 1 : 0}|${fontScaleKey}`,
+    [extraDataKey, selectionVisible, fontScaleKey],
   );
 
   return (
