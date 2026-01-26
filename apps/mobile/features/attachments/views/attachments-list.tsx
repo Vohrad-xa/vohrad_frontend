@@ -269,10 +269,6 @@ const AttachmentsListBase = ({
     [],
   );
 
-  const getItemType = useCallback((item: AttachmentDisplayItem) => {
-    return item.thumbnailUrl ? 1 : 0;
-  }, []);
-
   const ItemSeparator = useCallback(
     () => <Divider style={styles.divider} />,
     [styles.divider],
@@ -301,8 +297,7 @@ const AttachmentsListBase = ({
   );
 
   const extraData = useMemo(
-    () =>
-      `${extraDataKey ?? ''}|${selectionVisible ? 1 : 0}|${fontScaleKey}`,
+    () => `${extraDataKey ?? ''}|${selectionVisible ? 1 : 0}|${fontScaleKey}`,
     [extraDataKey, selectionVisible, fontScaleKey],
   );
 
@@ -314,7 +309,6 @@ const AttachmentsListBase = ({
       extraData={extraData}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      getItemType={getItemType}
       refreshing={refreshing}
       onRefresh={handleRefresh}
       onEndReached={onEndReached}
