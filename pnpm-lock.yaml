@@ -78,6 +78,9 @@ importers:
       '@react-native-async-storage/async-storage':
         specifier: ^2.2.0
         version: 2.2.0(react-native@0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0))
+      '@react-native-community/checkbox':
+        specifier: ^0.5.20
+        version: 0.5.20(react-native@0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0))(react@19.2.0)
       '@react-native-community/datetimepicker':
         specifier: ^8.4.4
         version: 8.6.0(expo@55.0.0-preview.5)(react-native@0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0))(react@19.2.0)
@@ -129,9 +132,6 @@ importers:
       expo-camera:
         specifier: ~55.0.1
         version: 55.0.1(expo@55.0.0-preview.5)(react-native-web@0.21.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-native@0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0))(react@19.2.0)
-      expo-checkbox:
-        specifier: ~55.0.1
-        version: 55.0.1(react-native-web@0.21.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-native@0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0))(react@19.2.0)
       expo-constants:
         specifier: ~55.0.1
         version: 55.0.1(expo@55.0.0-preview.5)(react-native@0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0))
@@ -1934,6 +1934,16 @@ packages:
     peerDependencies:
       react-native: ^0.0.0-0 || >=0.65 <1.0
 
+  '@react-native-community/checkbox@0.5.20':
+    resolution: {integrity: sha512-NuTAOFmttPEX7cwDbVr5Rf0HR86zCzX2FllebMayxca//dFH6X5DLySftra/PC2K9kt42yashWK7T2Tucm5JTQ==}
+    peerDependencies:
+      react: 19.2.0
+      react-native: '>= 0.62'
+      react-native-windows: '>=0.62'
+    peerDependenciesMeta:
+      react-native-windows:
+        optional: true
+
   '@react-native-community/datetimepicker@8.6.0':
     resolution: {integrity: sha512-yxPSqNfxgpGaqHQIpatqe6ykeBdU/1pdsk/G3x01mY2bpTflLpmVTLqFSJYd3MiZzxNZcMs/j1dQakUczSjcYA==}
     peerDependencies:
@@ -3565,16 +3575,6 @@ packages:
     resolution: {integrity: sha512-cy6vM372Q67OvXPQo40DPX4+gBRtUI+FE51Kcnc//B7/F5/kjZSnNYgztJdujsCYVwHF6mm4J4E8dCQl0JVsCQ==}
     peerDependencies:
       expo: '*'
-      react: 19.2.0
-      react-native: '*'
-      react-native-web: '*'
-    peerDependenciesMeta:
-      react-native-web:
-        optional: true
-
-  expo-checkbox@55.0.1:
-    resolution: {integrity: sha512-qjHP9T/yeqo86jVFyIkUuFSHykNGu3m2RJSE6x3+9Lc316uX9NWBGc2iAqiooXHxKmwcyZ8A2tAJ8zwd+tEEZw==}
-    peerDependencies:
       react: 19.2.0
       react-native: '*'
       react-native-web: '*'
@@ -8066,6 +8066,11 @@ snapshots:
       merge-options: 3.0.4
       react-native: 0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0)
 
+  '@react-native-community/checkbox@0.5.20(react-native@0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0))(react@19.2.0)':
+    dependencies:
+      react: 19.2.0
+      react-native: 0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0)
+
   '@react-native-community/datetimepicker@8.6.0(expo@55.0.0-preview.5)(react-native@0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0))(react@19.2.0)':
     dependencies:
       invariant: 2.2.4
@@ -9669,7 +9674,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1)):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -9700,7 +9705,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.39.2(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2(jiti@2.6.1))
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@8.53.1(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -9889,13 +9894,6 @@ snapshots:
     dependencies:
       expo: 55.0.0-preview.5(@babel/core@7.28.6)(@expo/dom-webview@55.0.1)(@expo/metro-runtime@55.0.1)(expo-router@55.0.0-beta.2)(react-dom@19.2.0(react@19.2.0))(react-native-web@0.21.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-native-webview@13.16.0(react-native@0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0))(react@19.2.0))(react-native@0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0))(react@19.2.0)
       invariant: 2.2.4
-      react: 19.2.0
-      react-native: 0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0)
-    optionalDependencies:
-      react-native-web: 0.21.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-
-  expo-checkbox@55.0.1(react-native-web@0.21.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-native@0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0))(react@19.2.0):
-    dependencies:
       react: 19.2.0
       react-native: 0.83.1(@babel/core@7.28.6)(@types/react@19.2.9)(react@19.2.0)
     optionalDependencies:

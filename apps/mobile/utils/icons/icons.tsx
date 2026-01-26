@@ -67,7 +67,7 @@ export const Icon: React.FC<IconProps> = ({
 
 export const AppIcons = {
   ui: {
-    more: 'dots-horizontal',
+    more: 'dots-vertical',
     menu: 'menu',
     filter: 'filter-variant',
     search: 'magnify',

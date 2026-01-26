@@ -1,9 +1,9 @@
 import {memo, useCallback, useMemo} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet} from 'react-native';
 import {type Href} from 'expo-router';
 import {List, type ListItemProps} from 'react-native-paper';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
-import {AppearanceMenu} from '@/features/settings';
+import {AppearanceSheet, presentAppearanceSheet} from '@/features/settings';
 import {useAuth, useTheme} from '@/providers';
 import {useSafeRouter} from '@/utils';
 import {
@@ -15,7 +15,6 @@ import {
 } from '@/utils';
 
 type LeftProps = Parameters<NonNullable<ListItemProps['left']>>[0];
-type RightProps = Parameters<NonNullable<ListItemProps['right']>>[0];
 
 type SettingsRowModel = Readonly<{
   id: string;
@@ -24,7 +23,6 @@ type SettingsRowModel = Readonly<{
   icon: IconName;
   href?: Href;
   onPress?: () => void;
-  right?: 'appearance';
   danger?: boolean;
 }>;
 
@@ -43,15 +41,6 @@ const SettingsRow = memo((row: SettingsRowModel) => {
     [row.icon],
   );
 
-  const renderRight = useCallback(
-    (props: RightProps) => (
-      <View style={[props.style, styles.rightSlot]}>
-        <AppearanceMenu />
-      </View>
-    ),
-    [styles.rightSlot],
-  );
-
   const pressable = Boolean(row.onPress ?? row.href);
 
   return (
@@ -60,7 +49,6 @@ const SettingsRow = memo((row: SettingsRowModel) => {
       titleStyle={row.danger ? styles.dangerTitle : undefined}
       description={row.description}
       left={renderLeft}
-      right={row.right === 'appearance' ? renderRight : undefined}
       onPress={pressable ? onPress : undefined}
       borderless
       style={styles.row}
@@ -83,6 +71,10 @@ export default function SettingsModal() {
       onConfirm: logout,
     });
   }, [logout]);
+
+  const handleOpenAppearance = useCallback(() => {
+    void presentAppearanceSheet();
+  }, []);
 
   const ROWS = useMemo<readonly SettingsRowModel[]>(
     () => [
@@ -119,7 +111,7 @@ export default function SettingsModal() {
         title: 'Appearance',
         description: 'Change app theme',
         icon: AppIcons.ui.appearance,
-        right: 'appearance',
+        onPress: handleOpenAppearance,
       },
       {
         id: 'preferences',
@@ -179,7 +171,7 @@ export default function SettingsModal() {
         danger: true,
       },
     ],
-    [handleLogout],
+    [handleLogout, handleOpenAppearance],
   );
 
   return (
@@ -187,6 +179,7 @@ export default function SettingsModal() {
       {ROWS.map((row) => (
         <SettingsRow key={row.id} {...row} />
       ))}
+      <AppearanceSheet />
     </ScrollView>
   );
 }
@@ -196,11 +189,6 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       row: {
         paddingHorizontal: ds.spacing.lg,
-      },
-      rightSlot: {
-        alignSelf: 'stretch',
-        justifyContent: 'center',
-        alignItems: 'flex-end',
       },
       dangerTitle: {
         color: Palette.red,
