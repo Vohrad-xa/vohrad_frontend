@@ -34,12 +34,14 @@ type SelectableAttachmentsListProps = AttachmentsListProps & {
   selection: AttachmentsSelectionController<AttachmentDisplayItem>;
 };
 
-type AnimatedNumber = Animated.Value | Animated.AnimatedInterpolation<number> | number;
+type AnimatedNumber =
+  | Animated.Value
+  | Animated.AnimatedInterpolation<number>
+  | number;
 
 type AttachmentListSelectionState = {
   isVisible: boolean;
   isSelected: (id: string) => boolean;
-  onLongPress: (id: string) => void;
   checkboxOpacity: Animated.Value;
   checkboxScale: Animated.AnimatedInterpolation<number>;
   contentTranslateX: Animated.AnimatedInterpolation<number>;
@@ -58,7 +60,6 @@ type AttachmentItemProps = {
   showCheckbox: boolean;
   isSelected: boolean;
   onPressRow: (id: string) => void;
-  onLongPressRow?: (id: string) => void;
   checkboxOpacity: AnimatedNumber;
   checkboxScale: AnimatedNumber;
   contentTranslateX: AnimatedNumber;
@@ -73,7 +74,6 @@ const AttachmentItem = memo<AttachmentItemProps>(
     showCheckbox,
     isSelected,
     onPressRow,
-    onLongPressRow,
     checkboxOpacity,
     checkboxScale,
     contentTranslateX,
@@ -87,16 +87,9 @@ const AttachmentItem = memo<AttachmentItemProps>(
       [item.id, onPressRow],
     );
 
-    const handleLongPress = useCallback(() => {
-      if (onLongPressRow) {
-        onLongPressRow(item.id);
-      }
-    }, [item.id, onLongPressRow]);
-
     return (
       <Pressable
         onPress={handlePress}
-        onLongPress={onLongPressRow ? handleLongPress : undefined}
         accessibilityRole="button"
         unstable_pressDelay={60}
         style={({pressed}) => [
@@ -227,8 +220,6 @@ const AttachmentsListBase = ({
   const hasSelection = selectionState != null;
   const selectionVisible = selectionState?.isVisible ?? false;
 
-  const onLongPressRow = selectionState?.onLongPress;
-
   const checkboxOpacity: AnimatedNumber = selectionState?.checkboxOpacity ?? 0;
 
   const checkboxScale: AnimatedNumber = selectionState?.checkboxScale ?? 1;
@@ -250,7 +241,6 @@ const AttachmentsListBase = ({
         showCheckbox={hasSelection}
         isSelected={isSelected(item.id)}
         onPressRow={onAttachmentPress}
-        onLongPressRow={onLongPressRow}
         checkboxOpacity={checkboxOpacity}
         checkboxScale={checkboxScale}
         contentTranslateX={contentTranslateX}
@@ -263,7 +253,6 @@ const AttachmentsListBase = ({
       hasSelection,
       isSelected,
       onAttachmentPress,
-      onLongPressRow,
       checkboxOpacity,
       checkboxScale,
       contentTranslateX,
@@ -395,15 +384,6 @@ export function SelectableAttachmentsList({
     [selectionMode, selection, triggerHaptic, onAttachmentPress],
   );
 
-  const handleLongPressRow = useCallback(
-    (id: string) => {
-      selection.enableSelectionMode();
-      triggerHaptic('light');
-      selection.toggleSelection(id);
-    },
-    [selection, triggerHaptic],
-  );
-
   const checkboxScale = useMemo(
     () =>
       selectionAnimation.interpolate({
@@ -426,7 +406,6 @@ export function SelectableAttachmentsList({
     () => ({
       isVisible: selectionVisible,
       isSelected: selection.isSelected,
-      onLongPress: handleLongPressRow,
       checkboxOpacity: selectionAnimation,
       checkboxScale,
       contentTranslateX,
@@ -434,7 +413,6 @@ export function SelectableAttachmentsList({
     [
       selectionVisible,
       selection.isSelected,
-      handleLongPressRow,
       selectionAnimation,
       checkboxScale,
       contentTranslateX,
