@@ -1,12 +1,19 @@
 import {requireNativeView} from 'expo';
 import {StyleProp, ViewStyle} from 'react-native';
 
+export type DatePickerMode = 'date' | 'time';
+
 export type DatePickerProps = {
   initialDate?: string | null;
   onDateSelected?: (date: Date | null) => void;
   onDismiss?: () => void;
   confirmText?: string;
   dismissText?: string;
+  /**
+   * Determines which picker to show.
+   * @default 'date'
+   */
+  mode?: DatePickerMode;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -34,6 +41,7 @@ export function transformDatePickerProps(
 
   return {
     ...rest,
+    mode: props.mode ?? 'date',
     initialDate: initialDateTimestamp,
     onDateSelected: onDateSelected
       ? ({nativeEvent: {date}}) => {

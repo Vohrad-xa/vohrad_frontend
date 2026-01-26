@@ -1,6 +1,5 @@
 import React, {useRef, useState, useCallback} from 'react';
 import {useNavigation} from 'expo-router';
-import {ModalScrollView} from '@/components/ui';
 import {
   PreferencesContent,
   type PreferencesContentHandle,
@@ -44,13 +43,11 @@ export default function PreferencesScreen() {
   }, [handleNavigationAfterSave, triggerSuccess]);
 
   return (
-    <ModalScrollView>
-      <PreferencesContent
-        ref={preferencesContentRef}
-        isEditing
-        onSaveComplete={handleSaveComplete}
-        onFieldChange={checkForChanges}
-      />
-    </ModalScrollView>
+    <PreferencesContent
+      ref={preferencesContentRef}
+      isEditing
+      onSaveComplete={handleSaveComplete}
+      onFieldChange={checkForChanges}
+    />
   );
 }
