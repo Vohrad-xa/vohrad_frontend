@@ -205,7 +205,6 @@ export const AppIcons = {
     pdf: 'doc.plaintext.fill',
     word: 'doc.plaintext.fill',
     excel: 'doc.plaintext.fill',
-    ppt: 'doc.plaintext.fill',
     text: 'doc.plaintext.fill',
   },
 

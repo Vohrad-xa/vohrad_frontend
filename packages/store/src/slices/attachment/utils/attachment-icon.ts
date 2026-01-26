@@ -4,7 +4,6 @@ export type AttachmentIconKey =
   | 'pdf'
   | 'word'
   | 'excel'
-  | 'ppt'
   | 'archive'
   | 'image'
   | 'text'
@@ -20,7 +19,6 @@ type IconKind =
   | 'pdf'
   | 'word'
   | 'excel'
-  | 'ppt'
   | 'archive'
   | 'image'
   | 'text'
@@ -72,7 +70,6 @@ const classify = (ext: string): IconKind => {
   if (normalized === 'pdf') return 'pdf';
   if (['doc', 'docx', 'odt'].includes(normalized)) return 'word';
   if (['xls', 'xlsx', 'csv', 'ods'].includes(normalized)) return 'excel';
-  if (['ppt', 'pptx', 'odp'].includes(normalized)) return 'ppt';
 
   if (['zip', 'rar', '7z', 'tar', 'gz'].includes(normalized)) return 'archive';
   if (['png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp', 'heic'].includes(normalized))
@@ -98,8 +95,6 @@ export function resolveAttachmentIconKey(input: IconInput): AttachmentIconKey {
       return 'word';
     case 'excel':
       return 'excel';
-    case 'ppt':
-      return 'ppt';
     case 'archive':
       return 'archive';
     case 'image':

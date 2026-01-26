@@ -23,12 +23,6 @@ const attachmentIconMap: Record<AttachmentIconKey, IconProps> = {
     symbolColorTokens: ['accentGreen', 'offWhite'],
     fontWeight: 'ultraLight',
   },
-  ppt: {
-    name: AppIcons.files.ppt,
-    colorToken: 'accentOrange',
-    symbolType: 'palette',
-    symbolColorTokens: ['accentOrange', 'offWhite'],
-  },
   archive: {
     name: AppIcons.files.archive,
     symbolType: 'palette',

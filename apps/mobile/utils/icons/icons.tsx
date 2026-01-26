@@ -1,13 +1,7 @@
-import React from 'react';
-import {type StyleProp, type ViewStyle, View} from 'react-native';
-import {
-  SymbolView,
-  type AndroidSymbol,
-  type SymbolWeight,
-  type ContentMode,
-} from 'expo-symbols';
+import {type StyleProp, type TextStyle} from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import type {TokenName} from '@/constants';
-import {useTheme} from '@/providers/theme-provider';
+import {useTheme} from '@/providers';
 
 export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
 
@@ -16,20 +10,31 @@ export type IconProps = {
   size?: number | IconSizeKey;
   color?: string;
   colorToken?: TokenName;
-  fontWeight?: SymbolWeight;
+  fontWeight?: string;
   accessibilityLabel?: string;
-  style?: StyleProp<ViewStyle>;
+  style?: StyleProp<TextStyle>;
   withBackground?: boolean;
   useSwiftUI?: boolean;
   noContainer?: boolean;
   symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
   symbolColorTokens?: TokenName[];
   scale?: number | string;
-  resizeMode?: ContentMode;
+  resizeMode?: string;
   animationSpec?: Record<string, unknown>;
 };
 
-export type IconName = AndroidSymbol;
+export type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
+
+export function getIconGlyph(name: IconName): string | undefined {
+  const glyphMap = MaterialCommunityIcons.glyphMap as unknown as Record<
+    IconName,
+    number | string
+  >;
+
+  const glyph = glyphMap[name];
+  if (glyph == null) return undefined;
+  return typeof glyph === 'number' ? String.fromCodePoint(glyph) : glyph;
+}
 
 export const Icon: React.FC<IconProps> = ({
   name,
@@ -37,9 +42,7 @@ export const Icon: React.FC<IconProps> = ({
   color,
   colorToken,
   style,
-  fontWeight = 'regular',
   accessibilityLabel,
-  resizeMode,
 }) => {
   const {theme, ds} = useTheme();
 
@@ -47,113 +50,109 @@ export const Icon: React.FC<IconProps> = ({
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
 
   const foreground = color ?? (colorToken ? theme[colorToken] : theme.icon);
+  const iconColor = foreground ?? theme.icon;
 
-  return (
-    <View style={[style]}>
-      <SymbolView
-        name={{
-          android: name,
-          web: name,
-        }}
-        size={resolvedSize}
-        tintColor={foreground}
-        weight={fontWeight}
-        resizeMode={resizeMode}
-        accessibilityLabel={accessibilityLabel}
-      />
-    </View>
+  const iconElement = (
+    <MaterialCommunityIcons
+      name={name}
+      size={resolvedSize}
+      color={iconColor}
+      style={style}
+      accessibilityLabel={accessibilityLabel}
+    />
   );
+
+  return iconElement;
 };
 
 export const AppIcons = {
   ui: {
-    more: 'more_vert',
+    more: 'dots-horizontal',
     menu: 'menu',
-    filter: 'filter_list',
-    search: 'search',
-    chevronUpDown: 'unfold_more',
-    notifications: 'notifications',
-    settings: 'settings',
-    appearance: 'contrast',
+    filter: 'filter-variant',
+    search: 'magnify',
+    chevronUpDown: 'unfold-more-horizontal',
+    notifications: 'bell-outline',
+    settings: 'cog-outline',
+    appearance: 'theme-light-dark',
     biometric: 'fingerprint',
-    haptic: 'vibration',
-    language: 'language',
-    privacy: 'lock',
-    terms: 'description',
-    plan: 'credit_card',
-    info: 'info',
-    help: 'help',
-    time: 'schedule',
-    profile: 'person',
-    userManagement: 'people',
-    support: 'support',
-    preference: 'tune',
+    haptic: 'vibrate',
+    language: 'translate',
+    privacy: 'lock-outline',
+    terms: 'file-document-outline',
+    plan: 'credit-card-outline',
+    info: 'information-outline',
+    help: 'help-circle-outline',
+    time: 'clock-outline',
+    profile: 'account-outline',
+    userManagement: 'account-multiple-outline',
+    support: 'lifebuoy',
+    preference: 'tune-variant',
   },
 
   actions: {
     close: 'close',
-    forward: 'chevron_right',
-    back: 'chevron_left',
-    add: 'add',
+    forward: 'chevron-right',
+    back: 'chevron-left',
+    add: 'plus',
     save: 'check',
-    share: 'share',
-    delete: 'delete',
+    share: 'share-variant',
+    delete: 'delete-outline',
     refresh: 'refresh',
     logout: 'logout',
     download: 'download',
-    edit: 'edit',
-    addUser: 'person_add',
-    addItem: 'library_add',
-    move: 'subdirectory_arrow_right',
-    scan: 'qr_code_scanner',
-    camera: 'photo_camera',
-    input: 'keyboard',
-    select: 'check_circle',
-    enableTorch: 'flash_on',
-    disableTorch: 'flash_off',
+    edit: 'pencil',
+    addUser: 'account-plus-outline',
+    addItem: 'plus-box-outline',
+    move: 'subdirectory-arrow-right',
+    scan: 'qrcode-scan',
+    camera: 'camera',
+    input: 'keyboard-outline',
+    select: 'check-circle-outline',
+    enableTorch: 'flashlight',
+    disableTorch: 'flashlight-off',
   },
 
   domain: {
-    item: 'grid_view',
-    itemOutline: 'grid_view',
-    vault: 'folder_open',
-    vaultOutline: 'folder_open',
+    item: 'view-grid-outline',
+    itemOutline: 'view-grid-outline',
+    vault: 'folder-open-outline',
+    vaultOutline: 'folder-open-outline',
     home: 'home',
-    homeOutline: 'home',
-    settings: 'settings',
-    settingsOutline: 'settings',
-    category: 'category',
-    location: 'location_on',
-    supplier: 'shopping_cart',
-    organization: 'domain',
-    maintenance: 'build',
+    homeOutline: 'home-outline',
+    settings: 'cog',
+    settingsOutline: 'cog-outline',
+    category: 'shape-outline',
+    location: 'map-marker-outline',
+    supplier: 'cart-outline',
+    organization: 'office-building-outline',
+    maintenance: 'wrench-outline',
   },
 
   files: {
-    document: 'description',
-    folder: 'folder_open',
-    file: 'insert_drive_file',
-    image: 'image',
-    archive: 'archive',
-    print: 'print',
-    list: 'list',
-    others: 'folder',
-    pdf: 'picture_as_pdf',
-    word: 'docs',
-    excel: 'docs',
-    ppt: 'slideshow',
-    text: 'text_snippet',
+    document: 'file-document-outline',
+    folder: 'folder-open-outline',
+    file: 'file-outline',
+    image: 'file-image-outline',
+    archive: 'archive-outline',
+    print: 'printer-outline',
+    list: 'format-list-bulleted',
+    others: 'folder-multiple-outline',
+    pdf: 'file-pdf-box',
+    word: 'file-word-outline',
+    excel: 'file-excel-outline',
+    text: 'file-document-outline',
   },
 
   status: {
-    success: 'check_circle',
-    warning: 'warning',
-    error: 'error',
-    pending: 'pending',
+    success: 'check-circle',
+    warning: 'alert',
+    error: 'alert-circle',
+    pending: 'progress-clock',
   },
 
   emptyStates: {
-    user: 'people',
-    file: 'folder_open',
+    user: 'account-multiple-outline',
+    file: 'folder-open-outline',
   },
 } as const satisfies Record<string, Record<string, IconName>>;
