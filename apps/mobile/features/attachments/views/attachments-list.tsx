@@ -1,13 +1,13 @@
 import {useCallback, useMemo, memo, useState, useRef, useEffect} from 'react';
 import {Animated, Platform, Pressable, StyleSheet, View} from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
 import {useHeaderHeight} from '@react-navigation/elements';
 import {FlashList} from '@shopify/flash-list';
-import {Checkbox} from 'expo-checkbox';
 import {Image} from 'expo-image';
 import {Divider} from 'react-native-paper';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedText, EmptyState} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme, useHaptic} from '@/providers';
@@ -116,7 +116,11 @@ const AttachmentItem = memo<AttachmentItemProps>(
               },
             ]}
           >
-            <Checkbox value={isSelected} onValueChange={handlePress} />
+            <CheckBox
+              value={isSelected}
+              onValueChange={handlePress}
+              tintColors={{true: Palette.blue, false: Palette.mushroom}}
+            />
           </Animated.View>
         ) : null}
 
