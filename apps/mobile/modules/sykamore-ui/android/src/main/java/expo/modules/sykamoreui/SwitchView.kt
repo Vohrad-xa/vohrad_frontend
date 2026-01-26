@@ -129,7 +129,9 @@ class SwitchView(context: Context, appContext: AppContext) :
     val (variant) = props.variant
     val (colors) = props.elementColors
     val (scaleFactor) = props.scale
+    val playSound = rememberClickSound()
     val onCheckedChange = { checked: Boolean ->
+      playSound()
       onValueChange(ValueChangeEvent(checked))
     }
     val composedModifier = Modifier.fromExpoModifiers(props.modifiers.value)

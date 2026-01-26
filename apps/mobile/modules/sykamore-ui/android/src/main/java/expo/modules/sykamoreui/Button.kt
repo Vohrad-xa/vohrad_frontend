@@ -17,6 +17,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -64,9 +65,16 @@ data class ButtonProps(
 
 @Composable
 fun StyledButton(variant: ButtonVariant, colors: ButtonColors, disabled: Boolean, onPress: () -> Unit, modifier: Modifier = Modifier, content: @Composable (RowScope.() -> Unit)) {
+  val playSound = rememberClickSound()
+  val onClick = remember(onPress, playSound) {
+    {
+      playSound()
+      onPress()
+    }
+  }
   when (variant) {
     ButtonVariant.BORDERED -> FilledTonalButton(
-      onPress,
+      onClick,
       enabled = !disabled,
       content = content,
       colors = ButtonDefaults.filledTonalButtonColors(
@@ -79,7 +87,7 @@ fun StyledButton(variant: ButtonVariant, colors: ButtonColors, disabled: Boolean
     )
 
     ButtonVariant.BORDERLESS -> TextButton(
-      onPress,
+      onClick,
       enabled = !disabled,
       content = content,
       colors = ButtonDefaults.textButtonColors(
@@ -92,7 +100,7 @@ fun StyledButton(variant: ButtonVariant, colors: ButtonColors, disabled: Boolean
     )
 
     ButtonVariant.OUTLINED -> OutlinedButton(
-      onPress,
+      onClick,
       enabled = !disabled,
       content = content,
       colors = ButtonDefaults.outlinedButtonColors(
@@ -105,7 +113,7 @@ fun StyledButton(variant: ButtonVariant, colors: ButtonColors, disabled: Boolean
     )
 
     ButtonVariant.ELEVATED -> ElevatedButton(
-      onPress,
+      onClick,
       enabled = !disabled,
       content = content,
       colors = ButtonDefaults.elevatedButtonColors(
@@ -118,7 +126,7 @@ fun StyledButton(variant: ButtonVariant, colors: ButtonColors, disabled: Boolean
     )
 
     else -> androidx.compose.material3.Button(
-      onPress,
+      onClick,
       enabled = !disabled,
       content = content,
       colors = ButtonDefaults.buttonColors(

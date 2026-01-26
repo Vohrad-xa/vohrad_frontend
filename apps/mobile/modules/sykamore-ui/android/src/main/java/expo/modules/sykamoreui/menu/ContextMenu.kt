@@ -38,6 +38,7 @@ import expo.modules.sykamoreui.ThemedHybridSwitch
 import expo.modules.sykamoreui.compose
 import expo.modules.sykamoreui.composeOrNull
 import expo.modules.sykamoreui.getImageVector
+import expo.modules.sykamoreui.rememberClickSound
 
 @Composable
 private fun SectionTitle(text: String) {
@@ -53,6 +54,7 @@ private fun SectionTitle(text: String) {
 
 @Composable
 fun FlatMenu(elements: Array<ContextMenuElement>, sectionTitle: String?, dispatchers: ContextMenuDispatchers, expanded: MutableState<Boolean>) {
+  val playSound = rememberClickSound()
   sectionTitle?.takeIf { !it.isEmpty() }?.let {
     SectionTitle(it)
   }
@@ -92,6 +94,7 @@ fun FlatMenu(elements: Array<ContextMenuElement>, sectionTitle: String?, dispatc
           }
         },
         onClick = {
+          playSound()
           dispatchers.buttonPressed(ContextMenuButtonPressedEvent(id))
           expanded.value = false
         }
@@ -118,6 +121,7 @@ fun FlatMenu(elements: Array<ContextMenuElement>, sectionTitle: String?, dispatc
         },
         modifier = Modifier.wrapContentSize(Alignment.Center),
         onClick = {
+          playSound()
           dispatchers.switchCheckedChanged(
             ContextMenuSwitchValueChangeEvent(!it.value, id)
           )

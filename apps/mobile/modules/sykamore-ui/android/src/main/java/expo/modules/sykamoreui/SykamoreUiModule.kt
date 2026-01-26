@@ -4,7 +4,6 @@ import android.graphics.Color
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -101,7 +100,7 @@ class SykamoreUiModule : Module() {
 
     Function("clickable") { callback: JavaScriptFunction<Any?> ->
       return@Function ExpoModifier(
-        Modifier.clickable(
+        Modifier.clickableWithSound(
           onClick = {
             appContext.executeOnJavaScriptThread {
               callback.invoke()

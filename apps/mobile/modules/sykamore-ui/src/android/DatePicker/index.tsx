@@ -1,7 +1,9 @@
 import {requireNativeView} from 'expo';
-import {StyleProp, ViewStyle} from 'react-native';
+
+import type {ExpoModifier} from '../types';
 
 export type DatePickerMode = 'date' | 'time';
+export type DatePickerVariant = 'picker' | 'input';
 
 export type DatePickerProps = {
   initialDate?: string | null;
@@ -14,7 +16,29 @@ export type DatePickerProps = {
    * @default 'date'
    */
   mode?: DatePickerMode;
-  style?: StyleProp<ViewStyle>;
+  /**
+   * Determines the date picker UI style.
+   * @default 'picker'
+   */
+  variant?: DatePickerVariant;
+  /**
+   * Show the input/picker toggle button for date mode.
+   * @default true
+   */
+  showVariantToggle?: boolean;
+  /**
+   * Overrides the 24-hour format in time mode.
+   * @default system
+   */
+  is24Hour?: boolean;
+  /**
+   * Tint color for date/time picker highlights.
+   */
+  color?: string;
+  /**
+   * Modifiers for the component.
+   */
+  modifiers?: ExpoModifier[];
 };
 
 type NativeDatePickerProps = Omit<
@@ -53,6 +77,8 @@ export function transformDatePickerProps(
           onDismiss();
         }
       : undefined,
+    // @ts-expect-error
+    modifiers: props.modifiers?.map((m) => m.__expo_shared_object_id__),
   };
 }
 

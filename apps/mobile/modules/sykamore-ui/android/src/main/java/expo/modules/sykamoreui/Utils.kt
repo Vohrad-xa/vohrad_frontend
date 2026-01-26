@@ -3,6 +3,8 @@ package expo.modules.sykamoreui
 import android.graphics.Color
 import android.os.Build
 import android.util.Log
+import android.view.SoundEffectConstants
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -10,9 +12,13 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.material.icons.Icons
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.composed
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 
 @Composable
 fun DynamicTheme(content: @Composable (() -> Unit)) {
@@ -31,6 +37,22 @@ fun DynamicTheme(content: @Composable (() -> Unit)) {
   }
   MaterialTheme(colorScheme = colors) {
     content()
+  }
+}
+
+@Composable
+fun rememberClickSound(): () -> Unit {
+  val view = LocalView.current
+  return remember(view) {
+    { view.playSoundEffect(SoundEffectConstants.CLICK) }
+  }
+}
+
+fun Modifier.clickableWithSound(onClick: () -> Unit): Modifier = composed {
+  val view = LocalView.current
+  clickable {
+    view.playSoundEffect(SoundEffectConstants.CLICK)
+    onClick()
   }
 }
 

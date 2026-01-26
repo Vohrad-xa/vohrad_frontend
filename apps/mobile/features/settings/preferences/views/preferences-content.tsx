@@ -158,16 +158,16 @@ export const PreferencesContentEditable = forwardRef<
           title="Timezone"
           description={timezoneLabel}
           disabled
-          descriptionStyle={styles.itemDescription}
           borderless
         />
 
         <List.Item
           title="Business Hours"
+          style={styles.listItem}
           description={businessHoursEnabled ? 'Enabled' : 'Disabled'}
-          descriptionStyle={styles.itemDescription}
           right={() => (
             <Switch
+              scale={0.85}
               value={businessHoursEnabled}
               onValueChange={
                 !isEditable || isLoading
@@ -186,26 +186,28 @@ export const PreferencesContentEditable = forwardRef<
         <Surface style={styles.surface} elevation={1} mode="flat">
           <List.Item
             title="Start Time"
+            style={styles.listItem}
             description={startTimeLabel}
-            descriptionStyle={styles.itemDescription}
             onPress={() =>
               handleOpenTimePicker(
                 'business_hour_start',
                 preferences.business_hour_start ?? null,
               )
             }
+            right={(props) => <List.Icon {...props} icon="clock-outline" />}
             borderless
           />
           <List.Item
             title="End Time"
+            style={styles.listItem}
             description={endTimeLabel}
-            descriptionStyle={styles.itemDescription}
             onPress={() =>
               handleOpenTimePicker(
                 'business_hour_end',
                 preferences.business_hour_end ?? null,
               )
             }
+            right={(props) => <List.Icon {...props} icon="clock-outline" />}
             borderless
           />
         </Surface>
@@ -233,7 +235,7 @@ export const PreferencesContentEditable = forwardRef<
 PreferencesContentEditable.displayName = 'PreferencesContentEditable';
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         padding: ds.spacing.md,
@@ -243,9 +245,8 @@ const createStyles = makeStyleFactory(
         borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
-
-      itemDescription: {
-        color: theme.muted,
+      listItem: {
+        paddingRight: ds.spacing.md,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

@@ -9,7 +9,8 @@
     ".": "./src/index.tsx",
     "./ios": "./src/ios/index.tsx",
     "./ios/modifiers": "./src/ios/modifiers/index.ts",
-    "./android": "./src/android/index.tsx"
+    "./android": "./src/android/index.tsx",
+    "./android/modifiers": "./src/android/modifiers.ts"
   },
   "files": [
     "src",

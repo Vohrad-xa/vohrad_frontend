@@ -109,6 +109,7 @@ class PickerView(context: Context, appContext: AppContext) :
     val (options) = props.options
     val (colors) = props.elementColors
     val (variant) = props.variant
+    val playSound = rememberClickSound()
 
     @Composable
     fun SegmentedComposable() {
@@ -124,6 +125,7 @@ class PickerView(context: Context, appContext: AppContext) :
                   count = options.size
                 ),
                 onClick = {
+                  playSound()
                   onOptionSelected(mapOf("index" to index, "label" to label))
                 },
                 modifier = Modifier.fromExpoModifiers(props.buttonModifiers.value),
@@ -162,6 +164,7 @@ class PickerView(context: Context, appContext: AppContext) :
                   .selectable(
                     selected = index == selectedIndex,
                     onClick = {
+                      playSound()
                       onOptionSelected(mapOf("index" to index, "label" to label))
                     },
                     role = Role.RadioButton
@@ -192,7 +195,10 @@ class PickerView(context: Context, appContext: AppContext) :
         AutoSizingComposable(shadowNodeProxy) {
           Box {
             TextButton(
-              onClick = { expanded = true },
+              onClick = {
+                playSound()
+                expanded = true
+              },
               modifier = Modifier.fromExpoModifiers(props.triggerModifiers.value),
               contentPadding = androidx.compose.foundation.layout.PaddingValues(
                 start = (triggerPadding?.start ?: 12).dp,
@@ -219,6 +225,7 @@ class PickerView(context: Context, appContext: AppContext) :
                 DropdownMenuItem(
                   text = { Text(label) },
                   onClick = {
+                    playSound()
                     onOptionSelected(mapOf("index" to index, "label" to label))
                     expanded = false
                   },
