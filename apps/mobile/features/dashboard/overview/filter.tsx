@@ -1,10 +1,9 @@
 import React from 'react';
 import {StyleSheet, Platform, View} from 'react-native';
 import {List, Surface} from 'react-native-paper';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
 import {useTheme} from '@/providers';
-import {Icon} from '@/utils/icons';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {Icon, makeStyleFactory} from '@/utils';
 import {Switch as AndroidSwitch} from 'sykamore-ui/android';
 import {
   Host,
@@ -82,6 +81,7 @@ export function FilterContent() {
                   }
                   variant="switch"
                   scale={0.8}
+                  elementColors={{checkedTrackColor: Palette.bluepurple}}
                 />
               )}
             />
