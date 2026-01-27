@@ -12,7 +12,7 @@ import {
   useAttachmentsSnackbar,
   useAttachmentsSource,
 } from '../hooks';
-import {SelectableAttachmentsList} from '../views/attachments-list';
+import {SelectableAttachmentsList} from './attachments-list';
 import type {AttachmentKind} from '@sykamore/types';
 
 type AttachmentKindKey = Extract<
@@ -31,9 +31,9 @@ type AttachmentKindScreenProps = {
 };
 
 /**
- * Reusable attachment screen template that mirrors the Documents behavior.
+ * Reusable attachment screen template
  */
-export function AttachmentKindScreen({
+export function AttachmentKindView({
   kind,
   title,
   labelSingular,

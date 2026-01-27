@@ -1,9 +1,9 @@
 import React from 'react';
-import {AttachmentKindScreen} from '@/features/attachments';
+import {AttachmentKindView} from '@/features/attachments';
 
 export default function VaultDocumentsScreen() {
   return (
-    <AttachmentKindScreen
+    <AttachmentKindView
       kind="document"
       title="Documents"
       labelSingular="document"

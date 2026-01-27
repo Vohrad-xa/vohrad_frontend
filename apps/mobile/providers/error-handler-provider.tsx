@@ -1,7 +1,7 @@
 import {useEffect, useRef, type ReactNode} from 'react';
 import {errorManager, type AppError} from '@sykamore/api-client';
 import {useNetworkConnectivity} from '@/features/network';
-import {showAlert, showConfirmAlert} from '@/utils';
+import {showAlert, showConfirmAlert} from '@/utils/alert';
 
 interface ErrorHandlerProviderProps {
   children: ReactNode;

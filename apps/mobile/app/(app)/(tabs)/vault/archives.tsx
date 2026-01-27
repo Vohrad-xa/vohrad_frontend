@@ -1,9 +1,9 @@
 import React from 'react';
-import {AttachmentKindScreen} from '@/features/attachments';
+import {AttachmentKindView} from '@/features/attachments';
 
 export default function VaultArchivesScreen() {
   return (
-    <AttachmentKindScreen
+    <AttachmentKindView
       kind="archive"
       title="Archives"
       labelSingular="archive"

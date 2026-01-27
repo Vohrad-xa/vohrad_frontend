@@ -1,9 +1,9 @@
 import React from 'react';
-import {AttachmentKindScreen} from '@/features/attachments';
+import {AttachmentKindView} from '@/features/attachments';
 
 export default function VaultOtherScreen() {
   return (
-    <AttachmentKindScreen
+    <AttachmentKindView
       kind="other"
       title="Other Attachments"
       labelSingular="other attachment"
