@@ -85,11 +85,11 @@ export default function SettingsModal() {
         href: '/(app)/(tabs)/settings/profile',
       },
       {
-        id: 'business-details',
+        id: 'organization',
         title: 'Business Details',
         description: 'Manage business information',
         icon: AppIcons.domain.organization,
-        href: '/(app)/(tabs)/settings/business-details',
+        href: '/(app)/(tabs)/settings/organization',
       },
       {
         id: 'users',

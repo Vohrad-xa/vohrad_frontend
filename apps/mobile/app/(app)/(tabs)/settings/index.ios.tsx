@@ -45,7 +45,7 @@ export default function SettingsModal() {
             iconColorToken="accentBlue"
             title="Business Details"
             onPress={() =>
-              router.push('/(app)/(tabs)/settings/business-details')
+              router.push('/(app)/(tabs)/settings/organization')
             }
           />
           <ListSection.Row

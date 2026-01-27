@@ -100,10 +100,6 @@ function SettingsStack() {
         <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
         <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
         <Stack.Screen name="about" options={{title: 'About'}} />
-        <Stack.Screen
-          name="business-details"
-          options={{title: 'Business Details'}}
-        />
         <Stack.Screen name="plan" options={{title: 'Plan'}} />
 
         <Stack.Screen name="users/index" options={usersIndexOptions} />
@@ -127,6 +123,7 @@ function SettingsStack() {
         />
 
         <Stack.Screen name="profile" options={{headerShown: false}} />
+        <Stack.Screen name="organization" options={{headerShown: false}} />
       </Stack>
     </ScreenLoadingWrapper>
   );
