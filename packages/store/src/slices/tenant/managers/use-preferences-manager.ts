@@ -1,9 +1,8 @@
-import {useState, useCallback, useMemo, useEffect} from 'react';
+import {useState, useCallback, useEffect} from 'react';
 import {useOrganizationDetails, useUpdateTenantSettings} from '../hooks';
 import type {Tenant} from '@sykamore/types';
 
 type PreferencesFormState = {
-  timezone: string;
   business_hour_start: string;
   business_hour_end: string;
 };
@@ -15,41 +14,23 @@ type BusinessHourCache = {
 
 const DEFAULT_BUSINESS_HOUR_START = '09:00';
 const DEFAULT_BUSINESS_HOUR_END = '17:00';
+const EMPTY_PREFERENCES_STATE: PreferencesFormState = {
+  business_hour_start: '',
+  business_hour_end: '',
+};
 
 export function usePreferencesManager() {
   const organization = useOrganizationDetails();
   const {updateTenantSettings, isLoading} = useUpdateTenantSettings();
-  const deviceTimezone = useMemo(() => {
-    try {
-      const resolved = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (resolved && resolved.length > 0) {
-        return resolved;
-      }
-    } catch (err) {
-      if (__DEV__) {
-        console.warn('Failed to resolve device timezone', err);
-      }
-    }
-    return '';
-  }, []);
-
-  const emptyPreferencesState: PreferencesFormState = useMemo(
-    () => ({
-      timezone: deviceTimezone,
-      business_hour_start: '',
-      business_hour_end: '',
-    }),
-    [deviceTimezone],
-  );
 
   const [businessHoursEnabled, setBusinessHoursEnabled] = useState(false);
   const [cachedBusinessHours, setCachedBusinessHours] =
     useState<BusinessHourCache>({start: '', end: ''});
   const [preferences, setPreferences] = useState<PreferencesFormState>(
-    emptyPreferencesState,
+    EMPTY_PREFERENCES_STATE,
   );
   const [initialPreferences, setInitialPreferences] =
-    useState<PreferencesFormState>(emptyPreferencesState);
+    useState<PreferencesFormState>(EMPTY_PREFERENCES_STATE);
 
   useEffect(() => {
     if (organization) {
@@ -59,10 +40,6 @@ export function usePreferencesManager() {
         (rawStart?.length ?? 0) > 0 || (rawEnd?.length ?? 0) > 0;
 
       const nextPreferences: PreferencesFormState = {
-        timezone:
-          organization.timezone && organization.timezone.length > 0
-            ? organization.timezone
-            : deviceTimezone,
         business_hour_start: hasBusinessHours ? rawStart : '',
         business_hour_end: hasBusinessHours ? rawEnd : '',
       };
@@ -70,7 +47,6 @@ export function usePreferencesManager() {
       setPreferences(nextPreferences);
       setInitialPreferences((prev) => ({
         ...prev,
-        timezone: organization.timezone ?? '',
         business_hour_start: rawStart,
         business_hour_end: rawEnd,
       }));
@@ -79,23 +55,29 @@ export function usePreferencesManager() {
         setCachedBusinessHours({start: rawStart, end: rawEnd});
       }
     } else {
-      setPreferences(emptyPreferencesState);
-      setInitialPreferences(emptyPreferencesState);
+      setPreferences(EMPTY_PREFERENCES_STATE);
+      setInitialPreferences(EMPTY_PREFERENCES_STATE);
       setBusinessHoursEnabled(false);
       setCachedBusinessHours({start: '', end: ''});
     }
-  }, [organization, emptyPreferencesState, deviceTimezone]);
+  }, [organization]);
 
-  const updateField = useCallback((key: string, value: string) => {
-    setPreferences((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  }, []);
+  const updateField = useCallback(
+    (key: keyof PreferencesFormState, value: string) => {
+      setPreferences((prev) => ({
+        ...prev,
+        [key]: value,
+      }));
+    },
+    [],
+  );
 
   const computeUpdateValue = useCallback(
-    (key: keyof PreferencesFormState): string | null | undefined => {
-      const currentValue = preferences[key]?.trim() ?? '';
+    (
+      key: keyof PreferencesFormState,
+      sourcePreferences: PreferencesFormState = preferences,
+    ): string | null | undefined => {
+      const currentValue = sourcePreferences[key]?.trim() ?? '';
       const originalValue =
         initialPreferences[key]?.trim() ??
         (organization?.[key as keyof Tenant] as string | undefined)?.trim() ??
@@ -114,43 +96,37 @@ export function usePreferencesManager() {
     [preferences, initialPreferences, organization],
   );
 
-  const hasChanges = useCallback(() => {
-    const keys: Array<keyof PreferencesFormState> = [
-      'timezone',
-      'business_hour_start',
-      'business_hour_end',
-    ];
+  const submitUpdate = useCallback(
+    async (overrides: Partial<PreferencesFormState> = {}) => {
+      const nextPreferences = {...preferences, ...overrides};
+      const updateData: Record<string, string | null | undefined> = {};
+      const keys: Array<keyof PreferencesFormState> = [
+        'business_hour_start',
+        'business_hour_end',
+      ];
 
-    return keys.some((key) => computeUpdateValue(key) !== undefined);
-  }, [computeUpdateValue]);
+      keys.forEach((key) => {
+        const value = computeUpdateValue(key, nextPreferences);
+        if (value !== undefined) {
+          updateData[key] = value;
+        }
+      });
 
-  const submitUpdate = useCallback(async () => {
-    const updateData: Record<string, string | null | undefined> = {};
-    const keys: Array<keyof PreferencesFormState> = [
-      'timezone',
-      'business_hour_start',
-      'business_hour_end',
-    ];
-
-    keys.forEach((key) => {
-      const value = computeUpdateValue(key);
-      if (value !== undefined) {
-        updateData[key] = value;
-      }
-    });
-
-    const updatedTenant = await updateTenantSettings(updateData);
-    setInitialPreferences({...preferences});
-    setCachedBusinessHours({
-      start: preferences.business_hour_start,
-      end: preferences.business_hour_end,
-    });
-    setBusinessHoursEnabled(
-      preferences.business_hour_start.length > 0 ||
-        preferences.business_hour_end.length > 0,
-    );
-    return updatedTenant;
-  }, [computeUpdateValue, updateTenantSettings, preferences]);
+      const updatedTenant = await updateTenantSettings(updateData);
+      setPreferences(nextPreferences);
+      setInitialPreferences({...nextPreferences});
+      setCachedBusinessHours({
+        start: nextPreferences.business_hour_start,
+        end: nextPreferences.business_hour_end,
+      });
+      setBusinessHoursEnabled(
+        nextPreferences.business_hour_start.length > 0 ||
+          nextPreferences.business_hour_end.length > 0,
+      );
+      return updatedTenant;
+    },
+    [computeUpdateValue, preferences, updateTenantSettings],
+  );
 
   const toggleBusinessHours = useCallback(
     async (enabled: boolean) => {
@@ -245,7 +221,6 @@ export function usePreferencesManager() {
     businessHoursEnabled,
     updateField,
     toggleBusinessHours,
-    hasChanges,
     submitUpdate,
   };
 }

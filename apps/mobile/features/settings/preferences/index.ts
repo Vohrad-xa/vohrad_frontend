@@ -1,5 +1,1 @@
-export {
-  BusinessHours as PreferencesContent,
-  type PreferencesContentHandle,
-  type SavePreferencesOptions,
-} from './views/business-hours';
+export {BusinessHours as PreferencesContent} from './views/business-hours';
