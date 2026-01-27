@@ -324,7 +324,7 @@ export function AttachmentsFilterMenu({
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={accessibilityHint}
     >
-      <HeaderButton variant="more" />
+      <HeaderButton variant="more" isMenuTrigger />
     </SykaMenuView>
   );
 }

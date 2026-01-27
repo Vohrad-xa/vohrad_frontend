@@ -53,7 +53,6 @@ export function VaultActionsMenu({
             android: 'outlined.Delete',
           }),
           imageColor: theme.accentRed,
-          separator: true,
           attributes: {destructive: true},
         },
       ],
@@ -101,7 +100,6 @@ export function VaultActionsMenu({
       }),
       imageColor: theme.icon,
       attributes: {keepsMenuPresented: true},
-      androidTitleColor: theme.accentBlue,
     },
     {
       id: 'support-email',
@@ -117,7 +115,6 @@ export function VaultActionsMenu({
     {
       id: 'support-priority',
       title: 'Priority Support',
-      androidTitleColor: theme.accentOrange,
       image: Platform.select({ios: 'star', android: 'outlined.Star'}),
       imageColor: theme.accentOrange,
     },
@@ -247,11 +244,12 @@ export function VaultActionsMenu({
       title="menu"
       actions={menuActions}
       onPressAction={({nativeEvent}) => handleSelect(nativeEvent.event)}
-      ripple={{
-        mode: 'circle',
-      }}
     >
-      <HeaderButton variant="more" accessibilityLabel="Vault actions" />
+      <HeaderButton
+        variant="more"
+        accessibilityLabel="Vault actions"
+        isMenuTrigger
+      />
     </SykaMenuView>
   );
 }

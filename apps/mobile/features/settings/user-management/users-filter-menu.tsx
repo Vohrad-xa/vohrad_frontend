@@ -151,7 +151,7 @@ export function UsersFilterMenu({
   );
 
   const renderFilterControl = useMemo(() => {
-    const trigger = <HeaderButton variant="more" />;
+    const trigger = <HeaderButton variant="more" isMenuTrigger />;
     const isAndroid = Platform.OS === 'android';
 
     const sortMenuAction: SykaMenuAction = isAndroid

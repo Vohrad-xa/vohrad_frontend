@@ -130,6 +130,7 @@ export interface HeaderButtonProps
   symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
   symbolColorTokens?: TokenName[];
   isGrouped?: boolean;
+  isMenuTrigger?: boolean;
 }
 
 export const HeaderButton = ({
@@ -150,12 +151,13 @@ export const HeaderButton = ({
   testID,
   style,
   isGrouped,
+  isMenuTrigger,
 }: HeaderButtonProps) => {
   const {theme, ds} = useTheme();
   const styles = createStyles(ds, theme);
-  const isDisabled = !!disabled || !onPress;
+  const resolvedOnPress = onPress ?? (isMenuTrigger ? () => {} : undefined);
+  const isDisabled = !!disabled || !resolvedOnPress;
   const isTextLike = variant === 'text' || variant === 'cancel';
-
   const variantConfig = getVariantConfig(variant, theme);
 
   // Variant config as defaults
@@ -213,7 +215,7 @@ export const HeaderButton = ({
       accessibilityHint={accessibilityHint}
       accessibilityState={{disabled: isDisabled}}
       testID={testID}
-      onPress={onPress}
+      onPress={resolvedOnPress}
       disabled={isDisabled}
     >
       {buttonContent}
