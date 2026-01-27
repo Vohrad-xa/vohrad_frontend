@@ -94,6 +94,13 @@ export function UsersFilterMenu({
     [activeSort, setOdataOrderBy],
   );
 
+  const applySortDirection = useCallback(
+    (key: UserSortKey, direction: OrderByDirection) => {
+      setOdataOrderBy(buildUserOrderBy(key, direction));
+    },
+    [setOdataOrderBy],
+  );
+
   const handleMenuSelect = useCallback(
     (id: string) => {
       if (id === 'all-roles') {
@@ -116,15 +123,107 @@ export function UsersFilterMenu({
         return;
       }
 
+      if (id === 'date-asc') {
+        applySortDirection('date', 'asc');
+        return;
+      }
+
+      if (id === 'date-desc') {
+        applySortDirection('date', 'desc');
+        return;
+      }
+
+      if (id === 'name-asc') {
+        applySortDirection('name', 'asc');
+        return;
+      }
+
+      if (id === 'name-desc') {
+        applySortDirection('name', 'desc');
+        return;
+      }
+
       if (id === 'add-user') {
         router.push('/settings/users/add-user');
       }
     },
-    [applySort, router],
+    [applySort, applySortDirection, router],
   );
 
   const renderFilterControl = useMemo(() => {
     const trigger = <HeaderButton variant="more" />;
+    const isAndroid = Platform.OS === 'android';
+
+    const sortMenuAction: SykaMenuAction = isAndroid
+      ? {
+          id: 'sort-menu',
+          title: 'Sort by',
+          menuOptions: {displayInline: true},
+          preferredElementSize: 'large',
+          subactions: [
+            {
+              id: 'sort-date',
+              title: 'Date',
+              subactions: [
+                {
+                  id: 'date-desc',
+                  title: 'Newest first',
+                  state: dateSortDirection === 'desc' ? 'on' : 'off',
+                },
+                {
+                  id: 'date-asc',
+                  title: 'Oldest first',
+                  state: dateSortDirection === 'asc' ? 'on' : 'off',
+                },
+              ],
+            },
+            {
+              id: 'sort-name',
+              title: 'Name',
+              subactions: [
+                {
+                  id: 'name-asc',
+                  title: 'A to Z',
+                  state: nameSortDirection === 'asc' ? 'on' : 'off',
+                },
+                {
+                  id: 'name-desc',
+                  title: 'Z to A',
+                  state: nameSortDirection === 'desc' ? 'on' : 'off',
+                },
+              ],
+            },
+          ],
+        }
+      : {
+          id: 'sort-menu',
+          title: 'Sort by',
+          menuOptions: {displayInline: true},
+          preferredElementSize: 'large',
+          subactions: [
+            {
+              id: 'sort-date',
+              title: 'Date',
+              subtitle:
+                dateSortDirection === 'desc' ? 'Newest first' : 'Oldest first',
+              state:
+                activeSort.key === 'date' ? ('on' as const) : ('off' as const),
+              image: Platform.select({
+                ios: 'clock',
+              }),
+            },
+            {
+              id: 'sort-name',
+              title: 'Name',
+              subtitle: nameSortDirection === 'asc' ? 'A to Z' : 'Z to A',
+              state:
+                activeSort.key === 'name' ? ('on' as const) : ('off' as const),
+              image: Platform.select({
+                ios: 'textformat',
+              }),
+            },
+          ],
+        };
 
     const menuActions: SykaMenuAction[] = [
       {
@@ -132,40 +231,9 @@ export function UsersFilterMenu({
         title: 'Add user',
         image: Platform.select({
           ios: AppIcons.actions.addUser,
-          default: 'outlined.PersonAdd',
         }),
       },
-      {
-        id: 'sort-menu',
-        title: 'Sort by',
-        menuOptions: {displayInline: true},
-        preferredElementSize: 'large',
-        subactions: [
-          {
-            id: 'sort-date',
-            title: 'Date',
-            subtitle:
-              dateSortDirection === 'desc' ? 'Newest first' : 'Oldest first',
-            state:
-              activeSort.key === 'date' ? ('on' as const) : ('off' as const),
-            image: Platform.select({
-              ios: 'clock',
-              android: 'outlined.AccessTime',
-            }),
-          },
-          {
-            id: 'sort-name',
-            title: 'Name',
-            subtitle: nameSortDirection === 'asc' ? 'A to Z' : 'Z to A',
-            state:
-              activeSort.key === 'name' ? ('on' as const) : ('off' as const),
-            image: Platform.select({
-              ios: 'textformat',
-              android: 'outlined.SortByAlpha',
-            }),
-          },
-        ],
-      },
+      sortMenuAction,
       {
         id: 'roles-group',
         title: 'Filter by Role',
@@ -187,9 +255,6 @@ export function UsersFilterMenu({
 
     return (
       <SykaMenuView
-        ripple={{
-          mode: 'circle',
-        }}
         actions={menuActions}
         onPressAction={({nativeEvent}) => handleMenuSelect(nativeEvent.event)}
         accessibilityLabel="Filter users"

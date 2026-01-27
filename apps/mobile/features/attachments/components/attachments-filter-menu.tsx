@@ -8,7 +8,6 @@ import {
 } from '@sykamore/store';
 import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
 import {HeaderButton} from '@/components/ui';
-import {useTheme} from '@/providers';
 import type {AttachmentSortKey, OrderByDirection} from '@sykamore/types';
 
 type AttachmentsFilterMenuProps = {
@@ -34,8 +33,6 @@ export function AttachmentsFilterMenu({
   onOrderByChange,
   onSelectPress,
 }: AttachmentsFilterMenuProps) {
-  const {theme} = useTheme();
-
   const normalizedExtension = useMemo(
     () => getAttachmentExtension(extension ? {extension} : null),
     [extension],
@@ -86,6 +83,14 @@ export function AttachmentsFilterMenu({
     [activeSort, onOrderByChange],
   );
 
+  const applySortDirection = useCallback(
+    (key: AttachmentSortKey, direction: OrderByDirection) => {
+      const orderBy = buildAttachmentOrderBy(key, direction);
+      onOrderByChange?.(orderBy);
+    },
+    [onOrderByChange],
+  );
+
   const handleMenuSelect = useCallback(
     (actionId: string) => {
       if (actionId === 'ext-all') {
@@ -114,66 +119,147 @@ export function AttachmentsFilterMenu({
         return;
       }
 
+      if (actionId === 'date-asc') {
+        applySortDirection('date', 'asc');
+        return;
+      }
+
+      if (actionId === 'date-desc') {
+        applySortDirection('date', 'desc');
+        return;
+      }
+
+      if (actionId === 'name-asc') {
+        applySortDirection('name', 'asc');
+        return;
+      }
+
+      if (actionId === 'name-desc') {
+        applySortDirection('name', 'desc');
+        return;
+      }
+
+      if (actionId === 'size-asc') {
+        applySortDirection('size', 'asc');
+        return;
+      }
+
+      if (actionId === 'size-desc') {
+        applySortDirection('size', 'desc');
+        return;
+      }
+
       if (actionId === 'select') {
         onSelectPress?.();
       }
     },
-    [applyExtensionFilter, applySort, onSelectPress],
+    [applyExtensionFilter, applySort, applySortDirection, onSelectPress],
   );
 
   const menuActions = useMemo((): SykaMenuAction[] => {
     const presets = ['docx', 'xlsx', 'csv', 'txt', 'pdf'];
-    const extensionColors: Record<string, string> = {
-      pdf: theme.accentRed,
-      docx: theme.accentBlue,
-      xlsx: theme.accentGreen,
-      csv: theme.text,
-      txt: theme.icon,
-    };
-    const actions: SykaMenuAction[] = [
-      {
-        title: 'sorted by',
-        menuOptions: {displayInline: true},
-        id: 'sort-menu',
-        subactions: [
+    const isAndroid = Platform.OS === 'android';
+    const actions: SykaMenuAction[] = isAndroid
+      ? [
           {
-            id: 'date',
-            title: 'Date',
-            subtitle:
-              dateSortDirection === 'desc' ? 'Newest first' : 'Oldest first',
-            state:
-              activeSort.key === 'date' ? ('on' as const) : ('off' as const),
-            image: Platform.select({
-              ios: 'clock',
-              android: undefined,
-            }),
+            title: 'Sort by',
+            menuOptions: {displayInline: true},
+            id: 'sort-menu',
+            subactions: [
+              {
+                id: 'sort-date',
+                title: 'Date',
+                subactions: [
+                  {
+                    id: 'date-desc',
+                    title: 'Newest first',
+                    state: dateSortDirection === 'desc' ? 'on' : 'off',
+                  },
+                  {
+                    id: 'date-asc',
+                    title: 'Oldest first',
+                    state: dateSortDirection === 'asc' ? 'on' : 'off',
+                  },
+                ],
+              },
+              {
+                id: 'sort-name',
+                title: 'Name',
+                subactions: [
+                  {
+                    id: 'name-asc',
+                    title: 'A to Z',
+                    state: nameSortDirection === 'asc' ? 'on' : 'off',
+                  },
+                  {
+                    id: 'name-desc',
+                    title: 'Z to A',
+                    state: nameSortDirection === 'desc' ? 'on' : 'off',
+                  },
+                ],
+              },
+              {
+                id: 'sort-size',
+                title: 'Size',
+                subactions: [
+                  {
+                    id: 'size-desc',
+                    title: 'Largest first',
+                    state: sizeSortDirection === 'desc' ? 'on' : 'off',
+                  },
+                  {
+                    id: 'size-asc',
+                    title: 'Smallest first',
+                    state: sizeSortDirection === 'asc' ? 'on' : 'off',
+                  },
+                ],
+              },
+            ],
           },
+        ]
+      : [
           {
-            id: 'name',
-            title: 'Name',
-            subtitle: nameSortDirection === 'asc' ? 'A to Z' : 'Z to A',
-            state:
-              activeSort.key === 'name' ? ('on' as const) : ('off' as const),
-            image: Platform.select({
-              ios: 'textformat',
-              android: undefined,
-            }),
+            title: 'sorted by',
+            menuOptions: {displayInline: true},
+            id: 'sort-menu',
+            subactions: [
+              {
+                id: 'date',
+                title: 'Date',
+                subtitle:
+                  dateSortDirection === 'desc' ? 'Newest first' : 'Oldest first',
+                state:
+                  activeSort.key === 'date' ? ('on' as const) : ('off' as const),
+                image: Platform.select({
+                  ios: 'clock',
+                }),
+              },
+              {
+                id: 'name',
+                title: 'Name',
+                subtitle: nameSortDirection === 'asc' ? 'A to Z' : 'Z to A',
+                state:
+                  activeSort.key === 'name' ? ('on' as const) : ('off' as const),
+                image: Platform.select({
+                  ios: 'textformat',
+                }),
+              },
+              {
+                id: 'size',
+                title: 'Size',
+                subtitle:
+                  sizeSortDirection === 'desc'
+                    ? 'Largest first'
+                    : 'Smallest first',
+                state:
+                  activeSort.key === 'size' ? ('on' as const) : ('off' as const),
+                image: Platform.select({
+                  ios: 'externaldrive.badge.icloud',
+                }),
+              },
+            ],
           },
-          {
-            id: 'size',
-            title: 'Size',
-            subtitle:
-              sizeSortDirection === 'desc' ? 'Largest first' : 'Smallest first',
-            state:
-              activeSort.key === 'size' ? ('on' as const) : ('off' as const),
-            image: Platform.select({
-              ios: 'externaldrive.badge.icloud',
-              android: undefined,
-            }),
-          },
-        ],
-      },
-    ];
+        ];
 
     if (showExtensionFilter) {
       actions.push({
@@ -186,7 +272,6 @@ export function AttachmentsFilterMenu({
             title: 'All types',
             image: Platform.select({
               ios: 'folder',
-              android: 'outlined.FolderOpen',
             }),
             state: hasExtensionFilter ? ('off' as const) : ('on' as const),
           },
@@ -195,13 +280,7 @@ export function AttachmentsFilterMenu({
             title: ext,
             image: Platform.select({
               ios: 'doc.text',
-              android: 'outlined.Description',
             }),
-            imageColor: extensionColors[ext] ?? theme.icon,
-            androidTitleColor:
-              Platform.OS === 'android'
-                ? (extensionColors[ext] ?? theme.icon)
-                : undefined,
             state:
               normalizedExtension === ext ? ('on' as const) : ('off' as const),
           })),
@@ -229,11 +308,6 @@ export function AttachmentsFilterMenu({
     normalizedExtension,
     showExtensionFilter,
     onSelectPress,
-    theme.accentBlue,
-    theme.accentGreen,
-    theme.accentRed,
-    theme.icon,
-    theme.text,
   ]);
 
   const accessibilityLabel = showExtensionFilter
@@ -245,7 +319,6 @@ export function AttachmentsFilterMenu({
 
   return (
     <SykaMenuView
-      ripple={{mode: 'circle'}}
       actions={menuActions}
       onPressAction={({nativeEvent}) => handleMenuSelect(nativeEvent.event)}
       accessibilityLabel={accessibilityLabel}

@@ -85,10 +85,6 @@ export const AddUserScreen = forwardRef<
                 handleRoleMenuSelect(nativeEvent.event)
               }
               accessibilityLabel="Select role"
-              ripple={{
-                mode: 'bounded',
-                cornerRadius: ds.borderRadius.full,
-              }}
             >
               <Button
                 icon={AppIcons.ui.chevronUpDown}
