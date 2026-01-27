@@ -1,20 +1,24 @@
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
 import {useRouter} from 'expo-router';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
+import {Button, Card, Divider, Surface} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {ThemedButton, ThemedText, ThemedView} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {usePlatformStyles} from '@/hooks';
+import {ThemedText} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory} from '@/utils';
 
 export default function LoginScreen() {
   const {ds, theme, scheme} = useTheme();
   const router = useRouter();
+  const styles = createStyles(ds, theme);
+
+  const textColor = scheme === 'dark' ? '#000' : '#fff';
+  const buttonColor = scheme === 'dark' ? '#fff' : '#000';
+
+  const microsoftLogo = require('../../assets/icons/microsoft.png');
 
   const handleMicrosoftLogin = () => {
-    // Until Microsoft SSO is integrated, route to email login
     router.push('/(auth)/(modals)/personal-email');
   };
 
@@ -22,90 +26,68 @@ export default function LoginScreen() {
     router.push('/(auth)/(modals)/personal-email');
   };
 
-  const microsoftLogo = require('../../assets/icons/microsoft.png');
-
-  const buttonStyles = usePlatformStyles({
-    web: {
-      width: '50%',
-      alignSelf: 'center',
-    },
-    mobile: {
-      width: '100%',
-    },
-  });
-
-  const styles = createStyles(ds, theme);
-
   return (
-    <SafeAreaView
-      style={[styles.container, {backgroundColor: theme.background}]}
-    >
-      <ThemedView style={styles.container}>
-        <KeyboardAwareScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          contentInsetAdjustmentBehavior="automatic"
-          bottomOffset={0}
-          enabled
-          extraKeyboardSpace={0}
-        >
-          <View style={[styles.centered, styles.spacingXl]}>
-            <ThemedText variant="headline" style={styles.centered}>
-              Sign in
+    <SafeAreaView style={styles.safe}>
+      <Surface
+        style={[styles.surface, {backgroundColor: theme.background}]}
+        elevation={0}
+      >
+        <Card.Title title="Welcome" titleStyle={styles.title} />
+
+        <Card.Content style={styles.content}>
+          <Button
+            mode="contained"
+            onPress={handleMicrosoftLogin}
+            buttonColor={buttonColor}
+            textColor={textColor}
+            contentStyle={styles.buttonContent}
+            icon={({size}) => (
+              <Image
+                source={microsoftLogo}
+                style={{
+                  width: size,
+                  height: size,
+                }}
+              />
+            )}
+          >
+            Continue with Microsoft
+          </Button>
+
+          <View style={styles.orRow}>
+            <Divider
+              style={[styles.divider, {backgroundColor: theme.divider}]}
+            />
+            <ThemedText variant="label" style={{color: theme.muted}}>
+              OR
+            </ThemedText>
+            <Divider style={styles.divider} />
+          </View>
+
+          <Button
+            mode="contained"
+            onPress={handlePersonalEmailLogin}
+            buttonColor={buttonColor}
+            textColor={textColor}
+            contentStyle={styles.buttonContent}
+          >
+            Use personal email
+          </Button>
+
+          <View style={styles.footer}>
+            <ThemedText
+              variant="subheadline"
+              style={{color: theme.muted, textAlign: 'center'}}
+            >
+              By continuing, you acknowledge Sykamore’s
+            </ThemedText>
+
+            <ThemedText variant="caption" accessibilityRole="link">
+              Privacy Policy
             </ThemedText>
           </View>
-
-          <View style={[styles.spacingXl, styles.actionsStack]}>
-            <ThemedButton
-              fullWidth
-              onPress={handleMicrosoftLogin}
-              style={buttonStyles}
-            >
-              <Image source={microsoftLogo} style={styles.microsoftIcon} />
-              <ThemedText
-                variant="body"
-                style={{
-                  fontWeight: ds.fontWeight.semibold,
-                  color: scheme === 'dark' ? '#000' : '#fff',
-                }}
-              >
-                Continue with Microsoft
-              </ThemedText>
-            </ThemedButton>
-
-            <View style={[styles.divider, buttonStyles]}>
-              <View style={styles.dividerLine} />
-              <ThemedText variant="caption" colorToken="muted">
-                OR
-              </ThemedText>
-              <View style={styles.dividerLine} />
-            </View>
-
-            <ThemedButton
-              variant="primary"
-              title="Use personal email"
-              fullWidth
-              onPress={handlePersonalEmailLogin}
-              style={[buttonStyles]}
-            />
-
-            <View style={styles.footer}>
-              <ThemedText variant="caption" colorToken="muted">
-                By continuing, you acknowledge Vohrad’s
-              </ThemedText>
-              <ThemedText
-                variant="caption"
-                colorToken="muted"
-                style={styles.link}
-                accessibilityRole="link"
-              >
-                Privacy Policy
-              </ThemedText>
-            </View>
-          </View>
-        </KeyboardAwareScrollView>
-      </ThemedView>
+        </Card.Content>
+      </Surface>
     </SafeAreaView>
   );
 }
@@ -113,46 +95,40 @@ export default function LoginScreen() {
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      container: {
-        flex: 1,
-      },
-      scrollContent: {
+      safe: {flex: 1, backgroundColor: theme.background},
+
+      surface: {
         flex: 1,
         justifyContent: 'center',
-        padding: ds.layout.screenPadding,
-        width: '100%',
       },
-      centered: {
-        alignItems: 'center',
+
+      title: {
         textAlign: 'center',
+        fontSize: 22,
+        paddingBottom: ds.spacing.xl,
       },
-      spacingXl: {
-        marginBottom: ds.spacing.xl,
-      },
-      actionsStack: {
+
+      content: {
         gap: ds.spacing.md,
       },
-      footer: {
-        alignItems: 'center',
-        gap: ds.spacing.xs,
+
+      buttonContent: {
+        paddingVertical: ds.spacing.xs,
       },
-      divider: {
+
+      orRow: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: ds.spacing.sm,
       },
-      dividerLine: {
+
+      divider: {
         flex: 1,
-        height: ds.components.separator.height,
-        backgroundColor: theme.divider,
       },
-      link: {
-        textDecorationLine: 'underline',
-      },
-      microsoftIcon: {
-        width: ds.iconSize.md,
-        height: ds.iconSize.md,
-        marginRight: ds.spacing.sm,
+
+      footer: {
+        alignItems: 'center',
+        gap: ds.spacing.xs,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

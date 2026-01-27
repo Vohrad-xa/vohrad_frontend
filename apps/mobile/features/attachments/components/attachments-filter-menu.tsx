@@ -138,7 +138,7 @@ export function AttachmentsFilterMenu({
         subactions: [
           {
             id: 'date',
-            title: 'Date                         ',
+            title: 'Date',
             subtitle:
               dateSortDirection === 'desc' ? 'Newest first' : 'Oldest first',
             state:
@@ -214,7 +214,7 @@ export function AttachmentsFilterMenu({
         title: 'Select',
         image: Platform.select({
           ios: 'checkmark.circle',
-          android: 'outlined.CheckCircle',
+          android: undefined,
         }),
       });
     }
