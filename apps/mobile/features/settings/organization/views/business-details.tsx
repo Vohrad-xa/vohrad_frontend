@@ -5,7 +5,7 @@ import {Avatar, List, Surface} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {useBusinessDetails} from '../use-business-details';
+import {useBusinessDetails} from '../hooks/use-business-details';
 
 export const BusinessDetailsContent = () => {
   const {ds, theme} = useTheme();

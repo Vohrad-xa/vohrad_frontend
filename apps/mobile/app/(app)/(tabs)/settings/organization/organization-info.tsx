@@ -1,13 +1,27 @@
-import React, {useLayoutEffect} from 'react';
+import React, {useCallback, useLayoutEffect} from 'react';
 import {Platform} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {Palette} from '@/constants';
-import {OrganizationInfoView} from '@/features/settings';
+import {
+  OrganizationInfoView,
+  useOrganizationInfoForm,
+  useOrganizationSnackbar,
+} from '@/features/settings';
 import {AppIcons} from '@/utils/icons';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';
 
 export default function OrganizationInfoScreen() {
   const navigation = useNavigation();
+  const {values, handleFieldChange, hasChanges, isSaving, save} =
+    useOrganizationInfoForm();
+  const {showSnack, snackbar} = useOrganizationSnackbar();
+
+  const handleSave = useCallback(async () => {
+    const result = await save();
+    if (result) {
+      showSnack('Organization updated');
+    }
+  }, [save, showSnack]);
 
   useLayoutEffect(() => {
     const options = getHeaderOptions({
@@ -16,11 +30,14 @@ export default function OrganizationInfoScreen() {
           type: 'button',
           key: 'save',
           label: 'Save',
-          onPress: () => {},
           iosSymbol: AppIcons.actions.save,
           icon: AppIcons.actions.save,
           variant: 'done',
           tintColor: Platform.OS === 'ios' ? Palette.orange : undefined,
+          disabled: !hasChanges || isSaving,
+          onPress: () => {
+            void handleSave();
+          },
         },
       ],
     });
@@ -29,7 +46,12 @@ export default function OrganizationInfoScreen() {
       headerRight: options.headerRight,
       unstable_headerRightItems: options.unstable_headerRightItems,
     });
-  }, [navigation]);
+  }, [navigation, hasChanges, isSaving, handleSave]);
 
-  return <OrganizationInfoView />;
+  return (
+    <>
+      <OrganizationInfoView values={values} onFieldChange={handleFieldChange} />
+      {snackbar}
+    </>
+  );
 }
