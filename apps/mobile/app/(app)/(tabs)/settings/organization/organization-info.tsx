@@ -9,6 +9,7 @@ import {
 } from '@/features/settings';
 import {AppIcons} from '@/utils/icons';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';
+import {showAlert} from '@/utils';
 
 export default function OrganizationInfoScreen() {
   const navigation = useNavigation();
@@ -17,10 +18,20 @@ export default function OrganizationInfoScreen() {
   const {showSnack, snackbar} = useOrganizationSnackbar();
 
   const handleSave = useCallback(async () => {
-    const result = await save();
-    if (result) {
-      showSnack('Organization updated');
+    const changedLabels = await save();
+    if (!changedLabels) {
+      showAlert({
+        title: 'No Changes Detected',
+        message: 'Update a field before saving your organization.',
+      });
+      return;
     }
+
+    const message =
+      changedLabels.length === 1
+        ? `${changedLabels[0]} updated successfully`
+        : 'Details updated successfully';
+    showSnack(message);
   }, [save, showSnack]);
 
   useLayoutEffect(() => {

@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useUpdateTenant} from '@sykamore/store';
 import type {TenantProfileUpdate} from '@sykamore/types';
-import {showAlert} from '@/utils';
 import {useBusinessDetails} from './use-business-details';
 
 type OrganizationInfoValues = {
@@ -143,25 +142,54 @@ export function useOrganizationInfoForm() {
     return updateData;
   }, [organization, values]);
 
+  const getChangedFieldLabels = useCallback(() => {
+    const fields: Array<{
+      key: keyof OrganizationInfoValues;
+      label: string;
+      original: string | null | undefined;
+    }> = [
+      {key: 'phone', label: 'Phone', original: organization?.telephone},
+      {key: 'website', label: 'Website', original: organization?.website},
+      {key: 'street', label: 'Street', original: organization?.street},
+      {
+        key: 'streetNumber',
+        label: 'Street Number',
+        original: organization?.street_number,
+      },
+      {key: 'city', label: 'City', original: organization?.city},
+      {key: 'province', label: 'Province', original: organization?.province},
+      {
+        key: 'postalCode',
+        label: 'Postal Code',
+        original: organization?.postal_code,
+      },
+      {key: 'country', label: 'Country', original: organization?.country},
+    ];
+
+    return fields
+      .filter(({key, original}) => {
+        const value = values[key];
+        return computeUpdateValue(value, normalizeValue(original)) !== undefined;
+      })
+      .map(({label}) => label);
+  }, [organization, values]);
+
   const hasChanges = useMemo(() => {
-    const updateData = buildUpdateData();
-    return Object.keys(updateData).length > 0;
-  }, [buildUpdateData]);
+    const labels = getChangedFieldLabels();
+    return labels.length > 0;
+  }, [getChangedFieldLabels]);
 
   const save = useCallback(async () => {
     const updateData = buildUpdateData();
+    const changedLabels = getChangedFieldLabels();
 
     if (Object.keys(updateData).length === 0) {
-      showAlert({
-        title: 'No Changes Detected',
-        message: 'Update a field before saving your organization.',
-      });
-      return false;
+      return null;
     }
 
     await updateTenantProfile(updateData);
-    return true;
-  }, [buildUpdateData, updateTenantProfile]);
+    return changedLabels;
+  }, [buildUpdateData, getChangedFieldLabels, updateTenantProfile]);
 
   return {
     values,
