@@ -27,6 +27,11 @@ export type DatePickerProps = {
    */
   showVariantToggle?: boolean;
   /**
+   * Optional title for the time picker dialog.
+   * @default 'Select time'
+   */
+  timeTitle?: string;
+  /**
    * Overrides the 24-hour format in time mode.
    * @default system
    */
