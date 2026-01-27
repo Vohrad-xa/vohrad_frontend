@@ -81,7 +81,10 @@ export function FilterContent() {
                   }
                   variant="switch"
                   scale={0.8}
-                  elementColors={{checkedTrackColor: Palette.bluepurple}}
+                  elementColors={{
+                    checkedTrackColor: Palette.bluepurple,
+                    checkedThumbColor: Palette.white,
+                  }}
                 />
               )}
             />

@@ -1,5 +1,5 @@
 import {memo, useCallback, useMemo} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import {Platform, ScrollView, StyleSheet} from 'react-native';
 import {type Href} from 'expo-router';
 import {List, type ListItemProps} from 'react-native-paper';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
@@ -8,7 +8,6 @@ import {useAuth, useTheme} from '@/providers';
 import {useSafeRouter} from '@/utils';
 import {
   AppIcons,
-  Icon,
   type IconName,
   makeStyleFactory,
   showConfirmAlert,
@@ -37,7 +36,7 @@ const SettingsRow = memo((row: SettingsRowModel) => {
   }, [router, row]);
 
   const renderLeft = useCallback(
-    (_props: LeftProps) => <Icon name={row.icon} size={24} />,
+    (props: LeftProps) => <List.Icon {...props} icon={row.icon} />,
     [row.icon],
   );
 
@@ -51,7 +50,6 @@ const SettingsRow = memo((row: SettingsRowModel) => {
       left={renderLeft}
       onPress={pressable ? onPress : undefined}
       borderless
-      style={styles.row}
     />
   );
 });
@@ -60,6 +58,7 @@ SettingsRow.displayName = 'SettingsRow';
 
 export default function SettingsModal() {
   const {logout} = useAuth();
+  const showAppearanceMenu = Platform.OS !== 'android';
 
   const handleLogout = useCallback(() => {
     showConfirmAlert({
@@ -111,7 +110,8 @@ export default function SettingsModal() {
         title: 'Appearance',
         description: 'Change app theme',
         icon: AppIcons.ui.appearance,
-        onPress: handleOpenAppearance,
+        right: showAppearanceMenu ? 'appearance' : undefined,
+        onPress: showAppearanceMenu ? undefined : handleOpenAppearance,
       },
       {
         id: 'preferences',
@@ -171,7 +171,7 @@ export default function SettingsModal() {
         danger: true,
       },
     ],
-    [handleLogout, handleOpenAppearance],
+    [handleLogout, handleOpenAppearance, showAppearanceMenu],
   );
 
   return (
@@ -185,11 +185,8 @@ export default function SettingsModal() {
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (_ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
-      row: {
-        paddingHorizontal: ds.spacing.lg,
-      },
       dangerTitle: {
         color: Palette.red,
       },

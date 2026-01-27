@@ -1,5 +1,5 @@
 export {
-  PreferencesContentEditable as PreferencesContent,
+  BusinessHours as PreferencesContent,
   type PreferencesContentHandle,
   type SavePreferencesOptions,
-} from './views/preferences-content';
+} from './views/business-hours';

@@ -1,11 +1,11 @@
 import React, {forwardRef, useImperativeHandle} from 'react';
-import {StyleSheet} from 'react-native';
+import {View} from 'react-native';
 import {usePreferencesManager} from '@sykamore/store';
 import {ScrollView} from 'react-native-gesture-handler';
-import {List, Surface} from 'react-native-paper';
-import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
+import {List} from 'react-native-paper';
+import {Palette} from '@/constants';
 import {useTheme, useHaptic} from '@/providers';
-import {showConfirmAlert, showAlert, makeStyleFactory} from '@/utils';
+import {showConfirmAlert, showAlert} from '@/utils';
 import {DatePicker, Switch} from 'sykamore-ui/android';
 import {dialogBackground, tintColor} from 'sykamore-ui/android/modifiers';
 
@@ -48,13 +48,12 @@ const createTimeDate = (timeValue: string | null) => {
   return base;
 };
 
-export const PreferencesContentEditable = forwardRef<
+export const BusinessHours = forwardRef<
   PreferencesContentHandle,
   PreferencesContentEditableProps
 >(({isEditing, onSaveComplete, onFieldChange}, ref) => {
-  const {ds, theme} = useTheme();
+  const {theme, ds} = useTheme();
   const {triggerHaptic} = useHaptic();
-  const styles = createStyles(ds, theme);
 
   const {
     organization,
@@ -140,76 +139,100 @@ export const PreferencesContentEditable = forwardRef<
     setActiveTimePicker(null);
   }, []);
 
-  const isEditable = isEditing;
+  const canInteract = isEditing && !isLoading;
+
   const timezoneLabel = organization.timezone?.length
     ? organization.timezone
-    : '—';
+    : 'Not set';
+
   const startTimeLabel = preferences.business_hour_start?.length
     ? preferences.business_hour_start
-    : '—';
+    : 'Not set';
+
   const endTimeLabel = preferences.business_hour_end?.length
     ? preferences.business_hour_end
-    : '—';
+    : 'Not set';
+
+  const canEditTimes = canInteract && businessHoursEnabled;
+  const mutedGroupStyle = !canEditTimes
+    ? {opacity: ds.opacity.disabled}
+    : undefined;
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Surface style={styles.surface} elevation={1} mode="flat">
-        <List.Item title="Timezone" description={timezoneLabel} disabled />
+    <ScrollView>
+      <List.Section title="Time & Region">
+        <List.Item title="Time zone" description={timezoneLabel} disabled />
+      </List.Section>
 
+      <List.Section title="Business Hours">
+        {/* In Android settings, tapping the row usually toggles too */}
         <List.Item
-          title="Business Hours"
-          style={styles.listItem}
-          description={businessHoursEnabled ? 'Enabled' : 'Disabled'}
-          right={() => (
-            <Switch
-              scale={0.85}
-              value={businessHoursEnabled}
-              onValueChange={
-                !isEditable || isLoading
-                  ? undefined
-                  : (value) => {
-                      void handleToggleBusinessHours(value);
-                    }
-              }
-              elementColors={{
-                checkedTrackColor: Palette.bluepurple,
-              }}
-            />
+          title="Use business hours"
+          description="Limit availability to a daily time window"
+          onPress={
+            canInteract
+              ? () => void handleToggleBusinessHours(!businessHoursEnabled)
+              : undefined
+          }
+          disabled={!canInteract}
+          right={(props) => (
+            <View style={props.style}>
+              <Switch
+                value={businessHoursEnabled}
+                onValueChange={
+                  !canInteract
+                    ? undefined
+                    : (v) => void handleToggleBusinessHours(v)
+                }
+                elementColors={{
+                  checkedTrackColor: Palette.bluepurple,
+                  checkedThumbColor: Palette.white,
+                }}
+              />
+            </View>
           )}
-          borderless
         />
-      </Surface>
 
-      {businessHoursEnabled && (
-        <Surface style={styles.surface} elevation={1} mode="flat">
+        <View style={mutedGroupStyle}>
           <List.Item
-            title="Start Time"
-            style={styles.listItem}
-            description={startTimeLabel}
-            onPress={() =>
-              handleOpenTimePicker(
-                'business_hour_start',
-                preferences.business_hour_start ?? null,
-              )
+            title="Start time"
+            description={
+              canEditTimes ? startTimeLabel : 'Turn on business hours to edit'
             }
-            right={(props) => <List.Icon {...props} icon="clock-outline" />}
+            disabled={!canEditTimes}
+            onPress={
+              canEditTimes
+                ? () =>
+                    handleOpenTimePicker(
+                      'business_hour_start',
+                      preferences.business_hour_start ?? null,
+                    )
+                : undefined
+            }
+            right={(props) => <List.Icon {...props} icon="clock-start" />}
             borderless
           />
+
           <List.Item
-            title="End Time"
-            style={styles.listItem}
-            description={endTimeLabel}
-            onPress={() =>
-              handleOpenTimePicker(
-                'business_hour_end',
-                preferences.business_hour_end ?? null,
-              )
+            title="End time"
+            description={
+              canEditTimes ? endTimeLabel : 'Turn on business hours to edit'
             }
-            right={(props) => <List.Icon {...props} icon="clock-outline" />}
+            disabled={!canEditTimes}
+            onPress={
+              canEditTimes
+                ? () =>
+                    handleOpenTimePicker(
+                      'business_hour_end',
+                      preferences.business_hour_end ?? null,
+                    )
+                : undefined
+            }
+            right={(props) => <List.Icon {...props} icon="clock-end" />}
             borderless
           />
-        </Surface>
-      )}
+        </View>
+      </List.Section>
 
       {activeTimePicker && (
         <DatePicker
@@ -234,22 +257,4 @@ export const PreferencesContentEditable = forwardRef<
   );
 });
 
-PreferencesContentEditable.displayName = 'PreferencesContentEditable';
-
-const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        padding: ds.spacing.md,
-        gap: ds.spacing.lg,
-      },
-      surface: {
-        borderRadius: ds.borderRadius.xxxl,
-        overflow: 'hidden',
-      },
-      listItem: {
-        paddingRight: ds.spacing.md,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);
+BusinessHours.displayName = 'BusinessHours';
