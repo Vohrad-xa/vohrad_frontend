@@ -313,7 +313,7 @@ const AttachmentsListBase = ({
       onRefresh={handleRefresh}
       onEndReached={onEndReached}
       onEndReachedThreshold={onEndReachedThreshold}
-      drawDistance={Platform.OS === 'android' ? ds.screen.height : undefined}
+      // drawDistance={Platform.OS === 'android' ? ds.screen.height : undefined}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={ListHeader}
       ListEmptyComponent={

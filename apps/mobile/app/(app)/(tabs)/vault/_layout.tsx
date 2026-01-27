@@ -54,7 +54,6 @@ function VaultStack() {
         headerShown: true,
         headerShadowVisible: false,
         headerLargeTitle: true,
-        animation: 'ios_from_right' as const,
         headerBackButtonDisplayMode: 'minimal' as const,
         headerTransparent: Platform.OS === 'ios',
         headerTintColor: theme.icon,

@@ -1,4 +1,4 @@
-import {useCallback} from 'react';
+import {useCallback, useEffect} from 'react';
 import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {useNavigationState} from '@react-navigation/native';
@@ -31,6 +31,12 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
   const {isAuthenticated, authReady} = useAuth();
 
   const ready = isBootstrapComplete && authReady;
+
+  useEffect(() => {
+    if (ready) {
+      void SplashScreen.hideAsync();
+    }
+  }, [ready]);
 
   useNavigationState(
     useCallback((state) => {

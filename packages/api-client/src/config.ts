@@ -14,6 +14,23 @@ type GlobalWithEnv = {
   };
 };
 
+declare const process: {
+  env: Record<string, string | undefined>;
+};
+
+const inlineEnv: Record<string, string | undefined> = {
+  EXPO_PUBLIC_API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
+  EXPO_PUBLIC_API_PROTOCOL: process.env.EXPO_PUBLIC_API_PROTOCOL,
+  EXPO_PUBLIC_API_BASE_DOMAIN: process.env.EXPO_PUBLIC_API_BASE_DOMAIN,
+  EXPO_PUBLIC_TENANT: process.env.EXPO_PUBLIC_TENANT,
+  EXPO_PUBLIC_API_VERSION: process.env.EXPO_PUBLIC_API_VERSION,
+  NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  NEXT_PUBLIC_API_PROTOCOL: process.env.NEXT_PUBLIC_API_PROTOCOL,
+  NEXT_PUBLIC_API_BASE_DOMAIN: process.env.NEXT_PUBLIC_API_BASE_DOMAIN,
+  NEXT_PUBLIC_TENANT: process.env.NEXT_PUBLIC_TENANT,
+  NEXT_PUBLIC_API_VERSION: process.env.NEXT_PUBLIC_API_VERSION,
+};
+
 const envFromGlobal = (() => {
   try {
     return (globalThis as GlobalWithEnv).process?.env;
@@ -24,7 +41,7 @@ const envFromGlobal = (() => {
 
 const readEnv = (keys: string[]): string | undefined => {
   for (const k of keys) {
-    const v = envFromGlobal?.[k];
+    const v = inlineEnv[k] ?? envFromGlobal?.[k];
     if (typeof v === 'string' && v.length > 0) return v;
   }
   return undefined;

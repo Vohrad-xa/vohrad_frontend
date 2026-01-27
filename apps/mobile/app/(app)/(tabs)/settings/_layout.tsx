@@ -57,7 +57,6 @@ function SettingsStack() {
       ({
         headerShown: true,
         headerShadowVisible: false,
-        animation: 'ios_from_right' as const,
         headerBackButtonDisplayMode: 'minimal' as const,
         headerTransparent: Platform.OS === 'ios',
         headerTitleStyle: {

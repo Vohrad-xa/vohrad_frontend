@@ -4,13 +4,13 @@
     "slug": "sykamore",
     "version": "0.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icons/android/playstore-512.png",
+    "icon": "./assets/icons/playstore-512.png",
     "scheme": "mobile",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "sykamore.mobile",
-      "icon": "./assets/icons/ios/playstore-512.png",
+      "icon": "./assets/icons/playstore-512.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSFaceIDUsageDescription": "Face ID lets you unlock the app quickly and securely.",
@@ -21,13 +21,14 @@
       }
     },
     "android": {
-      "icon": "./assets/icons/android/playstore-512.png",
+      "icon": "./assets/icons/playstore-512.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/android/playstore-512.png",
+        "foregroundImage": "./assets/icons/playstore-512.png",
         "backgroundColor": "#00000000"
       },
-      "predictiveBackGestureEnabled": true,
+      "predictiveBackGestureEnabled": false,
       "edgeToEdgeEnabled": true,
+      "usesCleartextTraffic": true,
       "package": "sykamore.mobile",
       "permissions": [
         "CAMERA",
@@ -38,7 +39,6 @@
     },
     "web": {
       "output": "single",
-      "favicon": "./assets/icons/web/favicon-48x48.png",
       "bundler": "metro"
     },
     "plugins": [
@@ -51,21 +51,19 @@
           "android": {
             "enableMinifyInReleaseBuilds": true,
             "enableShrinkResourcesInReleaseBuilds": true,
-            "buildArchs": ["arm64-v8a", "x86_64"],
-            "buildReactNativeFromSource": true,
-            "useHermesV1": true
+            "buildReactNativeFromSource": true
           }
         }
       ],
       [
         "expo-splash-screen",
         {
-          "image": "./assets/icons/web/icon-512x512.png",
+          "image": "./assets/icons/playstore-512.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {
-            "image": "./assets/icons/web/icon-512x512.png",
+            "image": "./assets/icons/playstore-512.png",
             "backgroundColor": "#000000"
           }
         }

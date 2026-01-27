@@ -23,7 +23,6 @@ export default function LoginScreen() {
   };
 
   const microsoftLogo = require('../../assets/icons/microsoft.png');
-  const darkModeImage = require('../../assets/images/dark_mode_image.png');
 
   const buttonStyles = usePlatformStyles({
     web: {
@@ -52,7 +51,6 @@ export default function LoginScreen() {
           extraKeyboardSpace={0}
         >
           <View style={[styles.centered, styles.spacingXl]}>
-            <Image source={darkModeImage} style={styles.heroImage} />
             <ThemedText variant="headline" style={styles.centered}>
               Sign in
             </ThemedText>
@@ -155,10 +153,6 @@ const createStyles = makeStyleFactory(
         width: ds.iconSize.md,
         height: ds.iconSize.md,
         marginRight: ds.spacing.sm,
-      },
-      heroImage: {
-        width: 200,
-        height: 200,
       },
     }),
   (ds, theme) => themeKey(theme, ds),
