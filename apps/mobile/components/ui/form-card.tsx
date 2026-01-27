@@ -48,7 +48,7 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       card: {
         borderRadius: ds.components.card.borderRadius,
-        backgroundColor: theme.input,
+        backgroundColor: theme.modalBackground,
         ...ds.shadows.sm,
       },
       row: {

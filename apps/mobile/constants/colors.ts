@@ -22,6 +22,7 @@ export const Palette = {
   deepblue: '#1251D3',
   lightBlue: '#DDE7FB',
   bluepurple: '#135489',
+  slateblue: '#264653',
   teal: '#14B8A6',
   indigo: '#4F46E5',
   purple: '#6a24c4ff',
@@ -73,7 +74,7 @@ const _Tokens = {
     divider: Palette.gray[300],
     inputPlaceholder: Palette.gray[400],
     headerAndroid: Palette.bluepurple,
-    input: Palette.white,
+    secondaryContainer: Palette.lightBlue,
 
     accentBlue: Palette.blue,
     accentGreen: Palette.green,
@@ -89,7 +90,7 @@ const _Tokens = {
   dark: {
     primary: Palette.Greige,
     secondary: Palette.Greige,
-    tertiary: Palette.mushroom,
+    tertiary: Palette.slateblue,
     tint: Palette.mushroom,
     tint2: Palette.iceA83,
     muted: Palette.gray[500],
@@ -106,10 +107,10 @@ const _Tokens = {
     quickActionIcon: Palette.graphite,
     inputPlaceholder: Palette.gray[600],
     border: Palette.gray[700],
-    input: Palette.gray[800],
     divider: Palette.gray[700],
     headerAndroid: Palette.white,
     selected: Palette.gray[750],
+    secondaryContainer: Palette.slateblue,
 
     accentBlue: Palette.blue,
     accentGreen: Palette.green,

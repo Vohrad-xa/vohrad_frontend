@@ -60,7 +60,7 @@ export const DatePickerWeb: React.FC<DatePickerWebProps> = ({
 
       }
       .react-datepicker__header {
-        background: ${theme.input} !important;
+        background: ${theme.modalBackground} !important;
         border-bottom: 1px solid ${theme.border} !important;
         border-top-left-radius: 12px !important;
         border-top-right-radius: 12px !important;

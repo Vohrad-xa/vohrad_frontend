@@ -398,7 +398,7 @@ const createStyles = makeStyleFactory(
         marginRight: ds.spacing.xl,
         borderRadius: ds.borderRadius.lg,
         padding: 4,
-        backgroundColor: theme.input,
+        backgroundColor: theme.modalBackground,
       },
       labelWithIcon: {
         flexDirection: 'row',
@@ -419,7 +419,7 @@ const createStyles = makeStyleFactory(
         borderRadius: ds.borderRadius.md,
         borderWidth: 1,
         borderColor: theme.border,
-        backgroundColor: theme.input,
+        backgroundColor: theme.modalBackground,
         minHeight: ds.components.tapTarget.minSize,
       },
       iosDatePicker: {

@@ -48,7 +48,7 @@ const createStyles = makeStyleFactory(
         paddingVertical: ds.spacing.md,
         paddingHorizontal: ds.spacing.lg,
         gap: ds.spacing.lg,
-        backgroundColor: theme.input,
+        backgroundColor: theme.modalBackground,
         borderRadius: ds.components.card.borderRadius,
       },
       headerColumn: {

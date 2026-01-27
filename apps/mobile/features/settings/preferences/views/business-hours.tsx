@@ -59,7 +59,6 @@ export function BusinessHours() {
       </List.Section>
 
       <List.Section title="Business Hours">
-        {/* In Android settings, tapping the row usually toggles too */}
         <List.Item
           title="Use business hours"
           description="Limit availability to a daily time window"

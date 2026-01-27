@@ -120,7 +120,7 @@ const createStyles = makeStyleFactory(
         flex: 1,
       },
       card: {
-        backgroundColor: theme.input,
+        backgroundColor: theme.card,
         borderRadius: ds.components.card.borderRadius,
       },
       childContainer: {

@@ -1,2 +1,2 @@
 export {useLicenseInfo} from './use-license-info';
-export {PlanScreen} from './plan';
+export {LicenseView} from './license';

@@ -86,7 +86,7 @@ export const AppIcons = {
     time: 'clock-outline',
     profile: 'account-outline',
     userManagement: 'account-multiple-outline',
-    support: 'lifebuoy',
+    support: 'information-slab-circle-outline',
     preference: 'tune-variant',
   },
 

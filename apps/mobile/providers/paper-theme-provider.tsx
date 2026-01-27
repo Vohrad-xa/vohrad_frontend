@@ -23,11 +23,11 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
         primary: theme.primary,
         onPrimary: theme.text,
         primaryContainer: theme.secondary,
-        onPrimaryContainer: theme.input,
+        onPrimaryContainer: theme.secondaryContainer,
 
         secondary: theme.tertiary,
         onSecondary: theme.text,
-        secondaryContainer: theme.tabIndicator,
+        secondaryContainer: theme.secondaryContainer,
         onSecondaryContainer: theme.text,
 
         // Screens / surfaces
