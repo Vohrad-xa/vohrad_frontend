@@ -54,7 +54,7 @@ export function OrganizationInfoView() {
 
   return (
     <ScrollView style={{flex: 1}} keyboardShouldPersistTaps="handled">
-      <View style={{gap: ds.spacing.lg, padding: ds.spacing.md}}>
+      <View style={{gap: ds.spacing.lg, padding: ds.spacing.lg}}>
         <TextInput
           mode="outlined"
           label="Name"

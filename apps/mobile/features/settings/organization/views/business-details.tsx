@@ -1,7 +1,7 @@
 import React from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
-import {Avatar, List, Surface} from 'react-native-paper';
 import {router} from 'expo-router';
+import {Avatar, List, Surface} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -26,6 +26,7 @@ export const BusinessDetailsContent = () => {
         <List.Item
           title="Organization info"
           description="Name, email, phone, address"
+          borderless
           onPress={() =>
             router.push('/(app)/(tabs)/settings/organization/organization-info')
           }

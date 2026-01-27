@@ -24,7 +24,7 @@ export default function OrganizationLayout() {
         fontWeight: ds.fontWeight.bold,
       },
     }),
-    [ds.fontWeight.bold, ds.spacing.md, theme.headerAndroid],
+    [ds.fontWeight.bold, theme.headerAndroid],
   );
 
   return (
