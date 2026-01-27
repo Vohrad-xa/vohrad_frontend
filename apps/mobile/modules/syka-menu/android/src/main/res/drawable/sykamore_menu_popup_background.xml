@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+  <solid android:color="@color/sykamore_menu_background" />
+  <corners android:radius="@dimen/sykamore_menu_corner_radius" />
+</shape>

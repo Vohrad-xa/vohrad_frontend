@@ -20,6 +20,7 @@ data class MenuOptions(
 data class SykaMenuActionRecord(
   @Field val id: String? = null,
   @Field val title: String = "",
+  @Field val separator: Boolean = false,
   @Field val titleColor: Int? = null,
   @Field val subtitle: String? = null,
   @Field val attributes: MenuAttributes? = null,
@@ -36,13 +37,6 @@ data class MenuHitSlop(
   @Field val bottom: Int = 0,
   @Field val left: Int = 0,
   @Field val right: Int = 0
-) : Record, Serializable
-
-data class MenuRippleConfig(
-  @Field val mode: String? = null,
-  @Field val radius: Int? = null,
-  @Field val cornerRadius: Int? = null,
-  @Field val enabled: Boolean = true
 ) : Record, Serializable
 
 class MenuOnPressActionEvent(

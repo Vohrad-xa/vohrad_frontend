@@ -1,0 +1,8 @@
+<resources>
+  <style name="SykaMenu_PopupMenu" parent="Widget.AppCompat.PopupMenu">
+    <item name="android:popupBackground">@drawable/sykamore_menu_popup_background</item>
+  </style>
+  <style name="SykaMenu_PopupMenuOverlay" parent="ThemeOverlay.AppCompat">
+    <item name="colorControlActivated">@color/sykamore_menu_accent</item>
+  </style>
+</resources>

@@ -5,7 +5,13 @@ import type {NativeMenuComponentProps} from './types';
 
 const SykaMenuView: React.FC<
   React.PropsWithChildren<NativeMenuComponentProps>
-> = ({style, children, testID, accessibilityLabel, accessibilityHint}) => {
+> = ({
+  style,
+  children,
+  testID,
+  accessibilityLabel,
+  accessibilityHint,
+}) => {
   return (
     <View
       style={style}

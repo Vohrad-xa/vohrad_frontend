@@ -32,7 +32,7 @@ type MenuAttributes = {
    */
   hidden?: boolean;
   /**
-   * Keeps the menu open after selection (Android, iOS 16+).
+   * Keeps the menu open after selection (iOS 16+).
    */
   keepsMenuPresented?: boolean;
 };
@@ -42,112 +42,88 @@ type MenuAttributes = {
  */
 type MenuState = 'off' | 'on' | 'mixed';
 
+type SykaMenuSeparatorAction = {
+  /**
+   * Inserts a divider.
+   *
+   * - iOS 15+: native separators.
+   */
+  separator: true;
+  title?: never;
+};
+
 /**
  * Action item definition for SykaMenuView.
  *
  * - Nested `subactions` render a submenu.
  */
-export type SykaMenuAction = {
-  /**
-   * Optional id emitted via `onPressAction`.
-   */
-  id?: string;
-  /**
-   * Primary label shown in the menu.
-   */
-  title: string;
-  /**
-   * Not implemented yet; ignored on both platforms.
-   */
-  separator?: boolean;
-  /**
-   * Android only. Overrides item text color unless destructive/disabled.
-   * Ignored on iOS.
-   */
-  androidTitleColor?: number | ColorValue;
-  /**
-   * Secondary line below the title (Android, iOS 15+).
-   */
-  subtitle?: string;
-  /**
-   * Behavior flags (destructive, disabled, hidden, keepsMenuPresented).
-   */
-  attributes?: MenuAttributes;
-  /**
-   * Checkmark state. Android supports `on`/`off`; `mixed` is iOS only.
-   */
-  state?: MenuState;
-  /**
-   * Icon name. iOS uses SF Symbol or asset; Android uses a Material icon name
-   * (e.g. `outlined.Info`).
-   */
-  image?: string;
-  /**
-   * Icon tint color.
-   */
-  imageColor?: number | ColorValue;
-  /**
-   * Submenu options.
-   *
-   * - Only applies when `subactions` are present.
-   */
-  menuOptions?: {
-    /**
-     * iOS 15+. Enables single-selection behavior for submenu items.
-     */
-    singleSelection?: boolean;
-    /**
-     * iOS only. Marks the submenu as destructive.
-     * Android uses this to tint the submenu trigger title.
-     */
-    destructive?: boolean;
-    /**
-     * Displays submenu items inline (Android + iOS).
-     */
-    displayInline?: boolean;
-  };
-  /**
-   * Nested actions. When set, this item becomes a submenu trigger.
-   */
-  subactions?: SykaMenuAction[];
-  /**
-   * iOS 16+ only. Preferred size for submenu elements.
-   */
-  preferredElementSize?: 'small' | 'medium' | 'large';
-};
-
-/**
- * Android-only ripple behavior for the menu trigger.
- *
- * - `auto` uses the system default.
- * - `circle` forces a circular ripple.
- * - `bounded` keeps the ripple within view bounds.
- */
-export type MenuRippleMode = 'auto' | 'circle' | 'bounded';
-
-/**
- * Android-only ripple configuration for the trigger view.
- *
- * - `mode` defaults to `auto`.
- */
-export type MenuRippleConfig = {
-  /**
-   * Ripple shape/behavior for the trigger view.
-   */
-  mode?: MenuRippleMode;
-  /**
-   * Overrides the ripple radius in pixels.
-   */
-  radius?: number;
-  /**
-   * Rounded-corner radius for bounded ripples (pixels).
-   */
-  cornerRadius?: number;
-  /**
-   * Disables the ripple when set to false.
-   */
-  enabled?: boolean;
-};
+export type SykaMenuAction =
+  | {
+      /**
+       * Optional id emitted via `onPressAction`.
+       */
+      id?: string;
+      /**
+       * Primary label shown in the menu.
+       */
+      title: string;
+      /**
+       * When set, this item becomes a divider.
+       */
+      separator?: never;
+      /**
+       * Android only. Overrides item text color unless destructive/disabled.
+       */
+      titleColor?: number | ColorValue;
+      /**
+       * iOS 15+ only. Secondary line below the title.
+       */
+      subtitle?: string;
+      /**
+       * Behavior flags (destructive, disabled, hidden, keepsMenuPresented).
+       */
+      attributes?: MenuAttributes;
+      /**
+       * Checkmark state. Android supports `on`/`off`; `mixed` is iOS only.
+       */
+      state?: MenuState;
+      /**
+       * Icon name. iOS uses SF Symbol or asset; Android uses drawable resource name.
+       */
+      image?: string;
+      /**
+       * Icon tint color.
+       */
+      imageColor?: number | ColorValue;
+      /**
+       * iOS submenu options (ignored on Android).
+       *
+       * - Only applies when `subactions` are present.
+       */
+      menuOptions?: {
+        /**
+         * iOS 15+. Enables single-selection behavior for submenu items.
+         */
+        singleSelection?: boolean;
+        /**
+         * iOS only. Marks the submenu title as destructive.
+         */
+        destructive?: boolean;
+        /**
+         * iOS only. Displays submenu items inline.
+         */
+        displayInline?: boolean;
+      };
+      /**
+       * Nested actions. When set, this item becomes a submenu trigger.
+       */
+      subactions?: SykaMenuAction[];
+      /**
+       * iOS 16+ only. Preferred size for submenu elements.
+       */
+      preferredElementSize?: 'small' | 'medium' | 'large';
+    }
+  | SykaMenuSeparatorAction;
 
 /**
  * Props for SykaMenuView.
@@ -176,11 +152,22 @@ type MenuComponentPropsBase = {
    */
   actions: SykaMenuAction[];
   /**
-   * Menu title (Android + iOS).
-   *
-   * - Android renders a top-level header.
+   * Menu title (iOS only).
    */
   title?: string;
+  /**
+   * Default title color for menu items on Android.
+   *
+   * - Applies to every menu item (including submenu triggers).
+   * - Omit to keep the platform default text colors.
+   * - Submenu trigger titles default to the Android accent when omitted.
+   * - Ignored on iOS; destructive/disabled colors take precedence.
+   */
+  menuItemTextColor?: ColorValue;
+  /**
+   * Android only. Anchors the popup to the right edge.
+   */
+  isAnchoredToRight?: boolean;
   /**
    * If true, opens on long-press instead of single tap.
    */
@@ -198,10 +185,6 @@ type MenuComponentPropsBase = {
     left: number;
     right: number;
   };
-  /**
-   * Android only. Ripple behavior for the trigger view.
-   */
-  ripple?: MenuRippleConfig;
   /**
    * E2E identifier.
    */
@@ -228,13 +211,23 @@ export type MenuComponentRef = {
   show: () => void;
 };
 
-export type ProcessedMenuAction = Omit<
-  SykaMenuAction,
-  'imageColor' | 'androidTitleColor' | 'subactions'
-> & {
-  imageColor: ReturnType<typeof processColor>;
+export type ProcessedMenuAction = {
+  id?: string;
+  title: string;
+  separator?: boolean;
   titleColor: ReturnType<typeof processColor>;
+  subtitle?: string;
+  attributes?: MenuAttributes;
+  state?: MenuState;
+  image?: string;
+  imageColor: ReturnType<typeof processColor>;
+  menuOptions?: {
+    singleSelection?: boolean;
+    destructive?: boolean;
+    displayInline?: boolean;
+  };
   subactions?: ProcessedMenuAction[];
+  preferredElementSize?: 'small' | 'medium' | 'large';
 };
 
 export type NativeMenuComponentProps = {
@@ -246,7 +239,7 @@ export type NativeMenuComponentProps = {
   actionsHash: string;
   title?: string;
   hitSlop?: MenuComponentProps['hitSlop'];
-  ripple?: MenuComponentProps['ripple'];
+  isAnchoredToRight?: boolean;
   shouldOpenOnLongPress?: boolean;
   themeVariant?: string;
   testID?: string;

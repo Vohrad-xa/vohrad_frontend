@@ -22,20 +22,16 @@ class SykaMenuModule : Module() {
         view.setActionsHash(hash)
       }
 
-      Prop("title") { view: SykaMenuView, title: String? ->
-        view.setTitle(title)
+      Prop("isAnchoredToRight") { view: SykaMenuView, isAnchoredToRight: Boolean ->
+        view.setIsAnchoredToRight(isAnchoredToRight)
       }
 
-      Prop("shouldOpenOnLongPress") { view: SykaMenuView, shouldOpenOnLongPress: Boolean? ->
-        view.setIsOpenOnLongPress(shouldOpenOnLongPress == true)
+      Prop("shouldOpenOnLongPress") { view: SykaMenuView, shouldOpenOnLongPress: Boolean ->
+        view.setIsOpenOnLongPress(shouldOpenOnLongPress)
       }
 
-      Prop("hitSlop") { view: SykaMenuView, hitSlop: MenuHitSlop? ->
-        view.setHitSlop(hitSlop ?: MenuHitSlop())
-      }
-
-      Prop("ripple") { view: SykaMenuView, ripple: MenuRippleConfig? ->
-        view.setRippleConfig(ripple ?: MenuRippleConfig())
+      Prop("hitSlop") { view: SykaMenuView, hitSlop: MenuHitSlop ->
+        view.setHitSlop(hitSlop)
       }
 
       Prop("testID") { view: SykaMenuView, testID: String? ->

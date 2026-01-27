@@ -1,30 +1,38 @@
 package expo.modules.sykamoremenu
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.content.res.Resources
+import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.RippleDrawable
 import android.os.Build
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.GestureDetector
+import android.view.Gravity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.TouchDelegate
 import android.view.ViewGroup
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.appcompat.view.ContextThemeWrapper
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.MenuCompat
 import expo.modules.kotlin.AppContext
 import expo.modules.kotlin.viewevent.EventDispatcher
 import expo.modules.kotlin.views.ExpoView
+import java.lang.reflect.Field
 
 class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context, appContext) {
   private var actions: Array<SykaMenuActionRecord> = emptyArray()
   private var actionsHash: String? = null
-  private var title: String? = null
+  private var isAnchoredToRight = false
   private var isMenuDisplayed = false
   private var isOnLongPress = false
+  private var popupMenu: PopupMenu? = null
+  private var popupMenuContext: Context? = null
   private var hitSlopRect: Rect? = null
-  private var menuOverlay: ComposeView? = null
-  private var rippleConfig: MenuRippleConfig = MenuRippleConfig()
-  private var rippleDrawable: RippleDrawable? = null
 
   val onPressAction by EventDispatcher<MenuOnPressActionEvent>()
   val onOpenMenu by EventDispatcher<MenuOnOpenEvent>()
@@ -41,7 +49,7 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
 
       override fun onSingleTapUp(e: MotionEvent): Boolean {
         if (!isOnLongPress) {
-          performClick()
+          prepareMenu()
         }
         return true
       }
@@ -50,13 +58,6 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
 
   init {
     isClickable = true
-    isFocusable = true
-    setOnClickListener {
-      if (!isOnLongPress) {
-        prepareMenu()
-      }
-    }
-    rippleDrawable = applyRipple(this, rippleConfig)
   }
 
   fun show() {
@@ -68,22 +69,6 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
   }
 
   override fun onTouchEvent(ev: MotionEvent): Boolean {
-    val rippleEnabled = rippleConfig.enabled
-    when (ev.actionMasked) {
-      MotionEvent.ACTION_DOWN -> {
-        if (rippleEnabled) {
-          isPressed = true
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            drawableHotspotChanged(ev.x, ev.y)
-          }
-        }
-      }
-      MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-        if (rippleEnabled) {
-          isPressed = false
-        }
-      }
-    }
     gestureDetector.onTouchEvent(ev)
     return true
   }
@@ -91,7 +76,6 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
   override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
     super.onSizeChanged(w, h, oldw, oldh)
     updateTouchDelegate()
-    updateRippleRadius(rippleDrawable, rippleConfig, w, h)
   }
 
   override fun onAttachedToWindow() {
@@ -101,7 +85,11 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
 
   override fun onDetachedFromWindow() {
     super.onDetachedFromWindow()
-    dismissMenu()
+    if (isMenuDisplayed) {
+      popupMenu?.dismiss()
+    }
+    popupMenu = null
+    popupMenuContext = null
   }
 
   fun setActions(actions: Array<SykaMenuActionRecord>) {
@@ -112,8 +100,8 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
     actionsHash = hash
   }
 
-  fun setTitle(title: String?) {
-    this.title = title
+  fun setIsAnchoredToRight(value: Boolean) {
+    isAnchoredToRight = value
   }
 
   fun setIsOpenOnLongPress(isLongPress: Boolean) {
@@ -131,76 +119,144 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
     updateTouchDelegate()
   }
 
-  fun setRippleConfig(config: MenuRippleConfig) {
-    rippleConfig = config
-    rippleDrawable = applyRipple(this, rippleConfig)
-    if (!rippleConfig.enabled) {
-      isPressed = false
-    }
-    updateRippleRadius(rippleDrawable, rippleConfig, width, height)
-  }
-
   private fun prepareMenu() {
-    if (actions.isEmpty() || isMenuDisplayed) {
+    if (actions.isEmpty()) {
       return
     }
 
-    val rootView = rootView as? ViewGroup ?: return
-    val anchor = getAnchorBounds()
-    val overlay = ComposeView(context).apply {
-      layoutParams = ViewGroup.LayoutParams(
-        ViewGroup.LayoutParams.MATCH_PARENT,
-        ViewGroup.LayoutParams.MATCH_PARENT
-      )
-      setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
-      setContent {
-        DynamicTheme {
-          val submenuTitleColor = MaterialTheme.colorScheme.primary
-          SykaDropdownMenu(
-            anchor = anchor,
-            actions = actions.toList(),
-            submenuTitleColor = submenuTitleColor,
-            menuTitle = title,
-            onActionSelected = { action ->
-              onPressAction(MenuOnPressActionEvent(action.id ?: ""))
-              if (action.attributes?.keepsMenuPresented != true) {
-                dismissMenu()
-              }
-            },
-            onDismiss = { dismissMenu() }
-          )
+    val menu = createPopupMenu()
+    popupMenu = menu
+    menu.menu.clear()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      menu.gravity = if (isAnchoredToRight) Gravity.END else Gravity.START
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      menu.setForceShowIcon(true)
+    }
+
+    val submenuTitleColor =
+      (popupMenuContext ?: context).getColor(R.color.sykamore_menu_accent)
+    addMenuActions(menu.menu, actions, submenuTitleColor)
+
+    menu.setOnDismissListener {
+      isMenuDisplayed = false
+      onCloseMenu(MenuOnCloseEvent())
+    }
+
+    isMenuDisplayed = true
+    onOpenMenu(MenuOnOpenEvent())
+    menu.show()
+  }
+
+  private fun prepareMenuItem(
+    menuItem: MenuItem,
+    action: SykaMenuActionRecord,
+    submenuTitleColor: Int
+  ) {
+    val titleColor = action.titleColor
+    val imageName = action.image
+    val imageColor = action.imageColor
+    val attributes = action.attributes
+    val menuState = action.state
+    val isSubmenuTrigger = action.subactions.isNotEmpty()
+    val isDestructive = attributes?.destructive == true
+    val isDisabled = attributes?.disabled == true
+
+    if (imageName != null) {
+      val resourceId: Int = getDrawableIdWithName(imageName)
+      if (resourceId != 0) {
+        val icon = resources.getDrawable(resourceId, context.theme)
+        if (imageColor != null) {
+          icon.setTintList(ColorStateList.valueOf(imageColor))
         }
+        menuItem.icon = icon
       }
     }
 
-    rootView.addView(overlay)
-    menuOverlay = overlay
-    isMenuDisplayed = true
-    onOpenMenu(MenuOnOpenEvent())
-  }
+    if (attributes != null) {
+      menuItem.isEnabled = !isDisabled
+      if (isDisabled) {
+        val disabledColor = 0x77888888
+        menuItem.icon?.setTintList(ColorStateList.valueOf(disabledColor))
+      }
 
-  private fun dismissMenu() {
-    if (!isMenuDisplayed) {
-      return
+      menuItem.isVisible = !attributes.hidden
+
+      if (isDestructive) {
+        menuItem.icon?.setTintList(ColorStateList.valueOf(Color.RED))
+      }
     }
 
-    menuOverlay?.let { overlay ->
-      (overlay.parent as? ViewGroup)?.removeView(overlay)
+    val resolvedTitleColor = when {
+      isDestructive -> Color.RED
+      isDisabled -> 0x77888888
+      titleColor != null -> titleColor
+      isSubmenuTrigger -> submenuTitleColor
+      else -> null
     }
-    menuOverlay = null
-    isMenuDisplayed = false
-    onCloseMenu(MenuOnCloseEvent())
+
+    if (resolvedTitleColor != null) {
+      menuItem.title = getMenuItemTextWithColor(menuItem.title.toString(), resolvedTitleColor)
+    }
+
+    when (menuState) {
+      "on", "off" -> {
+        menuItem.isCheckable = true
+        menuItem.isChecked = menuState == "on"
+      }
+
+      else -> menuItem.isCheckable = false
+    }
+
+    if (action.subactions.isNotEmpty() && menuItem.hasSubMenu()) {
+      menuItem.subMenu?.let { subMenu ->
+        addMenuActions(subMenu, action.subactions, submenuTitleColor)
+      }
+    }
   }
 
-  private fun getAnchorBounds(): MenuAnchor {
-    val location = IntArray(2)
-    getLocationInWindow(location)
-    return MenuAnchor(
-      x = location[0],
-      y = location[1],
-      width = width,
-      height = height
-    )
+  private fun addMenuActions(
+    menu: Menu,
+    actions: Array<SykaMenuActionRecord>,
+    submenuTitleColor: Int
+  ) {
+    MenuCompat.setGroupDividerEnabled(menu, true)
+
+    var groupId = 0
+    var order = 0
+
+    actions.forEach { action ->
+      if (action.separator) {
+        groupId += 1
+        return@forEach
+      }
+
+      val menuItem = if (action.subactions.isNotEmpty()) {
+        menu.addSubMenu(groupId, Menu.NONE, order, action.title).item
+      } else {
+        menu.add(groupId, Menu.NONE, order, action.title)
+      }
+
+      prepareMenuItem(menuItem, action, submenuTitleColor)
+
+      menuItem.setOnMenuItemClickListener {
+        if (!it.hasSubMenu()) {
+          isMenuDisplayed = false
+          onPressAction(MenuOnPressActionEvent(action.id ?: ""))
+          true
+        } else {
+          false
+        }
+      }
+
+      order += 1
+    }
+  }
+
+  private fun createPopupMenu(): PopupMenu {
+    val themedContext = ContextThemeWrapper(context, R.style.SykaMenu_PopupMenuOverlay)
+    popupMenuContext = themedContext
+    return PopupMenu(themedContext, this, Gravity.NO_GRAVITY, 0, R.style.SykaMenu_PopupMenu)
   }
 
   private fun updateTouchDelegate() {
@@ -217,5 +273,35 @@ class SykaMenuView(context: Context, appContext: AppContext) : ExpoView(context,
 
       (parent as? ViewGroup)?.touchDelegate = TouchDelegate(hitRect, this)
     }
+  }
+
+  private fun getDrawableIdWithName(name: String): Int {
+    val appResources: Resources = context.resources
+    var resourceId = appResources.getIdentifier(name, "drawable", context.packageName)
+    if (resourceId == 0) {
+      resourceId = getResId(name, android.R.drawable::class.java)
+    }
+    return resourceId
+  }
+
+  private fun getResId(resName: String?, c: Class<*>): Int {
+    return try {
+      val idField: Field = c.getDeclaredField(resName!!)
+      idField.getInt(idField)
+    } catch (e: Exception) {
+      0
+    }
+  }
+
+  private fun getMenuItemTextWithColor(text: String, color: Int): SpannableStringBuilder {
+    val textWithColor = SpannableStringBuilder()
+    textWithColor.append(text)
+    textWithColor.setSpan(
+      ForegroundColorSpan(color),
+      0,
+      text.length,
+      Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+    return textWithColor
   }
 }
