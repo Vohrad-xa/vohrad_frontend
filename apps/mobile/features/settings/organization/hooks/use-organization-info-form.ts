@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useUpdateTenant} from '@sykamore/store';
-import type {TenantProfileUpdate} from '@sykamore/types';
 import {useBusinessDetails} from './use-business-details';
+import type {TenantProfileUpdate} from '@sykamore/types';
 
 type OrganizationInfoValues = {
   name: string;

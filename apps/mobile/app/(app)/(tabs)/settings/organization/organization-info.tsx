@@ -1,15 +1,16 @@
 import React, {useCallback, useLayoutEffect} from 'react';
 import {Platform} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {KeyboardController} from 'react-native-keyboard-controller';
 import {Palette} from '@/constants';
 import {
   OrganizationInfoView,
   useOrganizationInfoForm,
   useOrganizationSnackbar,
 } from '@/features/settings';
+import {showAlert} from '@/utils';
 import {AppIcons} from '@/utils/icons';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';
-import {showAlert} from '@/utils';
 
 export default function OrganizationInfoScreen() {
   const navigation = useNavigation();
@@ -18,6 +19,7 @@ export default function OrganizationInfoScreen() {
   const {showSnack, snackbar} = useOrganizationSnackbar();
 
   const handleSave = useCallback(async () => {
+    KeyboardController.dismiss({animated: true});
     const changedLabels = await save();
     if (!changedLabels) {
       showAlert({
