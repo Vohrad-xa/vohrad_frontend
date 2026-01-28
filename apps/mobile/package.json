@@ -15,7 +15,8 @@
     "typecheck:android": "tsc --noEmit -p tsconfig.android.json",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json}\"",
     "build": "echo Skipping mobile build in monorepo root. Use \"pnpm --filter mobile run eas:build\" for EAS builds.",
-    "eas:build": "eas build",
+    "eas:build-ios": "eas build --platform ios --profile development",
+    "eas:build-android": "eas build --platform android --profile development",
     "test": "echo \"No test script configured for mobile\""
   },
   "dependencies": {
