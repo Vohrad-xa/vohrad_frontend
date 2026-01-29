@@ -45,22 +45,22 @@ type ProfileRowModel = Readonly<{
 const CONTACT_ROWS = [
   {
     ...PROFILE_FIELDS.email,
-    systemImage: 'envelope' as const,
+    systemImage: 'envelope' as SystemImageName,
   },
   {
     ...PROFILE_FIELDS.phoneNumber,
-    systemImage: 'phone' as const,
+    systemImage: 'phone' as SystemImageName,
   },
   {
     ...PROFILE_FIELDS.password,
-    systemImage: 'key.horizontal' as const,
+    systemImage: 'key.horizontal' as SystemImageName,
   },
 ] as const satisfies readonly ProfileRowModel[];
 
 const ADDRESS_ROWS = [
   {
     ...PROFILE_FIELDS.address,
-    systemImage: 'building.2' as const,
+    systemImage: 'building.2' as SystemImageName,
   },
 ] as const satisfies readonly ProfileRowModel[];
 

@@ -17,8 +17,8 @@ export default function HomeLayout() {
         headerLargeTitle: true,
         headerBackButtonDisplayMode: 'minimal',
         headerTransparent: Platform.OS === 'ios',
-        headerTitleAlign: 'left',
         headerTitleStyle: {
+          fontWeight: 'bold',
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
           fontSize: Platform.OS !== 'ios' ? 26 : undefined,
         },
@@ -29,7 +29,7 @@ export default function HomeLayout() {
         options={{
           headerTitle: 'Dashboard',
           headerTitleStyle: {
-            fontWeight: Platform.OS === 'android' ? 'bold' : undefined,
+            fontWeight: Platform.OS === 'android' ? 'bold' : '600',
             color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
             fontSize: Platform.OS !== 'ios' ? 26 : undefined,
           },

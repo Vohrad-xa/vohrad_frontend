@@ -169,7 +169,9 @@ export function useOrganizationInfoForm() {
     return fields
       .filter(({key, original}) => {
         const value = values[key];
-        return computeUpdateValue(value, normalizeValue(original)) !== undefined;
+        return (
+          computeUpdateValue(value, normalizeValue(original)) !== undefined
+        );
       })
       .map(({label}) => label);
   }, [organization, values]);

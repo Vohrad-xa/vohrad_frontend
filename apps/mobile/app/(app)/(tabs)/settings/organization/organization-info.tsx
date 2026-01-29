@@ -11,6 +11,7 @@ import {
 import {showAlert} from '@/utils';
 import {AppIcons} from '@/utils/icons';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';
+import type {SFSymbol} from 'sf-symbols-typescript';
 
 export default function OrganizationInfoScreen() {
   const navigation = useNavigation();
@@ -43,7 +44,7 @@ export default function OrganizationInfoScreen() {
           type: 'button',
           key: 'save',
           label: 'Save',
-          iosSymbol: AppIcons.actions.save,
+          iosSymbol: AppIcons.actions.save as SFSymbol,
           icon: AppIcons.actions.save,
           variant: 'done',
           tintColor: Platform.OS === 'ios' ? Palette.orange : undefined,

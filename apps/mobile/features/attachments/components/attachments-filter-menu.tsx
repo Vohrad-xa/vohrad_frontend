@@ -227,9 +227,13 @@ export function AttachmentsFilterMenu({
                 id: 'date',
                 title: 'Date',
                 subtitle:
-                  dateSortDirection === 'desc' ? 'Newest first' : 'Oldest first',
+                  dateSortDirection === 'desc'
+                    ? 'Newest first'
+                    : 'Oldest first',
                 state:
-                  activeSort.key === 'date' ? ('on' as const) : ('off' as const),
+                  activeSort.key === 'date'
+                    ? ('on' as const)
+                    : ('off' as const),
                 image: Platform.select({
                   ios: 'clock',
                 }),
@@ -239,7 +243,9 @@ export function AttachmentsFilterMenu({
                 title: 'Name',
                 subtitle: nameSortDirection === 'asc' ? 'A to Z' : 'Z to A',
                 state:
-                  activeSort.key === 'name' ? ('on' as const) : ('off' as const),
+                  activeSort.key === 'name'
+                    ? ('on' as const)
+                    : ('off' as const),
                 image: Platform.select({
                   ios: 'textformat',
                 }),
@@ -252,7 +258,9 @@ export function AttachmentsFilterMenu({
                     ? 'Largest first'
                     : 'Smallest first',
                 state:
-                  activeSort.key === 'size' ? ('on' as const) : ('off' as const),
+                  activeSort.key === 'size'
+                    ? ('on' as const)
+                    : ('off' as const),
                 image: Platform.select({
                   ios: 'externaldrive.badge.icloud',
                 }),

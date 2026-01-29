@@ -20,7 +20,6 @@ import {useTheme} from '@/providers';
 import {Icon} from '@/utils/icons';
 import type {IconName} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {DatePickerMobile} from '../ui/date-picker-mobile';
 import {DatePickerWeb} from '../ui/date-picker-web';
 import {ThemedText} from '../ui/themed-text';
 
@@ -197,24 +196,6 @@ const InfoRowComponent: React.FC<InfoRowProps> = ({
       inputRef.current.focus();
     }
   };
-
-  // === DATE PICKERS ===
-
-  // iOS: Native date picker
-  if (type === 'date' && Platform.OS === 'ios') {
-    return (
-      <DatePickerMobile
-        label={label}
-        selectedDate={selectedDate}
-        onDateChange={handleDateChange}
-        editable={editable}
-        displayValue={displayValue}
-        fallbackLabel={fallbackLabel}
-        scheme={scheme}
-        styles={styles}
-      />
-    );
-  }
 
   // Web: react-datepicker
   if (type === 'date' && Platform.OS === 'web') {

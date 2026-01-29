@@ -1,21 +1,15 @@
-import {useState, forwardRef, useImperativeHandle, useCallback} from 'react';
-import {Platform, Pressable, View} from 'react-native';
-import {TextInput, HelperText} from 'react-native-paper';
+import React, {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useState,
+} from 'react';
+import {Pressable, View} from 'react-native';
+import {HelperText, TextInput} from 'react-native-paper';
 import {useTheme} from '@/providers';
 import {formatDate} from '@/utils';
 import {DatePicker as AndroidDatePicker} from 'sykamore-ui/android';
-import {
-  Host,
-  HStack,
-  Text,
-  DatePicker,
-  datePickerStyle,
-  foregroundStyle,
-  Form,
-  Section,
-  Spacer,
-} from 'sykamore-ui/ios';
-import {useProfile} from '../hooks';
+import {useProfileEdit} from '../hooks';
 
 export type DatePickerContentHandle = {
   save: () => Promise<void>;
@@ -24,54 +18,25 @@ export type DatePickerContentHandle = {
 export const DatePickerContent = forwardRef<DatePickerContentHandle>(
   (_, ref) => {
     const {ds, theme} = useTheme();
-    const {dateOfBirth, updateDateOfBirth} = useProfile();
 
-    const [selectedDate, setSelectedDate] = useState<Date>(
-      dateOfBirth ? new Date(dateOfBirth) : new Date(),
-    );
+    const {dateOfBirth: dob} = useProfileEdit();
+    const {selectedDate, setSelectedDate, save} = dob;
+
     const [showDatePicker, setShowDatePicker] = useState(false);
-
-    const save = useCallback(async () => {
-      await updateDateOfBirth(selectedDate);
-    }, [selectedDate, updateDateOfBirth]);
 
     useImperativeHandle(ref, () => ({save}), [save]);
 
-    const handleDateSelected = useCallback((date: Date | null) => {
-      if (date) {
-        setSelectedDate(date);
-      }
-      setShowDatePicker(false);
-    }, []);
+    const handleDateSelected = useCallback(
+      (date: Date | null) => {
+        if (date) setSelectedDate(date);
+        setShowDatePicker(false);
+      },
+      [setSelectedDate],
+    );
 
     const handleDismiss = useCallback(() => {
       setShowDatePicker(false);
     }, []);
-
-    if (Platform.OS === 'ios') {
-      return (
-        <Host style={{flex: 1}}>
-          <Form>
-            <Section>
-              <HStack>
-                <Text>Date of Birth</Text>
-                <Spacer />
-                <Text modifiers={[foregroundStyle('secondary')]}>
-                  {formatDate(selectedDate.toISOString())}
-                </Text>
-              </HStack>
-            </Section>
-
-            <DatePicker
-              selection={selectedDate}
-              displayedComponents={['date']}
-              onDateChange={setSelectedDate}
-              modifiers={[datePickerStyle('graphical')]}
-            />
-          </Form>
-        </Host>
-      );
-    }
 
     return (
       <View style={{flex: 1, gap: ds.spacing.md}}>
@@ -95,10 +60,12 @@ export const DatePickerContent = forwardRef<DatePickerContentHandle>(
             }
           />
         </Pressable>
+
         <HelperText type="info" visible variant="bodySmall">
           Please do not forget to save your changes after selecting your date of
           birth.
         </HelperText>
+
         {showDatePicker && (
           <AndroidDatePicker
             initialDate={selectedDate.toISOString()}

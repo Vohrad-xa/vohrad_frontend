@@ -1,6 +1,16 @@
 import {Platform} from 'react-native';
 import {Directory, File, Paths} from 'expo-file-system';
-import Share from 'react-native-share';
+
+let Share: typeof import('react-native-share').default | undefined;
+
+if (Platform.OS !== 'web') {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mod = require('react-native-share') as
+    | {default?: typeof Share}
+    | typeof Share;
+  // eslint-disable-next-line
+  Share = (mod as any)?.default ?? mod;
+}
 
 type ShareResult = {
   success: boolean;
@@ -24,11 +34,11 @@ export async function downloadDocumentFile(
   >,
 ): Promise<string> {
   if (Platform.OS === 'web') {
-    // For web, just return the URL - we'll handle downloading directly in share function
+    // For web, just return the URL
     return options.sourceUrl;
   }
 
-  // Share uses RNShare's FileProvider, which only exposes cache/download paths on Android.
+  // Share uses RNShare's FileProvider
   const downloadsDir = new Directory(Paths.cache, 'downloads');
   ensureDirectoryExists(downloadsDir);
 
@@ -75,6 +85,10 @@ export async function shareDownloadedFile(
     throw new Error('Missing local file path for sharing');
   }
 
+  if (!Share) {
+    throw new Error('Share is not available on this platform');
+  }
+
   const uri = normalizeShareUri(localPath);
   const mimeType = _mimeType?.trim() ?? undefined;
 
@@ -101,6 +115,9 @@ export async function shareDownloadedFiles(
   }
 
   const urls = localPaths.map(normalizeShareUri);
+  if (!Share) {
+    throw new Error('Share is not available on this platform');
+  }
 
   return Share.open({
     urls,

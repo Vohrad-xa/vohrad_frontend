@@ -37,10 +37,7 @@ function processAction(
 const defaultHitslop = {top: 0, left: 0, bottom: 0, right: 0};
 
 const SykaMenuView = forwardRef<MenuComponentRef, MenuComponentProps>(
-  (
-    {actions, hitSlop = defaultHitslop, menuItemTextColor, ...props},
-    ref,
-  ) => {
+  ({actions, hitSlop = defaultHitslop, menuItemTextColor, ...props}, ref) => {
     const processedActions = actions.map<ProcessedMenuAction>((action) =>
       processAction(action, menuItemTextColor),
     );

@@ -3,5 +3,5 @@
   "compilerOptions": {
     "moduleSuffixes": [".android", ".native", ""]
   },
-  "exclude": ["docs", "**/*.ios.*"]
+  "exclude": ["docs", "**/*.ios.*", "**/*.web.*"]
 }

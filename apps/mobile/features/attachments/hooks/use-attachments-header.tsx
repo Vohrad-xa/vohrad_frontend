@@ -243,9 +243,9 @@ export function useAttachmentsHeader({
   useLayoutEffect(() => {
     navigation.setOptions({
       ...headerActionsOptions,
-      headerLeft,
+      ...(isSelectionMode ? {headerLeft} : {}),
     });
-  }, [navigation, headerActionsOptions, headerLeft]);
+  }, [navigation, headerActionsOptions, headerLeft, isSelectionMode]);
 
   useLayoutEffect(() => {
     navigation.setOptions({headerTitle});

@@ -8,8 +8,4 @@ internal typealias ModifierArray = [ModifierType]
 public class UIBaseViewProps: ExpoSwiftUI.ViewProps {
   @Field var testID: String?
   @Field var modifiers: ModifierArray?
-
-  public required init() {
-    super.init()
-  }
 }

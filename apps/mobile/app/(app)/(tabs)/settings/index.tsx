@@ -1,9 +1,9 @@
 import {memo, useCallback, useMemo} from 'react';
-import {Platform, ScrollView, StyleSheet} from 'react-native';
+import {ScrollView, StyleSheet} from 'react-native';
+import {useActionSheet} from '@expo/react-native-action-sheet';
 import {type Href} from 'expo-router';
 import {List, type ListItemProps} from 'react-native-paper';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
-import {AppearanceSheet, presentAppearanceSheet} from '@/features/settings';
 import {useAuth, useTheme} from '@/providers';
 import {useSafeRouter} from '@/utils';
 import {
@@ -24,6 +24,12 @@ type SettingsRowModel = Readonly<{
   onPress?: () => void;
   danger?: boolean;
 }>;
+
+const APPEARANCE_OPTIONS = [
+  {id: 'light', label: 'Light'},
+  {id: 'dark', label: 'Dark'},
+  {id: 'system', label: 'System'},
+] as const;
 
 const SettingsRow = memo((row: SettingsRowModel) => {
   const router = useSafeRouter();
@@ -58,7 +64,8 @@ SettingsRow.displayName = 'SettingsRow';
 
 export default function SettingsModal() {
   const {logout} = useAuth();
-  const showAppearanceMenu = Platform.OS !== 'android';
+  const {preference, setScheme, ds, theme} = useTheme();
+  const {showActionSheetWithOptions} = useActionSheet();
 
   const handleLogout = useCallback(() => {
     showConfirmAlert({
@@ -72,8 +79,39 @@ export default function SettingsModal() {
   }, [logout]);
 
   const handleOpenAppearance = useCallback(() => {
-    void presentAppearanceSheet();
-  }, []);
+    const options = [...APPEARANCE_OPTIONS.map((o) => o.label), 'Cancel'];
+    const cancelButtonIndex = options.length - 1;
+
+    showActionSheetWithOptions(
+      {
+        title: 'Appearance',
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex: cancelButtonIndex,
+        containerStyle: {
+          backgroundColor: theme.modalBackground,
+          borderTopEndRadius: ds.borderRadius.xxxl,
+          borderTopStartRadius: ds.borderRadius.xxxl,
+        },
+        textStyle: {color: theme.text},
+        titleTextStyle: {color: theme.muted},
+      },
+      (index) => {
+        if (index == null || index === cancelButtonIndex) return;
+
+        const next = APPEARANCE_OPTIONS[index]?.id;
+        if (next && next !== preference) setScheme(next);
+      },
+    );
+  }, [
+    ds.borderRadius.xxxl,
+    preference,
+    setScheme,
+    showActionSheetWithOptions,
+    theme.modalBackground,
+    theme.muted,
+    theme.text,
+  ]);
 
   const ROWS = useMemo<readonly SettingsRowModel[]>(
     () => [
@@ -110,8 +148,7 @@ export default function SettingsModal() {
         title: 'Appearance',
         description: 'Change app theme',
         icon: AppIcons.ui.appearance,
-        right: showAppearanceMenu ? 'appearance' : undefined,
-        onPress: showAppearanceMenu ? undefined : handleOpenAppearance,
+        onPress: handleOpenAppearance,
       },
       {
         id: 'preferences',
@@ -171,7 +208,7 @@ export default function SettingsModal() {
         danger: true,
       },
     ],
-    [handleLogout, handleOpenAppearance, showAppearanceMenu],
+    [handleLogout, handleOpenAppearance],
   );
 
   return (
@@ -179,7 +216,6 @@ export default function SettingsModal() {
       {ROWS.map((row) => (
         <SettingsRow key={row.id} {...row} />
       ))}
-      <AppearanceSheet />
     </ScrollView>
   );
 }

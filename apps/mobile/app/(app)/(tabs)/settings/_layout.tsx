@@ -122,7 +122,10 @@ function SettingsStack() {
           }}
         />
 
-        <Stack.Screen name="profile" options={{headerShown: false}} />
+        <Stack.Screen
+          name="profile"
+          options={{headerShown: Platform.OS === 'ios'}}
+        />
         <Stack.Screen name="organization" options={{headerShown: false}} />
       </Stack>
     </ScreenLoadingWrapper>

@@ -1,11 +1,13 @@
 import {useEffect, useRef} from 'react';
-import {useSegments} from 'expo-router';
+import {Platform} from 'react-native';
+import {useSegments, Tabs} from 'expo-router';
 import {
   NativeTabs,
   type SFSymbolIcon,
   type MaterialIcon,
 } from 'expo-router/unstable-native-tabs';
 import {useHaptic, useTheme} from '@/providers';
+import {AppIcons, Icon, type IconName} from '@/utils/icons';
 
 const TAB_NAMES = ['dashboard', 'items', 'vault', 'settings'] as const;
 type TabName = (typeof TAB_NAMES)[number];
@@ -16,6 +18,7 @@ type TabConfig = {
   title: string;
   sf: SFSymbolIcon['sf'];
   md: MaterialIcon['md'];
+  icon: IconName;
 };
 
 const INITIAL_TAB: TabName = 'dashboard';
@@ -35,6 +38,7 @@ const TABS: readonly TabConfig[] = [
       selected: 'house.fill',
     },
     md: 'home',
+    icon: AppIcons.domain.home,
   },
   {
     name: 'items',
@@ -44,6 +48,7 @@ const TABS: readonly TabConfig[] = [
       selected: 'square.grid.2x2.fill',
     },
     md: 'grid_view',
+    icon: AppIcons.domain.item,
   },
   {
     name: 'vault',
@@ -53,6 +58,7 @@ const TABS: readonly TabConfig[] = [
       selected: 'folder.fill',
     },
     md: 'folder_zip',
+    icon: AppIcons.domain.vault,
   },
   {
     name: 'settings',
@@ -62,16 +68,21 @@ const TABS: readonly TabConfig[] = [
       selected: 'gearshape.fill',
     },
     md: 'settings',
+    icon: AppIcons.domain.settings,
   },
 ];
 
 export default function TabLayout() {
   const segments = useSegments<TabsRoute>();
+
   const {triggerHaptic} = useHaptic();
-  const {theme} = useTheme();
+
+  const {theme, ds} = useTheme();
+
   const prev = useRef<TabName | null>(null);
 
   useEffect(() => {
+    if (Platform.OS === 'web') return;
     if (segments[1] !== '(tabs)') return;
 
     const active: TabName = isTabName(segments[2]) ? segments[2] : INITIAL_TAB;
@@ -79,6 +90,42 @@ export default function TabLayout() {
     if (prev.current && prev.current !== active) triggerHaptic('light');
     prev.current = active;
   }, [segments, triggerHaptic]);
+
+  if (Platform.OS === 'web') {
+    return (
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarPosition: 'left',
+          tabBarVariant: 'material',
+          tabBarActiveBackgroundColor: theme.tabIndicator,
+          tabBarStyle: {
+            justifyContent: 'space-evenly',
+            backgroundColor: theme.tabBar,
+            minWidth: 150,
+          },
+          tabBarItemStyle: {
+            marginVertical: 10,
+          },
+          tabBarLabelStyle: {color: theme.text},
+        }}
+      >
+        {TABS.map((t) => (
+          <Tabs.Screen
+            key={t.name}
+            name={t.name}
+            options={{
+              title: t.title,
+              tabBarInactiveBackgroundColor: theme.ripple,
+              tabBarIcon: () => (
+                <Icon name={t.icon} color={theme.text} size={ds.iconSize.lg} />
+              ),
+            }}
+          />
+        ))}
+      </Tabs>
+    );
+  }
 
   return (
     <NativeTabs

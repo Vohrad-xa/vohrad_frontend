@@ -1,9 +1,5 @@
-import {Host, Text} from '@/modules/sykamore-ui';
+import {View} from 'react-native';
 
 export default function PasswordModal() {
-  return (
-    <Host style={{flex: 1}}>
-      <Text>Password</Text>
-    </Host>
-  );
+  return <View style={{flex: 1}} />;
 }

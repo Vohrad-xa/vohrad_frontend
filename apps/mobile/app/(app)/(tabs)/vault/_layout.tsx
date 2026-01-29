@@ -53,26 +53,25 @@ function VaultStack() {
       ({
         headerShown: true,
         headerShadowVisible: false,
-        headerLargeTitle: true,
         headerBackButtonDisplayMode: 'minimal' as const,
         headerTransparent: Platform.OS === 'ios',
-        headerTintColor: theme.icon,
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
           fontSize: Platform.OS !== 'ios' ? 26 : undefined,
         },
       }) satisfies NativeStackNavigationOptions,
-    [theme.icon, theme.headerAndroid],
+    [theme.headerAndroid],
   );
 
   const indexOptions = useMemo(
-    () => ({
-      headerTitle: 'Vault',
-      headerSearchBarOptions: {
-        ...headerSearchBarOptions,
-        placement: 'stacked' as const,
-      },
-    }),
+    () =>
+      ({
+        headerTitle: 'Vault',
+        headerSearchBarOptions: {
+          ...headerSearchBarOptions,
+          placement: 'stacked' as const,
+        },
+      }) satisfies NativeStackNavigationOptions,
     [headerSearchBarOptions],
   );
 
