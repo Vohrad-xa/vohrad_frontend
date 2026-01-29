@@ -1,5 +1,4 @@
-import React, {useCallback, useLayoutEffect} from 'react';
-import {Platform} from 'react-native';
+import {useCallback, useLayoutEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardController} from 'react-native-keyboard-controller';
 import {Palette} from '@/constants';
@@ -47,7 +46,7 @@ export default function OrganizationInfoScreen() {
           iosSymbol: AppIcons.actions.save as SFSymbol,
           icon: AppIcons.actions.save,
           variant: 'done',
-          tintColor: Platform.OS === 'ios' ? Palette.orange : undefined,
+          tintColor: Palette.orange,
           disabled: !hasChanges || isSaving,
           onPress: () => {
             void handleSave();
