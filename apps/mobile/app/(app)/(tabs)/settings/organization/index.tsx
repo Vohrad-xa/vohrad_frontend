@@ -1,6 +1,6 @@
 import React from 'react';
-import {BusinessDetailsContent} from '@/features/settings';
+import {TenantDetailsContent} from '@/features/settings';
 
-export default function BusinessDetailsScreen() {
-  return <BusinessDetailsContent />;
+export default function TenantDetailsScreen() {
+  return <TenantDetailsContent />;
 }

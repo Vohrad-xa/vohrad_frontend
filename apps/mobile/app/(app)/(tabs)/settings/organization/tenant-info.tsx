@@ -3,20 +3,20 @@ import {useNavigation} from '@react-navigation/native';
 import {KeyboardController} from 'react-native-keyboard-controller';
 import {Palette} from '@/constants';
 import {
-  OrganizationInfoView,
-  useOrganizationInfoForm,
-  useOrganizationSnackbar,
+  TenantInfoView,
+  useTenantInfoForm,
+  useTenantSnackbar,
 } from '@/features/settings';
 import {showAlert} from '@/utils';
 import {AppIcons} from '@/utils/icons';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';
 import type {SFSymbol} from 'sf-symbols-typescript';
 
-export default function OrganizationInfoScreen() {
+export default function TenantInfoScreen() {
   const navigation = useNavigation();
   const {values, handleFieldChange, hasChanges, isSaving, save} =
-    useOrganizationInfoForm();
-  const {showSnack, snackbar} = useOrganizationSnackbar();
+    useTenantInfoForm();
+  const {showSnack, snackbar} = useTenantSnackbar();
 
   const handleSave = useCallback(async () => {
     KeyboardController.dismiss({animated: true});
@@ -63,7 +63,7 @@ export default function OrganizationInfoScreen() {
 
   return (
     <>
-      <OrganizationInfoView values={values} onFieldChange={handleFieldChange} />
+      <TenantInfoView values={values} onFieldChange={handleFieldChange} />
       {snackbar}
     </>
   );

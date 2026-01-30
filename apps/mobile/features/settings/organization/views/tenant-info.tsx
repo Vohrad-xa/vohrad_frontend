@@ -1,7 +1,7 @@
 import {ScrollView, View} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {useTheme} from '@/providers';
-export type OrganizationInfoValues = {
+export type tenantInfoValues = {
   name: string;
   email: string;
   phone: string;
@@ -14,15 +14,12 @@ export type OrganizationInfoValues = {
   country: string;
 };
 
-type OrganizationInfoViewProps = {
-  values: OrganizationInfoValues;
-  onFieldChange: (key: keyof OrganizationInfoValues, value: string) => void;
+type TenantInfoViewProps = {
+  values: tenantInfoValues;
+  onFieldChange: (key: keyof tenantInfoValues, value: string) => void;
 };
 
-export function OrganizationInfoView({
-  values,
-  onFieldChange,
-}: OrganizationInfoViewProps) {
+export function TenantInfoView({values, onFieldChange}: TenantInfoViewProps) {
   const {ds} = useTheme();
 
   return (

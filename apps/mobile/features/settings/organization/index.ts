@@ -1,7 +1,7 @@
-export {BusinessDetailsContent} from './views/business-details';
-export {OrganizationInfoView} from './views/organization-info';
-export {useOrganizationInfoForm} from './hooks/use-organization-info-form';
-export {useOrganizationSnackbar} from './hooks/use-organization-snackbar';
+export {TenantDetailsContent} from './views/tenant';
+export {TenantInfoView} from './views/tenant-info';
+export {useTenantInfoForm} from './hooks/use-tenant-info-form';
+export {useTenantSnackbar} from './hooks/use-tenant-snackbar';
 export {useLicenseInfo} from './hooks/use-license-info';
 export {LicenseView} from './views/license';
-export {BusinessHours as PreferencesContent} from './views/business-hours';
+export {BusinessHours} from './views/business-hours';

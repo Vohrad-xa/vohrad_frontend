@@ -6,10 +6,10 @@ import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
 import {useTheme} from '@/providers';
 import {makeStyleFactory, useSafeRouter, AppIcons} from '@/utils';
-import {ORGANIZATION_FIELDS} from '../constants/organization-constants';
-import {useBusinessDetails} from '../hooks/use-business-details';
+import {TENANT_FIELDS} from '../constants/organization-constants';
+import {useTenantDetails} from '../hooks/use-tenant-details';
 
-type BusinessRowModel = Readonly<{
+type tenantRowModel = Readonly<{
   title: string;
   description: string;
   href: Href;
@@ -18,7 +18,7 @@ type BusinessRowModel = Readonly<{
 // Extracting the type of props passed to List.Item's right callback
 type RightProps = Parameters<NonNullable<ListItemProps['right']>>[0];
 
-const BusinessRow = memo(({title, description, href}: BusinessRowModel) => {
+const TenantRow = memo(({title, description, href}: tenantRowModel) => {
   const router = useSafeRouter();
 
   return (
@@ -34,17 +34,16 @@ const BusinessRow = memo(({title, description, href}: BusinessRowModel) => {
   );
 });
 
-export const BusinessDetailsContent = () => {
+export const TenantDetailsContent = () => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
-  const {title, subtitle, avatarLabel} = useBusinessDetails();
+  const {title, subtitle, avatarLabel} = useTenantDetails();
 
-  const BUSINESS_ROWS = [
-    ORGANIZATION_FIELDS.info,
-    ORGANIZATION_FIELDS.license,
-    ORGANIZATION_FIELDS.businessHours,
-  ] as const satisfies readonly BusinessRowModel[];
-
+  const TENANT_ROWS = [
+    TENANT_FIELDS.info,
+    TENANT_FIELDS.license,
+    TENANT_FIELDS.businessHours,
+  ] as const satisfies readonly tenantRowModel[];
   const renderAvatar = useCallback(
     (props: RightProps) => (
       <Avatar.Text
@@ -71,15 +70,15 @@ export const BusinessDetailsContent = () => {
 
       <List.Section style={styles.section}>
         <Surface mode="flat" style={[styles.surface, styles.surfaceTop]}>
-          <BusinessRow {...BUSINESS_ROWS[0]} />
+          <TenantRow {...TENANT_ROWS[0]} />
         </Surface>
 
         <Surface mode="flat" style={styles.surface}>
-          <BusinessRow {...BUSINESS_ROWS[1]} />
+          <TenantRow {...TENANT_ROWS[1]} />
         </Surface>
 
         <Surface mode="flat" style={[styles.surface, styles.surfaceBottom]}>
-          <BusinessRow {...BUSINESS_ROWS[2]} />
+          <TenantRow {...TENANT_ROWS[2]} />
         </Surface>
       </List.Section>
     </ScrollView>
@@ -116,5 +115,5 @@ const createStyles = makeStyleFactory(
   (ds, theme) => themeKey(theme, ds),
 );
 
-BusinessRow.displayName = 'BusinessRow';
-BusinessDetailsContent.displayName = 'BusinessDetailsContent';
+TenantRow.displayName = 'TenantRow';
+TenantDetailsContent.displayName = 'TenantDetailsContent';

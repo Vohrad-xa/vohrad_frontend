@@ -1,9 +1,9 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useUpdateTenantProfile} from '@sykamore/store';
-import {useBusinessDetails} from './use-business-details';
+import {useTenantDetails} from './use-tenant-details';
 import type {TenantProfileUpdate} from '@sykamore/types';
 
-type OrganizationInfoValues = {
+type TenantInfoValues = {
   name: string;
   email: string;
   phone: string;
@@ -30,9 +30,9 @@ function computeUpdateValue(currentValue: string, originalValue: string) {
   return current;
 }
 
-export function useOrganizationInfoForm() {
+export function useTenantInfoForm() {
   const {
-    organization,
+    tenant,
     name,
     email,
     phone,
@@ -43,11 +43,11 @@ export function useOrganizationInfoForm() {
     province,
     postalCode,
     country,
-  } = useBusinessDetails();
+  } = useTenantDetails();
   const {mutateAsync: updateTenantProfile, isPending: isLoading} =
     useUpdateTenantProfile();
 
-  const initialValues = useMemo<OrganizationInfoValues>(
+  const initialValues = useMemo<TenantInfoValues>(
     () => ({
       name,
       email,
@@ -74,14 +74,14 @@ export function useOrganizationInfoForm() {
     ],
   );
 
-  const [values, setValues] = useState<OrganizationInfoValues>(initialValues);
+  const [values, setValues] = useState<TenantInfoValues>(initialValues);
 
   useEffect(() => {
     setValues(initialValues);
   }, [initialValues]);
 
   const handleFieldChange = useCallback(
-    (key: keyof OrganizationInfoValues, value: string) => {
+    (key: keyof TenantInfoValues, value: string) => {
       setValues((prev) => ({...prev, [key]: value}));
     },
     [],
@@ -92,25 +92,25 @@ export function useOrganizationInfoForm() {
 
     const telephone = computeUpdateValue(
       values.phone,
-      normalizeValue(organization?.telephone),
+      normalizeValue(tenant?.telephone),
     );
     if (telephone !== undefined) updateData.telephone = telephone;
 
     const websiteValue = computeUpdateValue(
       values.website,
-      normalizeValue(organization?.website),
+      normalizeValue(tenant?.website),
     );
     if (websiteValue !== undefined) updateData.website = websiteValue;
 
     const streetValue = computeUpdateValue(
       values.street,
-      normalizeValue(organization?.street),
+      normalizeValue(tenant?.street),
     );
     if (streetValue !== undefined) updateData.street = streetValue;
 
     const streetNumberValue = computeUpdateValue(
       values.streetNumber,
-      normalizeValue(organization?.street_number),
+      normalizeValue(tenant?.street_number),
     );
     if (streetNumberValue !== undefined) {
       updateData.street_number = streetNumberValue;
@@ -118,53 +118,53 @@ export function useOrganizationInfoForm() {
 
     const cityValue = computeUpdateValue(
       values.city,
-      normalizeValue(organization?.city),
+      normalizeValue(tenant?.city),
     );
     if (cityValue !== undefined) updateData.city = cityValue;
 
     const provinceValue = computeUpdateValue(
       values.province,
-      normalizeValue(organization?.province),
+      normalizeValue(tenant?.province),
     );
     if (provinceValue !== undefined) updateData.province = provinceValue;
 
     const postalCodeValue = computeUpdateValue(
       values.postalCode,
-      normalizeValue(organization?.postal_code),
+      normalizeValue(tenant?.postal_code),
     );
     if (postalCodeValue !== undefined) updateData.postal_code = postalCodeValue;
 
     const countryValue = computeUpdateValue(
       values.country,
-      normalizeValue(organization?.country),
+      normalizeValue(tenant?.country),
     );
     if (countryValue !== undefined) updateData.country = countryValue;
 
     return updateData;
-  }, [organization, values]);
+  }, [tenant, values]);
 
   const getChangedFieldLabels = useCallback(() => {
     const fields: Array<{
-      key: keyof OrganizationInfoValues;
+      key: keyof TenantInfoValues;
       label: string;
       original: string | null | undefined;
     }> = [
-      {key: 'phone', label: 'Phone', original: organization?.telephone},
-      {key: 'website', label: 'Website', original: organization?.website},
-      {key: 'street', label: 'Street', original: organization?.street},
+      {key: 'phone', label: 'Phone', original: tenant?.telephone},
+      {key: 'website', label: 'Website', original: tenant?.website},
+      {key: 'street', label: 'Street', original: tenant?.street},
       {
         key: 'streetNumber',
         label: 'Street Number',
-        original: organization?.street_number,
+        original: tenant?.street_number,
       },
-      {key: 'city', label: 'City', original: organization?.city},
-      {key: 'province', label: 'Province', original: organization?.province},
+      {key: 'city', label: 'City', original: tenant?.city},
+      {key: 'province', label: 'Province', original: tenant?.province},
       {
         key: 'postalCode',
         label: 'Postal Code',
-        original: organization?.postal_code,
+        original: tenant?.postal_code,
       },
-      {key: 'country', label: 'Country', original: organization?.country},
+      {key: 'country', label: 'Country', original: tenant?.country},
     ];
 
     return fields
@@ -175,7 +175,7 @@ export function useOrganizationInfoForm() {
         );
       })
       .map(({label}) => label);
-  }, [organization, values]);
+  }, [tenant, values]);
 
   const hasChanges = useMemo(() => {
     const labels = getChangedFieldLabels();

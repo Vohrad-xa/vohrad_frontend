@@ -1,6 +1,6 @@
 import type {Href} from 'expo-router';
 
-export const ORGANIZATION_FIELDS = {
+export const TENANT_FIELDS = {
   info: {
     title: 'Organization info',
     description: 'Name, email, phone, address',

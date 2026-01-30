@@ -12,7 +12,7 @@ type UseOrganizationSnackbarResult = {
 /**
  * Organization snackbar helper for update actions.
  */
-export function useOrganizationSnackbar(): UseOrganizationSnackbarResult {
+export function useTenantSnackbar(): UseOrganizationSnackbarResult {
   const insets = useSafeAreaInsets();
   const {ds} = useTheme();
   const [snackbarVisible, setSnackbarVisible] = useState(false);
