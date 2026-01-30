@@ -16,23 +16,27 @@ export default function AppSettingsScreen() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      <Surface style={styles.card} elevation={1} mode="flat">
-        <List.Item
-          style={styles.listItem}
-          title="Biometric Unlock"
-          description="Enable Face ID / Fingerprint"
-          right={() => <BiometricToggle />}
-        />
-
-        {Platform.OS !== 'web' && (
+      <List.Section style={styles.section}>
+        <Surface style={styles.topSurface} mode="flat">
           <List.Item
             style={styles.listItem}
-            title="Haptic Feedback"
-            description="Enable haptic feedback"
-            right={() => <HapticToggle />}
+            title="Biometric Unlock"
+            description="Enable Face ID / Fingerprint"
+            right={() => <BiometricToggle />}
           />
+        </Surface>
+
+        {Platform.OS !== 'web' && (
+          <Surface style={[styles.bottomSurface]} mode="flat">
+            <List.Item
+              style={styles.listItem}
+              title="Haptic Feedback"
+              description="Enable haptic feedback"
+              right={() => <HapticToggle />}
+            />
+          </Surface>
         )}
-      </Surface>
+      </List.Section>
     </ScrollView>
   );
 }
@@ -45,19 +49,22 @@ const createStyles = makeStyleFactory(
         padding: ds.spacing.md,
       },
 
-      card: {
-        borderRadius: ds.borderRadius.xxxl,
+      section: {
+        gap: ds.spacing.xxs,
+      },
+
+      topSurface: {
+        borderTopLeftRadius: ds.borderRadius.xxxl,
+        borderTopRightRadius: ds.borderRadius.xxxl,
+      },
+
+      bottomSurface: {
+        borderBottomLeftRadius: ds.borderRadius.xxxl,
+        borderBottomRightRadius: ds.borderRadius.xxxl,
       },
 
       listItem: {
         paddingRight: ds.spacing.sm,
-        paddingTop: ds.spacing.xs,
-        paddingBottom: ds.spacing.xs,
-      },
-
-      iconContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

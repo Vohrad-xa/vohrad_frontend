@@ -10,6 +10,7 @@ import {
   getInitials,
   formatDate,
   useSafeRouter,
+  AppIcons,
 } from '@/utils';
 import {PROFILE_FIELDS} from '../constants/profile-constants';
 import {useProfile} from '../hooks';
@@ -28,6 +29,7 @@ type ProfileRowModel = Readonly<{
   >;
 }>;
 
+// Extracting the type of props passed to List.Item's right callback
 type RightProps = Parameters<NonNullable<ListItemProps['right']>>[0];
 
 const ProfileRow = memo(
@@ -46,7 +48,9 @@ const ProfileRow = memo(
     }, [router, href]);
 
     const renderRight = useCallback(
-      (props: RightProps) => <List.Icon {...props} icon="chevron-right" />,
+      (props: RightProps) => (
+        <List.Icon {...props} icon={AppIcons.actions.forward} />
+      ),
       [],
     );
 
@@ -123,9 +127,8 @@ export function ProfileContent() {
         label={initials}
         accessibilityLabel={`${displayName} avatar`}
         {...props}
-        style={props.style}
         color={Palette.white}
-        size={45}
+        size={48}
       />
     ),
     [displayName, initials],
@@ -133,17 +136,15 @@ export function ProfileContent() {
   return (
     <ScrollView style={styles.container}>
       <List.Section>
-        <Surface elevation={0} style={styles.surface}>
-          <List.Item
-            title={<ThemedText variant="title1">{displayName}</ThemedText>}
-            description={
-              <ThemedText variant="footnote" colorToken="muted">
-                {roleText} • Since {memberSince}
-              </ThemedText>
-            }
-            right={renderAvatar}
-          />
-        </Surface>
+        <List.Item
+          title={<ThemedText variant="title1">{displayName}</ThemedText>}
+          description={
+            <ThemedText variant="footnote" colorToken="muted">
+              {roleText} • Since {memberSince}
+            </ThemedText>
+          }
+          right={renderAvatar}
+        />
       </List.Section>
 
       <List.Section style={{gap: ds.spacing.xxs}}>

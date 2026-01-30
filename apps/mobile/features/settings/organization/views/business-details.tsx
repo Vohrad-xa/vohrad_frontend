@@ -1,95 +1,97 @@
-import React from 'react';
+import React, {memo, useCallback} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
-import {router} from 'expo-router';
+import {type Href} from 'expo-router';
 import {Avatar, List, Surface, type ListItemProps} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
-import {Palette} from '@/constants';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils/style-factory';
+import {makeStyleFactory, useSafeRouter, AppIcons} from '@/utils';
+import {ORGANIZATION_FIELDS} from '../constants/organization-constants';
 import {useBusinessDetails} from '../hooks/use-business-details';
 
+type BusinessRowModel = Readonly<{
+  title: string;
+  description: string;
+  href: Href;
+}>;
+
+// Extracting the type of props passed to List.Item's right callback
 type RightProps = Parameters<NonNullable<ListItemProps['right']>>[0];
+
+const BusinessRow = memo(({title, description, href}: BusinessRowModel) => {
+  const router = useSafeRouter();
+
+  const onPress = useCallback(() => {
+    router.push(href);
+  }, [router, href]);
+
+  const renderRight = useCallback(
+    (props: RightProps) => (
+      <List.Icon {...props} icon={AppIcons.actions.forward} />
+    ),
+    [],
+  );
+
+  return (
+    <List.Item
+      title={title}
+      description={description}
+      right={renderRight}
+      onPress={onPress}
+      borderless
+    />
+  );
+});
 
 export const BusinessDetailsContent = () => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
   const {title, subtitle, avatarLabel} = useBusinessDetails();
 
+  const BUSINESS_ROWS = [
+    ORGANIZATION_FIELDS.info,
+    ORGANIZATION_FIELDS.license,
+    ORGANIZATION_FIELDS.businessHours,
+  ] as const satisfies readonly BusinessRowModel[];
+
+  const renderAvatar = useCallback(
+    (props: RightProps) => (
+      <Avatar.Text
+        label={avatarLabel}
+        accessibilityLabel={`${title} avatar`}
+        {...props}
+        color={Palette.white}
+        size={48}
+      />
+    ),
+    [avatarLabel, title],
+  );
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <List.Section>
-        <Surface elevation={0} style={styles.surface}>
-          <List.Item
-            title={<ThemedText variant="title1">{title}</ThemedText>}
-            description={<ThemedText variant="caption">{subtitle}</ThemedText>}
-            right={(props: RightProps) => (
-              <Avatar.Text
-                label={avatarLabel}
-                {...props}
-                style={props.style}
-                color={Palette.white}
-                size={45}
-              />
-            )}
-          />
-        </Surface>
+        <List.Item
+          title={<ThemedText variant="title1">{title}</ThemedText>}
+          description={<ThemedText variant="caption">{subtitle}</ThemedText>}
+          right={renderAvatar}
+        />
       </List.Section>
 
       <List.Section style={styles.section}>
         <Surface elevation={1} mode="flat" style={styles.surfaceTop}>
-          <List.Item
-            title="Organization info"
-            description="Name, email, phone, address"
-            borderless
-            onPress={() =>
-              router.push(
-                '/(app)/(tabs)/settings/organization/organization-info',
-              )
-            }
-            right={(props: RightProps) => (
-              <List.Icon icon="chevron-right" {...props} />
-            )}
-          />
+          <BusinessRow {...BUSINESS_ROWS[0]} />
         </Surface>
 
-        <Surface elevation={1} mode="flat" style={{overflow: 'hidden'}}>
-          <List.Item
-            title="License & Billing"
-            description="Plan, payment method"
-            borderless
-            onPress={() =>
-              router.push('/(app)/(tabs)/settings/organization/license')
-            }
-            right={(props: RightProps) => (
-              <List.Icon icon="chevron-right" {...props} />
-            )}
-          />
+        <Surface elevation={1} mode="flat" style={styles.surface}>
+          <BusinessRow {...BUSINESS_ROWS[1]} />
         </Surface>
 
-        <Surface elevation={1} mode="flat" style={{overflow: 'hidden'}}>
-          <List.Item
-            title="Business hours"
-            description="Set your business hours"
-            borderless
-            onPress={() =>
-              router.push('/(app)/(tabs)/settings/organization/business-hours')
-            }
-            right={(props: RightProps) => (
-              <List.Icon icon="chevron-right" {...props} />
-            )}
-          />
-        </Surface>
-
-        <Surface elevation={1} mode="flat" style={styles.surfaceBottom}>
-          <List.Item
-            title="Manage members"
-            description="Manage users in your organization"
-            borderless
-            right={(props: RightProps) => (
-              <List.Icon icon="chevron-right" {...props} />
-            )}
-          />
+        <Surface
+          elevation={1}
+          mode="flat"
+          style={[styles.surface, styles.surfaceBottom]}
+        >
+          <BusinessRow {...BUSINESS_ROWS[2]} />
         </Surface>
       </List.Section>
     </ScrollView>
@@ -102,7 +104,7 @@ const createStyles = makeStyleFactory(
       container: {flex: 1},
 
       content: {
-        paddingHorizontal: ds.spacing.lg,
+        paddingHorizontal: ds.spacing.md,
       },
 
       section: {
@@ -110,7 +112,6 @@ const createStyles = makeStyleFactory(
       },
 
       surface: {
-        borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
 
@@ -129,4 +130,5 @@ const createStyles = makeStyleFactory(
   (ds, theme) => themeKey(theme, ds),
 );
 
+BusinessRow.displayName = 'BusinessRow';
 BusinessDetailsContent.displayName = 'BusinessDetailsContent';

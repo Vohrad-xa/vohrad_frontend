@@ -88,7 +88,7 @@ const _Tokens = {
   },
 
   dark: {
-    primary: Palette.Greige,
+    primary: Palette.slateblue,
     secondary: Palette.Greige,
     tertiary: Palette.slateblue,
     tint: Palette.mushroom,
