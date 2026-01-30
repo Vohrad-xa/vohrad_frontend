@@ -14,15 +14,14 @@ export {
 } from './slices/auth';
 
 export {
-  tenantSelectors,
-  useOrganizationDetails,
-  useUpdateTenant,
+  useFetchTenant,
+  useFetchLicenseInfo,
+  useUpdateTenantProfile,
   useUpdateTenantSettings,
-  usePreferencesManager,
-  useOrganizationManager,
-  useTenantLicenseInfo,
-  useFetchTenantLicenseInfo,
+  useTenantManager,
   useLicenseInfoManager,
+  buildTenantQueryKey,
+  buildTenantLicenseQueryKey,
   type TenantSlice,
 } from './slices/tenant';
 

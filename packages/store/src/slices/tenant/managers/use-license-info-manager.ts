@@ -1,43 +1,43 @@
-import {useCallback, useEffect} from 'react';
-import {useTenantLicenseInfo, useFetchTenantLicenseInfo} from '../hooks';
+import {useCallback, useMemo} from 'react';
+import {useFetchLicenseInfo} from '../hooks';
 
 type UseLicenseInfoManagerOptions = {
-  fetchOnMount?: boolean;
+  enabled?: boolean;
 };
 
+/**
+ * License info manager - orchestrates license query with computed values.
+ *
+ * - ONLY reads from TanStack Query (like attachments pattern)
+ * - Provides computed license properties
+ * - Clean orchestrator, no UI logic
+ */
 export function useLicenseInfoManager(
   options: UseLicenseInfoManagerOptions = {},
 ) {
-  const {fetchOnMount = false} = options;
-  const licenseInfo = useTenantLicenseInfo();
-  const {fetchLicenseInfo, isLoading} = useFetchTenantLicenseInfo();
-
-  useEffect(() => {
-    if (fetchOnMount && !licenseInfo) {
-      void fetchLicenseInfo();
-    }
-  }, [fetchOnMount, licenseInfo, fetchLicenseInfo]);
+  const {enabled = false} = options;
+  const {data: licenseInfo, isLoading, refetch} = useFetchLicenseInfo(enabled);
 
   const refresh = useCallback(async () => {
-    return await fetchLicenseInfo();
-  }, [fetchLicenseInfo]);
+    await refetch();
+  }, [refetch]);
 
-  const isLicenseActive = licenseInfo?.is_active ?? false;
-  const hasLicense = licenseInfo?.has_license ?? false;
-  const seatsRemaining = licenseInfo?.seats_available ?? 0;
-  const seatsUsed = licenseInfo?.seats_used ?? 0;
-  const seatsTotal = licenseInfo?.seats_total ?? 0;
-  const license = licenseInfo?.license ?? null;
+  const computed = useMemo(
+    () => ({
+      isLicenseActive: licenseInfo?.is_active ?? false,
+      hasLicense: licenseInfo?.has_license ?? false,
+      seatsRemaining: licenseInfo?.seats_available ?? 0,
+      seatsUsed: licenseInfo?.seats_used ?? 0,
+      seatsTotal: licenseInfo?.seats_total ?? 0,
+      license: licenseInfo?.license ?? null,
+    }),
+    [licenseInfo],
+  );
 
   return {
     licenseInfo,
-    license,
     isLoading,
     refresh,
-    hasLicense,
-    isLicenseActive,
-    seatsRemaining,
-    seatsUsed,
-    seatsTotal,
+    ...computed,
   };
 }

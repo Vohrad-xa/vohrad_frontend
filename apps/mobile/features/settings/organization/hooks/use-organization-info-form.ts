@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useMemo, useState} from 'react';
-import {useUpdateTenant} from '@sykamore/store';
+import {useUpdateTenantProfile} from '@sykamore/store';
 import {useBusinessDetails} from './use-business-details';
 import type {TenantProfileUpdate} from '@sykamore/types';
 
@@ -44,7 +44,8 @@ export function useOrganizationInfoForm() {
     postalCode,
     country,
   } = useBusinessDetails();
-  const {updateTenantProfile, isLoading} = useUpdateTenant();
+  const {mutateAsync: updateTenantProfile, isPending: isLoading} =
+    useUpdateTenantProfile();
 
   const initialValues = useMemo<OrganizationInfoValues>(
     () => ({

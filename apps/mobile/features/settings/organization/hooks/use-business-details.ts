@@ -1,8 +1,11 @@
 import {useMemo} from 'react';
-import {useOrganizationManager} from '@sykamore/store';
+import {useTenantManager} from '@sykamore/store';
 
+/**
+ * Provides computed organization/tenant details.
+ */
 export function useBusinessDetails() {
-  const {organization} = useOrganizationManager(false);
+  const {tenant: organization} = useTenantManager();
 
   const title = organization?.sub_domain ?? 'Organization';
   const subtitle = organization?.email ?? '';

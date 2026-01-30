@@ -1,13 +1,13 @@
 import {useLicenseInfoManager} from '@sykamore/store';
 
 type UseLicenseInfoOptions = {
-  fetchOnMount?: boolean;
+  enabled?: boolean;
 };
 
 export function useLicenseInfo(options: UseLicenseInfoOptions = {}) {
-  const {fetchOnMount = true} = options;
+  const {enabled = true} = options;
 
-  const manager = useLicenseInfoManager({fetchOnMount});
+  const manager = useLicenseInfoManager({enabled});
 
   return {
     licenseInfo: manager.licenseInfo,

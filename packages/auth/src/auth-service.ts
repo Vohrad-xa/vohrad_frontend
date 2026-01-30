@@ -1,4 +1,4 @@
-import {useAuthStore} from '@sykamore/store';
+import {useAuthStore, queryClient} from '@sykamore/store';
 import type {AuthTokens} from '@sykamore/types';
 import {ApiError, validation} from '@sykamore/types';
 import {authApi, tenantApi, errorManager} from '@sykamore/api-client';
@@ -77,8 +77,10 @@ export class AuthService {
       // Fetch tenant data after successful login
       try {
         const tenant = await tenantApi.getTenantInfo();
-        const {setTenant} = useAuthStore.getState();
-        setTenant(tenant);
+
+        // Update BOTH caches (one-time on login)
+        queryClient.setQueryData(['tenant', 'info'], tenant); // TanStack Query
+        useAuthStore.getState().setTenant(tenant); // Zustand (persistence)
       } catch (error) {
         console.warn('Failed to fetch tenant info:', error);
       }
@@ -135,8 +137,10 @@ export class AuthService {
       // Fetch tenant data after successful login
       try {
         const tenant = await tenantApi.getTenantInfo();
-        const {setTenant} = useAuthStore.getState();
-        setTenant(tenant);
+
+        // Update BOTH caches (one-time on login)
+        queryClient.setQueryData(['tenant', 'info'], tenant); // TanStack Query
+        useAuthStore.getState().setTenant(tenant); // Zustand (persistence)
       } catch (error) {
         console.warn('Failed to fetch tenant info:', error);
       }
