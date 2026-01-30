@@ -146,9 +146,8 @@ export const NavigationThemes = {
     dark: false,
     colors: {
       primary: Tokens.light.secondary,
-      background:
-        Platform.OS === 'android' ? Palette.fog : Tokens.light.background,
-      card: Platform.OS === 'android' ? Palette.fog : Tokens.light.background,
+      background: Platform.OS === 'ios' ? Tokens.light.background : Palette.fog,
+      card: Platform.OS === 'ios' ? Tokens.light.background : Palette.fog,
       text: Tokens.light.text,
       border: Tokens.light.border,
       notification: Palette.red,
