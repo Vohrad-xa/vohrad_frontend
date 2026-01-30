@@ -43,23 +43,14 @@ const ProfileRow = memo(
   }: ProfileRowModel) => {
     const router = useSafeRouter();
 
-    const onPress = useCallback(() => {
-      router.push(href);
-    }, [router, href]);
-
-    const renderRight = useCallback(
-      (props: RightProps) => (
-        <List.Icon {...props} icon={AppIcons.actions.forward} />
-      ),
-      [],
-    );
-
     return (
       <List.Item
         title={title}
         description={valueText}
-        right={renderRight}
-        onPress={onPress}
+        right={(props) => (
+          <List.Icon {...props} icon={AppIcons.actions.forward} />
+        )}
+        onPress={() => router.push(href)}
         accessibilityRole="button"
         accessibilityLabel={a11yLabel}
         accessibilityHint={a11yHint}
@@ -125,6 +116,7 @@ export function ProfileContent() {
     (props: RightProps) => (
       <Avatar.Text
         label={initials}
+        labelStyle={{letterSpacing: 2}}
         accessibilityLabel={`${displayName} avatar`}
         {...props}
         color={Palette.white}
@@ -148,31 +140,27 @@ export function ProfileContent() {
       </List.Section>
 
       <List.Section style={{gap: ds.spacing.xxs}}>
-        <Surface elevation={1} mode="flat" style={styles.surfaceTop}>
+        <Surface mode="flat" style={styles.surfaceTop}>
           <ProfileRow {...PERSONAL_ROWS[0]} />
         </Surface>
 
-        <Surface elevation={1} mode="flat" style={styles.surfaceBottom}>
+        <Surface mode="flat" style={styles.surfaceBottom}>
           <ProfileRow {...PERSONAL_ROWS[1]} />
         </Surface>
       </List.Section>
 
       <List.Section style={{gap: ds.spacing.xxs}}>
-        <Surface elevation={1} mode="flat" style={styles.surfaceTop}>
+        <Surface mode="flat" style={styles.surfaceTop}>
           <ProfileRow {...CONTACT_ROWS[0]} />
         </Surface>
 
-        <Surface elevation={1} mode="flat" style={styles.surfaceBottom}>
+        <Surface mode="flat" style={styles.surfaceBottom}>
           <ProfileRow {...CONTACT_ROWS[1]} />
         </Surface>
       </List.Section>
 
       <List.Section style={{gap: ds.spacing.xxs}}>
-        <Surface
-          elevation={1}
-          mode="flat"
-          style={[styles.surfaceTop, styles.surfaceBottom]}
-        >
+        <Surface mode="flat" style={[styles.surfaceTop, styles.surfaceBottom]}>
           <ProfileRow {...ADDRESS_ROWS[0]} />
         </Surface>
       </List.Section>
@@ -185,19 +173,15 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {flex: 1},
 
-      surface: {
-        borderRadius: ds.borderRadius.xxxl,
-      },
-
       surfaceTop: {
-        borderTopLeftRadius: ds.borderRadius.xxxl,
-        borderTopRightRadius: ds.borderRadius.xxxl,
+        borderTopLeftRadius: ds.borderRadius.xxl,
+        borderTopRightRadius: ds.borderRadius.xxl,
         overflow: 'hidden',
       },
 
       surfaceBottom: {
-        borderBottomLeftRadius: ds.borderRadius.xxxl,
-        borderBottomRightRadius: ds.borderRadius.xxxl,
+        borderBottomLeftRadius: ds.borderRadius.xxl,
+        borderBottomRightRadius: ds.borderRadius.xxl,
         overflow: 'hidden',
       },
     }),

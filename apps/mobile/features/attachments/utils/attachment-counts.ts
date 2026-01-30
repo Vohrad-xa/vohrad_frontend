@@ -5,7 +5,6 @@ export type AttachmentKindCount = Record<AttachmentKind, number>;
 const ATTACHMENT_KIND_KEYS: readonly AttachmentKind[] = [
   'image',
   'document',
-  'video',
   'archive',
   'other',
 ];
@@ -13,7 +12,6 @@ const ATTACHMENT_KIND_KEYS: readonly AttachmentKind[] = [
 export const ZERO_ATTACHMENT_COUNTS: AttachmentKindCount = {
   image: 0,
   document: 0,
-  video: 0,
   archive: 0,
   other: 0,
 };

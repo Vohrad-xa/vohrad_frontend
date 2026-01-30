@@ -21,23 +21,14 @@ type RightProps = Parameters<NonNullable<ListItemProps['right']>>[0];
 const BusinessRow = memo(({title, description, href}: BusinessRowModel) => {
   const router = useSafeRouter();
 
-  const onPress = useCallback(() => {
-    router.push(href);
-  }, [router, href]);
-
-  const renderRight = useCallback(
-    (props: RightProps) => (
-      <List.Icon {...props} icon={AppIcons.actions.forward} />
-    ),
-    [],
-  );
-
   return (
     <List.Item
       title={title}
       description={description}
-      right={renderRight}
-      onPress={onPress}
+      right={(props) => (
+        <List.Icon {...props} icon={AppIcons.actions.forward} />
+      )}
+      onPress={() => router.push(href)}
       borderless
     />
   );
@@ -58,6 +49,7 @@ export const BusinessDetailsContent = () => {
     (props: RightProps) => (
       <Avatar.Text
         label={avatarLabel}
+        labelStyle={{letterSpacing: 2}}
         accessibilityLabel={`${title} avatar`}
         {...props}
         color={Palette.white}
@@ -78,19 +70,15 @@ export const BusinessDetailsContent = () => {
       </List.Section>
 
       <List.Section style={styles.section}>
-        <Surface elevation={1} mode="flat" style={styles.surfaceTop}>
+        <Surface mode="flat" style={[styles.surface, styles.surfaceTop]}>
           <BusinessRow {...BUSINESS_ROWS[0]} />
         </Surface>
 
-        <Surface elevation={1} mode="flat" style={styles.surface}>
+        <Surface mode="flat" style={styles.surface}>
           <BusinessRow {...BUSINESS_ROWS[1]} />
         </Surface>
 
-        <Surface
-          elevation={1}
-          mode="flat"
-          style={[styles.surface, styles.surfaceBottom]}
-        >
+        <Surface mode="flat" style={[styles.surface, styles.surfaceBottom]}>
           <BusinessRow {...BUSINESS_ROWS[2]} />
         </Surface>
       </List.Section>
@@ -116,15 +104,13 @@ const createStyles = makeStyleFactory(
       },
 
       surfaceTop: {
-        borderTopLeftRadius: ds.borderRadius.xxxl,
-        borderTopRightRadius: ds.borderRadius.xxxl,
-        overflow: 'hidden',
+        borderTopLeftRadius: ds.borderRadius.xxl,
+        borderTopRightRadius: ds.borderRadius.xxl,
       },
 
       surfaceBottom: {
-        borderBottomLeftRadius: ds.borderRadius.xxxl,
-        borderBottomRightRadius: ds.borderRadius.xxxl,
-        overflow: 'hidden',
+        borderBottomLeftRadius: ds.borderRadius.xxl,
+        borderBottomRightRadius: ds.borderRadius.xxl,
       },
     }),
   (ds, theme) => themeKey(theme, ds),
