@@ -1,8 +1,8 @@
-import {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {useNavigationState} from '@react-navigation/native';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import {QueryProvider} from '@sykamore/store';
 import {Stack} from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
@@ -24,8 +24,6 @@ import {
 } from '@/providers';
 
 SplashScreen.preventAutoHideAsync();
-
-const queryClient = new QueryClient();
 
 function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
   const {isAuthenticated, authReady} = useAuth();
@@ -72,7 +70,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <KeyboardProvider>
-        <QueryClientProvider client={queryClient}>
+        <QueryProvider>
           <AppThemeProvider>
             <PaperThemeProvider>
               <HapticProvider>
@@ -93,7 +91,7 @@ export default function RootLayout() {
               </HapticProvider>
             </PaperThemeProvider>
           </AppThemeProvider>
-        </QueryClientProvider>
+        </QueryProvider>
       </KeyboardProvider>
     </GestureHandlerRootView>
   );

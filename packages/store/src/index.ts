@@ -148,3 +148,6 @@ export type {
   UserSortKey,
   UserSortState,
 } from '@sykamore/types';
+
+export {queryClient, QueryProvider} from './query';
+export {onlineManager, focusManager} from '@tanstack/react-query';

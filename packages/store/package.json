@@ -26,15 +26,15 @@
     "lint": "eslint --config ../../eslint.packages.config.js \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.90.7",
     "@sykamore/api-client": "workspace:*",
     "@sykamore/types": "workspace:*",
+    "@tanstack/react-query": "^5.90.7",
+    "react-native": "^0.83.1",
     "use-debounce": "^10.0.6",
     "zustand": "^4.3.9"
   },
   "peerDependencies": {
-    "react": "^19.1.0",
-    "react-native": ">=0.81.5"
+    "react": "^19.2.0"
   },
   "peerDependenciesMeta": {
     "react-native": {
