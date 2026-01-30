@@ -1,6 +1,7 @@
 import {ScrollView, View} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import {useTheme} from '@/providers';
+
 export type tenantInfoValues = {
   name: string;
   email: string;

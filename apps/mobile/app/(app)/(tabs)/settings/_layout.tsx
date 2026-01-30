@@ -121,7 +121,7 @@ function SettingsStack() {
           name="profile"
           options={{headerShown: Platform.OS === 'ios'}}
         />
-        <Stack.Screen name="organization" options={{headerShown: false}} />
+        <Stack.Screen name="tenant" options={{headerShown: false}} />
       </Stack>
     </ScreenLoadingWrapper>
   );

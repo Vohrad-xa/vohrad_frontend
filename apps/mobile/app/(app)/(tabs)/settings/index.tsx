@@ -124,10 +124,10 @@ export default function SettingsModal() {
       },
       {
         id: 'organization',
-        title: 'Business Details',
-        description: 'Manage business information',
+        title: 'Tenant',
+        description: 'Manage your organization settings',
         icon: AppIcons.domain.organization,
-        href: '/(app)/(tabs)/settings/organization',
+        href: '/(app)/(tabs)/settings/tenant',
       },
       {
         id: 'users',

@@ -45,7 +45,7 @@ export default function SettingsModal() {
             icon={AppIcons.domain.organization}
             iconColorToken="accentBlue"
             title="Business Details"
-            onPress={() => router.push('/(app)/(tabs)/settings/organization')}
+            onPress={() => router.push('/(app)/(tabs)/settings/tenant')}
           />
           <ListSection.Row
             icon={AppIcons.ui.userManagement}
