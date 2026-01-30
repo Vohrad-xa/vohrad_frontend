@@ -3,7 +3,7 @@ import {ScrollView, StyleSheet} from 'react-native';
 import {type Href} from 'expo-router';
 import {Surface, Avatar, List, type ListItemProps} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
 import {
   makeStyleFactory,
@@ -28,7 +28,6 @@ type ProfileRowModel = Readonly<{
   >;
 }>;
 
-type LeftProps = Parameters<NonNullable<ListItemProps['left']>>[0];
 type RightProps = Parameters<NonNullable<ListItemProps['right']>>[0];
 
 const ProfileRow = memo(
@@ -61,7 +60,6 @@ const ProfileRow = memo(
         accessibilityLabel={a11yLabel}
         accessibilityHint={a11yHint}
         {...descriptionProps}
-        style={{paddingRight: 8}}
         borderless
       />
     );
@@ -120,46 +118,63 @@ export function ProfileContent() {
   ] as const satisfies readonly ProfileRowModel[];
 
   const renderAvatar = useCallback(
-    (props: LeftProps) => (
+    (props: RightProps) => (
       <Avatar.Text
         label={initials}
         accessibilityLabel={`${displayName} avatar`}
+        {...props}
         style={props.style}
+        color={Palette.white}
+        size={45}
       />
     ),
     [displayName, initials],
   );
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <Surface style={styles.surface} mode="flat">
-        <List.Item
-          title={<ThemedText variant="title1">{displayName}</ThemedText>}
-          description={
-            <ThemedText variant="caption">
-              {roleText} • Since {memberSince}
-            </ThemedText>
-          }
-          left={renderAvatar}
-        />
-      </Surface>
+    <ScrollView style={styles.container}>
+      <List.Section>
+        <Surface elevation={0} style={styles.surface}>
+          <List.Item
+            title={<ThemedText variant="title1">{displayName}</ThemedText>}
+            description={
+              <ThemedText variant="footnote" colorToken="muted">
+                {roleText} • Since {memberSince}
+              </ThemedText>
+            }
+            right={renderAvatar}
+          />
+        </Surface>
+      </List.Section>
 
-      <Surface style={styles.sectionSurface} elevation={1} mode="flat">
-        {PERSONAL_ROWS.map((row) => (
-          <ProfileRow key={row.href} {...row} />
-        ))}
-      </Surface>
+      <List.Section style={{gap: ds.spacing.xxs}}>
+        <Surface elevation={1} mode="flat" style={styles.surfaceTop}>
+          <ProfileRow {...PERSONAL_ROWS[0]} />
+        </Surface>
 
-      <Surface style={styles.sectionSurface} elevation={1} mode="flat">
-        {CONTACT_ROWS.map((row) => (
-          <ProfileRow key={row.href} {...row} />
-        ))}
-        {ADDRESS_ROWS.map((row) => (
-          <ProfileRow key={row.href} {...row} />
-        ))}
-      </Surface>
+        <Surface elevation={1} mode="flat" style={styles.surfaceBottom}>
+          <ProfileRow {...PERSONAL_ROWS[1]} />
+        </Surface>
+      </List.Section>
+
+      <List.Section style={{gap: ds.spacing.xxs}}>
+        <Surface elevation={1} mode="flat" style={styles.surfaceTop}>
+          <ProfileRow {...CONTACT_ROWS[0]} />
+        </Surface>
+
+        <Surface elevation={1} mode="flat" style={styles.surfaceBottom}>
+          <ProfileRow {...CONTACT_ROWS[1]} />
+        </Surface>
+      </List.Section>
+
+      <List.Section style={{gap: ds.spacing.xxs}}>
+        <Surface
+          elevation={1}
+          mode="flat"
+          style={[styles.surfaceTop, styles.surfaceBottom]}
+        >
+          <ProfileRow {...ADDRESS_ROWS[0]} />
+        </Surface>
+      </List.Section>
     </ScrollView>
   );
 }
@@ -168,15 +183,20 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {flex: 1},
-      contentContainer: {gap: ds.spacing.lg},
 
       surface: {
         borderRadius: ds.borderRadius.xxxl,
+      },
+
+      surfaceTop: {
+        borderTopLeftRadius: ds.borderRadius.xxxl,
+        borderTopRightRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
 
-      sectionSurface: {
-        borderRadius: ds.borderRadius.xxxl,
+      surfaceBottom: {
+        borderBottomLeftRadius: ds.borderRadius.xxxl,
+        borderBottomRightRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
     }),

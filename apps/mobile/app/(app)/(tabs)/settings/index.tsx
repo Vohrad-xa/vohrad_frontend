@@ -151,20 +151,6 @@ export default function SettingsModal() {
         onPress: handleOpenAppearance,
       },
       {
-        id: 'preferences',
-        title: 'Preferences',
-        description: 'Set your app preferences',
-        icon: AppIcons.ui.preference,
-        href: '/(app)/(tabs)/settings/preferences',
-      },
-      {
-        id: 'plan',
-        title: 'Plan',
-        description: 'View and manage your plan',
-        icon: AppIcons.ui.plan,
-        href: '/(app)/(tabs)/settings/plan',
-      },
-      {
         id: 'language',
         title: 'App Language',
         description: 'Select your preferred language',

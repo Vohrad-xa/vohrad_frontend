@@ -61,10 +61,10 @@ const _Tokens = {
 
     background: Palette.white,
     modalBackground: Palette.fog,
-    card: Palette.fog,
+    card: Palette.white,
     text: Palette.slate,
     icon: Palette.gray[600],
-    tabBar: Palette.fog,
+    tabBar: Palette.white,
     tabIndicator: Palette.lightBlue,
     ripple: Palette.blackA10,
 
@@ -146,8 +146,9 @@ export const NavigationThemes = {
     dark: false,
     colors: {
       primary: Tokens.light.secondary,
-      background: Tokens.light.background,
-      card: Tokens.light.background,
+      background:
+        Platform.OS === 'android' ? Palette.fog : Tokens.light.background,
+      card: Platform.OS === 'android' ? Palette.fog : Tokens.light.background,
       text: Tokens.light.text,
       border: Tokens.light.border,
       notification: Palette.red,
@@ -158,10 +159,8 @@ export const NavigationThemes = {
     dark: true,
     colors: {
       primary: Palette.blue,
-      background:
-        Platform.OS === 'android' ? Palette.obsidian : Tokens.dark.background,
-      card:
-        Platform.OS === 'android' ? Palette.obsidian : Tokens.dark.background,
+      background: Tokens.dark.background,
+      card: Tokens.dark.background,
       text: Tokens.dark.text,
       border: Tokens.dark.border,
       notification: Palette.red,

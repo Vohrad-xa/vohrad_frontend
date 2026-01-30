@@ -41,7 +41,7 @@ export default function ProfileLayout() {
           fontWeight: ds.fontWeight.bold,
         },
         contentStyle: {
-          padding: Platform.OS !== 'ios' ? ds.spacing.md : undefined,
+          paddingHorizontal: Platform.OS !== 'ios' ? ds.spacing.md : undefined,
         },
       }}
     >

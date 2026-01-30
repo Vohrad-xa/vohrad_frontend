@@ -90,17 +90,12 @@ function SettingsStack() {
     <ScreenLoadingWrapper>
       <Stack screenOptions={stackScreenOptions}>
         <Stack.Screen name="index" options={indexOptions} />
-        <Stack.Screen
-          name="preferences"
-          options={{title: 'Preferences', headerBackButtonMenuEnabled: false}}
-        />
         <Stack.Screen name="language" options={{title: 'App Language'}} />
         <Stack.Screen name="support" options={{title: 'Report an Issue'}} />
         <Stack.Screen name="app-settings" options={{title: 'App Settings'}} />
         <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
         <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
         <Stack.Screen name="about" options={{title: 'About'}} />
-        <Stack.Screen name="plan" options={{title: 'Plan'}} />
 
         <Stack.Screen name="users/index" options={usersIndexOptions} />
         <Stack.Screen

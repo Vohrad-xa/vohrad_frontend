@@ -6,7 +6,7 @@ import {FAB, List, TextInput} from 'react-native-paper';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
 import {AppIcons, formatDate, makeStyleFactory} from '@/utils';
-import {useLicenseInfo} from './use-license-info';
+import {useLicenseInfo} from '../hooks/use-license-info';
 
 export function LicenseView() {
   const {ds, theme} = useTheme();
@@ -92,8 +92,8 @@ const createStyles = makeStyleFactory(
 
       fab: {
         position: 'absolute',
-        right: ds.spacing.xl,
-        bottom: ds.spacing.xl,
+        right: ds.spacing.sm,
+        bottom: ds.spacing.sm,
       },
       keyInput: {
         marginHorizontal: ds.spacing.lg,

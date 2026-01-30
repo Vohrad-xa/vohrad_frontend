@@ -38,6 +38,7 @@ export default function SettingsModal() {
             onPress={() => router.push('/(app)/(tabs)/settings/profile')}
           />
         </ListSection>
+
         {/* Organization Section */}
         <ListSection>
           <ListSection.Row
@@ -51,18 +52,6 @@ export default function SettingsModal() {
             iconColorToken="accentGreen"
             title="User Management"
             onPress={() => router.push('/(app)/(tabs)/settings/users')}
-          />
-          <ListSection.Row
-            icon={AppIcons.ui.settings}
-            iconColorToken="accentOrange"
-            title="Preferences"
-            onPress={() => router.push('/(app)/(tabs)/settings/preferences')}
-          />
-          <ListSection.Row
-            icon={AppIcons.ui.plan}
-            iconColorToken="accentOrange"
-            title="Plan"
-            onPress={() => router.push('/(app)/(tabs)/settings/plan')}
           />
         </ListSection>
 

@@ -23,12 +23,17 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
         primary: theme.primary,
         onPrimary: theme.text,
         primaryContainer: theme.secondary,
-        onPrimaryContainer: theme.secondaryContainer,
+        onPrimaryContainer: theme.text,
 
         secondary: theme.tertiary,
         onSecondary: theme.text,
         secondaryContainer: theme.secondaryContainer,
         onSecondaryContainer: theme.text,
+
+        tertiary: theme.tertiary,
+        onTertiary: theme.text,
+        tertiaryContainer: theme.secondaryContainer,
+        onTertiaryContainer: theme.text,
 
         // Screens / surfaces
         background: theme.background,
@@ -40,7 +45,7 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
         // Surface with elevation
         elevation: {
           ...base.colors.elevation,
-          level0: theme.background,
+          level0: 'transparent',
           level1: surfaceBase,
           level2: surfaceBase,
           level3: surfaceBase,

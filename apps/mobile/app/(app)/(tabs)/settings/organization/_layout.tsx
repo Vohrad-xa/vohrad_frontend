@@ -31,6 +31,8 @@ export default function OrganizationLayout() {
     <Stack screenOptions={screenOptions}>
       <Stack.Screen name="index" options={{title: 'Organization'}} />
       <Stack.Screen name="organization-info" options={{title: 'Details'}} />
+      <Stack.Screen name="business-hours" options={{title: 'Business Hours'}} />
+      <Stack.Screen name="license" options={{title: 'License & Billing'}} />
     </Stack>
   );
 }
