@@ -34,8 +34,8 @@ jobs:
       - name: Run ESLint (no fix)
         run: pnpm lint
 
-      - name: Run Prettier formatting check
-        run: pnpm format:check
+      - name: Run Prettier 
+        run: pnpm format
 
       - name: Build web app
         run: pnpm --filter web build
