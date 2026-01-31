@@ -52,7 +52,7 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
                 }),
               ]}
             >
-              {phoneNumber || 'No phone number'}
+              {phoneNumber ?? 'No phone number'}
             </Text>
             <Text
               modifiers={[

@@ -86,8 +86,8 @@ export function ProfileContent() {
   const roleText = profileDetails?.role ?? 'Member';
   const birthDateText = dateOfBirth ? formatDate(dateOfBirth) : NOT_SET;
 
-  const emailText = email || NOT_SET;
-  const phoneText = phoneNumber || NOT_SET;
+  const emailText = email ?? NOT_SET;
+  const phoneText = phoneNumber ?? NOT_SET;
   const shortAddress =
     [city, postalCode, country].filter(Boolean).join(' ') || NOT_SET;
 

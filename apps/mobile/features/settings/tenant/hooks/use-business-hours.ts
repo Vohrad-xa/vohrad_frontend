@@ -37,7 +37,7 @@ export function useBusinessHours() {
   const organizationTimezone = organization?.timezone ?? '';
   const businessHourStart = organization?.business_hour_start ?? '';
   const businessHourEnd = organization?.business_hour_end ?? '';
-  const businessHoursEnabled = Boolean(businessHourStart || businessHourEnd);
+  const businessHoursEnabled = Boolean(businessHourStart ?? businessHourEnd);
 
   const activeTimePickerDate = useMemo(() => {
     if (!activeTimePicker) return null;
@@ -87,8 +87,8 @@ export function useBusinessHours() {
         });
       } else {
         await updateTenantSettings({
-          business_hour_start: businessHourStart || DEFAULT_BUSINESS_HOUR_START,
-          business_hour_end: businessHourEnd || DEFAULT_BUSINESS_HOUR_END,
+          business_hour_start: businessHourStart ?? DEFAULT_BUSINESS_HOUR_START,
+          business_hour_end: businessHourEnd ?? DEFAULT_BUSINESS_HOUR_END,
         });
       }
     },
