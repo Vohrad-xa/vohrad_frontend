@@ -1,23 +1,43 @@
-import {useMemo} from 'react';
+import {memo, useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {List, Chip, Surface} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
-import {makeStyleFactory, Icon, AppIcons} from '@/utils';
+import {makeStyleFactory, AppIcons, type IconName} from '@/utils';
 import type {AttachmentKindCount} from '../utils/attachment-counts';
 import type {AttachmentKind} from '@sykamore/types';
 
-interface AttachmentKindTile {
+interface AttachmentTileModel {
   kind: AttachmentKind;
   label: string;
   count: number;
-  icon: (typeof AppIcons.files)[keyof typeof AppIcons.files];
+  icon: IconName;
   onPress?: () => void;
 }
 
-type AttachmentKindKey = AttachmentKindTile['kind'];
+type AttachmentKindKey = AttachmentTileModel['kind'];
+
+const AttachmentTile = memo(
+  ({label, count, icon, onPress}: AttachmentTileModel) => {
+    const description =
+      count > 0 ? `${count} ${count === 1 ? 'file' : 'files'}` : 'None';
+
+    return (
+      <List.Item
+        title={label}
+        description={description}
+        left={(props) => <List.Icon {...props} icon={icon} />}
+        right={(props) => (
+          <List.Icon {...props} icon={AppIcons.actions.forward} />
+        )}
+        onPress={onPress}
+        borderless
+      />
+    );
+  },
+);
 
 interface AttachmentFilterChip {
   label: string;
@@ -41,7 +61,7 @@ export function AttachmentsOverview({
   const {ds, theme} = useTheme();
   const styles = useStyles(ds, theme);
 
-  const tiles = useMemo<AttachmentKindTile[]>(
+  const tiles = useMemo<AttachmentTileModel[]>(
     () => [
       {
         kind: 'image' as const,
@@ -91,49 +111,34 @@ export function AttachmentsOverview({
           </Chip>
         </View>
       ) : (
-        <ThemedText
-          fontWeight="bold"
-          colorToken="muted"
-          style={styles.headerText}
-        >
+        <ThemedText variant="title2" style={styles.headerText}>
           All Attachments
         </ThemedText>
       )}
 
-      <Surface elevation={1} mode="flat" style={styles.surface}>
-        {tiles.map((tile) => (
-          <List.Item
-            key={tile.kind}
-            title={tile.label}
-            style={styles.listItem}
-            description={
-              tile.count > 0
-                ? `${tile.count} ${tile.count === 1 ? 'file' : 'files'}`
-                : 'None'
-            }
-            left={() => (
-              <Icon name={tile.icon} size="xl" style={styles.leftSlot} />
-            )}
-            right={() => (
-              <Icon
-                name={AppIcons.actions.forward}
-                size="lg"
-                colorToken="muted"
-                style={styles.rightSlot}
-              />
-            )}
-            onPress={tile.onPress}
-            rippleColor={theme.ripple}
-            borderless
-          />
-        ))}
-      </Surface>
+      <List.Section style={{gap: ds.spacing.xxs}}>
+        <Surface mode="flat" style={styles.surfaceTop}>
+          <AttachmentTile {...tiles[0]} />
+        </Surface>
+
+        <Surface mode="flat">
+          <AttachmentTile {...tiles[1]} />
+        </Surface>
+
+        <Surface mode="flat">
+          <AttachmentTile {...tiles[2]} />
+        </Surface>
+
+        <Surface mode="flat" style={styles.surfaceBottom}>
+          <AttachmentTile {...tiles[3]} />
+        </Surface>
+      </List.Section>
     </ScrollView>
   );
 }
 
 const useStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
@@ -146,7 +151,7 @@ const useStyles = makeStyleFactory(
 
       headerText: {
         marginHorizontal: ds.spacing.md,
-        paddingBottom: ds.spacing.md,
+        color: theme.muted,
       },
 
       filterChip: {
@@ -154,28 +159,19 @@ const useStyles = makeStyleFactory(
         borderRadius: ds.borderRadius.full,
       },
 
-      listItem: {
-        paddingRight: 0,
-        paddingTop: ds.spacing.xs,
-        paddingBottom: ds.spacing.xs,
+      surfaceTop: {
+        borderTopLeftRadius: ds.borderRadius.xxxl,
+        borderTopRightRadius: ds.borderRadius.xxxl,
+        overflow: 'hidden',
       },
 
-      leftSlot: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: ds.spacing.md,
-      },
-
-      rightSlot: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: ds.iconSize.lg + ds.spacing.md,
-      },
-
-      surface: {
-        borderRadius: ds.borderRadius.xxxl,
+      surfaceBottom: {
+        borderBottomLeftRadius: ds.borderRadius.xxxl,
+        borderBottomRightRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
     }),
   (ds, theme) => themeKey(theme, ds),
 );
+
+AttachmentTile.displayName = 'AttachmentTile';

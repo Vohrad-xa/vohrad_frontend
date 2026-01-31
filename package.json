@@ -33,7 +33,7 @@
     "format": "prettier . --write",
     "check:all": "turbo run lint && turbo run typecheck && turbo run format"
   },
-  "packageManager": "pnpm@10.27.0",
+  "packageManager": "pnpm@10.28.0",
   "pnpm": {
     "overrides": {
       "glob": "^10.4.5",
@@ -41,8 +41,7 @@
       "@shopify/flash-list": "2.0.2",
       "@react-native-community/slider": "5.1.1",
       "react": "19.2.0",
-      "react-native-keyboard-controller": "1.20.4",
-      "react-native-worklets": "0.8.0-nightly-20260122-45349f895"
+      "react-native-keyboard-controller": "1.20.4"
     },
     "ignoredBuiltDependencies": [
       "esbuild"

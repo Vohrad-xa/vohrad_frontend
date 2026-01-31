@@ -6,7 +6,7 @@ import {createSystemSlice, type SystemSlice} from './slices/system/slice';
 import {createFilterSlice, type FilterSlice} from './slices/filter/slice';
 import {sanitizeUser, redactTokens} from './utils/sanitizers';
 import {getPersistBackend} from './utils/storage';
-import {httpClient} from '@sykamore/api-client';
+import {httpClient, setApiTenant} from '@sykamore/api-client';
 
 export type StoreState = AuthSlice &
   TenantSlice &
@@ -37,6 +37,11 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
           // Sync tokens to httpClient after rehydration
           if (state.tokens?.access_token) {
             httpClient.setAccessToken(state.tokens.access_token);
+          }
+
+          // Restore multi-tenant API context
+          if (state.tenant?.sub_domain) {
+            setApiTenant(state.tenant.sub_domain);
           }
 
           // Set hydrated flag

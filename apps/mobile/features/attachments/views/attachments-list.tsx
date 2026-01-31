@@ -1,11 +1,8 @@
 import {useCallback, useMemo, memo, useState, useRef, useEffect} from 'react';
 import {Animated, Platform, Pressable, StyleSheet, View} from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
-import {useHeaderHeight} from '@react-navigation/elements';
 import {FlashList} from '@shopify/flash-list';
 import {Image} from 'expo-image';
 import {Divider} from 'react-native-paper';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ThemedText, EmptyState} from '@/components/ui';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
@@ -14,6 +11,14 @@ import {useTheme, useHaptic} from '@/providers';
 import {makeStyleFactory, Icon, AppIcons, getAttachmentFileIcon} from '@/utils';
 import type {AttachmentsSelectionController} from '../hooks';
 import type {AttachmentDisplayItem} from '@sykamore/store';
+
+let CheckBox: typeof import('@react-native-community/checkbox').default | null =
+  null;
+if (Platform.OS !== 'web') {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mod = require('@react-native-community/checkbox');
+  CheckBox = mod?.default ?? mod;
+}
 
 /**
  * Shared attachment list view with optional selection state.
@@ -27,7 +32,6 @@ type AttachmentsListProps = {
   isLoading?: boolean;
   lastUpdated?: Date | null;
   listKey?: string;
-  applyHeaderContentInset?: boolean;
 };
 
 type SelectableAttachmentsListProps = AttachmentsListProps & {
@@ -102,7 +106,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
         ]}
         android_ripple={{color: rippleColor, foreground: true}}
       >
-        {showCheckbox ? (
+        {showCheckbox && CheckBox ? (
           <Animated.View
             pointerEvents={selectionVisible ? 'auto' : 'none'}
             importantForAccessibility={
@@ -120,6 +124,12 @@ const AttachmentItem = memo<AttachmentItemProps>(
               value={isSelected}
               onValueChange={handlePress}
               tintColors={{true: Palette.blue, false: Palette.mushroom}}
+              style={{transform: [{scaleX: 0.8}, {scaleY: 0.8}]}}
+              onCheckColor={Palette.white}
+              onFillColor={Palette.blue}
+              onAnimationType="bounce"
+              offAnimationType="bounce"
+              animationDuration={0.2}
             />
           </Animated.View>
         ) : null}
@@ -191,33 +201,10 @@ const AttachmentsListBase = ({
   listKey = 'attachments',
   selectionState = null,
   extraDataKey,
-  applyHeaderContentInset = false,
 }: AttachmentsListBaseProps) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
   const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({onRefresh});
-
-  // iOS (transparent + large title): keep scroll indicator stable by forcing a fixed inset.
-  const insets = useSafeAreaInsets();
-  const headerHeight = useHeaderHeight();
-  const iosIndicatorProps =
-    Platform.OS === 'ios' && applyHeaderContentInset
-      ? {
-          automaticallyAdjustsScrollIndicatorInsets: false as const,
-          scrollIndicatorInsets: {
-            top: headerHeight,
-            bottom: insets.bottom + 45,
-          },
-          contentInset: {
-            top: headerHeight,
-            bottom: insets.bottom + 45,
-          },
-          contentOffset: {
-            x: 0,
-            y: -headerHeight,
-          },
-        }
-      : {};
 
   const fontScaleKey = ds.screen?.fontScale ?? 1;
 
@@ -303,7 +290,6 @@ const AttachmentsListBase = ({
 
   return (
     <FlashList
-      {...iosIndicatorProps}
       key={`${listKey}-${fontScaleKey}`}
       data={attachments}
       extraData={extraData}
@@ -313,7 +299,6 @@ const AttachmentsListBase = ({
       onRefresh={handleRefresh}
       onEndReached={onEndReached}
       onEndReachedThreshold={onEndReachedThreshold}
-      // drawDistance={Platform.OS === 'android' ? ds.screen.height : undefined}
       ItemSeparatorComponent={ItemSeparator}
       ListHeaderComponent={ListHeader}
       ListEmptyComponent={
@@ -450,7 +435,7 @@ const createStyles = makeStyleFactory(
       },
 
       contentSelection: {
-        paddingRight: ds.spacing.xxxl + ds.spacing.sm,
+        paddingRight: ds.spacing.xxxl + ds.spacing.md,
       },
 
       rowContainer: {

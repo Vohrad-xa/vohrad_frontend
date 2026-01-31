@@ -39,4 +39,3 @@ packages/store/ARCHITECTURE.md
 **/__tests__/
 **/__tests__/**
 **/*.{test,spec}.{js,jsx,ts,tsx}
-

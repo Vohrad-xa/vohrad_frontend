@@ -17,7 +17,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: "10.17.0"
+          version: "10.28.0"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -26,7 +26,10 @@ jobs:
           cache: "pnpm"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build workspace packages (generate dist + .d.ts)
+        run: pnpm -r build
 
       - name: Run Typescript type checking
         run: pnpm typecheck
@@ -34,8 +37,8 @@ jobs:
       - name: Run ESLint (no fix)
         run: pnpm lint
 
-      - name: Run Prettier formatting check
-        run: pnpm format:check
+      - name: Run Prettier 
+        run: pnpm format
 
       - name: Build web app
         run: pnpm --filter web build

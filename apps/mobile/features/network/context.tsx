@@ -5,7 +5,7 @@ import React, {
   useMemo,
   type ReactNode,
 } from 'react';
-import {onlineManager} from '@tanstack/react-query';
+import {onlineManager} from '@sykamore/store';
 import {
   useBackendReachability,
   type ReachabilityOptions,

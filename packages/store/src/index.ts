@@ -14,15 +14,14 @@ export {
 } from './slices/auth';
 
 export {
-  tenantSelectors,
-  useOrganizationDetails,
-  useUpdateTenant,
+  useFetchTenant,
+  useFetchLicenseInfo,
+  useUpdateTenantProfile,
   useUpdateTenantSettings,
-  usePreferencesManager,
-  useOrganizationManager,
-  useTenantLicenseInfo,
-  useFetchTenantLicenseInfo,
+  useTenantManager,
   useLicenseInfoManager,
+  buildTenantQueryKey,
+  buildTenantLicenseQueryKey,
   type TenantSlice,
 } from './slices/tenant';
 
@@ -148,3 +147,6 @@ export type {
   UserSortKey,
   UserSortState,
 } from '@sykamore/types';
+
+export {queryClient, QueryProvider} from './query';
+export {onlineManager, focusManager} from '@tanstack/react-query';

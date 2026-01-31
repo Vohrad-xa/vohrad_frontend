@@ -1,0 +1,166 @@
+import React, {
+  forwardRef,
+  useCallback,
+  useImperativeHandle,
+  useRef,
+} from 'react';
+import {Palette} from '@/constants';
+import {useTheme} from '@/providers';
+import {AppIcons, Icon, formatDate, type IconName} from '@/utils';
+import {
+  Host,
+  Form,
+  Section,
+  HStack,
+  Spacer,
+  Text,
+  Button,
+  TextField,
+  accessibilityLabel,
+  font,
+  foregroundStyle,
+  disabled,
+  VStack,
+  type TextFieldRef,
+  LabeledContent,
+} from 'sykamore-ui/ios';
+import {useProfileEdit} from '../hooks';
+
+export type EmailContentHandle = {
+  save: () => Promise<void>;
+};
+
+const SUPPORTING_TEXT =
+  'This email will be used to support account security, including login, identity verification and account recovery.';
+
+export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
+  const {ds} = useTheme();
+  const textFieldRef = useRef<TextFieldRef>(null);
+
+  const {email: emailEdit} = useProfileEdit();
+  const {
+    email,
+    pendingEmail,
+    pendingEmailExpiresAt,
+    setEmailValue,
+    isEditing,
+    startEditing,
+    cancelEditing,
+    saveIfEditing,
+  } = emailEdit;
+
+  useImperativeHandle(ref, () => ({save: saveIfEditing}), [saveIfEditing]);
+
+  const handleEditPress = useCallback(() => {
+    startEditing();
+    setTimeout(() => {
+      textFieldRef.current?.focus();
+    }, 100);
+  }, [startEditing]);
+
+  const handleCancelPress = useCallback(() => {
+    cancelEditing();
+    textFieldRef.current?.setText(email);
+    textFieldRef.current?.blur();
+  }, [cancelEditing, email]);
+
+  return (
+    <Host style={{flex: 1}}>
+      <Form>
+        <Section>
+          <VStack alignment="leading" spacing={ds.spacing.lg}>
+            <Icon
+              useSwiftUI
+              name={'envelope' as IconName}
+              size="xxxl"
+              colorToken="tint"
+            />
+            <Text
+              modifiers={[
+                font({
+                  textStyle: 'title2',
+                  weight: 'semibold',
+                }),
+              ]}
+            >
+              Email Address
+            </Text>
+
+            <Text
+              modifiers={[
+                font({textStyle: 'body'}),
+                foregroundStyle('secondary'),
+              ]}
+            >
+              {SUPPORTING_TEXT}
+            </Text>
+          </VStack>
+        </Section>
+
+        <Section title="Primary">
+          <HStack>
+            <TextField
+              ref={textFieldRef}
+              defaultValue={email}
+              placeholder="Email address"
+              textContentType="email-address"
+              keyboardType="email-address"
+              onChangeText={setEmailValue}
+              modifiers={[
+                disabled(!isEditing),
+                accessibilityLabel('Email address'),
+              ]}
+            />
+            <Spacer />
+            <Button
+              label={isEditing ? 'Cancel' : 'Edit'}
+              role={isEditing ? 'destructive' : 'default'}
+              onPress={isEditing ? handleCancelPress : handleEditPress}
+              modifiers={[
+                accessibilityLabel(isEditing ? 'Cancel editing' : 'Edit email'),
+              ]}
+            />
+          </HStack>
+        </Section>
+
+        {pendingEmail && (
+          <Section
+            title="New"
+            footer={
+              <Text>
+                A verification link has been sent to {pendingEmail}
+                {'\n'}The link will expire on{' '}
+                {formatDate(pendingEmailExpiresAt, {includeTime: true})}.{'\n'}
+                In case you did not receive a link, you can request a new one.
+              </Text>
+            }
+          >
+            <LabeledContent label={pendingEmail}>
+              <HStack spacing={ds.spacing.sm}>
+                <Text
+                  modifiers={[
+                    font({
+                      size: ds.typography.ios.subheadline.baseSize,
+                      family: 'system',
+                    }),
+                    foregroundStyle(Palette.mushroom),
+                  ]}
+                >
+                  Pending
+                </Text>
+                <Icon
+                  useSwiftUI
+                  name={AppIcons.status.pending}
+                  color={Palette.mushroom}
+                  size="xs"
+                />
+              </HStack>
+            </LabeledContent>
+          </Section>
+        )}
+      </Form>
+    </Host>
+  );
+});
+
+EmailContent.displayName = 'EmailContent';

@@ -30,7 +30,6 @@ export default function ProfileLayout() {
   return (
     <Stack
       screenOptions={{
-        headerShown: true,
         headerShadowVisible: false,
         headerBackButtonDisplayMode: 'minimal',
         headerTransparent: Platform.OS === 'ios',
@@ -42,11 +41,14 @@ export default function ProfileLayout() {
           fontWeight: ds.fontWeight.bold,
         },
         contentStyle: {
-          padding: Platform.OS !== 'ios' ? ds.spacing.md : undefined,
+          paddingHorizontal: Platform.OS !== 'ios' ? ds.spacing.md : undefined,
         },
       }}
     >
-      <Stack.Screen name="index" options={{title: 'Profile'}} />
+      <Stack.Screen
+        name="index"
+        options={{title: 'Profile', headerShown: Platform.OS !== 'ios'}}
+      />
       <Stack.Screen
         name="birth-date"
         options={{title: 'Date of Birth', ...modalOptions}}

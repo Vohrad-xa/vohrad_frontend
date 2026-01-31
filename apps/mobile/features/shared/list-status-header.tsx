@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, Platform, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {Divider} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
@@ -104,14 +104,7 @@ const createStyles = makeStyleFactory(
       container: {
         flexDirection: 'row',
         alignItems: 'center',
-        ...Platform.select({
-          ios: {
-            paddingBottom: ds.spacing.md,
-          },
-          android: {
-            paddingVertical: ds.spacing.md,
-          },
-        }),
+        paddingVertical: ds.spacing.md,
         paddingHorizontal: ds.spacing.lg,
       },
       indicator: {

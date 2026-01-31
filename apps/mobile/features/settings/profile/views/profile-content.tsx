@@ -3,13 +3,14 @@ import {ScrollView, StyleSheet} from 'react-native';
 import {type Href} from 'expo-router';
 import {Surface, Avatar, List, type ListItemProps} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
 import {
   makeStyleFactory,
   getInitials,
   formatDate,
   useSafeRouter,
+  AppIcons,
 } from '@/utils';
 import {PROFILE_FIELDS} from '../constants/profile-constants';
 import {useProfile} from '../hooks';
@@ -28,7 +29,7 @@ type ProfileRowModel = Readonly<{
   >;
 }>;
 
-type LeftProps = Parameters<NonNullable<ListItemProps['left']>>[0];
+// Extracting the type of props passed to List.Item's right callback
 type RightProps = Parameters<NonNullable<ListItemProps['right']>>[0];
 
 const ProfileRow = memo(
@@ -42,26 +43,18 @@ const ProfileRow = memo(
   }: ProfileRowModel) => {
     const router = useSafeRouter();
 
-    const onPress = useCallback(() => {
-      router.push(href);
-    }, [router, href]);
-
-    const renderRight = useCallback(
-      (props: RightProps) => <List.Icon {...props} icon="chevron-right" />,
-      [],
-    );
-
     return (
       <List.Item
         title={title}
         description={valueText}
-        right={renderRight}
-        onPress={onPress}
+        right={(props) => (
+          <List.Icon {...props} icon={AppIcons.actions.forward} />
+        )}
+        onPress={() => router.push(href)}
         accessibilityRole="button"
         accessibilityLabel={a11yLabel}
         accessibilityHint={a11yHint}
         {...descriptionProps}
-        style={{paddingRight: 8}}
         borderless
       />
     );
@@ -93,8 +86,8 @@ export function ProfileContent() {
   const roleText = profileDetails?.role ?? 'Member';
   const birthDateText = dateOfBirth ? formatDate(dateOfBirth) : NOT_SET;
 
-  const emailText = email || NOT_SET;
-  const phoneText = phoneNumber || NOT_SET;
+  const emailText = email ?? NOT_SET;
+  const phoneText = phoneNumber ?? NOT_SET;
   const shortAddress =
     [city, postalCode, country].filter(Boolean).join(' ') || NOT_SET;
 
@@ -120,46 +113,57 @@ export function ProfileContent() {
   ] as const satisfies readonly ProfileRowModel[];
 
   const renderAvatar = useCallback(
-    (props: LeftProps) => (
+    (props: RightProps) => (
       <Avatar.Text
         label={initials}
+        labelStyle={{letterSpacing: 2}}
         accessibilityLabel={`${displayName} avatar`}
-        style={props.style}
+        {...props}
+        color={Palette.white}
+        size={48}
       />
     ),
     [displayName, initials],
   );
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-    >
-      <Surface style={styles.surface} mode="flat">
+    <ScrollView style={styles.container}>
+      <List.Section>
         <List.Item
           title={<ThemedText variant="title1">{displayName}</ThemedText>}
           description={
-            <ThemedText variant="caption">
+            <ThemedText variant="footnote" colorToken="muted">
               {roleText} • Since {memberSince}
             </ThemedText>
           }
-          left={renderAvatar}
+          right={renderAvatar}
         />
-      </Surface>
+      </List.Section>
 
-      <Surface style={styles.sectionSurface} elevation={1} mode="flat">
-        {PERSONAL_ROWS.map((row) => (
-          <ProfileRow key={row.href} {...row} />
-        ))}
-      </Surface>
+      <List.Section style={{gap: ds.spacing.xxs}}>
+        <Surface mode="flat" style={styles.surfaceTop}>
+          <ProfileRow {...PERSONAL_ROWS[0]} />
+        </Surface>
 
-      <Surface style={styles.sectionSurface} elevation={1} mode="flat">
-        {CONTACT_ROWS.map((row) => (
-          <ProfileRow key={row.href} {...row} />
-        ))}
-        {ADDRESS_ROWS.map((row) => (
-          <ProfileRow key={row.href} {...row} />
-        ))}
-      </Surface>
+        <Surface mode="flat" style={styles.surfaceBottom}>
+          <ProfileRow {...PERSONAL_ROWS[1]} />
+        </Surface>
+      </List.Section>
+
+      <List.Section style={{gap: ds.spacing.xxs}}>
+        <Surface mode="flat" style={styles.surfaceTop}>
+          <ProfileRow {...CONTACT_ROWS[0]} />
+        </Surface>
+
+        <Surface mode="flat" style={styles.surfaceBottom}>
+          <ProfileRow {...CONTACT_ROWS[1]} />
+        </Surface>
+      </List.Section>
+
+      <List.Section style={{gap: ds.spacing.xxs}}>
+        <Surface mode="flat" style={[styles.surfaceTop, styles.surfaceBottom]}>
+          <ProfileRow {...ADDRESS_ROWS[0]} />
+        </Surface>
+      </List.Section>
     </ScrollView>
   );
 }
@@ -168,15 +172,16 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, _theme: ThemeShape) =>
     StyleSheet.create({
       container: {flex: 1},
-      contentContainer: {gap: ds.spacing.lg},
 
-      surface: {
-        borderRadius: ds.borderRadius.xxxl,
+      surfaceTop: {
+        borderTopLeftRadius: ds.borderRadius.xxxl,
+        borderTopRightRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
 
-      sectionSurface: {
-        borderRadius: ds.borderRadius.xxxl,
+      surfaceBottom: {
+        borderBottomLeftRadius: ds.borderRadius.xxxl,
+        borderBottomRightRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
     }),

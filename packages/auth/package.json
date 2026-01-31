@@ -33,9 +33,9 @@
   "devDependencies": {
     "tsup": "~8.5.1",
     "typescript": "~5.9.2",
-    "@types/react": "^19.1.13"
+    "@types/react": "~19.2.7"
   },
   "peerDependencies": {
-    "react": ">=18.0.0"
+    "react": ">=19.2.0"
   }
 }

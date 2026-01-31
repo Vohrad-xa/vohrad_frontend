@@ -1,3 +1,2 @@
-export {usePreferencesManager} from './use-preferences-manager';
-export {useOrganizationManager} from './use-organization-manager';
+export {useTenantManager} from './use-tenant-manager';
 export {useLicenseInfoManager} from './use-license-info-manager';

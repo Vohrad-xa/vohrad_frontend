@@ -2,7 +2,6 @@ import React from 'react';
 import {Platform} from 'react-native';
 import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
 import {HeaderButton} from '@/components/ui';
-import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
 
 interface VaultActionsMenuProps {
@@ -16,8 +15,6 @@ export function VaultActionsMenu({
   onScanDocument,
   onFilter,
 }: VaultActionsMenuProps) {
-  const {theme} = useTheme();
-
   const menuActions: SykaMenuAction[] = [
     {
       id: 'add-document',
