@@ -4,8 +4,8 @@ import React, {
   useImperativeHandle,
   useState,
 } from 'react';
-import {Pressable, View} from 'react-native';
-import {HelperText, TextInput} from 'react-native-paper';
+import {Pressable} from 'react-native';
+import {HelperText, TextInput, List} from 'react-native-paper';
 import {useTheme} from '@/providers';
 import {formatDate} from '@/utils';
 import {DatePicker as AndroidDatePicker} from 'sykamore-ui/android';
@@ -17,9 +17,10 @@ export type DatePickerContentHandle = {
 
 export const DatePickerContent = forwardRef<DatePickerContentHandle>(
   (_, ref) => {
-    const {ds, theme} = useTheme();
+    const {theme} = useTheme();
 
     const {dateOfBirth: dob} = useProfileEdit();
+
     const {selectedDate, setSelectedDate, save} = dob;
 
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -39,7 +40,7 @@ export const DatePickerContent = forwardRef<DatePickerContentHandle>(
     }, []);
 
     return (
-      <View style={{flex: 1, gap: ds.spacing.md}}>
+      <List.Section>
         <Pressable
           onPress={() => setShowDatePicker(true)}
           accessibilityLabel="Select Date of Birth"
@@ -54,8 +55,7 @@ export const DatePickerContent = forwardRef<DatePickerContentHandle>(
               <TextInput.Icon
                 icon="calendar"
                 onPress={() => setShowDatePicker(true)}
-                color={theme.accentBlue}
-                rippleColor={theme.ripple}
+                color={theme.primary}
               />
             }
           />
@@ -75,7 +75,7 @@ export const DatePickerContent = forwardRef<DatePickerContentHandle>(
             dismissText="Cancel"
           />
         )}
-      </View>
+      </List.Section>
     );
   },
 );
