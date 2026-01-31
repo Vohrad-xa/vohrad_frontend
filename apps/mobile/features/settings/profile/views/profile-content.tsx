@@ -1,7 +1,13 @@
 import React, {memo, useCallback} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
 import {type Href} from 'expo-router';
-import {Surface, Avatar, List, type ListItemProps} from 'react-native-paper';
+import {
+  Surface,
+  Avatar,
+  List,
+  type ListItemProps,
+  Divider,
+} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
@@ -139,28 +145,24 @@ export function ProfileContent() {
         />
       </List.Section>
 
-      <List.Section style={{gap: ds.spacing.xxs}}>
-        <Surface mode="flat" style={styles.surfaceTop}>
+      <List.Section>
+        <Surface mode="flat" style={styles.Surface}>
           <ProfileRow {...PERSONAL_ROWS[0]} />
-        </Surface>
-
-        <Surface mode="flat" style={styles.surfaceBottom}>
+          <Divider style={styles.divider} />
           <ProfileRow {...PERSONAL_ROWS[1]} />
         </Surface>
       </List.Section>
 
-      <List.Section style={{gap: ds.spacing.xxs}}>
-        <Surface mode="flat" style={styles.surfaceTop}>
+      <List.Section>
+        <Surface mode="flat" style={styles.Surface}>
           <ProfileRow {...CONTACT_ROWS[0]} />
-        </Surface>
-
-        <Surface mode="flat" style={styles.surfaceBottom}>
+          <Divider style={styles.divider} />
           <ProfileRow {...CONTACT_ROWS[1]} />
         </Surface>
       </List.Section>
 
-      <List.Section style={{gap: ds.spacing.xxs}}>
-        <Surface mode="flat" style={[styles.surfaceTop, styles.surfaceBottom]}>
+      <List.Section>
+        <Surface mode="flat" style={styles.Surface}>
           <ProfileRow {...ADDRESS_ROWS[0]} />
         </Surface>
       </List.Section>
@@ -173,16 +175,12 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {flex: 1},
 
-      surfaceTop: {
-        borderTopLeftRadius: ds.borderRadius.xxxl,
-        borderTopRightRadius: ds.borderRadius.xxxl,
+      Surface: {
+        borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
-
-      surfaceBottom: {
-        borderBottomLeftRadius: ds.borderRadius.xxxl,
-        borderBottomRightRadius: ds.borderRadius.xxxl,
-        overflow: 'hidden',
+      divider: {
+        height: 1.7,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

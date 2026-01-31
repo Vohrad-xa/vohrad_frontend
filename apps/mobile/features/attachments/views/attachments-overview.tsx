@@ -1,7 +1,7 @@
 import {memo, useMemo} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import {List, Chip, Surface} from 'react-native-paper';
+import {List, Chip, Surface, Divider} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
@@ -116,20 +116,14 @@ export function AttachmentsOverview({
         </ThemedText>
       )}
 
-      <List.Section style={{gap: ds.spacing.xxs}}>
-        <Surface mode="flat" style={styles.surfaceTop}>
+      <List.Section>
+        <Surface mode="flat" style={styles.surface}>
           <AttachmentTile {...tiles[0]} />
-        </Surface>
-
-        <Surface mode="flat">
+          <Divider style={styles.divider} />
           <AttachmentTile {...tiles[1]} />
-        </Surface>
-
-        <Surface mode="flat">
+          <Divider style={styles.divider} />
           <AttachmentTile {...tiles[2]} />
-        </Surface>
-
-        <Surface mode="flat" style={styles.surfaceBottom}>
+          <Divider style={styles.divider} />
           <AttachmentTile {...tiles[3]} />
         </Surface>
       </List.Section>
@@ -158,17 +152,12 @@ const useStyles = makeStyleFactory(
         alignSelf: 'flex-start',
         borderRadius: ds.borderRadius.full,
       },
-
-      surfaceTop: {
-        borderTopLeftRadius: ds.borderRadius.xxxl,
-        borderTopRightRadius: ds.borderRadius.xxxl,
+      surface: {
+        borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
-
-      surfaceBottom: {
-        borderBottomLeftRadius: ds.borderRadius.xxxl,
-        borderBottomRightRadius: ds.borderRadius.xxxl,
-        overflow: 'hidden',
+      divider: {
+        height: 1.7,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

@@ -35,6 +35,8 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
         tertiaryContainer: theme.secondaryContainer,
         onTertiaryContainer: theme.text,
 
+        outlineVariant: scheme === 'dark' ? Palette.black : Palette.fog,
+
         // Screens / surfaces
         background: theme.background,
         surface: surfaceBase,
@@ -45,7 +47,7 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
         // Surface with elevation
         elevation: {
           ...base.colors.elevation,
-          level0: 'transparent',
+          level0: surfaceBase,
           level1: surfaceBase,
           level2: surfaceBase,
           level3: surfaceBase,

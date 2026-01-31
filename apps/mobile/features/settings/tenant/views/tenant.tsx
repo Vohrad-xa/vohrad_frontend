@@ -1,7 +1,13 @@
 import React, {memo, useCallback} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
 import {type Href} from 'expo-router';
-import {Avatar, List, Surface, type ListItemProps} from 'react-native-paper';
+import {
+  Avatar,
+  List,
+  Surface,
+  Divider,
+  type ListItemProps,
+} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
 import {useTheme} from '@/providers';
@@ -68,19 +74,14 @@ export const TenantDetailsContent = () => {
           right={renderAvatar}
         />
       </List.Section>
-
-      <List.Section style={styles.section}>
-        <Surface mode="flat" style={[styles.surface, styles.surfaceTop]}>
+      <List.Section>
+        <Surface mode="flat" style={styles.surface}>
           <TenantRow {...TENANT_ROWS[0]} />
-        </Surface>
-
-        <Surface mode="flat" style={styles.surface}>
+          <Divider style={styles.divider} />
           <TenantRow {...TENANT_ROWS[1]} />
-        </Surface>
-        <Surface mode="flat" style={styles.surface}>
+          <Divider style={styles.divider} />
           <TenantRow {...TENANT_ROWS[2]} />
-        </Surface>
-        <Surface mode="flat" style={[styles.surface, styles.surfaceBottom]}>
+          <Divider style={styles.divider} />
           <TenantRow {...TENANT_ROWS[3]} />
         </Surface>
       </List.Section>
@@ -97,22 +98,13 @@ const createStyles = makeStyleFactory(
         paddingHorizontal: ds.spacing.md,
       },
 
-      section: {
-        gap: ds.spacing.xxs,
-      },
-
       surface: {
+        borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
 
-      surfaceTop: {
-        borderTopLeftRadius: ds.borderRadius.xxxl,
-        borderTopRightRadius: ds.borderRadius.xxxl,
-      },
-
-      surfaceBottom: {
-        borderBottomLeftRadius: ds.borderRadius.xxxl,
-        borderBottomRightRadius: ds.borderRadius.xxxl,
+      divider: {
+        height: 1.7,
       },
     }),
   (ds, theme) => themeKey(theme, ds),
