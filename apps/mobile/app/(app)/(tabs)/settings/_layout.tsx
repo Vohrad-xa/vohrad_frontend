@@ -1,34 +1,18 @@
 import {useCallback, useMemo} from 'react';
 import {Platform} from 'react-native';
 import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
-import {router, Stack} from 'expo-router';
+import {Stack} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
-import {SearchProvider, useSearch} from '@/features/dashboard';
+import {SearchProvider} from '@/features/dashboard';
 import {useTheme} from '@/providers';
-import {getHeaderOptions} from '@/utils/navigation/header-actions';
 
 export const unstable_settings = {
   initialRouteName: 'index',
 };
 
-interface SearchChangeEvent {
-  nativeEvent: {
-    text: string;
-  };
-}
-
 function SettingsStack() {
   const {theme} = useTheme();
-  const {setSearchQuery} = useSearch();
 
-  const handleSearchChange = useCallback(
-    (event: SearchChangeEvent) => {
-      setSearchQuery(event.nativeEvent.text);
-    },
-    [setSearchQuery],
-  );
-
-  // TODO: wire up notifications screen
   const headerRightNotifications = useCallback(
     () => (
       <HeaderButton
@@ -38,18 +22,6 @@ function SettingsStack() {
       />
     ),
     [],
-  );
-
-  const searchBarOptions = useMemo(
-    () =>
-      ({
-        placement: 'integratedButton' as const,
-        hideWhenScrolling: false,
-        placeholder: 'Search...',
-        headerIconColor: theme.icon,
-        onChangeText: handleSearchChange,
-      }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
-    [handleSearchChange, theme.icon],
   );
 
   const stackScreenOptions = useMemo(
@@ -72,18 +44,8 @@ function SettingsStack() {
       ({
         headerTitle: 'Settings',
         headerRight: headerRightNotifications,
-        headerSearchBarOptions: searchBarOptions,
       }) satisfies NativeStackNavigationOptions,
-    [headerRightNotifications, searchBarOptions],
-  );
-
-  const usersIndexOptions = useMemo(
-    () => ({
-      headerTitle: 'Users',
-      headerLargeTitle: true,
-      headerSearchBarOptions: searchBarOptions,
-    }),
-    [searchBarOptions],
+    [headerRightNotifications],
   );
 
   return (
@@ -96,26 +58,6 @@ function SettingsStack() {
         <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
         <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
         <Stack.Screen name="about" options={{title: 'About'}} />
-
-        <Stack.Screen name="users/index" options={usersIndexOptions} />
-        <Stack.Screen
-          name="users/add-user"
-          options={{
-            title: 'Add User',
-            presentation: 'modal',
-            ...getHeaderOptions({
-              left: [
-                {
-                  type: 'button',
-                  key: 'close',
-                  label: 'Close',
-                  iosSymbol: 'xmark',
-                  onPress: () => router.dismiss(),
-                },
-              ],
-            }),
-          }}
-        />
 
         <Stack.Screen
           name="profile"

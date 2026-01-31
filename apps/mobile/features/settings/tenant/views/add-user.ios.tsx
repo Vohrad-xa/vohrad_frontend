@@ -12,7 +12,7 @@ import {
   datePickerStyle,
   Text,
 } from 'sykamore-ui/ios';
-import {useAddUser} from './use-add-user';
+import {useAddUser} from '../hooks/use-add-user';
 import type {Role} from '@sykamore/types';
 
 export type AddUserScreenHandle = {

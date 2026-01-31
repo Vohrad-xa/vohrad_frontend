@@ -43,6 +43,7 @@ export const TenantDetailsContent = () => {
     TENANT_FIELDS.info,
     TENANT_FIELDS.license,
     TENANT_FIELDS.businessHours,
+    TENANT_FIELDS.users,
   ] as const satisfies readonly tenantRowModel[];
   const renderAvatar = useCallback(
     (props: RightProps) => (
@@ -76,9 +77,11 @@ export const TenantDetailsContent = () => {
         <Surface mode="flat" style={styles.surface}>
           <TenantRow {...TENANT_ROWS[1]} />
         </Surface>
-
-        <Surface mode="flat" style={[styles.surface, styles.surfaceBottom]}>
+        <Surface mode="flat" style={styles.surface}>
           <TenantRow {...TENANT_ROWS[2]} />
+        </Surface>
+        <Surface mode="flat" style={[styles.surface, styles.surfaceBottom]}>
+          <TenantRow {...TENANT_ROWS[3]} />
         </Surface>
       </List.Section>
     </ScrollView>
@@ -103,13 +106,13 @@ const createStyles = makeStyleFactory(
       },
 
       surfaceTop: {
-        borderTopLeftRadius: ds.borderRadius.xxl,
-        borderTopRightRadius: ds.borderRadius.xxl,
+        borderTopLeftRadius: ds.borderRadius.xxxl,
+        borderTopRightRadius: ds.borderRadius.xxxl,
       },
 
       surfaceBottom: {
-        borderBottomLeftRadius: ds.borderRadius.xxl,
-        borderBottomRightRadius: ds.borderRadius.xxl,
+        borderBottomLeftRadius: ds.borderRadius.xxxl,
+        borderBottomRightRadius: ds.borderRadius.xxxl,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

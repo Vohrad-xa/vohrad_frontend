@@ -1,7 +1,6 @@
 export {BiometricToggle, HapticToggle} from './app-settings';
 export * from './profile';
 export * from './tenant';
-export * from './user-management';
 
 // Types
 export type {

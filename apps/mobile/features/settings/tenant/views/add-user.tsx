@@ -8,7 +8,7 @@ import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {DatePicker} from 'sykamore-ui/android';
-import {useAddUser} from './use-add-user';
+import {useAddUser} from '../hooks/use-add-user';
 import type {Role} from '@sykamore/types';
 
 export type AddUserScreenHandle = {

@@ -47,12 +47,6 @@ export default function SettingsModal() {
             title="Business Details"
             onPress={() => router.push('/(app)/(tabs)/settings/tenant')}
           />
-          <ListSection.Row
-            icon={AppIcons.ui.userManagement}
-            iconColorToken="accentGreen"
-            title="User Management"
-            onPress={() => router.push('/(app)/(tabs)/settings/users')}
-          />
         </ListSection>
 
         {/* Preferences Section */}

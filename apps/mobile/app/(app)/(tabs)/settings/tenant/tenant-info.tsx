@@ -6,7 +6,7 @@ import {
   TenantInfoView,
   useTenantInfoForm,
   useTenantSnackbar,
-} from '@/features/settings';
+} from '@/features/settings/tenant';
 import {showAlert} from '@/utils';
 import {AppIcons} from '@/utils/icons';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';

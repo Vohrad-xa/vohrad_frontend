@@ -130,13 +130,6 @@ export default function SettingsModal() {
         href: '/(app)/(tabs)/settings/tenant',
       },
       {
-        id: 'users',
-        title: 'User Management',
-        description: 'Manage users and roles',
-        icon: AppIcons.ui.userManagement,
-        href: '/(app)/(tabs)/settings/users',
-      },
-      {
         id: 'app-settings',
         title: 'App Settings',
         description: 'Configure application settings',

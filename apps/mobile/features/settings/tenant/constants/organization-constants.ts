@@ -16,4 +16,9 @@ export const TENANT_FIELDS = {
     description: 'Set your business hours',
     href: '/(app)/(tabs)/settings/tenant/business-hours' satisfies Href,
   },
+  users: {
+    title: 'Users',
+    description: 'Manage organization users',
+    href: '/(app)/(tabs)/settings/tenant/users' satisfies Href,
+  },
 } as const;

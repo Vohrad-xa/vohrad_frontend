@@ -93,7 +93,7 @@ export const createDesignSystem = (
       lg: 8,
       xl: 10,
       xxl: 14,
-      xxxl: 24,
+      xxxl: 22,
       full: 9999,
     } as const,
 
@@ -136,7 +136,7 @@ export const createDesignSystem = (
         height: 44,
         fontSize: 17,
       },
-      card: {borderRadius: 30, padding: 16},
+      card: {borderRadius: 22, padding: 16},
       modal: {borderRadius: 25, padding: 24},
       listItem: {minHeight: 44, paddingVertical: 10, paddingHorizontal: 16},
       separator: {height: 0.5, marginLeft: 16},

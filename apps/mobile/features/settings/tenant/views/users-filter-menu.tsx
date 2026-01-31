@@ -6,7 +6,10 @@ import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
 import {HeaderButton} from '@/components/ui';
 import {useRolesList} from '@/features/roles';
 import {AppIcons} from '@/utils';
-import {useSearchUsers, type UsersFilterOptions} from './use-search-users';
+import {
+  useSearchUsers,
+  type UsersFilterOptions,
+} from '../hooks/use-search-users';
 import type {OrderByDirection, UserSortKey} from '@sykamore/types';
 
 type UsersFilterMenuProps = {
@@ -144,7 +147,7 @@ export function UsersFilterMenu({
       }
 
       if (id === 'add-user') {
-        router.push('/settings/users/add-user');
+        router.push('/settings/tenant/users/add-user');
       }
     },
     [applySort, applySortDirection, router],

@@ -174,14 +174,14 @@ const createStyles = makeStyleFactory(
       container: {flex: 1},
 
       surfaceTop: {
-        borderTopLeftRadius: ds.borderRadius.xxl,
-        borderTopRightRadius: ds.borderRadius.xxl,
+        borderTopLeftRadius: ds.borderRadius.xxxl,
+        borderTopRightRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
 
       surfaceBottom: {
-        borderBottomLeftRadius: ds.borderRadius.xxl,
-        borderBottomRightRadius: ds.borderRadius.xxl,
+        borderBottomLeftRadius: ds.borderRadius.xxxl,
+        borderBottomRightRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
     }),
