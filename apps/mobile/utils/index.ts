@@ -17,7 +17,6 @@ export * as validators from './validators';
 export * from './icons';
 export * from './style-factory';
 export * from './format-date';
-export * from './sorting';
 export * from './haptics';
 export * from './versioning';
 export * from './bootstrap';
