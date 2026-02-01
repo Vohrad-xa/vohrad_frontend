@@ -88,6 +88,10 @@ export const AppIcons = {
     userManagement: 'account-multiple-outline',
     support: 'information-slab-circle-outline',
     preference: 'tune-variant',
+    email: 'email-outline',
+    phone: 'phone-outline',
+    web: 'web',
+    tax: 'bank-outline',
   },
 
   actions: {

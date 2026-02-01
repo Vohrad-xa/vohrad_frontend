@@ -152,6 +152,10 @@ export const AppIcons = {
     userManagement: 'person.2.circle',
     support: 'questionmark.circle',
     preference: 'slider.horizontal.2.gobackward',
+    email: 'envelope',
+    phone: 'phone',
+    web: 'safari',
+    tax: 'building.columns',
   },
 
   actions: {
