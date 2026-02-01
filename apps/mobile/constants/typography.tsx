@@ -39,11 +39,11 @@ const IOS_TYPOGRAPHY: Record<
 };
 
 const PAPER_TYPOGRAPHY: Record<Typography, PaperVariant> = {
-  largeTitle: 'displayMedium',
+  largeTitle: 'headlineMedium',
   title1: 'titleLarge',
   title2: 'titleMedium',
   title3: 'titleSmall',
-  headline: 'bodyLarge',
+  headline: 'headlineSmall',
   body: 'bodyLarge',
   subheadline: 'bodySmall',
   label: 'labelLarge',

@@ -1,7 +1,6 @@
 import React, {forwardRef, useImperativeHandle} from 'react';
-import {ScrollView, View} from 'react-native';
-import {TextInput} from 'react-native-paper';
-import {useTheme} from '@/providers';
+import {ScrollView} from 'react-native';
+import {List, TextInput} from 'react-native-paper';
 import {useProfileEdit} from '../hooks';
 
 export type AddressContentHandle = {
@@ -9,8 +8,6 @@ export type AddressContentHandle = {
 };
 
 export const AddressContent = forwardRef<AddressContentHandle>((_, ref) => {
-  const {ds} = useTheme();
-
   const {address} = useProfileEdit();
   const {
     addressValue,
@@ -30,7 +27,7 @@ export const AddressContent = forwardRef<AddressContentHandle>((_, ref) => {
 
   return (
     <ScrollView style={{flex: 1}} keyboardShouldPersistTaps="handled">
-      <View style={{gap: ds.spacing.lg}}>
+      <List.Section title="Edit address details" style={{gap: 16}}>
         <TextInput
           mode="outlined"
           label="Street"
@@ -81,7 +78,7 @@ export const AddressContent = forwardRef<AddressContentHandle>((_, ref) => {
           autoCapitalize="words"
           returnKeyType="done"
         />
-      </View>
+      </List.Section>
     </ScrollView>
   );
 });

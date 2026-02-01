@@ -27,5 +27,7 @@ export function useTenantDetails() {
     province: tenant?.province ?? '',
     postalCode: tenant?.postal_code ?? '',
     country: tenant?.country ?? '',
+    industry: tenant?.industry ?? '',
+    taxId: tenant?.tax_id ?? '',
   };
 }

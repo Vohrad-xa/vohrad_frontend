@@ -1,7 +1,6 @@
-import {memo, useMemo} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-import {List, Chip, Surface} from 'react-native-paper';
+import React, {memo, useMemo} from 'react';
+import {StyleSheet, View, ScrollView} from 'react-native';
+import {List, Chip, Divider} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
@@ -24,6 +23,8 @@ const AttachmentTile = memo(
     const description =
       count > 0 ? `${count} ${count === 1 ? 'file' : 'files'}` : 'None';
 
+    const {ds, theme} = useTheme();
+
     return (
       <List.Item
         title={label}
@@ -34,6 +35,10 @@ const AttachmentTile = memo(
         )}
         onPress={onPress}
         borderless
+        style={{
+          borderRadius: ds.borderRadius.sm,
+          backgroundColor: theme.card,
+        }}
       />
     );
   },
@@ -116,22 +121,13 @@ export function AttachmentsOverview({
         </ThemedText>
       )}
 
-      <List.Section style={{gap: ds.spacing.xxs}}>
-        <Surface mode="flat" style={styles.surfaceTop}>
-          <AttachmentTile {...tiles[0]} />
-        </Surface>
-
-        <Surface mode="flat">
-          <AttachmentTile {...tiles[1]} />
-        </Surface>
-
-        <Surface mode="flat">
-          <AttachmentTile {...tiles[2]} />
-        </Surface>
-
-        <Surface mode="flat" style={styles.surfaceBottom}>
-          <AttachmentTile {...tiles[3]} />
-        </Surface>
+      <List.Section style={styles.section}>
+        {tiles.map((t, idx) => (
+          <React.Fragment key={t.kind}>
+            <AttachmentTile {...t} />
+            {idx !== tiles.length - 1 && <Divider style={styles.divider} />}
+          </React.Fragment>
+        ))}
       </List.Section>
     </ScrollView>
   );
@@ -159,16 +155,14 @@ const useStyles = makeStyleFactory(
         borderRadius: ds.borderRadius.full,
       },
 
-      surfaceTop: {
-        borderTopLeftRadius: ds.borderRadius.xxxl,
-        borderTopRightRadius: ds.borderRadius.xxxl,
+      section: {
+        borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
       },
 
-      surfaceBottom: {
-        borderBottomLeftRadius: ds.borderRadius.xxxl,
-        borderBottomRightRadius: ds.borderRadius.xxxl,
-        overflow: 'hidden',
+      divider: {
+        height: 1.9,
+        backgroundColor: 'transparent',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

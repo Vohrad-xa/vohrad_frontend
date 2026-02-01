@@ -24,7 +24,7 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
       style={{flex: 1, gap: ds.spacing.md}}
       keyboardShouldPersistTaps="handled"
     >
-      <List.Section title="Primary Email" titleStyle={{paddingTop: 0}}>
+      <List.Section title="Primary Email">
         <TextInput
           mode="outlined"
           label="Email"
@@ -39,27 +39,25 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
         />
       </List.Section>
 
-      <List.Section title="Pending Request">
-        {pendingEmail ? (
-          <>
-            <TextInput
-              mode="outlined"
-              label="New email"
-              value={pendingEmail}
-              textColor={Palette.gray[500]}
-              editable={false}
-              right={
-                <TextInput.Icon icon="clock-outline" color={Palette.orange} />
-              }
-            />
-            <HelperText type="info" visible>
-              You have requested to change your email.{'\n'}A verification link
-              has been sent. Expires on{' '}
-              {formatDate(pendingEmailExpiresAt, {includeTime: true})}.
-            </HelperText>
-          </>
-        ) : null}
-      </List.Section>
+      {pendingEmail ? (
+        <List.Section title="Pending Request">
+          <TextInput
+            mode="outlined"
+            label="New email"
+            value={pendingEmail}
+            textColor={Palette.gray[500]}
+            editable={false}
+            right={
+              <TextInput.Icon icon="clock-outline" color={Palette.orange} />
+            }
+          />
+          <HelperText type="info" visible>
+            You have requested to change your email.{'\n'}A verification link
+            has been sent. Expires on{' '}
+            {formatDate(pendingEmailExpiresAt, {includeTime: true})}.
+          </HelperText>
+        </List.Section>
+      ) : null}
     </ScrollView>
   );
 });

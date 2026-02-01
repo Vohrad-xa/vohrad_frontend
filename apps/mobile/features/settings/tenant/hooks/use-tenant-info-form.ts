@@ -3,7 +3,7 @@ import {useUpdateTenantProfile} from '@sykamore/store';
 import {useTenantDetails} from './use-tenant-details';
 import type {TenantProfileUpdate} from '@sykamore/types';
 
-type TenantInfoValues = {
+export type TenantInfoValues = {
   name: string;
   email: string;
   phone: string;
@@ -14,6 +14,8 @@ type TenantInfoValues = {
   province: string;
   postalCode: string;
   country: string;
+  industry: string;
+  taxId: string;
 };
 
 function normalizeValue(value: string | null | undefined) {
@@ -43,6 +45,8 @@ export function useTenantInfoForm() {
     province,
     postalCode,
     country,
+    industry,
+    taxId,
   } = useTenantDetails();
   const {mutateAsync: updateTenantProfile, isPending: isLoading} =
     useUpdateTenantProfile();
@@ -59,6 +63,8 @@ export function useTenantInfoForm() {
       province,
       postalCode,
       country,
+      industry,
+      taxId,
     }),
     [
       name,
@@ -71,6 +77,8 @@ export function useTenantInfoForm() {
       province,
       postalCode,
       country,
+      industry,
+      taxId,
     ],
   );
 
@@ -140,6 +148,18 @@ export function useTenantInfoForm() {
     );
     if (countryValue !== undefined) updateData.country = countryValue;
 
+    const industryValue = computeUpdateValue(
+      values.industry,
+      normalizeValue(tenant?.industry),
+    );
+    if (industryValue !== undefined) updateData.industry = industryValue;
+
+    const taxIdValue = computeUpdateValue(
+      values.taxId,
+      normalizeValue(tenant?.tax_id),
+    );
+    if (taxIdValue !== undefined) updateData.tax_id = taxIdValue;
+
     return updateData;
   }, [tenant, values]);
 
@@ -165,6 +185,8 @@ export function useTenantInfoForm() {
         original: tenant?.postal_code,
       },
       {key: 'country', label: 'Country', original: tenant?.country},
+      {key: 'industry', label: 'Industry', original: tenant?.industry},
+      {key: 'taxId', label: 'Tax ID', original: tenant?.tax_id},
     ];
 
     return fields

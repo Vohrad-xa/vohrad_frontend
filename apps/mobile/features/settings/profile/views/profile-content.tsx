@@ -1,7 +1,13 @@
 import React, {memo, useCallback} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
 import {type Href} from 'expo-router';
-import {Surface, Avatar, List, type ListItemProps} from 'react-native-paper';
+import {
+  Surface,
+  Avatar,
+  List,
+  type ListItemProps,
+  Divider,
+} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
@@ -42,6 +48,7 @@ const ProfileRow = memo(
     descriptionProps,
   }: ProfileRowModel) => {
     const router = useSafeRouter();
+    const {ds, theme} = useTheme();
 
     return (
       <List.Item
@@ -56,6 +63,7 @@ const ProfileRow = memo(
         accessibilityHint={a11yHint}
         {...descriptionProps}
         borderless
+        style={{borderRadius: ds.borderRadius.sm, backgroundColor: theme.card}}
       />
     );
   },
@@ -94,12 +102,12 @@ export function ProfileContent() {
   const PERSONAL_ROWS = [
     {...PROFILE_FIELDS.name, valueText: displayName},
     {...PROFILE_FIELDS.dateOfBirth, valueText: birthDateText},
-  ] as const satisfies ReadonlyArray<Omit<ProfileRowModel, 'descriptionProps'>>;
+  ] as const satisfies readonly ProfileRowModel[];
 
   const CONTACT_ROWS = [
     {...PROFILE_FIELDS.email, valueText: emailText},
     {...PROFILE_FIELDS.phoneNumber, valueText: phoneText},
-  ] as const satisfies ReadonlyArray<Omit<ProfileRowModel, 'descriptionProps'>>;
+  ] as const satisfies readonly ProfileRowModel[];
 
   const ADDRESS_ROWS = [
     {
@@ -125,45 +133,35 @@ export function ProfileContent() {
     ),
     [displayName, initials],
   );
+
+  const renderRows = (rows: readonly ProfileRowModel[]) => (
+    <Surface mode="flat" style={styles.surface}>
+      {rows.map((row, idx) => (
+        <React.Fragment key={String(row.href)}>
+          <ProfileRow {...row} />
+          {idx !== rows.length - 1 && <Divider style={styles.divider} />}
+        </React.Fragment>
+      ))}
+    </Surface>
+  );
+
   return (
     <ScrollView style={styles.container}>
-      <List.Section>
-        <List.Item
-          title={<ThemedText variant="title1">{displayName}</ThemedText>}
-          description={
-            <ThemedText variant="footnote" colorToken="muted">
-              {roleText} • Since {memberSince}
-            </ThemedText>
-          }
-          right={renderAvatar}
-        />
-      </List.Section>
+      <List.Item
+        title={<ThemedText variant="title1">{displayName}</ThemedText>}
+        description={
+          <ThemedText variant="footnote" colorToken="muted">
+            {roleText} • Since {memberSince}
+          </ThemedText>
+        }
+        right={renderAvatar}
+      />
 
-      <List.Section style={{gap: ds.spacing.xxs}}>
-        <Surface mode="flat" style={styles.surfaceTop}>
-          <ProfileRow {...PERSONAL_ROWS[0]} />
-        </Surface>
+      <List.Section>{renderRows(PERSONAL_ROWS)}</List.Section>
 
-        <Surface mode="flat" style={styles.surfaceBottom}>
-          <ProfileRow {...PERSONAL_ROWS[1]} />
-        </Surface>
-      </List.Section>
+      <List.Section>{renderRows(CONTACT_ROWS)}</List.Section>
 
-      <List.Section style={{gap: ds.spacing.xxs}}>
-        <Surface mode="flat" style={styles.surfaceTop}>
-          <ProfileRow {...CONTACT_ROWS[0]} />
-        </Surface>
-
-        <Surface mode="flat" style={styles.surfaceBottom}>
-          <ProfileRow {...CONTACT_ROWS[1]} />
-        </Surface>
-      </List.Section>
-
-      <List.Section style={{gap: ds.spacing.xxs}}>
-        <Surface mode="flat" style={[styles.surfaceTop, styles.surfaceBottom]}>
-          <ProfileRow {...ADDRESS_ROWS[0]} />
-        </Surface>
-      </List.Section>
+      <List.Section>{renderRows(ADDRESS_ROWS)}</List.Section>
     </ScrollView>
   );
 }
@@ -173,16 +171,15 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {flex: 1},
 
-      surfaceTop: {
-        borderTopLeftRadius: ds.borderRadius.xxxl,
-        borderTopRightRadius: ds.borderRadius.xxxl,
+      surface: {
+        borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
+        backgroundColor: 'transparent',
       },
 
-      surfaceBottom: {
-        borderBottomLeftRadius: ds.borderRadius.xxxl,
-        borderBottomRightRadius: ds.borderRadius.xxxl,
-        overflow: 'hidden',
+      divider: {
+        height: 1.9,
+        backgroundColor: 'transparent',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

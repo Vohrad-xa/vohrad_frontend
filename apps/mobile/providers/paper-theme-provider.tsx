@@ -36,16 +36,16 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
         onTertiaryContainer: theme.text,
 
         // Screens / surfaces
-        background: theme.background,
+        background: theme.card,
         surface: surfaceBase,
         onSurface: theme.text,
-        surfaceVariant: theme.modalBackground,
-        onSurfaceVariant: theme.muted,
+        surfaceVariant: theme.card,
+        onSurfaceVariant: theme.icon,
 
         // Surface with elevation
         elevation: {
           ...base.colors.elevation,
-          level0: 'transparent',
+          level0: surfaceBase,
           level1: surfaceBase,
           level2: surfaceBase,
           level3: surfaceBase,

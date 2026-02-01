@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Platform} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import {List, Surface} from 'react-native-paper';
+import {List, Surface, Divider} from 'react-native-paper';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {BiometricToggle, HapticToggle} from '@/features/settings';
 import {useTheme} from '@/providers';
@@ -16,55 +16,52 @@ export default function AppSettingsScreen() {
       contentContainerStyle={styles.container}
       showsVerticalScrollIndicator={false}
     >
-      <List.Section style={styles.section}>
-        <Surface style={styles.topSurface} mode="flat">
-          <List.Item
-            style={styles.listItem}
-            title="Biometric Unlock"
-            description="Enable Face ID / Fingerprint"
-            right={() => <BiometricToggle />}
-          />
-        </Surface>
+      <Surface mode="flat" style={styles.surface}>
+        <List.Item
+          style={styles.listItem}
+          title="Biometric Unlock"
+          description="Enable Face ID / Fingerprint"
+          right={() => <BiometricToggle />}
+        />
+
+        <Divider style={styles.divider} />
 
         {Platform.OS !== 'web' && (
-          <Surface style={[styles.bottomSurface]} mode="flat">
-            <List.Item
-              style={styles.listItem}
-              title="Haptic Feedback"
-              description="Enable haptic feedback"
-              right={() => <HapticToggle />}
-            />
-          </Surface>
+          <List.Item
+            style={styles.listItem}
+            title="Haptic Feedback"
+            description="Enable haptic feedback"
+            right={() => <HapticToggle />}
+          />
         )}
-      </List.Section>
+      </Surface>
     </ScrollView>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       container: {
         flex: 1,
         padding: ds.spacing.md,
       },
 
-      section: {
-        gap: ds.spacing.xxs,
-      },
-
-      topSurface: {
-        borderTopLeftRadius: ds.borderRadius.xxxl,
-        borderTopRightRadius: ds.borderRadius.xxxl,
-      },
-
-      bottomSurface: {
-        borderBottomLeftRadius: ds.borderRadius.xxxl,
-        borderBottomRightRadius: ds.borderRadius.xxxl,
+      surface: {
+        borderRadius: ds.borderRadius.xxxl,
+        overflow: 'hidden',
+        backgroundColor: 'transparent',
       },
 
       listItem: {
-        paddingRight: ds.spacing.sm,
+        paddingRight: ds.spacing.md,
+        borderRadius: ds.borderRadius.sm,
+        backgroundColor: theme.card,
+      },
+
+      divider: {
+        height: 1.9,
+        backgroundColor: 'transparent',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

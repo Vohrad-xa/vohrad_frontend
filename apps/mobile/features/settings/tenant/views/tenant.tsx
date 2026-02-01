@@ -1,7 +1,13 @@
 import React, {memo, useCallback} from 'react';
 import {ScrollView, StyleSheet} from 'react-native';
 import {type Href} from 'expo-router';
-import {Avatar, List, Surface, type ListItemProps} from 'react-native-paper';
+import {
+  Avatar,
+  List,
+  Surface,
+  Divider,
+  type ListItemProps,
+} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
 import {useTheme} from '@/providers';
@@ -9,7 +15,7 @@ import {makeStyleFactory, useSafeRouter, AppIcons} from '@/utils';
 import {TENANT_FIELDS} from '../constants/organization-constants';
 import {useTenantDetails} from '../hooks/use-tenant-details';
 
-type tenantRowModel = Readonly<{
+type TenantRowModel = Readonly<{
   title: string;
   description: string;
   href: Href;
@@ -18,8 +24,9 @@ type tenantRowModel = Readonly<{
 // Extracting the type of props passed to List.Item's right callback
 type RightProps = Parameters<NonNullable<ListItemProps['right']>>[0];
 
-const TenantRow = memo(({title, description, href}: tenantRowModel) => {
+const TenantRow = memo(({title, description, href}: TenantRowModel) => {
   const router = useSafeRouter();
+  const {theme, ds} = useTheme();
 
   return (
     <List.Item
@@ -30,21 +37,22 @@ const TenantRow = memo(({title, description, href}: tenantRowModel) => {
       )}
       onPress={() => router.push(href)}
       borderless
+      style={{borderRadius: ds.borderRadius.sm, backgroundColor: theme.card}}
     />
   );
 });
+
+const TENANT_ROWS = [
+  TENANT_FIELDS.info,
+  TENANT_FIELDS.license,
+  TENANT_FIELDS.businessHours,
+  TENANT_FIELDS.users,
+] as const satisfies readonly TenantRowModel[];
 
 export const TenantDetailsContent = () => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
   const {title, subtitle, avatarLabel} = useTenantDetails();
-
-  const TENANT_ROWS = [
-    TENANT_FIELDS.info,
-    TENANT_FIELDS.license,
-    TENANT_FIELDS.businessHours,
-    TENANT_FIELDS.users,
-  ] as const satisfies readonly tenantRowModel[];
   const renderAvatar = useCallback(
     (props: RightProps) => (
       <Avatar.Text
@@ -59,31 +67,26 @@ export const TenantDetailsContent = () => {
     [avatarLabel, title],
   );
 
+  const renderRows = (rows: readonly TenantRowModel[]) => (
+    <Surface mode="flat" style={styles.surface}>
+      {rows.map((row, idx) => (
+        <React.Fragment key={String(row.href)}>
+          <TenantRow {...row} />
+          {idx !== rows.length - 1 && <Divider style={styles.divider} />}
+        </React.Fragment>
+      ))}
+    </Surface>
+  );
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <List.Section>
-        <List.Item
-          title={<ThemedText variant="title1">{title}</ThemedText>}
-          description={<ThemedText variant="caption">{subtitle}</ThemedText>}
-          right={renderAvatar}
-        />
-      </List.Section>
+      <List.Item
+        title={<ThemedText variant="title1">{title}</ThemedText>}
+        description={<ThemedText variant="caption">{subtitle}</ThemedText>}
+        right={renderAvatar}
+      />
 
-      <List.Section style={styles.section}>
-        <Surface mode="flat" style={[styles.surface, styles.surfaceTop]}>
-          <TenantRow {...TENANT_ROWS[0]} />
-        </Surface>
-
-        <Surface mode="flat" style={styles.surface}>
-          <TenantRow {...TENANT_ROWS[1]} />
-        </Surface>
-        <Surface mode="flat" style={styles.surface}>
-          <TenantRow {...TENANT_ROWS[2]} />
-        </Surface>
-        <Surface mode="flat" style={[styles.surface, styles.surfaceBottom]}>
-          <TenantRow {...TENANT_ROWS[3]} />
-        </Surface>
-      </List.Section>
+      <List.Section>{renderRows(TENANT_ROWS)}</List.Section>
     </ScrollView>
   );
 };
@@ -97,22 +100,15 @@ const createStyles = makeStyleFactory(
         paddingHorizontal: ds.spacing.md,
       },
 
-      section: {
-        gap: ds.spacing.xxs,
-      },
-
       surface: {
+        borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
+        backgroundColor: 'transparent',
       },
 
-      surfaceTop: {
-        borderTopLeftRadius: ds.borderRadius.xxxl,
-        borderTopRightRadius: ds.borderRadius.xxxl,
-      },
-
-      surfaceBottom: {
-        borderBottomLeftRadius: ds.borderRadius.xxxl,
-        borderBottomRightRadius: ds.borderRadius.xxxl,
+      divider: {
+        height: 1.9,
+        backgroundColor: 'transparent',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

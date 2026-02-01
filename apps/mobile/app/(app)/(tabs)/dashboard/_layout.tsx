@@ -18,9 +18,8 @@ export default function HomeLayout() {
         headerBackButtonDisplayMode: 'minimal',
         headerTransparent: Platform.OS === 'ios',
         headerTitleStyle: {
-          fontWeight: 'bold',
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          fontSize: Platform.OS !== 'ios' ? 26 : undefined,
+          fontSize: Platform.OS !== 'ios' ? 22 : undefined,
         },
       }}
     >

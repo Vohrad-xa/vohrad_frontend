@@ -1,10 +1,10 @@
-import {useCallback, useRef} from 'react';
+import {useCallback, useMemo, useRef} from 'react';
 import {useRouter, type Href, type Router} from 'expo-router';
 
 type RouterMethods = Pick<Router, 'push' | 'navigate' | 'replace'>;
 type NavOptions = Parameters<RouterMethods['push']>[1];
 
-const NAVIGATION_DEBOUNCE_MS = 600;
+const NAVIGATION_DEBOUNCE_MS = 500;
 
 let lastGlobalNavTime = 0;
 let lastGlobalNavHref: string | null = null;
@@ -51,10 +51,13 @@ export function useSafeRouter(): Router {
     [router],
   );
 
-  return {
-    ...router,
-    push: createDebouncedNav('push'),
-    navigate: createDebouncedNav('navigate'),
-    replace: createDebouncedNav('replace'),
-  };
+  return useMemo(
+    () => ({
+      ...router,
+      push: createDebouncedNav('push'),
+      navigate: createDebouncedNav('navigate'),
+      replace: createDebouncedNav('replace'),
+    }),
+    [router, createDebouncedNav],
+  );
 }
