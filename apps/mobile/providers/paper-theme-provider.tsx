@@ -35,14 +35,12 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
         tertiaryContainer: theme.secondaryContainer,
         onTertiaryContainer: theme.text,
 
-        outlineVariant: scheme === 'dark' ? Palette.black : Palette.fog,
-
         // Screens / surfaces
         background: theme.background,
         surface: surfaceBase,
         onSurface: theme.text,
         surfaceVariant: theme.modalBackground,
-        onSurfaceVariant: theme.muted,
+        onSurfaceVariant: theme.icon,
 
         // Surface with elevation
         elevation: {

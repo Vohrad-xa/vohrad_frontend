@@ -48,6 +48,7 @@ const ProfileRow = memo(
     descriptionProps,
   }: ProfileRowModel) => {
     const router = useSafeRouter();
+    const {ds, theme} = useTheme();
 
     return (
       <List.Item
@@ -62,6 +63,7 @@ const ProfileRow = memo(
         accessibilityHint={a11yHint}
         {...descriptionProps}
         borderless
+        style={{borderRadius: ds.borderRadius.sm, backgroundColor: theme.card}}
       />
     );
   },
@@ -100,12 +102,12 @@ export function ProfileContent() {
   const PERSONAL_ROWS = [
     {...PROFILE_FIELDS.name, valueText: displayName},
     {...PROFILE_FIELDS.dateOfBirth, valueText: birthDateText},
-  ] as const satisfies ReadonlyArray<Omit<ProfileRowModel, 'descriptionProps'>>;
+  ] as const satisfies readonly ProfileRowModel[];
 
   const CONTACT_ROWS = [
     {...PROFILE_FIELDS.email, valueText: emailText},
     {...PROFILE_FIELDS.phoneNumber, valueText: phoneText},
-  ] as const satisfies ReadonlyArray<Omit<ProfileRowModel, 'descriptionProps'>>;
+  ] as const satisfies readonly ProfileRowModel[];
 
   const ADDRESS_ROWS = [
     {
@@ -131,41 +133,35 @@ export function ProfileContent() {
     ),
     [displayName, initials],
   );
+
+  const renderRows = (rows: readonly ProfileRowModel[]) => (
+    <Surface mode="flat" style={styles.surface}>
+      {rows.map((row, idx) => (
+        <React.Fragment key={String(row.href)}>
+          <ProfileRow {...row} />
+          {idx !== rows.length - 1 && <Divider style={styles.divider} />}
+        </React.Fragment>
+      ))}
+    </Surface>
+  );
+
   return (
     <ScrollView style={styles.container}>
-      <List.Section>
-        <List.Item
-          title={<ThemedText variant="title1">{displayName}</ThemedText>}
-          description={
-            <ThemedText variant="footnote" colorToken="muted">
-              {roleText} • Since {memberSince}
-            </ThemedText>
-          }
-          right={renderAvatar}
-        />
-      </List.Section>
+      <List.Item
+        title={<ThemedText variant="title1">{displayName}</ThemedText>}
+        description={
+          <ThemedText variant="footnote" colorToken="muted">
+            {roleText} • Since {memberSince}
+          </ThemedText>
+        }
+        right={renderAvatar}
+      />
 
-      <List.Section>
-        <Surface mode="flat" style={styles.Surface}>
-          <ProfileRow {...PERSONAL_ROWS[0]} />
-          <Divider style={styles.divider} />
-          <ProfileRow {...PERSONAL_ROWS[1]} />
-        </Surface>
-      </List.Section>
+      <List.Section>{renderRows(PERSONAL_ROWS)}</List.Section>
 
-      <List.Section>
-        <Surface mode="flat" style={styles.Surface}>
-          <ProfileRow {...CONTACT_ROWS[0]} />
-          <Divider style={styles.divider} />
-          <ProfileRow {...CONTACT_ROWS[1]} />
-        </Surface>
-      </List.Section>
+      <List.Section>{renderRows(CONTACT_ROWS)}</List.Section>
 
-      <List.Section>
-        <Surface mode="flat" style={styles.Surface}>
-          <ProfileRow {...ADDRESS_ROWS[0]} />
-        </Surface>
-      </List.Section>
+      <List.Section>{renderRows(ADDRESS_ROWS)}</List.Section>
     </ScrollView>
   );
 }
@@ -175,12 +171,15 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       container: {flex: 1},
 
-      Surface: {
+      surface: {
         borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
+        backgroundColor: 'transparent',
       },
+
       divider: {
-        height: 1.7,
+        height: 1.9,
+        backgroundColor: 'transparent',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

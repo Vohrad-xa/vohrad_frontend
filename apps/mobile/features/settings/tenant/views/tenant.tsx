@@ -15,7 +15,7 @@ import {makeStyleFactory, useSafeRouter, AppIcons} from '@/utils';
 import {TENANT_FIELDS} from '../constants/organization-constants';
 import {useTenantDetails} from '../hooks/use-tenant-details';
 
-type tenantRowModel = Readonly<{
+type TenantRowModel = Readonly<{
   title: string;
   description: string;
   href: Href;
@@ -24,8 +24,9 @@ type tenantRowModel = Readonly<{
 // Extracting the type of props passed to List.Item's right callback
 type RightProps = Parameters<NonNullable<ListItemProps['right']>>[0];
 
-const TenantRow = memo(({title, description, href}: tenantRowModel) => {
+const TenantRow = memo(({title, description, href}: TenantRowModel) => {
   const router = useSafeRouter();
+  const {theme, ds} = useTheme();
 
   return (
     <List.Item
@@ -36,21 +37,22 @@ const TenantRow = memo(({title, description, href}: tenantRowModel) => {
       )}
       onPress={() => router.push(href)}
       borderless
+      style={{borderRadius: ds.borderRadius.sm, backgroundColor: theme.card}}
     />
   );
 });
+
+const TENANT_ROWS = [
+  TENANT_FIELDS.info,
+  TENANT_FIELDS.license,
+  TENANT_FIELDS.businessHours,
+  TENANT_FIELDS.users,
+] as const satisfies readonly TenantRowModel[];
 
 export const TenantDetailsContent = () => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
   const {title, subtitle, avatarLabel} = useTenantDetails();
-
-  const TENANT_ROWS = [
-    TENANT_FIELDS.info,
-    TENANT_FIELDS.license,
-    TENANT_FIELDS.businessHours,
-    TENANT_FIELDS.users,
-  ] as const satisfies readonly tenantRowModel[];
   const renderAvatar = useCallback(
     (props: RightProps) => (
       <Avatar.Text
@@ -65,26 +67,26 @@ export const TenantDetailsContent = () => {
     [avatarLabel, title],
   );
 
+  const renderRows = (rows: readonly TenantRowModel[]) => (
+    <Surface mode="flat" style={styles.surface}>
+      {rows.map((row, idx) => (
+        <React.Fragment key={String(row.href)}>
+          <TenantRow {...row} />
+          {idx !== rows.length - 1 && <Divider style={styles.divider} />}
+        </React.Fragment>
+      ))}
+    </Surface>
+  );
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <List.Section>
-        <List.Item
-          title={<ThemedText variant="title1">{title}</ThemedText>}
-          description={<ThemedText variant="caption">{subtitle}</ThemedText>}
-          right={renderAvatar}
-        />
-      </List.Section>
-      <List.Section>
-        <Surface mode="flat" style={styles.surface}>
-          <TenantRow {...TENANT_ROWS[0]} />
-          <Divider style={styles.divider} />
-          <TenantRow {...TENANT_ROWS[1]} />
-          <Divider style={styles.divider} />
-          <TenantRow {...TENANT_ROWS[2]} />
-          <Divider style={styles.divider} />
-          <TenantRow {...TENANT_ROWS[3]} />
-        </Surface>
-      </List.Section>
+      <List.Item
+        title={<ThemedText variant="title1">{title}</ThemedText>}
+        description={<ThemedText variant="caption">{subtitle}</ThemedText>}
+        right={renderAvatar}
+      />
+
+      <List.Section>{renderRows(TENANT_ROWS)}</List.Section>
     </ScrollView>
   );
 };
@@ -101,10 +103,12 @@ const createStyles = makeStyleFactory(
       surface: {
         borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
+        backgroundColor: 'transparent',
       },
 
       divider: {
-        height: 1.7,
+        height: 1.9,
+        backgroundColor: 'transparent',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

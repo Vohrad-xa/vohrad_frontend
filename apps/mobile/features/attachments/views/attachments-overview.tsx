@@ -1,6 +1,5 @@
-import {memo, useMemo} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
+import React, {memo, useMemo} from 'react';
+import {StyleSheet, View, ScrollView} from 'react-native';
 import {List, Chip, Surface, Divider} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
@@ -24,6 +23,8 @@ const AttachmentTile = memo(
     const description =
       count > 0 ? `${count} ${count === 1 ? 'file' : 'files'}` : 'None';
 
+    const {ds, theme} = useTheme();
+
     return (
       <List.Item
         title={label}
@@ -34,6 +35,7 @@ const AttachmentTile = memo(
         )}
         onPress={onPress}
         borderless
+        style={{borderRadius: ds.borderRadius.sm, backgroundColor: theme.card}}
       />
     );
   },
@@ -118,13 +120,12 @@ export function AttachmentsOverview({
 
       <List.Section>
         <Surface mode="flat" style={styles.surface}>
-          <AttachmentTile {...tiles[0]} />
-          <Divider style={styles.divider} />
-          <AttachmentTile {...tiles[1]} />
-          <Divider style={styles.divider} />
-          <AttachmentTile {...tiles[2]} />
-          <Divider style={styles.divider} />
-          <AttachmentTile {...tiles[3]} />
+          {tiles.map((t, idx) => (
+            <React.Fragment key={t.kind}>
+              <AttachmentTile {...t} />
+              {idx !== tiles.length - 1 && <Divider style={styles.divider} />}
+            </React.Fragment>
+          ))}
         </Surface>
       </List.Section>
     </ScrollView>
@@ -155,9 +156,11 @@ const useStyles = makeStyleFactory(
       surface: {
         borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
+        backgroundColor: 'transparent',
       },
       divider: {
-        height: 1.7,
+        height: 1.9,
+        backgroundColor: 'transparent',
       },
     }),
   (ds, theme) => themeKey(theme, ds),
