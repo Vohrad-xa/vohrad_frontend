@@ -35,7 +35,7 @@ export default function OrganizationLayout() {
       headerBackButtonDisplayMode: 'minimal' as const,
       headerTransparent: Platform.OS === 'ios',
       headerTitleStyle: {
-        fontSize: Platform.OS !== 'ios' ? 26 : undefined,
+        fontSize: Platform.OS !== 'ios' ? 22 : undefined,
         color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
       },
       headerLargeTitleStyle: {
