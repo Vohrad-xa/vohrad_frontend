@@ -6,12 +6,12 @@ export interface AttachmentNavigationTarget {
   itemName?: string;
 }
 
-type VaultPath = '/(app)/(tabs)/vault';
-type VaultAddPath = '/(app)/(tabs)/vault/add';
-type VaultImagesPath = '/(app)/(tabs)/vault/images';
-type VaultDocumentsPath = '/(app)/(tabs)/vault/documents';
-type VaultArchivesPath = '/(app)/(tabs)/vault/archives';
-type VaultOtherPath = '/(app)/(tabs)/vault/other';
+type VaultPath = '/(tabs)/vault';
+type VaultAddPath = '/(tabs)/vault/add';
+type VaultImagesPath = '/(tabs)/vault/images';
+type VaultDocumentsPath = '/(tabs)/vault/documents';
+type VaultArchivesPath = '/(tabs)/vault/archives';
+type VaultOtherPath = '/(tabs)/vault/other';
 
 export const VAULT_SEARCH_SCOPES = {
   index: 'vault.index',
@@ -26,7 +26,7 @@ export interface AttachmentRoute<Path extends string> {
   params: Record<string, string>;
 }
 
-const BASE_VAULT_PATH: VaultPath = '/(app)/(tabs)/vault';
+const BASE_VAULT_PATH: VaultPath = '/(tabs)/vault';
 
 export function buildAttachmentVaultBaseRoute(): AttachmentRoute<VaultPath> {
   return {

@@ -69,7 +69,7 @@ export default function ItemsScreen() {
 
   const handleItemPress = (itemId: string) => {
     router.push({
-      pathname: '/(app)/(tabs)/items/[id]',
+      pathname: '/(tabs)/items/[id]',
       params: {id: itemId},
     });
   };

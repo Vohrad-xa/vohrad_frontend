@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect} from 'react';
+import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {useNavigationState} from '@react-navigation/native';
 import {QueryProvider} from '@sykamore/store';
@@ -9,6 +10,7 @@ import {
   KeyboardProvider,
   KeyboardController,
 } from 'react-native-keyboard-controller';
+import {ThemedStatusBar} from '@/components/ui';
 import {AttachmentProvider} from '@/features/attachments';
 import {NetworkProvider} from '@/features/network';
 import {NetworkBanner} from '@/features/network/components/network-banner';
@@ -47,7 +49,13 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
   return (
     <Stack screenOptions={{headerShown: false}}>
       <Stack.Protected guard={isAuthenticated}>
-        <Stack.Screen name="(app)" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="(modals)"
+          options={{
+            presentation: Platform.OS === 'ios' ? 'modal' : 'transparentModal',
+          }}
+        />
       </Stack.Protected>
       <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="(auth)" />
@@ -72,6 +80,7 @@ export default function RootLayout() {
                     <LoadingProvider>
                       <AuthProvider>
                         <AttachmentProvider>
+                          <ThemedStatusBar />
                           <RootNavigation
                             isBootstrapComplete={isBootstrapComplete}
                           />

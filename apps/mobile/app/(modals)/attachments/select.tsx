@@ -30,7 +30,7 @@ export default function ResourceSelectorModal() {
   const handleDone = useCallback(() => {
     if (!selectedId) {
       router.dismissTo({
-        pathname: '/(app)/(tabs)/vault/add',
+        pathname: '/(tabs)/vault/add',
         params: {},
       });
       return;
@@ -42,7 +42,7 @@ export default function ResourceSelectorModal() {
     }
 
     router.dismissTo({
-      pathname: '/(app)/(tabs)/vault/add',
+      pathname: '/(tabs)/vault/add',
       params: {
         targetType: 'item',
         targetId: selectedItem.id,

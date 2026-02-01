@@ -35,7 +35,7 @@ export default function SettingsModal() {
             icon={AppIcons.ui.profile}
             iconColorToken="accentRed"
             title="My Profile"
-            onPress={() => router.push('/(app)/(tabs)/settings/profile')}
+            onPress={() => router.push('/(tabs)/settings/profile')}
           />
         </ListSection>
 
@@ -45,7 +45,7 @@ export default function SettingsModal() {
             icon={AppIcons.domain.organization}
             iconColorToken="accentBlue"
             title="Business Details"
-            onPress={() => router.push('/(app)/(tabs)/settings/tenant')}
+            onPress={() => router.push('/(tabs)/settings/tenant')}
           />
         </ListSection>
 
@@ -55,7 +55,7 @@ export default function SettingsModal() {
             icon={AppIcons.ui.settings}
             iconColorToken="muted"
             title="App Settings"
-            onPress={() => router.push('/(app)/(tabs)/settings/app-settings')}
+            onPress={() => router.push('/(tabs)/settings/app-settings')}
           />
 
           <Picker
@@ -84,7 +84,7 @@ export default function SettingsModal() {
             icon={AppIcons.ui.language}
             iconColorToken="accentBlue"
             title="App Language"
-            onPress={() => router.push('/(app)/(tabs)/settings/language')}
+            onPress={() => router.push('/(tabs)/settings/language')}
           />
         </ListSection>
 
@@ -94,25 +94,25 @@ export default function SettingsModal() {
             icon={AppIcons.ui.privacy}
             iconColorToken="accentPurple"
             title="Privacy Policy"
-            onPress={() => router.push('/(app)/(tabs)/settings/privacy')}
+            onPress={() => router.push('/(tabs)/settings/privacy')}
           />
           <ListSection.Row
             icon={AppIcons.ui.terms}
             iconColorToken="accentOrange"
             title="Terms of Use"
-            onPress={() => router.push('/(app)/(tabs)/settings/terms')}
+            onPress={() => router.push('/(tabs)/settings/terms')}
           />
           <ListSection.Row
             icon={AppIcons.ui.info}
             iconColorToken="muted"
             title="About"
-            onPress={() => router.push('/(app)/(tabs)/settings/about')}
+            onPress={() => router.push('/(tabs)/settings/about')}
           />
           <ListSection.Row
             icon={AppIcons.ui.help}
             iconColorToken="accentOrange"
             title="Report an Issue"
-            onPress={() => router.push('/(app)/(tabs)/settings/support')}
+            onPress={() => router.push('/(tabs)/settings/support')}
           />
         </ListSection>
 
