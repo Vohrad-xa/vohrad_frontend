@@ -35,7 +35,10 @@ const AttachmentTile = memo(
         )}
         onPress={onPress}
         borderless
-        style={{borderRadius: ds.borderRadius.sm, backgroundColor: theme.card}}
+        style={{
+          borderRadius: ds.borderRadius.sm,
+          backgroundColor: theme.card,
+        }}
       />
     );
   },
@@ -118,15 +121,13 @@ export function AttachmentsOverview({
         </ThemedText>
       )}
 
-      <List.Section>
-        <Surface mode="flat" style={styles.surface}>
-          {tiles.map((t, idx) => (
-            <React.Fragment key={t.kind}>
-              <AttachmentTile {...t} />
-              {idx !== tiles.length - 1 && <Divider style={styles.divider} />}
-            </React.Fragment>
-          ))}
-        </Surface>
+      <List.Section style={styles.section}>
+        {tiles.map((t, idx) => (
+          <React.Fragment key={t.kind}>
+            <AttachmentTile {...t} />
+            {idx !== tiles.length - 1 && <Divider style={styles.divider} />}
+          </React.Fragment>
+        ))}
       </List.Section>
     </ScrollView>
   );
@@ -153,11 +154,12 @@ const useStyles = makeStyleFactory(
         alignSelf: 'flex-start',
         borderRadius: ds.borderRadius.full,
       },
-      surface: {
+
+      section: {
         borderRadius: ds.borderRadius.xxxl,
         overflow: 'hidden',
-        backgroundColor: 'transparent',
       },
+
       divider: {
         height: 1.9,
         backgroundColor: 'transparent',

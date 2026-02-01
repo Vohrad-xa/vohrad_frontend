@@ -87,8 +87,15 @@ export function useBusinessHours() {
         });
       } else {
         await updateTenantSettings({
-          business_hour_start: businessHourStart ?? DEFAULT_BUSINESS_HOUR_START,
-          business_hour_end: businessHourEnd ?? DEFAULT_BUSINESS_HOUR_END,
+          business_hour_start:
+            businessHourStart.length > 0
+              ? businessHourStart
+              : DEFAULT_BUSINESS_HOUR_START,
+
+          business_hour_end:
+            businessHourEnd.length > 0
+              ? businessHourEnd
+              : DEFAULT_BUSINESS_HOUR_END,
         });
       }
     },
