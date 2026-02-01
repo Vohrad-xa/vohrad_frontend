@@ -16,14 +16,14 @@ export function useInfiniteItems(
       return itemApi.getItems({
         limit: pageSize,
         cursor: pageParam ?? undefined,
-        direction: 'before',
+        direction: 'after',
         odataFilter,
       });
     },
     initialPageParam: null,
     getNextPageParam: (lastPage) => {
-      if (lastPage.data.has_previous_page) {
-        return lastPage.data.start_cursor;
+      if (lastPage.data.has_next_page) {
+        return lastPage.data.end_cursor;
       }
       return undefined;
     },
