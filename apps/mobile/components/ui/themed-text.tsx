@@ -88,27 +88,15 @@ export function ThemedText({
     );
   }
 
-  if (Platform.OS === 'android') {
-    return (
-      <PaperText
-        {...props}
-        variant={typographyProps.variant}
-        allowFontScaling={typographyProps.allowFontScaling}
-        style={[baseStyle, dynamicStyle, style]}
-      >
-        {children}
-      </PaperText>
-    );
-  }
-
   return (
-    <RNText
+    <PaperText
       {...props}
+      variant={typographyProps.variant}
       allowFontScaling={typographyProps.allowFontScaling}
       style={[baseStyle, dynamicStyle, style]}
     >
       {children}
-    </RNText>
+    </PaperText>
   );
 }
 

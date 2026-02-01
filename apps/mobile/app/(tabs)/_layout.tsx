@@ -11,7 +11,7 @@ import {AppIcons, Icon, type IconName} from '@/utils/icons';
 
 const TAB_NAMES = ['dashboard', 'items', 'vault', 'settings'] as const;
 type TabName = (typeof TAB_NAMES)[number];
-type TabsRoute = `/(app)/(tabs)/${TabName}`;
+type TabsRoute = `/(tabs)/${TabName}`;
 
 type TabConfig = {
   name: TabName;
@@ -83,9 +83,9 @@ export default function TabLayout() {
 
   useEffect(() => {
     if (Platform.OS === 'web') return;
-    if (segments[1] !== '(tabs)') return;
+    if (segments[0] !== '(tabs)') return;
 
-    const active: TabName = isTabName(segments[2]) ? segments[2] : INITIAL_TAB;
+    const active: TabName = isTabName(segments[1]) ? segments[1] : INITIAL_TAB;
 
     if (prev.current && prev.current !== active) triggerHaptic('light');
     prev.current = active;

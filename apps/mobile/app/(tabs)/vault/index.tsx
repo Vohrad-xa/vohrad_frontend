@@ -298,7 +298,7 @@ export default function VaultScreen() {
         itemName: filterInfo.itemName,
       });
     } else {
-      router.push('/(app)/(tabs)/vault/add');
+      router.push('/(tabs)/vault/add');
     }
   }, [router, filterInfo, openVaultAdd]);
 

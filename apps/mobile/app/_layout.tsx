@@ -10,6 +10,7 @@ import {
   KeyboardProvider,
   KeyboardController,
 } from 'react-native-keyboard-controller';
+import {ThemedStatusBar} from '@/components/ui';
 import {AttachmentProvider} from '@/features/attachments';
 import {NetworkProvider} from '@/features/network';
 import {NetworkBanner} from '@/features/network/components/network-banner';
@@ -47,9 +48,8 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
 
   return (
     <Stack screenOptions={{headerShown: false}}>
-      <Stack.Screen name="email/confirm" />
       <Stack.Protected guard={isAuthenticated}>
-        <Stack.Screen name="(app)" />
+        <Stack.Screen name="(tabs)" />
         <Stack.Screen
           name="(modals)"
           options={{
@@ -59,6 +59,7 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
       </Stack.Protected>
       <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="(auth)" />
+        <Stack.Screen name="email/confirm" />
       </Stack.Protected>
     </Stack>
   );
@@ -79,6 +80,7 @@ export default function RootLayout() {
                     <LoadingProvider>
                       <AuthProvider>
                         <AttachmentProvider>
+                          <ThemedStatusBar />
                           <RootNavigation
                             isBootstrapComplete={isBootstrapComplete}
                           />

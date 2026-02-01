@@ -17,7 +17,7 @@ export default function AttachmentDestinationSelectorModal() {
           accessibilityLabel="Select item"
           onPress={() =>
             router.push({
-              pathname: '/(modals)/attachments/select',
+              pathname: '/attachments/select',
               params: selectedIds
                 ? {type: 'items', selectedIds}
                 : {type: 'items'},
@@ -32,7 +32,7 @@ export default function AttachmentDestinationSelectorModal() {
           accessibilityLabel="Select location"
           onPress={() =>
             router.push({
-              pathname: '/(modals)/attachments/select',
+              pathname: '/attachments/select',
               params: selectedIds
                 ? {type: 'locations', selectedIds}
                 : {type: 'locations'},

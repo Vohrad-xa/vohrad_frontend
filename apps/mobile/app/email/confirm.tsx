@@ -57,7 +57,7 @@ export default function EmailConfirmScreen() {
       setStatus('error');
       setMessage('This confirmation link is invalid.');
       if (isAuthenticated) {
-        router.replace('/(app)/(tabs)/dashboard');
+        router.replace('/(tabs)/dashboard');
       } else {
         router.replace('/(auth)/login');
       }
@@ -113,7 +113,7 @@ export default function EmailConfirmScreen() {
 
   const navigateBackToApp = () => {
     if (isAuthenticated) {
-      router.replace('/(app)/(tabs)/dashboard');
+      router.replace('/(tabs)/dashboard');
     } else {
       router.replace('/(auth)/login');
     }
@@ -148,7 +148,7 @@ export default function EmailConfirmScreen() {
           variant="primary"
           onPress={() => {
             if (isAuthenticated) {
-              router.replace('/(app)/(tabs)/settings/profile');
+              router.replace('/(tabs)/settings/profile');
             } else {
               router.replace('/(auth)/login');
             }

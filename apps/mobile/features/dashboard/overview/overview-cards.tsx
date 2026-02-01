@@ -42,10 +42,10 @@ export function OverviewCards({
     (cardTitle: string) => {
       switch (cardTitle) {
         case 'Items':
-          router.push('/(app)/(tabs)/items');
+          router.push('/(tabs)/items');
           break;
         case 'Vault':
-          router.push('/(app)/(tabs)/vault');
+          router.push('/(tabs)/vault');
           break;
         // Other navigation cases
         default:
