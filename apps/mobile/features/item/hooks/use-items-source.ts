@@ -17,6 +17,7 @@ type UseItemsSourceResult = {
   isFetchingNextPage: boolean;
   refresh: () => Promise<void>;
   getItemImageUrl: (item: Item) => {uri: string} | undefined;
+  lastUpdated: Date | null;
 };
 
 /**
@@ -53,6 +54,7 @@ export function useItemsSource(
     isFetchingNextPage,
     refresh,
     getItemImageUrl,
+    lastUpdated,
   } = useItemsManager({
     odataFilter,
     pageSize,
@@ -67,5 +69,6 @@ export function useItemsSource(
     isFetchingNextPage,
     refresh,
     getItemImageUrl,
+    lastUpdated,
   };
 }

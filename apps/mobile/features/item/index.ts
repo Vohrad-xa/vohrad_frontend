@@ -12,7 +12,6 @@ export {AttachmentField} from './detail/attachments/attachment-field';
 export {ItemSpecifications} from './detail/specifications/item-specifications';
 export {SpecificationsForm} from './detail/specifications/specifications-form';
 export {Locations} from './detail/locations/location-field';
-export {ItemsList} from './list/items-list';
 
 // Hooks
 export {useItemForm} from './detail/use-item-form';

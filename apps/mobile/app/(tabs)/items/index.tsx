@@ -1,52 +1,62 @@
-import React, {useLayoutEffect} from 'react';
-import {useItemsManager} from '@sykamore/store';
+import React, {useLayoutEffect, useEffect, useState} from 'react';
+import {usePendingFilters, useClearPendingFilters} from '@sykamore/store';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {useSearch} from '@/features/dashboard';
-import {
-  ItemsList,
-  useHybridItemSearch,
-  useServerSearchState,
-  useItemFilters,
-} from '@/features/item';
+import {useItemsSource} from '@/features/item/hooks';
+import {ItemsList} from '@/features/item/views';
 import {AppIcons} from '@/utils';
+import type {ItemFilterState} from '@sykamore/types';
 
 export default function ItemsScreen() {
   const router = useRouter();
   const navigation = useNavigation();
-  const {searchQuery: globalSearchQuery} = useSearch();
+  const {searchQuery} = useSearch();
   const params = useLocalSearchParams<{filters?: string}>();
 
-  // Manage server search state
-  const {shouldUseServerSearch, enableServerSearch} =
-    useServerSearchState(globalSearchQuery);
-
-  // Manage filters
-  const {filters, odataFilter} = useItemFilters({
-    urlParams: params.filters,
-    searchQuery: shouldUseServerSearch ? globalSearchQuery : undefined,
+  const [filters, setFilters] = useState<ItemFilterState>({
+    statuses: [],
+    trackingModes: [],
+    priceMin: null,
+    priceMax: null,
   });
 
-  // Use items manager with OData filter
+  const pendingFilters = usePendingFilters();
+  const clearPendingFilters = useClearPendingFilters();
+
+  // Apply filters from URL params
+  useEffect(() => {
+    if (params.filters) {
+      try {
+        const parsed = JSON.parse(
+          decodeURIComponent(params.filters),
+        ) as ItemFilterState;
+        setFilters(parsed);
+      } catch (error) {
+        console.error('Failed to parse filters from params:', error);
+      }
+    }
+  }, [params.filters]);
+
+  // Apply filters from modal
+  useEffect(() => {
+    if (pendingFilters) {
+      setFilters(pendingFilters);
+      clearPendingFilters();
+    }
+  }, [pendingFilters, clearPendingFilters]);
+
   const {
-    items: rawItems,
+    items,
     isLoading,
-    error,
+    hasNext,
+    loadMore,
     refresh,
     getItemImageUrl,
-    hasNext,
-    onEndReached,
-    isFetchingNextPage,
-  } = useItemsManager({
-    odataFilter,
-  });
-
-  // Hybrid search: local first, server fallback
-  const items = useHybridItemSearch({
-    items: rawItems,
-    searchQuery: globalSearchQuery,
-    onServerSearchNeeded: enableServerSearch,
-    isUsingServerSearch: shouldUseServerSearch,
+    lastUpdated,
+  } = useItemsSource({
+    searchQuery,
+    filters,
   });
 
   useLayoutEffect(() => {
@@ -74,23 +84,15 @@ export default function ItemsScreen() {
     });
   };
 
-  const hasItems = items.length > 0;
-  const isEmpty = !isLoading && !hasItems && !error;
-
   return (
     <ItemsList
-      searchQuery={globalSearchQuery}
+      items={items}
       onItemPress={handleItemPress}
       onRefresh={refresh}
-      items={items}
+      onEndReached={hasNext ? loadMore : undefined}
       isLoading={isLoading}
-      error={error?.message ?? null}
-      hasItems={hasItems}
-      isEmpty={isEmpty}
+      lastUpdated={lastUpdated}
       getItemImageUrl={getItemImageUrl}
-      onLoadMore={onEndReached}
-      canLoadMore={hasNext}
-      isLoadingMore={isFetchingNextPage}
     />
   );
 }

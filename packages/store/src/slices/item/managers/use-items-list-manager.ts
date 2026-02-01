@@ -13,6 +13,7 @@ type UseItemsListManagerOptions = {
 export function useItemsListManager(options?: UseItemsListManagerOptions) {
   const {
     data,
+    dataUpdatedAt,
     error,
     isError,
     isSuccess,
@@ -67,6 +68,7 @@ export function useItemsListManager(options?: UseItemsListManagerOptions) {
 
   return {
     items,
+    lastUpdated: dataUpdatedAt ? new Date(dataUpdatedAt) : null,
     isLoading: isFetching,
     isFetchingNextPage,
     error,
