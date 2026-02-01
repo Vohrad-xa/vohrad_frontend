@@ -3,7 +3,7 @@ import {useUpdateTenantProfile} from '@sykamore/store';
 import {useTenantDetails} from './use-tenant-details';
 import type {TenantProfileUpdate} from '@sykamore/types';
 
-type TenantInfoValues = {
+export type TenantInfoValues = {
   name: string;
   email: string;
   phone: string;

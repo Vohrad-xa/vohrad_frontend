@@ -1,31 +1,43 @@
-import {ScrollView, View} from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {StyleSheet} from 'react-native';
+import {Link} from 'expo-router';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
+import {TextInput, Surface} from 'react-native-paper';
+import {ThemedText} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
-
-export type tenantInfoValues = {
-  name: string;
-  email: string;
-  phone: string;
-  website: string;
-  street: string;
-  streetNumber: string;
-  city: string;
-  province: string;
-  postalCode: string;
-  country: string;
-};
+import {makeStyleFactory, AppIcons} from '@/utils';
+import type {TenantInfoValues} from '../hooks/use-tenant-info-form';
 
 type TenantInfoViewProps = {
-  values: tenantInfoValues;
-  onFieldChange: (key: keyof tenantInfoValues, value: string) => void;
+  values: TenantInfoValues;
+  onFieldChange: (key: keyof TenantInfoValues, value: string) => void;
 };
 
 export function TenantInfoView({values, onFieldChange}: TenantInfoViewProps) {
-  const {ds} = useTheme();
+  const {ds, theme} = useTheme();
+  const styles = createStyles(ds, theme);
 
   return (
-    <ScrollView style={{flex: 1}} keyboardShouldPersistTaps="handled">
-      <View style={{gap: ds.spacing.lg, padding: ds.spacing.lg}}>
+    <KeyboardAwareScrollView
+      style={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
+      <ThemedText variant="headline" style={styles.title}>
+        Tenant Info
+      </ThemedText>
+
+      <Surface mode="flat" style={styles.inputsContainer}>
+        <ThemedText variant="subheadline">
+          Organization details can be viewed and edited below.{'\n'}Name and
+          email are read-only for security reasons, to change them, please{' '}
+          <Link href="/" asChild>
+            <ThemedText variant="subheadline" colorToken="accentBlue">
+              contact us
+            </ThemedText>
+          </Link>
+          .
+        </ThemedText>
+
         <TextInput
           mode="outlined"
           label="Name"
@@ -34,7 +46,7 @@ export function TenantInfoView({values, onFieldChange}: TenantInfoViewProps) {
           editable={false}
           autoCapitalize="words"
           returnKeyType="done"
-          right={<TextInput.Icon icon="lock-outline" />}
+          right={<TextInput.Icon icon={AppIcons.ui.privacy} />}
         />
 
         <TextInput
@@ -46,8 +58,8 @@ export function TenantInfoView({values, onFieldChange}: TenantInfoViewProps) {
           autoCapitalize="none"
           keyboardType="email-address"
           returnKeyType="done"
-          left={<TextInput.Icon icon="email-outline" />}
-          right={<TextInput.Icon icon="lock-outline" />}
+          left={<TextInput.Icon icon={AppIcons.ui.email} />}
+          right={<TextInput.Icon icon={AppIcons.ui.privacy} />}
         />
 
         <TextInput
@@ -57,7 +69,17 @@ export function TenantInfoView({values, onFieldChange}: TenantInfoViewProps) {
           onChangeText={(value) => onFieldChange('phone', value)}
           keyboardType="phone-pad"
           returnKeyType="done"
-          left={<TextInput.Icon icon="phone-outline" />}
+          left={<TextInput.Icon icon={AppIcons.ui.phone} />}
+        />
+
+        <TextInput
+          mode="outlined"
+          label="Industry"
+          value={values.industry}
+          onChangeText={(value) => onFieldChange('industry', value)}
+          autoCapitalize="words"
+          returnKeyType="done"
+          left={<TextInput.Icon icon={AppIcons.domain.organization} />}
         />
 
         <TextInput
@@ -68,7 +90,17 @@ export function TenantInfoView({values, onFieldChange}: TenantInfoViewProps) {
           autoCapitalize="none"
           keyboardType="url"
           returnKeyType="done"
-          left={<TextInput.Icon icon="web" />}
+          left={<TextInput.Icon icon={AppIcons.ui.web} />}
+        />
+
+        <TextInput
+          mode="outlined"
+          label="Tax ID"
+          value={values.taxId}
+          onChangeText={(value) => onFieldChange('taxId', value)}
+          autoCapitalize="characters"
+          returnKeyType="done"
+          left={<TextInput.Icon icon={AppIcons.ui.tax} />}
         />
 
         <TextInput
@@ -124,7 +156,28 @@ export function TenantInfoView({values, onFieldChange}: TenantInfoViewProps) {
           autoCapitalize="words"
           returnKeyType="done"
         />
-      </View>
-    </ScrollView>
+      </Surface>
+    </KeyboardAwareScrollView>
   );
 }
+
+const createStyles = makeStyleFactory(
+  (ds: DSShape, theme: ThemeShape) =>
+    StyleSheet.create({
+      container: {
+        flex: 1,
+      },
+      inputsContainer: {
+        padding: ds.spacing.xl,
+        gap: ds.spacing.lg,
+        backgroundColor: theme.card,
+        borderTopLeftRadius: ds.borderRadius.xxl * 2,
+        borderTopRightRadius: ds.borderRadius.xxl * 2,
+      },
+      title: {
+        marginVertical: ds.spacing.xl,
+        paddingHorizontal: ds.spacing.xl,
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);
