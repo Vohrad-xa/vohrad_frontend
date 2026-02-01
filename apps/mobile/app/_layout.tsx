@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect} from 'react';
-import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
 import {useNavigationState} from '@react-navigation/native';
 import {QueryProvider} from '@sykamore/store';
@@ -47,19 +46,13 @@ function RootNavigation({isBootstrapComplete}: {isBootstrapComplete: boolean}) {
 
   return (
     <Stack screenOptions={{headerShown: false}}>
-      <Stack.Screen name="email/confirm" />
       <Stack.Protected guard={isAuthenticated}>
         <Stack.Screen name="(app)" />
-        <Stack.Screen
-          name="(modals)"
-          options={{
-            presentation: Platform.OS === 'ios' ? 'modal' : 'transparentModal',
-          }}
-        />
       </Stack.Protected>
       <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
+      <Stack.Screen name="email/confirm" />
     </Stack>
   );
 }
