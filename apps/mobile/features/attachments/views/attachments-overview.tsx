@@ -1,6 +1,6 @@
 import React, {memo, useMemo} from 'react';
 import {StyleSheet, View, ScrollView} from 'react-native';
-import {List, Chip, Surface, Divider} from 'react-native-paper';
+import {List, Chip, Divider} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';

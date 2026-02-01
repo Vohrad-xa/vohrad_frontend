@@ -1,5 +1,5 @@
 import {useCallback} from 'react';
-import {useRouter} from 'expo-router';
+import {useSafeRouter} from '@/utils';
 import {
   buildAttachmentVaultBaseRoute,
   buildAttachmentVaultRoute,
@@ -12,7 +12,7 @@ import {
 } from '../utils';
 
 export function useAttachmentNavigation() {
-  const router = useRouter();
+  const router = useSafeRouter();
 
   const openVaultRoot = useCallback(() => {
     const route = buildAttachmentVaultBaseRoute();
