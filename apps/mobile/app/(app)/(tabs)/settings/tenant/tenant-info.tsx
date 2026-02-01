@@ -7,7 +7,6 @@ import {
   useTenantInfoForm,
   useTenantSnackbar,
 } from '@/features/settings/tenant';
-import {showAlert} from '@/utils';
 import {AppIcons} from '@/utils/icons';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';
 import type {SFSymbol} from 'sf-symbols-typescript';
@@ -21,11 +20,8 @@ export default function TenantInfoScreen() {
   const handleSave = useCallback(async () => {
     KeyboardController.dismiss({animated: true});
     const changedLabels = await save();
+
     if (!changedLabels) {
-      showAlert({
-        title: 'No Changes Detected',
-        message: 'Update a field before saving your organization.',
-      });
       return;
     }
 
