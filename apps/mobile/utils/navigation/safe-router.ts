@@ -4,7 +4,7 @@ import {useRouter, type Href, type Router} from 'expo-router';
 type RouterMethods = Pick<Router, 'push' | 'navigate' | 'replace'>;
 type NavOptions = Parameters<RouterMethods['push']>[1];
 
-const NAVIGATION_DEBOUNCE_MS = 600;
+const NAVIGATION_DEBOUNCE_MS = 500;
 
 let lastGlobalNavTime = 0;
 let lastGlobalNavHref: string | null = null;
