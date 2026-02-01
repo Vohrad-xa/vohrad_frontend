@@ -98,16 +98,6 @@ export function ThemedText({
       {children}
     </PaperText>
   );
-
-  return (
-    <RNText
-      {...props}
-      allowFontScaling={typographyProps.allowFontScaling}
-      style={[baseStyle, dynamicStyle, style]}
-    >
-      {children}
-    </RNText>
-  );
 }
 
 const createStyles = makeStyleFactory(
