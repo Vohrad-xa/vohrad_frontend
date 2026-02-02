@@ -5,7 +5,6 @@ import {HeaderButton} from '@/components/ui';
 import {useSearch} from '@/features/dashboard';
 import {useItemsSource} from '@/features/item/hooks';
 import {ItemsList} from '@/features/item/views';
-import {AppIcons} from '@/utils';
 import type {ItemFilterState} from '@sykamore/types';
 
 export default function ItemsScreen() {
@@ -63,7 +62,7 @@ export default function ItemsScreen() {
     navigation.setOptions({
       headerRight: () => (
         <HeaderButton
-          icon={AppIcons.ui.filter}
+          variant="more"
           accessibilityLabel="Filter items"
           onPress={() => {
             router.push(

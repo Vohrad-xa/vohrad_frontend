@@ -109,7 +109,6 @@ function ItemsStack() {
         name="[id]"
         options={{
           headerTitle: 'Item Details',
-          headerBackButtonDisplayMode: 'minimal',
         }}
       />
     </Stack>

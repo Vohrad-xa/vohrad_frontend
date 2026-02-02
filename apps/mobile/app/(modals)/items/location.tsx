@@ -1,17 +1,27 @@
 import React, {useRef, useEffect} from 'react';
 import type {TextInput} from 'react-native';
-import {StyleSheet, View} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
+import {Stack, router} from 'expo-router';
 import {
   ModalScrollView,
   Card,
   EmptyState,
   ThemedText,
   ThemedInput,
+  HeaderButton,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useItemLocation} from '@/features/item';
 import {useTheme} from '@/providers';
 import {makeStyleFactory, AppIcons} from '@/utils';
+
+const CloseHeaderLeft = () => (
+  <HeaderButton
+    variant="close"
+    onPress={() => router.dismiss()}
+    accessibilityLabel="Close"
+  />
+);
 
 export default function LocationModal() {
   const {ds, theme} = useTheme();
@@ -43,50 +53,62 @@ export default function LocationModal() {
   }
 
   return (
-    <ModalScrollView>
-      <View>
-        {locations.map((location, index) => (
-          <View
-            key={location.item_location_id ?? location.id}
-            style={{gap: ds.spacing.sm}}
-          >
-            <ThemedText variant="value" style={styles.locationTitle}>
-              {location.name}
-            </ThemedText>
-            <Card>
-              <View style={styles.fieldRow}>
-                <ThemedText variant="label" style={styles.fieldLabel}>
-                  Code
-                </ThemedText>
-                <ThemedText variant="value">{location.code}</ThemedText>
-              </View>
-              <Card.Divider />
-              <View style={styles.fieldRow}>
-                <ThemedText variant="label" style={styles.fieldLabel}>
-                  Quantity
-                </ThemedText>
-                <ThemedInput
-                  ref={index === 0 ? firstInputRef : undefined}
-                  variant="value"
-                  textAlign="right"
-                  borderless
-                  value={location.quantity}
-                  onChangeText={(text) =>
-                    handleQuantityChange(
-                      location.item_location_id ?? location.id,
-                      text,
-                    )
-                  }
-                  editable={isEditMode}
-                  keyboardType="decimal-pad"
-                  style={styles.quantityInput}
-                />
-              </View>
-            </Card>
-          </View>
-        ))}
-      </View>
-    </ModalScrollView>
+    <>
+      <Stack.Screen
+        options={{
+          title: 'Locations',
+          headerShown: true,
+          headerShadowVisible: false,
+          headerTransparent: Platform.OS === 'ios',
+          headerLeft: Platform.OS === 'ios' ? CloseHeaderLeft : undefined,
+          headerTitleAlign: 'center',
+        }}
+      />
+      <ModalScrollView>
+        <View>
+          {locations.map((location, index) => (
+            <View
+              key={location.item_location_id ?? location.id}
+              style={{gap: ds.spacing.sm}}
+            >
+              <ThemedText variant="value" style={styles.locationTitle}>
+                {location.name}
+              </ThemedText>
+              <Card>
+                <View style={styles.fieldRow}>
+                  <ThemedText variant="label" style={styles.fieldLabel}>
+                    Code
+                  </ThemedText>
+                  <ThemedText variant="value">{location.code}</ThemedText>
+                </View>
+                <Card.Divider />
+                <View style={styles.fieldRow}>
+                  <ThemedText variant="label" style={styles.fieldLabel}>
+                    Quantity
+                  </ThemedText>
+                  <ThemedInput
+                    ref={index === 0 ? firstInputRef : undefined}
+                    variant="value"
+                    textAlign="right"
+                    borderless
+                    value={location.quantity}
+                    onChangeText={(text) =>
+                      handleQuantityChange(
+                        location.item_location_id ?? location.id,
+                        text,
+                      )
+                    }
+                    editable={isEditMode}
+                    keyboardType="decimal-pad"
+                    style={styles.quantityInput}
+                  />
+                </View>
+              </Card>
+            </View>
+          ))}
+        </View>
+      </ModalScrollView>
+    </>
   );
 }
 
