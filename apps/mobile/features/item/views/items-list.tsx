@@ -1,6 +1,7 @@
 import React, {memo, useCallback, useMemo} from 'react';
 import {StyleSheet} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
+import {Image} from 'expo-image';
 import {Avatar, Divider, List, type ListItemProps} from 'react-native-paper';
 import {EmptyState} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
@@ -38,11 +39,23 @@ const ItemItem = memo<ItemItemProps>(
     const left = useCallback<NonNullable<ListItemProps['left']>>(
       ({style}) =>
         imageUrl ? (
-          <Avatar.Image size={45} source={imageUrl} style={style} />
+          <Avatar.Image
+            size={45}
+            source={({size}) => (
+              <Image
+                source={imageUrl}
+                recyclingKey={item.id}
+                cachePolicy="memory-disk"
+                contentFit="cover"
+                style={{width: size, height: size, borderRadius: size / 2}}
+              />
+            )}
+            style={style}
+          />
         ) : (
           <Avatar.Icon size={45} icon={AppIcons.domain.item} style={style} />
         ),
-      [imageUrl],
+      [imageUrl, item.id],
     );
 
     return (
@@ -56,6 +69,7 @@ const ItemItem = memo<ItemItemProps>(
         right={(props) => (
           <List.Icon {...props} icon={AppIcons.actions.forward} />
         )}
+        unstable_pressDelay={30}
         borderless
       />
     );

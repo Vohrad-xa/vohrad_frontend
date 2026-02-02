@@ -95,7 +95,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
       <Pressable
         onPress={handlePress}
         accessibilityRole="button"
-        unstable_pressDelay={60}
+        unstable_pressDelay={30}
         style={({pressed}) => [
           styles.content,
           selectionVisible ? styles.contentSelection : null,
