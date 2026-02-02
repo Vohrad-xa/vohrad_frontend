@@ -1,5 +1,5 @@
 import {useCallback} from 'react';
-import {useItemFiltersManager} from '@sykamore/store';
+import {useItemFiltersManager, useSetPendingFilters} from '@sykamore/store';
 import type {ItemFilterState} from '@sykamore/types';
 
 type UseItemFiltersOptions = {
@@ -23,6 +23,7 @@ type UseItemFiltersResult = {
   updatePriceMax: (value: number | null) => void;
   resetFilters: () => void;
   setFilters: (filters: ItemFilterState) => void;
+  saveFilters: () => void;
   hasActiveFilters: boolean;
 };
 
@@ -46,6 +47,12 @@ export function useItemFilters(
     setFilters,
   } = useItemFiltersManager(initialFilters);
 
+  const setPendingFilters = useSetPendingFilters();
+
+  const saveFilters = useCallback(() => {
+    setPendingFilters(filters);
+  }, [filters, setPendingFilters]);
+
   const hasActiveFilters = useCallback(() => {
     const hasStatuses =
       Array.isArray(filters.statuses) && filters.statuses.length > 0;
@@ -64,6 +71,7 @@ export function useItemFilters(
     updatePriceMax,
     resetFilters,
     setFilters,
+    saveFilters,
     hasActiveFilters,
   };
 }
