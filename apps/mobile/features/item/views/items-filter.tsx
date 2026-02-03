@@ -156,8 +156,10 @@ export const ItemsFilterSheet = forwardRef<
     <TrueSheet
       ref={sheetRef}
       detents={[0.7, 1]}
-      backgroundColor={theme.modalBackground}
-      cornerRadius={30}
+      backgroundColor={
+        Platform.OS === 'android' ? theme.modalBackground : undefined
+      }
+      cornerRadius={Platform.OS === 'android' ? 30 : undefined}
       scrollable
       role="form"
       header={
@@ -226,7 +228,7 @@ ItemsFilterSheet.displayName = 'ItemsFilterSheet';
 const styles = StyleSheet.create({
   header: {
     display: 'flex',
-    paddingTop: 12,
+    paddingTop: 8,
   },
   headerContainer: {
     flexDirection: 'row',
