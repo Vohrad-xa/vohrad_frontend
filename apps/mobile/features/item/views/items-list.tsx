@@ -1,14 +1,14 @@
 import React, {memo, useCallback, useMemo} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {Image} from 'expo-image';
-import {Avatar, Divider, List, type ListItemProps} from 'react-native-paper';
+import {Divider, List, type ListItemProps} from 'react-native-paper';
 import {EmptyState} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
-import {AppIcons, makeStyleFactory} from '@/utils';
+import {AppIcons, makeStyleFactory, Icon} from '@/utils';
 import type {Item} from '@sykamore/types';
 
 type ItemsListProps = {
@@ -39,23 +39,35 @@ const ItemItem = memo<ItemItemProps>(
     const left = useCallback<NonNullable<ListItemProps['left']>>(
       ({style}) =>
         imageUrl ? (
-          <Avatar.Image
-            size={45}
-            source={({size}) => (
-              <Image
-                source={imageUrl}
-                recyclingKey={item.id}
-                cachePolicy="memory-disk"
-                contentFit="cover"
-                style={{width: size, height: size, borderRadius: size / 2}}
-              />
-            )}
-            style={style}
+          <Image
+            source={imageUrl}
+            recyclingKey={item.id}
+            cachePolicy="memory-disk"
+            contentFit="cover"
+            style={[styles.avatar, style]}
           />
         ) : (
-          <Avatar.Icon size={45} icon={AppIcons.domain.item} style={style} />
+          <View style={[styles.iconContainer, style]}>
+            <Icon name={AppIcons.domain.item} size="lg" />
+          </View>
         ),
-      [imageUrl, item.id],
+      [imageUrl, item.id, styles.avatar, styles.iconContainer],
+    );
+
+    const right = useCallback<NonNullable<ListItemProps['right']>>(
+      (props) => (
+        <List.Icon
+          {...props}
+          icon={() => (
+            <Icon
+              name={AppIcons.actions.forward}
+              size="sm"
+              colorToken="muted"
+            />
+          )}
+        />
+      ),
+      [],
     );
 
     return (
@@ -66,9 +78,7 @@ const ItemItem = memo<ItemItemProps>(
         titleStyle={styles.title}
         style={styles.content}
         left={left}
-        right={(props) => (
-          <List.Icon {...props} icon={AppIcons.actions.forward} />
-        )}
+        right={right}
         unstable_pressDelay={30}
         borderless
       />
@@ -156,10 +166,10 @@ export function ItemsList({
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       content: {
-        paddingRight: ds.spacing.md,
+        paddingRight: ds.spacing.lg,
       },
       title: {
         marginBottom: ds.spacing.xs,
@@ -167,6 +177,19 @@ const createStyles = makeStyleFactory(
       divider: {
         marginLeft: ds.spacing.xxl * 2 + ds.spacing.md,
         marginRight: ds.spacing.lg,
+      },
+      avatar: {
+        width: 45,
+        height: 45,
+        borderRadius: ds.borderRadius.full,
+      },
+      iconContainer: {
+        width: 45,
+        height: 45,
+        borderRadius: ds.borderRadius.full,
+        backgroundColor: theme.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

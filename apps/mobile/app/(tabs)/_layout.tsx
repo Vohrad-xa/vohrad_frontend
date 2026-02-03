@@ -44,8 +44,8 @@ const TABS: readonly TabConfig[] = [
     name: 'items',
     title: 'Items',
     sf: {
-      default: 'square.grid.2x2',
-      selected: 'square.grid.2x2.fill',
+      default: 'rectangle.3.offgrid',
+      selected: 'rectangle.3.offgrid.fill',
     },
     md: 'grid_view',
     icon: AppIcons.domain.item,

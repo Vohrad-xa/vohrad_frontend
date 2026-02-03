@@ -82,12 +82,11 @@ function ItemsStack() {
       ({
         headerShown: true,
         headerShadowVisible: false,
-        headerLargeTitle: true,
         headerBackButtonDisplayMode: 'minimal' as const,
         headerTransparent: Platform.OS === 'ios',
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          fontSize: Platform.OS !== 'ios' ? 26 : undefined,
+          fontSize: Platform.OS !== 'ios' ? 26 : 18,
         },
       }) satisfies NativeStackNavigationOptions,
     [theme.headerAndroid],
