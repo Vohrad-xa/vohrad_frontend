@@ -1,10 +1,10 @@
-import React, {useLayoutEffect, useEffect, useState} from 'react';
+import React, {useLayoutEffect, useEffect, useRef, useState} from 'react';
 import {usePendingFilters, useClearPendingFilters} from '@sykamore/store';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {useSearch} from '@/features/dashboard';
 import {useItemsSource} from '@/features/item/hooks';
-import {ItemsList} from '@/features/item/views';
+import {ItemsFilterSheet, ItemsList, type ItemsFilterSheetHandle} from '@/features/item/views';
 import type {ItemFilterState} from '@sykamore/types';
 
 export default function ItemsScreen() {
@@ -19,6 +19,8 @@ export default function ItemsScreen() {
     priceMin: null,
     priceMax: null,
   });
+
+  const filterSheetRef = useRef<ItemsFilterSheetHandle>(null);
 
   const pendingFilters = usePendingFilters();
   const clearPendingFilters = useClearPendingFilters();
@@ -65,16 +67,12 @@ export default function ItemsScreen() {
           variant="more"
           accessibilityLabel="Filter items"
           onPress={() => {
-            router.push(
-              `/(modals)/items/filters?initialFilters=${encodeURIComponent(
-                JSON.stringify(filters),
-              )}`,
-            );
+            void filterSheetRef.current?.present();
           }}
         />
       ),
     });
-  }, [navigation, filters, router]);
+  }, [navigation]);
 
   const handleItemPress = (itemId: string) => {
     router.push({
@@ -84,14 +82,17 @@ export default function ItemsScreen() {
   };
 
   return (
-    <ItemsList
-      items={items}
-      onItemPress={handleItemPress}
-      onRefresh={refresh}
-      onEndReached={hasNext ? loadMore : undefined}
-      isLoading={isLoading}
-      lastUpdated={lastUpdated}
-      getItemImageUrl={getItemImageUrl}
-    />
+    <>
+      <ItemsList
+        items={items}
+        onItemPress={handleItemPress}
+        onRefresh={refresh}
+        onEndReached={hasNext ? loadMore : undefined}
+        isLoading={isLoading}
+        lastUpdated={lastUpdated}
+        getItemImageUrl={getItemImageUrl}
+      />
+      <ItemsFilterSheet ref={filterSheetRef} initialFilters={filters} />
+    </>
   );
 }
