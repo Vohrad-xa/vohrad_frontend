@@ -6,7 +6,7 @@ type UseItemFiltersOptions = {
   initialFilters?: ItemFilterState;
 };
 
-const DEFAULT_FILTERS: ItemFilterState = {
+export const DEFAULT_ITEM_FILTERS: ItemFilterState = {
   statuses: [],
   trackingModes: [],
   priceMin: null,
@@ -23,7 +23,7 @@ type UseItemFiltersResult = {
   updatePriceMax: (value: number | null) => void;
   resetFilters: () => void;
   setFilters: (filters: ItemFilterState) => void;
-  saveFilters: () => void;
+  saveFilters: (filters?: ItemFilterState) => void;
   hasActiveFilters: boolean;
 };
 
@@ -36,7 +36,7 @@ type UseItemFiltersResult = {
 export function useItemFilters(
   options: UseItemFiltersOptions = {},
 ): UseItemFiltersResult {
-  const {initialFilters = DEFAULT_FILTERS} = options;
+  const {initialFilters = DEFAULT_ITEM_FILTERS} = options;
 
   const {
     filters,
@@ -49,9 +49,12 @@ export function useItemFilters(
 
   const setPendingFilters = useSetPendingFilters();
 
-  const saveFilters = useCallback(() => {
-    setPendingFilters(filters);
-  }, [filters, setPendingFilters]);
+  const saveFilters = useCallback(
+    (nextFilters?: ItemFilterState) => {
+      setPendingFilters(nextFilters ?? filters);
+    },
+    [filters, setPendingFilters],
+  );
 
   const hasActiveFilters = useCallback(() => {
     const hasStatuses =
