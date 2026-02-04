@@ -28,7 +28,6 @@
       },
       "predictiveBackGestureEnabled": false,
       "edgeToEdgeEnabled": true,
-      "usesCleartextTraffic": true,
       "package": "sykamore.mobile",
       "permissions": [
         "CAMERA",
@@ -74,14 +73,7 @@
       [
         "react-native-share",
         {
-          "ios": [
-            "fb",
-            "tg",
-            "telegram",
-            "ms-outlook",
-            "mailto",
-            "sgnl"
-          ],
+          "ios": ["fb", "tg", "telegram", "ms-outlook", "mailto", "sgnl"],
           "android": [
             "com.facebook.katana",
             "org.telegram.messenger",
@@ -92,9 +84,7 @@
         }
       ]
     ],
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "developmentClient": {
       "silentLaunch": true
     },
