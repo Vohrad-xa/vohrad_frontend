@@ -37,10 +37,7 @@ export default function SettingsModal() {
             title="My Profile"
             onPress={() => router.push('/(tabs)/settings/profile')}
           />
-        </ListSection>
 
-        {/* Organization Section */}
-        <ListSection>
           <ListSection.Row
             icon={AppIcons.domain.organization}
             iconColorToken="accentBlue"
