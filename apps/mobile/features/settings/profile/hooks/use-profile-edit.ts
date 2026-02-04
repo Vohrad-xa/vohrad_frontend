@@ -1,43 +1,29 @@
-// use-profile-edit.ts
 import {useCallback, useState} from 'react';
 import {useProfile} from './use-profile';
 
 export function useProfileEdit() {
   const {
-    // Name
     firstName,
     lastName,
     updateName,
-
-    // Phone
     phoneNumber,
     updatePhoneNumber,
-
-    // Address
     address,
     city,
     province,
     postalCode,
     country,
     updateAddress,
-
-    // Email
     email,
     pendingEmail,
     pendingEmailExpiresAt,
     updateEmail,
-
-    // Date of Birth
     dateOfBirth,
     updateDateOfBirth,
-
-    // Common
     isLoading,
   } = useProfile();
 
-  // --------------------
-  // Name
-  // --------------------
+  /* Name */
   const [firstNameValue, setFirstNameValue] = useState(firstName);
   const [lastNameValue, setLastNameValue] = useState(lastName);
 
@@ -45,9 +31,7 @@ export function useProfileEdit() {
     await updateName(firstNameValue.trim(), lastNameValue.trim());
   }, [firstNameValue, lastNameValue, updateName]);
 
-  // --------------------
-  // Phone
-  // --------------------
+  /* Phone */
   const [phoneValue, setPhoneValue] = useState(phoneNumber);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
 
@@ -61,9 +45,7 @@ export function useProfileEdit() {
     }
   }, [phoneValue, phoneNumber, updatePhoneNumber]);
 
-  // --------------------
-  // Address
-  // --------------------
+  /* Address */
   const [addressValue, setAddressValue] = useState(address);
   const [cityValue, setCityValue] = useState(city);
   const [provinceValue, setProvinceValue] = useState(province);
@@ -87,9 +69,7 @@ export function useProfileEdit() {
     updateAddress,
   ]);
 
-  // --------------------
-  // Email
-  // --------------------
+  /* Email */
   const [emailValue, setEmailValue] = useState(email);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
 
@@ -116,9 +96,7 @@ export function useProfileEdit() {
     }
   }, [isEditingEmail, emailValue, email, updateEmail]);
 
-  // --------------------
   // Date of birth
-  // --------------------
   const [selectedDate, setSelectedDate] = useState<Date>(
     dateOfBirth ? new Date(dateOfBirth) : new Date(),
   );
