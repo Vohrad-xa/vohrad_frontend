@@ -48,7 +48,7 @@ const ItemItem = memo<ItemItemProps>(
           />
         ) : (
           <View style={[styles.iconContainer, style]}>
-            <Icon name={AppIcons.domain.item} size="lg" />
+            <Icon name={AppIcons.domain.itemOutline} size="lg" />
           </View>
         ),
       [imageUrl, item.id, styles.avatar, styles.iconContainer],
@@ -187,7 +187,7 @@ const createStyles = makeStyleFactory(
         width: 45,
         height: 45,
         borderRadius: ds.borderRadius.full,
-        backgroundColor: theme.primary,
+        backgroundColor: theme.secondaryContainer,
         justifyContent: 'center',
         alignItems: 'center',
       },

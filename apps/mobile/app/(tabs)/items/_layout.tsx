@@ -68,9 +68,9 @@ function ItemsStack() {
   const headerSearchBarOptions = useMemo(
     () =>
       ({
-        placement: 'integratedButton' as const,
+        placement: 'stacked' as const,
         hideWhenScrolling: false,
-        placeholder: 'Search...',
+        placeholder: 'Search',
         headerIconColor: theme.icon,
         onChangeText: handleSearchChange,
       }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],

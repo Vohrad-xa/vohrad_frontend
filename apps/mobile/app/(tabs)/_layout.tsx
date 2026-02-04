@@ -64,8 +64,8 @@ const TABS: readonly TabConfig[] = [
     name: 'settings',
     title: 'Settings',
     sf: {
-      default: 'gearshape',
-      selected: 'gearshape.fill',
+      default: 'gear',
+      selected: 'gear',
     },
     md: 'settings',
     icon: AppIcons.domain.settings,
