@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect} from 'react';
 import {Platform} from 'react-native';
 import {ActionSheetProvider} from '@expo/react-native-action-sheet';
+import {TrueSheetProvider} from '@lodev09/react-native-true-sheet';
 import {useNavigationState} from '@react-navigation/native';
 import {QueryProvider} from '@sykamore/store';
 import {Stack} from 'expo-router';
@@ -69,27 +70,29 @@ export default function RootLayout() {
   const isBootstrapComplete = useBootstrap();
 
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView style={{flex: 1}}>
       <KeyboardProvider>
         <QueryProvider>
           <AppThemeProvider>
             <PaperThemeProvider>
               <HapticProvider>
-                <ActionSheetProvider>
-                  <NetworkProvider>
-                    <LoadingProvider>
-                      <AuthProvider>
-                        <AttachmentProvider>
-                          <ThemedStatusBar />
-                          <RootNavigation
-                            isBootstrapComplete={isBootstrapComplete}
-                          />
-                          <NetworkBanner />
-                        </AttachmentProvider>
-                      </AuthProvider>
-                    </LoadingProvider>
-                  </NetworkProvider>
-                </ActionSheetProvider>
+                <TrueSheetProvider>
+                  <ActionSheetProvider>
+                    <NetworkProvider>
+                      <LoadingProvider>
+                        <AuthProvider>
+                          <AttachmentProvider>
+                            <ThemedStatusBar />
+                            <RootNavigation
+                              isBootstrapComplete={isBootstrapComplete}
+                            />
+                            <NetworkBanner />
+                          </AttachmentProvider>
+                        </AuthProvider>
+                      </LoadingProvider>
+                    </NetworkProvider>
+                  </ActionSheetProvider>
+                </TrueSheetProvider>
               </HapticProvider>
             </PaperThemeProvider>
           </AppThemeProvider>
