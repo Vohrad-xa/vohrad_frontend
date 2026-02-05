@@ -25,3 +25,4 @@ export * from './ContextMenu';
 export * from './Namespace';
 export * from './Layout';
 export * from './LabeledContent';
+export * from './Slider';

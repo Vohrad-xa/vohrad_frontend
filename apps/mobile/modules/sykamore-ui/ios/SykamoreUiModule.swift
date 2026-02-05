@@ -16,6 +16,8 @@ public final class SykamoreUiModule: Module {
     View(SectionHeader.self)
     View(SectionFooter.self)
     View(SectionContent.self)
+    ExpoUIView(SliderView.self)
+    View(SliderLabelView.self)
     View(LabelIcon.self)
     View(LabeledContentLabel.self)
     View(LabeledContentContent.self)

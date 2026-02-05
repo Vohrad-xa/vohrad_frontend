@@ -99,7 +99,7 @@ export const AppIcons = {
     forward: 'chevron-right',
     back: 'chevron-left',
     add: 'plus',
-    save: 'check-outline',
+    save: 'check',
     share: 'share-variant',
     delete: 'trash-can-outline',
     refresh: 'refresh',

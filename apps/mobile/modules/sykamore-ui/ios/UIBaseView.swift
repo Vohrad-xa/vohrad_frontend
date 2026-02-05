@@ -2,7 +2,7 @@ import ExpoModulesCore
 import SwiftUI
 
 /**
- Base view for all SwiftUI views in expo-ui.
+ Base view for all SwiftUI views.
  */
 public struct UIBaseView<Props: UIBaseViewProps, Content: ExpoSwiftUI.View<Props>>: ExpoSwiftUI.View {
   @ObservedObject public var props: Props
@@ -19,8 +19,8 @@ public struct UIBaseView<Props: UIBaseViewProps, Content: ExpoSwiftUI.View<Props
 }
 
 /**
- Base view modifier in expo-ui
- This is useful for View with AsyncFunctions that cannot use the `ExpoUIView` builder.
+ Base view modifier.
+ This is useful for View with AsyncFunctions that cannot use the builder.
  */
 public struct UIBaseViewModifier<Props: UIBaseViewProps>: ViewModifier {
   @ObservedObject var props: Props
@@ -34,7 +34,7 @@ public struct UIBaseViewModifier<Props: UIBaseViewProps>: ViewModifier {
 }
 
 /**
- Common UI Builder in expo-ui.
+ Common UI Builder.
  This is similar to expo-modules-core's View builder but further supports common base view props and modifiers
  */
 public func ExpoUIView<Content: ExpoSwiftUI.View>(
