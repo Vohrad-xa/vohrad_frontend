@@ -8,9 +8,10 @@ export function useBootstrap() {
     let cancelled = false;
 
     async function initializeApp() {
-      await bootstrap();
-      if (!cancelled) {
-        setIsComplete(true);
+      try {
+        await bootstrap();
+      } finally {
+        if (!cancelled) setIsComplete(true);
       }
     }
 
