@@ -1,242 +1,219 @@
-import React, {
-  forwardRef,
-  memo,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-} from 'react';
-import {Platform, StyleSheet, View} from 'react-native';
+import React, {forwardRef, memo, useMemo} from 'react';
+import {StyleSheet} from 'react-native';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
 import Slider from '@react-native-community/slider';
-import {
-  IconButton,
-  List,
-  Switch as PaperSwitch,
-  Tooltip,
-} from 'react-native-paper';
-import {Palette} from '@/constants';
+import {Appbar, Divider, List, Surface, Switch} from 'react-native-paper';
+import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
-import {triggerHaptic} from '@/utils';
-import {Switch as AndroidSwitch} from 'sykamore-ui/android';
-import {DEFAULT_ITEM_FILTERS, useItemFilters} from '../hooks';
+import {AppIcons, makeStyleFactory} from '@/utils';
+import {useEditFilter} from '../hooks';
 import type {ItemFilterState} from '@sykamore/types';
 
-type StatusValue = NonNullable<ItemFilterState['statuses']>[number];
-type TrackingValue = NonNullable<ItemFilterState['trackingModes']>[number];
-
-type ToggleRowModel = Readonly<{
+type ToggleRowModel = {
   id: string;
   label: string;
   checked: boolean;
   onToggle: () => void;
-}>;
+};
 
-const STATUS_FILTERS = [
-  {label: 'Active', value: 'active'},
-  {label: 'Inactive', value: 'inactive'},
-] as const satisfies ReadonlyArray<{label: string; value: StatusValue}>;
-
-const TRACKING_FILTERS = [
-  {label: 'Abstract', value: 'abstract'},
-  {label: 'Lot', value: 'lot'},
-  {label: 'Serialized', value: 'serialized'},
-] as const satisfies ReadonlyArray<{label: string; value: TrackingValue}>;
-
-const ToggleRow = memo(({label, checked, onToggle}: ToggleRowModel) => {
-  const renderRight = useCallback(
-    () =>
-      Platform.OS === 'android' ? (
-        <AndroidSwitch
-          value={checked}
-          onValueChange={onToggle}
-          scale={0.85}
-          elementColors={{checkedTrackColor: Palette.bluepurple}}
-        />
-      ) : (
-        <PaperSwitch value={checked} onValueChange={onToggle} />
-      ),
-    [checked, onToggle],
-  );
-
-  return <List.Item title={label} right={renderRight} style={styles.row} />;
-});
-
-ToggleRow.displayName = 'ToggleRow';
-
-export type ItemsFilterSheetHandle = {
-  present: () => Promise<void>;
-  dismiss: () => Promise<void>;
+type PriceRowModel = {
+  id: string;
+  label: string;
+  valueLabel: string;
+  value: number;
+  min: number;
+  max: number;
+  onChange: (value: number) => void;
 };
 
 type ItemsFilterSheetProps = {
   initialFilters: ItemFilterState;
 };
 
+type ItemsFilterSheetHandle = {
+  present: () => Promise<void>;
+  dismiss: () => Promise<void>;
+};
+
+const ToggleRow = memo(({label, checked, onToggle}: ToggleRowModel) => {
+  const {ds, theme} = useTheme();
+
+  return (
+    <List.Item
+      title={label}
+      right={() => <Switch value={checked} onValueChange={onToggle} />}
+      borderless
+      style={{borderRadius: ds.borderRadius.xs, backgroundColor: theme.card}}
+    />
+  );
+});
+
+ToggleRow.displayName = 'ToggleRow';
+
+const PriceRow = memo(
+  ({label, valueLabel, value, min, max, onChange}: PriceRowModel) => {
+    const {ds, theme} = useTheme();
+
+    return (
+      <List.Item
+        title={`${label}: ${valueLabel}`}
+        description={() => (
+          <Slider
+            minimumTrackTintColor={Palette.bluepurple}
+            thumbTintColor={Palette.bluepurple}
+            value={value}
+            onValueChange={onChange}
+            minimumValue={min}
+            maximumValue={max}
+            style={{marginTop: ds.spacing.sm}}
+          />
+        )}
+        borderless
+        style={{borderRadius: ds.borderRadius.xs, backgroundColor: theme.card}}
+      />
+    );
+  },
+);
+
+PriceRow.displayName = 'PriceRow';
+
 export const ItemsFilterSheet = forwardRef<
   ItemsFilterSheetHandle,
   ItemsFilterSheetProps
 >(({initialFilters}, ref) => {
-  const {theme} = useTheme();
-  const sheetRef = useRef<TrueSheet>(null);
+  const {theme, ds} = useTheme();
+  const styles = createStyles(ds, theme);
 
   const {
+    sheetRef,
     filters,
-    toggleFilter,
+    statusRows,
+    trackingRows,
+    priceMinLabel,
+    priceMaxLabel,
     updatePriceMin,
     updatePriceMax,
-    setFilters,
-    resetFilters,
-    saveFilters,
-  } = useItemFilters();
+    handleSave,
+    handleReset,
+  } = useEditFilter({initialFilters, sheetHandleRef: ref});
 
-  const {statuses = [], trackingModes = []} = filters;
-
-  const handlePresent = useCallback(async () => {
-    setFilters(initialFilters);
-    await sheetRef.current?.present();
-  }, [initialFilters, setFilters]);
-
-  const handleDismiss = useCallback(async () => {
-    await sheetRef.current?.dismiss();
-  }, []);
-
-  useImperativeHandle(
-    ref,
-    () => ({
-      present: handlePresent,
-      dismiss: handleDismiss,
-    }),
-    [handlePresent, handleDismiss],
+  const priceRows = useMemo<PriceRowModel[]>(
+    () => [
+      {
+        id: 'price-min',
+        label: 'Minimum',
+        valueLabel: priceMinLabel,
+        value: filters.priceMin ?? 0,
+        min: 0,
+        max: filters.priceMax ?? 10000,
+        onChange: updatePriceMin,
+      },
+      {
+        id: 'price-max',
+        label: 'Maximum',
+        valueLabel: priceMaxLabel,
+        value: filters.priceMax ?? 10000,
+        min: filters.priceMin ?? 0,
+        max: 10000,
+        onChange: updatePriceMax,
+      },
+    ],
+    [
+      filters.priceMin,
+      filters.priceMax,
+      priceMinLabel,
+      priceMaxLabel,
+      updatePriceMin,
+      updatePriceMax,
+    ],
   );
-
-  const handleSave = useCallback(() => {
-    saveFilters();
-    void sheetRef.current?.dismiss();
-  }, [saveFilters]);
-
-  const handleReset = useCallback(() => {
-    triggerHaptic('light');
-    resetFilters();
-    saveFilters(DEFAULT_ITEM_FILTERS);
-    void sheetRef.current?.dismiss();
-  }, [resetFilters, saveFilters]);
-
-  const statusRows = useMemo<ToggleRowModel[]>(
-    () =>
-      STATUS_FILTERS.map((status) => ({
-        id: `status-${status.value}`,
-        label: status.label,
-        checked: statuses.includes(status.value),
-        onToggle: () => toggleFilter('statuses', status.value),
-      })),
-    [statuses, toggleFilter],
-  );
-
-  const trackingRows = useMemo<ToggleRowModel[]>(
-    () =>
-      TRACKING_FILTERS.map((tracking) => ({
-        id: `tracking-${tracking.value}`,
-        label: tracking.label,
-        checked: trackingModes.includes(tracking.value),
-        onToggle: () => toggleFilter('trackingModes', tracking.value),
-      })),
-    [trackingModes, toggleFilter],
-  );
-
-  const toggleRows = useMemo(
-    () => [...statusRows, ...trackingRows],
-    [statusRows, trackingRows],
-  );
-
-  const priceMinLabel = filters.priceMin?.toFixed(2) ?? '0.00';
-  const priceMaxLabel = filters.priceMax?.toFixed(2) ?? '10000.00';
 
   return (
     <TrueSheet
       ref={sheetRef}
-      detents={[0.7, 1]}
-      backgroundColor={
-        Platform.OS === 'android' ? theme.modalBackground : undefined
-      }
-      cornerRadius={Platform.OS === 'android' ? 30 : undefined}
-      scrollable
+      detents={[0.85, 1]}
+      backgroundColor={theme.modalBackground}
+      style={styles.container}
       role="form"
       header={
-        <View>
-          <List.Item
-            title="Item Filters"
-            style={{paddingRight: 0}}
-            right={() => (
-              <View style={styles.headerContainer}>
-                <Tooltip title="Reset filters">
-                  <IconButton
-                    icon="restore"
-                    onPress={handleReset}
-                    accessibilityLabel="Reset item filters"
-                  />
-                </Tooltip>
-                <Tooltip title="Save filters">
-                  <IconButton
-                    icon="check"
-                    onPress={handleSave}
-                    accessibilityLabel="Save item filters"
-                  />
-                </Tooltip>
-              </View>
-            )}
+        <Appbar.Header
+          statusBarHeight={ds.layout.screenPadding}
+          style={styles.header}
+        >
+          <Appbar.Content title="Item Filters" />
+          <Appbar.Action
+            icon={AppIcons.actions.refresh}
+            onPress={handleReset}
+            accessibilityLabel="Reset item filters"
           />
-        </View>
+          <Appbar.Action
+            icon={AppIcons.actions.save}
+            onPress={handleSave}
+            accessibilityLabel="Save item filters"
+          />
+        </Appbar.Header>
       }
-      headerStyle={styles.header}
     >
-      <List.Section>
-        {toggleRows.map((row) => (
-          <ToggleRow key={row.id} {...row} />
-        ))}
+      <List.Section title="Status">
+        <Surface mode="flat" style={styles.surface}>
+          {statusRows.map((row, idx) => (
+            <React.Fragment key={row.id}>
+              <ToggleRow {...row} />
+              {idx !== statusRows.length - 1 && (
+                <Divider style={styles.divider} />
+              )}
+            </React.Fragment>
+          ))}
+        </Surface>
       </List.Section>
 
-      <View>
-        <List.Subheader>Minimum: ${priceMinLabel}</List.Subheader>
-        <Slider
-          minimumTrackTintColor={Palette.bluepurple}
-          thumbTintColor={Palette.bluepurple}
-          value={filters.priceMin ?? 0}
-          onValueChange={updatePriceMin}
-          minimumValue={0}
-          maximumValue={filters.priceMax ?? 10000}
-          step={10}
-        />
+      <List.Section title="Tracking Mode">
+        <Surface mode="flat" style={styles.surface}>
+          {trackingRows.map((row, idx) => (
+            <React.Fragment key={row.id}>
+              <ToggleRow {...row} />
+              {idx !== trackingRows.length - 1 && (
+                <Divider style={styles.divider} />
+              )}
+            </React.Fragment>
+          ))}
+        </Surface>
+      </List.Section>
 
-        <List.Subheader>Maximum: ${priceMaxLabel}</List.Subheader>
-        <Slider
-          minimumTrackTintColor={Palette.bluepurple}
-          thumbTintColor={Palette.bluepurple}
-          value={filters.priceMax ?? 10000}
-          onValueChange={updatePriceMax}
-          minimumValue={filters.priceMin ?? 0}
-          maximumValue={10000}
-          step={10}
-        />
-      </View>
+      <List.Section title="Price Range">
+        <Surface mode="flat" style={styles.surface}>
+          {priceRows.map((row, idx) => (
+            <React.Fragment key={row.id}>
+              <PriceRow {...row} />
+              {idx !== priceRows.length - 1 && (
+                <Divider style={styles.divider} />
+              )}
+            </React.Fragment>
+          ))}
+        </Surface>
+      </List.Section>
     </TrueSheet>
   );
 });
 
 ItemsFilterSheet.displayName = 'ItemsFilterSheet';
 
-const styles = StyleSheet.create({
-  header: {
-    display: 'flex',
-    paddingTop: 8,
-  },
-  headerContainer: {
-    flexDirection: 'row',
-  },
-  row: {
-    paddingVertical: 0,
-    paddingRight: 12,
-  },
-});
+const createStyles = makeStyleFactory(
+  (ds: DSShape, _theme: ThemeShape) =>
+    StyleSheet.create({
+      container: {paddingHorizontal: ds.spacing.md},
+      header: {backgroundColor: 'transparent'},
+      surface: {
+        borderRadius: ds.borderRadius.xxxl,
+        overflow: 'hidden',
+        backgroundColor: 'transparent',
+      },
+      divider: {
+        height: 1.9,
+        backgroundColor: 'transparent',
+      },
+    }),
+  (ds, theme) => themeKey(theme, ds),
+);
 
 export default ItemsFilterSheet;
