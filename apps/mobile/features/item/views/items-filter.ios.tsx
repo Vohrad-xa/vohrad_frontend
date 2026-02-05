@@ -1,14 +1,25 @@
 import React, {forwardRef} from 'react';
+import {View} from 'react-native';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
-import {Appbar} from 'react-native-paper';
+import {Palette} from '@/constants';
+import {useTheme} from '@/providers';
+import {AppIcons} from '@/utils';
 import {
-  Host,
   List,
+  HStack,
+  Host,
+  Image,
   Section,
   Slider,
+  Spacer,
   Text,
   Toggle,
   VStack,
+  accessibilityLabel,
+  font,
+  foregroundStyle,
+  frame,
+  glassEffect,
 } from 'sykamore-ui/ios';
 import {useEditFilter} from '../hooks';
 import type {ItemFilterState} from '@sykamore/types';
@@ -26,6 +37,7 @@ export const ItemsFilterSheet = forwardRef<
   ItemsFilterSheetHandle,
   ItemsFilterSheetProps
 >(({initialFilters}, ref) => {
+  const {ds} = useTheme();
   const {
     sheetRef,
     filters,
@@ -39,33 +51,61 @@ export const ItemsFilterSheet = forwardRef<
     handleReset,
   } = useEditFilter({initialFilters, sheetHandleRef: ref});
 
+  const headerButtonSize = ds.components.tapTarget.minSize;
+  const buildHeaderIconModifiers = (tintColor?: string) => [
+    font({size: ds.iconSize.md, weight: 'regular'}),
+    frame({width: headerButtonSize, height: headerButtonSize}),
+    glassEffect(
+      tintColor
+        ? {shape: 'circle', glass: {tint: tintColor, interactive: true}}
+        : {shape: 'circle', glass: {interactive: true}},
+    ),
+  ];
+
+  const headerContent = (
+    <HStack alignment="center" spacing={ds.spacing.sm}>
+      <Text modifiers={[font({weight: 'medium', textStyle: 'headline'})]}>
+        Item Filters
+      </Text>
+
+      <Spacer />
+
+      <Image
+        systemName={AppIcons.actions.refresh}
+        onPress={handleReset}
+        modifiers={[
+          ...buildHeaderIconModifiers(),
+          accessibilityLabel('Reset item filters'),
+        ]}
+      />
+
+      <Image
+        systemName={AppIcons.actions.save}
+        onPress={handleSave}
+        modifiers={[
+          ...buildHeaderIconModifiers(Palette.orange),
+          foregroundStyle(Palette.white),
+          accessibilityLabel('Save item filters'),
+        ]}
+      />
+    </HStack>
+  );
+
   return (
     <TrueSheet
       ref={sheetRef}
-      detents={[0.72, 1]}
+      detents={[0.78, 1]}
       scrollable
       role="form"
       header={
-        <Appbar.Header
-          statusBarHeight={0}
-          style={{backgroundColor: 'transparent'}}
-        >
-          <Appbar.Content title="Item Filters" />
-          <Appbar.Action
-            icon="restore"
-            onPress={handleReset}
-            accessibilityLabel="Reset item filters"
-          />
-          <Appbar.Action
-            icon="check"
-            onPress={handleSave}
-            accessibilityLabel="Save item filters"
-          />
-        </Appbar.Header>
+        <View>
+          <Host matchContents>{headerContent}</Host>
+        </View>
       }
+      headerStyle={{padding: ds.spacing.lg}}
     >
       <Host style={{flex: 1}}>
-        <List listStyle="automatic">
+        <List>
           <Section title="Status">
             {statusRows.map((row) => (
               <Toggle
@@ -89,15 +129,24 @@ export const ItemsFilterSheet = forwardRef<
           </Section>
 
           <Section title="Price Range">
-            <VStack alignment="leading" spacing={12}>
-              <Text>Minimum: {priceMinLabel}</Text>
+            <VStack alignment="leading" spacing={ds.spacing.md}>
+              <Text
+                modifiers={[font({weight: 'medium', design: 'monospaced'})]}
+              >
+                min {priceMinLabel}
+              </Text>
               <Slider
                 value={filters.priceMin ?? 0}
                 onValueChange={updatePriceMin}
                 min={0}
                 max={filters.priceMax ?? 10000}
               />
-              <Text>Maximum: {priceMaxLabel}</Text>
+
+              <Text
+                modifiers={[font({weight: 'medium', design: 'monospaced'})]}
+              >
+                max {priceMaxLabel}
+              </Text>
               <Slider
                 value={filters.priceMax ?? 10000}
                 onValueChange={updatePriceMax}
