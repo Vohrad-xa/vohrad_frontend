@@ -9,6 +9,7 @@ type UseItemFiltersOptions = {
 export const DEFAULT_ITEM_FILTERS: ItemFilterState = {
   statuses: [],
   trackingModes: [],
+  unitIds: [],
   priceMin: null,
   priceMax: null,
 };
@@ -61,10 +62,14 @@ export function useItemFilters(
       Array.isArray(filters.statuses) && filters.statuses.length > 0;
     const hasTrackingModes =
       Array.isArray(filters.trackingModes) && filters.trackingModes.length > 0;
+    const hasUnits =
+      Array.isArray(filters.unitIds) && filters.unitIds.length > 0;
     const hasPriceMin = filters.priceMin !== null;
     const hasPriceMax = filters.priceMax !== null;
 
-    return hasStatuses || hasTrackingModes || hasPriceMin || hasPriceMax;
+    return (
+      hasStatuses || hasTrackingModes || hasUnits || hasPriceMin || hasPriceMax
+    );
   }, [filters])();
 
   return {

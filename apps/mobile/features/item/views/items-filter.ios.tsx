@@ -43,6 +43,7 @@ export const ItemsFilterSheet = forwardRef<
     filters,
     statusRows,
     trackingRows,
+    unitRows,
     priceMinLabel,
     priceMaxLabel,
     updatePriceMin,
@@ -94,7 +95,7 @@ export const ItemsFilterSheet = forwardRef<
   return (
     <TrueSheet
       ref={sheetRef}
-      detents={[0.78, 1]}
+      detents={[0.51, 1]}
       scrollable
       role="form"
       header={
@@ -119,6 +120,17 @@ export const ItemsFilterSheet = forwardRef<
 
           <Section title="Tracking Mode">
             {trackingRows.map((row) => (
+              <Toggle
+                key={row.id}
+                isOn={row.checked}
+                onIsOnChange={row.onToggle}
+                label={row.label}
+              />
+            ))}
+          </Section>
+
+          <Section title="Unit of Measure">
+            {unitRows.map((row) => (
               <Toggle
                 key={row.id}
                 isOn={row.checked}

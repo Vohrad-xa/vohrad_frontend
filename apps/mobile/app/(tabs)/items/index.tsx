@@ -16,6 +16,7 @@ export default function ItemsScreen() {
   const [filters, setFilters] = useState<ItemFilterState>({
     statuses: [],
     trackingModes: [],
+    unitIds: [],
     priceMin: null,
     priceMax: null,
   });
