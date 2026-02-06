@@ -90,17 +90,6 @@ export function ImageAttachmentsGrid({
 
   const getItemType = useCallback(() => 'image', []);
 
-  const listFooter = useMemo(
-    () =>
-      attachments.length > 0 ? (
-        <ListCountFooter
-          count={attachments.length}
-          textVariant="callout"
-          fontWeight="bold"
-        />
-      ) : null,
-    [attachments.length],
-  );
   const ListEmpty = useCallback(
     () => (
       <EmptyState message="No Records Found" icon={AppIcons.emptyStates.file} />
@@ -118,13 +107,11 @@ export function ImageAttachmentsGrid({
       refreshing={refreshing}
       onRefresh={handleRefresh}
       onEndReached={handleLoadMore}
-      onEndReachedThreshold={0.2}
+      onEndReachedThreshold={0.5}
       drawDistance={drawDistance}
       getItemType={getItemType}
       removeClippedSubviews
-      ListFooterComponent={listFooter}
       maintainVisibleContentPosition={{disabled: true}}
-      showsVerticalScrollIndicator={false}
       ListEmptyComponent={
         attachments.length === 0 && !isLoading ? ListEmpty : undefined
       }
