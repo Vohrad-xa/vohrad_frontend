@@ -6,12 +6,14 @@ export const API_ENDPOINTS = {
     LOGOUT: '/auth/logout',
     LOGOUT_ALL: '/auth/logout-all',
   },
+
   USERS: {
     LIST: '/users/',
     CREATE: '/users/',
     ME: '/users/me',
     UPDATE_PROFILE: '/users/me',
   },
+
   ROLES: {
     LIST: '/roles/',
     CREATE: '/roles/',
@@ -23,17 +25,20 @@ export const API_ENDPOINTS = {
     ACTIVATE: (id: string) => `/roles/${id}/activate`,
     DEACTIVATE: (id: string) => `/roles/${id}/deactivate`,
   },
+
   EMAIL_VERIFICATION: {
     RESEND: '/email-verification/resend',
     CONFIRM: '/email-verification/confirm',
     CONFIRM_PUBLIC: '/email-verification/confirm/public',
   },
+
   TENANT: {
     INFO: '/tenant/',
     SETTINGS: '/tenant/settings',
     PROFILE: '/tenant/profile',
     LICENSE_INFO: '/tenant/license-info',
   },
+
   ITEMS: {
     LIST: '/items/',
     CREATE: '/items/',
@@ -48,10 +53,17 @@ export const API_ENDPOINTS = {
     DELETE_LOCATION: (itemId: string, locationId: string) =>
       `/items/${itemId}/locations/${locationId}`,
   },
+
   ITEM_LOCATIONS: {
     UPDATE: (itemLocationId: string) => `/item-locations/${itemLocationId}`,
     DELETE: (itemLocationId: string) => `/item-locations/${itemLocationId}`,
   },
+
+  UOM: {
+    LIST: '/uom/',
+    DETAIL: (id: string) => `/uom/${id}`,
+  },
+
   ATTACHMENTS: {
     LIST: '/attachments/',
     CREATE: '/attachments/',
@@ -61,6 +73,7 @@ export const API_ENDPOINTS = {
     UNLINK: (id: string) => `/attachments/${id}/link`,
     GET_URL: (id: string) => `/attachments/${id}/url`,
   },
+
   SYSTEM: {
     DASHBOARD_OVERVIEW: '/system/dashboard/overview',
   },

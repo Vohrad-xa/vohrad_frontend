@@ -61,6 +61,7 @@ export type {
   Category,
   Status,
   TrackingMode,
+  UnitOfMeasure,
 } from './item';
 
 // Attachment types

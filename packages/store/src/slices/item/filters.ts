@@ -26,6 +26,14 @@ export function buildItemODataFilter(
     conditions.push(`(${modeConditions.join(' or ')})`);
   }
 
+  // Unit of measure filter
+  if (filters.unitIds && filters.unitIds.length > 0) {
+    const unitConditions = filters.unitIds.map(
+      (unitId) => `unit_id eq ${formatODataValue(unitId)}`,
+    );
+    conditions.push(`(${unitConditions.join(' or ')})`);
+  }
+
   // Price range filters
   if (filters.priceMin !== null && filters.priceMin !== undefined) {
     conditions.push(`price ge ${filters.priceMin}`);
@@ -70,6 +78,9 @@ export function hasActiveFilters(filters: ItemFilterState): boolean {
   if (filters.trackingModes && filters.trackingModes.length > 0) {
     return true;
   }
+  if (filters.unitIds && filters.unitIds.length > 0) {
+    return true;
+  }
   if (filters.priceMin !== null && filters.priceMin !== undefined) {
     return true;
   }
@@ -92,6 +103,7 @@ export function clearAllFilters(): ItemFilterState {
   return {
     statuses: [],
     trackingModes: [],
+    unitIds: [],
     priceMin: null,
     priceMax: null,
     specifications: null,

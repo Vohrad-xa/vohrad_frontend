@@ -61,6 +61,8 @@ export {
   useRoleDetailManager,
 } from './slices/role';
 
+export {useInfiniteUnits, useUnitsListManager} from './slices/uom';
+
 export {
   useInfiniteUsers,
   useUsersListManager,

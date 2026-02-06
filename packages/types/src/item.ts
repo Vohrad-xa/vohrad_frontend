@@ -7,6 +7,7 @@ export type ItemSpecifications = Record<string, JsonValue> | null;
 export type ItemFilterState = {
   statuses?: Array<'active' | 'inactive'>;
   trackingModes?: Array<TrackingMode>;
+  unitIds?: string[];
   priceMin?: number | null;
   priceMax?: number | null;
   specifications?: ItemSpecifications;
