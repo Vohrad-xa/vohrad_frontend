@@ -2,7 +2,6 @@ import {useCallback, useMemo} from 'react';
 import {useWindowDimensions} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {EmptyState} from '@/components/ui';
-import {ListCountFooter} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useHaptic} from '@/providers';
 import {AppIcons} from '@/utils';
