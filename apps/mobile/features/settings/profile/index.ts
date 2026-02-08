@@ -5,12 +5,7 @@ export type {
   PhoneContentHandle,
   EmailContentHandle,
 } from './views';
-export {
-  useProfile,
-  useProfileForm,
-  useProfileActions,
-  useProfileHeader,
-} from './hooks';
+export {useProfile, useProfileActions, useProfileHeader} from './hooks';
 export type {ProfileContentHandle} from './hooks';
 export {
   ProfileContent,
