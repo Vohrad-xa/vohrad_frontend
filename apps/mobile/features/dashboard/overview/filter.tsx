@@ -1,7 +1,6 @@
-import React from 'react';
 import {StyleSheet, Platform, View} from 'react-native';
-import {List, Surface} from 'react-native-paper';
-import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
+import {ListRow, ListRows} from '@/components/ui';
+import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
 import {Icon, makeStyleFactory} from '@/utils';
 import {Switch as AndroidSwitch} from 'sykamore-ui/android';
@@ -13,7 +12,6 @@ import {
   Text,
 } from 'sykamore-ui/ios';
 import {useDashboardCardControls} from './filter-context';
-import type {SFSymbol} from 'sf-symbols-typescript';
 
 export function FilterContent() {
   const {ds, theme} = useTheme();
@@ -47,7 +45,7 @@ export function FilterContent() {
                     setCardVisibility(visibilityKey, value)
                   }
                   label={card.title}
-                  systemImage={card.icon as SFSymbol}
+                  systemImage={card.icon}
                 />
               );
             })}
@@ -59,20 +57,19 @@ export function FilterContent() {
 
   return (
     <View style={styles.container}>
-      <Surface elevation={1} mode="flat" style={styles.surface}>
+      <ListRows>
         {cardConfig.map((card) => {
           const visibilityKey = card.key;
           const isVisible = visibility[visibilityKey];
 
           return (
-            <List.Item
+            <ListRow
               key={visibilityKey}
-              style={styles.itemList}
+              rowKey={visibilityKey}
               title={card.title}
-              accessibilityLabel={`Toggle ${card.title} card`}
-              left={() => (
-                <Icon name={card.icon} style={styles.iconContainer} />
-              )}
+              a11yLabel={`Toggle ${card.title} card`}
+              a11yHint={`Show or hide ${card.title} on dashboard`}
+              left={(props) => <Icon name={card.icon} style={props.style} />}
               right={() => (
                 <AndroidSwitch
                   value={isVisible}
@@ -80,17 +77,14 @@ export function FilterContent() {
                     setCardVisibility(visibilityKey, value)
                   }
                   variant="switch"
-                  scale={0.8}
-                  elementColors={{
-                    checkedTrackColor: Palette.bluepurple,
-                    checkedThumbColor: Palette.white,
-                  }}
+                  scale={0.85}
                 />
               )}
+              style={styles.itemList}
             />
           );
         })}
-      </Surface>
+      </ListRows>
     </View>
   );
 }
@@ -104,18 +98,10 @@ const createStyles = makeStyleFactory(
         flex: 1,
         padding: ds.spacing.md,
       },
-      surface: {
-        borderRadius: ds.borderRadius.xxxl,
-      },
+
       itemList: {
-        paddingRight: ds.spacing.sm,
-        paddingTop: 0,
-        paddingBottom: 0,
-      },
-      iconContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: ds.spacing.md,
+        paddingTop: ds.spacing.xxs,
+        paddingBottom: ds.spacing.xxs,
       },
     }),
   (ds, _theme) => themeKey(_theme, ds),
