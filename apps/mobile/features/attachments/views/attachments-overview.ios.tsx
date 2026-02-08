@@ -1,7 +1,7 @@
-import React, {useMemo, useCallback} from 'react';
+import React, {useMemo} from 'react';
 import {
   Host,
-  List as IOSList,
+  List,
   Button,
   HStack,
   Label,
@@ -17,19 +17,17 @@ import {
   controlSize,
 } from 'sykamore-ui';
 import {useTheme} from '@/providers';
-import {Icon, AppIcons, type IconName} from '@/utils';
+import {Icon, AppIcons, type IconName, useSafeRouter} from '@/utils';
 import type {AttachmentKindCount} from '../utils/attachment-counts';
-import type {AttachmentKind} from '@sykamore/types';
+import type {Href} from 'expo-router';
 
 type AttachmentKindTile = Readonly<{
-  kind: AttachmentKind;
+  kind: string;
   label: string;
   systemImage: IconName;
   count: number;
-  onPress?: () => void;
+  href: Href;
 }>;
-
-type AttachmentKindKey = AttachmentKindTile['kind'];
 
 type AttachmentFilterChip = Readonly<{
   label: string;
@@ -39,10 +37,7 @@ type AttachmentFilterChip = Readonly<{
 
 type AttachmentsOverviewProps = Readonly<{
   counts: AttachmentKindCount;
-  onTilePress?: Partial<Record<AttachmentKindKey, () => void>>;
   filterChip?: AttachmentFilterChip;
-  tileOrder?: AttachmentKindKey[];
-  onMoveTile?: (from: number, to: number) => void;
 }>;
 
 function ChevronRight() {
@@ -58,32 +53,20 @@ function ChevronRight() {
 }
 
 const AttachmentTileRow = React.memo(
-  ({
-    label,
-    systemImage,
-    count,
-    onPress,
-  }: Pick<
-    AttachmentKindTile,
-    'label' | 'systemImage' | 'count' | 'onPress'
-  >) => {
+  ({label, systemImage, count, href}: AttachmentKindTile) => {
     const {ds, theme} = useTheme();
+    const router = useSafeRouter();
 
     const countText = useMemo(() => {
       if (count <= 0) return 'none';
-      return `${count} ${count === 1 ? 'file' : 'files'}`;
+      return `${count} ${count === 1 ? 'item' : 'items'}`;
     }, [count]);
 
     const a11y = useMemo(() => `${label}, ${countText}`, [label, countText]);
 
-    // Guard: if no onPress, make the row inert.
-    const handlePress = useCallback(() => {
-      onPress?.();
-    }, [onPress]);
-
     return (
       <Button
-        onPress={handlePress}
+        onPress={() => router.push(href)}
         modifiers={[
           buttonStyle('automatic'),
           tint('primary'),
@@ -118,10 +101,7 @@ const AttachmentTileRow = React.memo(
 
 export function AttachmentsOverview({
   counts,
-  onTilePress,
   filterChip,
-  tileOrder,
-  onMoveTile,
 }: AttachmentsOverviewProps) {
   const tiles = useMemo<readonly AttachmentKindTile[]>(
     () => [
@@ -129,57 +109,33 @@ export function AttachmentsOverview({
         kind: 'image',
         label: 'Images',
         count: counts.image,
-        onPress: onTilePress?.image,
         systemImage: AppIcons.files.image,
+        href: '/(tabs)/vault/images' satisfies Href,
       },
       {
         kind: 'document',
         label: 'Documents',
         count: counts.document,
-        onPress: onTilePress?.document,
         systemImage: AppIcons.files.document,
+        href: '/(tabs)/vault/documents' satisfies Href,
       },
       {
         kind: 'archive',
         label: 'Archives',
         count: counts.archive,
-        onPress: onTilePress?.archive,
         systemImage: AppIcons.files.archive,
+        href: '/(tabs)/vault/archives' satisfies Href,
       },
       {
         kind: 'other',
         label: 'Other',
         count: counts.other,
-        onPress: onTilePress?.other,
         systemImage: AppIcons.files.others,
+        href: '/(tabs)/vault/other' satisfies Href,
       },
     ],
-    [counts, onTilePress],
+    [counts],
   );
-
-  const orderedTiles = useMemo(() => {
-    if (!tileOrder || tileOrder.length === 0) return tiles;
-
-    const tileMap = new Map<AttachmentKindKey, AttachmentKindTile>(
-      tiles.map((tile) => [tile.kind, tile]),
-    );
-
-    const seen = new Set<AttachmentKindKey>();
-    const ordered: AttachmentKindTile[] = [];
-
-    for (const kind of tileOrder) {
-      const tile = tileMap.get(kind);
-      if (!tile || seen.has(kind)) continue;
-      ordered.push(tile);
-      seen.add(kind);
-    }
-
-    for (const tile of tiles) {
-      if (!seen.has(tile.kind)) ordered.push(tile);
-    }
-
-    return ordered;
-  }, [tileOrder, tiles]);
 
   const filterHeader = filterChip ? (
     <HStack alignment="center">
@@ -200,24 +156,13 @@ export function AttachmentsOverview({
 
   return (
     <Host style={{flex: 1}}>
-      <IOSList
-        listStyle="automatic"
-        refreshEnabled
-        moveEnabled={Boolean(onMoveTile)}
-        onMoveItem={onMoveTile}
-      >
+      <List listStyle="automatic" refreshEnabled>
         <Section header={filterHeader} title="All Attachments">
-          {orderedTiles.map((tile) => (
-            <AttachmentTileRow
-              key={tile.kind}
-              label={tile.label}
-              systemImage={tile.systemImage}
-              count={tile.count}
-              onPress={tile.onPress}
-            />
+          {tiles.map((tile) => (
+            <AttachmentTileRow key={tile.kind} {...tile} />
           ))}
         </Section>
-      </IOSList>
+      </List>
     </Host>
   );
 }

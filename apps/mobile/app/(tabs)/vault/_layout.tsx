@@ -16,7 +16,7 @@ function VaultStack() {
   const {theme} = useTheme();
   const segments = useSegments();
   const activeSearchScope = useMemo(() => {
-    const screen = segments.at(3);
+    const screen = segments.at(2);
     if (screen === 'images') return VAULT_SEARCH_SCOPES.images;
     if (screen === 'documents') return VAULT_SEARCH_SCOPES.documents;
     if (screen === 'archives') return VAULT_SEARCH_SCOPES.archives;
