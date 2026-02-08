@@ -1,68 +1,35 @@
-import React from 'react';
-import {StyleSheet, Platform} from 'react-native';
+import {Platform} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import {List, Surface, Divider} from 'react-native-paper';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {ListRow, ListRows} from '@/components/ui';
 import {BiometricToggle, HapticToggle} from '@/features/settings';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils';
 
 export default function AppSettingsScreen() {
   const {ds, theme} = useTheme();
-  const styles = createStyles(ds, theme);
 
   return (
-    <ScrollView
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
-      <Surface mode="flat" style={styles.surface}>
-        <List.Item
-          style={styles.listItem}
+    <ScrollView contentContainerStyle={{padding: ds.spacing.md}}>
+      <ListRows>
+        <ListRow
+          rowKey="biometric"
           title="Biometric Unlock"
           description="Enable Face ID / Fingerprint"
           right={() => <BiometricToggle />}
+          a11yLabel="Biometric Unlock"
+          a11yHint="Toggle biometric authentication"
         />
 
-        <Divider style={styles.divider} />
-
         {Platform.OS !== 'web' && (
-          <List.Item
-            style={styles.listItem}
+          <ListRow
+            rowKey="haptic"
             title="Haptic Feedback"
             description="Enable haptic feedback"
             right={() => <HapticToggle />}
+            a11yLabel="Haptic Feedback"
+            a11yHint="Toggle haptic feedback"
           />
         )}
-      </Surface>
+      </ListRows>
     </ScrollView>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {
-        flex: 1,
-        padding: ds.spacing.md,
-      },
-
-      surface: {
-        borderRadius: ds.borderRadius.xxxl,
-        overflow: 'hidden',
-        backgroundColor: 'transparent',
-      },
-
-      listItem: {
-        paddingRight: ds.spacing.md,
-        borderRadius: ds.borderRadius.sm,
-        backgroundColor: theme.card,
-      },
-
-      divider: {
-        height: 1.9,
-        backgroundColor: 'transparent',
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);
