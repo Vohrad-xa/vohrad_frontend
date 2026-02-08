@@ -5,7 +5,6 @@ import {
   List,
   Section,
   TextField,
-  SecureField,
   DatePicker,
   Picker,
   Button,
@@ -78,27 +77,19 @@ export const AddUserScreen = forwardRef<
         )}
 
         <Section title="User Information">
-          {textFields.map((field) =>
-            field.secureTextEntry ? (
-              <SecureField
-                key={field.key}
-                placeholder={field.label}
-                defaultValue={(formData[field.key] as string) ?? ''}
-                onChangeText={(val) => handleFieldChange(field.key, val)}
-              />
-            ) : (
-              <TextField
-                key={field.key}
-                placeholder={field.label}
-                defaultValue={(formData[field.key] as string) ?? ''}
-                onChangeText={(val) => handleFieldChange(field.key, val)}
-                textContentType={field.textContentType}
-                keyboardType={field.keyboardType}
-                autocapitalization={field.autocapitalization}
-                submitLabel={field.submitLabel}
-              />
-            ),
-          )}
+          {textFields.map((field) => (
+            <TextField
+              key={field.key}
+              placeholder={field.label}
+              defaultValue={(formData[field.key] as string) ?? ''}
+              onChangeText={(val) => handleFieldChange(field.key, val)}
+              textContentType={field.textContentType}
+              keyboardType={field.keyboardType}
+              autocapitalization={field.autocapitalization}
+              submitLabel={field.submitLabel}
+              isSecure={field.secureTextEntry}
+            />
+          ))}
           <DatePicker
             title="Date of Birth"
             displayedComponents={['date']}
