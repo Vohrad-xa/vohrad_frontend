@@ -69,7 +69,7 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
               label="Edit phone number"
               onPress={startEditing}
               modifiers={[
-                buttonStyle('automatic'),
+                buttonStyle({style: 'automatic'}),
                 accessibilityLabel('Edit phone number button'),
               ]}
             />
@@ -77,7 +77,7 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
         </Section>
 
         {isEditing && (
-          <Section title="Edit number" collapsible>
+          <Section title="Edit number">
             <LabeledContent label="Phone">
               <TextField
                 placeholder="Phone Number"

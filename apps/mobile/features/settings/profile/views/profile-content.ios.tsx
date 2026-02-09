@@ -95,7 +95,7 @@ const ProfileRow = React.memo(
       <Button
         onPress={onPress}
         modifiers={[
-          buttonStyle('automatic'),
+          buttonStyle({style: 'automatic'}),
           tint('primary'),
           accessibilityLabel(a11yLabel),
           ...(a11yHint ? [accessibilityHint(a11yHint)] : []),

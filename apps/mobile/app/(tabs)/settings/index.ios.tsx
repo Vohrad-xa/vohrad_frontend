@@ -25,16 +25,13 @@ export default function SettingsModal() {
 
   return (
     <Host style={{flex: 1}}>
-      <List
-        listStyle="sidebar"
-        modifiers={[listSectionSpacing(ds.spacing.xl + ds.spacing.xs)]}
-      >
+      <List listStyle="sidebar" modifiers={[listSectionSpacing(ds.spacing.xl)]}>
         {/* Account Section */}
         <ListSection>
           <ListSection.Row
             icon={AppIcons.ui.profile}
             iconColorToken="accentRed"
-            title="My Profile"
+            title="Account"
             onPress={() => router.push('/(tabs)/settings/profile')}
           />
 
@@ -55,8 +52,15 @@ export default function SettingsModal() {
             onPress={() => router.push('/(tabs)/settings/app-settings')}
           />
 
+          <ListSection.Row
+            icon={AppIcons.ui.language}
+            iconColorToken="accentBlue"
+            title="Language"
+            onPress={() => router.push('/(tabs)/settings/language')}
+          />
+
           <Picker
-            label="Theme"
+            label="Appearance"
             icon={
               <Icon
                 name={AppIcons.ui.appearance}
@@ -76,40 +80,25 @@ export default function SettingsModal() {
           </Picker>
         </ListSection>
 
-        <ListSection footer="For best results, select the language you mainly speak, if not available, the app will default to English.">
-          <ListSection.Row
-            icon={AppIcons.ui.language}
-            iconColorToken="accentBlue"
-            title="App Language"
-            onPress={() => router.push('/(tabs)/settings/language')}
-          />
-        </ListSection>
-
         {/* Data & Information */}
         <ListSection>
           <ListSection.Row
             icon={AppIcons.ui.privacy}
             iconColorToken="accentPurple"
-            title="Privacy Policy"
+            title="Privacy"
             onPress={() => router.push('/(tabs)/settings/privacy')}
           />
           <ListSection.Row
-            icon={AppIcons.ui.terms}
-            iconColorToken="accentOrange"
-            title="Terms of Use"
-            onPress={() => router.push('/(tabs)/settings/terms')}
-          />
-          <ListSection.Row
             icon={AppIcons.ui.info}
-            iconColorToken="muted"
-            title="About"
-            onPress={() => router.push('/(tabs)/settings/about')}
+            iconColorToken="accentOrange"
+            title="Help"
+            onPress={() => router.push('/(tabs)/settings/support')}
           />
           <ListSection.Row
             icon={AppIcons.ui.help}
-            iconColorToken="accentOrange"
-            title="Report an Issue"
-            onPress={() => router.push('/(tabs)/settings/support')}
+            iconColorToken="muted"
+            title="Sykamore FAQ"
+            onPress={() => router.push('/(tabs)/settings/about')}
           />
         </ListSection>
 

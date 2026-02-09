@@ -34,41 +34,20 @@ export default function AppSettingsScreen() {
   return (
     <Host style={{flex: 1}}>
       <List listStyle="automatic">
-        <Section
-          footer={
-            <Text>
-              Enable Face ID or Touch ID to quickly and securely access the app.
-            </Text>
-          }
-        >
+        <Section>
           <Toggle
-            isOn={biometricEnabled}
-            onIsOnChange={handleBiometricChange}
             label="Face ID"
-          >
-            <Icon
-              name={AppIcons.ui.biometric}
-              useSwiftUI
-              colorToken="accentGreen"
-            />
-          </Toggle>
-        </Section>
+            onIsOnChange={handleBiometricChange}
+            isOn={biometricEnabled}
+            systemImage={AppIcons.ui.biometric}
+          />
 
-        <Section
-          footer={
-            <Text>
-              Enable haptic feedback to receive tactile responses when
-              interacting with the app.
-            </Text>
-          }
-        >
           <Toggle
-            isOn={hapticEnabled}
-            onIsOnChange={handleHapticChange}
             label="Haptic Feedback"
-          >
-            <Icon name={AppIcons.ui.haptic} useSwiftUI colorToken="accentRed" />
-          </Toggle>
+            onIsOnChange={handleHapticChange}
+            isOn={hapticEnabled}
+            systemImage={AppIcons.ui.haptic}
+          />
         </Section>
       </List>
     </Host>
