@@ -1,5 +1,5 @@
 import React, {forwardRef, memo, useMemo} from 'react';
-import {ScrollView, View} from 'react-native';
+import {Platform, ScrollView, View} from 'react-native';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
 import Slider from '@react-native-community/slider';
 import {useRouter} from 'expo-router';
@@ -135,7 +135,7 @@ export const ItemsFilterSheet = forwardRef<
   return (
     <TrueSheet
       ref={sheetRef}
-      detents={['auto']}
+      detents={Platform.OS === 'web' ? [0.82, 1] : ['auto']}
       backgroundColor={theme.modalBackground}
       role="form"
       scrollable
@@ -146,7 +146,6 @@ export const ItemsFilterSheet = forwardRef<
             onPress={openAdvancedFilters}
             accessibilityLabel="Open advanced item filters"
             textColor={Palette.white}
-            role="button"
           >
             Advanced Filters
           </Button>

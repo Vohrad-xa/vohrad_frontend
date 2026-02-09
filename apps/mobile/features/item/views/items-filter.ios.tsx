@@ -40,6 +40,7 @@ const iconButtonModifiers = (label: string) => [
   buttonStyle({style: 'glass', borderShape: 'circle'}),
   controlSize('large'),
   labelStyle('iconOnly'),
+  font({weight: 'semibold'}),
 ];
 
 const priceFont = font({weight: 'medium', design: 'monospaced'});
@@ -94,11 +95,19 @@ export const ItemsFilterSheet = forwardRef<
                 role="default"
                 onPress={openAdvancedFilters}
                 modifiers={[
-                  buttonStyle({style: 'glass'}),
+                  buttonStyle({style: 'glassProminent'}),
                   controlSize('large'),
                 ]}
               >
-                <Text modifiers={[frame({maxWidth: Infinity})]}>
+                <Text
+                  modifiers={[
+                    frame({maxWidth: Infinity}),
+                    font({
+                      weight: 'semibold',
+                      textStyle: 'callout',
+                    }),
+                  ]}
+                >
                   Advanced Filters
                 </Text>
               </Button>
