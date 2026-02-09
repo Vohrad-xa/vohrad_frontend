@@ -5,7 +5,7 @@ import {BiometricToggle, HapticToggle} from '@/features/settings';
 import {useTheme} from '@/providers';
 
 export default function AppSettingsScreen() {
-  const {ds, theme} = useTheme();
+  const {ds} = useTheme();
 
   return (
     <ScrollView contentContainerStyle={{padding: ds.spacing.md}}>
