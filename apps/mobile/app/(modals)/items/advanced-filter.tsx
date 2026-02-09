@@ -1,19 +1,12 @@
 import React, {useLayoutEffect} from 'react';
 import {Platform, ScrollView} from 'react-native';
-import {Stack, router, useNavigation} from 'expo-router';
-import {HeaderButton, ThemedText} from '@/components/ui';
+import {useNavigation} from 'expo-router';
+import {ThemedText} from '@/components/ui';
+import {Palette} from '@/constants';
 import {
   getHeaderOptions,
   type HeaderButtonAction,
 } from '@/utils/navigation/header-actions';
-
-const CloseHeaderLeft = () => (
-  <HeaderButton
-    variant="close"
-    onPress={() => router.dismiss()}
-    accessibilityLabel="Close"
-  />
-);
 
 export default function AdvancedFilterModal() {
   const navigation = useNavigation();
@@ -27,8 +20,7 @@ export default function AdvancedFilterModal() {
         type: 'button',
         key: 'reset',
         label: 'Reset',
-        iosSymbol: 'arrow.counterclockwise',
-        icon: 'refresh',
+        icon: 'refresh', // android and web, ios shows text
         onPress: handleReset,
         accessibilityLabel: 'Reset advanced filters',
       },
@@ -38,32 +30,27 @@ export default function AdvancedFilterModal() {
         label: 'Save',
         iosSymbol: 'checkmark',
         icon: 'check',
-        variant: 'done',
+        variant: 'prominent',
+        tintColor: Platform.OS === 'ios' ? Palette.orange : undefined,
         onPress: handleSave,
         accessibilityLabel: 'Save advanced filters',
       },
     ];
 
-    navigation.setOptions(getHeaderOptions({right}));
+    const options = getHeaderOptions({right});
+
+    navigation.setOptions({
+      headerRight: options.headerRight,
+      unstable_headerRightItems: options.unstable_headerRightItems,
+    });
   }, [navigation]);
 
   return (
-    <>
-      <Stack.Screen
-        options={{
-          title: 'Advanced Filters',
-          headerShown: true,
-          headerShadowVisible: false,
-          headerTransparent: Platform.OS === 'ios',
-          headerLeft: Platform.OS === 'ios' ? CloseHeaderLeft : undefined,
-        }}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={{flex: 1, backgroundColor: '#282727'}}
-      >
-        <ThemedText>This is where the advanced filters will go.</ThemedText>
-      </ScrollView>
-    </>
+    <ScrollView
+      contentInsetAdjustmentBehavior="automatic"
+      style={{flex: 1, backgroundColor: '#282727'}}
+    >
+      <ThemedText>This is where the advanced filters will go.</ThemedText>
+    </ScrollView>
   );
 }
