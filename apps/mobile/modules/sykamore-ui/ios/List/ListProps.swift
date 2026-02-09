@@ -74,7 +74,7 @@ final class ListProps: UIBaseViewProps {
   @Field var editModeEnabled: Bool = false
 
   // MARK: Scroll
-  @Field var scrollEnabled: Bool = true
+  @Field var scrollDisabled: Bool = false
 
   // MARK: Refresh
   @Field var refreshEnabled: Bool = false

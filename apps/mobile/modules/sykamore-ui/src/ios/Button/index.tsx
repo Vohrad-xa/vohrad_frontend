@@ -13,13 +13,21 @@ import {Text} from '../Text';
  */
 export type ButtonRole = 'default' | 'cancel' | 'destructive';
 
-export type ButtonProps = {
+type ButtonBaseProps = {
   onPress?: () => void;
-  systemImage?: SFSymbol;
   role?: ButtonRole;
-  label?: string;
   children?: React.ReactNode;
 } & CommonViewModifierProps;
+
+/**
+ * `systemImage` requires `label` — SwiftUI's Button only supports
+ * systemImage as a companion to a text label, not standalone.
+ */
+export type ButtonProps = ButtonBaseProps &
+  (
+    | {label: string; systemImage?: SFSymbol}
+    | {label?: undefined; systemImage?: never}
+  );
 
 type NativeButtonProps = Omit<ButtonProps, 'onPress'> &
   ViewEvent<'onButtonPress', void>;

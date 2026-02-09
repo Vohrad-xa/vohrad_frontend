@@ -1,4 +1,5 @@
 import {requireNativeView} from 'expo';
+import {type ViewEvent} from '../../types';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 
@@ -72,6 +73,48 @@ function transformGroupProps(props: GroupProps) {
 
 export function Group(props: GroupProps) {
   return <GroupNativeView {...transformGroupProps(props)} />;
+}
+//#endregion
+
+//#region DisclosureGroup Component
+export interface DisclosureGroupProps extends CommonViewModifierProps {
+  label: string;
+  children: React.ReactNode;
+  isExpanded?: boolean;
+  onIsExpandedChange?: (isExpanded: boolean) => void;
+}
+
+type DisclosureGroupStateChangeEvent = ViewEvent<
+  'onIsExpandedChange',
+  {isExpanded: boolean}
+>;
+
+type NativeDisclosureGroupProps = Omit<
+  DisclosureGroupProps,
+  'onIsExpandedChange'
+> &
+  DisclosureGroupStateChangeEvent;
+
+const DisclosureGroupNativeView: React.ComponentType<NativeDisclosureGroupProps> =
+  requireNativeView('SykamoreUi', 'DisclosureGroupView');
+
+export function DisclosureGroup(props: DisclosureGroupProps) {
+  const {onIsExpandedChange, modifiers, ...rest} = props;
+
+  const transformedProps = {
+    modifiers,
+    ...(modifiers ? createViewModifierEventListener(modifiers) : undefined),
+    ...rest,
+  };
+
+  return (
+    <DisclosureGroupNativeView
+      {...transformedProps}
+      onIsExpandedChange={(event: {nativeEvent: {isExpanded: boolean}}) =>
+        onIsExpandedChange?.(event.nativeEvent.isExpanded)
+      }
+    />
+  );
 }
 //#endregion
 

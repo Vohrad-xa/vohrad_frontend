@@ -78,8 +78,8 @@ export interface ListProps extends CommonViewModifierProps {
   editModeEnabled?: boolean;
 
   // MARK: Scroll
-  /** Make the list scrollable */
-  scrollEnabled?: boolean;
+  /** Disables scrolling in the list (iOS 16.0+) */
+  scrollDisabled?: boolean;
 
   // MARK: Refresh
   /** Enable pull-to-refresh (iOS 15.0+) */

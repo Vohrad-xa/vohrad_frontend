@@ -4,18 +4,23 @@ import {type CommonViewModifierProps} from '../types';
 
 export type SectionProps = {
   title?: string;
-  header?: React.ReactNode;
   footer?: React.ReactNode;
+  header?: React.ReactNode;
   children: React.ReactNode;
-  collapsible?: boolean;
-  /** Initial expanded state when collapsible is true (default: true) */
-  initiallyExpanded?: boolean;
+  /**
+   * When provided, the section becomes collapsible.
+   * > **Note**: Available only when the list style is set to `sidebar`.
+   */
+  isExpanded?: boolean;
+  onIsExpandedChange?: (isExpanded: boolean) => void;
 } & CommonViewModifierProps;
 
-const SectionNativeView: React.ComponentType<SectionProps> = requireNativeView(
-  'SykamoreUi',
-  'SectionView',
-);
+type SectionNativeProps = Omit<SectionProps, 'onIsExpandedChange'> & {
+  onIsExpandedChange?: (e: {nativeEvent: {isExpanded: boolean}}) => void;
+};
+
+const SectionNativeView: React.ComponentType<SectionNativeProps> =
+  requireNativeView('SykamoreUi', 'SectionView');
 
 const SectionHeader: React.ComponentType<object> = requireNativeView(
   'SykamoreUi',
@@ -32,13 +37,26 @@ const SectionContent: React.ComponentType<object> = requireNativeView(
   'SectionContent',
 );
 
+/**
+ * Section component uses the native section component.
+ */
 export function Section(props: SectionProps) {
-  const {modifiers, header, footer, children, ...restProps} = props;
-
+  const {
+    modifiers,
+    header,
+    footer,
+    children,
+    onIsExpandedChange,
+    ...restProps
+  } = props;
   return (
     <SectionNativeView
       modifiers={modifiers}
       {...(modifiers ? createViewModifierEventListener(modifiers) : undefined)}
+      {...(onIsExpandedChange && {
+        onIsExpandedChange: (e: {nativeEvent: {isExpanded: boolean}}) =>
+          onIsExpandedChange(e.nativeEvent.isExpanded),
+      })}
       {...restProps}
     >
       {header && <SectionHeader>{header}</SectionHeader>}

@@ -1,11 +1,5 @@
 import {requireNativeView} from 'expo';
-import {
-  type ColorSchemeName,
-  I18nManager,
-  StyleProp,
-  ViewStyle,
-} from 'react-native';
-
+import {I18nManager, StyleProp, ViewStyle} from 'react-native';
 import {createViewModifierEventListener} from '../modifiers/utils';
 import {type CommonViewModifierProps} from '../types';
 
@@ -15,9 +9,9 @@ export type HostProps = {
   onLayoutContent?: (event: {
     nativeEvent: {width: number; height: number};
   }) => void;
-  colorScheme?: ColorSchemeName;
+  colorScheme?: 'light' | 'dark';
   layoutDirection?: 'leftToRight' | 'rightToLeft';
-  ignoreSafeAreaKeyboardInsets?: boolean;
+  ignoreSafeArea?: 'all' | 'keyboard';
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
 } & CommonViewModifierProps;
@@ -37,7 +31,7 @@ export function Host(props: HostProps) {
   const {
     matchContents,
     onLayoutContent,
-    ignoreSafeAreaKeyboardInsets,
+    ignoreSafeArea,
     modifiers,
     layoutDirection,
     ...restProps
@@ -62,7 +56,7 @@ export function Host(props: HostProps) {
         layoutDirection ??
         (I18nManager.getConstants().isRTL ? 'rightToLeft' : 'leftToRight')
       }
-      ignoreSafeAreaKeyboardInsets={ignoreSafeAreaKeyboardInsets}
+      ignoreSafeArea={ignoreSafeArea}
       {...restProps}
     />
   );

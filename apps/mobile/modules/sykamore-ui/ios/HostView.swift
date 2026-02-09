@@ -29,13 +29,13 @@ internal enum ExpoLayoutDirection: String, Enumerable {
   }
 }
 
-internal final class HostViewProps: ExpoSwiftUI.ViewProps {
+internal final class HostViewProps: ExpoSwiftUI.ViewProps, ExpoSwiftUI.SafeAreaControllable {
   @Field var useViewportSizeMeasurement: Bool = false
   @Field var colorScheme: ExpoColorScheme?
   @Field var layoutDirection: ExpoLayoutDirection = .leftToRight
   @Field var matchContentsHorizontal = false
   @Field var matchContentsVertical = false
-  @Field var ignoreSafeAreaKeyboardInsets: Bool = false
+  @Field var ignoreSafeArea: ExpoSwiftUI.IgnoreSafeArea?
   var onLayoutContent = EventDispatcher()
 }
 

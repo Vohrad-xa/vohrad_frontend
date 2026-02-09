@@ -456,9 +456,10 @@ export const grayscale = (amount: number) =>
 /**
  * Sets the button style for button views.
  * @param style - The button style.
+ * @param options - Optional button border shape settings.
  * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/buttonstyle(_:)).
  */
-export const buttonStyle = (
+export const buttonStyle = (options: {
   style:
     | 'automatic'
     | 'bordered'
@@ -466,8 +467,10 @@ export const buttonStyle = (
     | 'borderless'
     | 'glass'
     | 'glassProminent'
-    | 'plain',
-) => createModifier('buttonStyle', {style});
+    | 'plain';
+  borderShape?: 'automatic' | 'capsule' | 'circle' | 'roundedRectangle';
+  cornerRadius?: number;
+}) => createModifier('buttonStyle', options);
 
 /**
  * Sets the style for toggles within this view.

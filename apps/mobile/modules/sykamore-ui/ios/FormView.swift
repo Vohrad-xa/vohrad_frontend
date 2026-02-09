@@ -2,7 +2,7 @@ import SwiftUI
 import ExpoModulesCore
 
 internal final class FormViewProps: UIBaseViewProps {
-  @Field var scrollEnabled: Bool = true
+  @Field var scrollDisabled: Bool = false
 }
 
 internal struct FormView: ExpoSwiftUI.View {
@@ -14,7 +14,7 @@ internal struct FormView: ExpoSwiftUI.View {
     }
 
     if #available(iOS 16.0, tvOS 16.0, *) {
-      form.scrollDisabled(!props.scrollEnabled)
+      form.scrollDisabled(props.scrollDisabled)
     } else {
       form
     }

@@ -137,7 +137,7 @@ struct ListView: ExpoSwiftUI.View {
   private func applyModifiers<Content: View>(to list: Content) -> some View {
     let styled = list
       .modifier(ListStyleModifier(style: props.listStyle))
-      .modifier(ScrollDisabled(disabled: !props.scrollEnabled))
+      .modifier(ScrollDisabled(disabled: props.scrollDisabled))
       .environment(\.editMode, $editModeEnabled)
 
     return applyRefreshable(to: styled)

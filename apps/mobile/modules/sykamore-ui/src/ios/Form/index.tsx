@@ -6,11 +6,11 @@ export interface FormProps extends CommonViewModifierProps {
   children: React.ReactNode;
 
   /**
-   * Makes the form scrollable.
-   * @default true
+   * Disables scrolling in the form.
+   * @default false
    * @platform ios 16.0+
    */
-  scrollEnabled?: boolean;
+  scrollDisabled?: boolean;
 }
 
 const FormNativeView: React.ComponentType<FormProps> = requireNativeView(
