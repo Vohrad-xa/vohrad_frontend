@@ -13,6 +13,10 @@ export default function ModalsLayout() {
         name="items/specifications"
         options={{title: 'Specifications'}}
       />
+      <Stack.Screen
+        name="items/advanced-filter"
+        options={{title: 'Advanced Filters'}}
+      />
       <Stack.Screen name="preview" options={{title: 'Preview'}} />
       <Stack.Screen name="attachments" options={{title: 'Attachments'}} />
     </Stack>

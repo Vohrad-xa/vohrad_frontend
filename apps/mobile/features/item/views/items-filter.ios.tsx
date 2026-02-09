@@ -65,7 +65,7 @@ export const ItemsFilterSheet = forwardRef<
 
   const openAdvancedFilters = async () => {
     await sheetRef.current?.dismiss();
-    router.push('/');
+    router.push('/(modals)/items/advanced-filter');
   };
 
   return (
