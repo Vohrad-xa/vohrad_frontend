@@ -36,7 +36,6 @@ type UseEditFilterResult = {
   filters: ItemFilterState;
   statusRows: ToggleRowModel[];
   trackingRows: ToggleRowModel[];
-  toggleRows: ToggleRowModel[];
   priceMinLabel: string;
   priceMaxLabel: string;
   updatePriceMin: (value: number | null) => void;
@@ -126,11 +125,6 @@ export function useEditFilter({
     [trackingModes, toggleFilter],
   );
 
-  const toggleRows = useMemo(
-    () => [...statusRows, ...trackingRows],
-    [statusRows, trackingRows],
-  );
-
   const priceMinLabel = filters.priceMin?.toFixed(2) ?? '0.00';
   const priceMaxLabel = filters.priceMax?.toFixed(2) ?? '10000.00';
 
@@ -139,7 +133,6 @@ export function useEditFilter({
     filters,
     statusRows,
     trackingRows,
-    toggleRows,
     priceMinLabel,
     priceMaxLabel,
     updatePriceMin,

@@ -1,11 +1,13 @@
 import React, {forwardRef, memo, useMemo} from 'react';
-import {StyleSheet} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
 import Slider from '@react-native-community/slider';
-import {Appbar, Divider, List, Surface, Switch} from 'react-native-paper';
-import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {useRouter} from 'expo-router';
+import {Appbar, Button, List, Switch} from 'react-native-paper';
+import {ListRow, ListRows} from '@/components/ui';
+import {Palette} from '@/constants';
 import {useTheme} from '@/providers';
-import {AppIcons, makeStyleFactory} from '@/utils';
+import {AppIcons} from '@/utils';
 import {useEditFilter} from '../hooks';
 import type {ItemFilterState} from '@sykamore/types';
 
@@ -35,23 +37,21 @@ type ItemsFilterSheetHandle = {
   dismiss: () => Promise<void>;
 };
 
-const ToggleRow = memo(({label, checked, onToggle}: ToggleRowModel) => {
-  const {ds, theme} = useTheme();
-
+const ToggleRow = memo(({id, label, checked, onToggle}: ToggleRowModel) => {
   return (
-    <List.Item
+    <ListRow
+      rowKey={id}
       title={label}
+      a11yLabel={label}
+      a11yHint={`Toggles ${label}`}
       right={() => <Switch value={checked} onValueChange={onToggle} />}
-      borderless
-      style={{borderRadius: ds.borderRadius.xs, backgroundColor: theme.card}}
     />
   );
 });
-
 ToggleRow.displayName = 'ToggleRow';
 
 const PriceRow = memo(
-  ({label, valueLabel, value, min, max, onChange}: PriceRowModel) => {
+  ({id: _id, label, valueLabel, value, min, max, onChange}: PriceRowModel) => {
     const {ds, theme} = useTheme();
 
     return (
@@ -74,15 +74,14 @@ const PriceRow = memo(
     );
   },
 );
-
 PriceRow.displayName = 'PriceRow';
 
 export const ItemsFilterSheet = forwardRef<
   ItemsFilterSheetHandle,
   ItemsFilterSheetProps
 >(({initialFilters}, ref) => {
+  const router = useRouter();
   const {theme, ds} = useTheme();
-  const styles = createStyles(ds, theme);
 
   const {
     sheetRef,
@@ -96,6 +95,11 @@ export const ItemsFilterSheet = forwardRef<
     handleSave,
     handleReset,
   } = useEditFilter({initialFilters, sheetHandleRef: ref});
+
+  const openAdvancedFilters = async () => {
+    await sheetRef.current?.dismiss();
+    router.push('/');
+  };
 
   const priceRows = useMemo<PriceRowModel[]>(
     () => [
@@ -131,14 +135,27 @@ export const ItemsFilterSheet = forwardRef<
   return (
     <TrueSheet
       ref={sheetRef}
-      detents={[0.85, 1]}
+      detents={['auto']}
       backgroundColor={theme.modalBackground}
-      style={styles.container}
       role="form"
+      scrollable
+      footer={
+        <View style={{padding: ds.layout.screenPadding}}>
+          <Button
+            mode="contained"
+            onPress={openAdvancedFilters}
+            accessibilityLabel="Open advanced item filters"
+            textColor={Palette.white}
+            role="button"
+          >
+            Advanced Filters
+          </Button>
+        </View>
+      }
       header={
         <Appbar.Header
-          statusBarHeight={ds.layout.screenPadding}
-          style={styles.header}
+          statusBarHeight={ds.spacing.md}
+          style={{backgroundColor: 'transparent'}}
         >
           <Appbar.Content title="Item Filters" />
           <Appbar.Action
@@ -154,66 +171,38 @@ export const ItemsFilterSheet = forwardRef<
         </Appbar.Header>
       }
     >
-      <List.Section title="Status">
-        <Surface mode="flat" style={styles.surface}>
-          {statusRows.map((row, idx) => (
-            <React.Fragment key={row.id}>
-              <ToggleRow {...row} />
-              {idx !== statusRows.length - 1 && (
-                <Divider style={styles.divider} />
-              )}
-            </React.Fragment>
-          ))}
-        </Surface>
-      </List.Section>
+      <ScrollView
+        nestedScrollEnabled
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingHorizontal: ds.spacing.md}}
+      >
+        <List.Section title="Status">
+          <ListRows>
+            {statusRows.map((row) => (
+              <ToggleRow key={row.id} {...row} />
+            ))}
+          </ListRows>
+        </List.Section>
 
-      <List.Section title="Tracking Mode">
-        <Surface mode="flat" style={styles.surface}>
-          {trackingRows.map((row, idx) => (
-            <React.Fragment key={row.id}>
-              <ToggleRow {...row} />
-              {idx !== trackingRows.length - 1 && (
-                <Divider style={styles.divider} />
-              )}
-            </React.Fragment>
-          ))}
-        </Surface>
-      </List.Section>
+        <List.Section title="Tracking Mode">
+          <ListRows>
+            {trackingRows.map((row) => (
+              <ToggleRow key={row.id} {...row} />
+            ))}
+          </ListRows>
+        </List.Section>
 
-      <List.Section title="Price Range">
-        <Surface mode="flat" style={styles.surface}>
-          {priceRows.map((row, idx) => (
-            <React.Fragment key={row.id}>
-              <PriceRow {...row} />
-              {idx !== priceRows.length - 1 && (
-                <Divider style={styles.divider} />
-              )}
-            </React.Fragment>
-          ))}
-        </Surface>
-      </List.Section>
+        <List.Section title="Price Range">
+          <ListRows>
+            {priceRows.map((row) => (
+              <PriceRow key={row.id} {...row} />
+            ))}
+          </ListRows>
+        </List.Section>
+      </ScrollView>
     </TrueSheet>
   );
 });
-
 ItemsFilterSheet.displayName = 'ItemsFilterSheet';
-
-const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      container: {paddingHorizontal: ds.spacing.md},
-      header: {backgroundColor: 'transparent'},
-      surface: {
-        borderRadius: ds.borderRadius.xxxl,
-        overflow: 'hidden',
-        backgroundColor: 'transparent',
-      },
-      divider: {
-        height: 1.9,
-        backgroundColor: 'transparent',
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);
 
 export default ItemsFilterSheet;

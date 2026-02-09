@@ -1,25 +1,27 @@
 import React, {forwardRef} from 'react';
 import {View} from 'react-native';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
-import {Palette} from '@/constants';
+import {useRouter} from 'expo-router';
 import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
 import {
+  Host,
   List,
   HStack,
-  Host,
-  Image,
-  Section,
-  Slider,
-  Spacer,
-  Text,
-  Toggle,
   VStack,
+  Section,
+  Text,
+  Button,
+  Slider,
+  Toggle,
   accessibilityLabel,
+  listSectionSpacing,
+  listSectionMargins,
+  controlSize,
+  buttonStyle,
+  labelStyle,
   font,
-  foregroundStyle,
   frame,
-  glassEffect,
 } from 'sykamore-ui/ios';
 import {useEditFilter} from '../hooks';
 import type {ItemFilterState} from '@sykamore/types';
@@ -33,17 +35,26 @@ type ItemsFilterSheetProps = {
   initialFilters: ItemFilterState;
 };
 
+const iconButtonModifiers = (label: string) => [
+  accessibilityLabel(label),
+  buttonStyle({style: 'glass', borderShape: 'circle'}),
+  controlSize('large'),
+  labelStyle('iconOnly'),
+];
+
+const priceFont = font({weight: 'medium', design: 'monospaced'});
+
 export const ItemsFilterSheet = forwardRef<
   ItemsFilterSheetHandle,
   ItemsFilterSheetProps
 >(({initialFilters}, ref) => {
+  const router = useRouter();
   const {ds} = useTheme();
   const {
     sheetRef,
     filters,
     statusRows,
     trackingRows,
-    unitRows,
     priceMinLabel,
     priceMaxLabel,
     updatePriceMin,
@@ -52,62 +63,64 @@ export const ItemsFilterSheet = forwardRef<
     handleReset,
   } = useEditFilter({initialFilters, sheetHandleRef: ref});
 
-  const headerButtonSize = ds.components.tapTarget.minSize;
-  const buildHeaderIconModifiers = (tintColor?: string) => [
-    font({size: ds.iconSize.md, weight: 'regular'}),
-    frame({width: headerButtonSize, height: headerButtonSize}),
-    glassEffect(
-      tintColor
-        ? {shape: 'circle', glass: {tint: tintColor, interactive: true}}
-        : {shape: 'circle', glass: {interactive: true}},
-    ),
-  ];
-
-  const headerContent = (
-    <HStack alignment="center" spacing={ds.spacing.sm}>
-      <Text modifiers={[font({weight: 'medium', textStyle: 'headline'})]}>
-        Item Filters
-      </Text>
-
-      <Spacer />
-
-      <Image
-        systemName={AppIcons.actions.refresh}
-        onPress={handleReset}
-        modifiers={[
-          ...buildHeaderIconModifiers(),
-          accessibilityLabel('Reset item filters'),
-        ]}
-      />
-
-      <Image
-        systemName={AppIcons.actions.save}
-        onPress={handleSave}
-        modifiers={[
-          ...buildHeaderIconModifiers(Palette.orange),
-          foregroundStyle(Palette.white),
-          accessibilityLabel('Save item filters'),
-        ]}
-      />
-    </HStack>
-  );
+  const openAdvancedFilters = async () => {
+    await sheetRef.current?.dismiss();
+    router.push('/');
+  };
 
   return (
     <TrueSheet
       ref={sheetRef}
-      detents={[0.51, 1]}
+      detents={[0.76, 1]}
       scrollable
-      role="form"
-      header={
-        <View>
-          <Host matchContents>{headerContent}</Host>
+      role="menu"
+      footer={
+        <View
+          style={{
+            paddingHorizontal: ds.layout.screenPadding,
+            paddingVertical: ds.spacing.md,
+          }}
+        >
+          <Host matchContents useViewportSizeMeasurement>
+            <HStack alignment="center" spacing={ds.spacing.sm}>
+              <Button
+                label="Reset filters"
+                systemImage={AppIcons.actions.refresh}
+                onPress={handleReset}
+                modifiers={iconButtonModifiers('Reset filters')}
+              />
+
+              <Button
+                role="default"
+                onPress={openAdvancedFilters}
+                modifiers={[
+                  buttonStyle({style: 'glass'}),
+                  controlSize('large'),
+                ]}
+              >
+                <Text modifiers={[frame({maxWidth: Infinity})]}>
+                  Advanced Filters
+                </Text>
+              </Button>
+
+              <Button
+                label="Save filters"
+                systemImage={AppIcons.actions.save}
+                onPress={handleSave}
+                modifiers={iconButtonModifiers('Save basic item filters')}
+              />
+            </HStack>
+          </Host>
         </View>
       }
-      headerStyle={{padding: ds.spacing.lg}}
     >
       <Host style={{flex: 1}}>
-        <List>
-          <Section title="Status">
+        <List listStyle="sidebar" modifiers={[listSectionSpacing('compact')]}>
+          <Section
+            title="Status"
+            isExpanded
+            modifiers={[listSectionMargins({top: ds.spacing.lg})]}
+          >
             {statusRows.map((row) => (
               <Toggle
                 key={row.id}
@@ -118,7 +131,7 @@ export const ItemsFilterSheet = forwardRef<
             ))}
           </Section>
 
-          <Section title="Tracking Mode">
+          <Section title="Tracking Mode" isExpanded>
             {trackingRows.map((row) => (
               <Toggle
                 key={row.id}
@@ -129,36 +142,17 @@ export const ItemsFilterSheet = forwardRef<
             ))}
           </Section>
 
-          <Section title="Unit of Measure">
-            {unitRows.map((row) => (
-              <Toggle
-                key={row.id}
-                isOn={row.checked}
-                onIsOnChange={row.onToggle}
-                label={row.label}
-              />
-            ))}
-          </Section>
-
-          <Section title="Price Range">
+          <Section title="Price Range" isExpanded>
             <VStack alignment="leading" spacing={ds.spacing.md}>
-              <Text
-                modifiers={[font({weight: 'medium', design: 'monospaced'})]}
-              >
-                min {priceMinLabel}
-              </Text>
+              <Text modifiers={[priceFont]}>min {priceMinLabel}</Text>
               <Slider
                 value={filters.priceMin ?? 0}
                 onValueChange={updatePriceMin}
-                min={0}
                 max={filters.priceMax ?? 10000}
+                min={0}
               />
 
-              <Text
-                modifiers={[font({weight: 'medium', design: 'monospaced'})]}
-              >
-                max {priceMaxLabel}
-              </Text>
+              <Text modifiers={[priceFont]}>max {priceMaxLabel}</Text>
               <Slider
                 value={filters.priceMax ?? 10000}
                 onValueChange={updatePriceMax}
