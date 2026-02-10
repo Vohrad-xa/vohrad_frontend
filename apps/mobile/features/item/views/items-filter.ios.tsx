@@ -15,6 +15,8 @@ import {
   Slider,
   Toggle,
   accessibilityLabel,
+  accessibilityHint,
+  accessibilityValue,
   listSectionSpacing,
   listSectionMargins,
   controlSize,
@@ -83,7 +85,7 @@ export const ItemsFilterSheet = forwardRef<
           }}
         >
           <Host matchContents useViewportSizeMeasurement>
-            <HStack alignment="center" spacing={ds.spacing.sm}>
+            <HStack alignment="center" spacing={ds.spacing.xs}>
               <Button
                 label="Reset filters"
                 systemImage={AppIcons.actions.refresh}
@@ -95,6 +97,7 @@ export const ItemsFilterSheet = forwardRef<
                 role="default"
                 onPress={openAdvancedFilters}
                 modifiers={[
+                  accessibilityLabel('Open advanced filters'),
                   buttonStyle({style: 'glassProminent'}),
                   controlSize('large'),
                 ]}
@@ -104,7 +107,7 @@ export const ItemsFilterSheet = forwardRef<
                     frame({maxWidth: Infinity}),
                     font({
                       weight: 'semibold',
-                      textStyle: 'callout',
+                      size: 16,
                     }),
                   ]}
                 >
@@ -113,10 +116,10 @@ export const ItemsFilterSheet = forwardRef<
               </Button>
 
               <Button
-                label="Save filters"
+                label="Apply filters"
                 systemImage={AppIcons.actions.save}
                 onPress={handleSave}
-                modifiers={iconButtonModifiers('Save basic item filters')}
+                modifiers={iconButtonModifiers('Apply filters')}
               />
             </HStack>
           </Host>
@@ -136,6 +139,7 @@ export const ItemsFilterSheet = forwardRef<
                 isOn={row.checked}
                 onIsOnChange={row.onToggle}
                 label={row.label}
+                modifiers={[accessibilityLabel(row.label)]}
               />
             ))}
           </Section>
@@ -147,6 +151,7 @@ export const ItemsFilterSheet = forwardRef<
                 isOn={row.checked}
                 onIsOnChange={row.onToggle}
                 label={row.label}
+                modifiers={[accessibilityLabel(row.label)]}
               />
             ))}
           </Section>
@@ -159,6 +164,11 @@ export const ItemsFilterSheet = forwardRef<
                 onValueChange={updatePriceMin}
                 max={filters.priceMax ?? 10000}
                 min={0}
+                modifiers={[
+                  accessibilityLabel('Minimum price slider'),
+                  accessibilityHint('Adjusts the lowest price filter.'),
+                  accessibilityValue(priceMinLabel),
+                ]}
               />
 
               <Text modifiers={[priceFont]}>max {priceMaxLabel}</Text>
@@ -167,6 +177,11 @@ export const ItemsFilterSheet = forwardRef<
                 onValueChange={updatePriceMax}
                 min={filters.priceMin ?? 0}
                 max={10000}
+                modifiers={[
+                  accessibilityLabel('Maximum price slider'),
+                  accessibilityHint('Adjusts the highest price filter.'),
+                  accessibilityValue(priceMaxLabel),
+                ]}
               />
             </VStack>
           </Section>

@@ -68,7 +68,7 @@ function ItemsStack() {
   const headerSearchBarOptions = useMemo(
     () =>
       ({
-        placement: 'stacked' as const,
+        placement: 'integrated' as const,
         hideWhenScrolling: false,
         placeholder: 'Search',
         headerIconColor: theme.icon,

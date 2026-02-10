@@ -132,8 +132,7 @@ export const Icon: React.FC<IconProps> = ({
 export const AppIcons = {
   ui: {
     more: 'ellipsis',
-    menu: 'line.3.horizontal.decrease',
-    filter: 'equal',
+    filter: 'line.3.horizontal.decrease',
     search: 'magnifyingglass',
     chevronUpDown: 'chevron.up.chevron.down',
     notifications: 'bell',

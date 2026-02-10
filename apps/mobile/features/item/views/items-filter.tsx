@@ -44,7 +44,13 @@ const ToggleRow = memo(({id, label, checked, onToggle}: ToggleRowModel) => {
       title={label}
       a11yLabel={label}
       a11yHint={`Toggles ${label}`}
-      right={() => <Switch value={checked} onValueChange={onToggle} />}
+      right={() => (
+        <Switch
+          value={checked}
+          onValueChange={onToggle}
+          accessibilityLabel={`${label} toggle`}
+        />
+      )}
     />
   );
 });
@@ -66,6 +72,8 @@ const PriceRow = memo(
             minimumValue={min}
             maximumValue={max}
             style={{marginTop: ds.spacing.sm}}
+            accessibilityLabel={`${label} price slider`}
+            accessibilityValue={{text: valueLabel}}
           />
         )}
         borderless
@@ -140,7 +148,12 @@ export const ItemsFilterSheet = forwardRef<
       role="form"
       scrollable
       footer={
-        <View style={{padding: ds.layout.screenPadding}}>
+        <View
+          style={{
+            paddingHorizontal: ds.spacing.md,
+            paddingVertical: ds.spacing.xxl,
+          }}
+        >
           <Button
             mode="contained"
             onPress={openAdvancedFilters}

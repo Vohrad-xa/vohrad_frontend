@@ -83,9 +83,9 @@ const getVariantConfig = (
       return {
         color: theme.accentRed,
       };
-    case 'menu':
+    case 'filter':
       return {
-        icon: AppIcons.ui.menu,
+        icon: AppIcons.ui.filter,
       };
     default:
       return {
@@ -108,7 +108,7 @@ export type HeaderButtonVariant =
   | 'success'
   | 'back'
   | 'destructive'
-  | 'menu';
+  | 'filter';
 
 export interface HeaderButtonProps
   extends
@@ -163,8 +163,7 @@ export const HeaderButton = ({
   // Variant config as defaults
   const useIcon = icon ?? variantConfig.icon;
   const useText = text ?? variantConfig.text;
-  const useIconSize =
-    (iconSize ?? variantConfig.iconSize ?? Platform.OS === 'ios') ? 'xl' : 'md';
+  const useIconSize = iconSize ?? variantConfig.iconSize ?? 'lg';
   const useIconColorToken = iconColor ? undefined : iconColorToken;
   const useIconColor =
     iconColor ?? (useIconColorToken ? undefined : variantConfig.color);
@@ -246,7 +245,8 @@ const createStyles = makeStyleFactory(
         borderRadius: ds.borderRadius.full,
       },
       groupedButton: {
-        marginHorizontal: Platform.OS === 'ios' ? ds.spacing.sm : ds.spacing.sm,
+        marginHorizontal:
+          Platform.OS === 'ios' ? ds.spacing.sm : ds.spacing.xxs,
       },
 
       buttonDisabled: {

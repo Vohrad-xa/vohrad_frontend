@@ -1,4 +1,4 @@
-import {useCallback} from 'react';
+import {useCallback, useLayoutEffect} from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -7,8 +7,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 import {useDashboardOverview, useFetchUserProfile} from '@sykamore/store';
-import {router} from 'expo-router';
-import {RefreshableScrollView, ThemedView} from '@/components/ui';
+import {router, useNavigation} from 'expo-router';
+import {HeaderButton, RefreshableScrollView, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {OverviewCards, QuickActions} from '@/features/dashboard';
 import {useHaptic, useTheme} from '@/providers';
@@ -16,15 +16,29 @@ import {makeStyleFactory} from '@/utils';
 
 export default function HomeScreen() {
   const {ds, theme} = useTheme();
+  const navigation = useNavigation();
   const {width: screenWidth} = useWindowDimensions();
   const styles = createStyles(ds, theme);
   const {triggerHaptic} = useHaptic();
   const {refetch: refetchOverview} = useDashboardOverview();
   const {fetchUserProfile} = useFetchUserProfile();
 
-  const handlePresentModal = useCallback(() => {
-    router.push('/dashboard/cards-filter');
-  }, []);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderButton
+          variant={Platform.OS === 'ios' ? 'more' : 'filter'}
+          accessibilityLabel="Filter dashboard cards"
+          onPress={() => {
+            router.push('/dashboard/cards-filter');
+          }}
+          style={{
+            backgroundColor: Platform.OS === 'ios' ? undefined : theme.ripple,
+          }}
+        />
+      ),
+    });
+  }, [navigation, theme]);
 
   const handleScanOpen = useCallback(() => {
     triggerHaptic('light');
@@ -51,10 +65,7 @@ export default function HomeScreen() {
       >
         <ThemedView style={styles.container}>
           <QuickActions onScanPress={handleScanOpen} />
-          <OverviewCards
-            onFilterPress={handlePresentModal}
-            screenWidth={screenWidth}
-          />
+          <OverviewCards screenWidth={screenWidth} />
         </ThemedView>
       </ScrollComponent>
     </>

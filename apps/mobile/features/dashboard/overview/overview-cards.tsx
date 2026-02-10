@@ -6,26 +6,18 @@ import {
   Pressable,
   type ViewStyle,
 } from 'react-native';
-import {isLiquidGlassAvailable, GlassView} from 'expo-glass-effect';
 import {useRouter} from 'expo-router';
 import {ThemedText, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon, AppIcons, makeStyleFactory} from '@/utils';
-import {
-  useFilteredDashboardCards,
-  useDashboardCardVisibility,
-} from './filter-context';
+import {Icon, makeStyleFactory} from '@/utils';
+import {useFilteredDashboardCards} from './filter-context';
 
 type OverviewCardsProps = {
-  onFilterPress?: () => void;
   screenWidth: number;
 };
 
-export function OverviewCards({
-  onFilterPress,
-  screenWidth,
-}: OverviewCardsProps) {
+export function OverviewCards({screenWidth}: OverviewCardsProps) {
   const {ds, theme} = useTheme();
   const router = useRouter();
   const styles = createStyles(ds, theme, screenWidth);
@@ -33,8 +25,6 @@ export function OverviewCards({
   const isAndroid = Platform.OS === 'android';
   const isFeedbackEnabled = isAndroid || isWeb;
 
-  // Get visibility state and filtered cards
-  const visibility = useDashboardCardVisibility();
   const menuCards = useFilteredDashboardCards();
 
   // Handle card press navigation
@@ -55,40 +45,12 @@ export function OverviewCards({
     [router],
   );
 
-  const hasActiveFilters =
-    !visibility.items ||
-    !visibility.locations ||
-    !visibility.maintenance ||
-    !visibility.suppliers ||
-    !visibility.checkInOut ||
-    !visibility.attachments;
-
   return (
     <>
       <View style={styles.overviewHeader}>
         <ThemedText variant="title3" fontWeight="semibold">
           Overview
         </ThemedText>
-        <View style={styles.headerRight}>
-          {hasActiveFilters && (
-            <ThemedText variant="body" style={styles.filterStatus}>
-              {menuCards.length} of 6
-            </ThemedText>
-          )}
-          <Pressable onPress={onFilterPress}>
-            {isLiquidGlassAvailable() ? (
-              <GlassView
-                style={styles.glassButton}
-                glassEffectStyle="regular"
-                isInteractive
-              >
-                <Icon name={AppIcons.ui.more} colorToken="icon" size="lg" />
-              </GlassView>
-            ) : (
-              <Icon name={AppIcons.ui.filter} size="lg" />
-            )}
-          </Pressable>
-        </View>
       </View>
       <View style={styles.cardContainer}>
         <View style={styles.menuGrid}>
@@ -189,14 +151,6 @@ const createStyles = makeStyleFactory(
         marginTop: ds.spacing.lg,
         marginBottom: ds.spacing.md,
       },
-      headerRight: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: ds.spacing.sm,
-      },
-      filterStatus: {
-        color: theme.muted,
-      },
       cardContainer: {
         gap: ds.spacing.md,
       } as ViewStyle,
@@ -235,13 +189,6 @@ const createStyles = makeStyleFactory(
       cardCount: {
         alignSelf: 'flex-start',
         fontWeight: ds.fontWeight.bold,
-      },
-      glassButton: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: ds.components.card.borderRadius,
-        width: ds.iconSize.md * 2.2,
-        height: ds.iconSize.md * 2.2,
       },
     });
   },

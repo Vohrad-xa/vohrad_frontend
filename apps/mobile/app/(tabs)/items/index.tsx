@@ -69,7 +69,7 @@ export default function ItemsScreen() {
     navigation.setOptions({
       headerRight: () => (
         <HeaderButton
-          variant="more"
+          variant="filter"
           accessibilityLabel="Filter items"
           onPress={() => {
             void filterSheetRef.current?.present();
