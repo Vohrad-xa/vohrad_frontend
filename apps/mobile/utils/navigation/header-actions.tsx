@@ -281,6 +281,9 @@ function toIOSHeaderItem(a: HeaderAction): NativeStackHeaderItem {
 /**
  * Build platform-appropriate header options from actions.
  *
+ * - iOS 26+: native bar button items via `unstable_header*Items`.
+ * - Older iOS / Android / Web: React-rendered `ActionsRow` via `headerLeft`/`headerRight`.
+ *
  * Works with:
  * - `<Stack.Screen options={getHeaderOptions(config)} />`
  * - `navigation.setOptions(getHeaderOptions(config))`
@@ -293,7 +296,7 @@ export function getHeaderOptions({
 }: HeaderActionsConfig): Partial<NativeStackNavigationOptions> {
   assertValidActions(left, right);
 
-  if (Platform.OS === 'ios') {
+  if (Platform.OS === 'ios' && Number(Platform.Version) >= 26) {
     return {
       headerLeft: left?.length
         ? undefined
