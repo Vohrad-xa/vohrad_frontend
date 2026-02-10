@@ -155,10 +155,9 @@ export const ItemsFilterSheet = forwardRef<
           }}
         >
           <Button
-            mode="contained"
             onPress={openAdvancedFilters}
             accessibilityLabel="Open advanced item filters"
-            textColor={Palette.white}
+            textColor={theme.tint2}
           >
             Advanced Filters
           </Button>

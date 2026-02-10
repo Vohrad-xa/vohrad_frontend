@@ -14,8 +14,6 @@ import {
   Label,
   Spacer,
   foregroundStyle,
-  listRowBackground,
-  listSectionMargins,
   frame,
   font,
   padding,
@@ -23,6 +21,7 @@ import {
   accessibilityLabel,
   accessibilityHint,
   tint,
+  listSectionSpacing,
 } from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers';
 import {getInitials, formatDate, AppIcons, Icon, type IconName} from '@/utils';
@@ -103,6 +102,7 @@ const ProfileRow = React.memo(
       >
         <HStack alignment="center">
           <Label systemImage={systemImage} title={title} />
+
           <Spacer />
 
           {valueText ? (
@@ -153,40 +153,28 @@ export function ProfileContent() {
 
   return (
     <Host style={{flex: 1}}>
-      <List listStyle="insetGrouped" selectionMode="none">
+      <List
+        listStyle="automatic"
+        modifiers={[listSectionSpacing(ds.spacing.xl)]}
+      >
         {/* Profile Header */}
-        <Section
-          modifiers={[
-            listRowBackground('clear'),
-            listSectionMargins({vertical: 0}),
-          ]}
-        >
-          <VStack
-            alignment="center"
-            spacing={ds.spacing.lg}
-            modifiers={[
-              frame({maxWidth: ds.screen.width, alignment: 'center'}),
-            ]}
-          >
+        <Section>
+          <HStack alignment="center" spacing={ds.spacing.lg}>
             <ZStack alignment="center">
               <Circle
                 modifiers={[
-                  frame({width: 100, height: 100}),
-                  foregroundStyle({
-                    styleType: 'linearGradient',
-                    colors: [Palette.blue, Palette.deepblue],
-                    startPoint: {x: 0.08, y: 0.4},
-                    endPoint: {x: 0.5, y: 0.8},
-                  }),
+                  frame({width: 70, height: 70}),
+                  foregroundStyle(Palette.lightBlue),
                 ]}
               />
 
               <Text
                 modifiers={[
-                  foregroundStyle({styleType: 'color', color: 'white'}),
+                  foregroundStyle(Palette.deepblue),
                   font({
-                    textStyle: 'largeTitle',
-                    weight: 'semibold',
+                    textStyle: 'title1',
+                    weight: 'medium',
+                    design: 'rounded',
                   }),
                   accessibilityLabel(`Profile initials: ${initials}`),
                 ]}
@@ -195,41 +183,43 @@ export function ProfileContent() {
               </Text>
             </ZStack>
 
-            <Text
-              modifiers={[
-                font({
-                  textStyle: 'title1',
-                  weight: 'semibold',
-                }),
-              ]}
-            >
-              {fullName}
-            </Text>
+            <VStack alignment="leading">
+              <Text
+                modifiers={[
+                  font({
+                    textStyle: 'title2',
+                    weight: 'medium',
+                  }),
+                ]}
+              >
+                {fullName}
+              </Text>
 
-            <Text
-              modifiers={[
-                font({
-                  textStyle: 'subheadline',
-                  weight: 'medium',
-                }),
-                foregroundStyle('secondary'),
-              ]}
-            >
-              Since {memberSinceText}
-            </Text>
+              <Text
+                modifiers={[
+                  font({
+                    textStyle: 'footnote',
+                    weight: 'medium',
+                  }),
+                  foregroundStyle('secondary'),
+                ]}
+              >
+                Since {memberSinceText}
+              </Text>
 
-            <Text
-              modifiers={[
-                font({
-                  textStyle: 'subheadline',
-                  weight: 'medium',
-                }),
-                foregroundStyle('secondary'),
-              ]}
-            >
-              {roleText}
-            </Text>
-          </VStack>
+              <Text
+                modifiers={[
+                  font({
+                    textStyle: 'footnote',
+                    weight: 'medium',
+                  }),
+                  foregroundStyle('secondary'),
+                ]}
+              >
+                {roleText}
+              </Text>
+            </VStack>
+          </HStack>
         </Section>
 
         {/* Personal Information */}

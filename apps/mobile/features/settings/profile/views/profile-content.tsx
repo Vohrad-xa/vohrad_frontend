@@ -69,8 +69,8 @@ export function ProfileContent() {
             label={initials}
             labelStyle={{letterSpacing: 2}}
             accessibilityLabel={`${displayName} avatar`}
-            color={Palette.white}
-            size={48}
+            color={Palette.deepblue}
+            size={50}
           />
         )}
       />

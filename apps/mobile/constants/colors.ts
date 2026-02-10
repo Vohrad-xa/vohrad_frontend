@@ -20,7 +20,7 @@ export const Palette = {
 
   blue: '#007AFF',
   deepblue: '#1251D3',
-  lightBlue: '#DDE7FB',
+  lightBlue: '#d3eaff',
   bluepurple: '#135489',
   slateblue: '#264653',
   teal: '#14B8A6',
@@ -52,7 +52,7 @@ export const Palette = {
 
 const _Tokens = {
   light: {
-    primary: Palette.deepblue,
+    primary: Palette.lightBlue,
     secondary: Palette.lightBlue,
     tertiary: Palette.bluepurple,
     tint: Palette.blue,
@@ -88,7 +88,7 @@ const _Tokens = {
   },
 
   dark: {
-    primary: Palette.slateblue,
+    primary: Palette.lightBlue,
     secondary: Palette.Greige,
     tertiary: Palette.slateblue,
     tint: Palette.mushroom,
