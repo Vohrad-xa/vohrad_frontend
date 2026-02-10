@@ -35,6 +35,7 @@ export type ItemsFilterSheetHandle = {
 
 type ItemsFilterSheetProps = {
   initialFilters: ItemFilterState;
+  onSave: (filters: ItemFilterState) => void;
 };
 
 const iconButtonModifiers = (label: string) => [
@@ -50,7 +51,7 @@ const priceFont = font({weight: 'medium', design: 'monospaced'});
 export const ItemsFilterSheet = forwardRef<
   ItemsFilterSheetHandle,
   ItemsFilterSheetProps
->(({initialFilters}, ref) => {
+>(({initialFilters, onSave}, ref) => {
   const router = useRouter();
   const {ds} = useTheme();
   const {
@@ -64,7 +65,7 @@ export const ItemsFilterSheet = forwardRef<
     updatePriceMax,
     handleSave,
     handleReset,
-  } = useEditFilter({initialFilters, sheetHandleRef: ref});
+  } = useEditFilter({initialFilters, onSave, sheetHandleRef: ref});
 
   const openAdvancedFilters = async () => {
     await sheetRef.current?.dismiss();

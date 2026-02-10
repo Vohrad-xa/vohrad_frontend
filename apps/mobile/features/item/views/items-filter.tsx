@@ -30,6 +30,7 @@ type PriceRowModel = {
 
 type ItemsFilterSheetProps = {
   initialFilters: ItemFilterState;
+  onSave: (filters: ItemFilterState) => void;
 };
 
 type ItemsFilterSheetHandle = {
@@ -87,7 +88,7 @@ PriceRow.displayName = 'PriceRow';
 export const ItemsFilterSheet = forwardRef<
   ItemsFilterSheetHandle,
   ItemsFilterSheetProps
->(({initialFilters}, ref) => {
+>(({initialFilters, onSave}, ref) => {
   const router = useRouter();
   const {theme, ds} = useTheme();
 
@@ -102,7 +103,7 @@ export const ItemsFilterSheet = forwardRef<
     updatePriceMax,
     handleSave,
     handleReset,
-  } = useEditFilter({initialFilters, sheetHandleRef: ref});
+  } = useEditFilter({initialFilters, onSave, sheetHandleRef: ref});
 
   const openAdvancedFilters = async () => {
     await sheetRef.current?.dismiss();

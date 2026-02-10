@@ -1,56 +1,26 @@
-import React, {useLayoutEffect, useEffect, useRef, useState} from 'react';
-import {usePendingFilters, useClearPendingFilters} from '@sykamore/store';
-import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
-import {HeaderButton} from '@/components/ui';
+import React, {useLayoutEffect, useRef} from 'react';
+import {useRouter, useNavigation} from 'expo-router';
 import {useSearch} from '@/features/dashboard';
 import {useItemsSource} from '@/features/item/hooks';
+import {useItemFilters} from '@/features/item/hooks/use-item-filters';
 import {
   ItemsFilterSheet,
   ItemsList,
   type ItemsFilterSheetHandle,
 } from '@/features/item/views';
-import type {ItemFilterState} from '@sykamore/types';
+import {
+  getHeaderOptions,
+  type HeaderButtonAction,
+} from '@/utils/navigation/header-actions';
 
 export default function ItemsScreen() {
   const router = useRouter();
   const navigation = useNavigation();
   const {searchQuery} = useSearch();
-  const params = useLocalSearchParams<{filters?: string}>();
 
-  const [filters, setFilters] = useState<ItemFilterState>({
-    statuses: [],
-    trackingModes: [],
-    unitIds: [],
-    priceMin: null,
-    priceMax: null,
-  });
+  const {filters, setFilters, activeFilterCount} = useItemFilters();
 
   const filterSheetRef = useRef<ItemsFilterSheetHandle>(null);
-
-  const pendingFilters = usePendingFilters();
-  const clearPendingFilters = useClearPendingFilters();
-
-  // Apply filters from URL params
-  useEffect(() => {
-    if (params.filters) {
-      try {
-        const parsed = JSON.parse(
-          decodeURIComponent(params.filters),
-        ) as ItemFilterState;
-        setFilters(parsed);
-      } catch (error) {
-        console.error('Failed to parse filters from params:', error);
-      }
-    }
-  }, [params.filters]);
-
-  // Apply filters from modal
-  useEffect(() => {
-    if (pendingFilters) {
-      setFilters(pendingFilters);
-      clearPendingFilters();
-    }
-  }, [pendingFilters, clearPendingFilters]);
 
   const {
     items,
@@ -66,18 +36,24 @@ export default function ItemsScreen() {
   });
 
   useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <HeaderButton
-          variant="filter"
-          accessibilityLabel="Filter items"
-          onPress={() => {
-            void filterSheetRef.current?.present();
-          }}
-        />
-      ),
-    });
-  }, [navigation]);
+    const filterAction: HeaderButtonAction = {
+      type: 'button',
+      key: 'filters',
+      label: 'Filter items',
+      iosSymbol: 'line.3.horizontal.decrease',
+      icon: 'filter-variant',
+      onPress: () => {
+        void filterSheetRef.current?.present();
+      },
+      badge: activeFilterCount > 0 ? {value: activeFilterCount} : undefined,
+      accessibilityLabel:
+        activeFilterCount > 0
+          ? `Filter items, ${activeFilterCount} active`
+          : 'Filter items',
+    };
+
+    navigation.setOptions(getHeaderOptions({right: [filterAction]}));
+  }, [navigation, activeFilterCount]);
 
   const handleItemPress = (itemId: string) => {
     router.push({
@@ -97,7 +73,11 @@ export default function ItemsScreen() {
         lastUpdated={lastUpdated}
         getItemImageUrl={getItemImageUrl}
       />
-      <ItemsFilterSheet ref={filterSheetRef} initialFilters={filters} />
+      <ItemsFilterSheet
+        ref={filterSheetRef}
+        initialFilters={filters}
+        onSave={setFilters}
+      />
     </>
   );
 }

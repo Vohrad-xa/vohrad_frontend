@@ -28,6 +28,7 @@ type SheetHandle = {
 
 type UseEditFilterOptions = {
   initialFilters: ItemFilterState;
+  onSave: (filters: ItemFilterState) => void;
   sheetHandleRef: ForwardedRef<SheetHandle>;
 };
 
@@ -57,6 +58,7 @@ const TRACKING_FILTERS = [
 
 export function useEditFilter({
   initialFilters,
+  onSave,
   sheetHandleRef,
 }: UseEditFilterOptions): UseEditFilterResult {
   const sheetRef = useRef<TrueSheet | null>(null);
@@ -68,7 +70,6 @@ export function useEditFilter({
     updatePriceMax,
     setFilters,
     resetFilters,
-    saveFilters,
   } = useItemFilters();
 
   const {statuses = [], trackingModes = []} = filters;
@@ -92,16 +93,16 @@ export function useEditFilter({
   );
 
   const handleSave = useCallback(() => {
-    saveFilters();
+    onSave(filters);
     void sheetRef.current?.dismiss();
-  }, [saveFilters]);
+  }, [onSave, filters]);
 
   const handleReset = useCallback(() => {
     triggerHaptic('light');
     resetFilters();
-    saveFilters(DEFAULT_ITEM_FILTERS);
+    onSave(DEFAULT_ITEM_FILTERS);
     void sheetRef.current?.dismiss();
-  }, [resetFilters, saveFilters]);
+  }, [resetFilters, onSave]);
 
   const statusRows = useMemo<ToggleRowModel[]>(
     () =>

@@ -1,5 +1,5 @@
-import {useCallback} from 'react';
-import {useItemFiltersManager, useSetPendingFilters} from '@sykamore/store';
+import {useMemo} from 'react';
+import {useItemFiltersManager} from '@sykamore/store';
 import type {ItemFilterState} from '@sykamore/types';
 
 type UseItemFiltersOptions = {
@@ -14,6 +14,18 @@ export const DEFAULT_ITEM_FILTERS: ItemFilterState = {
   priceMax: null,
 };
 
+/** Count individual active filter selections. */
+export function countActiveFilters(filters: ItemFilterState): number {
+  let count = 0;
+  if (Array.isArray(filters.statuses)) count += filters.statuses.length;
+  if (Array.isArray(filters.trackingModes))
+    count += filters.trackingModes.length;
+  if (Array.isArray(filters.unitIds)) count += filters.unitIds.length;
+  if (filters.priceMin !== null && filters.priceMin !== undefined) count++;
+  if (filters.priceMax !== null && filters.priceMax !== undefined) count++;
+  return count;
+}
+
 type UseItemFiltersResult = {
   filters: ItemFilterState;
   toggleFilter: <T extends keyof ItemFilterState>(
@@ -24,8 +36,8 @@ type UseItemFiltersResult = {
   updatePriceMax: (value: number | null) => void;
   resetFilters: () => void;
   setFilters: (filters: ItemFilterState) => void;
-  saveFilters: (filters?: ItemFilterState) => void;
   hasActiveFilters: boolean;
+  activeFilterCount: number;
 };
 
 /**
@@ -48,29 +60,12 @@ export function useItemFilters(
     setFilters,
   } = useItemFiltersManager(initialFilters);
 
-  const setPendingFilters = useSetPendingFilters();
-
-  const saveFilters = useCallback(
-    (nextFilters?: ItemFilterState) => {
-      setPendingFilters(nextFilters ?? filters);
-    },
-    [filters, setPendingFilters],
+  const activeFilterCount = useMemo(
+    () => countActiveFilters(filters),
+    [filters],
   );
 
-  const hasActiveFilters = useCallback(() => {
-    const hasStatuses =
-      Array.isArray(filters.statuses) && filters.statuses.length > 0;
-    const hasTrackingModes =
-      Array.isArray(filters.trackingModes) && filters.trackingModes.length > 0;
-    const hasUnits =
-      Array.isArray(filters.unitIds) && filters.unitIds.length > 0;
-    const hasPriceMin = filters.priceMin !== null;
-    const hasPriceMax = filters.priceMax !== null;
-
-    return (
-      hasStatuses || hasTrackingModes || hasUnits || hasPriceMin || hasPriceMax
-    );
-  }, [filters])();
+  const hasActiveFilters = activeFilterCount > 0;
 
   return {
     filters,
@@ -79,7 +74,7 @@ export function useItemFilters(
     updatePriceMax,
     resetFilters,
     setFilters,
-    saveFilters,
     hasActiveFilters,
+    activeFilterCount,
   };
 }
