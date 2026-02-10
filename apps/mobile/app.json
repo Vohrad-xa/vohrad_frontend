@@ -3,7 +3,7 @@
     "name": "sykamore",
     "slug": "syka",
     "version": "0.0.1",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icons/playstore-512.png",
     "scheme": "mobile",
     "userInterfaceStyle": "automatic",

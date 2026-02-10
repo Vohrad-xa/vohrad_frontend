@@ -134,7 +134,7 @@ export default function TabLayout() {
       backBehavior="history"
       rippleColor="transparent"
       labelVisibilityMode="labeled"
-      tintColor={Platform.OS === 'ios' ? theme.tint2 : theme.tint}
+      tintColor={Platform.OS === 'ios' ? theme.tint : theme.tint2}
       indicatorColor={theme.tabIndicator}
       backgroundColor={theme.tabBar}
       iconColor={theme.text}
