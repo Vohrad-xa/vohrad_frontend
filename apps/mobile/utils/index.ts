@@ -13,7 +13,6 @@ export {
   secureStorage,
 } from './secure-storage';
 export * from './alert';
-export * as validators from './validators';
 export * from './icons';
 export * from './style-factory';
 export * from './format-date';

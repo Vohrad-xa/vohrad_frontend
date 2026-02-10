@@ -1,14 +1,11 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import type {TextInput} from 'react-native';
-import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
+import type {TextInput as RNTextInput} from 'react-native';
+import {Alert, View} from 'react-native';
 import {validateEmail} from '@sykamore/types';
-import {ThemedButton, ThemedText, Input} from '@/components/ui';
-import {FormCard} from '@/components/ui/form-card';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
+import {Button, HelperText, TextInput} from 'react-native-paper';
 import * as biometricService from '@/features/security/biometric-service';
 import {useAuth, useTheme} from '@/providers';
 import * as AppStorage from '@/utils/storage';
-import {makeStyleFactory} from '@/utils/style-factory';
 
 type PersonalEmailFormProps = {
   onSuccess: () => void;
@@ -17,17 +14,6 @@ type PersonalEmailFormProps = {
 
 type FormState = {subdomain: string; email: string; password: string};
 type FieldKey = keyof FormState;
-
-type FieldRow = {
-  key: FieldKey;
-  placeholder: string;
-  keyboardType?: 'default' | 'email-address';
-  secureTextEntry?: boolean;
-  ref?:
-    | React.MutableRefObject<TextInput | null>
-    | React.RefObject<TextInput | null>
-    | React.Ref<TextInput>;
-};
 
 export function PersonalEmailForm({
   onSuccess,
@@ -39,17 +25,17 @@ export function PersonalEmailForm({
     password: '',
   });
   const [showEmailValidation, setShowEmailValidation] = useState(false);
+  const [securePassword, setSecurePassword] = useState(true);
 
   const {loginUser, isLoading} = useAuth();
   const {ds, theme} = useTheme();
 
-  const subdomainInputRef = useRef<TextInput>(null);
-  const emailInputRef = useRef<TextInput>(null);
+  const subdomainInputRef = useRef<RNTextInput>(null);
+  const emailInputRef = useRef<RNTextInput>(null);
+  const passwordInputRef = useRef<RNTextInput>(null);
   const emailValidationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
-
-  const styles = createStyles(ds, theme);
 
   useEffect(() => {
     AppStorage.getTenantSubdomain().then((saved) => {
@@ -102,14 +88,6 @@ export function PersonalEmailForm({
       setField('email', emailValidation.suggestion);
   };
 
-  const handleEmailErrorPress = () => {
-    Alert.alert(
-      'Email Requirements',
-      '• Must contain @ symbol\n• Must have valid domain (e.g., example.com).',
-      [{text: 'OK'}],
-    );
-  };
-
   const promptBiometricEnable = async () => {
     const shouldPrompt = await biometricService.shouldPromptEnable();
     if (!shouldPrompt) return;
@@ -158,122 +136,100 @@ export function PersonalEmailForm({
 
   const handleForgotPassword = () => onForgotPassword?.();
 
-  const fields: FieldRow[] = [
-    {
-      key: 'subdomain',
-      placeholder: 'Subdomain (e.g., mycompany)',
-      keyboardType: 'default',
-      ref: subdomainInputRef,
-    },
-    {
-      key: 'email',
-      placeholder: 'Email',
-      keyboardType: 'email-address',
-      ref: emailInputRef,
-    },
-    {key: 'password', placeholder: 'Password', secureTextEntry: true},
-  ];
-
   return (
-    <View style={styles.content}>
-      <FormCard<FieldRow>
-        data={fields}
-        keyExtractor={(it) => String(it.key)}
-        renderItem={({item}) => {
-          const isEmail = item.key === 'email';
-          return (
-            <View style={styles.fieldWrapper}>
-              <Input
-                ref={item.ref}
-                placeholder={item.placeholder}
-                keyboardType={item.keyboardType ?? 'default'}
-                secureTextEntry={item.secureTextEntry}
-                autoCapitalize="none"
-                autoCorrect={false}
-                value={form[item.key]}
-                onChangeText={(t) => setField(item.key, t)}
-                returnKeyType={item.key === 'password' ? 'go' : 'next'}
-                onSubmitEditing={
-                  item.key === 'password' ? handleLogin : undefined
-                }
-              />
-
-              {isEmail && (showEmailError || emailValidation.suggestion) && (
-                <View style={styles.inlineHelper}>
-                  {showEmailError && (
-                    <TouchableOpacity onPress={handleEmailErrorPress}>
-                      <ThemedText variant="caption" color="red">
-                        {emailValidation.error ?? 'Invalid email'}
-                      </ThemedText>
-                    </TouchableOpacity>
-                  )}
-                  {emailValidation.suggestion && (
-                    <TouchableOpacity onPress={handleApplySuggestion}>
-                      <ThemedText variant="caption" colorToken="muted">
-                        Did you mean{' '}
-                        <ThemedText
-                          variant="caption"
-                          style={styles.suggestionEmail}
-                        >
-                          {emailValidation.suggestion}
-                        </ThemedText>
-                        ?
-                      </ThemedText>
-                    </TouchableOpacity>
-                  )}
-                </View>
-              )}
-            </View>
-          );
-        }}
+    <View style={{gap: 16, padding: 16}}>
+      <TextInput
+        ref={subdomainInputRef}
+        label="Subdomain"
+        placeholder="e.g. mycompany"
+        mode="outlined"
+        value={form.subdomain}
+        onChangeText={(t) => setField('subdomain', t)}
+        autoCapitalize="none"
+        autoCorrect={false}
+        returnKeyType="next"
+        onSubmitEditing={() => emailInputRef.current?.focus()}
+        outlineStyle={{borderRadius: ds.borderRadius.xxl}}
+        activeOutlineColor={theme.text}
       />
 
-      <View style={styles.section}>
-        <TouchableOpacity onPress={handleForgotPassword} disabled={isLoading}>
-          <ThemedText variant="caption" style={styles.forgotPasswordLink}>
-            Forgot password?
-          </ThemedText>
-        </TouchableOpacity>
+      <View>
+        <TextInput
+          ref={emailInputRef}
+          label="Email"
+          placeholder="you@example.com"
+          mode="outlined"
+          value={form.email}
+          onChangeText={(t) => setField('email', t)}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoCorrect={false}
+          returnKeyType="next"
+          onSubmitEditing={() => passwordInputRef.current?.focus()}
+          error={showEmailError}
+          outlineStyle={{borderRadius: ds.borderRadius.xxl}}
+          activeOutlineColor={theme.text}
+        />
+        {showEmailError && !emailValidation.suggestion && (
+          <HelperText type="error" visible>
+            {emailValidation.error ?? 'Invalid email'}
+          </HelperText>
+        )}
+        {emailValidation.suggestion && showEmailValidation && (
+          <HelperText type="info" visible onPress={handleApplySuggestion}>
+            Did you mean {emailValidation.suggestion}?
+          </HelperText>
+        )}
       </View>
 
-      <View style={styles.section}>
-        <ThemedButton
-          variant="primary"
-          title={isLoading ? 'Signing In...' : 'Sign In'}
-          onPress={handleLogin}
-          disabled={!isFormValid || isLoading}
-          loading={isLoading}
-          style={[
-            styles.loginButton,
-            (!isFormValid || isLoading) && styles.loginButtonDisabled,
-          ]}
-          accessibilityLabel="Login button"
-        />
-      </View>
+      <TextInput
+        ref={passwordInputRef}
+        label="Password"
+        mode="outlined"
+        value={form.password}
+        onChangeText={(t) => setField('password', t)}
+        secureTextEntry={securePassword}
+        autoCapitalize="none"
+        autoCorrect={false}
+        returnKeyType="go"
+        onSubmitEditing={handleLogin}
+        right={
+          <TextInput.Icon
+            icon={securePassword ? 'eye-off' : 'eye'}
+            onPress={() => setSecurePassword((v) => !v)}
+            forceTextInputFocus={false}
+          />
+        }
+        outlineStyle={{borderRadius: ds.borderRadius.xxl}}
+        activeOutlineColor={theme.text}
+      />
+
+      <Button
+        mode="text"
+        onPress={handleForgotPassword}
+        disabled={isLoading}
+        textColor={theme.accentBlue}
+      >
+        Forgot password?
+      </Button>
+
+      <Button
+        mode="contained"
+        style={{
+          padding: ds.spacing.xs,
+          borderRadius: ds.borderRadius.xxl,
+          width: ds.screen.width * 0.5,
+          alignSelf: 'center',
+        }}
+        onPress={handleLogin}
+        disabled={!isFormValid || isLoading}
+        loading={isLoading}
+        accessibilityLabel="Login button"
+      >
+        {isLoading ? 'Signing In...' : 'Sign In'}
+      </Button>
     </View>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
-    StyleSheet.create({
-      content: {gap: ds.spacing.xl},
-      inlineHelper: {marginTop: ds.spacing.xs, alignSelf: 'flex-start'},
-      suggestionEmail: {color: theme.accentBlue, fontWeight: '500'},
-      section: {gap: ds.spacing.md, alignItems: 'center', width: '100%'},
-      loginButton: {paddingHorizontal: ds.spacing.xxl, alignSelf: 'center'},
-      loginButtonDisabled: {opacity: ds.opacity.pressed},
-      fieldWrapper: {
-        width: '100%',
-      },
-      errorText: {
-        textAlign: 'center',
-      },
-      forgotPasswordLink: {
-        textDecorationLine: 'underline',
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);
 
 export default PersonalEmailForm;
