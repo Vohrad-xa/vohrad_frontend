@@ -1,10 +1,12 @@
-import React, {useLayoutEffect, useRef} from 'react';
+import React, {useCallback, useLayoutEffect, useRef} from 'react';
 import {useRouter, useNavigation} from 'expo-router';
 import {
   useItemsSource,
   useItemFilters,
+  AdvancedFilterSheet,
   ItemsFilterSheet,
   ItemsList,
+  type AdvancedFilterSheetHandle,
   type ItemsFilterSheetHandle,
 } from '@/features/item';
 import {useSearch} from '@/providers';
@@ -21,6 +23,11 @@ export default function ItemsScreen() {
   const {filters, setFilters, activeFilterCount} = useItemFilters();
 
   const filterSheetRef = useRef<ItemsFilterSheetHandle>(null);
+  const advancedFilterSheetRef = useRef<AdvancedFilterSheetHandle>(null);
+
+  const handleAdvancedFiltersPress = useCallback(() => {
+    void advancedFilterSheetRef.current?.present();
+  }, []);
 
   const {
     items,
@@ -77,7 +84,9 @@ export default function ItemsScreen() {
         ref={filterSheetRef}
         initialFilters={filters}
         onSave={setFilters}
+        onAdvancedFiltersPress={handleAdvancedFiltersPress}
       />
+      <AdvancedFilterSheet ref={advancedFilterSheetRef} />
     </>
   );
 }

@@ -26,11 +26,6 @@ export default function ModalsLayout() {
         options={{title: 'Specifications'}}
       />
       <Stack.Screen
-        name="items/advanced-filter"
-        options={{title: 'Advanced Filters'}}
-      />
-
-      <Stack.Screen
         name="attachments/index"
         options={{title: 'Select Destination'}}
       />

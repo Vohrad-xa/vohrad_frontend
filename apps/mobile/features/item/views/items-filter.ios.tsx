@@ -1,7 +1,6 @@
 import React, {forwardRef} from 'react';
 import {Platform, View} from 'react-native';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
-import {useRouter} from 'expo-router';
 import {useTheme} from '@/providers';
 import {AppIcons} from '@/utils';
 import {
@@ -36,6 +35,7 @@ export type ItemsFilterSheetHandle = {
 type ItemsFilterSheetProps = {
   initialFilters: ItemFilterState;
   onSave: (filters: ItemFilterState) => void;
+  onAdvancedFiltersPress?: () => void;
 };
 
 const iconButtonModifiers = (label: string) => [
@@ -51,8 +51,7 @@ const priceFont = font({weight: 'medium', design: 'monospaced'});
 export const ItemsFilterSheet = forwardRef<
   ItemsFilterSheetHandle,
   ItemsFilterSheetProps
->(({initialFilters, onSave}, ref) => {
-  const router = useRouter();
+>(({initialFilters, onSave, onAdvancedFiltersPress}, ref) => {
   const {ds} = useTheme();
   const {
     sheetRef,
@@ -69,7 +68,7 @@ export const ItemsFilterSheet = forwardRef<
 
   const openAdvancedFilters = async () => {
     await sheetRef.current?.dismiss();
-    router.push('/(modals)/items/advanced-filter');
+    onAdvancedFiltersPress?.();
   };
 
   return (

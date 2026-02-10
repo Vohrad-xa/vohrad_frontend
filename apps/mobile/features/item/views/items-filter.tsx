@@ -2,7 +2,6 @@ import React, {forwardRef, memo, useMemo} from 'react';
 import {Platform, ScrollView, View} from 'react-native';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
 import Slider from '@react-native-community/slider';
-import {useRouter} from 'expo-router';
 import {Appbar, Button, List, Switch} from 'react-native-paper';
 import {ListRow, ListRows} from '@/components/ui';
 import {Palette} from '@/constants';
@@ -31,6 +30,7 @@ type PriceRowModel = {
 type ItemsFilterSheetProps = {
   initialFilters: ItemFilterState;
   onSave: (filters: ItemFilterState) => void;
+  onAdvancedFiltersPress?: () => void;
 };
 
 type ItemsFilterSheetHandle = {
@@ -88,8 +88,7 @@ PriceRow.displayName = 'PriceRow';
 export const ItemsFilterSheet = forwardRef<
   ItemsFilterSheetHandle,
   ItemsFilterSheetProps
->(({initialFilters, onSave}, ref) => {
-  const router = useRouter();
+>(({initialFilters, onSave, onAdvancedFiltersPress}, ref) => {
   const {theme, ds} = useTheme();
 
   const {
@@ -107,7 +106,7 @@ export const ItemsFilterSheet = forwardRef<
 
   const openAdvancedFilters = async () => {
     await sheetRef.current?.dismiss();
-    router.push('/(modals)/items/advanced-filter');
+    onAdvancedFiltersPress?.();
   };
 
   const priceRows = useMemo<PriceRowModel[]>(
