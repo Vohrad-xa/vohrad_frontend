@@ -42,7 +42,7 @@ export default function VaultScreen() {
   // Search functionality
   const {attachments: searchResults, isSearchActive} = useAttachmentSearch({
     searchQuery,
-    enabled: !attachmentFilter && isFocused,
+    enabled: isFocused,
   });
 
   const initialFilter = useMemo(() => {
@@ -83,7 +83,6 @@ export default function VaultScreen() {
       dashboardData?.attachment_counts ?? {
         image: 0,
         document: 0,
-        video: 0,
         archive: 0,
         other: 0,
       }
@@ -170,7 +169,7 @@ export default function VaultScreen() {
   }, [navigation, handleAddPress]);
 
   // Show search results when user is typing
-  if (isSearchActive && !hasActiveFilter) {
+  if (isSearchActive) {
     return (
       <AttachmentsList
         attachments={searchResults}
