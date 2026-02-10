@@ -68,7 +68,7 @@ const AttachmentTileRow = React.memo(
       <Button
         onPress={() => router.push(href)}
         modifiers={[
-          buttonStyle('automatic'),
+          buttonStyle({style: 'automatic'}),
           tint('primary'),
           accessibilityLabel(a11y),
         ]}
@@ -146,7 +146,7 @@ export function AttachmentsOverview({
         label="clear filter"
         systemImage="x.circle"
         modifiers={[
-          buttonStyle('automatic'),
+          buttonStyle({style: 'automatic'}),
           controlSize('small'),
           accessibilityLabel(filterChip.accessibilityLabel ?? 'Clear filter'),
         ]}
@@ -156,8 +156,11 @@ export function AttachmentsOverview({
 
   return (
     <Host style={{flex: 1}}>
-      <List listStyle="automatic" refreshEnabled>
-        <Section header={filterHeader} title="All Attachments">
+      <List listStyle="automatic">
+        <Section
+          header={filterHeader}
+          title={filterChip ? undefined : 'All Attachments'}
+        >
           {tiles.map((tile) => (
             <AttachmentTileRow key={tile.kind} {...tile} />
           ))}
