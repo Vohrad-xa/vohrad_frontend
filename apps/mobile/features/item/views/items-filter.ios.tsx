@@ -1,5 +1,5 @@
 import React, {forwardRef} from 'react';
-import {View} from 'react-native';
+import {Platform, View} from 'react-native';
 import {TrueSheet} from '@lodev09/react-native-true-sheet';
 import {useRouter} from 'expo-router';
 import {useTheme} from '@/providers';
@@ -74,7 +74,7 @@ export const ItemsFilterSheet = forwardRef<
   return (
     <TrueSheet
       ref={sheetRef}
-      detents={[0.76, 1]}
+      detents={Platform.OS === 'ios' && Platform.isPad ? [0.8, 1] : [0.75, 1]}
       scrollable
       role="menu"
       footer={
