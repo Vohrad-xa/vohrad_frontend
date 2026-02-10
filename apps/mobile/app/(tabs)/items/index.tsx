@@ -1,5 +1,5 @@
 import React, {useCallback, useLayoutEffect, useRef} from 'react';
-import {useRouter, useNavigation} from 'expo-router';
+import {useNavigation} from 'expo-router';
 import {
   useItemsSource,
   useItemFilters,
@@ -10,21 +10,21 @@ import {
   type ItemsFilterSheetHandle,
 } from '@/features/item';
 import {useSearch} from '@/providers';
+import {AppIcons} from '@/utils/icons';
 import {
+  useSafeRouter,
   getHeaderOptions,
   type HeaderButtonAction,
-} from '@/utils/navigation/header-actions';
+} from '@/utils/navigation';
 
 export default function ItemsScreen() {
-  const router = useRouter();
+  const router = useSafeRouter();
   const navigation = useNavigation();
   const {searchQuery} = useSearch();
 
   const {filters, setFilters, activeFilterCount} = useItemFilters();
-
   const filterSheetRef = useRef<ItemsFilterSheetHandle>(null);
   const advancedFilterSheetRef = useRef<AdvancedFilterSheetHandle>(null);
-
   const handleAdvancedFiltersPress = useCallback(() => {
     void advancedFilterSheetRef.current?.present();
   }, []);
@@ -47,8 +47,8 @@ export default function ItemsScreen() {
       type: 'button',
       key: 'filters',
       label: 'Filter items',
-      iosSymbol: 'line.3.horizontal.decrease',
-      icon: 'filter-variant',
+      icon: AppIcons.ui.filter,
+      iosSymbol: AppIcons.ui.filter,
       onPress: () => {
         void filterSheetRef.current?.present();
       },
