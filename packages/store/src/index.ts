@@ -93,9 +93,6 @@ export {
 } from './slices/attachment';
 
 export {
-  usePendingFilters,
-  useSetPendingFilters,
-  useClearPendingFilters,
   useAttachmentFilter,
   useSetAttachmentFilter,
   useClearAttachmentFilter,
@@ -118,7 +115,7 @@ export {
 } from './slices/user';
 
 export {buildODataOrderBy} from './utils/odata-orderby-builder';
-export {searchItemsLocally, searchUsersLocally} from './utils/local-search';
+export {searchUsersLocally} from './utils/local-search';
 export type {AsyncState, PaginatedState} from './utils/state';
 export {
   resolveAttachmentPreviewUrl,

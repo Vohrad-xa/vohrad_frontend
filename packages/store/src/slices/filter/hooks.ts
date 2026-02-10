@@ -3,18 +3,6 @@ import type {AttachmentFilter} from '@sykamore/types';
 import {useAuthStore} from '../../store';
 import {hasAttachmentExtension} from '../attachment/utils/filters';
 
-export function usePendingFilters() {
-  return useAuthStore((state) => state.pendingFilters);
-}
-
-export function useSetPendingFilters() {
-  return useAuthStore((state) => state.setPendingFilters);
-}
-
-export function useClearPendingFilters() {
-  return useAuthStore((state) => state.clearPendingFilters);
-}
-
 export function useAttachmentFilter() {
   return useAuthStore((state) => state.attachmentFilter);
 }
