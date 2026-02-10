@@ -1,6 +1,7 @@
 import React from 'react';
 import {Platform, View, StyleSheet} from 'react-native';
-import {IconButton, Badge} from 'react-native-paper';
+import {IconButton, Badge, Tooltip} from 'react-native-paper';
+import {Palette} from '@/constants';
 import {useTheme} from '@/providers/theme-provider';
 import type {ParamListBase} from '@react-navigation/native';
 import type {
@@ -16,11 +17,9 @@ export type NavigationLike = Pick<
 >;
 
 type NativeHeaderButtonItem = Extract<NativeStackHeaderItem, {type: 'button'}>;
-type NativeHeaderMenuItem = Extract<NativeStackHeaderItem, {type: 'menu'}>;
 type HeaderButtonVariant = NativeHeaderButtonItem['variant'];
 type HeaderButtonLabelStyle = NativeHeaderButtonItem['labelStyle'];
 type HeaderButtonBadge = NativeHeaderButtonItem['badge'];
-type HeaderMenuConfig = NativeHeaderMenuItem['menu'];
 type NativeHeaderCustomItem = Extract<NativeStackHeaderItem, {type: 'custom'}>;
 
 type IosSfSymbolName = Extract<
@@ -90,67 +89,13 @@ export type HeaderButtonAction = {
   badge?: HeaderButtonBadge;
 };
 
-/**
- * Menu action.
- *
- * iOS:
- * - rendered as a real native menu via `unstable_header*Items`
- *
- * Android/Web:
- * - rendered as a normal IconButton (same slot),
- *   and you control what happens via `onPress` (Paper Menu, bottom sheet, etc.)
- *
- * @example
- * {
- *   type: 'menu',
- *   key: 'options',
- *   label: 'Options',
- *   iosSymbol: 'ellipsis.circle',
- *   icon: 'dots-vertical',
- *   menu: {
- *     title: 'Actions',
- *     items: [{type: 'action', label: 'Export', onPress: () => {}}]
- *   },
- *   onPress: () => setMenuOpen(true), // Android/Web
- * }
- */
-export type HeaderMenuAction = {
-  type: 'menu';
-  key: string;
-  label: string;
-
-  /** iOS: SF Symbol name like 'ellipsis.circle' */
-  iosSymbol?: IosSfSymbolName;
-
-  /** Android/Web: Material icon name like 'dots-vertical' */
-  icon?: string;
-
-  tintColor?: string;
-
-  /** iOS native menu config */
-  menu: HeaderMenuConfig;
-
-  /** iOS only */
-  changesSelectionAsPrimaryAction?: boolean;
-
-  /** Android/Web fallback behavior */
-  onPress?: () => void;
-  disabled?: boolean;
-
-  accessibilityLabel?: string;
-  accessibilityHint?: string;
-};
-
 export type HeaderCustomAction = {
   type: 'custom';
   key: string;
   element: React.ReactElement;
 };
 
-export type HeaderAction =
-  | HeaderButtonAction
-  | HeaderMenuAction
-  | HeaderCustomAction;
+export type HeaderAction = HeaderButtonAction | HeaderCustomAction;
 
 export type HeaderActionsConfig = {
   /** Left-side actions */
@@ -166,19 +111,28 @@ export type HeaderActionsConfig = {
   headerRightElement?: React.ReactNode;
 };
 
+/** Default badge colors applied on both platforms when no style override is given. */
+
 const styles = StyleSheet.create({
-  row: {flexDirection: 'row', alignItems: 'center', gap: 2},
-  iconBtn: {margin: 0},
+  row: {flexDirection: 'row', alignItems: 'center'},
   selected: {opacity: 0.5},
   badgeWrap: {position: 'relative'},
-  badge: {position: 'absolute', top: 4, right: 4},
+  badge: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+  },
 });
+
+const BADGE_STYLE = {
+  color: Palette.white,
+  backgroundColor: Palette.orange,
+} as const;
 
 /**
  * Dev-time safety checks:
  * - keys must be unique across left/right (and within each).
  * - buttons without onPress must be explicitly disabled.
- * - menus on Android/Web must have onPress or be explicitly disabled.
  *
  * Throws in __DEV__ to fail fast.
  */
@@ -211,18 +165,6 @@ function assertValidActions(left?: HeaderAction[], right?: HeaderAction[]) {
           `[header-actions] Button "${a.key}" at ${where} has no onPress but disabled is not set. Set disabled: true (or provide onPress).`,
         );
       }
-
-      // Max-safety: on Android/Web, a "menu" is just a button, so it must have onPress or be disabled.
-      if (
-        Platform.OS !== 'ios' &&
-        a.type === 'menu' &&
-        !a.onPress &&
-        !a.disabled
-      ) {
-        throw new Error(
-          `[header-actions] Menu "${a.key}" at ${where} has no onPress for Android/Web but disabled is not set. Set disabled: true (or provide onPress).`,
-        );
-      }
     });
   };
 
@@ -240,24 +182,6 @@ function ActionsRow({actions}: {actions: HeaderAction[]}) {
           return <React.Fragment key={a.key}>{a.element}</React.Fragment>;
         }
 
-        // Android/Web rendering path (ActionsRow is only used off-iOS in getHeaderOptions).
-        if (a.type === 'menu') {
-          const disabled = !!a.disabled || !a.onPress;
-
-          return (
-            <IconButton
-              key={a.key}
-              icon={a.icon ?? 'dots-vertical'}
-              onPress={disabled ? undefined : a.onPress}
-              disabled={disabled}
-              iconColor={a.tintColor ?? theme.icon}
-              style={styles.iconBtn}
-              accessibilityLabel={a.accessibilityLabel ?? a.label}
-              accessibilityHint={a.accessibilityHint}
-            />
-          );
-        }
-
         // Button: standard handling
         const disabled = !!a.disabled || !a.onPress;
 
@@ -267,32 +191,41 @@ function ActionsRow({actions}: {actions: HeaderAction[]}) {
             onPress={disabled ? undefined : a.onPress}
             disabled={disabled}
             iconColor={a.tintColor ?? theme.icon}
-            style={[styles.iconBtn, a.selected && styles.selected]}
+            style={[a.selected && styles.selected]}
             accessibilityLabel={a.accessibilityLabel ?? a.label}
             accessibilityHint={a.accessibilityHint}
           />
         );
 
         if (!a.badge) {
-          return <React.Fragment key={a.key}>{btn}</React.Fragment>;
+          return (
+            <Tooltip key={a.key} title={a.label}>
+              {btn}
+            </Tooltip>
+          );
         }
 
         return (
-          <View key={a.key} style={styles.badgeWrap}>
-            {btn}
-            <Badge
-              visible
-              size={18}
-              style={[
-                styles.badge,
-                a.badge.style?.backgroundColor
-                  ? {backgroundColor: a.badge.style.backgroundColor}
-                  : undefined,
-              ]}
-            >
-              {String(a.badge.value)}
-            </Badge>
-          </View>
+          <Tooltip key={a.key} title={a.label}>
+            <View style={styles.badgeWrap}>
+              {btn}
+              <Badge
+                visible
+                size={16}
+                style={[
+                  styles.badge,
+                  {
+                    color: a.badge.style?.color ?? BADGE_STYLE.color,
+                    backgroundColor:
+                      a.badge.style?.backgroundColor ??
+                      BADGE_STYLE.backgroundColor,
+                  },
+                ]}
+              >
+                {String(a.badge.value)}
+              </Badge>
+            </View>
+          </Tooltip>
         );
       })}
     </View>
@@ -306,24 +239,6 @@ function toIOSHeaderItem(a: HeaderAction): NativeStackHeaderItem {
       element: a.element,
     };
 
-    return item;
-  }
-
-  if (a.type === 'menu') {
-    const item: NativeHeaderMenuItem = {
-      type: 'menu',
-      label: a.label,
-      menu: a.menu,
-    };
-
-    if (a.iosSymbol) item.icon = {type: 'sfSymbol', name: a.iosSymbol};
-    if (a.tintColor) item.tintColor = a.tintColor;
-    if (a.changesSelectionAsPrimaryAction)
-      item.changesSelectionAsPrimaryAction = a.changesSelectionAsPrimaryAction;
-    if (a.accessibilityLabel) item.accessibilityLabel = a.accessibilityLabel;
-    if (a.accessibilityHint) item.accessibilityHint = a.accessibilityHint;
-
-    // Note: Android/Web fallback uses onPress/disabled. iOS menu ignores them.
     return item;
   }
 
@@ -346,7 +261,15 @@ function toIOSHeaderItem(a: HeaderAction): NativeStackHeaderItem {
   if (a.labelStyle) item.labelStyle = a.labelStyle;
   if (a.width !== undefined) item.width = a.width;
   if (a.selected !== undefined) item.selected = a.selected;
-  if (a.badge) item.badge = a.badge;
+  if (a.badge) {
+    item.badge = {
+      ...a.badge,
+      style: {
+        ...BADGE_STYLE,
+        ...a.badge.style,
+      },
+    };
+  }
   if (typeof a.sharesBackground === 'boolean')
     item.sharesBackground = a.sharesBackground;
   if (a.accessibilityLabel) item.accessibilityLabel = a.accessibilityLabel;
