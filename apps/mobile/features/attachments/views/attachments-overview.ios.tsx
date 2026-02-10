@@ -20,6 +20,7 @@ import {useTheme} from '@/providers';
 import {Icon, AppIcons, type IconName, useSafeRouter} from '@/utils';
 import type {AttachmentKindCount} from '../utils/attachment-counts';
 import type {Href} from 'expo-router';
+import {Palette} from '@/constants';
 
 type AttachmentKindTile = Readonly<{
   kind: string;
@@ -67,11 +68,7 @@ const AttachmentTileRow = React.memo(
     return (
       <Button
         onPress={() => router.push(href)}
-        modifiers={[
-          buttonStyle({style: 'automatic'}),
-          tint('primary'),
-          accessibilityLabel(a11y),
-        ]}
+        modifiers={[buttonStyle({style: 'plain'}), accessibilityLabel(a11y)]}
       >
         <HStack alignment="center">
           <Label
@@ -84,8 +81,8 @@ const AttachmentTileRow = React.memo(
           <Text
             monospaced
             modifiers={[
-              font({size: ds.typography.ios.caption.baseSize}),
-              foregroundStyle(theme.muted),
+              font({textStyle: 'footnote'}),
+              foregroundStyle('secondary'),
               padding({horizontal: ds.spacing.md}),
             ]}
           >
@@ -143,10 +140,13 @@ export function AttachmentsOverview({
       <Spacer />
       <Button
         onPress={filterChip.onClear}
-        label="clear filter"
         systemImage="x.circle"
+        label="Clear filter"
         modifiers={[
-          buttonStyle({style: 'automatic'}),
+          buttonStyle({
+            style: 'automatic',
+          }),
+          tint(Palette.blue),
           controlSize('small'),
           accessibilityLabel(filterChip.accessibilityLabel ?? 'Clear filter'),
         ]}
