@@ -6,6 +6,7 @@ import {
   type SFSymbolIcon,
   type MaterialIcon,
 } from 'expo-router/unstable-native-tabs';
+import {Palette} from '@/constants';
 import {useHaptic, useTheme} from '@/providers';
 import {AppIcons, Icon, type IconName} from '@/utils/icons';
 
@@ -54,8 +55,8 @@ const TABS: readonly TabConfig[] = [
     name: 'vault',
     title: 'Vault',
     sf: {
-      default: 'folder',
-      selected: 'folder.fill',
+      default: 'internaldrive',
+      selected: 'internaldrive.fill',
     },
     md: 'folder_zip',
     icon: AppIcons.domain.vault,
@@ -129,19 +130,29 @@ export default function TabLayout() {
 
   return (
     <NativeTabs
-      minimizeBehavior="automatic"
+      minimizeBehavior="onScrollDown"
       backBehavior="history"
       rippleColor="transparent"
       labelVisibilityMode="labeled"
-      tintColor={theme.tint2}
+      tintColor={Platform.OS === 'ios' ? theme.tint2 : theme.tint}
       indicatorColor={theme.tabIndicator}
       backgroundColor={theme.tabBar}
       iconColor={theme.text}
-      labelStyle={{color: theme.text}}
+      labelStyle={{
+        selected: {
+          color: Platform.OS === 'ios' ? Palette.blue : theme.tint2,
+          fontWeight: 'bold',
+        },
+        default: {color: theme.text},
+      }}
     >
       {TABS.map((t) => (
         <NativeTabs.Trigger key={t.name} name={t.name}>
-          <NativeTabs.Trigger.Icon sf={t.sf} md={t.md} />
+          <NativeTabs.Trigger.Icon
+            sf={t.sf}
+            md={t.md}
+            selectedColor={Platform.OS === 'ios' ? Palette.blue : theme.tint2}
+          />
           <NativeTabs.Trigger.Label>{t.title}</NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>
       ))}

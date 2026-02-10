@@ -18,7 +18,7 @@ export const Palette = {
     950: '#0B0B0B',
   },
 
-  blue: '#0A84FF',
+  blue: '#007AFF',
   deepblue: '#1251D3',
   lightBlue: '#DDE7FB',
   bluepurple: '#135489',
