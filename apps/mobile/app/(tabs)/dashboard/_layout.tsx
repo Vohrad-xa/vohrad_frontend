@@ -14,7 +14,7 @@ export default function HomeLayout() {
       screenOptions={{
         headerShown: true,
         headerShadowVisible: false,
-        headerLargeTitle: true,
+        // headerLargeTitle: true,
         headerBackButtonDisplayMode: 'minimal',
         headerTransparent: Platform.OS === 'ios',
         headerTitleStyle: {
@@ -30,7 +30,7 @@ export default function HomeLayout() {
           headerTitleStyle: {
             fontWeight: Platform.OS === 'android' ? 'bold' : '600',
             color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-            fontSize: Platform.OS !== 'ios' ? 26 : undefined,
+            fontSize: Platform.OS !== 'ios' ? 26 : 18,
           },
         }}
       />

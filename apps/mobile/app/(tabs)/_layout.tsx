@@ -6,7 +6,6 @@ import {
   type SFSymbolIcon,
   type MaterialIcon,
 } from 'expo-router/unstable-native-tabs';
-import {Palette} from '@/constants';
 import {useHaptic, useTheme} from '@/providers';
 import {AppIcons, Icon, type IconName} from '@/utils/icons';
 

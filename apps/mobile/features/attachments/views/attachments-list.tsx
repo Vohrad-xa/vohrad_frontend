@@ -122,9 +122,8 @@ const AttachmentItem = memo<AttachmentItemProps>(
           >
             <CheckBox
               value={isSelected}
-              onValueChange={handlePress}
               tintColors={{true: Palette.blue, false: Palette.mushroom}}
-              style={{transform: [{scaleX: 0.8}, {scaleY: 0.8}]}}
+              style={{transform: [{scaleX: 0.85}, {scaleY: 0.85}]}}
               onCheckColor={Palette.white}
               onFillColor={Palette.blue}
               onAnimationType="bounce"

@@ -16,7 +16,7 @@ export function HapticToggle() {
         value={isEnabled}
         onValueChange={handleToggle}
         variant="switch"
-        scale={0.8}
+        scale={0.85}
       />
     );
   }

@@ -29,7 +29,7 @@ export function TenantDetailsContent() {
             label={avatarLabel}
             labelStyle={{letterSpacing: 2}}
             accessibilityLabel={`${title} avatar`}
-            color={Palette.white}
+            color={Palette.deepblue}
             size={50}
           />
         )}
