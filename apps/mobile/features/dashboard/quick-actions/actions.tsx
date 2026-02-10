@@ -9,6 +9,7 @@ import {
   type TextStyle,
 } from 'react-native';
 import {ThemedText} from '@/components/ui';
+import {Palette} from '@/constants';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import type {MenuItem} from '@/types';
@@ -68,7 +69,7 @@ export function QuickActions({onScanPress}: QuickActionsProps) {
           <Icon
             name={item.icon}
             size={ds.iconSize.xl}
-            colorToken="quickActionIcon"
+            color={Palette.deepblue}
           />
         </View>
         <ThemedText variant="subheadline" style={styles.actionLabel}>
@@ -161,7 +162,7 @@ const createStyles = makeStyleFactory(
         width: 50,
         height: 50,
         borderRadius: ds.borderRadius.full,
-        backgroundColor: theme.secondary,
+        backgroundColor: Palette.lightBlue,
         alignItems: 'center',
         justifyContent: 'center',
       } as ViewStyle,

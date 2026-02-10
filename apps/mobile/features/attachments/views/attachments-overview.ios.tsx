@@ -16,11 +16,11 @@ import {
   buttonStyle,
   controlSize,
 } from 'sykamore-ui';
+import {Palette} from '@/constants';
 import {useTheme} from '@/providers';
 import {Icon, AppIcons, type IconName, useSafeRouter} from '@/utils';
 import type {AttachmentKindCount} from '../utils/attachment-counts';
 import type {Href} from 'expo-router';
-import {Palette} from '@/constants';
 
 type AttachmentKindTile = Readonly<{
   kind: string;

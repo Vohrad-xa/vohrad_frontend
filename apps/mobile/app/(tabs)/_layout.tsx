@@ -140,7 +140,7 @@ export default function TabLayout() {
       iconColor={theme.text}
       labelStyle={{
         selected: {
-          color: Platform.OS === 'ios' ? Palette.blue : theme.tint2,
+          color: Platform.OS === 'ios' ? theme.text : theme.tint2,
           fontWeight: 'bold',
         },
         default: {color: theme.text},
@@ -151,7 +151,7 @@ export default function TabLayout() {
           <NativeTabs.Trigger.Icon
             sf={t.sf}
             md={t.md}
-            selectedColor={Platform.OS === 'ios' ? Palette.blue : theme.tint2}
+            selectedColor={Platform.OS === 'ios' ? theme.text : theme.tint2}
           />
           <NativeTabs.Trigger.Label>{t.title}</NativeTabs.Trigger.Label>
         </NativeTabs.Trigger>

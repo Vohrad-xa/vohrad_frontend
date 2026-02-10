@@ -6,6 +6,7 @@ import {
   type TextStyle,
 } from 'react-native';
 import {ThemedText} from '@/components/ui';
+import {Palette} from '@/constants/colors';
 import {useTheme} from '@/providers';
 import {Icon} from '@/utils';
 import type {IconName} from '@/utils/icons';
@@ -32,7 +33,7 @@ export function ScanQuickAction({
   return (
     <TouchableOpacity style={actionStyles.actionButton} onPress={onScanPress}>
       <View style={actionStyles.iconContainer}>
-        <Icon name={icon} size={ds.iconSize.xl} colorToken="quickActionIcon" />
+        <Icon name={icon} size={ds.iconSize.xl} color={Palette.deepblue} />
       </View>
       <ThemedText variant="subheadline" style={actionStyles.actionLabel}>
         {label}

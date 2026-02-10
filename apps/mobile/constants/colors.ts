@@ -19,8 +19,8 @@ export const Palette = {
   },
 
   blue: '#007AFF',
-  deepblue: '#1251D3',
-  lightBlue: '#d3eaff',
+  deepblue: '#2e64cf',
+  lightBlue: '#d5e7f9',
   bluepurple: '#135489',
   slateblue: '#264653',
   teal: '#14B8A6',
