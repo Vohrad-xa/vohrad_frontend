@@ -2,8 +2,7 @@ import {useMemo, useCallback} from 'react';
 import {Platform} from 'react-native';
 import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {Stack, router} from 'expo-router';
-import {useSearch} from '@/features/dashboard';
-import {useTheme} from '@/providers';
+import {useSearch, useTheme} from '@/providers';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';
 
 export const unstable_settings = {

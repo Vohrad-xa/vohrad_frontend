@@ -3,8 +3,7 @@ import {Platform} from 'react-native';
 import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {Stack, useSegments} from 'expo-router';
 import {VAULT_SEARCH_SCOPES} from '@/features/attachments/utils';
-import {SearchProvider, useSearch} from '@/features/dashboard';
-import {useTheme} from '@/providers';
+import {SearchProvider, useSearch, useTheme} from '@/providers';
 
 interface SearchChangeEvent {
   nativeEvent: {

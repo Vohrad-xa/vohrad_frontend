@@ -9,7 +9,6 @@ export {AttachmentField} from './detail/attachments/attachment-field';
 export {ItemSpecifications} from './detail/specifications/item-specifications';
 export {SpecificationsForm} from './detail/specifications/specifications-form';
 export {Locations} from './detail/locations/location-field';
-
 export {useItemForm} from './detail/use-item-form';
 export {useItemAttachmentUpload} from './detail/attachments/use-item-attachment-upload';
 export {useItemLocation} from './detail/locations/use-item-location';
@@ -17,5 +16,7 @@ export {
   useHybridItemSearch,
   useServerSearchState,
 } from './list/use-item-search';
-
 export type {UseItemFormReturn} from './detail/use-item-form';
+
+export * from './views';
+export * from './hooks';

@@ -3,8 +3,7 @@ import {Platform} from 'react-native';
 import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {Stack} from 'expo-router';
 import {HeaderButton, ScreenLoadingWrapper} from '@/components/ui';
-import {SearchProvider} from '@/features/dashboard';
-import {useTheme} from '@/providers';
+import {SearchProvider, useTheme} from '@/providers';
 
 export const unstable_settings = {
   initialRouteName: 'index',

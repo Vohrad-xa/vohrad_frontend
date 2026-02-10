@@ -9,8 +9,7 @@ import {
 import {Platform} from 'react-native';
 import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {Stack} from 'expo-router';
-import {SearchProvider, useSearch} from '@/features/dashboard';
-import {useTheme} from '@/providers';
+import {SearchProvider, useSearch, useTheme} from '@/providers';
 
 interface SearchChangeEvent {
   nativeEvent: {

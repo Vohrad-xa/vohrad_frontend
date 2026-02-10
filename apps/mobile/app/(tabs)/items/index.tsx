@@ -1,13 +1,13 @@
 import React, {useLayoutEffect, useRef} from 'react';
 import {useRouter, useNavigation} from 'expo-router';
-import {useSearch} from '@/features/dashboard';
-import {useItemsSource} from '@/features/item/hooks';
-import {useItemFilters} from '@/features/item/hooks/use-item-filters';
 import {
+  useItemsSource,
+  useItemFilters,
   ItemsFilterSheet,
   ItemsList,
   type ItemsFilterSheetHandle,
-} from '@/features/item/views';
+} from '@/features/item';
+import {useSearch} from '@/providers';
 import {
   getHeaderOptions,
   type HeaderButtonAction,

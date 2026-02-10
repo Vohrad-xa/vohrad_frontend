@@ -18,7 +18,7 @@ import {
   useAttachmentContext,
 } from '@/features/attachments';
 import {VAULT_SEARCH_SCOPES} from '@/features/attachments/utils';
-import {useSearch} from '@/features/dashboard';
+import {useSearch} from '@/providers';
 
 export default function VaultScreen() {
   const router = useRouter();

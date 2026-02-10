@@ -3,7 +3,7 @@ import {useIsFocused} from '@react-navigation/native';
 import {getAttachmentExtension} from '@sykamore/store';
 import {useNavigation} from 'expo-router';
 import {VAULT_SEARCH_SCOPES} from '@/features/attachments/utils';
-import {useSearch} from '@/features/dashboard';
+import {useSearch} from '@/providers';
 import {
   useAttachmentsBulkActions,
   useAttachmentPress,

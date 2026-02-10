@@ -13,7 +13,7 @@ import {
   type ImageAttachmentItem,
 } from '@/features/attachments';
 import {VAULT_SEARCH_SCOPES} from '@/features/attachments/utils';
-import {useSearch} from '@/features/dashboard';
+import {useSearch} from '@/providers';
 
 export default function VaultImagesScreen() {
   const navigation = useNavigation();

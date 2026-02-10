@@ -1,7 +1,7 @@
 import React, {useLayoutEffect, useState, useCallback} from 'react';
 import {useNavigation} from 'expo-router';
-import {useSearch} from '@/features/dashboard';
 import {UsersFilterMenu, UsersList} from '@/features/settings';
+import {useSearch} from '@/providers';
 
 export default function UsersScreen() {
   const navigation = useNavigation();
