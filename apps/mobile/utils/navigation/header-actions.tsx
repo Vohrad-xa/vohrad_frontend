@@ -73,8 +73,11 @@ export type HeaderButtonAction = {
   /** Selected/active state. iOS native, Android shows as 50% opacity. */
   selected?: boolean;
 
-  /** iOS only. Allow background sharing with adjacent items. */
+  /** iOS 26+ only. Allow background sharing with adjacent items. */
   sharesBackground?: boolean;
+
+  /** iOS 26+ only. Hides the shared background an item may display. */
+  hidesSharedBackground?: boolean;
 
   /** Screen reader label override. Defaults to 'label' if not provided. */
   accessibilityLabel?: string;
@@ -93,6 +96,9 @@ export type HeaderCustomAction = {
   type: 'custom';
   key: string;
   element: React.ReactElement;
+
+  /** iOS 26+ only. Hides the shared background for this custom item. */
+  hidesSharedBackground?: boolean;
 };
 
 export type HeaderAction = HeaderButtonAction | HeaderCustomAction;
@@ -211,7 +217,7 @@ function ActionsRow({actions}: {actions: HeaderAction[]}) {
               {btn}
               <Badge
                 visible
-                size={16}
+                size={18}
                 style={[
                   styles.badge,
                   {
@@ -238,6 +244,9 @@ function toIOSHeaderItem(a: HeaderAction): NativeStackHeaderItem {
       type: 'custom',
       element: a.element,
     };
+
+    if (typeof a.hidesSharedBackground === 'boolean')
+      item.hidesSharedBackground = a.hidesSharedBackground;
 
     return item;
   }
@@ -272,6 +281,8 @@ function toIOSHeaderItem(a: HeaderAction): NativeStackHeaderItem {
   }
   if (typeof a.sharesBackground === 'boolean')
     item.sharesBackground = a.sharesBackground;
+  if (typeof a.hidesSharedBackground === 'boolean')
+    item.hidesSharedBackground = a.hidesSharedBackground;
   if (a.accessibilityLabel) item.accessibilityLabel = a.accessibilityLabel;
   if (a.accessibilityHint) item.accessibilityHint = a.accessibilityHint;
 
