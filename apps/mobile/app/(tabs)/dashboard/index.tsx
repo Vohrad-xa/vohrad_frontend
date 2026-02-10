@@ -1,4 +1,4 @@
-import {useCallback, useLayoutEffect} from 'react';
+import {useCallback, useLayoutEffect, useRef} from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -10,7 +10,12 @@ import {useDashboardOverview, useFetchUserProfile} from '@sykamore/store';
 import {router, useNavigation} from 'expo-router';
 import {HeaderButton, RefreshableScrollView, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
-import {OverviewCards, QuickActions} from '@/features/dashboard';
+import {
+  OverviewCards,
+  QuickActions,
+  CardsFilterSheet,
+  type CardsFilterSheetHandle,
+} from '@/features/dashboard';
 import {useHaptic, useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
@@ -22,6 +27,7 @@ export default function HomeScreen() {
   const {triggerHaptic} = useHaptic();
   const {refetch: refetchOverview} = useDashboardOverview();
   const {fetchUserProfile} = useFetchUserProfile();
+  const filterSheetRef = useRef<CardsFilterSheetHandle>(null);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -30,7 +36,7 @@ export default function HomeScreen() {
           variant={Platform.OS === 'ios' ? 'more' : 'filter'}
           accessibilityLabel="Filter dashboard cards"
           onPress={() => {
-            router.push('/dashboard/cards-filter');
+            void filterSheetRef.current?.present();
           }}
           style={{
             backgroundColor: Platform.OS === 'ios' ? undefined : theme.ripple,
@@ -68,6 +74,7 @@ export default function HomeScreen() {
           <OverviewCards screenWidth={screenWidth} />
         </ThemedView>
       </ScrollComponent>
+      <CardsFilterSheet ref={filterSheetRef} />
     </>
   );
 }

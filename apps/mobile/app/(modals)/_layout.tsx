@@ -20,7 +20,6 @@ export default function ModalsLayout() {
         headerLeft: Platform.OS === 'ios' ? CloseHeaderLeft : undefined,
       }}
     >
-      <Stack.Screen name="dashboard/cards-filter" options={{title: 'Filter'}} />
       <Stack.Screen name="items/location" options={{title: 'Locations'}} />
       <Stack.Screen
         name="items/specifications"

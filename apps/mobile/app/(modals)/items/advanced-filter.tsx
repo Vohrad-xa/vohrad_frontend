@@ -49,10 +49,7 @@ export default function AdvancedFilterModal() {
   }, [navigation, saveIcon]);
 
   return (
-    <ScrollView
-      contentInsetAdjustmentBehavior="automatic"
-      style={{flex: 1, backgroundColor: '#282727'}}
-    >
+    <ScrollView contentInsetAdjustmentBehavior="automatic" style={{flex: 1}}>
       <ThemedText>This is where the advanced filters will go.</ThemedText>
     </ScrollView>
   );
