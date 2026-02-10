@@ -38,7 +38,7 @@ export class ItemApi {
       search.set('order', params.order);
     }
     if (params.odataFilter) {
-      search.set('odata_filter', params.odataFilter);
+      search.set('$filter', params.odataFilter);
     }
 
     const queryString = search.toString();

@@ -4,8 +4,11 @@ import type {JsonValue} from '@sykamore/types';
  * Formats a value for an OData filter expression.
  */
 export function formatODataValue(value: JsonValue): string {
+  if (value === null) {
+    return 'null';
+  }
   if (typeof value === 'string') {
-    return `'${value}'`;
+    return `'${escapeString(value)}'`;
   }
   if (typeof value === 'boolean') {
     return value.toString();
@@ -13,8 +16,8 @@ export function formatODataValue(value: JsonValue): string {
   if (typeof value === 'number') {
     return value.toString();
   }
-  // For null, arrays, and objects, convert to string
-  return `'${JSON.stringify(value)}'`;
+  // For arrays and objects, convert to a JSON literal string.
+  return `'${escapeString(JSON.stringify(value))}'`;
 }
 
 /**

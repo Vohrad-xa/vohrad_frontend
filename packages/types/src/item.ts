@@ -10,7 +10,6 @@ export type ItemFilterState = {
   unitIds?: string[];
   priceMin?: number | null;
   priceMax?: number | null;
-  specifications?: ItemSpecifications;
 };
 
 export interface ItemLocationData {

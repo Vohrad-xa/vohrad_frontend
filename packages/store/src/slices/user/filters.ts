@@ -22,7 +22,12 @@ export function buildUserODataFilter(
   if (searchTerm && searchTerm.trim().length > 0) {
     const term = escapeString(searchTerm.trim());
     conditions.push(
-      `contains(first_name,'${term}') or contains(last_name,'${term}') or contains(email,'${term}') or contains(role,'${term}')`,
+      `(${[
+        `contains(first_name,'${term}')`,
+        `contains(last_name,'${term}')`,
+        `contains(email,'${term}')`,
+        `contains(role,'${term}')`,
+      ].join(' or ')})`,
     );
   }
 

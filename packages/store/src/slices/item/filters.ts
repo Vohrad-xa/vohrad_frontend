@@ -1,5 +1,5 @@
 import type {ItemFilterState} from '@sykamore/types';
-import {formatODataValue} from '../../utils/odata-filter-builder';
+import {escapeString, formatODataValue} from '../../utils/odata-filter-builder';
 
 /**
  * Build an OData filter string based on item filter state and optional search term.
@@ -21,7 +21,7 @@ export function buildItemODataFilter(
   // Tracking mode filter
   if (filters.trackingModes && filters.trackingModes.length > 0) {
     const modeConditions = filters.trackingModes.map(
-      (mode) => `tracking_mode eq '${mode}'`,
+      (mode) => `tracking_mode eq '${escapeString(mode)}'`,
     );
     conditions.push(`(${modeConditions.join(' or ')})`);
   }
@@ -43,19 +43,9 @@ export function buildItemODataFilter(
     conditions.push(`price le ${filters.priceMax}`);
   }
 
-  // Specifications filters
-  if (filters.specifications) {
-    Object.entries(filters.specifications).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        const formattedValue = formatODataValue(value);
-        conditions.push(`specifications/${key} eq ${formattedValue}`);
-      }
-    });
-  }
-
   // Search filter
   if (searchTerm && searchTerm.trim().length > 0) {
-    const term = searchTerm.trim();
+    const term = escapeString(searchTerm.trim());
     const searchConditions = [
       `contains(name,'${term}')`,
       `contains(sku,'${term}')`,
@@ -87,12 +77,6 @@ export function hasActiveFilters(filters: ItemFilterState): boolean {
   if (filters.priceMax !== null && filters.priceMax !== undefined) {
     return true;
   }
-  if (
-    filters.specifications &&
-    Object.keys(filters.specifications).length > 0
-  ) {
-    return true;
-  }
   return false;
 }
 
@@ -106,6 +90,5 @@ export function clearAllFilters(): ItemFilterState {
     unitIds: [],
     priceMin: null,
     priceMax: null,
-    specifications: null,
   };
 }

@@ -45,7 +45,7 @@ export function buildAttachmentODataFilter(
 
   const normalizedExtension = getAttachmentExtension(filter);
   return normalizedExtension
-    ? `extension eq '${normalizedExtension}'`
+    ? `extension eq '${escapeString(normalizedExtension)}'`
     : undefined;
 }
 
