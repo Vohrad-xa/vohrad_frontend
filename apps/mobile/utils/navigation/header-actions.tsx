@@ -279,6 +279,15 @@ function toIOSHeaderItem(a: HeaderAction): NativeStackHeaderItem {
 }
 
 /**
+ * Whether the native unstable header items API is available.
+ * Requires iOS 26+ for full support (badges, shared backgrounds, etc.).
+ * Falls back to React-rendered ActionsRow on older iOS and Android/Web.
+ */
+const CHECK_IOS_26 =
+  Platform.OS === 'ios' &&
+  parseInt(String(Platform.Version).split('.')[0], 10) >= 26;
+
+/**
  * Build platform-appropriate header options from actions.
  *
  * - iOS 26+: native bar button items via `unstable_header*Items`.
@@ -296,7 +305,7 @@ export function getHeaderOptions({
 }: HeaderActionsConfig): Partial<NativeStackNavigationOptions> {
   assertValidActions(left, right);
 
-  if (Platform.OS === 'ios' && Number(Platform.Version) >= 26) {
+  if (CHECK_IOS_26) {
     return {
       headerLeft: left?.length
         ? undefined
