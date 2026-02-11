@@ -7,7 +7,6 @@ export interface AttachmentFilter {
   targetId?: string;
   itemName?: string;
   extension?: string;
-  odataFilter?: string;
   odataOrderBy?: string;
 }
 

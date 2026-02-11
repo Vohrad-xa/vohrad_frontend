@@ -1,5 +1,6 @@
 export {
   useInfiniteItems,
+  type ItemListFilters,
   useFetchItem,
   useCreateItem,
   useUpdateItem,
@@ -12,4 +13,4 @@ export {
   useItemDetailManager,
   useItemFiltersManager,
 } from './managers';
-export * from './filters';
+export {hasActiveFilters, clearAllFilters} from './filters';

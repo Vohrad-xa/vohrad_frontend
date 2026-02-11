@@ -18,6 +18,7 @@ export type ListItemsParams = {
   direction?: CursorDirection;
   order?: CursorOrder;
   odataFilter?: string;
+  count?: boolean;
 };
 
 export class ItemApi {
@@ -38,7 +39,10 @@ export class ItemApi {
       search.set('order', params.order);
     }
     if (params.odataFilter) {
-      search.set('$filter', params.odataFilter);
+      search.set('odata_filter', params.odataFilter);
+    }
+    if (typeof params.count === 'boolean') {
+      search.set('odata_count', String(params.count));
     }
 
     const queryString = search.toString();

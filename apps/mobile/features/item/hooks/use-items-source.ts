@@ -1,5 +1,4 @@
-import {useMemo} from 'react';
-import {useItemsManager, buildItemODataFilter} from '@sykamore/store';
+import {useItemsManager} from '@sykamore/store';
 import type {Item, ItemFilterState} from '@sykamore/types';
 
 type UseItemsSourceOptions = {
@@ -23,28 +22,12 @@ type UseItemsSourceResult = {
 /**
  * Unified item source for filtered list and search queries.
  *
- * Combines filters and search into a single OData filter and fetches from server.
- * Server handles both filtering and searching.
+ * Passes raw filters and search to the manager; OData is built at the API boundary.
  */
 export function useItemsSource(
   options: UseItemsSourceOptions,
 ): UseItemsSourceResult {
   const {searchQuery = '', filters, pageSize, enabled = true} = options;
-
-  const odataFilter = useMemo(() => {
-    if (!filters && !searchQuery) {
-      return undefined;
-    }
-    return buildItemODataFilter(
-      filters ?? {
-        statuses: [],
-        trackingModes: [],
-        priceMin: null,
-        priceMax: null,
-      },
-      searchQuery,
-    );
-  }, [filters, searchQuery]);
 
   const {
     items,
@@ -56,7 +39,8 @@ export function useItemsSource(
     getItemImageUrl,
     lastUpdated,
   } = useItemsManager({
-    odataFilter,
+    searchQuery: searchQuery || undefined,
+    itemFilters: filters,
     pageSize,
     enabled,
   });

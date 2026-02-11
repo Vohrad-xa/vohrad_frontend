@@ -24,6 +24,7 @@ export interface ApiResponse<T> {
 export interface PaginatedResponse<T> {
   items: T[];
   limit: number;
+  total_count?: number;
   start_cursor: string | null;
   end_cursor: string | null;
   has_next_page: boolean;

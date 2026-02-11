@@ -1,6 +1,5 @@
 import {useCallback} from 'react';
 import {
-  buildAttachmentODataFilter,
   useAttachmentsViewManager,
   useFilteredAttachmentsManager,
   type AttachmentDisplayItem,
@@ -66,10 +65,6 @@ export function useAttachmentsSource(
     enabled,
   });
 
-  const localOdataFilter = buildAttachmentODataFilter(
-    extension ? {extension} : null,
-  );
-
   const {
     attachments: fetchedAttachments,
     loadMore,
@@ -80,7 +75,7 @@ export function useAttachmentsSource(
     lastUpdated,
   } = useFilteredAttachmentsManager({
     kind,
-    odataFilter: localOdataFilter,
+    extension,
     odataOrderBy,
     pageSize,
     enabled: enabled && !isSearchActive && !isUsingContext,

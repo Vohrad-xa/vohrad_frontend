@@ -101,9 +101,9 @@ export {
 } from './slices/filter';
 
 export {
-  buildItemODataFilter,
   hasActiveFilters,
   clearAllFilters,
+  type ItemListFilters,
 } from './slices/item';
 
 export {

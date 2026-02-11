@@ -43,14 +43,13 @@ export function buildItemODataFilter(
     conditions.push(`price le ${filters.priceMax}`);
   }
 
-  // Search filter
   if (searchTerm && searchTerm.trim().length > 0) {
-    const term = escapeString(searchTerm.trim());
+    const term = escapeString(searchTerm.trim().toLowerCase());
     const searchConditions = [
-      `contains(name,'${term}')`,
-      `contains(sku,'${term}')`,
-      `contains(description,'${term}')`,
-      `contains(barcode,'${term}')`,
+      `contains(tolower(name),'${term}')`,
+      `contains(tolower(sku),'${term}')`,
+      `contains(tolower(description),'${term}')`,
+      `contains(tolower(barcode),'${term}')`,
     ];
     conditions.push(`(${searchConditions.join(' or ')})`);
   }

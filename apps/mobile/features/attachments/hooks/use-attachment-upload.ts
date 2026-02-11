@@ -307,8 +307,8 @@ export function useAttachmentUpload(
             } as unknown as Blob);
 
       formData.append('file', fileValue);
-      formData.append('attachable_type', targetType);
-      formData.append('attachable_id', targetId);
+      formData.append('target_type', targetType);
+      formData.append('target_id', targetId);
       formData.append('original_filename', name);
       formData.append('filename', name);
       formData.append('file_type', mimeType);

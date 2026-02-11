@@ -4,6 +4,8 @@ import type {PaginatedResponse} from '@sykamore/types';
 import {
   buildAttachmentDisplayItems,
   type AttachmentDisplayItem,
+  buildAttachmentODataFilter,
+  buildAttachmentSearchODataFilter,
 } from '../utils';
 import {
   buildAttachmentListQueryKey,
@@ -28,11 +30,26 @@ export function useInfiniteAttachments(
   >({
     queryKey,
     queryFn: async ({pageParam}) => {
+      const searchQuery = filters.searchQuery?.trim();
+      const odataFilter = searchQuery
+        ? buildAttachmentSearchODataFilter(
+            searchQuery,
+            filters.extension ?? null,
+          )
+        : buildAttachmentODataFilter(
+            filters.extension ? {extension: filters.extension} : null,
+          );
       const response = await attachmentApi.listAttachments({
-        ...filters,
+        ...(filters.targetType ? {targetType: filters.targetType} : {}),
+        ...(filters.targetId ? {targetId: filters.targetId} : {}),
+        ...(filters.kind ? {kind: filters.kind} : {}),
+        ...(filters.includeDeleted ? {includeDeleted: true} : {}),
+        ...(filters.odataOrderBy ? {odataOrderBy: filters.odataOrderBy} : {}),
+        ...(odataFilter ? {odataFilter} : {}),
         limit: pageSize,
         cursor: pageParam ?? undefined,
         direction: 'after',
+        count: true,
       });
       const data = response.data;
       return {

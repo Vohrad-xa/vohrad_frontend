@@ -1,5 +1,5 @@
 // Queries
-export {useInfiniteItems} from './use-infinite-items';
+export {useInfiniteItems, type ItemListFilters} from './use-infinite-items';
 export {useFetchItem} from './use-fetch-item';
 
 // Mutations

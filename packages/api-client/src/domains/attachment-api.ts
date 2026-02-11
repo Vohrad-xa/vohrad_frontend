@@ -38,6 +38,7 @@ export type ListAttachmentsParams = {
   includeDeleted?: boolean;
   odataFilter?: string;
   odataOrderBy?: string;
+  count?: boolean;
 };
 
 export class AttachmentApi {
@@ -78,10 +79,13 @@ export class AttachmentApi {
       search.set('include_deleted', 'true');
     }
     if (params.odataFilter) {
-      search.set('$filter', params.odataFilter);
+      search.set('odata_filter', params.odataFilter);
     }
     if (params.odataOrderBy) {
-      search.set('$orderby', params.odataOrderBy);
+      search.set('odata_orderby', params.odataOrderBy);
+    }
+    if (typeof params.count === 'boolean') {
+      search.set('odata_count', String(params.count));
     }
 
     const queryString = search.toString();

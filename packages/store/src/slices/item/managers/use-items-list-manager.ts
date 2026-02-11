@@ -1,16 +1,29 @@
 import {useCallback, useMemo, useEffect} from 'react';
 import {resolveAttachmentUrl} from '@sykamore/api-client';
-import type {Item} from '@sykamore/types';
+import type {Item, ItemFilterState} from '@sykamore/types';
 import {useAuthStore} from '../../../store';
 import {useInfiniteItems} from '../hooks/use-infinite-items';
+import type {ItemListFilters} from '../hooks/use-infinite-items';
 
 type UseItemsListManagerOptions = {
   pageSize?: number;
-  odataFilter?: string;
+  searchQuery?: string;
+  itemFilters?: ItemFilterState;
   enabled?: boolean;
 };
 
 export function useItemsListManager(options?: UseItemsListManagerOptions) {
+  const filters = useMemo<ItemListFilters>(() => {
+    const result: ItemListFilters = {};
+    if (options?.searchQuery) {
+      result.searchQuery = options.searchQuery;
+    }
+    if (options?.itemFilters) {
+      result.itemFilters = options.itemFilters;
+    }
+    return result;
+  }, [options?.searchQuery, options?.itemFilters]);
+
   const {
     data,
     dataUpdatedAt,
@@ -23,7 +36,7 @@ export function useItemsListManager(options?: UseItemsListManagerOptions) {
     isFetchingNextPage,
     refetch,
   } = useInfiniteItems(
-    options?.odataFilter,
+    filters,
     options?.pageSize,
     options?.enabled,
   );

@@ -16,8 +16,8 @@ export function buildAttachmentSearchFilter(
     return undefined;
   }
 
-  const term = escapeString(searchTerm.trim());
-  return `contains(filename,'${term}') or contains(original_filename,'${term}') or contains(description,'${term}')`;
+  const term = escapeString(searchTerm.trim().toLowerCase());
+  return `contains(tolower(filename),'${term}') or contains(tolower(original_filename),'${term}') or contains(tolower(description),'${term}')`;
 }
 
 /**
@@ -33,16 +33,10 @@ export function getAttachmentExtension(
 
 /**
  * Build an attachment $filter string from the stored filter state.
- *
- * - Explicit odataFilter takes precedence over extension.
  */
 export function buildAttachmentODataFilter(
   filter?: AttachmentFilter | null,
 ): string | undefined {
-  if (filter?.odataFilter) {
-    return filter.odataFilter;
-  }
-
   const normalizedExtension = getAttachmentExtension(filter);
   return normalizedExtension
     ? `extension eq '${escapeString(normalizedExtension)}'`
@@ -82,85 +76,13 @@ export function buildAttachmentSearchODataFilter(
   return `(${searchFilter}) and (${extensionFilter})`;
 }
 
-const decodeODataLiteral = (value: string): string => value.replace(/''/g, "'");
-
-const extractODataExtension = (filter: string): string | null => {
-  const match = /extension eq '((?:''|[^'])*)'/.exec(filter);
-  if (!match) return null;
-  return decodeODataLiteral(match[1]);
-};
-
-const extractODataSearchTerm = (filter: string): string | null => {
-  const match = /contains\(filename,'((?:''|[^'])*)'\)/.exec(filter);
-  if (!match) return null;
-  return decodeODataLiteral(match[1]);
-};
-
-type AttachmentODataCriteria = {
-  extension?: string | null;
-  searchTerm?: string | null;
-};
-
-const parseAttachmentODataCriteria = (
-  filter: string,
-): AttachmentODataCriteria | null => {
-  const extension = extractODataExtension(filter);
-  const searchTerm = extractODataSearchTerm(filter);
-
-  if (!extension && !searchTerm) {
-    return null;
-  }
-
-  return {extension, searchTerm};
-};
-
-/**
- * Checks an attachment against OData filters built by attachment utilities.
- *
- * - Supports extension and search-term filters only.
- */
-export function matchesAttachmentODataFilter(
-  attachment: ItemAttachment,
-  filter: string,
-): boolean {
-  const criteria = parseAttachmentODataCriteria(filter);
-  if (!criteria) {
-    return false;
-  }
-
-  if (criteria.extension) {
-    const normalizedFilter = normalizeAttachmentExtension(criteria.extension);
-    const normalizedAttachment = normalizeAttachmentExtension(
-      attachment.extension,
-    );
-    if (!normalizedFilter || normalizedFilter !== normalizedAttachment) {
-      return false;
-    }
-  }
-
-  if (criteria.searchTerm) {
-    const filename = attachment.filename ?? '';
-    const originalFilename = attachment.original_filename ?? '';
-    const description = attachment.description ?? '';
-    const matches =
-      filename.includes(criteria.searchTerm) ||
-      originalFilename.includes(criteria.searchTerm) ||
-      description.includes(criteria.searchTerm);
-    if (!matches) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 export function matchesAttachmentListFilters(
   attachment: ItemAttachment,
   filters: AttachmentListFilters,
 ): boolean {
   if (filters.targetType) {
     const attachmentTargetType = normalizeAttachmentTargetType(
-      attachment.attachable_type,
+      attachment.target_type,
     );
     if (attachmentTargetType !== filters.targetType) {
       return false;
@@ -169,7 +91,7 @@ export function matchesAttachmentListFilters(
 
   if (
     filters.targetId &&
-    String(attachment.attachable_id) !== String(filters.targetId)
+    String(attachment.target_id) !== String(filters.targetId)
   ) {
     return false;
   }
@@ -181,8 +103,31 @@ export function matchesAttachmentListFilters(
     return false;
   }
 
-  if (filters.odataFilter) {
-    return matchesAttachmentODataFilter(attachment, filters.odataFilter);
+  const normalizedFilterExtension = normalizeAttachmentExtension(
+    filters.extension ?? undefined,
+  );
+  if (normalizedFilterExtension) {
+    const normalizedAttachmentExtension = normalizeAttachmentExtension(
+      attachment.extension,
+    );
+    if (normalizedAttachmentExtension !== normalizedFilterExtension) {
+      return false;
+    }
+  }
+
+  const searchQuery = filters.searchQuery?.trim();
+  if (searchQuery) {
+    const normalizedQuery = searchQuery.toLowerCase();
+    const filename = (attachment.filename ?? '').toLowerCase();
+    const originalFilename = (attachment.original_filename ?? '').toLowerCase();
+    const description = (attachment.description ?? '').toLowerCase();
+    const matches =
+      filename.includes(normalizedQuery) ||
+      originalFilename.includes(normalizedQuery) ||
+      description.includes(normalizedQuery);
+    if (!matches) {
+      return false;
+    }
   }
 
   return true;

@@ -1,6 +1,5 @@
 import {useMemo} from 'react';
 import {
-  buildAttachmentSearchODataFilter,
   useFilteredAttachmentsManager,
   type AttachmentDisplayItem,
 } from '@sykamore/store';
@@ -39,11 +38,11 @@ export function useAttachmentSearch(
     odataOrderBy,
   } = options;
 
-  const odataFilter = useMemo(
-    () => buildAttachmentSearchODataFilter(searchQuery, extension),
-    [searchQuery, extension],
+  const normalizedSearchQuery = useMemo(
+    () => searchQuery.trim(),
+    [searchQuery],
   );
-  const isSearchActive = Boolean(odataFilter);
+  const isSearchActive = normalizedSearchQuery.length > 0;
   const shouldFetch = enabled && isSearchActive;
 
   const {
@@ -57,7 +56,8 @@ export function useAttachmentSearch(
     lastUpdated,
   } = useFilteredAttachmentsManager({
     kind,
-    odataFilter,
+    searchQuery: normalizedSearchQuery,
+    extension,
     odataOrderBy,
     pageSize,
     enabled: shouldFetch,

@@ -21,7 +21,6 @@ const hasAttachmentFilterValues = (filter: AttachmentFilter | null) =>
     filter?.targetId ||
     filter?.itemName ||
     hasAttachmentExtension(filter) ||
-    filter?.odataFilter ||
     filter?.odataOrderBy,
   );
 

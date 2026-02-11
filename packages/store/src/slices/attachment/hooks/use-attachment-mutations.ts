@@ -33,13 +33,13 @@ export function useUploadAttachment() {
 
       // 1. Update item-specific cache (e.g., ['attachments', 'item', '123'])
       const normalizedTargetType = normalizeAttachmentTargetType(
-        attachment.attachable_type,
+        attachment.target_type,
       );
-      if (normalizedTargetType && attachment.attachable_id) {
+      if (normalizedTargetType && attachment.target_id) {
         queryClient.setQueryData<AttachmentDisplayItem[]>(
           buildAttachmentTargetQueryKey(
             normalizedTargetType,
-            String(attachment.attachable_id),
+            String(attachment.target_id),
           ),
           (old) => (old ? [displayAttachment, ...old] : [displayAttachment]),
         );

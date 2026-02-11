@@ -1,7 +1,7 @@
 import {useMemo} from 'react';
 import type {AttachmentKind, AttachmentTargetType} from '@sykamore/types';
 import {useAttachmentFilter} from '../../filter/hooks';
-import {buildAttachmentODataFilter} from '../utils';
+import {normalizeAttachmentExtension} from '../utils/normalizers';
 import {useAttachmentsListManager} from './use-attachments-list-manager';
 
 export interface UseFilteredAttachmentsManagerOptions {
@@ -11,7 +11,8 @@ export interface UseFilteredAttachmentsManagerOptions {
     targetType?: AttachmentTargetType;
     targetId?: string;
   };
-  odataFilter?: string;
+  extension?: string;
+  searchQuery?: string;
   odataOrderBy?: string;
   enabled?: boolean;
 }
@@ -21,7 +22,7 @@ const DEFAULT_ATTACHMENTS_PAGE_SIZE = 30;
 /**
  * Attachment list manager that merges global filter state with local overrides.
  *
- * - Local odataFilter/orderBy overrides global filter state.
+ * - Local extension/orderBy overrides global filter state.
  * - Defaults to 50 items per page.
  */
 export function useFilteredAttachmentsManager(
@@ -34,21 +35,32 @@ export function useFilteredAttachmentsManager(
     initialFilter,
     enabled = true,
   } = options ?? {};
-  const hasLocalFilter = Boolean(
-    options && Object.prototype.hasOwnProperty.call(options, 'odataFilter'),
+
+  const hasLocalExtension = Boolean(
+    options && Object.prototype.hasOwnProperty.call(options, 'extension'),
   );
+
   const hasLocalOrderBy = Boolean(
     options && Object.prototype.hasOwnProperty.call(options, 'odataOrderBy'),
   );
-  const localOdataFilter = options?.odataFilter;
+
+  const localExtension = options?.extension;
+
   const localOrderBy = options?.odataOrderBy;
+
   const resolvedOrderBy = hasLocalOrderBy
     ? localOrderBy
     : globalFilter?.odataOrderBy;
-  const globalOdataFilter = buildAttachmentODataFilter(globalFilter);
-  const resolvedOdataFilter = hasLocalFilter
-    ? localOdataFilter
-    : globalOdataFilter;
+
+  const resolvedExtension = hasLocalExtension
+    ? localExtension
+    : globalFilter?.extension;
+
+  const normalizedExtension = normalizeAttachmentExtension(
+    resolvedExtension ?? null,
+  );
+
+  const normalizedSearchQuery = options?.searchQuery?.trim() || undefined;
 
   const filters = useMemo(() => {
     const sourceTargetType =
@@ -59,7 +71,8 @@ export function useFilteredAttachmentsManager(
       ...(sourceTargetType ? {targetType: sourceTargetType} : {}),
       ...(sourceTargetId ? {targetId: sourceTargetId} : {}),
       ...(kind ? {kind} : {}),
-      ...(resolvedOdataFilter ? {odataFilter: resolvedOdataFilter} : {}),
+      ...(normalizedExtension ? {extension: normalizedExtension} : {}),
+      ...(normalizedSearchQuery ? {searchQuery: normalizedSearchQuery} : {}),
       ...(resolvedOrderBy ? {odataOrderBy: resolvedOrderBy} : {}),
     };
   }, [
@@ -68,7 +81,8 @@ export function useFilteredAttachmentsManager(
     initialFilter?.targetType,
     initialFilter?.targetId,
     kind,
-    resolvedOdataFilter,
+    normalizedExtension,
+    normalizedSearchQuery,
     resolvedOrderBy,
   ]);
 

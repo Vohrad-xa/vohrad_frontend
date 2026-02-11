@@ -1,11 +1,15 @@
-import type {ListAttachmentsParams} from '@sykamore/api-client';
-import type {AttachmentTargetType} from '@sykamore/types';
+import type {AttachmentKind, AttachmentTargetType} from '@sykamore/types';
 import {normalizeAttachmentTargetType} from './normalizers';
 
-export type AttachmentListFilters = Omit<
-  ListAttachmentsParams,
-  'limit' | 'cursor' | 'direction' | 'order'
->;
+export type AttachmentListFilters = {
+  targetType?: AttachmentTargetType;
+  targetId?: string;
+  kind?: AttachmentKind;
+  includeDeleted?: boolean;
+  odataOrderBy?: string;
+  extension?: string | null;
+  searchQuery?: string | null;
+};
 
 export type AttachmentListQueryKey = readonly [
   'attachments',
