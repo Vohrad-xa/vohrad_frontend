@@ -23,6 +23,7 @@ import {
   labelStyle,
   font,
   frame,
+  monospaced,
 } from 'sykamore-ui/ios';
 import {useEditFilter} from '../hooks';
 import type {ItemFilterState} from '@sykamore/types';
@@ -45,8 +46,6 @@ const iconButtonModifiers = (label: string) => [
   labelStyle('iconOnly'),
   font({weight: 'semibold'}),
 ];
-
-const priceFont = font({weight: 'medium', design: 'monospaced'});
 
 export const ItemsFilterSheet = forwardRef<
   ItemsFilterSheetHandle,
@@ -157,8 +156,12 @@ export const ItemsFilterSheet = forwardRef<
           </Section>
 
           <Section title="Price Range" isExpanded>
-            <VStack alignment="leading" spacing={ds.spacing.md}>
-              <Text modifiers={[priceFont]}>min {priceMinLabel}</Text>
+            <VStack
+              alignment="leading"
+              spacing={ds.spacing.md}
+              modifiers={[monospaced()]}
+            >
+              <Text>min {priceMinLabel}</Text>
               <Slider
                 value={filters.priceMin ?? 0}
                 onValueChange={updatePriceMin}
@@ -171,7 +174,7 @@ export const ItemsFilterSheet = forwardRef<
                 ]}
               />
 
-              <Text modifiers={[priceFont]}>max {priceMaxLabel}</Text>
+              <Text>max {priceMaxLabel}</Text>
               <Slider
                 value={filters.priceMax ?? 10000}
                 onValueChange={updatePriceMax}

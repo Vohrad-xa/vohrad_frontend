@@ -1000,6 +1000,49 @@ export const submitLabel = (
     | 'send',
 ) => createModifier('submitLabel', {submitLabel});
 
+/**
+ * Applies italic styling to the text.
+ * @param enabled - Whether italic is enabled (default: true).
+ * @platform ios 16.0+
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/italic(_:)).
+ */
+export const italic = (enabled: boolean = true) =>
+  createModifier('italic', {enabled});
+
+/**
+ * Applies monospaced styling to the text.
+ * @param enabled - Whether monospaced is enabled (default: true).
+ * @platform ios 16.0+
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/monospaced(_:)).
+ */
+export const monospaced = (enabled: boolean = true) =>
+  createModifier('monospaced', {enabled});
+
+/**
+ * Modifies the fonts of all child views to use fixed-width digits of equal width.
+ * @param enabled - Whether monospaced digit is enabled (default: true).
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/monospaceddigit()).
+ */
+export const monospacedDigit = (enabled: boolean = true) =>
+  createModifier('monospacedDigit', {enabled});
+
+/**
+ * Sets the tracking (letter spacing) for the text.
+ * @param value - The tracking value in points.
+ * @platform ios 16.0+
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/tracking(_:)).
+ */
+export const tracking = (value: number) => createModifier('tracking', {value});
+
+/**
+ * Sets the vertical offset for the text relative to its baseline.
+ * @param value - The baseline offset value in points.
+ * @platform ios 16.0+
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/baselineoffset(_:)).
+ */
+export const baselineOffset = (value: number) =>
+  createModifier('baselineOffset', {value});
+
 // =============================================================================
 // Type Definitions
 // =============================================================================
@@ -1092,7 +1135,12 @@ export type BuiltInModifier =
   | ReturnType<typeof datePickerStyle>
   | ReturnType<typeof tag>
   | ReturnType<typeof pickerStyle>
-  | ReturnType<typeof swipeActions>;
+  | ReturnType<typeof swipeActions>
+  | ReturnType<typeof italic>
+  | ReturnType<typeof monospaced>
+  | ReturnType<typeof monospacedDigit>
+  | ReturnType<typeof tracking>
+  | ReturnType<typeof baselineOffset>;
 
 /**
  * Main ViewModifier type that supports both built-in and 3rd party modifiers.

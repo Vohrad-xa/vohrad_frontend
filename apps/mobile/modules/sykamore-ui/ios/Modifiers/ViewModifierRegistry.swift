@@ -1487,5 +1487,25 @@ extension ViewModifierRegistry {
     register("datePickerStyle") { params, appContext, _ in
       return try DatePickerStyleModifier(from: params, appContext: appContext)
     }
+
+    register("italic") { params, appContext, _ in
+      return try ItalicModifier(from: params, appContext: appContext)
+    }
+
+    register("monospaced") { params, appContext, _ in
+      return try MonospacedModifier(from: params, appContext: appContext)
+    }
+
+    register("monospacedDigit") { params, appContext, _ in
+      return try MonospacedDigitModifier(from: params, appContext: appContext)
+    }
+
+    register("tracking") { params, appContext, _ in
+      return try TrackingModifier(from: params, appContext: appContext)
+    }
+
+    register("baselineOffset") { params, appContext, _ in
+      return try BaselineOffsetModifier(from: params, appContext: appContext)
+    }
   }
 }

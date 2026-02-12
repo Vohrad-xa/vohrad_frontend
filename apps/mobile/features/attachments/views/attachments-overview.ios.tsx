@@ -10,6 +10,7 @@ import {
   accessibilityLabel,
   font,
   foregroundStyle,
+  monospaced,
   padding,
   tint,
   Section,
@@ -41,18 +42,6 @@ type AttachmentsOverviewProps = Readonly<{
   filterChip?: AttachmentFilterChip;
 }>;
 
-function ChevronRight() {
-  return (
-    <Icon
-      useSwiftUI
-      name={AppIcons.actions.forward}
-      colorToken="muted"
-      fontWeight="medium"
-      size={12}
-    />
-  );
-}
-
 const AttachmentTileRow = React.memo(
   ({label, systemImage, count, href}: AttachmentKindTile) => {
     const {ds, theme} = useTheme();
@@ -79,8 +68,8 @@ const AttachmentTileRow = React.memo(
           <Spacer />
 
           <Text
-            monospaced
             modifiers={[
+              monospaced(),
               font({textStyle: 'footnote'}),
               foregroundStyle('secondary'),
               padding({horizontal: ds.spacing.md}),
@@ -89,7 +78,13 @@ const AttachmentTileRow = React.memo(
             {countText}
           </Text>
 
-          <ChevronRight />
+          <Icon
+            useSwiftUI
+            name={AppIcons.actions.forward}
+            colorToken="muted"
+            fontWeight="medium"
+            size={12}
+          />
         </HStack>
       </Button>
     );

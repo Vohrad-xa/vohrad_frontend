@@ -10,15 +10,6 @@ export interface TextProps extends CommonViewModifierProps {
    */
   children?: React.ReactNode;
   lineLimit?: number;
-  textCase?: 'uppercase' | 'lowercase';
-  italic?: boolean;
-  underline?: boolean;
-  strikethrough?: boolean;
-  monospaced?: boolean;
-  monospacedDigit?: boolean;
-  kerning?: number;
-  tracking?: number;
-  baselineOffset?: number;
 }
 
 type NativeTextProps = Omit<TextProps, 'children'> & {
