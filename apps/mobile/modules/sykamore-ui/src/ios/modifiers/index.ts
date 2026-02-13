@@ -245,126 +245,115 @@ export const offset = (params: {x?: number; y?: number}) =>
   createModifier('offset', params);
 
 /**
- * Sets the foreground style of a view with comprehensive styling options.
+ * A gradient that transitions colors along a line between start and end points.
+ * Use with `foregroundStyle` or `background`.
  *
- * Replaces the deprecated `foregroundColor` modifier with enhanced capabilities including
- * colors, gradients, and semantic hierarchical styles that adapt to system appearance.
- *
- * @param style - The foreground style configuration. Can be:
- *
- * **Simple Color (string):**
- * - Hex colors: `'#FF0000'`, `'#RGB'`, `'#RRGGBB'`, `'#AARRGGBB'`
- * - Named colors: `'red'`, `'blue'`, `'green'`, and so on.
- *
- * **Explicit Color Object:**
- * ```ts
- * { type: 'color', color: '#FF0000' }
- * ```
- *
- * **Hierarchical Styles (Semantic):**
- * Auto-adapting semantic styles that respond to light/dark mode and accessibility settings:
- * ```ts
- * { type: 'hierarchical', style: 'primary' }    // Most prominent (main content, headlines)
- * { type: 'hierarchical', style: 'secondary' }  // Supporting text, subheadlines
- * { type: 'hierarchical', style: 'tertiary' }   // Less important text, captions
- * { type: 'hierarchical', style: 'quaternary' } // Subtle text, disabled states
- * { type: 'hierarchical', style: 'quinary' }    // Most subtle (iOS 16+, fallback to quaternary)
- * ```
- *
- * **Linear Gradient:**
- * ```ts
- * {
- *   type: 'linearGradient',
- *   colors: ['#FF0000', '#0000FF', '#00FF00'],
- *   startPoint: { x: 0, y: 0 },    // Top-left
- *   endPoint: { x: 1, y: 1 }       // Bottom-right
- * }
- * ```
- *
- * **Radial Gradient:**
- * ```ts
- * {
- *   type: 'radialGradient',
- *   colors: ['#FF0000', '#0000FF'],
- *   center: { x: 0.5, y: 0.5 },    // Center of view
- *   startRadius: 0,                // Inner radius
- *   endRadius: 100                 // Outer radius
- * }
- * ```
- * Applies a foreground style (color, hierarchical semantic colors, or gradient) to text and shapes.
- *
- * @example Simple color
+ * @example
  * ```tsx
- * <Text modifiers={[foregroundStyle('#FF0000')]}>Red Text</Text>
+ * foregroundStyle(linearGradient({ colors: ['#FF0000', '#0000FF'], startPoint: {x: 0, y: 0}, endPoint: {x: 1, y: 1} }))
  * ```
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/lineargradient).
+ */
+export const linearGradient = (params: {
+  colors: string[];
+  startPoint: {x: number; y: number};
+  endPoint: {x: number; y: number};
+}) => ({styleType: 'linearGradient' as const, ...params});
+
+/**
+ * A gradient that radiates outward from a center point.
+ * Use with `foregroundStyle` or `background`.
  *
- * @example Hierarchical semantic colors (adapts to light/dark mode)
+ * @example
  * ```tsx
- * <Text modifiers={[foregroundStyle({
- *   styleType: 'hierarchical',
- *   hierarchicalStyle: 'secondary'
- * })]}>
- *   Supporting Text
- * </Text>
+ * foregroundStyle(radialGradient({ colors: ['#FF0000', '#0000FF'], center: {x: 0.5, y: 0.5}, startRadius: 0, endRadius: 100 }))
  * ```
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/radialgradient).
+ */
+export const radialGradient = (params: {
+  colors: string[];
+  center: {x: number; y: number};
+  startRadius: number;
+  endRadius: number;
+}) => ({styleType: 'radialGradient' as const, ...params});
+
+/**
+ * A gradient that sweeps around a center point.
+ * Use with `foregroundStyle` or `background`.
  *
- * @example Linear gradient
+ * @example
  * ```tsx
- * <Text modifiers={[foregroundStyle({
- *   styleType: 'linearGradient',
- *   colors: ['#FF0000', '#0000FF'],
- *   startPoint: {x: 0, y: 0},
- *   endPoint: {x: 1, y: 1}
- * })]}>
- *   Gradient Text
- * </Text>
+ * foregroundStyle(angularGradient({ colors: ['#FF0000', '#0000FF'], center: {x: 0.5, y: 0.5} }))
+ * ```
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/angulargradient).
+ */
+export const angularGradient = (params: {
+  colors: string[];
+  center: {x: number; y: number};
+  startAngle?: number;
+  endAngle?: number;
+}) => ({styleType: 'angularGradient' as const, ...params});
+
+type GradientStyle =
+  | ReturnType<typeof linearGradient>
+  | ReturnType<typeof radialGradient>
+  | ReturnType<typeof angularGradient>;
+
+type HierarchicalStyle =
+  | 'primary'
+  | 'secondary'
+  | 'tertiary'
+  | 'quaternary'
+  | 'quinary';
+
+const HIERARCHICAL_STYLES: ReadonlySet<string> = new Set([
+  'primary',
+  'secondary',
+  'tertiary',
+  'quaternary',
+  'quinary',
+]);
+
+/**
+ * Sets the foreground style of a view.
+ * Matches SwiftUI's `foregroundStyle(_:)` API — accepts colors, hierarchical styles, or gradients.
+ *
+ * @example Colors
+ * ```tsx
+ * foregroundStyle('#FF0000')     // hex color
+ * foregroundStyle('red')         // named color
  * ```
  *
- * @returns A view modifier that applies the specified foreground style
- * @since iOS 15.0+ (hierarchical quinary requires iOS 16.0+)
+ * @example Hierarchical styles (adapt relative to parent foreground)
+ * ```tsx
+ * foregroundStyle('secondary')   // dimmed relative to parent
+ * foregroundStyle('tertiary')    // more dimmed
+ * ```
+ *
+ * @example Gradients (via helper functions)
+ * ```tsx
+ * foregroundStyle(linearGradient({ colors: ['#FF0000', '#0000FF'], startPoint: {x: 0, y: 0}, endPoint: {x: 1, y: 1} }))
+ * foregroundStyle(radialGradient({ colors: ['#FF0000', '#0000FF'], center: {x: 0.5, y: 0.5}, startRadius: 0, endRadius: 100 }))
+ * ```
+ *
  * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/foregroundstyle(_:)).
  */
 export const foregroundStyle = (
-  style:
-    | string // Simple color (hex string, color name, or Apple system color name)
-    | {styleType: 'color'; color: string}
-    | {
-        styleType: 'hierarchical';
-        hierarchicalStyle:
-          | 'primary'
-          | 'secondary'
-          | 'tertiary'
-          | 'quaternary'
-          | 'quinary';
-      }
-    | {
-        styleType: 'linearGradient';
-        colors: string[];
-        startPoint: {x: number; y: number};
-        endPoint: {x: number; y: number};
-      }
-    | {
-        styleType: 'radialGradient';
-        colors: string[];
-        center: {x: number; y: number};
-        startRadius: number;
-        endRadius: number;
-      }
-    | {
-        styleType: 'angularGradient';
-        colors: string[];
-        center: {x: number; y: number};
-      },
+  style: HierarchicalStyle | (string & {}) | GradientStyle,
 ) => {
-  // Handle string color
   if (typeof style === 'string') {
+    if (HIERARCHICAL_STYLES.has(style)) {
+      return createModifier('foregroundStyle', {
+        styleType: 'hierarchical',
+        hierarchicalStyle: style,
+      });
+    }
     return createModifier('foregroundStyle', {
       styleType: 'color',
       color: style,
     });
   }
 
-  // All other types can be passed directly - names match Swift exactly
   return createModifier('foregroundStyle', style);
 };
 

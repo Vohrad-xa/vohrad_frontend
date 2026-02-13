@@ -1,6 +1,6 @@
 import type {ApiResponse} from '@sykamore/types';
 import {ApiError} from '@sykamore/types';
-import {resolveApiUrl, getApiConfig} from './config';
+import {resolveApiUrl} from './config';
 import {loadingManager} from './loading-manager';
 import {errorManager} from './error-manager';
 
@@ -29,7 +29,6 @@ export class HttpClient {
       urlOrEndpoint.startsWith('http://') ||
       urlOrEndpoint.startsWith('https://');
     const url = isFullUrl ? urlOrEndpoint : resolveApiUrl(urlOrEndpoint);
-    const apiConfig = getApiConfig();
 
     const incomingHeaders = (options.headers as Record<string, string>) || {};
     const isFormDataBody =
@@ -53,12 +52,6 @@ export class HttpClient {
 
     if (this.accessToken) {
       headers.Authorization = `Bearer ${this.accessToken}`;
-    }
-
-    // DEVELOPMENT ONLY: Send tenant via header for IP-based development
-    // NOTE: Now using subdomain in URL instead (tenant.domain.com)
-    if (apiConfig.tenant) {
-      headers['X-Tenant-Subdomain'] = apiConfig.tenant;
     }
 
     const config: RequestInit = {

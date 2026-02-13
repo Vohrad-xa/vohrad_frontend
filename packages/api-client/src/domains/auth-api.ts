@@ -35,10 +35,7 @@ export class AuthApi {
       issued_at: Date.now(),
     };
 
-    // Set access token for subsequent requests
     httpClient.setAccessToken(tokens.access_token);
-
-    // Get user profile from /users/me endpoint
     const userResponse = await httpClient.get<User>(API_ENDPOINTS.USERS.ME);
     const user: User = userResponse.data;
 
@@ -46,8 +43,7 @@ export class AuthApi {
   }
 
   async refreshToken(refreshToken?: string): Promise<AuthTokens> {
-    // On web we rely on cookies, so the payload is only sent for native clients.
-    const payload = refreshToken ? {refresh_token: refreshToken} : undefined;
+    const payload = refreshToken ? {refresh_token: refreshToken} : {};
     const response = await httpClient.post<TokenResponse>(
       API_ENDPOINTS.AUTH.REFRESH,
       payload,
@@ -60,7 +56,6 @@ export class AuthApi {
   }
 
   async getCurrentUser(): Promise<User> {
-    // Browser bootstrap uses this after refreshing via cookie.
     const userResponse = await httpClient.get<User>(API_ENDPOINTS.USERS.ME);
     return userResponse.data;
   }

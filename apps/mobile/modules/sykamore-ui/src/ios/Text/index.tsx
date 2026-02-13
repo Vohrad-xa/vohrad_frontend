@@ -9,7 +9,19 @@ export interface TextProps extends CommonViewModifierProps {
    * Only string and number are supported.
    */
   children?: React.ReactNode;
+  /**
+   * The maximum number of lines to display.
+   * @default undefined
+   * @platform ios 15.0+
+   */
   lineLimit?: number;
+  /**
+   * When true, parses the text as markdown.
+   * Supports **bold**, *italic*, ~~strikethrough~~, `code`, and [links](url).
+   * @default false
+   * @platform ios 15.0+
+   */
+  markdown?: boolean;
 }
 
 type NativeTextProps = Omit<TextProps, 'children'> & {

@@ -79,13 +79,19 @@ internal struct BaselineOffsetModifier: ViewModifier, Record {
 internal final class TextViewProps: UIBaseViewProps {
   @Field var text: String = ""
   @Field var lineLimit: Int?
+  @Field var markdown: Bool = false
 }
 
 internal struct TextView: ExpoSwiftUI.View {
   @ObservedObject var props: TextViewProps
 
   var body: some View {
-    Text(props.text)
-      .lineLimit(props.lineLimit)
+    if props.markdown {
+      Text(LocalizedStringKey(props.text))
+        .lineLimit(props.lineLimit)
+    } else {
+      Text(props.text)
+        .lineLimit(props.lineLimit)
+    }
   }
 }

@@ -108,10 +108,7 @@ const ProfileRow = React.memo(
           {valueText ? (
             <Text
               modifiers={[
-                foregroundStyle({
-                  styleType: 'hierarchical',
-                  hierarchicalStyle: 'secondary',
-                }),
+                foregroundStyle('secondary'),
                 ...(valuePaddingX != null
                   ? [padding({horizontal: valuePaddingX})]
                   : []),

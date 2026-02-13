@@ -209,6 +209,8 @@ class GlobalErrorManager {
       lower.includes('invalid email') ||
       lower.includes('authentication') ||
       lower.includes('unauthorized') ||
+      lower.includes('refresh token') ||
+      lower.includes('session expired') ||
       lower.includes('401')
     );
   }

@@ -93,12 +93,7 @@ export function resolveBaseUrl(): string {
     );
   }
 
-  // Check if domain is an IP address - if so, don't use subdomain (invalid DNS)
-  const isIpAddress = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(domain);
-
-  // For IP addresses, tenant is sent via X-Tenant-Subdomain header (see http-client.ts)
-  const fullDomain =
-    cfg.tenant && !isIpAddress ? `${cfg.tenant}.${domain}` : domain;
+  const fullDomain = cfg.tenant ? `${cfg.tenant}.${domain}` : domain;
   return `${proto}://${fullDomain}`;
 }
 
@@ -107,8 +102,6 @@ export function resolveApiUrl(endpoint: string): string {
   const ver = current.version?.replace(/^\//, '');
   const ep = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
   const url = ver ? `${base}/${ver}/${ep}` : `${base}/${ep}`;
-  // LATER TODO : Add /api prefix for professional API structure
-  // const url = ver ? `${base}/api/${ver}/${ep}` : `${base}/api/${ep}`;
   return url.replace(/(?<!:)\/+/g, '/');
 }
 

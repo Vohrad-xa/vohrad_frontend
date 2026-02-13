@@ -1,7 +1,7 @@
 import {Platform} from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 
-const PREFIX = 'vohrad.secure.';
+const PREFIX = 'sykamore.secure.';
 const fallbackMemory = new Map<string, string>();
 const MAX_VALUE_LENGTH = 2000;
 const META_SUFFIX = '.meta';
