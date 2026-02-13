@@ -1,20 +1,15 @@
-import {router} from 'expo-router';
-import {Palette} from '@/constants';
 import {useTheme} from '@/providers';
 import {
   Host,
   Form,
+  Text,
+  Label,
   Section,
   TextField,
   LabeledContent,
-  Text,
-  accessibilityLabel,
-  foregroundStyle,
-  frame,
-  onTapGesture,
-  Label,
-  VStack,
   listSectionSpacing,
+  accessibilityLabel,
+  frame,
 } from 'sykamore-ui/ios';
 import type {TenantInfoValues} from '../hooks/use-tenant-info-form';
 
@@ -47,20 +42,10 @@ export function TenantInfoView({values, onFieldChange}: TenantInfoViewProps) {
 
         <Section
           footer={
-            <VStack alignment="leading">
-              <Text>
-                Name and email are read-only for security reasons. To request
-                changes, please contact our support team.
-              </Text>
-              <Text
-                modifiers={[
-                  foregroundStyle(Palette.blue),
-                  onTapGesture(() => router.push('/(tabs)/settings/support')),
-                ]}
-              >
-                Send us a message.
-              </Text>
-            </VStack>
+            <Text markdown>
+              Name and email are read-only for security reasons. To request
+              changes, please [contact support](mobile://settings/support).
+            </Text>
           }
         >
           <LabeledContent label="Phone">
