@@ -33,15 +33,13 @@
     "format": "prettier . --write",
     "check:all": "turbo run lint && turbo run typecheck && turbo run format"
   },
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@10.29.3",
   "pnpm": {
     "overrides": {
       "glob": "^13.0.1",
       "rimraf": "^6.0.1",
-      "@shopify/flash-list": "2.0.2",
-      "@react-native-community/slider": "5.1.1",
       "react": "19.2.0",
-      "react-native-keyboard-controller": "1.20.4"
+      "@shopify/flash-list": "2.0.2"
     },
     "ignoredBuiltDependencies": [
       "esbuild"
