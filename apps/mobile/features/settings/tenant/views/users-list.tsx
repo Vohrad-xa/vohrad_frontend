@@ -73,26 +73,18 @@ const UserItem = memo<UserItemProps>(({item, onPress, styles}) => {
       right={right}
       onPress={handlePress}
       title={
-        <ThemedText
-          variant="body"
-          fontWeight="regular"
-          ellipsizeMode="tail"
-          numberOfLines={1}
-        >
+        <ThemedText variant="body" fontWeight="regular" ellipsizeMode="tail">
           {name}
         </ThemedText>
       }
       titleStyle={styles.title}
       description={
-        <ThemedText
-          variant="footnote"
-          fontWeight="medium"
-          colorToken="muted"
-          numberOfLines={1}
-        >
+        <ThemedText variant="footnote" fontWeight="medium" colorToken="muted">
           {description}
         </ThemedText>
       }
+      descriptionNumberOfLines={1}
+      titleNumberOfLines={1}
       borderless
     />
   );

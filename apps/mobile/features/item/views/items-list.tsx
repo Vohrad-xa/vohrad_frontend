@@ -84,6 +84,8 @@ const ItemItem = memo<ItemItemProps>(
         left={left}
         right={right}
         unstable_pressDelay={30}
+        descriptionNumberOfLines={1}
+        titleNumberOfLines={1}
         borderless
       />
     );
