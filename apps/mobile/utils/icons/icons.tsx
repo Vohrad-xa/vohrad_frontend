@@ -13,7 +13,6 @@ export type IconProps = {
   fontWeight?: string;
   accessibilityLabel?: string;
   style?: StyleProp<TextStyle>;
-  withBackground?: boolean;
   useSwiftUI?: boolean;
   noContainer?: boolean;
   symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';

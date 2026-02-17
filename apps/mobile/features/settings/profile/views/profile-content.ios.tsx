@@ -69,8 +69,8 @@ function ChevronRight() {
       useSwiftUI
       name={AppIcons.actions.forward}
       colorToken="muted"
-      fontWeight="regular"
-      size={12}
+      fontWeight="medium"
+      size={13}
     />
   );
 }
@@ -136,7 +136,7 @@ export function ProfileContent() {
     : '—';
   const birthDateText = dateOfBirth ? formatDate(dateOfBirth) : 'Not set';
 
-  const valuePaddingX = ds.spacing.sm;
+  const valuePaddingX = ds.spacing.md;
 
   const pendingIcon = pendingEmail ? (
     <Icon

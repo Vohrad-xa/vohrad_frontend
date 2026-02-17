@@ -41,7 +41,11 @@ type TenantRowModel = Readonly<{
 const TENANT_ROWS = [
   {
     ...TENANT_FIELDS.info,
-    systemImage: 'textformat' as SystemImageName,
+    systemImage: 'building.2' as SystemImageName,
+  },
+  {
+    ...TENANT_FIELDS.users,
+    systemImage: 'person.2' as SystemImageName,
   },
   {
     ...TENANT_FIELDS.license,
@@ -51,10 +55,6 @@ const TENANT_ROWS = [
     ...TENANT_FIELDS.businessHours,
     systemImage: 'clock' as SystemImageName,
   },
-  {
-    ...TENANT_FIELDS.users,
-    systemImage: 'person.2' as SystemImageName,
-  },
 ] as const satisfies readonly TenantRowModel[];
 
 function ChevronRight() {
@@ -63,8 +63,8 @@ function ChevronRight() {
       useSwiftUI
       name={AppIcons.actions.forward}
       colorToken="muted"
-      fontWeight="regular"
-      size={12}
+      fontWeight="medium"
+      size={13}
     />
   );
 }

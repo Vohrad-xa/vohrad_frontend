@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {Avatar, Divider, List, type ListItemProps} from 'react-native-paper';
 import {ThemedText, EmptyState} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
@@ -50,7 +50,14 @@ const UserItem = memo<UserItemProps>(({item, onPress, styles}) => {
   const initials = getUserInitials(item);
 
   const left = useCallback<NonNullable<ListItemProps['left']>>(
-    ({style}) => <Avatar.Text size={40} label={initials} style={style} />,
+    ({style}) => (
+      <Avatar.Text
+        label={initials}
+        style={style}
+        color={Palette.deepblue}
+        size={45}
+      />
+    ),
     [initials],
   );
 
@@ -188,7 +195,7 @@ const createStyles = makeStyleFactory(
         marginBottom: ds.spacing.xs,
       },
       divider: {
-        marginLeft: ds.spacing.xxl * 2 + ds.spacing.sm + ds.spacing.xxs,
+        marginLeft: ds.spacing.xxl * 2 + ds.spacing.lg,
         marginRight: ds.spacing.lg,
       },
     }),

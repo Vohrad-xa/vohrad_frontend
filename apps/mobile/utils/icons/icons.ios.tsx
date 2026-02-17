@@ -6,12 +6,12 @@ import {useTheme} from '@/providers/theme-provider';
 import {
   accessibilityLabel,
   background,
-  clipShape,
   Image,
   font,
   foregroundStyle,
   frame,
   type ViewModifier,
+  cornerRadius,
 } from 'sykamore-ui/ios';
 
 export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
@@ -33,7 +33,6 @@ export type IconProps = {
   fontWeight?: SwiftUIFontWeight;
   accessibilityLabel?: string;
   style?: StyleProp<TextStyle>;
-  withBackground?: boolean;
   useSwiftUI?: boolean;
   container?: boolean;
   symbolType?: SymbolType;
@@ -62,8 +61,7 @@ export const Icon: React.FC<IconProps> = ({
 }) => {
   const {theme, ds} = useTheme();
 
-  const resolvedSize =
-    typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.sm);
+  const resolvedSize = typeof size === 'number' ? size : ds.iconSize[size];
 
   const resolvedTintColor =
     color ?? (colorToken ? theme[colorToken] : theme.text);
@@ -109,7 +107,7 @@ export const Icon: React.FC<IconProps> = ({
           foregroundStyle(Palette.white),
           frame({width: tile, height: tile}),
           background(resolvedTintColor ?? theme.card),
-          clipShape('roundedRectangle'),
+          cornerRadius(ds.borderRadius.lg),
           ...a11yModifier,
         ]}
       />

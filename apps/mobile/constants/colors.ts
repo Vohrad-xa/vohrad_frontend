@@ -91,7 +91,7 @@ const _Tokens = {
     primary: Palette.lightBlue,
     secondary: Palette.Greige,
     tertiary: Palette.slateblue,
-    tint: Palette.deepblue,
+    tint: Palette.blue,
     tint2: Palette.iceA83,
     muted: Palette.gray[500],
 

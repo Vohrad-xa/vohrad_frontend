@@ -57,7 +57,11 @@ const AttachmentTileRow = React.memo(
     return (
       <Button
         onPress={() => router.push(href)}
-        modifiers={[buttonStyle({style: 'plain'}), accessibilityLabel(a11y)]}
+        modifiers={[
+          buttonStyle({style: 'automatic'}),
+          tint('primary'),
+          accessibilityLabel(a11y),
+        ]}
       >
         <HStack alignment="center">
           <Label
@@ -83,7 +87,7 @@ const AttachmentTileRow = React.memo(
             name={AppIcons.actions.forward}
             colorToken="muted"
             fontWeight="medium"
-            size={12}
+            size={13}
           />
         </HStack>
       </Button>

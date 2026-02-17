@@ -4,7 +4,7 @@ import {FlashList} from '@shopify/flash-list';
 import {Image} from 'expo-image';
 import {Divider, List, type ListItemProps} from 'react-native-paper';
 import {EmptyState} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
@@ -48,7 +48,11 @@ const ItemItem = memo<ItemItemProps>(
           />
         ) : (
           <View style={[styles.iconContainer, style]}>
-            <Icon name={AppIcons.domain.itemOutline} size="lg" />
+            <Icon
+              name={AppIcons.domain.itemOutline}
+              color={Palette.deepblue}
+              size="lg"
+            />
           </View>
         ),
       [imageUrl, item.id, styles.avatar, styles.iconContainer],
@@ -187,7 +191,7 @@ const createStyles = makeStyleFactory(
         width: 45,
         height: 45,
         borderRadius: ds.borderRadius.full,
-        backgroundColor: theme.secondaryContainer,
+        backgroundColor: theme.primary,
         justifyContent: 'center',
         alignItems: 'center',
       },
