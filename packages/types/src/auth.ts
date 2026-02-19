@@ -28,18 +28,25 @@ export interface AuthState {
   clearError: () => void;
 }
 
+export type MobileOidcLoginParams = {
+  subdomain: string;
+  code: string;
+  codeVerifier: string;
+  redirectUri: string;
+  /**
+   * Pre-fetched token endpoint from OIDC discovery
+   * avoids a second discovery request in the service.
+   */
+  tokenEndpoint?: string;
+};
+
 export interface AuthContextValue {
   isAuthenticated: boolean;
   user: User | null;
   isLoading: boolean;
   error: string | null;
   authReady: boolean;
-  loginUser: (
-    email: string,
-    password: string,
-    subdomain: string,
-  ) => Promise<void>;
-  loginAdmin: (email: string, password: string) => Promise<void>;
+  startWebLogin: (subdomain: string, returnTo?: string) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
 }

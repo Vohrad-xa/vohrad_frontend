@@ -1,4 +1,4 @@
-import React, {createContext, useContext} from 'react';
+import React, {createContext, useCallback, useContext, useMemo} from 'react';
 import {authService} from './auth-service';
 import {useAuthStore} from '@sykamore/store';
 import type {AuthContextValue} from '@sykamore/types';
@@ -21,33 +21,39 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   const clearError = useAuthStore((s) => s.clearError);
   const _hasHydrated = useAuthStore((s) => s._hasHydrated);
 
-  const loginUser = async (
-    email: string,
-    password: string,
-    subdomain: string,
-  ) => {
-    await authService.loginUser(email, password, subdomain);
-  };
+  const startWebLogin = useCallback(
+    async (subdomain: string, returnTo?: string) => {
+      await authService.startWebLogin(subdomain, returnTo);
+    },
+    [],
+  );
 
-  const loginAdmin = async (email: string, password: string) => {
-    await authService.loginAdmin(email, password);
-  };
-
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await authService.logout();
-  };
+  }, []);
 
-  const value: AuthContextValue = {
-    isAuthenticated,
-    user,
-    isLoading,
-    error,
-    authReady: _hasHydrated,
-    loginUser,
-    loginAdmin,
-    logout,
-    clearError,
-  };
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      isAuthenticated,
+      user,
+      isLoading,
+      error,
+      authReady: _hasHydrated,
+      startWebLogin,
+      logout,
+      clearError,
+    }),
+    [
+      isAuthenticated,
+      user,
+      isLoading,
+      error,
+      _hasHydrated,
+      startWebLogin,
+      logout,
+      clearError,
+    ],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -1,8 +1,8 @@
 export const API_ENDPOINTS = {
   AUTH: {
-    LOGIN_USER: '/auth/login/user',
-    LOGIN_ADMIN: '/auth/login/admin',
-    REFRESH: '/auth/refresh',
+    OIDC_START: '/auth/oidc/start',
+    WEB_TOKEN: '/auth/web/token',
+    WEB_LOGOUT: '/auth/web/logout',
     LOGOUT: '/auth/logout',
     LOGOUT_ALL: '/auth/logout-all',
   },

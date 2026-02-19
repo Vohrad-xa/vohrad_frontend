@@ -8,6 +8,8 @@ import {sanitizeUser, redactTokens} from './utils/sanitizers';
 import {getPersistBackend} from './utils/storage';
 import {httpClient, setApiTenant} from '@sykamore/api-client';
 
+export const AUTH_PERSIST_KEY = 'sykamore-auth';
+
 export type StoreState = AuthSlice &
   TenantSlice &
   SystemSlice &
@@ -25,7 +27,7 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
       _hasHydrated: false,
     }),
     {
-      name: 'sykamore-auth',
+      name: AUTH_PERSIST_KEY,
       storage: createJSONStorage(() => ({
         getItem: (key: string) => getPersistBackend().getItem(key),
         setItem: (key: string, value: string) =>

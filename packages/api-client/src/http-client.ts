@@ -70,8 +70,8 @@ export class HttpClient {
       // Intercept 401 responses and attempt token refresh
       if (response.status === 401 && !isRetry && this.onTokenRefresh) {
         const isAuthEndpoint =
-          urlOrEndpoint.includes('/auth/login') ||
-          urlOrEndpoint.includes('/auth/refresh');
+          urlOrEndpoint.includes('/auth/oidc/') ||
+          urlOrEndpoint.includes('/auth/web/token');
 
         if (!isAuthEndpoint) {
           try {
@@ -243,9 +243,14 @@ export class HttpClient {
     return this.makeRequest<T>(urlOrEndpoint, {method: 'GET'});
   }
 
-  async post<T>(endpoint: string, body?: unknown): Promise<ApiResponse<T>> {
+  async post<T>(
+    endpoint: string,
+    body?: unknown,
+    headers?: Record<string, string>,
+  ): Promise<ApiResponse<T>> {
     return this.makeRequest<T>(endpoint, {
       method: 'POST',
+      headers,
       body: body ? JSON.stringify(body) : undefined,
     });
   }

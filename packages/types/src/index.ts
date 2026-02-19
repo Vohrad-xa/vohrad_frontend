@@ -1,5 +1,5 @@
 // Auth types
-export type {AuthState, AuthContextValue, AsyncState} from './auth';
+export type {AuthState, AuthContextValue, AsyncState, MobileOidcLoginParams} from './auth';
 
 // API types
 export type {
@@ -16,10 +16,6 @@ export {ApiError} from './api';
 export type {
   User,
   AuthTokens,
-  BaseCredentials,
-  UserCredentials,
-  AdminCredentials,
-  RefreshTokenRequest,
   TokenResponse,
   UserCreateData,
   UserUpdateData,

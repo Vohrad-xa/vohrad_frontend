@@ -1,9 +1,4 @@
-export type {
-  UserCredentials,
-  AdminCredentials,
-  TokenResponse,
-  ApiResponse,
-} from '@sykamore/types';
+export type {TokenResponse, ApiResponse} from '@sykamore/types';
 export {ApiError} from '@sykamore/types';
 export {httpClient} from './http-client';
 export * from './domains';

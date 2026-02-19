@@ -12,19 +12,10 @@ const phoneSchema = basePhoneSchema;
 const dateSchema = baseDateSchema;
 const postalCodeSchema = createPostalCodeSchema();
 
-const passwordSchema = z
-  .string()
-  .min(8, 'Password must be at least 8 characters')
-  .max(128, 'Password cannot exceed 128 characters')
-  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-  .regex(/[0-9]/, 'Password must contain at least one number');
-
 export const userCreateDataSchema = z.object({
   first_name: nameSchema.optional(),
   last_name: nameSchema.optional(),
   email: emailSchema,
-  password: passwordSchema,
   phone_number: phoneSchema.optional(),
   date_of_birth: dateSchema.optional(),
   address: z

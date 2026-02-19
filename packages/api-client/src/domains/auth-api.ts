@@ -1,52 +1,22 @@
-import type {
-  AuthTokens,
-  User,
-  UserCredentials,
-  AdminCredentials,
-  TokenResponse,
-} from '@sykamore/types';
+import type {AuthTokens, User, TokenResponse} from '@sykamore/types';
+import {resolveApiUrl} from '../config';
 import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';
 
 export class AuthApi {
-  async loginUser(
-    credentials: UserCredentials,
-  ): Promise<{tokens: AuthTokens; user: User}> {
-    return this.login(API_ENDPOINTS.AUTH.LOGIN_USER, credentials);
+  getOidcStartUrl(returnTo?: string): string {
+    const url = new URL(resolveApiUrl(API_ENDPOINTS.AUTH.OIDC_START));
+    if (returnTo && returnTo.trim().length > 0) {
+      url.searchParams.set('return_to', returnTo.trim());
+    }
+    return url.toString();
   }
 
-  async loginAdmin(
-    credentials: AdminCredentials,
-  ): Promise<{tokens: AuthTokens; user: User}> {
-    return this.login(API_ENDPOINTS.AUTH.LOGIN_ADMIN, credentials);
-  }
-
-  private async login(
-    endpoint: string,
-    credentials: UserCredentials | AdminCredentials,
-  ): Promise<{tokens: AuthTokens; user: User}> {
+  async issueWebAccessToken(csrfToken: string): Promise<AuthTokens> {
     const response = await httpClient.post<TokenResponse>(
-      endpoint,
-      credentials,
-    );
-
-    const tokens: AuthTokens = {
-      ...response.data,
-      issued_at: Date.now(),
-    };
-
-    httpClient.setAccessToken(tokens.access_token);
-    const userResponse = await httpClient.get<User>(API_ENDPOINTS.USERS.ME);
-    const user: User = userResponse.data;
-
-    return {tokens, user};
-  }
-
-  async refreshToken(refreshToken?: string): Promise<AuthTokens> {
-    const payload = refreshToken ? {refresh_token: refreshToken} : {};
-    const response = await httpClient.post<TokenResponse>(
-      API_ENDPOINTS.AUTH.REFRESH,
-      payload,
+      API_ENDPOINTS.AUTH.WEB_TOKEN,
+      {},
+      {'X-CSRF-Token': csrfToken},
     );
 
     return {
@@ -58,6 +28,14 @@ export class AuthApi {
   async getCurrentUser(): Promise<User> {
     const userResponse = await httpClient.get<User>(API_ENDPOINTS.USERS.ME);
     return userResponse.data;
+  }
+
+  async logoutWebSession(csrfToken: string): Promise<void> {
+    await httpClient.post<null>(
+      API_ENDPOINTS.AUTH.WEB_LOGOUT,
+      {},
+      {'X-CSRF-Token': csrfToken},
+    );
   }
 
   async logout(): Promise<void> {

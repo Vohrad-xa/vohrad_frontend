@@ -1,27 +1,11 @@
 import {z} from 'zod';
-import {emailSchema} from './email';
-
-const baseCredentialsSchema = z.object({
-  email: emailSchema,
-  password: z.string().min(1, 'Password is required'),
-});
-
-export const userCredentialsSchema = baseCredentialsSchema.extend({
-  tenant_id: z.string().optional(),
-});
-
-export const adminCredentialsSchema = baseCredentialsSchema;
-
-export const refreshTokenRequestSchema = z.object({
-  refresh_token: z.string().optional(),
-});
 
 export const tokenResponseSchema = z.object({
   access_token: z.string(),
-  refresh_token: z.string(),
+  refresh_token: z.string().optional(),
   token_type: z.string(),
   expires_in: z.number(),
-  refresh_expires_in: z.number(),
+  refresh_expires_in: z.number().optional(),
 });
 
 export const authTokensSchema = tokenResponseSchema.extend({
@@ -51,10 +35,6 @@ export const userSchema = z.object({
   pending_email_expires_at: z.string().nullable().optional(),
 });
 
-export type BaseCredentials = z.infer<typeof baseCredentialsSchema>;
-export type UserCredentials = z.infer<typeof userCredentialsSchema>;
-export type AdminCredentials = z.infer<typeof adminCredentialsSchema>;
-export type RefreshTokenRequest = z.infer<typeof refreshTokenRequestSchema>;
 export type TokenResponse = z.infer<typeof tokenResponseSchema>;
 export type AuthTokens = z.infer<typeof authTokensSchema>;
 export type User = z.infer<typeof userSchema>;

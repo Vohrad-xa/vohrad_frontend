@@ -1,4 +1,4 @@
-export {useAuthStore} from './store';
+export {useAuthStore, AUTH_PERSIST_KEY} from './store';
 export type {StoreState} from './store';
 export {setAuthPersistStorage} from './utils/storage';
 export {shallow} from 'zustand/shallow';
