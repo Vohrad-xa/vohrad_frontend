@@ -60,10 +60,6 @@ export default function ProfileLayout() {
         options={{title: 'Phone Number', ...modalOptions}}
       />
       <Stack.Screen
-        name="password"
-        options={{title: 'Password', ...modalOptions}}
-      />
-      <Stack.Screen
         name="address"
         options={{title: 'Address', ...modalOptions}}
       />

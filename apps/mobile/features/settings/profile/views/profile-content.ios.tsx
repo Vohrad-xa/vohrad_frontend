@@ -50,10 +50,6 @@ const CONTACT_ROWS = [
     ...PROFILE_FIELDS.phoneNumber,
     systemImage: 'phone' as SystemImageName,
   },
-  {
-    ...PROFILE_FIELDS.password,
-    systemImage: 'key.horizontal' as SystemImageName,
-  },
 ] as const satisfies readonly ProfileRowModel[];
 
 const ADDRESS_ROWS = [

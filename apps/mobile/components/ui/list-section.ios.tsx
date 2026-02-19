@@ -1,7 +1,6 @@
 import React from 'react';
 import {Section, Label, Spacer, Text, Button, HStack, tint} from 'sykamore-ui';
 import {type TokenName} from '@/constants/colors';
-import {useTheme} from '@/providers';
 import {Icon, AppIcons, type IconName} from '@/utils/icons';
 
 interface ListSectionProps {
@@ -47,7 +46,6 @@ const ListSectionRow: React.FC<ListSectionRowProps> = ({
   hideChevron = false,
 }) => {
   const showChevron = !hideChevron && !rightComponent;
-  const {theme} = useTheme();
 
   return (
     <Button role="default" onPress={onPress} modifiers={[tint('primary')]}>

@@ -25,12 +25,6 @@ export const PROFILE_FIELDS = {
     a11yLabel: 'Phone number',
     a11yHint: 'Opens the phone number editor',
   },
-  password: {
-    title: 'Password',
-    href: '/(tabs)/settings/profile/password' satisfies Href,
-    a11yLabel: 'Change password',
-    a11yHint: 'Opens the password change screen',
-  },
   address: {
     title: 'Address',
     href: '/(tabs)/settings/profile/address' satisfies Href,

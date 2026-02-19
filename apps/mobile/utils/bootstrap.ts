@@ -1,14 +1,12 @@
 import {Alert, Platform} from 'react-native';
 import {authService} from '@sykamore/auth';
-import {useAuthStore, setAuthPersistStorage} from '@sykamore/store';
+import {useAuthStore, setAuthPersistStorage, AUTH_PERSIST_KEY} from '@sykamore/store';
 import {
   authenticateWithBiometrics,
   disableBiometrics,
   shouldRequireAuthenticationOnLaunch,
 } from '@/features/security/biometric-service';
 import {secureStorage} from './secure-storage';
-
-const PERSIST_KEY = 'sykamore-auth';
 
 function configureZustandPersistence() {
   const hydrationState = {locked: true};
@@ -29,7 +27,7 @@ function configureZustandPersistence() {
 }
 
 async function hasPersistedRefreshToken(): Promise<boolean> {
-  const raw = await secureStorage.getItem(PERSIST_KEY);
+  const raw = await secureStorage.getItem(AUTH_PERSIST_KEY);
   if (!raw) return false;
 
   try {
@@ -58,7 +56,7 @@ async function handleBiometricAuthentication(): Promise<boolean> {
 
   // If auth fails/cancelled: disable biometrics and wipe persisted auth snapshot.
   await disableBiometrics();
-  await secureStorage.removeItem(PERSIST_KEY);
+  await secureStorage.removeItem(AUTH_PERSIST_KEY);
 
   if (!authResult.cancelled) {
     Alert.alert('Authentication failed', 'Please sign in again to continue.');
@@ -71,17 +69,11 @@ async function rehydrateSession() {
   await useAuthStore.persist?.rehydrate?.();
 
   if (Platform.OS === 'web') {
-    const {isAuthenticated} = useAuthStore.getState();
-    if (!isAuthenticated) {
-      try {
-        await authService.restoreSessionFromCookie();
-      } catch (error) {
-        console.error(
-          '[bootstrap] Failed to restore web session from cookie:',
-          error,
-        );
-      }
+    const restored = await authService.restoreSessionFromCookie();
+    if (!restored) {
+      useAuthStore.getState().logout();
     }
+    return;
   }
 
   const {tokens, isAuthenticated} = useAuthStore.getState();

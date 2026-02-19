@@ -35,10 +35,10 @@ export function useAddUser(
   }, [formData]);
 
   const saveUser = useCallback(async (): Promise<boolean> => {
-    if (!formData.email || !formData.password) {
+    if (!formData.email) {
       showAlert({
-        title: 'Missing Required Fields',
-        message: 'Email and password are required to create a user.',
+        title: 'Missing Required Field',
+        message: 'Email is required to create a user.',
       });
       return false;
     }
@@ -70,8 +70,6 @@ export function useAddUser(
       | 'url';
     textContentType?:
       | 'email-address'
-      | 'password'
-      | 'new-password'
       | 'one-time-code'
       | 'username'
       | 'name'
@@ -91,7 +89,7 @@ export function useAddUser(
   }> = [
     {
       key: 'first_name',
-      label: 'First Name *',
+      label: 'First Name',
       textContentType: 'given-name',
       autoCapitalize: 'words',
       autocapitalization: 'words',
@@ -99,7 +97,7 @@ export function useAddUser(
     },
     {
       key: 'last_name',
-      label: 'Last Name *',
+      label: 'Last Name',
       textContentType: 'family-name',
       autoCapitalize: 'words',
       autocapitalization: 'words',
@@ -112,13 +110,6 @@ export function useAddUser(
       textContentType: 'email-address',
       autoCapitalize: 'none',
       autocapitalization: 'never',
-      submitLabel: 'next',
-    },
-    {
-      key: 'password',
-      label: 'Password *',
-      secureTextEntry: true,
-      textContentType: 'new-password',
       submitLabel: 'next',
     },
     {

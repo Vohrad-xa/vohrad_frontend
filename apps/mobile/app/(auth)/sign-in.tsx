@@ -1,16 +1,14 @@
 import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
-import {PersonalEmailForm} from '@/features/auth';
+import {SignInForm} from '@/features/auth';
 
-export default function PersonalEmailModal() {
-  const handleSuccess = () => {};
-
+export default function SignInScreen() {
   return (
     <KeyboardAwareScrollView
       contentInsetAdjustmentBehavior="automatic"
       keyboardShouldPersistTaps="handled"
       style={{flex: 1}}
     >
-      <PersonalEmailForm onSuccess={handleSuccess} />
+      <SignInForm />
     </KeyboardAwareScrollView>
   );
 }

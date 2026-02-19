@@ -8,29 +8,16 @@ import {
 } from '@/components/ui';
 import {useTheme} from '@/providers';
 
-interface AuthLayoutProps {
-  children: React.ReactNode;
-}
-
-function AuthLayout({children}: AuthLayoutProps) {
-  return (
-    <ScreenLoadingWrapper>
-      {children}
-      <ThemedStatusBar />
-    </ScreenLoadingWrapper>
-  );
-}
-
 export default function AuthGroupLayout() {
   const {theme} = useTheme();
   const router = useRouter();
 
   return (
-    <AuthLayout>
+    <ScreenLoadingWrapper>
       <Stack screenOptions={{headerShown: false}}>
         <Stack.Screen name="login" />
         <Stack.Screen
-          name="personal-email"
+          name="sign-in"
           options={{
             title: 'Login',
             headerShown: true,
@@ -52,6 +39,7 @@ export default function AuthGroupLayout() {
           }}
         />
       </Stack>
-    </AuthLayout>
+      <ThemedStatusBar />
+    </ScreenLoadingWrapper>
   );
 }

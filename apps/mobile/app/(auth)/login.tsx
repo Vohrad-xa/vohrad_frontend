@@ -8,6 +8,9 @@ import {themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
+ 
+const microsoftLogo = require('../../assets/icons/microsoft.png') as number;
+
 export default function LoginScreen() {
   const {ds, theme, scheme} = useTheme();
   const router = useRouter();
@@ -16,14 +19,8 @@ export default function LoginScreen() {
   const textColor = scheme === 'dark' ? '#000' : '#fff';
   const buttonColor = scheme === 'dark' ? '#fff' : '#000';
 
-  const microsoftLogo = require('../../assets/icons/microsoft.png');
-
-  const handleMicrosoftLogin = () => {
-    router.push('/(auth)/personal-email');
-  };
-
-  const handlePersonalEmailLogin = () => {
-    router.push('/(auth)/personal-email');
+  const navigateToSignIn = () => {
+    router.push('/(auth)/sign-in');
   };
 
   return (
@@ -37,17 +34,14 @@ export default function LoginScreen() {
         <Card.Content style={styles.content}>
           <Button
             mode="contained"
-            onPress={handleMicrosoftLogin}
+            onPress={navigateToSignIn}
             buttonColor={buttonColor}
             textColor={textColor}
             contentStyle={styles.buttonContent}
             icon={({size}) => (
               <Image
                 source={microsoftLogo}
-                style={{
-                  width: size,
-                  height: size,
-                }}
+                style={{width: size, height: size}}
               />
             )}
           >
@@ -66,12 +60,12 @@ export default function LoginScreen() {
 
           <Button
             mode="contained"
-            onPress={handlePersonalEmailLogin}
+            onPress={navigateToSignIn}
             buttonColor={buttonColor}
             textColor={textColor}
             contentStyle={styles.buttonContent}
           >
-            Use personal email
+            Continue with Email
           </Button>
 
           <View style={styles.footer}>
@@ -79,12 +73,10 @@ export default function LoginScreen() {
               variant="subheadline"
               style={{color: theme.muted, textAlign: 'center'}}
             >
-              By continuing, you acknowledge Sykamore’s
+              {"By continuing, you acknowledge Sykamore\u2019s"}
             </ThemedText>
 
-            <ThemedText variant="caption" accessibilityRole="link">
-              Privacy Policy
-            </ThemedText>
+            <ThemedText variant="caption">Privacy Policy</ThemedText>
           </View>
         </Card.Content>
       </Surface>
