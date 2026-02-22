@@ -12,7 +12,7 @@ export function searchUsersLocally(users: User[], searchQuery: string): User[] {
     const firstName = user.first_name?.toLowerCase() || '';
     const lastName = user.last_name?.toLowerCase() || '';
     const email = user.email?.toLowerCase() || '';
-    const role = user.role?.toLowerCase() || '';
+    const role = user.role_name?.toLowerCase() || '';
 
     return (
       firstName.includes(term) ||

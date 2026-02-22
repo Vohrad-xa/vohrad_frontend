@@ -45,7 +45,9 @@ const UserItem = memo<UserItemProps>(({item, onPress, styles}) => {
   const name =
     `${item.first_name ?? ''} ${item.last_name ?? ''}`.trim() || 'No name';
 
-  const description = `${item.email}${item.role ? ` - ${item.role}` : ''}`;
+  const description = `${item.email}${
+    item.role_name ? ` - ${item.role_name}` : ''
+  }`;
 
   const initials = getUserInitials(item);
 

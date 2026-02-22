@@ -126,7 +126,7 @@ export function ProfileContent() {
   const {profileDetails, fullName, dateOfBirth, pendingEmail} = useProfile();
 
   const initials = getInitials(fullName) ?? 'U';
-  const roleText = profileDetails?.role ?? 'member';
+  const roleText = profileDetails?.role_name ?? 'member';
   const memberSinceText = profileDetails?.created_at
     ? formatDate(profileDetails.created_at)
     : '—';

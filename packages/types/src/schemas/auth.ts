@@ -13,11 +13,13 @@ export const authTokensSchema = tokenResponseSchema.extend({
 });
 
 export const userSchema = z.object({
-  id: z.string(),
-  email: z.string(),
-  role: z.string(),
+  id: z.string().uuid(),
+  tenant_id: z.string().uuid().nullable().optional(),
+  idp_subject: z.string().min(1),
+  email: z.string().email(),
+  role_id: z.string().uuid().nullable().optional(),
+  role_name: z.string().nullable().optional(),
   role_description: z.string().nullable().optional(),
-  tenant_id: z.string().optional(),
   first_name: z.string().nullable().optional(),
   last_name: z.string().nullable().optional(),
   phone_number: z.string().nullable().optional(),
@@ -28,8 +30,8 @@ export const userSchema = z.object({
   postal_code: z.string().nullable().optional(),
   country: z.string().nullable().optional(),
   email_verified_at: z.string().nullable().optional(),
-  created_at: z.string().optional(),
-  updated_at: z.string(),
+  created_at: z.string().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
   pending_email: z.string().nullable().optional(),
   pending_email_requested_at: z.string().nullable().optional(),
   pending_email_expires_at: z.string().nullable().optional(),

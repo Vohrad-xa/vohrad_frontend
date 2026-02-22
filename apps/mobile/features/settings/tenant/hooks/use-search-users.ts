@@ -55,7 +55,7 @@ function useHybridUserSearch({
     }
 
     return users.filter((user) => {
-      if (hasRoleFilter && user.role !== roleFilter) {
+      if (hasRoleFilter && user.role_name !== roleFilter) {
         return false;
       }
 

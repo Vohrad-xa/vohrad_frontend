@@ -72,7 +72,7 @@ export function UsersFilterMenu({
       });
     } else {
       roleSourceUsers.forEach((user) => {
-        if (user.role) roleSet.add(user.role);
+        if (user.role_name) roleSet.add(user.role_name);
       });
     }
     if (filters.role) {

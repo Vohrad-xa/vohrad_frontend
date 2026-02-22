@@ -16,7 +16,7 @@ export function buildUserODataFilter(
   const conditions: string[] = [];
 
   if (filters.role) {
-    conditions.push(`role eq '${escapeString(filters.role)}'`);
+    conditions.push(`role_name eq '${escapeString(filters.role)}'`);
   }
 
   if (searchTerm && searchTerm.trim().length > 0) {
@@ -26,7 +26,7 @@ export function buildUserODataFilter(
         `contains(first_name,'${term}')`,
         `contains(last_name,'${term}')`,
         `contains(email,'${term}')`,
-        `contains(role,'${term}')`,
+        `contains(role_name,'${term}')`,
       ].join(' or ')})`,
     );
   }

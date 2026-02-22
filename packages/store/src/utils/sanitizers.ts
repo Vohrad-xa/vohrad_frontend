@@ -7,10 +7,12 @@ export function sanitizeUser(user: User | null): User | null {
 
   return {
     id: user.id,
-    email: user.email,
-    role: user.role,
-    role_description: user.role_description,
     tenant_id: user.tenant_id,
+    idp_subject: user.idp_subject,
+    email: user.email,
+    role_id: user.role_id,
+    role_name: user.role_name,
+    role_description: user.role_description,
     first_name: user.first_name,
     last_name: user.last_name,
     phone_number: user.phone_number,

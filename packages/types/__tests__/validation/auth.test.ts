@@ -21,9 +21,12 @@ describe('Auth Validation', () => {
   describe('validateUser', () => {
     it('validates complete user object', () => {
       const user = {
-        id: 'user-123',
+        id: '11111111-1111-4111-8111-111111111111',
+        tenant_id: '22222222-2222-4222-8222-222222222222',
+        idp_subject: 'a3f6a0bc-0c9b-49cb-8f7f-4fd6f18d8f21',
         email: 'user@example.com',
-        role: 'user',
+        role_id: '33333333-3333-4333-8333-333333333333',
+        role_name: 'employee',
         updated_at: '2024-01-01T00:00:00Z',
       };
 
@@ -86,9 +89,12 @@ describe('Auth Validation', () => {
   describe('userSchema', () => {
     it('validates complete user data', () => {
       const user = {
-        id: 'user-123',
+        id: '11111111-1111-4111-8111-111111111111',
+        tenant_id: '22222222-2222-4222-8222-222222222222',
+        idp_subject: 'a3f6a0bc-0c9b-49cb-8f7f-4fd6f18d8f21',
         email: 'user@example.com',
-        role: 'user',
+        role_id: '33333333-3333-4333-8333-333333333333',
+        role_name: 'employee',
         first_name: 'John',
         last_name: 'Doe',
         phone_number: '+1234567890',
@@ -97,15 +103,16 @@ describe('Auth Validation', () => {
 
       const result = schemas.userSchema.safeParse(user);
       expect(result.success).toBe(true);
-      expect(result.data?.id).toBe('user-123');
+      expect(result.data?.id).toBe('11111111-1111-4111-8111-111111111111');
       expect(result.data?.email).toBe('user@example.com');
     });
 
     it('validates user with nullable fields', () => {
       const user = {
-        id: 'user-456',
+        id: '44444444-4444-4444-8444-444444444444',
+        idp_subject: 'd2fc8ab6-6e44-4f96-8b5f-84c9caecfe1f',
         email: 'test@example.com',
-        role: 'admin',
+        role_name: 'admin',
         first_name: null,
         last_name: null,
         phone_number: null,

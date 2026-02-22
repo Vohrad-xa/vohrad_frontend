@@ -28,7 +28,7 @@ export function ProfileContent() {
     ? formatDate(profileDetails.created_at)
     : '—';
 
-  const roleText = profileDetails?.role ?? 'Member';
+  const roleText = profileDetails?.role_name ?? 'Member';
   const birthDateText = dateOfBirth ? formatDate(dateOfBirth) : NOT_SET;
 
   const emailText = email ?? NOT_SET;
