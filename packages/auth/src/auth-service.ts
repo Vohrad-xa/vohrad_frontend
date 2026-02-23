@@ -1,6 +1,17 @@
-import {authApi, errorManager, httpClient, setApiTenant, tenantApi} from '@sykamore/api-client';
+import {
+  authApi,
+  errorManager,
+  httpClient,
+  setApiTenant,
+  tenantApi,
+} from '@sykamore/api-client';
 import {queryClient, useAuthStore} from '@sykamore/store';
-import {ApiError, type AuthTokens, type MobileOidcLoginParams, validation} from '@sykamore/types';
+import {
+  ApiError,
+  type AuthTokens,
+  type MobileOidcLoginParams,
+  validation,
+} from '@sykamore/types';
 
 type GlobalWithEnv = {
   process?: {
@@ -148,7 +159,11 @@ export class AuthService {
     return AuthService.instance;
   }
 
-  async startWebLogin(subdomain: string, returnTo = '/'): Promise<void> {
+  async startWebLogin(
+    subdomain: string,
+    returnTo = '/',
+    options?: {setupPasskey?: boolean},
+  ): Promise<void> {
     if (!this.isWebRuntime()) {
       throw new Error('startWebLogin is only available in web runtime');
     }
@@ -164,7 +179,7 @@ export class AuthService {
       const redirectTarget =
         returnTo && returnTo.trim().length > 0 ? returnTo.trim() : '/';
 
-      const loginUrl = authApi.getOidcStartUrl(redirectTarget);
+      const loginUrl = authApi.getOidcStartUrl(redirectTarget, options);
       window.location.assign(loginUrl);
     } catch (error) {
       setLoading(false);
@@ -313,7 +328,9 @@ export class AuthService {
         }
 
         const mergedTokens =
-          !this.isWebRuntime() && !tokensResult.data.refresh_token && tokens?.refresh_token
+          !this.isWebRuntime() &&
+          !tokensResult.data.refresh_token &&
+          tokens?.refresh_token
             ? {
                 ...tokensResult.data,
                 refresh_token: tokens.refresh_token,
@@ -372,7 +389,10 @@ export class AuthService {
         const tenant = await tenantApi.getTenantInfo();
         useAuthStore.getState().setTenant(tenant);
       } catch (error) {
-        console.warn('Failed to fetch tenant info during session restore:', error);
+        console.warn(
+          'Failed to fetch tenant info during session restore:',
+          error,
+        );
       }
 
       login(userResult.data, tokensResult.data);
@@ -396,7 +416,9 @@ export class AuthService {
 
   private syncTokenStateWithPlatform(): void {
     if (this.isWebRuntime()) {
-      httpClient.setAccessToken(useAuthStore.getState().tokens?.access_token ?? null);
+      httpClient.setAccessToken(
+        useAuthStore.getState().tokens?.access_token ?? null,
+      );
     }
   }
 
@@ -423,10 +445,14 @@ export class AuthService {
       .find((entry) => entry.startsWith(`${WEB_CSRF_COOKIE_NAME}=`));
 
     if (!cookieValue) {
-      throw new Error('Missing CSRF cookie. Start login from /auth/oidc/start.');
+      throw new Error(
+        'Missing CSRF cookie. Start login from /auth/oidc/start.',
+      );
     }
 
-    return decodeURIComponent(cookieValue.slice(WEB_CSRF_COOKIE_NAME.length + 1));
+    return decodeURIComponent(
+      cookieValue.slice(WEB_CSRF_COOKIE_NAME.length + 1),
+    );
   }
 
   private async issueWebAccessTokenFromCookie(): Promise<AuthTokens> {
@@ -484,7 +510,9 @@ export class AuthService {
       });
     } catch (error) {
       throw new ApiError(
-        error instanceof Error ? error.message : 'Unable to reach OIDC token endpoint',
+        error instanceof Error
+          ? error.message
+          : 'Unable to reach OIDC token endpoint',
         0,
       );
     }
@@ -526,7 +554,10 @@ export class AuthService {
     }
 
     if (!response.ok) {
-      throw new ApiError('Failed to load OIDC discovery metadata', response.status);
+      throw new ApiError(
+        'Failed to load OIDC discovery metadata',
+        response.status,
+      );
     }
 
     const payload = (await response.json()) as {token_endpoint?: string};
@@ -554,7 +585,7 @@ export class AuthService {
     this.clearRefreshTimer();
     this.refreshTimer = setTimeout(() => {
       this.refreshToken().catch(() => {
-        // Intentionally swallow; further handling occurs in refreshToken catch.
+        // further handling occurs in refreshToken catch.
       });
     }, AuthService.NETWORK_RETRY_DELAY_MS);
   }

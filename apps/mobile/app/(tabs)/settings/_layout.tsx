@@ -60,8 +60,8 @@ function SettingsStack() {
   return (
     <Stack screenOptions={stackScreenOptions}>
       <Stack.Screen name="index" options={{title: 'Settings'}} />
-      <Stack.Screen name="language" options={{title: 'App Language'}} />
-      <Stack.Screen name="support" options={{title: 'Report an Issue'}} />
+      <Stack.Screen name="language" options={{title: 'Language'}} />
+      <Stack.Screen name="help" options={{title: 'Help'}} />
       <Stack.Screen name="app-settings" options={{title: 'App Settings'}} />
       <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
       <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />

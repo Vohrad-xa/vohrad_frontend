@@ -14,6 +14,10 @@ type OidcDiscovery = {
   endSessionEndpoint?: string;
 };
 
+type OidcFlowStartOptions = {
+  setupPasskey?: boolean;
+};
+
 type OidcFlowOutcome =
   | {completed: true}
   | {completed: false; cancelled: boolean};
@@ -38,7 +42,10 @@ export function useOidcFlow() {
   const isConfigured = oidcConfig !== null;
 
   const startFlow = useCallback(
-    async (subdomain: string): Promise<OidcFlowOutcome> => {
+    async (
+      subdomain: string,
+      options?: OidcFlowStartOptions,
+    ): Promise<OidcFlowOutcome> => {
       if (!oidcConfig) {
         Alert.alert(
           'Missing OIDC Configuration',
@@ -46,6 +53,8 @@ export function useOidcFlow() {
         );
         return {completed: false, cancelled: false};
       }
+
+      const shouldSetupPasskey = options?.setupPasskey === true;
 
       try {
         const discoveryResponse = await fetch(
@@ -81,6 +90,9 @@ export function useOidcFlow() {
           scopes: oidcConfig.scopes,
           usePKCE: true,
           redirectUri,
+          extraParams: shouldSetupPasskey
+            ? {kc_action: 'webauthn-register'}
+            : undefined,
         });
 
         const result = await request.promptAsync(discovery);

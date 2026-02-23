@@ -9,8 +9,11 @@ import {makeStyleFactory} from '@/utils';
 import * as AppStorage from '@/utils/storage';
 import {useOidcFlow} from './use-oidc-flow';
 
+const PASSKEY_PROMPT_KEY_PREFIX = 'passkey_prompted';
+
 export function SignInForm() {
   const [subdomain, setSubdomain] = useState('');
+  const [isStartingMobileFlow, setIsStartingMobileFlow] = useState(false);
 
   const {startWebLogin, isLoading} = useAuth();
   const {ds, theme} = useTheme();
@@ -63,32 +66,115 @@ export function SignInForm() {
     );
   }, []);
 
+  const promptPasskeyEnrollment = useCallback(
+    async (tenantSubdomain: string) => {
+      const promptKey = `${PASSKEY_PROMPT_KEY_PREFIX}:${tenantSubdomain}`;
+      const alreadyPrompted = await AppStorage.getItem(promptKey);
+
+      if (alreadyPrompted === '1') {
+        return;
+      }
+
+      const wantsPasskey = await new Promise<boolean>((resolve) => {
+        let resolved = false;
+        const finish = (value: boolean) => {
+          if (resolved) return;
+          resolved = true;
+          resolve(value);
+        };
+
+        Alert.alert(
+          'Set up passkey?',
+          'Use Face ID or Touch ID in Keycloak for faster sign-in next time.',
+          [
+            {
+              text: 'Not now',
+              style: 'cancel',
+              onPress: () => {
+                void AppStorage.setItem(promptKey, '1');
+                finish(false);
+              },
+            },
+            {
+              text: 'Set up now',
+              onPress: () => finish(true),
+            },
+          ],
+          {
+            cancelable: true,
+            onDismiss: () => {
+              void AppStorage.setItem(promptKey, '1');
+              finish(false);
+            },
+          },
+        );
+      });
+
+      if (!wantsPasskey) {
+        return;
+      }
+
+      const enrollmentOutcome = await startFlow(tenantSubdomain, {
+        setupPasskey: true,
+      });
+
+      if (enrollmentOutcome.completed) {
+        await AppStorage.setItem(promptKey, '1');
+        Alert.alert(
+          'Passkey enabled',
+          'This account can now use passkey on this device when available.',
+        );
+      }
+    },
+    [startFlow],
+  );
+
   const handleSubmit = async () => {
-    if (!isFormValid || isLoading) return;
+    if (!isFormValid || isLoading || isStartingMobileFlow) return;
 
     const normalizedSubdomain = subdomain.trim();
 
     try {
-      await AppStorage.setTenantSubdomain(normalizedSubdomain);
-
       if (Platform.OS === 'web') {
+        await AppStorage.setTenantSubdomain(normalizedSubdomain);
+
         const returnTo =
           typeof window !== 'undefined'
             ? `${window.location.pathname}${window.location.search}`
             : '/';
-        await startWebLogin(normalizedSubdomain, returnTo);
+
+        const webPromptKey = `${PASSKEY_PROMPT_KEY_PREFIX}:web:${normalizedSubdomain}`;
+        const alreadyPrompted = await AppStorage.getItem(webPromptKey);
+
+        let setupPasskey = false;
+        if (alreadyPrompted !== '1' && typeof window !== 'undefined') {
+          setupPasskey = window.confirm(
+            'Set up passkey during this sign-in for faster future logins?',
+          );
+          await AppStorage.setItem(webPromptKey, '1');
+        }
+
+        await startWebLogin(normalizedSubdomain, returnTo, {setupPasskey});
         return;
       }
 
+      setIsStartingMobileFlow(true);
+      await AppStorage.setTenantSubdomain(normalizedSubdomain);
+
       const outcome = await startFlow(normalizedSubdomain);
-      if (outcome.completed) {
-        await promptBiometricEnableIfNeeded();
+      if (!outcome.completed) {
+        return;
       }
+
+      await promptPasskeyEnrollment(normalizedSubdomain);
+      await promptBiometricEnableIfNeeded();
     } catch {
       Alert.alert(
         'Sign in failed',
         'An unexpected error occurred. Please try again.',
       );
+    } finally {
+      setIsStartingMobileFlow(false);
     }
   };
 
@@ -125,11 +211,11 @@ export function SignInForm() {
         style={styles.submitButton}
         contentStyle={styles.submitButtonContent}
         onPress={handleSubmit}
-        disabled={!isFormValid || isLoading}
-        loading={isLoading}
+        disabled={!isFormValid || isLoading || isStartingMobileFlow}
+        loading={isLoading || isStartingMobileFlow}
         accessibilityLabel="Continue to sign in"
       >
-        {isLoading
+        {isLoading || isStartingMobileFlow
           ? 'Opening sign in...'
           : Platform.OS === 'web'
             ? 'Continue to Sign In'

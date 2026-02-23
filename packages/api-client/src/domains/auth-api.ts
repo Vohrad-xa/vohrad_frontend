@@ -4,10 +4,18 @@ import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';
 
 export class AuthApi {
-  getOidcStartUrl(returnTo?: string): string {
+  getOidcStartUrl(
+    returnTo?: string,
+    options?: {
+      setupPasskey?: boolean;
+    },
+  ): string {
     const url = new URL(resolveApiUrl(API_ENDPOINTS.AUTH.OIDC_START));
     if (returnTo && returnTo.trim().length > 0) {
       url.searchParams.set('return_to', returnTo.trim());
+    }
+    if (options?.setupPasskey) {
+      url.searchParams.set('setup_passkey', 'true');
     }
     return url.toString();
   }

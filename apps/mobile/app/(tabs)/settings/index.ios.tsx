@@ -92,7 +92,7 @@ export default function SettingsModal() {
             icon={AppIcons.ui.info}
             iconColorToken="accentOrange"
             title="Help"
-            onPress={() => router.push('/(tabs)/settings/support')}
+            onPress={() => router.push('/(tabs)/settings/help')}
           />
           <ListSection.Row
             icon={AppIcons.ui.help}

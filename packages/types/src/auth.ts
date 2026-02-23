@@ -46,7 +46,11 @@ export interface AuthContextValue {
   isLoading: boolean;
   error: string | null;
   authReady: boolean;
-  startWebLogin: (subdomain: string, returnTo?: string) => Promise<void>;
+  startWebLogin: (
+    subdomain: string,
+    returnTo?: string,
+    options?: {setupPasskey?: boolean},
+  ) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
