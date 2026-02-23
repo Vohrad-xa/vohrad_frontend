@@ -9,18 +9,16 @@ import {makeStyleFactory} from '@/utils';
 import * as AppStorage from '@/utils/storage';
 import {useOidcFlow} from './use-oidc-flow';
 
-const PASSKEY_PROMPT_KEY_PREFIX = 'passkey_prompted';
+const PASSKEY_PROMPT_KEY_PREFIX = 'passkey_prompted_v3';
 
 export function SignInForm() {
   const [subdomain, setSubdomain] = useState('');
   const [isStartingMobileFlow, setIsStartingMobileFlow] = useState(false);
-
   const {startWebLogin, isLoading} = useAuth();
   const {ds, theme} = useTheme();
-  const {startFlow, isConfigured: isOidcConfigured} = useOidcFlow();
-
-  const subdomainInputRef = useRef<RNTextInput>(null);
   const styles = createStyles(ds, theme);
+  const {startFlow, isConfigured: isOidcConfigured} = useOidcFlow();
+  const subdomainInputRef = useRef<RNTextInput>(null);
 
   useEffect(() => {
     AppStorage.getTenantSubdomain().then((saved) => {
@@ -66,16 +64,26 @@ export function SignInForm() {
     );
   }, []);
 
-  const promptPasskeyEnrollment = useCallback(
+  const resolvePasskeySetupChoice = useCallback(
     async (tenantSubdomain: string) => {
-      const promptKey = `${PASSKEY_PROMPT_KEY_PREFIX}:${tenantSubdomain}`;
+      const promptKey = `${PASSKEY_PROMPT_KEY_PREFIX}:${Platform.OS}:${tenantSubdomain}`;
       const alreadyPrompted = await AppStorage.getItem(promptKey);
 
       if (alreadyPrompted === '1') {
-        return;
+        return false;
       }
 
-      const wantsPasskey = await new Promise<boolean>((resolve) => {
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        const setupPasskey = window.confirm(
+          'Set up passkey during this sign-in for faster future logins?',
+        );
+        if (setupPasskey) {
+          await AppStorage.setItem(promptKey, '1');
+        }
+        return setupPasskey;
+      }
+
+      const setupPasskey = await new Promise<boolean>((resolve) => {
         let resolved = false;
         const finish = (value: boolean) => {
           if (resolved) return;
@@ -85,15 +93,12 @@ export function SignInForm() {
 
         Alert.alert(
           'Set up passkey?',
-          'Use Face ID or Touch ID in Keycloak for faster sign-in next time.',
+          'Set up passkey during this sign-in for faster future logins.',
           [
             {
               text: 'Not now',
               style: 'cancel',
-              onPress: () => {
-                void AppStorage.setItem(promptKey, '1');
-                finish(false);
-              },
+              onPress: () => finish(false),
             },
             {
               text: 'Set up now',
@@ -102,31 +107,18 @@ export function SignInForm() {
           ],
           {
             cancelable: true,
-            onDismiss: () => {
-              void AppStorage.setItem(promptKey, '1');
-              finish(false);
-            },
+            onDismiss: () => finish(false),
           },
         );
       });
 
-      if (!wantsPasskey) {
-        return;
-      }
-
-      const enrollmentOutcome = await startFlow(tenantSubdomain, {
-        setupPasskey: true,
-      });
-
-      if (enrollmentOutcome.completed) {
+      if (setupPasskey) {
         await AppStorage.setItem(promptKey, '1');
-        Alert.alert(
-          'Passkey enabled',
-          'This account can now use passkey on this device when available.',
-        );
       }
+
+      return setupPasskey;
     },
-    [startFlow],
+    [],
   );
 
   const handleSubmit = async () => {
@@ -135,38 +127,28 @@ export function SignInForm() {
     const normalizedSubdomain = subdomain.trim();
 
     try {
-      if (Platform.OS === 'web') {
-        await AppStorage.setTenantSubdomain(normalizedSubdomain);
+      await AppStorage.setTenantSubdomain(normalizedSubdomain);
 
+      if (Platform.OS === 'web') {
         const returnTo =
           typeof window !== 'undefined'
             ? `${window.location.pathname}${window.location.search}`
             : '/';
 
-        const webPromptKey = `${PASSKEY_PROMPT_KEY_PREFIX}:web:${normalizedSubdomain}`;
-        const alreadyPrompted = await AppStorage.getItem(webPromptKey);
-
-        let setupPasskey = false;
-        if (alreadyPrompted !== '1' && typeof window !== 'undefined') {
-          setupPasskey = window.confirm(
-            'Set up passkey during this sign-in for faster future logins?',
-          );
-          await AppStorage.setItem(webPromptKey, '1');
-        }
-
+        const setupPasskey =
+          await resolvePasskeySetupChoice(normalizedSubdomain);
         await startWebLogin(normalizedSubdomain, returnTo, {setupPasskey});
         return;
       }
 
       setIsStartingMobileFlow(true);
-      await AppStorage.setTenantSubdomain(normalizedSubdomain);
 
-      const outcome = await startFlow(normalizedSubdomain);
+      const setupPasskey = await resolvePasskeySetupChoice(normalizedSubdomain);
+      const outcome = await startFlow(normalizedSubdomain, {setupPasskey});
       if (!outcome.completed) {
         return;
       }
 
-      await promptPasskeyEnrollment(normalizedSubdomain);
       await promptBiometricEnableIfNeeded();
     } catch {
       Alert.alert(
