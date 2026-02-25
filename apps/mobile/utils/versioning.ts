@@ -1,5 +1,4 @@
-// Simple hash function to generate a number from a string.
-function simpleHash(str: string): number {
+function Hash(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
@@ -9,11 +8,12 @@ function simpleHash(str: string): number {
   return Math.abs(hash);
 }
 
-// Generates a version number from an object's content.
+/**
+ * Derives a stable numeric version from an object's content by hashing its sorted JSON.
+ *
+ * - Key order is normalized before hashing so the same data always produces the same version.
+ */
 export function generateVersion<T extends object>(obj: T): number {
-  // We can't sort the keys of the object directly, as that would
-  // break the type inference. Instead, we create a new object
-  // with the keys sorted.
   const sortedObj = Object.keys(obj)
     .sort()
     .reduce((acc, key) => {
@@ -21,6 +21,5 @@ export function generateVersion<T extends object>(obj: T): number {
       return acc;
     }, {} as T);
 
-  const json = JSON.stringify(sortedObj);
-  return simpleHash(json);
+  return Hash(JSON.stringify(sortedObj));
 }

@@ -4,7 +4,12 @@ import {StyleSheet} from 'react-native';
 type AnyStyle = ViewStyle | TextStyle | ImageStyle;
 type NamedStyles<T> = {[P in keyof T]: AnyStyle};
 
-// A factory function that creates and caches styles based on input parameters.
+/**
+ * Creates a memoized StyleSheet factory keyed by the result of toKey().
+ *
+ * - Calls StyleSheet.create() only once per unique key, caching the result for re-renders.
+ * - Evicts the oldest entry when the cache exceeds max (default 64) to bound memory usage.
+ */
 export function makeStyleFactory<
   T extends NamedStyles<T> | NamedStyles<Record<string, AnyStyle>>,
   Args extends readonly unknown[],
