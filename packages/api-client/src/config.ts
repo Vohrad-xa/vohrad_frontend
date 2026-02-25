@@ -4,7 +4,6 @@ export type ApiClientConfig = {
   baseUrl?: string;
   protocol?: Protocol;
   baseDomain?: string;
-  tenant?: string;
   version?: string;
 };
 
@@ -22,12 +21,10 @@ const inlineEnv: Record<string, string | undefined> = {
   EXPO_PUBLIC_API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
   EXPO_PUBLIC_API_PROTOCOL: process.env.EXPO_PUBLIC_API_PROTOCOL,
   EXPO_PUBLIC_API_BASE_DOMAIN: process.env.EXPO_PUBLIC_API_BASE_DOMAIN,
-  EXPO_PUBLIC_TENANT: process.env.EXPO_PUBLIC_TENANT,
   EXPO_PUBLIC_API_VERSION: process.env.EXPO_PUBLIC_API_VERSION,
   NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
   NEXT_PUBLIC_API_PROTOCOL: process.env.NEXT_PUBLIC_API_PROTOCOL,
   NEXT_PUBLIC_API_BASE_DOMAIN: process.env.NEXT_PUBLIC_API_BASE_DOMAIN,
-  NEXT_PUBLIC_TENANT: process.env.NEXT_PUBLIC_TENANT,
   NEXT_PUBLIC_API_VERSION: process.env.NEXT_PUBLIC_API_VERSION,
 };
 
@@ -63,7 +60,6 @@ const defaultConfig: ApiClientConfig = {
     'EXPO_PUBLIC_API_BASE_DOMAIN',
     'NEXT_PUBLIC_API_BASE_DOMAIN',
   ]),
-  tenant: readEnv(['EXPO_PUBLIC_TENANT', 'NEXT_PUBLIC_TENANT']),
   version: readEnv(['EXPO_PUBLIC_API_VERSION', 'NEXT_PUBLIC_API_VERSION']),
 };
 
@@ -71,10 +67,6 @@ let current: ApiClientConfig = {...defaultConfig};
 
 export function initApiConfig(partial?: Partial<ApiClientConfig>) {
   if (partial) current = {...current, ...partial};
-}
-
-export function setApiTenant(tenant?: string) {
-  current = {...current, tenant};
 }
 
 export function getApiConfig(): Readonly<ApiClientConfig> {
@@ -93,8 +85,7 @@ export function resolveBaseUrl(): string {
     );
   }
 
-  const fullDomain = cfg.tenant ? `${cfg.tenant}.${domain}` : domain;
-  return `${proto}://${fullDomain}`;
+  return `${proto}://${domain}`;
 }
 
 export function resolveApiUrl(endpoint: string): string {
@@ -105,7 +96,7 @@ export function resolveApiUrl(endpoint: string): string {
   return url.replace(/(?<!:)\/+/g, '/');
 }
 
-// ONLY DEBELOPMENT USAGE FOR ATTACHMENT URLS
+// ONLY DEVELOPMENT USAGE FOR ATTACHMENT URLS
 export function resolveAttachmentUrl(relativePath: string): string {
   const baseUrl = resolveBaseUrl();
   return `${baseUrl}${relativePath}`;

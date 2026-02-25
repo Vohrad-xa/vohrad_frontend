@@ -1,7 +1,10 @@
 import type {User} from '@sykamore/types';
 
 // local/client-side search for users
-export function searchUsersLocally(users: User[], searchQuery: string): User[] {
+export function searchUsersLocally(
+  users: User[],
+  searchQuery: string,
+): User[] {
   if (!searchQuery || searchQuery.trim().length === 0) {
     return users;
   }

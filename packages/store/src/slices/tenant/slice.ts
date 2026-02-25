@@ -1,19 +1,23 @@
 import type {StateCreator} from 'zustand';
-import type {Tenant} from '@sykamore/types';
+import type {TenantMembership} from '@sykamore/types';
 
 /**
- * Minimal tenant slice for session persistence.
+ * Tenant slice for workspace context persistence.
  *
- * - Tenant data persisted to storage for multi-tenant context
- * - All operations use TanStack Query hooks
- * - This slice is ONLY for persistence, not active operations
+ * - selectedTenantId: the active workspace UUID (sent as X-Tenant-Id header)
+ * - memberships: full list of the user's tenant memberships for the picker
+ * - All data operations use TanStack Query hooks
  */
 export interface TenantSlice {
-  tenant: Tenant | null;
-  setTenant: (tenant: Tenant | null) => void;
+  selectedTenantId: string | null;
+  memberships: TenantMembership[];
+  setSelectedTenantId: (id: string | null) => void;
+  setMemberships: (memberships: TenantMembership[]) => void;
 }
 
 export const createTenantSlice: StateCreator<TenantSlice> = (set) => ({
-  tenant: null,
-  setTenant: (tenant: Tenant | null) => set({tenant}),
+  selectedTenantId: null,
+  memberships: [],
+  setSelectedTenantId: (id: string | null) => set({selectedTenantId: id}),
+  setMemberships: (memberships: TenantMembership[]) => set({memberships}),
 });

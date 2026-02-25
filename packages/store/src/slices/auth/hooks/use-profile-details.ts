@@ -1,7 +1,7 @@
 import {useAuthStore} from '../../../store';
 import {authSelectors} from '../selectors';
-import type {User} from '@sykamore/types';
+import type {Identity} from '@sykamore/types';
 
-export function useProfileDetails(): User | null {
+export function useProfileDetails(): Identity | null {
   return useAuthStore(authSelectors.user);
 }

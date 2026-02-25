@@ -1,22 +1,22 @@
 import type {StateCreator} from 'zustand';
-import type {User, AuthTokens} from '@sykamore/types';
+import type {Identity, AuthTokens} from '@sykamore/types';
 import {httpClient} from '@sykamore/api-client';
 
 export interface AuthSlice {
-  user: User | null;
+  user: Identity | null;
   tokens: AuthTokens | null;
   isAuthenticated: boolean;
   intendedRoute: string | null;
   isLoading: boolean;
   error: string | null;
   retryCallback: (() => void) | null;
-  setUser: (user: User) => void;
+  setUser: (user: Identity) => void;
   setTokens: (tokens: AuthTokens | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null, retryCallback?: () => void) => void;
   setIntendedRoute: (route: string | null) => void;
-  updateUser: (userData: Partial<User>) => void;
-  login: (user: User, tokens: AuthTokens) => void;
+  updateUser: (userData: Partial<Identity>) => void;
+  login: (user: Identity, tokens: AuthTokens) => void;
   logout: () => void;
   clearError: () => void;
 }
@@ -30,7 +30,7 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
   error: null,
   retryCallback: null,
 
-  setUser: (user: User) => set({user}),
+  setUser: (user: Identity) => set({user}),
 
   // CRITICAL: setTokens ALWAYS syncs to httpClient
   setTokens: (tokens: AuthTokens | null) => {
@@ -44,12 +44,12 @@ export const createAuthSlice: StateCreator<AuthSlice> = (set) => ({
   setIntendedRoute: (route: string | null) => set({intendedRoute: route}),
   clearError: () => set({error: null, retryCallback: null}),
 
-  updateUser: (userData: Partial<User>) =>
+  updateUser: (userData: Partial<Identity>) =>
     set((state) => ({
       user: state.user ? {...state.user, ...userData} : null,
     })),
 
-  login: (user: User, tokens: AuthTokens) => {
+  login: (user: Identity, tokens: AuthTokens) => {
     // Sync token to httpClient before updating state
     httpClient.setAccessToken(tokens.access_token);
     set({

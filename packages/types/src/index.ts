@@ -14,9 +14,10 @@ export {ApiError} from './api';
 
 // Schema types (validated data contracts)
 export type {
-  User,
+  Identity,
   AuthTokens,
   TokenResponse,
+  User,
   UserCreateData,
   UserUpdateData,
   Email,
@@ -35,6 +36,7 @@ export type {
 // Tenant types
 export type {
   Tenant,
+  TenantMembership,
   TenantSettingsUpdate,
   TenantProfileUpdate,
   TenantLicenseInfo,

@@ -113,7 +113,7 @@ export class AttachmentApi {
     const url = response.data;
 
     // If the API returns a relative path (local storage),
-    // use resolveAttachmentUrl to handle tenant subdomain for IP addresses
+    // resolve it against the configured API base URL.
     if (url.startsWith('/')) {
       return resolveAttachmentUrl(url);
     }

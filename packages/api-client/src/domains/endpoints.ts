@@ -7,11 +7,15 @@ export const API_ENDPOINTS = {
     LOGOUT_ALL: '/auth/logout-all',
   },
 
+  ME: {
+    PROFILE: '/me',
+    TENANTS: '/me/tenants',
+  },
+
   USERS: {
     LIST: '/users/',
     CREATE: '/users/',
-    ME: '/users/me',
-    UPDATE_PROFILE: '/users/me',
+    PROFILE: '/users/profile',
   },
 
   ROLES: {

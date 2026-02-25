@@ -124,6 +124,7 @@ export {
 } from './utils/attachment-urls';
 
 export type {
+  Identity,
   User,
   AuthTokens,
   Tenant,

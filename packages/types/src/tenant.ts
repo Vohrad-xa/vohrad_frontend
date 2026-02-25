@@ -86,3 +86,10 @@ export interface TenantLicenseInfo {
   seats_total: number;
   is_active: boolean;
 }
+
+export interface TenantMembership {
+  id: string;
+  name: string;
+  role: string;
+  is_default: boolean;
+}

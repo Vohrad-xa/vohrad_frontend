@@ -8,10 +8,11 @@ import type {DashboardCardKey, DashboardVisibilityState} from './slice';
 const STALE_TIME = 2 * 60 * 1000; // 2 minutes
 
 export function useDashboardOverview() {
-  const {isAuthenticated, hasHydrated} = useAuthStore(
+  const {isAuthenticated, hasHydrated, selectedTenantId} = useAuthStore(
     (state) => ({
       isAuthenticated: state.isAuthenticated,
       hasHydrated: state._hasHydrated,
+      selectedTenantId: state.selectedTenantId,
     }),
     shallow,
   );
@@ -22,7 +23,7 @@ export function useDashboardOverview() {
       const response = await dashboardApi.getOverview();
       return response.data;
     },
-    enabled: isAuthenticated && hasHydrated,
+    enabled: isAuthenticated && hasHydrated && !!selectedTenantId,
     staleTime: STALE_TIME,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,

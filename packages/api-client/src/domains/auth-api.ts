@@ -1,4 +1,4 @@
-import type {AuthTokens, User, TokenResponse} from '@sykamore/types';
+import type {AuthTokens, Identity, TokenResponse, TenantMembership} from '@sykamore/types';
 import {resolveApiUrl} from '../config';
 import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';
@@ -33,9 +33,16 @@ export class AuthApi {
     };
   }
 
-  async getCurrentUser(): Promise<User> {
-    const userResponse = await httpClient.get<User>(API_ENDPOINTS.USERS.ME);
-    return userResponse.data;
+  async getMeProfile(): Promise<Identity> {
+    const response = await httpClient.get<Identity>(API_ENDPOINTS.ME.PROFILE);
+    return response.data;
+  }
+
+  async getMyTenants(): Promise<TenantMembership[]> {
+    const response = await httpClient.get<TenantMembership[]>(
+      API_ENDPOINTS.ME.TENANTS,
+    );
+    return response.data;
   }
 
   async logoutWebSession(csrfToken: string): Promise<void> {

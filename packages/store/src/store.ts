@@ -6,7 +6,7 @@ import {createSystemSlice, type SystemSlice} from './slices/system/slice';
 import {createFilterSlice, type FilterSlice} from './slices/filter/slice';
 import {sanitizeUser, redactTokens} from './utils/sanitizers';
 import {getPersistBackend} from './utils/storage';
-import {httpClient, setApiTenant} from '@sykamore/api-client';
+import {httpClient} from '@sykamore/api-client';
 
 export const AUTH_PERSIST_KEY = 'sykamore-auth';
 
@@ -41,9 +41,9 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
             httpClient.setAccessToken(state.tokens.access_token);
           }
 
-          // Restore multi-tenant API context
-          if (state.tenant?.sub_domain) {
-            setApiTenant(state.tenant.sub_domain);
+          // Restore active workspace context
+          if (state.selectedTenantId) {
+            httpClient.setTenantId(state.selectedTenantId);
           }
 
           // Set hydrated flag
@@ -54,7 +54,8 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
       },
       partialize: (state) => ({
         user: sanitizeUser(state.user),
-        tenant: state.tenant,
+        selectedTenantId: state.selectedTenantId,
+        memberships: state.memberships,
         tokens: redactTokens(state.tokens),
         isAuthenticated: state.isAuthenticated,
         dashboardVisibility: state.dashboardVisibility,
@@ -66,11 +67,19 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
 // HTTP client token in sync
 let syncedAccessToken = useAuthStore.getState().tokens?.access_token ?? null;
 httpClient.setAccessToken(syncedAccessToken);
+let syncedTenantId = useAuthStore.getState().selectedTenantId ?? null;
+httpClient.setTenantId(syncedTenantId);
 
 useAuthStore.subscribe((state) => {
   const nextToken = state.tokens?.access_token ?? null;
   if (nextToken !== syncedAccessToken) {
     syncedAccessToken = nextToken;
     httpClient.setAccessToken(nextToken);
+  }
+
+  const nextTenantId = state.selectedTenantId ?? null;
+  if (nextTenantId !== syncedTenantId) {
+    syncedTenantId = nextTenantId;
+    httpClient.setTenantId(nextTenantId);
   }
 });

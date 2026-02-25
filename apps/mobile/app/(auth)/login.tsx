@@ -1,27 +1,23 @@
 import React from 'react';
 import {Image, StyleSheet, View} from 'react-native';
-import {useRouter} from 'expo-router';
 import {Button, Card, Divider, Surface} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {useSignIn} from '@/features/auth';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
- 
 const microsoftLogo = require('../../assets/icons/microsoft.png') as number;
 
 export default function LoginScreen() {
   const {ds, theme, scheme} = useTheme();
-  const router = useRouter();
   const styles = createStyles(ds, theme);
+  const {handleSubmit, isLoading, isStartingMobileFlow} = useSignIn();
 
   const textColor = scheme === 'dark' ? '#000' : '#fff';
   const buttonColor = scheme === 'dark' ? '#fff' : '#000';
-
-  const navigateToSignIn = () => {
-    router.push('/(auth)/sign-in');
-  };
+  const isSigningIn = isLoading || isStartingMobileFlow;
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -34,7 +30,9 @@ export default function LoginScreen() {
         <Card.Content style={styles.content}>
           <Button
             mode="contained"
-            onPress={navigateToSignIn}
+            onPress={handleSubmit}
+            disabled={isSigningIn}
+            loading={isSigningIn}
             buttonColor={buttonColor}
             textColor={textColor}
             contentStyle={styles.buttonContent}
@@ -60,7 +58,9 @@ export default function LoginScreen() {
 
           <Button
             mode="contained"
-            onPress={navigateToSignIn}
+            onPress={handleSubmit}
+            disabled={isSigningIn}
+            loading={isSigningIn}
             buttonColor={buttonColor}
             textColor={textColor}
             contentStyle={styles.buttonContent}

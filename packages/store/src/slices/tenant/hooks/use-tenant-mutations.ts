@@ -5,6 +5,7 @@ import type {
   TenantProfileUpdate,
   TenantSettingsUpdate,
 } from '@sykamore/types';
+import {useAuthStore} from '../../../store';
 import {buildTenantQueryKey} from '../utils/query-keys';
 
 /**
@@ -12,12 +13,20 @@ import {buildTenantQueryKey} from '../utils/query-keys';
  */
 export function useUpdateTenantProfile() {
   const queryClient = useQueryClient();
+  const selectedTenantId = useAuthStore((state) => state.selectedTenantId);
 
   return useMutation({
     mutationFn: (data: TenantProfileUpdate) =>
       tenantApi.updateTenantProfile(data),
     onSuccess: (updatedTenant: Tenant) => {
-      queryClient.setQueryData<Tenant>(buildTenantQueryKey(), updatedTenant);
+      if (!selectedTenantId) {
+        return;
+      }
+
+      queryClient.setQueryData<Tenant>(
+        buildTenantQueryKey(selectedTenantId),
+        updatedTenant,
+      );
     },
   });
 }
@@ -27,12 +36,20 @@ export function useUpdateTenantProfile() {
  */
 export function useUpdateTenantSettings() {
   const queryClient = useQueryClient();
+  const selectedTenantId = useAuthStore((state) => state.selectedTenantId);
 
   return useMutation({
     mutationFn: (data: TenantSettingsUpdate) =>
       tenantApi.updateTenantSettings(data),
     onSuccess: (updatedTenant: Tenant) => {
-      queryClient.setQueryData<Tenant>(buildTenantQueryKey(), updatedTenant);
+      if (!selectedTenantId) {
+        return;
+      }
+
+      queryClient.setQueryData<Tenant>(
+        buildTenantQueryKey(selectedTenantId),
+        updatedTenant,
+      );
     },
   });
 }

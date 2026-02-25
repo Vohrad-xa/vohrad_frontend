@@ -13,7 +13,6 @@ export type {
 } from './error-manager';
 export {
   initApiConfig,
-  setApiTenant,
   getApiConfig,
   resolveBaseUrl,
   resolveApiUrl,

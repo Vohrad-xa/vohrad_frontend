@@ -1,11 +1,5 @@
-import {
-  authApi,
-  errorManager,
-  httpClient,
-  setApiTenant,
-  tenantApi,
-} from '@sykamore/api-client';
-import {queryClient, useAuthStore} from '@sykamore/store';
+import {authApi, errorManager, httpClient} from '@sykamore/api-client';
+import {useAuthStore} from '@sykamore/store';
 import {
   ApiError,
   type AuthTokens,
@@ -160,7 +154,6 @@ export class AuthService {
   }
 
   async startWebLogin(
-    subdomain: string,
     returnTo = '/',
     options?: {setupPasskey?: boolean},
   ): Promise<void> {
@@ -172,9 +165,6 @@ export class AuthService {
 
     try {
       setLoading(true);
-
-      const normalizedSubdomain = this.normalizeSubdomain(subdomain);
-      setApiTenant(normalizedSubdomain);
 
       const redirectTarget =
         returnTo && returnTo.trim().length > 0 ? returnTo.trim() : '/';
@@ -199,9 +189,6 @@ export class AuthService {
     try {
       setLoading(true);
 
-      const normalizedSubdomain = this.normalizeSubdomain(params.subdomain);
-      setApiTenant(normalizedSubdomain);
-
       // Pre-seed the token endpoint cache if the caller already fetched discovery,
       // so getMobileTokenEndpoint() skips a redundant network request.
       if (params.tokenEndpoint && !this.mobileTokenEndpoint) {
@@ -225,26 +212,19 @@ export class AuthService {
         );
       }
 
-      // Set the access token on the http client before calling getCurrentUser,
-      // since login() hasn't been called yet at this point.
+      // Set the access token on the http client before calling getMeProfile,
       httpClient.setAccessToken(tokensResult.data.access_token);
 
-      const user = await authApi.getCurrentUser();
-      const userResult = validation.validateUser(user);
+      const user = await authApi.getMeProfile();
+      const userResult = validation.validateIdentity(user);
       if (!userResult.success) {
         throw new Error('Invalid user data received from API');
       }
 
+      await this.loadAndActivateDefaultTenant();
+
       login(userResult.data, tokensResult.data);
       this.scheduleTokenRefresh(tokensResult.data);
-
-      try {
-        const tenant = await tenantApi.getTenantInfo();
-        queryClient.setQueryData(['tenant', 'info'], tenant);
-        useAuthStore.getState().setTenant(tenant);
-      } catch (tenantError) {
-        console.warn('Failed to fetch tenant info:', tenantError);
-      }
     } catch (error) {
       // If login didn't complete, clear any token that was set on the http client.
       httpClient.setAccessToken(null);
@@ -277,6 +257,7 @@ export class AuthService {
         console.warn('Logout API call failed:', error);
       }
 
+      httpClient.setTenantId(null);
       this.clearRefreshTimer();
       logout();
     } catch (error) {
@@ -294,6 +275,7 @@ export class AuthService {
       setLoading(true);
 
       await authApi.logoutAllDevices();
+      httpClient.setTenantId(null);
       this.clearRefreshTimer();
       logout();
     } catch (error) {
@@ -373,30 +355,22 @@ export class AuthService {
         return false;
       }
 
-      // Set the access token before calling getCurrentUser,
-      // since login() hasn't been called yet at this point.
+      // Set the access token before calling getMeProfile,
       httpClient.setAccessToken(tokensResult.data.access_token);
 
-      const user = await authApi.getCurrentUser();
-
-      const userResult = validation.validateUser(user);
+      const user = await authApi.getMeProfile();
+      const userResult = validation.validateIdentity(user);
       if (!userResult.success) {
         httpClient.setAccessToken(null);
         return false;
       }
 
-      try {
-        const tenant = await tenantApi.getTenantInfo();
-        useAuthStore.getState().setTenant(tenant);
-      } catch (error) {
-        console.warn(
-          'Failed to fetch tenant info during session restore:',
-          error,
-        );
-      }
+      // activate tenant before login()
+      await this.loadAndActivateDefaultTenant();
 
       login(userResult.data, tokensResult.data);
       this.scheduleTokenRefresh(tokensResult.data);
+
       return true;
     } catch {
       httpClient.setAccessToken(null);
@@ -414,20 +388,54 @@ export class AuthService {
     return user;
   }
 
+  /**
+   * Fetch membership list and activate the default tenant workspace.
+   * Silently fails — a missing tenant list should not block login.
+   */
+  private async loadAndActivateDefaultTenant(): Promise<void> {
+    const {setMemberships, setSelectedTenantId} = useAuthStore.getState();
+
+    const clearTenantContext = () => {
+      setMemberships([]);
+      setSelectedTenantId(null);
+      httpClient.setTenantId(null);
+    };
+
+    try {
+      const memberships = await authApi.getMyTenants();
+      const membershipsResult =
+        validation.validateTenantMemberships(memberships);
+
+      if (!membershipsResult.success) {
+        clearTenantContext();
+        return;
+      }
+
+      setMemberships(membershipsResult.data);
+
+      const defaultTenant =
+        membershipsResult.data.find((m) => m.is_default) ??
+        membershipsResult.data[0];
+
+      if (defaultTenant) {
+        httpClient.setTenantId(defaultTenant.id);
+        setSelectedTenantId(defaultTenant.id);
+        return;
+      }
+
+      clearTenantContext();
+    } catch (error) {
+      console.warn('[auth] Failed to load tenant memberships:', error);
+      clearTenantContext();
+    }
+  }
+
   private syncTokenStateWithPlatform(): void {
     if (this.isWebRuntime()) {
       httpClient.setAccessToken(
         useAuthStore.getState().tokens?.access_token ?? null,
       );
     }
-  }
-
-  private normalizeSubdomain(subdomain: string): string {
-    const normalized = subdomain.trim();
-    if (normalized.length === 0) {
-      throw new Error('Subdomain is required');
-    }
-    return normalized;
   }
 
   private isWebRuntime(): boolean {

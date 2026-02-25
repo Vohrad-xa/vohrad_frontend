@@ -26,7 +26,7 @@ export default function HomeScreen() {
   const styles = createStyles(ds, theme);
   const {triggerHaptic} = useHaptic();
   const {refetch: refetchOverview} = useDashboardOverview();
-  const {fetchUserProfile} = useFetchUserProfile();
+  const {refetch: refetchUserProfile} = useFetchUserProfile();
   const filterSheetRef = useRef<CardsFilterSheetHandle>(null);
 
   useLayoutEffect(() => {
@@ -52,8 +52,8 @@ export default function HomeScreen() {
   }, [triggerHaptic]);
 
   const handleRefresh = useCallback(async () => {
-    await Promise.all([fetchUserProfile(), refetchOverview()]);
-  }, [fetchUserProfile, refetchOverview]);
+    await Promise.all([refetchUserProfile(), refetchOverview()]);
+  }, [refetchUserProfile, refetchOverview]);
 
   const ScrollComponent =
     Platform.OS === 'web' ? ScrollView : RefreshableScrollView;

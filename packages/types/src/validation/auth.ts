@@ -1,11 +1,16 @@
-import {authTokensSchema, userSchema} from '../schemas';
+import {z} from 'zod';
+import {authTokensSchema, identitySchema, tenantMembershipSchema} from '../schemas';
 
 export function validateAuthTokens(tokens: unknown) {
   return authTokensSchema.safeParse(tokens);
 }
 
-export function validateUser(user: unknown) {
-  return userSchema.safeParse(user);
+export function validateIdentity(identity: unknown) {
+  return identitySchema.safeParse(identity);
 }
 
-export type {AuthTokens, TokenResponse, User} from '../schemas';
+export function validateTenantMemberships(memberships: unknown) {
+  return z.array(tenantMembershipSchema).safeParse(memberships);
+}
+
+export type {AuthTokens, TokenResponse, Identity} from '../schemas';

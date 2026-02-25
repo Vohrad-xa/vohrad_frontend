@@ -1,5 +1,4 @@
-import type {Tenant} from './tenant';
-import type {User, AuthTokens} from './schemas';
+import type {Identity, AuthTokens} from './schemas';
 
 export interface AsyncState<TData = unknown, TError = string | null> {
   data: TData;
@@ -8,28 +7,24 @@ export interface AsyncState<TData = unknown, TError = string | null> {
 }
 
 export interface AuthState {
-  user: User | null;
-  tenant: Tenant | null;
+  user: Identity | null;
   tokens: AuthTokens | null;
   isAuthenticated: boolean;
   intendedRoute: string | null;
   isLoading: boolean;
   error: string | null;
-  setUser: (user: User) => void;
-  setTenant: (tenant: Tenant | null) => void;
+  setUser: (user: Identity) => void;
   setTokens: (tokens: AuthTokens) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setIntendedRoute: (route: string | null) => void;
-  updateUser: (userData: Partial<User>) => void;
-  updateTenant: (tenantData: Partial<Tenant>) => void;
-  login: (user: User, tokens: AuthTokens) => void;
+  updateUser: (userData: Partial<Identity>) => void;
+  login: (user: Identity, tokens: AuthTokens) => void;
   logout: () => void;
   clearError: () => void;
 }
 
 export type MobileOidcLoginParams = {
-  subdomain: string;
   code: string;
   codeVerifier: string;
   redirectUri: string;
@@ -42,12 +37,11 @@ export type MobileOidcLoginParams = {
 
 export interface AuthContextValue {
   isAuthenticated: boolean;
-  user: User | null;
+  user: Identity | null;
   isLoading: boolean;
   error: string | null;
   authReady: boolean;
   startWebLogin: (
-    subdomain: string,
     returnTo?: string,
     options?: {setupPasskey?: boolean},
   ) => Promise<void>;

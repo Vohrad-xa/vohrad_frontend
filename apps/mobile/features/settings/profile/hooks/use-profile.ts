@@ -1,5 +1,5 @@
 import {useCallback} from 'react';
-import {useProfileDetails, useUpdateProfile} from '@sykamore/store';
+import {useFetchUserProfile, useUpdateProfile} from '@sykamore/store';
 import {formatDateInput} from '@/utils';
 
 /**
@@ -7,7 +7,7 @@ import {formatDateInput} from '@/utils';
  * Used by the main profile view and all modal views.
  */
 export function useProfile() {
-  const profileDetails = useProfileDetails();
+  const {data: profileDetails} = useFetchUserProfile();
   const {updateProfile, isLoading} = useUpdateProfile();
 
   const firstName = profileDetails?.first_name ?? '';

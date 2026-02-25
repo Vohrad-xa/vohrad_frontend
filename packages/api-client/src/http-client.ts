@@ -6,11 +6,16 @@ import {errorManager} from './error-manager';
 
 export class HttpClient {
   private accessToken: string | null = null;
+  private tenantId: string | null = null;
   private onTokenRefresh: (() => Promise<void>) | null = null;
   private retryCallbacks = new Map<string, () => Promise<void>>();
 
   setAccessToken(token: string | null) {
     this.accessToken = token;
+  }
+
+  setTenantId(id: string | null) {
+    this.tenantId = id;
   }
 
   setTokenRefreshHandler(handler: () => Promise<void>) {
@@ -52,6 +57,10 @@ export class HttpClient {
 
     if (this.accessToken) {
       headers.Authorization = `Bearer ${this.accessToken}`;
+    }
+
+    if (this.tenantId) {
+      headers['X-Tenant-Id'] = this.tenantId;
     }
 
     const config: RequestInit = {

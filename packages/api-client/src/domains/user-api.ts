@@ -62,13 +62,15 @@ export class UserApi {
   }
 
   async getUserProfile(): Promise<User> {
-    const response = await httpClient.get<User>(API_ENDPOINTS.USERS.ME);
+    const response = await httpClient.get<User>(
+      API_ENDPOINTS.USERS.PROFILE,
+    );
     return response.data;
   }
 
   async updateUserProfile(data: UserUpdateData): Promise<User> {
     const response = await httpClient.put<User>(
-      API_ENDPOINTS.USERS.UPDATE_PROFILE,
+      API_ENDPOINTS.USERS.PROFILE,
       data,
     );
     return response.data;

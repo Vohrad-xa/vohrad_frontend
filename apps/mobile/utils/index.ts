@@ -2,9 +2,9 @@ export {
   getItem,
   setItem,
   removeItem,
-  setTenantSubdomain,
-  getTenantSubdomain,
-  clearTenantSubdomain,
+  setTenantId,
+  getTenantId,
+  clearTenantId,
 } from './storage';
 export {
   getSecureItem,

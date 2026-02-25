@@ -24,7 +24,7 @@ type OidcFlowOutcome =
 
 /**
  * Encapsulates the full OIDC browser flow: discovery → AuthRequest →
- * promptAsync → code exchange. Call `startFlow(subdomain)` on a user gesture.
+ * promptAsync → code exchange. Call `startFlow()` on a user gesture.
  *
  * - Returns `{ completed: true }` on success.
  * - Returns `{ completed: false, cancelled: true }` when the user dismissed the browser.
@@ -42,10 +42,7 @@ export function useOidcFlow() {
   const isConfigured = oidcConfig !== null;
 
   const startFlow = useCallback(
-    async (
-      subdomain: string,
-      options?: OidcFlowStartOptions,
-    ): Promise<OidcFlowOutcome> => {
+    async (options?: OidcFlowStartOptions): Promise<OidcFlowOutcome> => {
       if (!oidcConfig) {
         Alert.alert(
           'Missing OIDC Configuration',
@@ -122,7 +119,6 @@ export function useOidcFlow() {
         }
 
         await authService.completeMobileOidcLogin({
-          subdomain,
           code,
           codeVerifier,
           redirectUri,

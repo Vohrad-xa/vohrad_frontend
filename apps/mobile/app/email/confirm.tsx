@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {StyleSheet} from 'react-native';
 import {userApi} from '@sykamore/api-client';
-import {useAuthStore, type StoreState} from '@sykamore/store';
+import {queryClient} from '@sykamore/store';
 import {useLocalSearchParams, useRouter} from 'expo-router';
 import {ThemedText, ThemedButton, ThemedView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -14,7 +14,6 @@ export default function EmailConfirmScreen() {
     tenant_id?: string;
     tenantId?: string;
   }>();
-  const setUser = useAuthStore((state: StoreState) => state.setUser);
   const router = useRouter();
   const {theme, ds} = useTheme();
   const {isAuthenticated} = useAuth();
@@ -82,7 +81,7 @@ export default function EmailConfirmScreen() {
         if (!isMounted) {
           return;
         }
-        setUser(user);
+        queryClient.invalidateQueries({queryKey: ['users', 'profile']});
         setConfirmedAt(user.updated_at ? formatDate(user.updated_at) : null);
         setStatus('success');
 
@@ -109,7 +108,7 @@ export default function EmailConfirmScreen() {
     return () => {
       isMounted = false;
     };
-  }, [token, rawTenantId, setUser, router, isAuthenticated]);
+  }, [token, rawTenantId, router, isAuthenticated]);
 
   const navigateBackToApp = () => {
     if (isAuthenticated) {

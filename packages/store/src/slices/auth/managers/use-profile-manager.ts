@@ -1,5 +1,5 @@
 import {useState, useCallback, useMemo, useEffect} from 'react';
-import {useProfileDetails, useUpdateProfile} from '../hooks';
+import {useFetchUserProfile, useUpdateProfile} from '../hooks';
 import type {UserUpdateData} from '@sykamore/types';
 
 type ProfileFormState = Required<{
@@ -7,7 +7,7 @@ type ProfileFormState = Required<{
 }>;
 
 export function useProfileManager() {
-  const profileDetails = useProfileDetails();
+  const {data: profileDetails} = useFetchUserProfile();
   const {updateProfile, isLoading} = useUpdateProfile();
 
   const emptyProfileState: ProfileFormState = useMemo(

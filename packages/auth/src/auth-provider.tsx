@@ -22,12 +22,8 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   const _hasHydrated = useAuthStore((s) => s._hasHydrated);
 
   const startWebLogin = useCallback(
-    async (
-      subdomain: string,
-      returnTo?: string,
-      options?: {setupPasskey?: boolean},
-    ) => {
-      await authService.startWebLogin(subdomain, returnTo, options);
+    async (returnTo?: string, options?: {setupPasskey?: boolean}) => {
+      await authService.startWebLogin(returnTo, options);
     },
     [],
   );
