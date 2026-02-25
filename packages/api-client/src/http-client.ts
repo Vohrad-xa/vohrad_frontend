@@ -4,6 +4,9 @@ import {resolveApiUrl} from './config';
 import {loadingManager} from './loading-manager';
 import {errorManager} from './error-manager';
 
+/**
+ * Thin fetch wrapper that injects auth headers, retries on 401, and enforces request timeouts.
+ */
 export class HttpClient {
   private accessToken: string | null = null;
   private tenantId: string | null = null;
@@ -18,10 +21,21 @@ export class HttpClient {
     this.tenantId = id;
   }
 
+  /**
+   * Registers the handler invoked when a 401 response is received.
+   *
+   * - The handler must refresh the token and update the client; it should handle logout on failure.
+   */
   setTokenRefreshHandler(handler: () => Promise<void>) {
     this.onTokenRefresh = handler;
   }
 
+  /**
+   * Executes an HTTP request, injecting auth headers and retrying once on 401.
+   *
+   * - Accepts a full URL or a relative endpoint resolved via resolveApiUrl().
+   * - On 401, triggers the token refresh handler and retries the original request once.
+   */
   async makeRequest<T>(
     urlOrEndpoint: string,
     options: RequestInit = {},
@@ -29,7 +43,6 @@ export class HttpClient {
   ): Promise<ApiResponse<T>> {
     const loadingToken = loadingManager.startRequest();
 
-    // Detect if it's a full URL or relative endpoint
     const isFullUrl =
       urlOrEndpoint.startsWith('http://') ||
       urlOrEndpoint.startsWith('https://');
@@ -51,7 +64,7 @@ export class HttpClient {
       typeof window !== 'undefined' && typeof document !== 'undefined';
 
     if (isBrowser && !headers['X-Client-Platform']) {
-      // Tell the API when we are running from the web build so it can switch to cookie auth.
+      // Signals the API to switch to cookie-based auth for web sessions.
       headers['X-Client-Platform'] = 'web';
     }
 
@@ -69,14 +82,13 @@ export class HttpClient {
     };
 
     if (isBrowser) {
-      // Allow browser fetch to include HttpOnly refresh cookies.
+      // Required for the browser to send HttpOnly refresh cookies.
       config.credentials = 'include';
     }
 
     try {
       const response = await this.fetchWithRetry(url, config);
 
-      // Intercept 401 responses and attempt token refresh
       if (response.status === 401 && !isRetry && this.onTokenRefresh) {
         const isAuthEndpoint =
           urlOrEndpoint.includes('/auth/oidc/') ||
@@ -85,12 +97,9 @@ export class HttpClient {
         if (!isAuthEndpoint) {
           try {
             await this.onTokenRefresh();
-
-            // Retry original request with new token
             return this.makeRequest(urlOrEndpoint, options, true);
           } catch (_refreshError) {
-            // Refresh failed, let original 401 error propagate
-            // The refresh handler should already handle logout
+            // Refresh failed — let the original 401 propagate; the handler owns logout.
           }
         }
       }
@@ -104,7 +113,7 @@ export class HttpClient {
           parsedBody = JSON.parse(rawBody);
         } catch (parseError) {
           if (response.ok) {
-            // Successful response with non-JSON payload
+            // Successful response with a non-JSON body.
             return {
               success: true,
               data: undefined as T,
@@ -143,7 +152,7 @@ export class HttpClient {
 
         let errorMessage = `HTTP ${response.status}`;
 
-        // Handle nested error object structure (e.g., { error: { message: "..." } })
+        // Handle nested error object: { error: { message, code } }
         if (errorPayload?.error) {
           if (typeof errorPayload.error === 'string') {
             errorMessage = errorPayload.error;
@@ -157,7 +166,7 @@ export class HttpClient {
           errorMessage = errorPayload.message;
         }
 
-        // Handle backend validation errors format
+        // Handle backend validation errors: { error: { details: { validation_errors } } }
         const errorObj = errorPayload?.error;
         if (
           errorObj &&
@@ -207,7 +216,7 @@ export class HttpClient {
         return parsedBody as ApiResponse<T>;
       }
 
-      // Successful response with no body (e.g., 204 No Content)
+      // 204 No Content or empty body.
       return {
         success: true,
         data: undefined as T,
@@ -224,7 +233,6 @@ export class HttpClient {
         0,
       );
 
-      // Store retry callback for this request
       const requestId = `retry-${Date.now()}-${Math.random()}`;
       this.retryCallbacks.set(requestId, async () => {
         await this.makeRequest<T>(urlOrEndpoint, options, false);
@@ -247,7 +255,6 @@ export class HttpClient {
     }
   }
 
-  // Convenience methods for common HTTP verbs
   async get<T>(urlOrEndpoint: string): Promise<ApiResponse<T>> {
     return this.makeRequest<T>(urlOrEndpoint, {method: 'GET'});
   }
@@ -285,23 +292,20 @@ export class HttpClient {
     return this.makeRequest<T>(endpoint, {method: 'DELETE'});
   }
 
-  // Single fetch attempt with timeout to prevent infinite hanging
   private async fetchWithRetry(
     url: string,
     config: RequestInit,
   ): Promise<Response> {
-    // If external signal provided, use it; otherwise create internal timeout controller
     const externalSignal = config.signal;
     const controller = new AbortController();
     const timeoutMs = 10000;
 
-    // Combine external signal with timeout
     const timeoutId = setTimeout(() => {
       controller.abort();
     }, timeoutMs);
 
-    // If external signal aborts, abort internal controller too
     if (externalSignal) {
+      // Propagate external cancellation (e.g. component unmount) into the internal controller.
       externalSignal.addEventListener('abort', () => controller.abort());
     }
 
@@ -316,12 +320,10 @@ export class HttpClient {
     } catch (error) {
       clearTimeout(timeoutId);
 
-      // Check if external abort (component unmount)
       if (externalSignal?.aborted) {
         throw new Error('Request cancelled');
       }
 
-      // Distinguish timeout from other network errors
       if (
         error instanceof Error &&
         (error.name === 'AbortError' || error.name === 'TimeoutError')
@@ -334,5 +336,4 @@ export class HttpClient {
   }
 }
 
-// Create singleton instance with env-driven configuration
 export const httpClient = new HttpClient();

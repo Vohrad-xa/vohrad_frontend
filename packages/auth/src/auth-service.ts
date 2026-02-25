@@ -7,119 +7,28 @@ import {
   validation,
 } from '@sykamore/types';
 
-type GlobalWithEnv = {
-  process?: {
-    env?: Record<string, string | undefined>;
-  };
-};
-
-declare const process: {
-  env: Record<string, string | undefined>;
-};
-
 const WEB_CSRF_COOKIE_NAME = 'sykamore_csrf_token';
-const MOBILE_DEFAULT_SCOPES = [
-  'openid',
-  'sykamore-claims',
-  'sykamore-audience',
-  'offline_access',
-];
 
-type MobileOidcClientConfig = {
+export type MobileOidcConfig = {
   issuerUrl: string;
   mobileClientId: string;
   scopes: string[];
-  mobileRedirectUri: string | null;
+  mobileRedirectUri?: string;
 };
 
-const inlineEnv: Record<string, string | undefined> = {
-  EXPO_PUBLIC_OIDC_ISSUER_URL: process.env.EXPO_PUBLIC_OIDC_ISSUER_URL,
-  EXPO_PUBLIC_OIDC_MOBILE_CLIENT_ID:
-    process.env.EXPO_PUBLIC_OIDC_MOBILE_CLIENT_ID,
-  EXPO_PUBLIC_OIDC_MOBILE_SCOPES: process.env.EXPO_PUBLIC_OIDC_MOBILE_SCOPES,
-  EXPO_PUBLIC_OIDC_MOBILE_REDIRECT_URI:
-    process.env.EXPO_PUBLIC_OIDC_MOBILE_REDIRECT_URI,
-  NEXT_PUBLIC_OIDC_ISSUER_URL: process.env.NEXT_PUBLIC_OIDC_ISSUER_URL,
-  NEXT_PUBLIC_OIDC_MOBILE_CLIENT_ID:
-    process.env.NEXT_PUBLIC_OIDC_MOBILE_CLIENT_ID,
-  NEXT_PUBLIC_OIDC_MOBILE_SCOPES: process.env.NEXT_PUBLIC_OIDC_MOBILE_SCOPES,
-  NEXT_PUBLIC_OIDC_MOBILE_REDIRECT_URI:
-    process.env.NEXT_PUBLIC_OIDC_MOBILE_REDIRECT_URI,
-};
+let mobileOidcConfig: MobileOidcConfig | null = null;
 
-const envFromGlobal = (() => {
-  try {
-    return (globalThis as GlobalWithEnv).process?.env;
-  } catch {
-    return undefined;
-  }
-})();
+export function initMobileOidcConfig(config: MobileOidcConfig): void {
+  mobileOidcConfig = config;
+}
 
-const readEnv = (keys: string[]): string | undefined => {
-  for (const key of keys) {
-    const value = inlineEnv[key] ?? envFromGlobal?.[key];
-    if (typeof value === 'string' && value.trim().length > 0) {
-      return value.trim();
-    }
-  }
-  return undefined;
-};
-
-const parseScopes = (value?: string): string[] => {
-  if (!value) return MOBILE_DEFAULT_SCOPES;
-
-  const parsed = value
-    .split(/[\s,]+/)
-    .map((scope) => scope.trim())
-    .filter((scope) => scope.length > 0);
-
-  return parsed.length > 0 ? parsed : MOBILE_DEFAULT_SCOPES;
-};
-
-let cachedMobileOidcConfig: MobileOidcClientConfig | null = null;
-
-export function getMobileOidcClientConfig(): MobileOidcClientConfig {
-  if (cachedMobileOidcConfig) {
-    return cachedMobileOidcConfig;
-  }
-
-  const issuerUrl = readEnv([
-    'EXPO_PUBLIC_OIDC_ISSUER_URL',
-    'NEXT_PUBLIC_OIDC_ISSUER_URL',
-  ]);
-  const mobileClientId = readEnv([
-    'EXPO_PUBLIC_OIDC_MOBILE_CLIENT_ID',
-    'NEXT_PUBLIC_OIDC_MOBILE_CLIENT_ID',
-  ]);
-  const scopeValue = readEnv([
-    'EXPO_PUBLIC_OIDC_MOBILE_SCOPES',
-    'NEXT_PUBLIC_OIDC_MOBILE_SCOPES',
-  ]);
-  const mobileRedirectUriValue = readEnv([
-    'EXPO_PUBLIC_OIDC_MOBILE_REDIRECT_URI',
-    'NEXT_PUBLIC_OIDC_MOBILE_REDIRECT_URI',
-  ]);
-
-  if (!issuerUrl) {
+export function getMobileOidcClientConfig(): MobileOidcConfig {
+  if (!mobileOidcConfig) {
     throw new Error(
-      'OIDC issuer URL is not configured. Set EXPO_PUBLIC_OIDC_ISSUER_URL.',
+      'OIDC config not initialized. Call initMobileOidcConfig() at app startup.',
     );
   }
-
-  if (!mobileClientId) {
-    throw new Error(
-      'OIDC mobile client ID is not configured. Set EXPO_PUBLIC_OIDC_MOBILE_CLIENT_ID.',
-    );
-  }
-
-  cachedMobileOidcConfig = {
-    issuerUrl: issuerUrl.replace(/\/+$/, ''),
-    mobileClientId,
-    scopes: parseScopes(scopeValue),
-    mobileRedirectUri: mobileRedirectUriValue ?? null,
-  };
-
-  return cachedMobileOidcConfig;
+  return mobileOidcConfig;
 }
 
 export class AuthService {

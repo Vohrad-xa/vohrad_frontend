@@ -1,13 +1,36 @@
 import {Alert, Platform} from 'react-native';
-import {authService} from '@sykamore/auth';
+import {initApiConfig} from '@sykamore/api-client';
+import {authService, initMobileOidcConfig} from '@sykamore/auth';
 import {useAuthStore, setAuthPersistStorage, AUTH_PERSIST_KEY} from '@sykamore/store';
 import {
   authenticateWithBiometrics,
   disableBiometrics,
   shouldRequireAuthenticationOnLaunch,
 } from '@/features/security/biometric-service';
+import {env} from './env';
 import {secureStorage} from './secure-storage';
 
+initApiConfig({
+  baseUrl: env.api.baseUrl,
+  protocol: env.api.protocol,
+  baseDomain: env.api.baseDomain,
+  version: env.api.version,
+});
+
+if (env.oidc.issuerUrl && env.oidc.mobileClientId) {
+  initMobileOidcConfig({
+    issuerUrl: env.oidc.issuerUrl,
+    mobileClientId: env.oidc.mobileClientId,
+    scopes: env.oidc.scopes,
+    mobileRedirectUri: env.oidc.redirectUri,
+  });
+}
+
+/**
+ * Wires secureStorage as the Zustand persist adapter and returns a write-lock handle.
+ *
+ * - Writes are blocked while locked to prevent flushing stale state during hydration.
+ */
 function configureZustandPersistence() {
   const hydrationState = {locked: true};
 
@@ -26,6 +49,9 @@ function configureZustandPersistence() {
   return hydrationState;
 }
 
+/**
+ * Returns true if a refresh token exists in the persisted auth snapshot.
+ */
 async function hasPersistedRefreshToken(): Promise<boolean> {
   const raw = await secureStorage.getItem(AUTH_PERSIST_KEY);
   if (!raw) return false;
@@ -36,43 +62,44 @@ async function hasPersistedRefreshToken(): Promise<boolean> {
     };
     return Boolean(snapshot?.state?.tokens?.refresh_token);
   } catch (error) {
-    console.error(
-      '[bootstrap] Failed to parse persisted auth snapshot:',
-      error,
-    );
+    console.error('[bootstrap] Failed to parse auth snapshot:', error);
     return false;
   }
 }
 
+/**
+ * Prompts biometric unlock when required; clears the session on failure.
+ *
+ * - Returns false if authentication fails or is cancelled, true in all other cases.
+ */
 async function handleBiometricAuthentication(): Promise<boolean> {
-  const persistedHasRefreshToken = await hasPersistedRefreshToken();
-  if (!persistedHasRefreshToken) return true;
+  if (!(await hasPersistedRefreshToken())) return true;
+  if (!(await shouldRequireAuthenticationOnLaunch())) return true;
 
-  const requireBiometric = await shouldRequireAuthenticationOnLaunch();
-  if (!requireBiometric) return true;
+  const result = await authenticateWithBiometrics('Unlock your account');
+  if (result.success) return true;
 
-  const authResult = await authenticateWithBiometrics('Unlock your account');
-  if (authResult.success) return true;
-
-  // If auth fails/cancelled: disable biometrics and wipe persisted auth snapshot.
   await disableBiometrics();
   await secureStorage.removeItem(AUTH_PERSIST_KEY);
 
-  if (!authResult.cancelled) {
+  if (!result.cancelled) {
     Alert.alert('Authentication failed', 'Please sign in again to continue.');
   }
 
   return false;
 }
 
-async function rehydrateSession() {
+/**
+ * Rehydrates the Zustand auth store and refreshes the access token if absent.
+ *
+ * - On web, restores the session from the OIDC cookie instead.
+ */
+async function rehydrateSession(): Promise<void> {
   await useAuthStore.persist?.rehydrate?.();
 
   if (Platform.OS === 'web') {
     const restored = await authService.restoreSessionFromCookie();
-    if (!restored) {
-      useAuthStore.getState().logout();
-    }
+    if (!restored) useAuthStore.getState().logout();
     return;
   }
 
@@ -81,15 +108,15 @@ async function rehydrateSession() {
     try {
       await authService.refreshToken();
     } catch (error) {
-      console.error(
-        '[bootstrap] Failed to refresh access token on boot:',
-        error,
-      );
+      console.error('[bootstrap] Token refresh on boot failed:', error);
     }
   }
 }
 
-function clearAuthState() {
+/**
+ * Resets the auth store to a fully logged-out state.
+ */
+function clearAuthState(): void {
   useAuthStore.setState({
     user: null,
     tokens: null,
@@ -99,12 +126,17 @@ function clearAuthState() {
   });
 }
 
+/**
+ * Configures persistence, gates on biometrics, and rehydrates the auth session.
+ *
+ * - Must be awaited before rendering protected routes.
+ * - Never throws — errors are logged internally.
+ */
 export async function bootstrap(): Promise<void> {
   try {
     const hydrationState = configureZustandPersistence();
 
     const ok = await handleBiometricAuthentication();
-
     hydrationState.locked = false;
 
     if (!ok) {
@@ -114,6 +146,6 @@ export async function bootstrap(): Promise<void> {
 
     await rehydrateSession();
   } catch (error) {
-    console.error('[bootstrap] Failed to bootstrap app:', error);
+    console.error('[bootstrap] Unexpected failure:', error);
   }
 }
