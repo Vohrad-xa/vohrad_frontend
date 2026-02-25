@@ -30,33 +30,31 @@ type TrackedRequest = {
   timeoutId?: ReturnType<typeof setTimeout>;
 };
 
+/**
+ * Tracks in-flight requests and drives loading indicator visibility with flicker prevention.
+ *
+ * - Visibility is debounced: delayed on show, held for a minimum duration on hide.
+ * - Each request is identified by a unique token returned from startRequest().
+ */
 class GlobalLoadingManager {
-  // Observable pattern: UI components subscribe to state changes
   private listeners = new Set<LoadingListener>();
-
   private errorListeners = new Set<ErrorListener>();
-
-  // Token-based tracking: each request gets unique token
   private requests = new Map<string, TrackedRequest>();
-
   private trackedRequestCount = 0;
-
-  // Timing configuration: prevent flicker and ensure visibility
   private showDelayMs = 300;
-
   private minimumVisibleMs = 500;
-
   private defaultMaxDurationMs = 15000;
-
   private isVisible = false;
-
   private showTimer: ReturnType<typeof setTimeout> | null = null;
-
   private hideTimer: ReturnType<typeof setTimeout> | null = null;
-
   private lastShowTimestamp: number | null = null;
 
-  // Start tracking a request, returns token for cleanup
+  /**
+   * Registers a request and returns a token required to complete it via finishRequest().
+   *
+   * - Silent requests are tracked internally but never affect indicator visibility.
+   * - Automatically calls finishRequest after maxDurationMs to prevent stuck loaders.
+   */
   startRequest(options?: StartOptions): string {
     const token =
       options?.key ??
@@ -65,17 +63,11 @@ class GlobalLoadingManager {
     const silent = options?.silent ?? false;
     const isInitialTracked = !silent && this.trackedRequestCount === 0;
 
-    // Safety timeout prevents infinite loading
     const maxDuration = options?.maxDurationMs ?? this.defaultMaxDurationMs;
     const timeoutId = setTimeout(() => {
-      const request = this.requests.get(token);
-      if (request) {
+      if (this.requests.get(token)) {
         this.finishRequest(token);
-
-        this.emitError({
-          message: 'Request timeout',
-          timestamp: Date.now(),
-        });
+        this.emitError({message: 'Request timeout', timestamp: Date.now()});
       }
     }, maxDuration);
 
@@ -92,70 +84,65 @@ class GlobalLoadingManager {
     return token;
   }
 
-  // Clean up request by token
+  /**
+   * Marks a request as complete and triggers hide logic when no tracked requests remain.
+   */
   finishRequest(token: string): void {
     const request = this.requests.get(token);
-    if (!request) {
-      return;
-    }
+    if (!request) return;
 
-    if (request.timeoutId) {
-      clearTimeout(request.timeoutId);
-    }
+    if (request.timeoutId) clearTimeout(request.timeoutId);
 
     this.requests.delete(token);
 
     if (!request.silent) {
       this.trackedRequestCount = Math.max(0, this.trackedRequestCount - 1);
-
-      if (this.trackedRequestCount === 0) {
-        this.queueHide();
-      }
+      if (this.trackedRequestCount === 0) this.queueHide();
     }
 
     this.notify();
   }
 
-  // Subscribe to loading state changes
+  /**
+   * Subscribes to loading state changes; the listener is called immediately with the current state.
+   *
+   * - Returns an unsubscribe function — call it on unmount to prevent memory leaks.
+   */
   subscribe(listener: LoadingListener): () => void {
     this.listeners.add(listener);
     listener(this.getState());
-    return () => {
-      this.listeners.delete(listener);
-    };
+    return () => this.listeners.delete(listener);
   }
 
-  // Subscribe to loading errors (timeouts)
+  /**
+   * Subscribes to timeout errors emitted when a request exceeds maxDurationMs.
+   *
+   * - Returns an unsubscribe function.
+   */
   subscribeToErrors(listener: ErrorListener): () => void {
     this.errorListeners.add(listener);
-    return () => {
-      this.errorListeners.delete(listener);
-    };
+    return () => this.errorListeners.delete(listener);
   }
 
-  // Configure timing behavior
+  /**
+   * Overrides default timing: show delay, minimum visible duration, and max request duration.
+   */
   configure(options: ConfigOptions): void {
-    if (typeof options.showDelayMs === 'number') {
+    if (typeof options.showDelayMs === 'number')
       this.showDelayMs = Math.max(0, options.showDelayMs);
-    }
-    if (typeof options.minimumVisibleMs === 'number') {
+    if (typeof options.minimumVisibleMs === 'number')
       this.minimumVisibleMs = Math.max(0, options.minimumVisibleMs);
-    }
-    if (typeof options.defaultMaxDurationMs === 'number') {
+    if (typeof options.defaultMaxDurationMs === 'number')
       this.defaultMaxDurationMs = Math.max(0, options.defaultMaxDurationMs);
-    }
   }
 
-  // Delay showing spinner to prevent flicker on fast requests
   private queueShow(immediate: boolean): void {
     if (this.hideTimer) {
       clearTimeout(this.hideTimer);
       this.hideTimer = null;
     }
 
-    if (this.isVisible) {
-      return;
-    }
+    if (this.isVisible) return;
 
     if (this.showTimer) {
       clearTimeout(this.showTimer);
@@ -173,16 +160,13 @@ class GlobalLoadingManager {
     }, this.showDelayMs);
   }
 
-  // Ensure spinner stays visible long enough to be perceived
   private queueHide(): void {
     if (this.showTimer) {
       clearTimeout(this.showTimer);
       this.showTimer = null;
     }
 
-    if (!this.isVisible) {
-      return;
-    }
+    if (!this.isVisible) return;
 
     const timeSinceShow = this.lastShowTimestamp
       ? Date.now() - this.lastShowTimestamp
@@ -207,10 +191,7 @@ class GlobalLoadingManager {
   }
 
   private setVisible(nextVisible: boolean): void {
-    if (this.isVisible === nextVisible) {
-      return;
-    }
-
+    if (this.isVisible === nextVisible) return;
     this.isVisible = nextVisible;
     this.lastShowTimestamp = nextVisible ? Date.now() : null;
     this.notify();
@@ -224,18 +205,13 @@ class GlobalLoadingManager {
     };
   }
 
-  // Notify all subscribers of state changes
   private notify(): void {
     const state = this.getState();
-    this.listeners.forEach((listener) => {
-      listener(state);
-    });
+    this.listeners.forEach((listener) => listener(state));
   }
 
   private emitError(error: LoadingError): void {
-    this.errorListeners.forEach((listener) => {
-      listener(error);
-    });
+    this.errorListeners.forEach((listener) => listener(error));
   }
 }
 

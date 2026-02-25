@@ -42,13 +42,24 @@ type ConfigOptions = {
   enableLogging?: boolean;
 };
 
+/**
+ * Classifies, records, and broadcasts API errors to subscribed UI components.
+ *
+ * - Errors are categorized by message pattern into authentication, network, validation, etc.
+ * - History is capped at maxHistorySize (default 50) with newest errors first.
+ */
 class GlobalErrorManager {
   private listeners = new Set<ErrorListener>();
   private history: AppError[] = [];
   private maxHistorySize = 50;
   private enableLogging = false;
 
-  // Report a new error
+  /**
+   * Creates, stores, and broadcasts a new AppError derived from message and HTTP status.
+   *
+   * - Category, title, and retryability are inferred from the message unless overridden via options.
+   * - Returns the created AppError for inline handling at the call site.
+   */
   reportError(
     message: string,
     statusCode?: number,
@@ -73,13 +84,11 @@ class GlobalErrorManager {
       scope,
     };
 
-    // Add to history
     this.history.unshift(error);
     if (this.history.length > this.maxHistorySize) {
       this.history = this.history.slice(0, this.maxHistorySize);
     }
 
-    // Log if enabled
     if (this.enableLogging) {
       console.error(`[ErrorManager] ${error.title}: ${error.message}`, {
         category: error.category,
@@ -87,120 +96,77 @@ class GlobalErrorManager {
       });
     }
 
-    // Notify all subscribers
-    this.listeners.forEach((listener) => {
-      listener(error);
-    });
+    this.listeners.forEach((listener) => listener(error));
 
     return error;
   }
 
-  // subscribe to error events
+  /**
+   * Subscribes to errors as they are reported.
+   *
+   * - Returns an unsubscribe function — call it on unmount to prevent memory leaks.
+   */
   subscribe(listener: ErrorListener): () => void {
     this.listeners.add(listener);
-    return () => {
-      this.listeners.delete(listener);
-    };
+    return () => this.listeners.delete(listener);
   }
 
-  // Get error history
+  /**
+   * Returns recorded errors in reverse-chronological order, optionally capped to limit.
+   */
   getHistory(limit?: number): AppError[] {
     return limit ? this.history.slice(0, limit) : [...this.history];
   }
 
-  // Clear error history
   clearHistory(): void {
     this.history = [];
   }
 
-  // Configure error manager settings
+  /**
+   * Overrides default settings for history size and console logging.
+   */
   configure(options: ConfigOptions): void {
-    if (typeof options.maxHistorySize === 'number') {
+    if (typeof options.maxHistorySize === 'number')
       this.maxHistorySize = Math.max(1, options.maxHistorySize);
-    }
-    if (typeof options.enableLogging === 'boolean') {
+    if (typeof options.enableLogging === 'boolean')
       this.enableLogging = options.enableLogging;
-    }
   }
 
-  // Categorizes an error message and returns appropriate title and metadata
+  /**
+   * Infers category, display title, and retryability from a raw error message.
+   *
+   * - Matching is case-insensitive against known keywords and HTTP status codes.
+   * - Falls back to category 'unknown' with isRetryable false if no pattern matches.
+   */
   categorize(message: string): ErrorInfo {
-    const lowerMessage = message.toLowerCase();
+    const lower = message.toLowerCase();
 
-    if (this.isAuthenticationError(lowerMessage)) {
-      return {
-        category: 'authentication',
-        title: 'Login Failed',
-        isRetryable: false,
-      };
-    }
+    if (this.isAuthenticationError(lower))
+      return {category: 'authentication', title: 'Login Failed', isRetryable: false};
+    if (this.isAuthorizationError(lower))
+      return {category: 'authorization', title: 'Access Denied', isRetryable: false};
+    if (this.isValidationError(lower))
+      return {category: 'validation', title: 'Invalid Input', isRetryable: false};
+    if (this.isNotFoundError(lower))
+      return {category: 'not_found', title: 'Not Found', isRetryable: false};
+    if (this.isTimeoutError(lower))
+      return {category: 'timeout', title: 'Request Timeout', isRetryable: true};
+    if (this.isNetworkError(lower))
+      return {category: 'network', title: 'Connection Error', isRetryable: true};
+    if (this.isServerError(lower))
+      return {category: 'server', title: 'Server Error', isRetryable: true};
 
-    if (this.isAuthorizationError(lowerMessage)) {
-      return {
-        category: 'authorization',
-        title: 'Access Denied',
-        isRetryable: false,
-      };
-    }
-
-    if (this.isValidationError(lowerMessage)) {
-      return {
-        category: 'validation',
-        title: 'Invalid Input',
-        isRetryable: false,
-      };
-    }
-
-    if (this.isNotFoundError(lowerMessage)) {
-      return {
-        category: 'not_found',
-        title: 'Not Found',
-        isRetryable: false,
-      };
-    }
-
-    if (this.isTimeoutError(lowerMessage)) {
-      return {
-        category: 'timeout',
-        title: 'Request Timeout',
-        isRetryable: true,
-      };
-    }
-
-    if (this.isNetworkError(lowerMessage)) {
-      return {
-        category: 'network',
-        title: 'Connection Error',
-        isRetryable: true,
-      };
-    }
-
-    if (this.isServerError(lowerMessage)) {
-      return {
-        category: 'server',
-        title: 'Server Error',
-        isRetryable: true,
-      };
-    }
-
-    return {
-      category: 'unknown',
-      title: 'Error',
-      isRetryable: false,
-    };
+    return {category: 'unknown', title: 'Error', isRetryable: false};
   }
 
-  // Gets a user-friendly title for an error message
   getTitle(message: string): string {
     return this.categorize(message).title;
   }
 
-  // Determines if an error is retryable
   isRetryable(message: string): boolean {
     return this.categorize(message).isRetryable;
   }
 
-  // Checks if error is related to authentication
   isAuthenticationError(message: string): boolean {
     const lower = message.toLowerCase();
     return (
@@ -215,7 +181,6 @@ class GlobalErrorManager {
     );
   }
 
-  // Checks if error is related to authorization/permissions
   isAuthorizationError(message: string): boolean {
     const lower = message.toLowerCase();
     return (
@@ -226,7 +191,6 @@ class GlobalErrorManager {
     );
   }
 
-  // Checks if error is related to validation
   isValidationError(message: string): boolean {
     const lower = message.toLowerCase();
     return (
@@ -238,19 +202,15 @@ class GlobalErrorManager {
     );
   }
 
-  // Checks if error is a not found error
   isNotFoundError(message: string): boolean {
     const lower = message.toLowerCase();
     return lower.includes('not found') || lower.includes('404');
   }
 
-  // Checks if error is a timeout error
   isTimeoutError(message: string): boolean {
     const lower = message.toLowerCase();
     return lower.includes('timeout') || lower.includes('timed out');
   }
-
-  // Checks if error is a network error
 
   isNetworkError(message: string): boolean {
     const lower = message.toLowerCase();
@@ -262,7 +222,6 @@ class GlobalErrorManager {
     );
   }
 
-  // Checks if error is a server error
   isServerError(message: string): boolean {
     const lower = message.toLowerCase();
     return (
