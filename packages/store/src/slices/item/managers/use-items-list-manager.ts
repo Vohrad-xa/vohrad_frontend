@@ -35,11 +35,7 @@ export function useItemsListManager(options?: UseItemsListManagerOptions) {
     isFetching,
     isFetchingNextPage,
     refetch,
-  } = useInfiniteItems(
-    filters,
-    options?.pageSize,
-    options?.enabled,
-  );
+  } = useInfiniteItems(filters, options?.pageSize, options?.enabled);
 
   // Bridge TanStack Query state to global Zustand error store
   useEffect(() => {

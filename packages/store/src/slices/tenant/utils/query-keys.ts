@@ -1,5 +1,9 @@
 export type TenantQueryKey = readonly ['tenant', 'info', string | null];
-export type TenantLicenseQueryKey = readonly ['tenant', 'license', string | null];
+export type TenantLicenseQueryKey = readonly [
+  'tenant',
+  'license',
+  string | null,
+];
 
 /**
  * Builds the query key for tenant info cache.

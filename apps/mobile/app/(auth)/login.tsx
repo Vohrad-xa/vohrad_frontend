@@ -73,7 +73,7 @@ export default function LoginScreen() {
               variant="subheadline"
               style={{color: theme.muted, textAlign: 'center'}}
             >
-              {"By continuing, you acknowledge Sykamore\u2019s"}
+              {'By continuing, you acknowledge Sykamore\u2019s'}
             </ThemedText>
 
             <ThemedText variant="caption">Privacy Policy</ThemedText>

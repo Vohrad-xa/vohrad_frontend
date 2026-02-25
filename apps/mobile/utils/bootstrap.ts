@@ -1,7 +1,11 @@
 import {Alert, Platform} from 'react-native';
 import {initApiConfig} from '@sykamore/api-client';
 import {authService, initMobileOidcConfig} from '@sykamore/auth';
-import {useAuthStore, setAuthPersistStorage, AUTH_PERSIST_KEY} from '@sykamore/store';
+import {
+  useAuthStore,
+  setAuthPersistStorage,
+  AUTH_PERSIST_KEY,
+} from '@sykamore/store';
 import {
   authenticateWithBiometrics,
   disableBiometrics,

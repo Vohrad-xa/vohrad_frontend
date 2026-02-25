@@ -1,4 +1,9 @@
-import type {AuthTokens, Identity, TokenResponse, TenantMembership} from '@sykamore/types';
+import type {
+  AuthTokens,
+  Identity,
+  TokenResponse,
+  TenantMembership,
+} from '@sykamore/types';
 import {resolveApiUrl} from '../config';
 import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';

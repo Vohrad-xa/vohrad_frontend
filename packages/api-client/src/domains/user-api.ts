@@ -62,9 +62,7 @@ export class UserApi {
   }
 
   async getUserProfile(): Promise<User> {
-    const response = await httpClient.get<User>(
-      API_ENDPOINTS.USERS.PROFILE,
-    );
+    const response = await httpClient.get<User>(API_ENDPOINTS.USERS.PROFILE);
     return response.data;
   }
 

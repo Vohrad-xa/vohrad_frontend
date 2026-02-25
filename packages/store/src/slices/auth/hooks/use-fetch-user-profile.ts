@@ -8,13 +8,11 @@ const STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
 export type UserProfileQueryKey = readonly ['users', 'profile', string | null];
 
-
 export function buildUserProfileQueryKey(
   tenantId: string | null,
 ): UserProfileQueryKey {
   return ['users', 'profile', tenantId] as const;
 }
-
 
 /**
  * Fetches the full tenant-scoped user profile (GET /users/profile).

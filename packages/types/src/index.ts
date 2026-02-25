@@ -1,5 +1,10 @@
 // Auth types
-export type {AuthState, AuthContextValue, AsyncState, MobileOidcLoginParams} from './auth';
+export type {
+  AuthState,
+  AuthContextValue,
+  AsyncState,
+  MobileOidcLoginParams,
+} from './auth';
 
 // API types
 export type {

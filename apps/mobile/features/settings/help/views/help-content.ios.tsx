@@ -83,7 +83,9 @@ export function HelpContent() {
 
         <Section title="About Sykamore">
           <LabeledContent label="Version">
-            <Text modifiers={[foregroundStyle('secondary')]}>{APP_VERSION}</Text>
+            <Text modifiers={[foregroundStyle('secondary')]}>
+              {APP_VERSION}
+            </Text>
           </LabeledContent>
         </Section>
       </List>

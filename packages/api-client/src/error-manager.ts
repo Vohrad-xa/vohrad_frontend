@@ -142,17 +142,33 @@ class GlobalErrorManager {
     const lower = message.toLowerCase();
 
     if (this.isAuthenticationError(lower))
-      return {category: 'authentication', title: 'Login Failed', isRetryable: false};
+      return {
+        category: 'authentication',
+        title: 'Login Failed',
+        isRetryable: false,
+      };
     if (this.isAuthorizationError(lower))
-      return {category: 'authorization', title: 'Access Denied', isRetryable: false};
+      return {
+        category: 'authorization',
+        title: 'Access Denied',
+        isRetryable: false,
+      };
     if (this.isValidationError(lower))
-      return {category: 'validation', title: 'Invalid Input', isRetryable: false};
+      return {
+        category: 'validation',
+        title: 'Invalid Input',
+        isRetryable: false,
+      };
     if (this.isNotFoundError(lower))
       return {category: 'not_found', title: 'Not Found', isRetryable: false};
     if (this.isTimeoutError(lower))
       return {category: 'timeout', title: 'Request Timeout', isRetryable: true};
     if (this.isNetworkError(lower))
-      return {category: 'network', title: 'Connection Error', isRetryable: true};
+      return {
+        category: 'network',
+        title: 'Connection Error',
+        isRetryable: true,
+      };
     if (this.isServerError(lower))
       return {category: 'server', title: 'Server Error', isRetryable: true};
 

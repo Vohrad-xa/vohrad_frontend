@@ -1,5 +1,9 @@
 import {z} from 'zod';
-import {authTokensSchema, identitySchema, tenantMembershipSchema} from '../schemas';
+import {
+  authTokensSchema,
+  identitySchema,
+  tenantMembershipSchema,
+} from '../schemas';
 
 export function validateAuthTokens(tokens: unknown) {
   return authTokensSchema.safeParse(tokens);
