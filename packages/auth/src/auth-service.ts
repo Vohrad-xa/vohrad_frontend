@@ -327,8 +327,8 @@ export class AuthService {
         membershipsResult.data[0];
 
       if (defaultTenant) {
-        httpClient.setTenantId(defaultTenant.id);
-        setSelectedTenantId(defaultTenant.id);
+        httpClient.setTenantId(defaultTenant.tenant_id);
+        setSelectedTenantId(defaultTenant.tenant_id);
         return;
       }
 

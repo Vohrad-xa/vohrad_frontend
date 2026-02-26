@@ -75,7 +75,7 @@ export class ItemApi {
   }
 
   async updateItem(id: string, data: ItemUpdate): Promise<Item> {
-    const response = await httpClient.put<Item>(
+    const response = await httpClient.patch<Item>(
       API_ENDPOINTS.ITEMS.UPDATE(id),
       data,
     );
@@ -90,7 +90,7 @@ export class ItemApi {
     itemLocationId: string,
     data: ItemLocationUpdate,
   ): Promise<void> {
-    await httpClient.put(
+    await httpClient.patch(
       API_ENDPOINTS.ITEM_LOCATIONS.UPDATE(itemLocationId),
       data,
     );

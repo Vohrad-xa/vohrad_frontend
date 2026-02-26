@@ -14,7 +14,7 @@ export class TenantApi {
   }
 
   async updateTenantSettings(data: TenantSettingsUpdate): Promise<Tenant> {
-    const response = await httpClient.put<Tenant>(
+    const response = await httpClient.patch<Tenant>(
       API_ENDPOINTS.TENANT.SETTINGS,
       data,
     );
@@ -22,7 +22,7 @@ export class TenantApi {
   }
 
   async updateTenantProfile(data: TenantProfileUpdate): Promise<Tenant> {
-    const response = await httpClient.put<Tenant>(
+    const response = await httpClient.patch<Tenant>(
       API_ENDPOINTS.TENANT.PROFILE,
       data,
     );

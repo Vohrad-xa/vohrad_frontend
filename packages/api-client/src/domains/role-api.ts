@@ -84,7 +84,7 @@ export class RoleApi {
   }
 
   async updateRole(id: string, data: RoleUpdate): Promise<Role> {
-    const response = await httpClient.put<Role>(
+    const response = await httpClient.patch<Role>(
       API_ENDPOINTS.ROLES.UPDATE(id),
       data,
     );

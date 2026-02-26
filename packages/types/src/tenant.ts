@@ -88,7 +88,7 @@ export interface TenantLicenseInfo {
 }
 
 export interface TenantMembership {
-  id: string;
+  tenant_id: string;
   name: string;
   role: string;
   is_default: boolean;

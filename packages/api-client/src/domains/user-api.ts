@@ -67,7 +67,7 @@ export class UserApi {
   }
 
   async updateUserProfile(data: UserUpdateData): Promise<User> {
-    const response = await httpClient.put<User>(
+    const response = await httpClient.patch<User>(
       API_ENDPOINTS.USERS.PROFILE,
       data,
     );

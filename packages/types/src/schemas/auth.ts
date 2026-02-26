@@ -23,7 +23,7 @@ export const identitySchema = z.object({
 });
 
 export const tenantMembershipSchema = z.object({
-  id: z.string().uuid(),
+  tenant_id: z.string().uuid(),
   name: z.string(),
   role: z.string(),
   is_default: z.boolean(),
