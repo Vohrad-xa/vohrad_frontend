@@ -5,7 +5,7 @@
     "version": "0.0.1",
     "orientation": "default",
     "icon": "./assets/icons/playstore-512.png",
-    "scheme": "mobile",
+    "scheme": "com.sykamore.app",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
@@ -14,7 +14,10 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSFaceIDUsageDescription": "Face ID lets you unlock the app quickly and securely.",
-        "NSCameraUsageDescription": "This app uses the camera to scan barcodes and QR codes for quick data entry."
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes and QR codes for quick data entry.",
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
       },
       "runtimeVersion": {
         "policy": "appVersion"
@@ -27,7 +30,6 @@
         "backgroundColor": "#00000000"
       },
       "predictiveBackGestureEnabled": false,
-      "edgeToEdgeEnabled": true,
       "package": "sykamore.mobile",
       "permissions": [
         "CAMERA",
@@ -73,7 +75,14 @@
       [
         "react-native-share",
         {
-          "ios": ["fb", "tg", "telegram", "ms-outlook", "mailto", "sgnl"],
+          "ios": [
+            "fb",
+            "tg",
+            "telegram",
+            "ms-outlook",
+            "mailto",
+            "sgnl"
+          ],
           "android": [
             "com.facebook.katana",
             "org.telegram.messenger",
@@ -82,9 +91,12 @@
           ],
           "enableBase64ShareAndroid": true
         }
-      ]
+      ],
+      "expo-image"
     ],
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "developmentClient": {
       "silentLaunch": true
     },
@@ -96,10 +108,10 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "564475bf-4818-4ff7-9a27-276b3c1c3fd7"
+        "projectId": "bac9e740-57c1-446f-991e-8cf69991710c"
       }
     },
-    "owner": "syka",
+    "owner": "sykamore",
     "updates": {
       "url": "https://u.expo.dev/82b7131e-841a-46c9-970b-4426291c6480",
       "checkAutomatically": "ON_LOAD",
