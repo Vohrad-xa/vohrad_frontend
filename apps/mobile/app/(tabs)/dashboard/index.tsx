@@ -27,7 +27,7 @@ export default function HomeScreen() {
     navigation.setOptions({
       headerRight: () => (
         <HeaderButton
-          variant={Platform.OS === 'ios' ? 'more' : 'filter'}
+          variant="filter"
           accessibilityLabel="Filter dashboard cards"
           onPress={() => {
             void filterSheetRef.current?.present();
