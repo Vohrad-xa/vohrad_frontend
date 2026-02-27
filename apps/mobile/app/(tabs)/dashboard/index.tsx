@@ -1,14 +1,8 @@
 import {useCallback, useLayoutEffect, useRef} from 'react';
-import {
-  StyleSheet,
-  ScrollView,
-  Platform,
-  useWindowDimensions,
-  type ViewStyle,
-} from 'react-native';
+import {StyleSheet, ScrollView, Platform, View} from 'react-native';
 import {useDashboardOverview, useFetchUserProfile} from '@sykamore/store';
 import {router, useNavigation} from 'expo-router';
-import {HeaderButton, RefreshableScrollView, ThemedView} from '@/components/ui';
+import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   OverviewCards,
@@ -16,13 +10,13 @@ import {
   CardsFilterSheet,
   type CardsFilterSheetHandle,
 } from '@/features/dashboard';
+import {usePullToRefresh} from '@/hooks';
 import {useHaptic, useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
 export default function HomeScreen() {
   const {ds, theme} = useTheme();
   const navigation = useNavigation();
-  const {width: screenWidth} = useWindowDimensions();
   const styles = createStyles(ds, theme);
   const {triggerHaptic} = useHaptic();
   const {refetch: refetchOverview} = useDashboardOverview();
@@ -51,29 +45,25 @@ export default function HomeScreen() {
     router.push('/dashboard/scan');
   }, [triggerHaptic]);
 
-  const handleRefresh = useCallback(async () => {
-    await Promise.all([refetchUserProfile(), refetchOverview()]);
-  }, [refetchUserProfile, refetchOverview]);
-
-  const ScrollComponent =
-    Platform.OS === 'web' ? ScrollView : RefreshableScrollView;
+  const {refreshControl} = usePullToRefresh({
+    onRefresh: async () => {
+      await Promise.all([refetchUserProfile(), refetchOverview()]);
+    },
+  });
 
   return (
     <>
-      <ScrollComponent
-        bounces={Platform.OS !== 'web'}
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        contentInsetAdjustmentBehavior={
-          Platform.OS !== 'web' ? 'automatic' : undefined
-        }
+        contentInsetAdjustmentBehavior="automatic"
         style={styles.scrollView}
-        onRefresh={Platform.OS !== 'web' ? handleRefresh : undefined}
+        refreshControl={refreshControl}
       >
-        <ThemedView style={styles.container}>
+        <View style={styles.container}>
           <QuickActions onScanPress={handleScanOpen} />
-          <OverviewCards screenWidth={screenWidth} />
-        </ThemedView>
-      </ScrollComponent>
+          <OverviewCards />
+        </View>
+      </ScrollView>
       <CardsFilterSheet ref={filterSheetRef} />
     </>
   );
@@ -84,13 +74,9 @@ const createStyles = makeStyleFactory(
     StyleSheet.create({
       scrollView: {
         flex: 1,
-      } as ViewStyle,
+      },
       container: {
         padding: ds.layout.screenPadding,
-      } as ViewStyle,
-      titleNoMarginTop: {
-        marginTop: 0,
-        marginBottom: ds.spacing.md,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

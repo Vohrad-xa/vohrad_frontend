@@ -14,7 +14,7 @@ import {
   Section,
   Text,
 } from 'sykamore-ui/ios';
-import {useDashboardCardControls} from './filter-context';
+import {useDashboardCardControls} from '../hooks';
 
 export type CardsFilterSheetHandle = {
   present: () => Promise<void>;

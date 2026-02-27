@@ -9,7 +9,7 @@ import {TrueSheet} from '@lodev09/react-native-true-sheet';
 import {List, Switch} from 'react-native-paper';
 import {Palette} from '@/constants';
 import {useTheme} from '@/providers';
-import {useDashboardCardControls} from './filter-context';
+import {useDashboardCardControls} from '../hooks';
 
 export type CardsFilterSheetHandle = {
   present: () => Promise<void>;

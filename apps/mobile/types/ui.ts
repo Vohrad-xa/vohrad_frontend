@@ -80,14 +80,6 @@ export interface TabItem {
   icon: IconName;
 }
 
-// menu card with count display
-export interface MenuCard {
-  title: string;
-  icon: IconName;
-  count: number;
-  colorToken: TokenName;
-}
-
 // Menu item with icon and label
 export interface MenuItem extends RequiredIconProps {
   label: string;

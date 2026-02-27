@@ -75,14 +75,7 @@
       [
         "react-native-share",
         {
-          "ios": [
-            "fb",
-            "tg",
-            "telegram",
-            "ms-outlook",
-            "mailto",
-            "sgnl"
-          ],
+          "ios": ["fb", "tg", "telegram", "ms-outlook", "mailto", "sgnl"],
           "android": [
             "com.facebook.katana",
             "org.telegram.messenger",
@@ -94,9 +87,7 @@
       ],
       "expo-image"
     ],
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "developmentClient": {
       "silentLaunch": true
     },

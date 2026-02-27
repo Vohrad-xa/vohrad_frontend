@@ -14,12 +14,12 @@ export default function HomeLayout() {
       screenOptions={{
         headerShown: true,
         headerShadowVisible: false,
-        // headerLargeTitle: true,
         headerBackButtonDisplayMode: 'minimal',
         headerTransparent: Platform.OS === 'ios',
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          fontSize: Platform.OS !== 'ios' ? 22 : undefined,
+          fontSize: Platform.OS !== 'ios' ? 26 : 18,
+          fontWeight: Platform.OS === 'android' ? 'bold' : '600',
         },
       }}
     >
@@ -27,18 +27,12 @@ export default function HomeLayout() {
         name="index"
         options={{
           headerTitle: 'Dashboard',
-          headerTitleStyle: {
-            fontWeight: Platform.OS === 'android' ? 'bold' : '600',
-            color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-            fontSize: Platform.OS !== 'ios' ? 26 : 18,
-          },
         }}
       />
       <Stack.Screen
         name="scan"
         options={{
-          headerLargeTitle: false,
-          presentation: 'fullScreenModal',
+          presentation: 'modal',
         }}
       />
     </Stack>
