@@ -98,7 +98,7 @@ const createStyles = makeStyleFactory(
       card: {
         width: cardWidth,
         borderRadius: ds.borderRadius.xxxl,
-        backgroundColor: theme.card,
+        backgroundColor: theme.modalBackground,
       },
       cardContent: {
         gap: ds.spacing.md,
