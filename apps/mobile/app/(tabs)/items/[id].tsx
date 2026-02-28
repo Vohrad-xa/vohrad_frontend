@@ -1,12 +1,8 @@
 import React, {useState} from 'react';
+import {ScrollView, Button} from 'react-native';
 import {useItemDetailManager} from '@sykamore/store';
 import {useLocalSearchParams, useNavigation} from 'expo-router';
-import {
-  ModalScrollView,
-  ThemedView,
-  ThemedText,
-  ThemedButton,
-} from '@/components/ui';
+import {ThemedView, ThemedText} from '@/components/ui';
 import {ItemDetails, ItemHeader, useItemForm} from '@/features/item';
 import {useSettingsHeader} from '@/hooks/use-settings-header';
 import {useTheme, useHaptic} from '@/providers';
@@ -84,13 +80,13 @@ export default function ItemDetailScreen() {
         <ThemedText style={{textAlign: 'center', marginBottom: ds.spacing.md}}>
           Item not found.
         </ThemedText>
-        <ThemedButton title="Go Back" onPress={() => navigation.goBack()} />
+        <Button title="Go Back" onPress={() => navigation.goBack()} />
       </ThemedView>
     );
   }
 
   return (
-    <ModalScrollView contentContainerStyle={{gap: ds.spacing.xl}}>
+    <ScrollView contentContainerStyle={{gap: ds.spacing.xl}}>
       <ItemHeader item={item} imageUrl={getItemImageUrl()} />
       <ItemDetails
         quantity={item.total_quantity?.toString() ?? ''}
@@ -99,6 +95,6 @@ export default function ItemDetailScreen() {
         isEditing={isEditing}
         item={item}
       />
-    </ModalScrollView>
+    </ScrollView>
   );
 }

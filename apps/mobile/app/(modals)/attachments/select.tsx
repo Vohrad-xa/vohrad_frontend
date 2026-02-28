@@ -1,7 +1,7 @@
 import React, {useState, useCallback} from 'react';
+import {FlashList} from '@shopify/flash-list';
 import {useItemsManager, type Item} from '@sykamore/store';
 import {useLocalSearchParams, router, useNavigation} from 'expo-router';
-import {FlashList} from '@shopify/flash-list';
 import {Divider, Checkbox, List} from 'react-native-paper';
 import {useSettingsHeader} from '@/hooks';
 

@@ -1,13 +1,6 @@
 import React, {useRef, useEffect} from 'react';
-import type {TextInput} from 'react-native';
-import {StyleSheet, View} from 'react-native';
-import {
-  ModalScrollView,
-  Card,
-  EmptyState,
-  ThemedText,
-  ThemedInput,
-} from '@/components/ui';
+import {TextInput,StyleSheet, View, ScrollView} from 'react-native';
+import {Card, EmptyState, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useItemLocation} from '@/features/item';
 import {useTheme} from '@/providers';
@@ -43,7 +36,7 @@ export default function LocationModal() {
   }
 
   return (
-    <ModalScrollView>
+    <ScrollView>
       <View>
         {locations.map((location, index) => (
           <View
@@ -65,11 +58,9 @@ export default function LocationModal() {
                 <ThemedText variant="label" style={styles.fieldLabel}>
                   Quantity
                 </ThemedText>
-                <ThemedInput
+                <TextInput
                   ref={index === 0 ? firstInputRef : undefined}
-                  variant="value"
                   textAlign="right"
-                  borderless
                   value={location.quantity}
                   onChangeText={(text) =>
                     handleQuantityChange(
@@ -86,7 +77,7 @@ export default function LocationModal() {
           </View>
         ))}
       </View>
-    </ModalScrollView>
+    </ScrollView>
   );
 }
 

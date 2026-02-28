@@ -1,11 +1,11 @@
 import React from 'react';
-import {ModalScrollView} from '@/components/ui';
+import {ScrollView} from 'react-native';
 import {ItemSpecifications} from '@/features/item';
 
 export default function SpecificationsModal() {
   return (
-    <ModalScrollView>
+    <ScrollView>
       <ItemSpecifications />
-    </ModalScrollView>
+    </ScrollView>
   );
 }
