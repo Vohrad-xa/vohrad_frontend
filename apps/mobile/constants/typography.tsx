@@ -133,7 +133,7 @@ export const createDesignSystem = (
         borderRadius: 15,
         paddingVertical: 12,
         paddingHorizontal: 16,
-        height: 44,
+        height: 50,
         fontSize: 17,
       },
       card: {borderRadius: 22, padding: 16},

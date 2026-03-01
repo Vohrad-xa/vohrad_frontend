@@ -1,6 +1,7 @@
 export const API_ENDPOINTS = {
   AUTH: {
     OIDC_START: '/auth/oidc/start',
+    APPLE_EXCHANGE: '/auth/apple/exchange',
     WEB_TOKEN: '/auth/web/token',
     WEB_LOGOUT: '/auth/web/logout',
     LOGOUT: '/auth/logout',

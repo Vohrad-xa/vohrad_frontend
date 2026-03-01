@@ -1,5 +1,5 @@
 import React, {useRef, useEffect} from 'react';
-import {TextInput,StyleSheet, View, ScrollView} from 'react-native';
+import {TextInput, StyleSheet, View, ScrollView} from 'react-native';
 import {Card, EmptyState, ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useItemLocation} from '@/features/item';

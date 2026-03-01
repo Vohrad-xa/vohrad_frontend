@@ -40,6 +40,7 @@
     "@sykamore/store": "workspace:*",
     "@sykamore/types": "workspace:*",
     "expo": "55.0.4",
+    "expo-apple-authentication": "^55.0.8",
     "expo-auth-session": "^55.0.6",
     "expo-blur": "~55.0.8",
     "expo-build-properties": "~55.0.9",

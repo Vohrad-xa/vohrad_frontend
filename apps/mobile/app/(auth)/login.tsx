@@ -1,5 +1,6 @@
-import React from 'react';
-import {Image, StyleSheet, View} from 'react-native';
+import {Image, StyleSheet, View, type ImageStyle} from 'react-native';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import {Link} from 'expo-router';
 import {Button, Card, Divider, Surface} from 'react-native-paper';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ThemedText} from '@/components/ui';
@@ -10,73 +11,91 @@ import {makeStyleFactory} from '@/utils';
 
 const microsoftLogo = require('../../assets/icons/microsoft.png') as number;
 
+const iconStyle = (size: number): ImageStyle => ({width: size, height: size});
+
 export default function LoginScreen() {
   const {ds, theme, scheme} = useTheme();
   const styles = createStyles(ds, theme);
-  const {handleSubmit, isLoading, isStartingMobileFlow} = useSignIn();
 
-  const textColor = scheme === 'dark' ? '#000' : '#fff';
-  const buttonColor = scheme === 'dark' ? '#fff' : '#000';
-  const isSigningIn = isLoading || isStartingMobileFlow;
+  const {
+    handleSubmit,
+    handleAppleSubmit,
+    isLoading,
+    isStartingMobileFlow,
+    isStartingAppleFlow,
+    isAppleSupported,
+  } = useSignIn();
+
+  const isOidcSigningIn = isLoading || isStartingMobileFlow;
+  const isAppleSigningIn = isLoading || isStartingAppleFlow;
+
+  const commonButtonProps = {
+    onPress: handleSubmit,
+    disabled: isOidcSigningIn,
+    loading: isOidcSigningIn,
+    buttonColor: scheme === 'dark' ? '#fff' : '#000',
+    textColor: scheme === 'dark' ? '#000' : '#fff',
+    labelStyle: styles.buttonLabel,
+    style: styles.button,
+  };
+
+  const appleButtonStyle =
+    scheme === 'dark'
+      ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+      : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK;
 
   return (
     <SafeAreaView style={styles.safe}>
-      <Surface
-        style={[styles.surface, {backgroundColor: theme.background}]}
-        elevation={0}
-      >
-        <Card.Title title="Welcome" titleStyle={styles.title} />
+      <Surface style={styles.surface} elevation={0}>
+        <Card.Title
+          title="S Y K A M O R E"
+          titleVariant="headlineMedium"
+          titleStyle={styles.title}
+        />
 
         <Card.Content style={styles.content}>
           <Button
             mode="contained"
-            onPress={handleSubmit}
-            disabled={isSigningIn}
-            loading={isSigningIn}
-            buttonColor={buttonColor}
-            textColor={textColor}
-            contentStyle={styles.buttonContent}
+            {...commonButtonProps}
             icon={({size}) => (
-              <Image
-                source={microsoftLogo}
-                style={{width: size, height: size}}
-              />
+              <Image source={microsoftLogo} style={iconStyle(size)} />
             )}
           >
-            Continue with Microsoft
+            Sign in with Microsoft
           </Button>
 
-          <View style={styles.orRow}>
-            <Divider
-              style={[styles.divider, {backgroundColor: theme.divider}]}
+          {isAppleSupported && (
+            <AppleAuthentication.AppleAuthenticationButton
+              buttonType={
+                AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+              }
+              buttonStyle={appleButtonStyle}
+              cornerRadius={16}
+              onPress={handleAppleSubmit}
+              style={[styles.button, isAppleSigningIn && styles.disabled]}
             />
-            <ThemedText variant="label" style={{color: theme.muted}}>
-              OR
-            </ThemedText>
+          )}
+
+          <View style={styles.orRow}>
+            <Divider style={styles.divider} />
+            <ThemedText variant="caption">OR</ThemedText>
             <Divider style={styles.divider} />
           </View>
 
-          <Button
-            mode="contained"
-            onPress={handleSubmit}
-            disabled={isSigningIn}
-            loading={isSigningIn}
-            buttonColor={buttonColor}
-            textColor={textColor}
-            contentStyle={styles.buttonContent}
-          >
+          <Button mode="contained" {...commonButtonProps}>
             Continue with Email
           </Button>
 
           <View style={styles.footer}>
-            <ThemedText
-              variant="subheadline"
-              style={{color: theme.muted, textAlign: 'center'}}
-            >
+            <ThemedText variant="subheadline" style={styles.footerText}>
               {'By continuing, you acknowledge Sykamore\u2019s'}
             </ThemedText>
-
-            <ThemedText variant="caption">Privacy Policy</ThemedText>
+            <Link
+              href="/settings/privacy"
+              style={{textDecorationLine: 'underline'}}
+            >
+              <ThemedText variant="caption">Privacy Policy</ThemedText>
+            </Link>
           </View>
         </Card.Content>
       </Surface>
@@ -87,40 +106,47 @@ export default function LoginScreen() {
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      safe: {flex: 1, backgroundColor: theme.background},
-
+      safe: {
+        flex: 1,
+        backgroundColor: theme.background,
+      },
       surface: {
         flex: 1,
         justifyContent: 'center',
+        backgroundColor: theme.background,
       },
-
       title: {
         textAlign: 'center',
-        fontSize: 22,
-        paddingBottom: ds.spacing.xl,
+        paddingBottom: ds.layout.headerHeightLarge * 1.5,
+        fontWeight: ds.fontWeight.semibold,
       },
-
-      content: {
-        gap: ds.spacing.md,
-      },
-
-      buttonContent: {
+      content: {gap: ds.spacing.lg},
+      buttonLabel: {
+        fontSize: 17,
+        fontWeight: ds.fontWeight.semibold,
         paddingVertical: ds.spacing.xs,
       },
-
+      button: {
+        height: ds.components.button.height,
+        borderRadius: 16,
+      },
+      disabled: {opacity: 0.8},
       orRow: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: ds.spacing.sm,
       },
-
       divider: {
         flex: 1,
+        backgroundColor: theme.divider,
       },
-
       footer: {
         alignItems: 'center',
         gap: ds.spacing.xs,
+      },
+      footerText: {
+        color: theme.muted,
+        textAlign: 'center',
       },
     }),
   (ds, theme) => themeKey(theme, ds),

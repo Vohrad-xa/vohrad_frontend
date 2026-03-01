@@ -16,6 +16,14 @@ export type MobileOidcConfig = {
   mobileRedirectUri?: string;
 };
 
+export type AppleTokenExchangeUserProfile = {
+  name?: {
+    firstName?: string;
+    lastName?: string;
+  };
+  email?: string;
+};
+
 let mobileOidcConfig: MobileOidcConfig | null = null;
 
 export function initMobileOidcConfig(config: MobileOidcConfig): void {
@@ -93,7 +101,7 @@ export class AuthService {
   }
 
   async completeMobileOidcLogin(params: MobileOidcLoginParams): Promise<void> {
-    const {setLoading, login} = useAuthStore.getState();
+    const {setLoading} = useAuthStore.getState();
 
     try {
       setLoading(true);
@@ -109,31 +117,7 @@ export class AuthService {
         codeVerifier: params.codeVerifier,
         redirectUri: params.redirectUri,
       });
-
-      const tokensResult = validation.validateAuthTokens(tokens);
-      if (!tokensResult.success) {
-        throw new Error('Invalid mobile token response from Keycloak');
-      }
-
-      if (!tokensResult.data.refresh_token) {
-        throw new Error(
-          'OIDC mobile flow did not return a refresh token (offline_access missing)',
-        );
-      }
-
-      // Set the access token on the http client before calling getMeProfile,
-      httpClient.setAccessToken(tokensResult.data.access_token);
-
-      const user = await authApi.getMeProfile();
-      const userResult = validation.validateIdentity(user);
-      if (!userResult.success) {
-        throw new Error('Invalid user data received from API');
-      }
-
-      await this.loadAndActivateDefaultTenant();
-
-      login(userResult.data, tokensResult.data);
-      this.scheduleTokenRefresh(tokensResult.data);
+      await this.finalizeMobileLogin(tokens);
     } catch (error) {
       // If login didn't complete, clear any token that was set on the http client.
       httpClient.setAccessToken(null);
@@ -141,6 +125,35 @@ export class AuthService {
         error instanceof ApiError
           ? error.message
           : 'Login failed. Please try again.';
+      const statusCode = error instanceof ApiError ? error.status : undefined;
+      errorManager.reportError(message, statusCode);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async completeMobileAppleLogin(params: {
+    idToken: string;
+    userProfile?: AppleTokenExchangeUserProfile;
+  }): Promise<void> {
+    const {setLoading} = useAuthStore.getState();
+
+    try {
+      setLoading(true);
+
+      const tokens = await authApi.exchangeAppleToken({
+        idToken: params.idToken,
+        userProfile: params.userProfile,
+      });
+
+      await this.finalizeMobileLogin(tokens);
+    } catch (error) {
+      httpClient.setAccessToken(null);
+      const message =
+        error instanceof ApiError
+          ? error.message
+          : 'Apple sign in failed. Please try again.';
       const statusCode = error instanceof ApiError ? error.status : undefined;
       errorManager.reportError(message, statusCode);
       throw error;
@@ -535,6 +548,33 @@ export class AuthService {
       clearTimeout(this.refreshTimer);
       this.refreshTimer = null;
     }
+  }
+
+  private async finalizeMobileLogin(tokens: AuthTokens): Promise<void> {
+    const {login} = useAuthStore.getState();
+    const tokensResult = validation.validateAuthTokens(tokens);
+    if (!tokensResult.success) {
+      throw new Error('Invalid mobile token response from Keycloak');
+    }
+
+    if (!tokensResult.data.refresh_token) {
+      throw new Error(
+        'OIDC mobile flow did not return a refresh token (offline_access missing)',
+      );
+    }
+
+    // Set token before profile fetch.
+    httpClient.setAccessToken(tokensResult.data.access_token);
+
+    const user = await authApi.getMeProfile();
+    const userResult = validation.validateIdentity(user);
+    if (!userResult.success) {
+      throw new Error('Invalid user data received from API');
+    }
+
+    await this.loadAndActivateDefaultTenant();
+    login(userResult.data, tokensResult.data);
+    this.scheduleTokenRefresh(tokensResult.data);
   }
 }
 
