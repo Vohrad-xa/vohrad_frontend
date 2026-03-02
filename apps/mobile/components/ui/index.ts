@@ -11,3 +11,4 @@ export {ScreenLoadingWrapper} from './screen-loading-wrapper';
 export {type BadgeStatus} from './themed-view';
 export {Card} from '../cards/card';
 export {ThemedStatusBar} from './themed-status-bar';
+export * from './form';

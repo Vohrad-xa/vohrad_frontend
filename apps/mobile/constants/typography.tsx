@@ -130,10 +130,10 @@ export const createDesignSystem = (
         fontSize: 17,
       },
       button: {
-        borderRadius: 15,
+        borderRadius: 50,
         paddingVertical: 12,
         paddingHorizontal: 16,
-        height: 50,
+        height: 48,
         fontSize: 17,
       },
       card: {borderRadius: 22, padding: 16},
