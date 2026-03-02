@@ -10,6 +10,7 @@ import {
   type StyleProp,
 } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import {LinearGradient} from 'expo-linear-gradient';
 import {Link} from 'expo-router';
 import {Button, Divider} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
@@ -49,7 +50,7 @@ function SocialButton({
       icon={icon}
       onPress={onPress}
       loading={loading}
-      buttonColor={outlined ? textColor : buttonColor}
+      buttonColor={outlined ? undefined : buttonColor}
       textColor={outlined ? buttonColor : textColor}
       labelStyle={labelStyle}
       style={style}
@@ -62,7 +63,8 @@ function SocialButton({
 
 export default function LoginScreen() {
   const {ds, theme, scheme} = useTheme();
-  const styles = createStyles(ds, theme, scheme);
+
+  const styles = createStyles(ds, theme);
 
   const {
     handleSubmit,
@@ -75,10 +77,31 @@ export default function LoginScreen() {
   } = useSignIn();
 
   const buttonColor = scheme === 'dark' ? Palette.white : Palette.black;
+
   const textColor = scheme === 'dark' ? Palette.black : Palette.white;
 
+  const lightGradient = [
+    '#e9f2ff',
+    '#eef3fb',
+    '#f2f5f9',
+    '#f5f6f8',
+    '#f9f7f6',
+    '#fffaf6',
+  ] as const;
+
+  const darkGradient = [
+    '#0f1116',
+    '#0c0f14',
+    '#0a0c11',
+    '#080a0e',
+    '#06070b',
+    '#05060a',
+  ] as const;
+
   const isMicrosoftSigningIn = isStartingMobileFlow;
+
   const isGoogleSigningIn = isStartingGoogleFlow;
+
   const isEmailSigningIn = isStartingMobileFlow;
 
   const sharedSocialButtonProps = {
@@ -95,98 +118,107 @@ export default function LoginScreen() {
       : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK;
 
   return (
-    <KeyboardAvoidingView
-      style={styles.root}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <LinearGradient
+      colors={scheme === 'dark' ? darkGradient : lightGradient}
+      locations={[0, 0.2, 0.42, 0.64, 0.84, 1]}
+      start={{x: 0.5, y: 0}}
+      end={{x: 0.5, y: 1}}
+      style={{flex: 1}}
     >
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={styles.header}>
-          <ThemedText variant="title3" fontWeight="medium" colorToken="icon">
-            S Y K A M O R E
-          </ThemedText>
-          <ThemedText
-            variant="title1"
-            fontWeight="medium"
-            style={styles.tagline}
-          >
-            Get it right every time
-          </ThemedText>
-        </View>
-
-        <View style={styles.content}>
-          {isAppleSupported && (
-            <AppleAuthentication.AppleAuthenticationButton
-              buttonType={
-                AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
-              }
-              buttonStyle={appleButtonStyle}
-              cornerRadius={ds.components.button.borderRadius}
-              onPress={handleAppleSubmit}
-              style={styles.button}
-            />
-          )}
-
-          {isGoogleSupported && (
-            <SocialButton
-              icon={() => <GoogleIcon />}
-              label="Sign in with Google"
-              onPress={handleGoogleSubmit}
-              loading={isGoogleSigningIn}
-              {...sharedSocialButtonProps}
-            />
-          )}
-
-          <SocialButton
-            icon={() => <MicrosoftIcon />}
-            label="Sign in with Microsoft"
-            onPress={handleSubmit}
-            loading={isMicrosoftSigningIn}
-            {...sharedSocialButtonProps}
-          />
-
-          <View style={styles.orRow}>
-            <Divider style={styles.divider} />
-            <ThemedText variant="caption" fontWeight="semibold">
-              OR
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.header}>
+            <ThemedText variant="title3" fontWeight="medium" colorToken="icon">
+              S Y K A M O R E
             </ThemedText>
-            <Divider style={styles.divider} />
+            <ThemedText
+              variant="title1"
+              fontWeight="medium"
+              style={styles.tagline}
+            >
+              Get it right every time
+            </ThemedText>
           </View>
 
-          <SocialButton
-            label="Work or Personal Email"
-            onPress={handleSubmit}
-            loading={isEmailSigningIn}
-            outlined
-            {...sharedSocialButtonProps}
-            labelStyle={{fontWeight: ds.fontWeight.medium}}
-          />
-        </View>
+          <View style={styles.content}>
+            {isAppleSupported && (
+              <AppleAuthentication.AppleAuthenticationButton
+                buttonType={
+                  AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+                }
+                buttonStyle={appleButtonStyle}
+                cornerRadius={ds.components.button.borderRadius}
+                onPress={handleAppleSubmit}
+                style={styles.button}
+              />
+            )}
 
-        <View style={styles.footer}>
-          <ThemedText variant="footnote" colorToken="muted">
-            {'By continuing, you acknowledge Sykamore\u2019s'}
-          </ThemedText>
-          <Link href="/settings/privacy" style={styles.footerLink}>
-            <ThemedText variant="caption">Privacy Policy</ThemedText>
-          </Link>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            {isGoogleSupported && (
+              <SocialButton
+                icon={() => <GoogleIcon />}
+                label="Sign in with Google"
+                onPress={handleGoogleSubmit}
+                loading={isGoogleSigningIn}
+                {...sharedSocialButtonProps}
+              />
+            )}
+
+            <SocialButton
+              icon={() => <MicrosoftIcon />}
+              label="Sign in with Microsoft"
+              onPress={handleSubmit}
+              loading={isMicrosoftSigningIn}
+              {...sharedSocialButtonProps}
+            />
+
+            <View style={styles.orRow}>
+              <Divider style={styles.divider} />
+              <ThemedText
+                variant="footnote"
+                fontWeight="semibold"
+                colorToken="muted"
+              >
+                OR
+              </ThemedText>
+              <Divider style={styles.divider} />
+            </View>
+
+            <SocialButton
+              label="Work or Personal Email"
+              onPress={handleSubmit}
+              loading={isEmailSigningIn}
+              outlined
+              {...sharedSocialButtonProps}
+              labelStyle={{fontWeight: ds.fontWeight.medium}}
+            />
+
+            <View style={styles.footer}>
+              <ThemedText variant="footnote" colorToken="muted">
+                {'By continuing, you acknowledge Sykamore\u2019s'}
+              </ThemedText>
+              <Link href="/settings/privacy">
+                <ThemedText variant="caption" colorToken="accentBlue">
+                  Privacy Policy
+                </ThemedText>
+              </Link>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape, scheme: 'light' | 'dark') =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      root: {
-        flex: 1,
-        backgroundColor: scheme === 'dark' ? Palette.black : Palette.offWhite,
-      },
-
       scroll: {
         flexGrow: 1,
         alignItems: 'center',
@@ -235,13 +267,9 @@ const createStyles = makeStyleFactory(
       },
 
       footer: {
-        marginTop: ds.spacing.lg,
+        alignItems: 'center',
         gap: ds.spacing.xs,
       },
-
-      footerLink: {
-        alignSelf: 'center',
-      },
     }),
-  (ds, theme, _scheme) => themeKey(theme, ds),
+  (ds, theme) => themeKey(theme, ds),
 );
