@@ -17,7 +17,7 @@ import {ThemedText} from '@/components/ui';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useSignIn} from '@/features/auth';
 import {useTheme} from '@/providers';
-import {makeStyleFactory, GoogleIcon, MicrosoftIcon} from '@/utils';
+import {makeStyleFactory, GoogleIcon, MicrosoftIcon, EmailIcon} from '@/utils';
 
 type SocialButtonProps = {
   icon?: ((props: {size: number}) => React.ReactNode) | string;
@@ -191,7 +191,8 @@ export default function LoginScreen() {
             </View>
 
             <SocialButton
-              label="Work or Personal Email"
+              icon={() => <EmailIcon />}
+              label="Work or Personal email"
               onPress={handleSubmit}
               loading={isEmailSigningIn}
               outlined
@@ -204,9 +205,7 @@ export default function LoginScreen() {
                 {'By continuing, you acknowledge Sykamore\u2019s'}
               </ThemedText>
               <Link href="/settings/privacy">
-                <ThemedText variant="caption" colorToken="accentBlue">
-                  Privacy Policy
-                </ThemedText>
+                <ThemedText variant="caption">Privacy Policy</ThemedText>
               </Link>
             </View>
           </View>
@@ -246,7 +245,7 @@ const createStyles = makeStyleFactory(
 
       buttonLabel: {
         fontSize: ds.components.button.fontSize,
-        fontWeight: ds.fontWeight.semibold,
+        fontWeight: ds.components.button.fontWeight,
       },
 
       button: {
