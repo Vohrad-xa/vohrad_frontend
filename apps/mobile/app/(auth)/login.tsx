@@ -1,40 +1,85 @@
-import {Image, StyleSheet, View, type ImageStyle} from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+  type TextStyle,
+  type ViewStyle,
+  type StyleProp,
+} from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import {Link} from 'expo-router';
-import {Button, Card, Divider, Surface} from 'react-native-paper';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {Button, Divider} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useSignIn} from '@/features/auth';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
 
-const microsoftLogo = require('../../assets/icons/microsoft.png') as number;
+type SocialButtonProps = {
+  icon?: string;
+  label: string;
+  onPress: () => void;
+  loading: boolean;
+  buttonColor: string;
+  textColor: string;
+  labelStyle: StyleProp<TextStyle>;
+  style: StyleProp<ViewStyle>;
+  outlined?: boolean;
+};
 
-const iconStyle = (size: number): ImageStyle => ({width: size, height: size});
+function SocialButton({
+  icon,
+  label,
+  onPress,
+  loading,
+  buttonColor,
+  textColor,
+  labelStyle,
+  style,
+  outlined = false,
+}: SocialButtonProps) {
+  return (
+    <Button
+      mode={outlined ? 'outlined' : 'contained'}
+      icon={icon}
+      onPress={onPress}
+      loading={loading}
+      buttonColor={outlined ? textColor : buttonColor}
+      textColor={outlined ? buttonColor : textColor}
+      labelStyle={labelStyle}
+      style={style}
+    >
+      {label}
+    </Button>
+  );
+}
 
 export default function LoginScreen() {
   const {ds, theme, scheme} = useTheme();
-  const styles = createStyles(ds, theme);
+  const styles = createStyles(ds, theme, scheme);
 
   const {
     handleSubmit,
     handleAppleSubmit,
-    isLoading,
+    handleGoogleSubmit,
     isStartingMobileFlow,
-    isStartingAppleFlow,
+    isStartingGoogleFlow,
     isAppleSupported,
+    isGoogleSupported,
   } = useSignIn();
 
-  const isOidcSigningIn = isLoading || isStartingMobileFlow;
-  const isAppleSigningIn = isLoading || isStartingAppleFlow;
+  const buttonColor = scheme === 'dark' ? Palette.white : Palette.black;
+  const textColor = scheme === 'dark' ? Palette.black : Palette.white;
 
-  const commonButtonProps = {
-    onPress: handleSubmit,
-    disabled: isOidcSigningIn,
-    loading: isOidcSigningIn,
-    buttonColor: scheme === 'dark' ? '#fff' : '#000',
-    textColor: scheme === 'dark' ? '#000' : '#fff',
+  // const isMicrosoftSigningIn = isStartingMobileFlow;
+  const isGoogleSigningIn = isStartingGoogleFlow;
+  const isEmailSigningIn = isStartingMobileFlow;
+
+  const sharedSocialButtonProps = {
+    buttonColor,
+    textColor,
     labelStyle: styles.buttonLabel,
     style: styles.button,
   };
@@ -45,24 +90,46 @@ export default function LoginScreen() {
       : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK;
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <Surface style={styles.surface} elevation={0}>
-        <Card.Title
-          title="S Y K A M O R E"
-          titleVariant="headlineMedium"
-          titleStyle={styles.title}
-        />
-
-        <Card.Content style={styles.content}>
-          <Button
-            mode="contained"
-            {...commonButtonProps}
-            icon={({size}) => (
-              <Image source={microsoftLogo} style={iconStyle(size)} />
-            )}
+    <KeyboardAvoidingView
+      style={styles.root}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <ThemedText variant="title2" fontWeight="semibold" colorToken="icon">
+            S Y K A M O R E
+          </ThemedText>
+          <ThemedText
+            variant="largeTitle"
+            fontWeight="semibold"
+            style={styles.tagline}
           >
-            Sign in with Microsoft
-          </Button>
+            Everything in its place.
+          </ThemedText>
+        </View>
+
+        <View style={styles.content}>
+          {/* <SocialButton
+            icon="microsoft"
+            label="Sign in with Microsoft"
+            onPress={handleSubmit}
+            loading={isMicrosoftSigningIn}
+            {...sharedSocialButtonProps}
+          /> */}
+
+          {isGoogleSupported && (
+            <SocialButton
+              icon="google"
+              label="Sign in with Google"
+              onPress={handleGoogleSubmit}
+              loading={isGoogleSigningIn}
+              {...sharedSocialButtonProps}
+            />
+          )}
 
           {isAppleSupported && (
             <AppleAuthentication.AppleAuthenticationButton
@@ -70,9 +137,9 @@ export default function LoginScreen() {
                 AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
               }
               buttonStyle={appleButtonStyle}
-              cornerRadius={16}
+              cornerRadius={ds.components.button.borderRadius}
               onPress={handleAppleSubmit}
-              style={[styles.button, isAppleSigningIn && styles.disabled]}
+              style={styles.button}
             />
           )}
 
@@ -82,56 +149,67 @@ export default function LoginScreen() {
             <Divider style={styles.divider} />
           </View>
 
-          <Button mode="contained" {...commonButtonProps}>
-            Continue with Email
-          </Button>
+          <SocialButton
+            label="Continue with Email"
+            onPress={handleSubmit}
+            loading={isEmailSigningIn}
+            outlined
+            {...sharedSocialButtonProps}
+          />
+        </View>
 
-          <View style={styles.footer}>
-            <ThemedText variant="subheadline" style={styles.footerText}>
-              {'By continuing, you acknowledge Sykamore\u2019s'}
-            </ThemedText>
-            <Link
-              href="/settings/privacy"
-              style={{textDecorationLine: 'underline'}}
-            >
-              <ThemedText variant="caption">Privacy Policy</ThemedText>
-            </Link>
-          </View>
-        </Card.Content>
-      </Surface>
-    </SafeAreaView>
+        <View style={styles.footer}>
+          <ThemedText variant="footnote" colorToken="muted">
+            {'By continuing, you acknowledge Sykamore\u2019s'}
+          </ThemedText>
+          <Link href="/settings/privacy" style={styles.footerLink}>
+            <ThemedText variant="caption">Privacy Policy</ThemedText>
+          </Link>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape, scheme: 'light' | 'dark') =>
     StyleSheet.create({
-      safe: {
+      root: {
         flex: 1,
-        backgroundColor: theme.background,
+        backgroundColor: scheme === 'dark' ? Palette.black : Palette.offWhite,
       },
-      surface: {
-        flex: 1,
-        justifyContent: 'center',
-        backgroundColor: theme.background,
+      scroll: {
+        flexGrow: 1,
+        alignItems: 'center',
+        paddingHorizontal: ds.layout.screenPadding * 1.5,
+        paddingTop: ds.screen.height * 0.25,
+        paddingBottom: ds.screen.height * 0.15,
       },
-      title: {
+      header: {
+        alignItems: 'center',
+        gap: ds.spacing.xl,
+      },
+      tagline: {
         textAlign: 'center',
-        paddingBottom: ds.layout.headerHeightLarge * 1.5,
-        fontWeight: ds.fontWeight.semibold,
+        lineHeight: ds.layout.headerHeight,
+        letterSpacing: 1.3,
       },
-      content: {gap: ds.spacing.lg},
+      content: {
+        alignSelf: 'stretch',
+        marginTop: 'auto',
+        gap: ds.spacing.lg,
+      },
       buttonLabel: {
-        fontSize: 17,
+        fontSize: ds.components.button.fontSize,
         fontWeight: ds.fontWeight.semibold,
         paddingVertical: ds.spacing.xs,
       },
       button: {
         height: ds.components.button.height,
-        borderRadius: 16,
+        borderRadius: ds.components.button.borderRadius,
       },
-      disabled: {opacity: 0.8},
       orRow: {
+        alignSelf: 'stretch',
         flexDirection: 'row',
         alignItems: 'center',
         gap: ds.spacing.sm,
@@ -141,13 +219,12 @@ const createStyles = makeStyleFactory(
         backgroundColor: theme.divider,
       },
       footer: {
-        alignItems: 'center',
+        marginTop: ds.spacing.lg,
         gap: ds.spacing.xs,
       },
-      footerText: {
-        color: theme.muted,
-        textAlign: 'center',
+      footerLink: {
+        alignSelf: 'center',
       },
     }),
-  (ds, theme) => themeKey(theme, ds),
+  (ds, theme, _scheme) => themeKey(theme, ds),
 );
