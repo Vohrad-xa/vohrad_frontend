@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -15,10 +16,10 @@ import {ThemedText} from '@/components/ui';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useSignIn} from '@/features/auth';
 import {useTheme} from '@/providers';
-import {makeStyleFactory} from '@/utils';
+import {makeStyleFactory, GoogleIcon, MicrosoftIcon} from '@/utils';
 
 type SocialButtonProps = {
-  icon?: string;
+  icon?: ((props: {size: number}) => React.ReactNode) | string;
   label: string;
   onPress: () => void;
   loading: boolean;
@@ -26,6 +27,7 @@ type SocialButtonProps = {
   textColor: string;
   labelStyle: StyleProp<TextStyle>;
   style: StyleProp<ViewStyle>;
+  contentStyle?: StyleProp<ViewStyle>;
   outlined?: boolean;
 };
 
@@ -38,6 +40,7 @@ function SocialButton({
   textColor,
   labelStyle,
   style,
+  contentStyle,
   outlined = false,
 }: SocialButtonProps) {
   return (
@@ -50,6 +53,7 @@ function SocialButton({
       textColor={outlined ? buttonColor : textColor}
       labelStyle={labelStyle}
       style={style}
+      contentStyle={contentStyle}
     >
       {label}
     </Button>
@@ -73,7 +77,7 @@ export default function LoginScreen() {
   const buttonColor = scheme === 'dark' ? Palette.white : Palette.black;
   const textColor = scheme === 'dark' ? Palette.black : Palette.white;
 
-  // const isMicrosoftSigningIn = isStartingMobileFlow;
+  const isMicrosoftSigningIn = isStartingMobileFlow;
   const isGoogleSigningIn = isStartingGoogleFlow;
   const isEmailSigningIn = isStartingMobileFlow;
 
@@ -82,6 +86,7 @@ export default function LoginScreen() {
     textColor,
     labelStyle: styles.buttonLabel,
     style: styles.button,
+    contentStyle: {height: ds.components.button.height},
   };
 
   const appleButtonStyle =
@@ -100,37 +105,19 @@ export default function LoginScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
-          <ThemedText variant="title2" fontWeight="semibold" colorToken="icon">
+          <ThemedText variant="title3" fontWeight="medium" colorToken="icon">
             S Y K A M O R E
           </ThemedText>
           <ThemedText
-            variant="largeTitle"
-            fontWeight="semibold"
+            variant="title1"
+            fontWeight="medium"
             style={styles.tagline}
           >
-            Everything in its place.
+            Get it right every time
           </ThemedText>
         </View>
 
         <View style={styles.content}>
-          {/* <SocialButton
-            icon="microsoft"
-            label="Sign in with Microsoft"
-            onPress={handleSubmit}
-            loading={isMicrosoftSigningIn}
-            {...sharedSocialButtonProps}
-          /> */}
-
-          {isGoogleSupported && (
-            <SocialButton
-              icon="google"
-              label="Sign in with Google"
-              onPress={handleGoogleSubmit}
-              loading={isGoogleSigningIn}
-              {...sharedSocialButtonProps}
-            />
-          )}
-
           {isAppleSupported && (
             <AppleAuthentication.AppleAuthenticationButton
               buttonType={
@@ -143,18 +130,39 @@ export default function LoginScreen() {
             />
           )}
 
+          {isGoogleSupported && (
+            <SocialButton
+              icon={() => <GoogleIcon />}
+              label="Sign in with Google"
+              onPress={handleGoogleSubmit}
+              loading={isGoogleSigningIn}
+              {...sharedSocialButtonProps}
+            />
+          )}
+
+          <SocialButton
+            icon={() => <MicrosoftIcon />}
+            label="Sign in with Microsoft"
+            onPress={handleSubmit}
+            loading={isMicrosoftSigningIn}
+            {...sharedSocialButtonProps}
+          />
+
           <View style={styles.orRow}>
             <Divider style={styles.divider} />
-            <ThemedText variant="caption">OR</ThemedText>
+            <ThemedText variant="caption" fontWeight="semibold">
+              OR
+            </ThemedText>
             <Divider style={styles.divider} />
           </View>
 
           <SocialButton
-            label="Continue with Email"
+            label="Work or Personal Email"
             onPress={handleSubmit}
             loading={isEmailSigningIn}
             outlined
             {...sharedSocialButtonProps}
+            labelStyle={{fontWeight: ds.fontWeight.medium}}
           />
         </View>
 
@@ -178,6 +186,7 @@ const createStyles = makeStyleFactory(
         flex: 1,
         backgroundColor: scheme === 'dark' ? Palette.black : Palette.offWhite,
       },
+
       scroll: {
         flexGrow: 1,
         alignItems: 'center',
@@ -185,43 +194,51 @@ const createStyles = makeStyleFactory(
         paddingTop: ds.screen.height * 0.25,
         paddingBottom: ds.screen.height * 0.15,
       },
+
       header: {
         alignItems: 'center',
         gap: ds.spacing.xl,
       },
+
       tagline: {
         textAlign: 'center',
         lineHeight: ds.layout.headerHeight,
-        letterSpacing: 1.3,
+        letterSpacing: 1,
       },
+
       content: {
         alignSelf: 'stretch',
         marginTop: 'auto',
         gap: ds.spacing.lg,
       },
+
       buttonLabel: {
         fontSize: ds.components.button.fontSize,
         fontWeight: ds.fontWeight.semibold,
-        paddingVertical: ds.spacing.xs,
       },
+
       button: {
         height: ds.components.button.height,
         borderRadius: ds.components.button.borderRadius,
       },
+
       orRow: {
         alignSelf: 'stretch',
         flexDirection: 'row',
         alignItems: 'center',
         gap: ds.spacing.sm,
       },
+
       divider: {
         flex: 1,
         backgroundColor: theme.divider,
       },
+
       footer: {
         marginTop: ds.spacing.lg,
         gap: ds.spacing.xs,
       },
+
       footerLink: {
         alignSelf: 'center',
       },

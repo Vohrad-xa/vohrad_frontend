@@ -146,7 +146,9 @@ export class AuthService {
     });
   }
 
-  async completeMobileGoogleLogin(params: {accessToken: string}): Promise<void> {
+  async completeMobileGoogleLogin(params: {
+    accessToken: string;
+  }): Promise<void> {
     return this.completeMobileSocialLogin({
       provider: 'google',
       token: params.accessToken,

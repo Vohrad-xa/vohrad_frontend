@@ -62,7 +62,9 @@ export function useGoogleSignIn() {
 
     try {
       if (Platform.OS === 'android') {
-        await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+        await GoogleSignin.hasPlayServices({
+          showPlayServicesUpdateDialog: true,
+        });
       }
 
       const result = await GoogleSignin.signIn();

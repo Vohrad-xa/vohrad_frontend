@@ -13,14 +13,22 @@ config.watchFolders = Array.from(
   new Set([...(config.watchFolders ?? []), monorepoRoot]),
 );
 
+const {transformer, resolver} = config;
+config.transformer = {
+  ...transformer,
+  babelTransformerPath: require.resolve('react-native-svg-transformer'),
+};
+
 config.resolver = {
-  ...(config.resolver || {}),
+  ...(resolver || {}),
   nodeModulesPaths: [mobileNodeModules, rootNodeModules],
   resolverMainFields: ['react-native', 'browser', 'main'],
   unstable_conditionsByPlatform: {
-    ...(config.resolver?.unstable_conditionsByPlatform || {}),
+    ...(resolver?.unstable_conditionsByPlatform || {}),
     web: ['default', 'browser', 'react-native'],
   },
+  assetExts: (resolver?.assetExts ?? []).filter((ext) => ext !== 'svg'),
+  sourceExts: [...(resolver?.sourceExts ?? []), 'svg'],
 };
 
 module.exports = config;
