@@ -63,7 +63,6 @@ function SettingsStack() {
       <Stack.Screen name="language" options={{title: 'Language'}} />
       <Stack.Screen name="help" options={{title: 'Help'}} />
       <Stack.Screen name="app-settings" options={{title: 'App Settings'}} />
-      <Stack.Screen name="data-usage" options={{title: 'Data Usage'}} />
       <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
       <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
       <Stack.Screen name="about" options={{title: 'About'}} />

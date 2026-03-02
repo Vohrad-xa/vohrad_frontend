@@ -1,6 +1,6 @@
 import GoogleSvg from '@/assets/icons/icon-google.svg';
 import MicrosoftSvg from '@/assets/icons/icon-microsoft.svg';
-import EmailSvg from '@/assets/icons/icon-email.svg';
+import EmailSvg from '@/assets/icons/icon-password.svg';
 
 type SocialIconProps = {size?: number};
 

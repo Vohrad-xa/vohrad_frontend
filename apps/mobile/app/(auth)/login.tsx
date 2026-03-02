@@ -90,12 +90,12 @@ export default function LoginScreen() {
   ] as const;
 
   const darkGradient = [
-    '#0f1116',
-    '#0c0f14',
-    '#0a0c11',
-    '#080a0e',
+    '#040509',
+    '#060815',
+    '#0b1020',
+    '#090a12',
     '#06070b',
-    '#05060a',
+    '#040509',
   ] as const;
 
   const isMicrosoftSigningIn = isStartingMobileFlow;
@@ -151,7 +151,7 @@ export default function LoginScreen() {
             {isAppleSupported && (
               <AppleAuthentication.AppleAuthenticationButton
                 buttonType={
-                  AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
+                  AppleAuthentication.AppleAuthenticationButtonType.CONTINUE
                 }
                 buttonStyle={appleButtonStyle}
                 cornerRadius={ds.components.button.borderRadius}
@@ -163,7 +163,7 @@ export default function LoginScreen() {
             {isGoogleSupported && (
               <SocialButton
                 icon={() => <GoogleIcon />}
-                label="Sign in with Google"
+                label="Continue with Google"
                 onPress={handleGoogleSubmit}
                 loading={isGoogleSigningIn}
                 {...sharedSocialButtonProps}
@@ -172,7 +172,7 @@ export default function LoginScreen() {
 
             <SocialButton
               icon={() => <MicrosoftIcon />}
-              label="Sign in with Microsoft"
+              label="Continue with Microsoft"
               onPress={handleSubmit}
               loading={isMicrosoftSigningIn}
               {...sharedSocialButtonProps}
@@ -192,7 +192,7 @@ export default function LoginScreen() {
 
             <SocialButton
               icon={() => <EmailIcon />}
-              label="Work or Personal email"
+              label="Continue with Email"
               onPress={handleSubmit}
               loading={isEmailSigningIn}
               outlined
