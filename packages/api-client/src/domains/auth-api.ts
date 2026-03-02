@@ -9,17 +9,16 @@ import {resolveApiUrl} from '../config';
 import {httpClient} from '../http-client';
 import {API_ENDPOINTS} from './endpoints';
 
-/**
- * Optional Apple profile data forwarded to backend token exchange.
- * Apple may provide email/name only on first sign-in.
- */
-type AppleTokenExchangeUserProfile = {
+/** Optional social profile data forwarded to backend token exchange. */
+type SocialTokenExchangeUserProfile = {
   name?: {
     firstName?: string;
     lastName?: string;
   };
   email?: string;
 };
+
+type SocialProvider = 'apple' | 'google';
 
 export class AuthApi {
   /**
@@ -104,24 +103,26 @@ export class AuthApi {
   }
 
   /**
-   * Exchange Apple id_token via backend and return normalized auth tokens.
+   * Exchange social provider token via backend and return normalized auth tokens.
    */
-  async exchangeAppleToken(payload: {
-    idToken: string;
-    userProfile?: AppleTokenExchangeUserProfile;
+  async exchangeSocialToken(payload: {
+    provider: SocialProvider;
+    token: string;
+    userProfile?: SocialTokenExchangeUserProfile;
   }): Promise<AuthTokens> {
     const rawResponse = (await httpClient.makeRequest<unknown>(
-      API_ENDPOINTS.AUTH.APPLE_EXCHANGE,
+      API_ENDPOINTS.AUTH.SOCIAL_EXCHANGE,
       {
         method: 'POST',
         body: JSON.stringify({
-          id_token: payload.idToken,
+          provider: payload.provider,
+          token: payload.token,
           user_profile: payload.userProfile,
         }),
       },
     )) as unknown;
 
-    const tokenPayload = this.parseAppleExchangeResponse(rawResponse);
+    const tokenPayload = this.parseSocialExchangeResponse(rawResponse);
 
     return {
       ...tokenPayload,
@@ -140,13 +141,13 @@ export class AuthApi {
       'data' in value
     );
   }
-  private parseAppleExchangeResponse(rawResponse: unknown): TokenResponse {
+  private parseSocialExchangeResponse(rawResponse: unknown): TokenResponse {
     const tokenPayload = this.isApiEnvelope<TokenResponse>(rawResponse)
       ? rawResponse.data
       : rawResponse;
 
     if (!tokenPayload || typeof tokenPayload !== 'object') {
-      throw new Error('Invalid Apple token exchange response');
+      throw new Error('Invalid social token exchange response');
     }
 
     const tokenRecord = tokenPayload as Record<string, unknown>;
@@ -154,7 +155,7 @@ export class AuthApi {
       typeof tokenRecord.access_token !== 'string' ||
       typeof tokenRecord.token_type !== 'string'
     ) {
-      throw new Error('Invalid Apple token exchange response');
+      throw new Error('Invalid social token exchange response');
     }
 
     return tokenPayload as TokenResponse;

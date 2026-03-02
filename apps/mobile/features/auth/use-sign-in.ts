@@ -3,6 +3,7 @@ import {Alert, Platform} from 'react-native';
 import {useAuth} from '@/providers';
 import {useAppleSignIn} from './use-apple-sign-in';
 import {useBiometricPrompt} from './use-biometric-prompt';
+import {useGoogleSignIn} from './use-google-sign-in';
 import {useOidcFlow} from './use-oidc-flow';
 import {usePasskeyPrompt} from './use-passkey-prompt';
 
@@ -13,15 +14,25 @@ import {usePasskeyPrompt} from './use-passkey-prompt';
 export function useSignIn() {
   const [isStartingMobileFlow, setIsStartingMobileFlow] = useState(false);
   const [isStartingAppleFlow, setIsStartingAppleFlow] = useState(false);
+  const [isStartingGoogleFlow, setIsStartingGoogleFlow] = useState(false);
   const {startWebLogin, isLoading} = useAuth();
   const {startFlow, isConfigured: isOidcConfigured} = useOidcFlow();
   const {startFlow: startAppleFlow, isSupported: isAppleSupported} =
     useAppleSignIn();
+  const {startFlow: startGoogleFlow, isSupported: isGoogleSupported} =
+    useGoogleSignIn();
   const {resolvePasskeySetupChoice} = usePasskeyPrompt();
   const {promptEnableIfNeeded} = useBiometricPrompt();
 
   const handleSubmit = async () => {
-    if (isLoading || isStartingMobileFlow) return;
+    if (
+      isLoading ||
+      isStartingMobileFlow ||
+      isStartingAppleFlow ||
+      isStartingGoogleFlow
+    ) {
+      return;
+    }
 
     try {
       if (Platform.OS === 'web') {
@@ -52,7 +63,14 @@ export function useSignIn() {
   };
 
   const handleAppleSubmit = async () => {
-    if (isLoading || isStartingMobileFlow || isStartingAppleFlow) return;
+    if (
+      isLoading ||
+      isStartingMobileFlow ||
+      isStartingAppleFlow ||
+      isStartingGoogleFlow
+    ) {
+      return;
+    }
 
     setIsStartingAppleFlow(true);
     try {
@@ -69,13 +87,41 @@ export function useSignIn() {
     }
   };
 
+  const handleGoogleSubmit = async () => {
+    if (
+      isLoading ||
+      isStartingMobileFlow ||
+      isStartingAppleFlow ||
+      isStartingGoogleFlow
+    ) {
+      return;
+    }
+
+    setIsStartingGoogleFlow(true);
+    try {
+      const outcome = await startGoogleFlow();
+      if (!outcome.completed) return;
+      await promptEnableIfNeeded();
+    } catch {
+      Alert.alert(
+        'Sign in failed',
+        'An unexpected error occurred. Please try again.',
+      );
+    } finally {
+      setIsStartingGoogleFlow(false);
+    }
+  };
+
   return {
     handleSubmit,
     handleAppleSubmit,
+    handleGoogleSubmit,
     isLoading,
     isStartingMobileFlow,
     isStartingAppleFlow,
+    isStartingGoogleFlow,
     isOidcConfigured,
     isAppleSupported,
+    isGoogleSupported,
   };
 }

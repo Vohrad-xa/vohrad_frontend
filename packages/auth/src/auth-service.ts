@@ -24,6 +24,8 @@ export type AppleTokenExchangeUserProfile = {
   email?: string;
 };
 
+type SocialProvider = 'apple' | 'google';
+
 let mobileOidcConfig: MobileOidcConfig | null = null;
 
 export function initMobileOidcConfig(config: MobileOidcConfig): void {
@@ -137,13 +139,33 @@ export class AuthService {
     idToken: string;
     userProfile?: AppleTokenExchangeUserProfile;
   }): Promise<void> {
+    return this.completeMobileSocialLogin({
+      provider: 'apple',
+      token: params.idToken,
+      userProfile: params.userProfile,
+    });
+  }
+
+  async completeMobileGoogleLogin(params: {accessToken: string}): Promise<void> {
+    return this.completeMobileSocialLogin({
+      provider: 'google',
+      token: params.accessToken,
+    });
+  }
+
+  private async completeMobileSocialLogin(params: {
+    provider: SocialProvider;
+    token: string;
+    userProfile?: AppleTokenExchangeUserProfile;
+  }): Promise<void> {
     const {setLoading} = useAuthStore.getState();
 
     try {
       setLoading(true);
 
-      const tokens = await authApi.exchangeAppleToken({
-        idToken: params.idToken,
+      const tokens = await authApi.exchangeSocialToken({
+        provider: params.provider,
+        token: params.token,
         userProfile: params.userProfile,
       });
 
@@ -153,7 +175,7 @@ export class AuthService {
       const message =
         error instanceof ApiError
           ? error.message
-          : 'Apple sign in failed. Please try again.';
+          : `${params.provider} sign in failed. Please try again.`;
       const statusCode = error instanceof ApiError ? error.status : undefined;
       errorManager.reportError(message, statusCode);
       throw error;
