@@ -152,7 +152,7 @@ export default function SettingsModal() {
       },
       {
         id: 'support',
-        title: 'Report an Issue',
+        title: 'Help & Support',
         description: 'Get support or report a problem',
         icon: AppIcons.ui.support,
         href: '/(tabs)/settings/help',

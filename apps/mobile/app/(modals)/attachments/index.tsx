@@ -1,7 +1,8 @@
 import React from 'react';
+import {ScrollView} from 'react-native';
 import {useRouter, useLocalSearchParams} from 'expo-router';
 import {Card} from '@/components/cards/card';
-import {ModalScrollView, ThemedText} from '@/components/ui';
+import {ThemedText} from '@/components/ui';
 import {AppIcons} from '@/utils/icons';
 
 export default function AttachmentDestinationSelectorModal() {
@@ -10,7 +11,7 @@ export default function AttachmentDestinationSelectorModal() {
   const selectedIds = params.selectedIds;
 
   return (
-    <ModalScrollView>
+    <ScrollView>
       <Card>
         <Card.Row
           icon={AppIcons.domain.item}
@@ -42,6 +43,6 @@ export default function AttachmentDestinationSelectorModal() {
           <ThemedText variant="label">Locations</ThemedText>
         </Card.Row>
       </Card>
-    </ModalScrollView>
+    </ScrollView>
   );
 }
