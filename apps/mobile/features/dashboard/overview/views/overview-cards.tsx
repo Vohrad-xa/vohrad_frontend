@@ -39,7 +39,7 @@ export function OverviewCards() {
   return (
     <>
       <View style={styles.header}>
-        <ThemedText variant="title3" fontWeight="semibold">
+        <ThemedText variant="title1" fontWeight="semibold">
           Overview
         </ThemedText>
       </View>
@@ -52,14 +52,18 @@ export function OverviewCards() {
             style={styles.card}
           >
             <Card.Content style={styles.cardContent}>
-              <View style={styles.topSection}>
+              <View style={styles.topRow}>
                 <Icon name={card.icon} size="lg" />
-                <ThemedText variant="subheadline" colorToken="muted">
-                  {card.title}
+                <ThemedText
+                  variant={Platform.OS === 'ios' ? 'label' : 'body'}
+                  colorToken="muted"
+                  fontWeight="semibold"
+                >
+                  {card.count}
                 </ThemedText>
               </View>
-              <ThemedText variant="subheadline" fontWeight="bold">
-                {card.count}
+              <ThemedText variant={Platform.OS === 'ios' ? 'callout' : 'label'}>
+                {card.title}
               </ThemedText>
             </Card.Content>
           </Card>
@@ -71,7 +75,7 @@ export function OverviewCards() {
 
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape, screenWidth: number) => {
-    const gap = ds.spacing.md;
+    const gap = ds.spacing.sm;
     const padding = ds.layout.screenPadding;
     const isWeb = Platform.OS === 'web';
     const numColumns = isWeb
@@ -100,14 +104,15 @@ const createStyles = makeStyleFactory(
       },
       card: {
         width: cardWidth,
-        borderRadius: ds.borderRadius.xxxl,
-        backgroundColor: theme.modalBackground,
+        borderRadius: ds.components.card.borderRadius,
       },
       cardContent: {
         gap: ds.spacing.md,
       },
-      topSection: {
-        gap: ds.spacing.xs,
+      topRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
       },
     });
   },

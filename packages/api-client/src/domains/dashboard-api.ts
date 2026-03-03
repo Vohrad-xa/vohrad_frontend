@@ -10,6 +10,10 @@ export interface DashboardOverview {
   suppliers_total: number;
   check_in_out_total: number;
   documents_total: number;
+  categories_total: number;
+  transfers_total: number;
+  units_of_measure_total: number;
+  events_total: number;
   attachment_counts: {
     image: number;
     document: number;

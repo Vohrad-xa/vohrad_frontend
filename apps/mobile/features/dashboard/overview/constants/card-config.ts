@@ -16,6 +16,14 @@ export const CARD_CONFIG: DashboardCardConfig[] = [
   {key: 'suppliers', title: 'Suppliers', icon: AppIcons.domain.supplier},
   {key: 'checkInOut', title: 'Check In/Out', icon: AppIcons.actions.move},
   {key: 'attachments', title: 'Vault', icon: AppIcons.domain.vaultOutline},
+  {key: 'categories', title: 'Categories', icon: AppIcons.domain.category},
+  {key: 'transfers', title: 'Transfers', icon: AppIcons.domain.transfer},
+  {
+    key: 'unitsOfMeasure',
+    title: 'Units of Measure',
+    icon: AppIcons.domain.unitOfMeasure,
+  },
+  {key: 'events', title: 'Events', icon: AppIcons.ui.notifications},
 ];
 
 export const OVERVIEW_FIELD_BY_KEY: Record<
@@ -28,4 +36,8 @@ export const OVERVIEW_FIELD_BY_KEY: Record<
   suppliers: 'suppliers_total',
   checkInOut: 'check_in_out_total',
   attachments: 'attachments_total',
+  categories: 'categories_total',
+  transfers: 'transfers_total',
+  unitsOfMeasure: 'units_of_measure_total',
+  events: 'events_total',
 };

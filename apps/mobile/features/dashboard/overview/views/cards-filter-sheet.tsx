@@ -45,7 +45,7 @@ export const CardsFilterSheet = forwardRef<CardsFilterSheetHandle>((_, ref) => {
   return (
     <TrueSheet
       ref={sheetRef}
-      detents={Platform.OS === 'ios' ? [0.47, 1] : [0.57, 1]}
+      detents={Platform.OS === 'ios' ? [0.8, 'auto'] : ['auto']}
       scrollable
       backgroundColor={
         Platform.OS === 'ios' ? undefined : theme.modalBackground

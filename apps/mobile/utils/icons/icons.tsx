@@ -129,6 +129,8 @@ export const AppIcons = {
     supplier: 'cart-outline',
     organization: 'domain',
     maintenance: 'wrench-cog-outline',
+    transfer: 'swap-horizontal',
+    unitOfMeasure: 'ruler',
   },
 
   files: {

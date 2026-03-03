@@ -192,6 +192,8 @@ export const AppIcons = {
     supplier: 'cart',
     organization: 'briefcase.circle',
     maintenance: 'wrench',
+    transfer: 'arrow.left.arrow.right',
+    unitOfMeasure: 'ruler',
   },
 
   files: {

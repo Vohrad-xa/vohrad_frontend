@@ -137,7 +137,7 @@ export const createDesignSystem = (
         fontSize: 16,
         fontWeight: '500',
       },
-      card: {borderRadius: 22, padding: 16},
+      card: {borderRadius: 18, padding: 16},
       modal: {borderRadius: 25, padding: 24},
       listItem: {minHeight: 44, paddingVertical: 10, paddingHorizontal: 16},
       separator: {height: 0.5, marginLeft: 16},

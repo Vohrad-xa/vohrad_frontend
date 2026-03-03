@@ -6,7 +6,11 @@ export type DashboardCardKey =
   | 'maintenance'
   | 'suppliers'
   | 'checkInOut'
-  | 'attachments';
+  | 'attachments'
+  | 'categories'
+  | 'transfers'
+  | 'unitsOfMeasure'
+  | 'events';
 
 export type DashboardVisibilityState = Record<DashboardCardKey, boolean>;
 
@@ -17,6 +21,10 @@ const BASE_DASHBOARD_VISIBILITY: DashboardVisibilityState = {
   suppliers: true,
   checkInOut: true,
   attachments: true,
+  categories: true,
+  transfers: true,
+  unitsOfMeasure: true,
+  events: true,
 };
 
 export interface SystemSlice {
