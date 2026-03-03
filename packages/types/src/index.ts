@@ -67,6 +67,9 @@ export type {
   UnitOfMeasure,
 } from './item';
 
+// Location types
+export type {Location, LocationCreate, LocationUpdate} from './schemas';
+
 // Attachment types
 export type {
   AttachmentTargetType,
@@ -104,6 +107,13 @@ export {
   validateRoleCreate,
   validateRoleUpdate,
 } from './validation/role';
+
+// Location validation utilities
+export {
+  validateLocation,
+  validateLocationCreate,
+  validateLocationUpdate,
+} from './validation/location';
 
 // Validation helpers
 export {

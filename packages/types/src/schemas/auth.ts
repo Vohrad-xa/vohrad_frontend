@@ -10,20 +10,21 @@ export const tokenResponseSchema = z.object({
 
 export const authTokensSchema = tokenResponseSchema.extend({
   issued_at: z.number().optional(),
+  refresh_flow: z.enum(['oidc_direct', 'social_exchange']).optional(),
 });
 
 export const identitySchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
-  first_name: z.string().nullable().optional(),
-  last_name: z.string().nullable().optional(),
-  email_verified_at: z.string().nullable().optional(),
+  id: z.uuid(),
+  email: z.email(),
+  first_name: z.string().nullish(),
+  last_name: z.string().nullish(),
+  email_verified_at: z.string().nullish(),
   user_type: z.enum(['user', 'admin']),
   is_super_admin: z.boolean(),
 });
 
 export const tenantMembershipSchema = z.object({
-  tenant_id: z.string().uuid(),
+  tenant_id: z.uuid(),
   name: z.string(),
   role: z.string(),
   is_default: z.boolean(),

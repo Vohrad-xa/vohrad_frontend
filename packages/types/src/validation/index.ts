@@ -4,3 +4,4 @@ export * from './auth';
 export * from './numeric';
 export * from './helpers';
 export * from './role';
+export * from './location';

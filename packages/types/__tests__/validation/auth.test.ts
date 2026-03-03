@@ -1,4 +1,5 @@
 import {describe, it, expect} from '@jest/globals';
+import {randomUUID} from 'crypto';
 import {schemas, validation} from '@sykamore/types';
 
 describe('Auth Validation', () => {
@@ -21,11 +22,11 @@ describe('Auth Validation', () => {
   describe('validateUser', () => {
     it('validates complete user object', () => {
       const user = {
-        id: '11111111-1111-4111-8111-111111111111',
-        tenant_id: '22222222-2222-4222-8222-222222222222',
-        idp_subject: 'a3f6a0bc-0c9b-49cb-8f7f-4fd6f18d8f21',
+        id: randomUUID(),
+        tenant_id: randomUUID(),
+        idp_subject: randomUUID(),
         email: 'user@example.com',
-        role_id: '33333333-3333-4333-8333-333333333333',
+        role_id: randomUUID(),
         role_name: 'employee',
         updated_at: '2024-01-01T00:00:00Z',
       };
@@ -36,11 +37,7 @@ describe('Auth Validation', () => {
     });
 
     it('rejects invalid user object', () => {
-      const invalidUser = {
-        email: 'invalid-email',
-      };
-
-      const result = validation.validateUser(invalidUser);
+      const result = validation.validateUser({email: 'invalid-email'});
       expect(result.success).toBe(false);
     });
   });
@@ -77,23 +74,20 @@ describe('Auth Validation', () => {
     });
 
     it('rejects tokens with missing required fields', () => {
-      const tokens = {
-        access_token: 'access-token',
-      };
-
-      const result = schemas.authTokensSchema.safeParse(tokens);
+      const result = schemas.authTokensSchema.safeParse({access_token: 'token'});
       expect(result.success).toBe(false);
     });
   });
 
   describe('userSchema', () => {
     it('validates complete user data', () => {
+      const id = randomUUID();
       const user = {
-        id: '11111111-1111-4111-8111-111111111111',
-        tenant_id: '22222222-2222-4222-8222-222222222222',
-        idp_subject: 'a3f6a0bc-0c9b-49cb-8f7f-4fd6f18d8f21',
+        id,
+        tenant_id: randomUUID(),
+        idp_subject: randomUUID(),
         email: 'user@example.com',
-        role_id: '33333333-3333-4333-8333-333333333333',
+        role_id: randomUUID(),
         role_name: 'employee',
         first_name: 'John',
         last_name: 'Doe',
@@ -103,14 +97,15 @@ describe('Auth Validation', () => {
 
       const result = schemas.userSchema.safeParse(user);
       expect(result.success).toBe(true);
-      expect(result.data?.id).toBe('11111111-1111-4111-8111-111111111111');
+      expect(result.data?.id).toBe(id);
       expect(result.data?.email).toBe('user@example.com');
     });
 
     it('validates user with nullable fields', () => {
       const user = {
-        id: '44444444-4444-4444-8444-444444444444',
-        idp_subject: 'd2fc8ab6-6e44-4f96-8b5f-84c9caecfe1f',
+        id: randomUUID(),
+        tenant_id: null,
+        idp_subject: randomUUID(),
         email: 'test@example.com',
         role_name: 'admin',
         first_name: null,
@@ -126,11 +121,7 @@ describe('Auth Validation', () => {
     });
 
     it('rejects user with missing required fields', () => {
-      const user = {
-        email: 'missing-fields@example.com',
-      };
-
-      const result = schemas.userSchema.safeParse(user);
+      const result = schemas.userSchema.safeParse({email: 'missing-fields@example.com'});
       expect(result.success).toBe(false);
     });
   });
