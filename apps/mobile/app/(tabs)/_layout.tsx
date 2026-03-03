@@ -9,7 +9,13 @@ import {
 import {useHaptic, useTheme} from '@/providers';
 import {AppIcons, Icon, type IconName} from '@/utils/icons';
 
-const TAB_NAMES = ['dashboard', 'items', 'vault', 'settings'] as const;
+const TAB_NAMES = [
+  'dashboard',
+  'items',
+  'locations',
+  'vault',
+  'settings',
+] as const;
 type TabName = (typeof TAB_NAMES)[number];
 type TabsRoute = `/(tabs)/${TabName}`;
 
@@ -49,6 +55,16 @@ const TABS: readonly TabConfig[] = [
     },
     md: 'grid_view',
     icon: AppIcons.domain.item,
+  },
+  {
+    name: 'locations',
+    title: 'Locations',
+    sf: {
+      default: 'location',
+      selected: 'location.fill',
+    },
+    md: 'location_on',
+    icon: AppIcons.domain.location,
   },
   {
     name: 'vault',

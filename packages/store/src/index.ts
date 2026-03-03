@@ -63,6 +63,8 @@ export {
 
 export {useInfiniteUnits, useUnitsListManager} from './slices/uom';
 
+export {useInfiniteLocations, useLocationsManager} from './slices/location';
+
 export {
   useInfiniteUsers,
   useUsersListManager,
@@ -128,6 +130,7 @@ export type {
   User,
   AuthTokens,
   Tenant,
+  Location,
   TenantLicenseInfo,
   License,
   Item,

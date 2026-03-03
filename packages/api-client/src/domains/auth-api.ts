@@ -110,24 +110,50 @@ export class AuthApi {
     token: string;
     userProfile?: SocialTokenExchangeUserProfile;
   }): Promise<AuthTokens> {
-    const rawResponse = (await httpClient.makeRequest<unknown>(
+    const tokenPayload = await this.requestSocialTokenGrant(
       API_ENDPOINTS.AUTH.SOCIAL_EXCHANGE,
       {
-        method: 'POST',
-        body: JSON.stringify({
-          provider: payload.provider,
-          token: payload.token,
-          user_profile: payload.userProfile,
-        }),
+        provider: payload.provider,
+        token: payload.token,
+        user_profile: payload.userProfile,
       },
-    )) as unknown;
-
-    const tokenPayload = this.parseSocialExchangeResponse(rawResponse);
+    );
 
     return {
       ...tokenPayload,
       issued_at: Date.now(),
     };
+  }
+
+  /**
+   * Refresh social-exchange mobile tokens via backend confidential client.
+   */
+  async refreshSocialToken(payload: {
+    refreshToken: string;
+  }): Promise<AuthTokens> {
+    const tokenPayload = await this.requestSocialTokenGrant(
+      API_ENDPOINTS.AUTH.SOCIAL_REFRESH,
+      {
+        refresh_token: payload.refreshToken,
+      },
+    );
+
+    return {
+      ...tokenPayload,
+      issued_at: Date.now(),
+    };
+  }
+
+  private async requestSocialTokenGrant(
+    endpoint: string,
+    body: Record<string, unknown>,
+  ): Promise<TokenResponse> {
+    const rawResponse = await httpClient.makeRequest<unknown>(endpoint, {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+
+    return this.parseSocialExchangeResponse(rawResponse);
   }
 
   /**

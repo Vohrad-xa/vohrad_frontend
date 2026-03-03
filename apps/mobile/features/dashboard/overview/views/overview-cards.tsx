@@ -28,6 +28,9 @@ export function OverviewCards() {
           break;
         default:
           break;
+        case 'Locations':
+          router.push('/(tabs)/locations');
+          break;
       }
     },
     [router],

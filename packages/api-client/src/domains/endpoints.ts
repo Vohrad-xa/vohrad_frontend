@@ -2,6 +2,7 @@ export const API_ENDPOINTS = {
   AUTH: {
     OIDC_START: '/auth/oidc/start',
     SOCIAL_EXCHANGE: '/auth/social/exchange',
+    SOCIAL_REFRESH: '/auth/social/refresh',
     WEB_TOKEN: '/auth/web/token',
     WEB_LOGOUT: '/auth/web/logout',
     LOGOUT: '/auth/logout',
@@ -62,6 +63,11 @@ export const API_ENDPOINTS = {
   ITEM_LOCATIONS: {
     UPDATE: (itemLocationId: string) => `/item-locations/${itemLocationId}`,
     DELETE: (itemLocationId: string) => `/item-locations/${itemLocationId}`,
+  },
+
+  LOCATIONS: {
+    LIST: '/locations/',
+    DETAIL: (id: string) => `/locations/${id}`,
   },
 
   UOM: {

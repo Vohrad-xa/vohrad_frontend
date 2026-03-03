@@ -1,7 +1,6 @@
 import React, {useEffect, useRef} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, ScrollView} from 'react-native';
 import {useNavigation, useLocalSearchParams, useRouter} from 'expo-router';
-import {ModalScrollView} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {
   AttachmentAddOptions,
@@ -95,7 +94,7 @@ export default function VaultAddScreen() {
   };
 
   return (
-    <ModalScrollView contentContainerStyle={styles.contentContainer}>
+    <ScrollView contentContainerStyle={styles.contentContainer}>
       <AttachmentDestinationCard
         targetName={itemName}
         targetType={targetType}
@@ -121,7 +120,7 @@ export default function VaultAddScreen() {
           )}
         </>
       )}
-    </ModalScrollView>
+    </ScrollView>
   );
 }
 

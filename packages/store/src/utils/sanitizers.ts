@@ -27,6 +27,7 @@ export function redactTokens(tokens: AuthTokens | null): AuthTokens | null {
     refresh_expires_in,
     expires_in,
     issued_at,
+    refresh_flow,
     token_type,
   } = tokens;
 
@@ -36,6 +37,7 @@ export function redactTokens(tokens: AuthTokens | null): AuthTokens | null {
     refresh_expires_in,
     expires_in,
     issued_at,
+    refresh_flow,
     token_type,
   } as AuthTokens;
 }

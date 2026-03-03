@@ -25,6 +25,7 @@ export type AppleTokenExchangeUserProfile = {
 };
 
 type SocialProvider = 'apple' | 'google';
+type MobileRefreshFlow = 'oidc_direct' | 'social_exchange';
 
 let mobileOidcConfig: MobileOidcConfig | null = null;
 
@@ -119,7 +120,10 @@ export class AuthService {
         codeVerifier: params.codeVerifier,
         redirectUri: params.redirectUri,
       });
-      await this.finalizeMobileLogin(tokens);
+      await this.finalizeMobileLogin({
+        ...tokens,
+        refresh_flow: 'oidc_direct',
+      });
     } catch (error) {
       // If login didn't complete, clear any token that was set on the http client.
       httpClient.setAccessToken(null);
@@ -171,7 +175,10 @@ export class AuthService {
         userProfile: params.userProfile,
       });
 
-      await this.finalizeMobileLogin(tokens);
+      await this.finalizeMobileLogin({
+        ...tokens,
+        refresh_flow: 'social_exchange',
+      });
     } catch (error) {
       httpClient.setAccessToken(null);
       const message =
@@ -248,7 +255,7 @@ export class AuthService {
       try {
         const refreshedTokens = this.isWebRuntime()
           ? await this.issueWebAccessTokenFromCookie()
-          : await this.refreshMobileAccessToken(tokens?.refresh_token);
+          : await this.refreshMobileAccessToken(tokens);
 
         const tokensResult = validation.validateAuthTokens(refreshedTokens);
         if (!tokensResult.success) {
@@ -257,11 +264,13 @@ export class AuthService {
 
         const mergedTokens =
           !this.isWebRuntime() &&
-          !tokensResult.data.refresh_token &&
-          tokens?.refresh_token
+          (!tokensResult.data.refresh_token || !tokensResult.data.refresh_flow)
             ? {
                 ...tokensResult.data,
-                refresh_token: tokens.refresh_token,
+                refresh_token:
+                  tokensResult.data.refresh_token ?? tokens?.refresh_token,
+                refresh_flow:
+                  tokensResult.data.refresh_flow ?? tokens?.refresh_flow,
               }
             : tokensResult.data;
 
@@ -432,10 +441,16 @@ export class AuthService {
   }
 
   private async refreshMobileAccessToken(
-    refreshToken: string | undefined,
+    tokens: AuthTokens | null | undefined,
   ): Promise<AuthTokens> {
+    const refreshToken = tokens?.refresh_token;
     if (!refreshToken || refreshToken.length === 0) {
       throw new Error('No refresh token available for mobile session');
+    }
+
+    const refreshFlow = this.resolveMobileRefreshFlow(tokens);
+    if (refreshFlow === 'social_exchange') {
+      return authApi.refreshSocialToken({refreshToken});
     }
 
     const oidcConfig = getMobileOidcClientConfig();
@@ -445,7 +460,18 @@ export class AuthService {
       refresh_token: refreshToken,
     });
 
-    return this.requestMobileTokenGrant(body);
+    try {
+      return await this.requestMobileTokenGrant(body);
+    } catch (error) {
+      if (
+        error instanceof ApiError &&
+        error.status === 400 &&
+        error.message.toLowerCase().includes("authorized client don't match")
+      ) {
+        return authApi.refreshSocialToken({refreshToken});
+      }
+      throw error;
+    }
   }
 
   private async requestMobileTokenGrant(
@@ -472,7 +498,8 @@ export class AuthService {
     }
 
     if (!response.ok) {
-      throw new ApiError('OIDC token grant failed', response.status);
+      const message = await this.buildOidcGrantErrorMessage(response);
+      throw new ApiError(message, response.status);
     }
 
     const payload = (await response.json()) as AuthTokens;
@@ -480,6 +507,45 @@ export class AuthService {
       ...payload,
       issued_at: Date.now(),
     };
+  }
+
+  private async buildOidcGrantErrorMessage(
+    response: Response,
+  ): Promise<string> {
+    try {
+      const payload = (await response.json()) as {
+        error?: string;
+        error_description?: string;
+      };
+      const errorCode = payload?.error;
+      const description = payload?.error_description;
+      if (
+        typeof errorCode === 'string' &&
+        errorCode.length > 0 &&
+        typeof description === 'string' &&
+        description.length > 0
+      ) {
+        return `OIDC token grant failed: ${errorCode} (${description})`;
+      }
+      if (typeof description === 'string' && description.length > 0) {
+        return `OIDC token grant failed: ${description}`;
+      }
+      if (typeof errorCode === 'string' && errorCode.length > 0) {
+        return `OIDC token grant failed: ${errorCode}`;
+      }
+    } catch {
+      // Fall through to default message.
+    }
+    return 'OIDC token grant failed';
+  }
+
+  private resolveMobileRefreshFlow(
+    tokens: AuthTokens | null | undefined,
+  ): MobileRefreshFlow {
+    if (tokens?.refresh_flow === 'social_exchange') {
+      return 'social_exchange';
+    }
+    return 'oidc_direct';
   }
 
   private async getMobileTokenEndpoint(): Promise<string> {

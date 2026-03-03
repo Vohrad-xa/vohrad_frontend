@@ -1,4 +1,5 @@
 export * from './auth-api';
+export * from './location-api';
 export * from './item-api';
 export * from './tenant-api';
 export * from './user-api';
