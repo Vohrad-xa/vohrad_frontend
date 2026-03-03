@@ -9,7 +9,6 @@ import {
   type ViewStyle,
   type StyleProp,
 } from 'react-native';
-import * as AppleAuthentication from 'expo-apple-authentication';
 import {LinearGradient} from 'expo-linear-gradient';
 import {Link} from 'expo-router';
 import {Button, Divider} from 'react-native-paper';
@@ -17,7 +16,13 @@ import {ThemedText} from '@/components/ui';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useSignIn} from '@/features/auth';
 import {useTheme} from '@/providers';
-import {makeStyleFactory, GoogleIcon, MicrosoftIcon, EmailIcon} from '@/utils';
+import {
+  makeStyleFactory,
+  AppleIcon,
+  GoogleIcon,
+  MicrosoftIcon,
+  EmailIcon,
+} from '@/utils';
 
 type SocialButtonProps = {
   icon?: ((props: {size: number}) => React.ReactNode) | string;
@@ -63,7 +68,6 @@ function SocialButton({
 
 export default function LoginScreen() {
   const {ds, theme, scheme} = useTheme();
-
   const styles = createStyles(ds, theme);
 
   const {
@@ -72,13 +76,14 @@ export default function LoginScreen() {
     handleGoogleSubmit,
     isStartingMobileFlow,
     isStartingGoogleFlow,
+    isStartingAppleFlow,
     isAppleSupported,
     isGoogleSupported,
   } = useSignIn();
 
   const buttonColor = scheme === 'dark' ? Palette.white : Palette.black;
-
   const textColor = scheme === 'dark' ? Palette.black : Palette.white;
+  const appleIconColor = textColor;
 
   const lightGradient = [
     '#e9f2ff',
@@ -98,12 +103,6 @@ export default function LoginScreen() {
     '#040509',
   ] as const;
 
-  const isMicrosoftSigningIn = isStartingMobileFlow;
-
-  const isGoogleSigningIn = isStartingGoogleFlow;
-
-  const isEmailSigningIn = isStartingMobileFlow;
-
   const sharedSocialButtonProps = {
     buttonColor,
     textColor,
@@ -111,11 +110,6 @@ export default function LoginScreen() {
     style: styles.button,
     contentStyle: {height: ds.components.button.height},
   };
-
-  const appleButtonStyle =
-    scheme === 'dark'
-      ? AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
-      : AppleAuthentication.AppleAuthenticationButtonStyle.BLACK;
 
   return (
     <LinearGradient
@@ -149,14 +143,12 @@ export default function LoginScreen() {
 
           <View style={styles.content}>
             {isAppleSupported && (
-              <AppleAuthentication.AppleAuthenticationButton
-                buttonType={
-                  AppleAuthentication.AppleAuthenticationButtonType.CONTINUE
-                }
-                buttonStyle={appleButtonStyle}
-                cornerRadius={ds.components.button.borderRadius}
+              <SocialButton
+                icon={() => <AppleIcon color={appleIconColor} />}
+                label="Continue with Apple"
                 onPress={handleAppleSubmit}
-                style={styles.button}
+                loading={isStartingAppleFlow}
+                {...sharedSocialButtonProps}
               />
             )}
 
@@ -165,7 +157,7 @@ export default function LoginScreen() {
                 icon={() => <GoogleIcon />}
                 label="Continue with Google"
                 onPress={handleGoogleSubmit}
-                loading={isGoogleSigningIn}
+                loading={isStartingGoogleFlow}
                 {...sharedSocialButtonProps}
               />
             )}
@@ -174,7 +166,7 @@ export default function LoginScreen() {
               icon={() => <MicrosoftIcon />}
               label="Continue with Microsoft"
               onPress={handleSubmit}
-              loading={isMicrosoftSigningIn}
+              loading={isStartingMobileFlow}
               {...sharedSocialButtonProps}
             />
 
@@ -194,10 +186,9 @@ export default function LoginScreen() {
               icon={() => <EmailIcon />}
               label="Continue with Email"
               onPress={handleSubmit}
-              loading={isEmailSigningIn}
+              loading={isStartingMobileFlow}
               outlined
               {...sharedSocialButtonProps}
-              labelStyle={{fontWeight: ds.fontWeight.medium}}
             />
 
             <View style={styles.footer}>

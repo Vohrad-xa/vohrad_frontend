@@ -134,7 +134,7 @@ export const createDesignSystem = (
         paddingVertical: 12,
         paddingHorizontal: 16,
         height: 48,
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: '500',
       },
       card: {borderRadius: 22, padding: 16},
