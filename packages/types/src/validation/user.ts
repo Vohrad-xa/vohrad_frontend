@@ -1,4 +1,7 @@
-import {userSchema, userUpdateDataSchema as baseUserUpdateDataSchema} from '../schemas';
+import {
+  userSchema,
+  userUpdateDataSchema as baseUserUpdateDataSchema,
+} from '../schemas';
 import {emailSchema} from './email';
 import type {z} from 'zod';
 

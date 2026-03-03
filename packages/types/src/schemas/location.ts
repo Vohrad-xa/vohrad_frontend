@@ -13,18 +13,42 @@ export const locationSchema = z.object({
 });
 
 export const locationCreateSchema = z.object({
-  name: z.string().trim().min(1, 'Name is required').max(255, 'Name cannot exceed 255 characters'),
-  code: z.string().trim().min(1, 'Code is required').max(50, 'Code cannot exceed 50 characters'),
+  name: z
+    .string()
+    .trim()
+    .min(1, 'Name is required')
+    .max(255, 'Name cannot exceed 255 characters'),
+  code: z
+    .string()
+    .trim()
+    .min(1, 'Code is required')
+    .max(50, 'Code cannot exceed 50 characters'),
   parent_id: z.uuid().nullish(),
-  description: z.string().max(500, 'Description cannot exceed 500 characters').nullish(),
+  description: z
+    .string()
+    .max(500, 'Description cannot exceed 500 characters')
+    .nullish(),
   is_active: z.boolean().optional().default(true),
 });
 
 export const locationUpdateSchema = z.object({
-  name: z.string().trim().min(1).max(255, 'Name cannot exceed 255 characters').optional(),
-  code: z.string().trim().min(1).max(50, 'Code cannot exceed 50 characters').optional(),
+  name: z
+    .string()
+    .trim()
+    .min(1)
+    .max(255, 'Name cannot exceed 255 characters')
+    .optional(),
+  code: z
+    .string()
+    .trim()
+    .min(1)
+    .max(50, 'Code cannot exceed 50 characters')
+    .optional(),
   parent_id: z.uuid().nullish(),
-  description: z.string().max(500, 'Description cannot exceed 500 characters').nullish(),
+  description: z
+    .string()
+    .max(500, 'Description cannot exceed 500 characters')
+    .nullish(),
   is_active: z.boolean().optional(),
 });
 

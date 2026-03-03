@@ -1,6 +1,11 @@
 import {describe, it, expect} from '@jest/globals';
 import {randomUUID} from 'crypto';
-import {validateLocation, validateLocationCreate, validateLocationUpdate, schemas} from '@sykamore/types';
+import {
+  validateLocation,
+  validateLocationCreate,
+  validateLocationUpdate,
+  schemas,
+} from '@sykamore/types';
 
 const validLocation = {
   id: randomUUID(),
@@ -45,7 +50,9 @@ describe('Location Validation', () => {
     });
 
     it('rejects missing required fields', () => {
-      const result = validateLocation({id: 'b8200000-0000-0000-0000-000000000001'});
+      const result = validateLocation({
+        id: 'b8200000-0000-0000-0000-000000000001',
+      });
       expect(result.success).toBe(false);
     });
 
@@ -55,7 +62,10 @@ describe('Location Validation', () => {
     });
 
     it('rejects invalid uuid for parent_id', () => {
-      const result = validateLocation({...validLocation, parent_id: 'not-a-uuid'});
+      const result = validateLocation({
+        ...validLocation,
+        parent_id: 'not-a-uuid',
+      });
       expect(result.success).toBe(false);
     });
   });
@@ -92,12 +102,18 @@ describe('Location Validation', () => {
     });
 
     it('rejects name over 255 characters', () => {
-      const result = validateLocationCreate({name: 'A'.repeat(256), code: 'SH-A'});
+      const result = validateLocationCreate({
+        name: 'A'.repeat(256),
+        code: 'SH-A',
+      });
       expect(result.success).toBe(false);
     });
 
     it('rejects code over 50 characters', () => {
-      const result = validateLocationCreate({name: 'Shelf A', code: 'A'.repeat(51)});
+      const result = validateLocationCreate({
+        name: 'Shelf A',
+        code: 'A'.repeat(51),
+      });
       expect(result.success).toBe(false);
     });
   });

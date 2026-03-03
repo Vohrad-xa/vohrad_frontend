@@ -1,8 +1,9 @@
 import {ScrollView} from 'react-native';
 import {List} from 'react-native-paper';
 import {ListRows, type ListRowProps} from '@/components/ui';
+import {getAppVersion} from '@/utils';
 
-const APP_VERSION = '0.0.1';
+const {displayVersion} = getAppVersion();
 
 const HELP_ROWS = [
   {
@@ -23,11 +24,11 @@ const ABOUT_ROWS = [
   {
     rowKey: 'version',
     title: 'Version',
-    description: APP_VERSION,
+    description: displayVersion,
     a11yLabel: 'App version',
     a11yHint: 'Displays the current app version',
   },
-] as const satisfies readonly ListRowProps[];
+] satisfies readonly ListRowProps[];
 
 export function HelpContent() {
   return (

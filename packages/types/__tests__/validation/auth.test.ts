@@ -74,7 +74,9 @@ describe('Auth Validation', () => {
     });
 
     it('rejects tokens with missing required fields', () => {
-      const result = schemas.authTokensSchema.safeParse({access_token: 'token'});
+      const result = schemas.authTokensSchema.safeParse({
+        access_token: 'token',
+      });
       expect(result.success).toBe(false);
     });
   });
@@ -121,7 +123,9 @@ describe('Auth Validation', () => {
     });
 
     it('rejects user with missing required fields', () => {
-      const result = schemas.userSchema.safeParse({email: 'missing-fields@example.com'});
+      const result = schemas.userSchema.safeParse({
+        email: 'missing-fields@example.com',
+      });
       expect(result.success).toBe(false);
     });
   });
