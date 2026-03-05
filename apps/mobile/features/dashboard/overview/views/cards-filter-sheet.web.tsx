@@ -39,11 +39,11 @@ export const CardsFilterSheet = forwardRef<CardsFilterSheetHandle>((_, ref) => {
   return (
     <TrueSheet
       ref={sheetRef}
-      detents={[0.6, 1]}
+      detents={['auto']}
       backgroundColor={theme.modalBackground}
     >
       <View>
-        <List.Section title="you can customize your dashboard cards by toggling them on or off below:">
+        <List.Section>
           {cardConfig.map((card) => {
             const visibilityKey = card.key;
             const isVisible = !!visibility[visibilityKey];

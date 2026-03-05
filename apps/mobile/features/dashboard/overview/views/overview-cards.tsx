@@ -8,8 +8,6 @@ import {useTheme} from '@/providers';
 import {Icon, makeStyleFactory} from '@/utils';
 import {useFilteredDashboardCards} from '../hooks';
 
-const MIN_CARD_WIDTH = 200;
-
 export function OverviewCards() {
   const {ds, theme} = useTheme();
   const router = useRouter();
@@ -78,15 +76,9 @@ const createStyles = makeStyleFactory(
     const gap = ds.spacing.sm;
     const padding = ds.layout.screenPadding;
     const isWeb = Platform.OS === 'web';
-    const numColumns = isWeb
-      ? Math.max(
-          2,
-          Math.floor(
-            (screenWidth - padding * 2 + gap) / (MIN_CARD_WIDTH + gap),
-          ),
-        )
-      : 2;
-    const cardWidth =
+    const numColumns = 2;
+    const cardMinWidth = 200;
+    const mobileCardWidth =
       (screenWidth - padding * 2 - (numColumns - 1) * gap) / numColumns;
 
     return StyleSheet.create({
@@ -103,7 +95,14 @@ const createStyles = makeStyleFactory(
         gap,
       },
       card: {
-        width: cardWidth,
+        ...(isWeb
+          ? {
+              flexGrow: 1,
+              flexShrink: 1,
+              flexBasis: cardMinWidth,
+              minWidth: cardMinWidth,
+            }
+          : {width: mobileCardWidth}),
         borderRadius: ds.components.card.borderRadius,
       },
       cardContent: {
