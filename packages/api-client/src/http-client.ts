@@ -42,6 +42,8 @@ export class HttpClient {
     isRetry = false,
   ): Promise<ApiResponse<T>> {
     const loadingToken = loadingManager.startRequest();
+    const isAuthTokenGrantEndpoint =
+      this.isAuthTokenGrantEndpoint(urlOrEndpoint);
 
     const isFullUrl =
       urlOrEndpoint.startsWith('http://') ||
@@ -68,11 +70,11 @@ export class HttpClient {
       headers['X-Client-Platform'] = 'web';
     }
 
-    if (this.accessToken) {
+    if (this.accessToken && !isAuthTokenGrantEndpoint) {
       headers.Authorization = `Bearer ${this.accessToken}`;
     }
 
-    if (this.tenantId) {
+    if (this.tenantId && !isAuthTokenGrantEndpoint) {
       headers['X-Tenant-Id'] = this.tenantId;
     }
 
@@ -89,18 +91,17 @@ export class HttpClient {
     try {
       const response = await this.fetchWithRetry(url, config);
 
-      if (response.status === 401 && !isRetry && this.onTokenRefresh) {
-        const isAuthEndpoint =
-          urlOrEndpoint.includes('/auth/oidc/') ||
-          urlOrEndpoint.includes('/auth/web/token');
-
-        if (!isAuthEndpoint) {
-          try {
-            await this.onTokenRefresh();
-            return this.makeRequest(urlOrEndpoint, options, true);
-          } catch (_refreshError) {
-            // Refresh failed — let the original 401 propagate; the handler owns logout.
-          }
+      if (
+        response.status === 401 &&
+        !isRetry &&
+        this.onTokenRefresh &&
+        !isAuthTokenGrantEndpoint
+      ) {
+        try {
+          await this.onTokenRefresh();
+          return this.makeRequest(urlOrEndpoint, options, true);
+        } catch (_refreshError) {
+          // Refresh failed — let the original 401 propagate; the handler owns logout.
         }
       }
 
@@ -297,6 +298,15 @@ export class HttpClient {
 
   async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
     return this.makeRequest<T>(endpoint, {method: 'DELETE'});
+  }
+
+  private isAuthTokenGrantEndpoint(urlOrEndpoint: string): boolean {
+    return (
+      urlOrEndpoint.includes('/auth/oidc/') ||
+      urlOrEndpoint.includes('/auth/web/token') ||
+      urlOrEndpoint.includes('/auth/social/exchange') ||
+      urlOrEndpoint.includes('/auth/social/refresh')
+    );
   }
 
   private async fetchWithRetry(
