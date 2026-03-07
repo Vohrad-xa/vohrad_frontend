@@ -1,4 +1,5 @@
-import React, {useState, useRef, useCallback} from 'react';
+import React, {useState, useRef, useCallback, useMemo} from 'react';
+import {validation} from '@sykamore/types';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {useSettingsHeader} from '@/hooks';
 import {SpecificationsForm} from './specifications-form';
@@ -7,11 +8,32 @@ export function ItemSpecifications() {
   const router = useRouter();
   const navigation = useNavigation();
   const {itemData} = useLocalSearchParams<{itemData?: string}>();
-  const item = JSON.parse(itemData!);
+  const item = useMemo(() => {
+    if (!itemData) {
+      return null;
+    }
+
+    const parsedResult = validation.parseJson(itemData);
+    if (!parsedResult.success) {
+      return null;
+    }
+
+    const itemResult = validation.validateItemSpecificationsEditorItem(
+      parsedResult.data,
+    );
+    if (!itemResult.success) {
+      return null;
+    }
+
+    return itemResult.data;
+  }, [itemData]);
   const [hasChanges, setHasChanges] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(
-    !item.specifications || Object.keys(item.specifications).length === 0,
-  );
+  const [isEditMode, setIsEditMode] = useState(() => {
+    if (!item?.specifications) {
+      return true;
+    }
+    return Object.keys(item.specifications).length === 0;
+  });
   const specificationsFormRef = useRef<{
     performSave: () => Promise<void>;
   }>(null);

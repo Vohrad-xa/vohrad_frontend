@@ -15,10 +15,10 @@ import {useTheme, useHaptic} from '@/providers';
 import {showAlert} from '@/utils/alert';
 import {Icon, AppIcons} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
-import type {ItemDetail} from '@sykamore/types';
+import type {ItemSpecificationsEditorItem} from '@sykamore/types';
 
 interface SpecificationsFormProps {
-  item: ItemDetail;
+  item: ItemSpecificationsEditorItem;
   onSave?: () => void;
   onHasChangesChange?: (hasChanges: boolean) => void;
   isEditMode: boolean;
