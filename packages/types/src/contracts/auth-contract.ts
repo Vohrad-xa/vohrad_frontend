@@ -4,7 +4,7 @@ import type {
   AuthTokens,
   Identity,
   StartWebLoginOptions,
-} from './schemas';
+} from '../schemas';
 
 export interface AsyncState<TData = unknown, TError = string | null> {
   data: TData;
@@ -23,6 +23,7 @@ type AuthStateActions = {
   logout: () => void;
   clearError: () => void;
 };
+
 type AuthContextActions = {
   startWebLogin: (
     returnTo?: string,
@@ -34,8 +35,3 @@ type AuthContextActions = {
 
 export type AuthState = AuthStateData & AuthStateActions;
 export type AuthContextValue = AuthContextData & AuthContextActions;
-export type {
-  MobileOidcLoginParams,
-  OidcStartAction,
-  StartWebLoginOptions,
-} from './schemas';

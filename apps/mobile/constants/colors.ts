@@ -1,4 +1,3 @@
-import {Platform} from 'react-native';
 import {generateVersion} from '../utils/versioning';
 
 export const Palette = {

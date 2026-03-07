@@ -1,16 +1,25 @@
 import {z} from 'zod';
 import {emailSchema} from './email';
 import {
-  createNameSchema,
-  basePhoneSchema,
   baseDateSchema,
+  basePhoneSchema,
+  createNameSchema,
   createPostalCodeSchema,
-} from '../validation/helpers';
+} from './common';
+import {orderByDirectionSchema} from './attachment';
 
 const nameSchema = createNameSchema();
 const phoneSchema = basePhoneSchema;
 const dateSchema = baseDateSchema;
 const postalCodeSchema = createPostalCodeSchema();
+
+const addressSchema = z
+  .string()
+  .max(255, 'Address cannot exceed 255 characters');
+const cityOrProvinceSchema = z
+  .string()
+  .max(100, 'Field cannot exceed 100 characters');
+const countryCodeSchema = z.string().length(2, 'Country must be 2 characters');
 
 export const userSchema = z.strictObject({
   id: z.uuid(),
@@ -40,48 +49,35 @@ export const userCreateDataSchema = z.strictObject({
   email: emailSchema,
   phone_number: phoneSchema.optional(),
   date_of_birth: dateSchema.optional(),
-  address: z
-    .string()
-    .max(255, 'Address cannot exceed 255 characters')
-    .optional(),
-  city: z.string().max(100, 'City cannot exceed 100 characters').optional(),
-  province: z
-    .string()
-    .max(100, 'Province cannot exceed 100 characters')
-    .optional(),
+  address: addressSchema.optional(),
+  city: cityOrProvinceSchema.optional(),
+  province: cityOrProvinceSchema.optional(),
   postal_code: postalCodeSchema.optional(),
-  country: z.string().length(2, 'Country must be 2 characters').optional(),
+  country: countryCodeSchema.optional(),
   role_id: z.string().optional(),
 });
 
 export const userUpdateDataSchema = z.strictObject({
-  first_name: nameSchema.optional().nullable(),
-  last_name: nameSchema.optional().nullable(),
-  phone_number: phoneSchema.optional().nullable(),
-  date_of_birth: dateSchema.optional().nullable(),
-  address: z
-    .string()
-    .max(255, 'Address cannot exceed 255 characters')
-    .optional()
-    .nullable(),
-  city: z
-    .string()
-    .max(100, 'City cannot exceed 100 characters')
-    .optional()
-    .nullable(),
-  province: z
-    .string()
-    .max(100, 'Province cannot exceed 100 characters')
-    .optional()
-    .nullable(),
-  postal_code: postalCodeSchema.optional().nullable(),
-  country: z
-    .string()
-    .length(2, 'Country must be 2 characters')
-    .optional()
-    .nullable(),
+  first_name: nameSchema.nullish(),
+  last_name: nameSchema.nullish(),
+  phone_number: phoneSchema.nullish(),
+  date_of_birth: dateSchema.nullish(),
+  address: addressSchema.nullish(),
+  city: cityOrProvinceSchema.nullish(),
+  province: cityOrProvinceSchema.nullish(),
+  postal_code: postalCodeSchema.nullish(),
+  country: countryCodeSchema.nullish(),
+});
+
+export const userSortKeySchema = z.enum(['date', 'name']);
+
+export const userSortStateSchema = z.strictObject({
+  key: userSortKeySchema,
+  direction: orderByDirectionSchema,
 });
 
 export type User = z.infer<typeof userSchema>;
 export type UserCreateData = z.infer<typeof userCreateDataSchema>;
 export type UserUpdateData = z.infer<typeof userUpdateDataSchema>;
+export type UserSortKey = z.infer<typeof userSortKeySchema>;
+export type UserSortState = z.infer<typeof userSortStateSchema>;

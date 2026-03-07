@@ -2,10 +2,14 @@ import {authApi, errorManager, httpClient} from '@sykamore/api-client';
 import {useAuthStore} from '@sykamore/store';
 import {
   ApiError,
+  validateAuthTokens,
+  validateIdentity,
+  validateMobileOidcLoginParams,
+  validateStartWebLoginOptions,
+  validateTenantMemberships,
   type AuthTokens,
   type MobileOidcLoginParams,
   type StartWebLoginOptions,
-  validation,
 } from '@sykamore/types';
 
 const WEB_CSRF_COOKIE_NAME = 'sykamore_csrf_token';
@@ -87,9 +91,7 @@ export class AuthService {
     try {
       setLoading(true);
 
-      const optionsResult = validation.validateStartWebLoginOptions(
-        options ?? {},
-      );
+      const optionsResult = validateStartWebLoginOptions(options ?? {});
       if (!optionsResult.success) {
         throw new Error('Invalid web login options');
       }
@@ -120,7 +122,7 @@ export class AuthService {
     try {
       setLoading(true);
 
-      const paramsResult = validation.validateMobileOidcLoginParams(params);
+      const paramsResult = validateMobileOidcLoginParams(params);
       if (!paramsResult.success) {
         throw new Error('Invalid mobile OIDC login params');
       }
@@ -274,7 +276,7 @@ export class AuthService {
           ? await this.issueWebAccessTokenFromCookie()
           : await this.refreshMobileAccessToken(tokens);
 
-        const tokensResult = validation.validateAuthTokens(refreshedTokens);
+        const tokensResult = validateAuthTokens(refreshedTokens);
         if (!tokensResult.success) {
           throw new Error('Invalid token response from refresh flow');
         }
@@ -322,7 +324,7 @@ export class AuthService {
     try {
       const tokens = await this.issueWebAccessTokenFromCookie();
 
-      const tokensResult = validation.validateAuthTokens(tokens);
+      const tokensResult = validateAuthTokens(tokens);
       if (!tokensResult.success) {
         return false;
       }
@@ -331,7 +333,7 @@ export class AuthService {
       httpClient.setAccessToken(tokensResult.data.access_token);
 
       const user = await authApi.getMeProfile();
-      const userResult = validation.validateIdentity(user);
+      const userResult = validateIdentity(user);
       if (!userResult.success) {
         httpClient.setAccessToken(null);
         return false;
@@ -375,8 +377,7 @@ export class AuthService {
 
     try {
       const memberships = await authApi.getMyTenants();
-      const membershipsResult =
-        validation.validateTenantMemberships(memberships);
+      const membershipsResult = validateTenantMemberships(memberships);
 
       if (!membershipsResult.success) {
         clearTenantContext();
@@ -659,7 +660,7 @@ export class AuthService {
 
   private async finalizeMobileLogin(tokens: AuthTokens): Promise<void> {
     const {login} = useAuthStore.getState();
-    const tokensResult = validation.validateAuthTokens(tokens);
+    const tokensResult = validateAuthTokens(tokens);
     if (!tokensResult.success) {
       throw new Error('Invalid mobile token response from Keycloak');
     }
@@ -674,7 +675,7 @@ export class AuthService {
     httpClient.setAccessToken(tokensResult.data.access_token);
 
     const user = await authApi.getMeProfile();
-    const userResult = validation.validateIdentity(user);
+    const userResult = validateIdentity(user);
     if (!userResult.success) {
       throw new Error('Invalid user data received from API');
     }

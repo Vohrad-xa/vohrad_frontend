@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {basePhoneSchema} from '../validation/helpers';
+import {basePhoneSchema} from './common';
 
 export const phoneNumberSchema = basePhoneSchema;
 

@@ -1,7 +1,6 @@
 import {secureStoreChunkMetaSchema} from '../schemas';
+import {createValidator} from './parse';
 
-export function validateSecureStoreChunkMeta(meta: unknown) {
-  return secureStoreChunkMetaSchema.safeParse(meta);
-}
-
-export type {SecureStoreChunkMeta} from '../schemas';
+export const validateSecureStoreChunkMeta = createValidator(
+  secureStoreChunkMetaSchema,
+);

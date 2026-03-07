@@ -1,21 +1,28 @@
 import {describe, it, expect} from '@jest/globals';
 import {randomUUID} from 'crypto';
-import {schemas, validation, type AuthTokens, type User} from '@sykamore/types';
+import {
+  authTokensSchema,
+  userSchema,
+  validateAuthTokens,
+  validateUser,
+  type AuthTokens,
+  type User,
+} from '@sykamore/types';
 
-type TokenParseResult = ReturnType<typeof schemas.authTokensSchema.safeParse>;
+type TokenParseResult = ReturnType<typeof authTokensSchema.safeParse>;
 type TokenParser = (input: unknown) => TokenParseResult;
 
-type UserParseResult = ReturnType<typeof schemas.userSchema.safeParse>;
+type UserParseResult = ReturnType<typeof userSchema.safeParse>;
 type UserParser = (input: unknown) => UserParseResult;
 
 const TOKEN_PARSERS: ReadonlyArray<{
   name: string;
   parse: TokenParser;
 }> = [
-  {name: 'validation.validateAuthTokens', parse: validation.validateAuthTokens},
+  {name: 'validateAuthTokens', parse: validateAuthTokens},
   {
-    name: 'schemas.authTokensSchema.safeParse',
-    parse: schemas.authTokensSchema.safeParse,
+    name: 'authTokensSchema.safeParse',
+    parse: authTokensSchema.safeParse,
   },
 ];
 
@@ -23,8 +30,8 @@ const USER_PARSERS: ReadonlyArray<{
   name: string;
   parse: UserParser;
 }> = [
-  {name: 'validation.validateUser', parse: validation.validateUser},
-  {name: 'schemas.userSchema.safeParse', parse: schemas.userSchema.safeParse},
+  {name: 'validateUser', parse: validateUser},
+  {name: 'userSchema.safeParse', parse: userSchema.safeParse},
 ];
 
 const TOKEN_FIXTURE = {

@@ -11,57 +11,27 @@ import {
   startWebLoginOptionsSchema,
   tenantMembershipSchema,
 } from '../schemas';
+import {createValidator} from './parse';
 
-export function validateAuthTokens(tokens: unknown) {
-  return authTokensSchema.safeParse(tokens);
-}
+const tenantMembershipsSchema = z.array(tenantMembershipSchema);
 
-export function validateIdentity(identity: unknown) {
-  return identitySchema.safeParse(identity);
-}
-
-export function validateTenantMemberships(memberships: unknown) {
-  return z.array(tenantMembershipSchema).safeParse(memberships);
-}
-
-export function validateOidcStartAction(action: unknown) {
-  return oidcStartActionSchema.safeParse(action);
-}
-
-export function validateStartWebLoginOptions(options: unknown) {
-  return startWebLoginOptionsSchema.safeParse(options);
-}
-
-export function validateMobileOidcLoginParams(params: unknown) {
-  return mobileOidcLoginParamsSchema.safeParse(params);
-}
-
-export function validateAuthStateData(state: unknown) {
-  return authStateDataSchema.safeParse(state);
-}
-
-export function validateAuthContextData(state: unknown) {
-  return authContextDataSchema.safeParse(state);
-}
-
-export function validateBiometricSettingsSnapshot(settings: unknown) {
-  return biometricSettingsSnapshotSchema.safeParse(settings);
-}
-
-export function validateAuthPersistSnapshot(snapshot: unknown) {
-  return authPersistSnapshotSchema.safeParse(snapshot);
-}
-
-export type {
-  AuthPersistSnapshot,
-  AuthTokens,
-  TokenResponse,
-  BiometricSettings,
-  BiometricSettingsSnapshot,
-  Identity,
-  OidcStartAction,
-  StartWebLoginOptions,
-  MobileOidcLoginParams,
-  AuthStateData,
-  AuthContextData,
-} from '../schemas';
+export const validateAuthTokens = createValidator(authTokensSchema);
+export const validateIdentity = createValidator(identitySchema);
+export const validateTenantMemberships = createValidator(
+  tenantMembershipsSchema,
+);
+export const validateOidcStartAction = createValidator(oidcStartActionSchema);
+export const validateStartWebLoginOptions = createValidator(
+  startWebLoginOptionsSchema,
+);
+export const validateMobileOidcLoginParams = createValidator(
+  mobileOidcLoginParamsSchema,
+);
+export const validateAuthStateData = createValidator(authStateDataSchema);
+export const validateAuthContextData = createValidator(authContextDataSchema);
+export const validateBiometricSettingsSnapshot = createValidator(
+  biometricSettingsSnapshotSchema,
+);
+export const validateAuthPersistSnapshot = createValidator(
+  authPersistSnapshotSchema,
+);

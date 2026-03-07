@@ -6,7 +6,7 @@ import {
   setAuthPersistStorage,
   AUTH_PERSIST_KEY,
 } from '@sykamore/store';
-import {validation} from '@sykamore/types';
+import {parseJson, validateAuthPersistSnapshot} from '@sykamore/types';
 import {
   authenticateWithBiometrics,
   disableBiometrics,
@@ -62,14 +62,12 @@ async function hasPersistedRefreshToken(): Promise<boolean> {
   if (!raw) return false;
 
   try {
-    const parsedResult = validation.parseJson(raw);
+    const parsedResult = parseJson(raw);
     if (!parsedResult.success) {
       return false;
     }
 
-    const snapshotResult = validation.validateAuthPersistSnapshot(
-      parsedResult.data,
-    );
+    const snapshotResult = validateAuthPersistSnapshot(parsedResult.data);
     if (!snapshotResult.success) {
       return false;
     }

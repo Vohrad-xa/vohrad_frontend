@@ -1,12 +1,5 @@
 import {userSchema, userUpdateDataSchema} from '../schemas';
-import type {z} from 'zod';
+import {createValidator} from './parse';
 
-export type UserUpdateData = z.infer<typeof userUpdateDataSchema>;
-
-export function validateUser(data: unknown) {
-  return userSchema.safeParse(data);
-}
-
-export function validateUserUpdate(data: unknown) {
-  return userUpdateDataSchema.safeParse(data);
-}
+export const validateUser = createValidator(userSchema);
+export const validateUserUpdate = createValidator(userUpdateDataSchema);

@@ -6,36 +6,13 @@ import {
   integerSchema,
   decimalSchema,
 } from '../schemas';
+import {createValidator} from './parse';
 
-export function validatePhoneNumber(value: unknown) {
-  return phoneNumberSchema.safeParse(value);
-}
-
-export function validateNumeric(value: unknown) {
-  return numericSchema.safeParse(value);
-}
-
-export function validatePositiveNumber(value: unknown) {
-  return positiveNumberSchema.safeParse(value);
-}
-
-export function validateNonNegativeNumber(value: unknown) {
-  return nonNegativeNumberSchema.safeParse(value);
-}
-
-export function validateInteger(value: unknown) {
-  return integerSchema.safeParse(value);
-}
-
-export function validateDecimal(value: unknown) {
-  return decimalSchema.safeParse(value);
-}
-
-export type {
-  PhoneNumber,
-  NumericInput,
-  PositiveNumber,
-  NonNegativeNumber,
-  IntegerNumber,
-  DecimalNumber,
-} from '../schemas';
+export const validatePhoneNumber = createValidator(phoneNumberSchema);
+export const validateNumeric = createValidator(numericSchema);
+export const validatePositiveNumber = createValidator(positiveNumberSchema);
+export const validateNonNegativeNumber = createValidator(
+  nonNegativeNumberSchema,
+);
+export const validateInteger = createValidator(integerSchema);
+export const validateDecimal = createValidator(decimalSchema);

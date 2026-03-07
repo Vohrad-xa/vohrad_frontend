@@ -1,5 +1,5 @@
 import React, {useState, useRef, useCallback, useMemo} from 'react';
-import {validation} from '@sykamore/types';
+import {parseJson, validateItemSpecificationsEditorItem} from '@sykamore/types';
 import {useRouter, useNavigation, useLocalSearchParams} from 'expo-router';
 import {useSettingsHeader} from '@/hooks';
 import {SpecificationsForm} from './specifications-form';
@@ -13,14 +13,12 @@ export function ItemSpecifications() {
       return null;
     }
 
-    const parsedResult = validation.parseJson(itemData);
+    const parsedResult = parseJson(itemData);
     if (!parsedResult.success) {
       return null;
     }
 
-    const itemResult = validation.validateItemSpecificationsEditorItem(
-      parsedResult.data,
-    );
+    const itemResult = validateItemSpecificationsEditorItem(parsedResult.data);
     if (!itemResult.success) {
       return null;
     }

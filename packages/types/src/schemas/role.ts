@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {transformations} from '../validation/helpers';
+import {transformations} from './common';
 
 export const roleTypes = ['BASIC', 'PREDEFINED', 'CUSTOM'] as const;
 export const roleScopes = ['GLOBAL', 'TENANT'] as const;

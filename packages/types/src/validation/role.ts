@@ -1,22 +1,6 @@
-import {
-  roleSchema,
-  roleCreateSchema,
-  roleUpdateSchema,
-  type Role,
-  type RoleCreate,
-  type RoleUpdate,
-} from '../schemas';
+import {roleSchema, roleCreateSchema, roleUpdateSchema} from '../schemas';
+import {createValidator} from './parse';
 
-export function validateRole(data: unknown) {
-  return roleSchema.safeParse(data);
-}
-
-export function validateRoleCreate(data: unknown) {
-  return roleCreateSchema.safeParse(data);
-}
-
-export function validateRoleUpdate(data: unknown) {
-  return roleUpdateSchema.safeParse(data);
-}
-
-export type {Role, RoleCreate, RoleUpdate};
+export const validateRole = createValidator(roleSchema);
+export const validateRoleCreate = createValidator(roleCreateSchema);
+export const validateRoleUpdate = createValidator(roleUpdateSchema);

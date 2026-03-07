@@ -14,8 +14,6 @@ const COMMON_TYPOS: Record<string, string> = {
   'outloo.com': 'outlook.com',
 };
 
-export {emailSchema};
-
 export function suggestEmailCorrection(email: string): string | null {
   const parts = email.trim().toLowerCase().split('@');
   if (parts.length !== 2) return null;

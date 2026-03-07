@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {baseDateSchema} from './dates';
 
 export const patterns = {
   EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -13,7 +14,7 @@ export const patterns = {
     CANADA: /^[A-Z]\d[A-Z] \d[A-Z]\d$/,
     UK: /^[A-Z]{1,2}\d[A-Z\d]? \d[A-Z]{2}$/,
   },
-};
+} as const;
 
 export const messages = {
   REQUIRED: 'This field is required',
@@ -22,7 +23,7 @@ export const messages = {
   INVALID_DATE: 'Invalid date',
   TOO_SHORT: 'Too short',
   TOO_LONG: 'Too long',
-};
+} as const;
 
 export const commonRefinements = {
   email: (message?: string) => message || messages.INVALID_EMAIL,
@@ -50,11 +51,6 @@ export const basePhoneSchema = z
   )
   .refine((phone) => phone.length <= 15, 'Phone number cannot exceed 15 digits')
   .transform((phone) => `+${phone}`);
-
-export const baseDateSchema = z
-  .string()
-  .refine((date) => !isNaN(Date.parse(date)), messages.INVALID_DATE)
-  .transform((date) => new Date(date).toISOString().split('T')[0]);
 
 export function createNameSchema(field?: string, maxLength = 50) {
   return z
@@ -87,26 +83,9 @@ export function createPostalCodeSchema() {
     .transform((postal) => postal.toUpperCase().replace(/\s/g, ' '));
 }
 
-export function optionalNullable<T extends z.ZodType>(schema: T) {
-  return schema.optional().nullable();
+export function validateAgainstPatterns(
+  value: string,
+  regexPatterns: RegExp[],
+) {
+  return regexPatterns.some((pattern) => pattern.test(value));
 }
-
-export function validateAgainstPatterns(value: string, patterns: RegExp[]) {
-  return patterns.some((pattern) => pattern.test(value));
-}
-
-export const baseSchemas = {
-  string: {
-    required: (min = 1, max = 100) => z.string().min(min).max(max),
-    optional: (min = 1, max = 100) => z.string().min(min).max(max).optional(),
-  },
-  number: {
-    positive: () => z.number().positive(),
-    min: (min: number) => z.number().min(min),
-    max: (max: number) => z.number().max(max),
-  },
-  boolean: {
-    required: () => z.boolean(),
-    optional: () => z.boolean().optional(),
-  },
-};

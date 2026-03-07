@@ -1,10 +1,10 @@
 import {describe, it, expect} from '@jest/globals';
 import {randomUUID} from 'crypto';
 import {
+  locationSchema,
   validateLocation,
   validateLocationCreate,
   validateLocationUpdate,
-  schemas,
 } from '@sykamore/types';
 
 const validLocation = {
@@ -140,9 +140,9 @@ describe('Location Validation', () => {
     });
   });
 
-  describe('schemas.locationSchema direct access', () => {
-    it('is accessible via schemas namespace', () => {
-      const result = schemas.locationSchema.safeParse(validLocation);
+  describe('locationSchema direct access', () => {
+    it('is accessible as a named export', () => {
+      const result = locationSchema.safeParse(validLocation);
       expect(result.success).toBe(true);
     });
   });

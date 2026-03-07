@@ -1,9 +1,9 @@
 import {describe, it, expect} from '@jest/globals';
 import {
+  emailSchema,
   validateEmail,
   suggestEmailCorrection,
   isEmail,
-  schemas,
 } from '@sykamore/types';
 
 describe('Email Validation', () => {
@@ -98,7 +98,7 @@ describe('Email Validation', () => {
 
   describe('emailSchema', () => {
     it('transforms emails to lowercase', () => {
-      const result = schemas.emailSchema.safeParse('User@GMAIL.COM');
+      const result = emailSchema.safeParse('User@GMAIL.COM');
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data).toBe('user@gmail.com');
@@ -106,14 +106,14 @@ describe('Email Validation', () => {
     });
 
     it('rejects emails with whitespace', () => {
-      const result = schemas.emailSchema.safeParse('  user@gmail.com  ');
+      const result = emailSchema.safeParse('  user@gmail.com  ');
       expect(result.success).toBe(false);
     });
 
     it('rejects invalid formats', () => {
-      expect(schemas.emailSchema.safeParse('invalid').success).toBe(false);
-      expect(schemas.emailSchema.safeParse('@example.com').success).toBe(false);
-      expect(schemas.emailSchema.safeParse('user@').success).toBe(false);
+      expect(emailSchema.safeParse('invalid').success).toBe(false);
+      expect(emailSchema.safeParse('@example.com').success).toBe(false);
+      expect(emailSchema.safeParse('user@').success).toBe(false);
     });
 
     it('accepts valid emails', () => {
@@ -124,7 +124,7 @@ describe('Email Validation', () => {
       ];
 
       validEmails.forEach((email) => {
-        expect(schemas.emailSchema.safeParse(email).success).toBe(true);
+        expect(emailSchema.safeParse(email).success).toBe(true);
       });
     });
   });

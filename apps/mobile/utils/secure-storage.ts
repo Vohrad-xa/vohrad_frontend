@@ -1,5 +1,5 @@
 import {Platform} from 'react-native';
-import {validation} from '@sykamore/types';
+import {parseJson, validateSecureStoreChunkMeta} from '@sykamore/types';
 import * as SecureStore from 'expo-secure-store';
 
 const PREFIX = 'sykamore.secure.';
@@ -54,12 +54,12 @@ function remember(key: string, value: string | null) {
 }
 
 function parseChunkCount(meta: string): number | null {
-  const parsedResult = validation.parseJson(meta);
+  const parsedResult = parseJson(meta);
   if (!parsedResult.success) {
     return null;
   }
 
-  const metaResult = validation.validateSecureStoreChunkMeta(parsedResult.data);
+  const metaResult = validateSecureStoreChunkMeta(parsedResult.data);
   if (!metaResult.success) {
     return null;
   }

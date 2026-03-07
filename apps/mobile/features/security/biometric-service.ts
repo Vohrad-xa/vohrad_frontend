@@ -1,5 +1,5 @@
 import {Platform} from 'react-native';
-import {validation} from '@sykamore/types';
+import {parseJson, validateBiometricSettingsSnapshot} from '@sykamore/types';
 import * as LocalAuthentication from 'expo-local-authentication';
 import {secureStorage} from '@/utils/secure-storage';
 
@@ -58,14 +58,12 @@ async function readSettings(): Promise<BiometricSettings> {
   }
 
   try {
-    const parsedResult = validation.parseJson(raw);
+    const parsedResult = parseJson(raw);
     if (!parsedResult.success) {
       return {...DEFAULT_SETTINGS};
     }
 
-    const settingsResult = validation.validateBiometricSettingsSnapshot(
-      parsedResult.data,
-    );
+    const settingsResult = validateBiometricSettingsSnapshot(parsedResult.data);
     if (!settingsResult.success) {
       return {...DEFAULT_SETTINGS};
     }

@@ -1,30 +1,8 @@
 import {z} from 'zod';
-import type {JsonValue} from '../tenant';
+import {jsonObjectSchema} from '../common';
+import {trackingModeSchema} from './item-filters';
 
-export const trackingModeSchema = z.enum(['abstract', 'lot', 'serialized']);
-
-const jsonValueSchema: z.ZodType<JsonValue> = z.lazy(() =>
-  z.union([
-    z.string(),
-    z.number(),
-    z.boolean(),
-    z.null(),
-    z.array(jsonValueSchema),
-    z.record(z.string(), jsonValueSchema),
-  ]),
-);
-
-export const itemSpecificationsSchema = z
-  .record(z.string(), jsonValueSchema)
-  .nullable();
-
-export const itemFilterStateSchema = z.strictObject({
-  statuses: z.array(z.enum(['active', 'inactive'])).optional(),
-  trackingModes: z.array(trackingModeSchema).optional(),
-  unitIds: z.array(z.string()).optional(),
-  priceMin: z.number().nullable().optional(),
-  priceMax: z.number().nullable().optional(),
-});
+export const itemSpecificationsSchema = jsonObjectSchema.nullable();
 
 export const itemLocationDataSchema = z.strictObject({
   id: z.string(),
@@ -157,9 +135,7 @@ export const itemSpecificationsEditorItemSchema = itemSchema.pick({
   specifications: true,
 });
 
-export type TrackingMode = z.infer<typeof trackingModeSchema>;
 export type ItemSpecifications = z.infer<typeof itemSpecificationsSchema>;
-export type ItemFilterState = z.infer<typeof itemFilterStateSchema>;
 export type ItemLocationData = z.infer<typeof itemLocationDataSchema>;
 export type ItemLocationInput = z.infer<typeof itemLocationInputSchema>;
 export type ItemLocationUpdate = z.infer<typeof itemLocationUpdateSchema>;

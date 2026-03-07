@@ -1,5 +1,6 @@
 import {
-  validation,
+  validateAuthTokens,
+  validateStartWebLoginOptions,
   type ApiResponse,
   type AuthTokens,
   type Identity,
@@ -27,9 +28,7 @@ export class AuthApi {
    * Build OIDC start URL with optional return path and start action.
    */
   getOidcStartUrl(returnTo?: string, options?: StartWebLoginOptions): string {
-    const optionsResult = validation.validateStartWebLoginOptions(
-      options ?? {},
-    );
+    const optionsResult = validateStartWebLoginOptions(options ?? {});
     if (!optionsResult.success) {
       throw new Error('Invalid OIDC start options');
     }
@@ -177,7 +176,7 @@ export class AuthApi {
       ? rawResponse.data
       : rawResponse;
 
-    const validationResult = validation.validateAuthTokens(tokenPayload);
+    const validationResult = validateAuthTokens(tokenPayload);
     if (!validationResult.success) {
       throw new Error('Invalid social token exchange response');
     }

@@ -1,5 +1,5 @@
 import type {ApiResponse} from '@sykamore/types';
-import {ApiError, validation} from '@sykamore/types';
+import {ApiError, parseJson} from '@sykamore/types';
 import {resolveApiUrl} from './config';
 import {loadingManager} from './loading-manager';
 import {errorManager} from './error-manager';
@@ -108,7 +108,7 @@ export class HttpClient {
 
       let parsedBody: unknown = null;
       if (rawBody.length > 0) {
-        const parsedResult = validation.parseJson(rawBody);
+        const parsedResult = parseJson(rawBody);
         if (parsedResult.success) {
           parsedBody = parsedResult.data;
         } else if (response.ok) {

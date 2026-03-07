@@ -1,39 +1,6 @@
 import {z} from 'zod';
-
-const nullishToUndefined = <TSchema extends z.ZodTypeAny>(schema: TSchema) =>
-  schema.nullish().transform((value) => value ?? undefined);
-
-export const tokenResponseSchema = z.object({
-  access_token: z.string().min(1),
-  refresh_token: nullishToUndefined(z.string().min(1)),
-  token_type: z.string().min(1),
-  expires_in: z.coerce.number().int().positive(),
-  refresh_expires_in: nullishToUndefined(
-    z.coerce.number().int().nonnegative(),
-  ),
-});
-
-export const authTokensSchema = tokenResponseSchema.extend({
-  issued_at: z.coerce.number().int().nonnegative().optional(),
-  refresh_flow: z.enum(['oidc_direct', 'social_exchange']).optional(),
-});
-
-export const identitySchema = z.strictObject({
-  id: z.uuid(),
-  email: z.email(),
-  first_name: z.string().nullish(),
-  last_name: z.string().nullish(),
-  email_verified_at: z.string().nullish(),
-  user_type: z.enum(['user', 'admin']),
-  is_super_admin: z.boolean(),
-});
-
-export const tenantMembershipSchema = z.strictObject({
-  tenant_id: z.uuid(),
-  name: z.string(),
-  role: z.string(),
-  is_default: z.boolean(),
-});
+import {authTokensSchema} from './token';
+import {identitySchema} from './user';
 
 export const oidcStartActionSchema = z.enum([
   'login',
@@ -89,9 +56,6 @@ export const authPersistSnapshotSchema = z.looseObject({
   version: z.number().optional(),
 });
 
-export type TokenResponse = z.infer<typeof tokenResponseSchema>;
-export type AuthTokens = z.infer<typeof authTokensSchema>;
-export type Identity = z.infer<typeof identitySchema>;
 export type OidcStartAction = z.infer<typeof oidcStartActionSchema>;
 export type StartWebLoginOptions = z.infer<typeof startWebLoginOptionsSchema>;
 export type MobileOidcLoginParams = z.infer<typeof mobileOidcLoginParamsSchema>;

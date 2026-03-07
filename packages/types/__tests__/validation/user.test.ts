@@ -1,5 +1,5 @@
 import {describe, it, expect} from '@jest/globals';
-import {validateUserUpdate, schemas} from '@sykamore/types';
+import {validateUserUpdate, userUpdateDataSchema} from '@sykamore/types';
 
 describe('User Validation', () => {
   it('validates complete user data', () => {
@@ -24,7 +24,7 @@ describe('User Validation', () => {
       phone_number: '(123) 456-7890',
     };
 
-    const result = schemas.userUpdateDataSchema.safeParse(userData);
+    const result = userUpdateDataSchema.safeParse(userData);
     expect(result.success).toBe(true);
     expect(result.data?.phone_number).toBe('+1234567890');
   });
@@ -34,7 +34,7 @@ describe('User Validation', () => {
       date_of_birth: '1990-01-01',
     };
 
-    const result = schemas.userUpdateDataSchema.safeParse(userData);
+    const result = userUpdateDataSchema.safeParse(userData);
     expect(result.success).toBe(true);
     expect(result.data?.date_of_birth).toBe('1990-01-01');
   });
