@@ -1,7 +1,7 @@
 import {useCallback, useState} from 'react';
 import {Platform} from 'react-native';
-import {useAuth} from '@/providers';
 import {useOidcFlow} from '@/features/auth/use-oidc-flow';
+import {useAuth} from '@/providers';
 import {useProfile} from './use-profile';
 
 export function useProfileEdit() {

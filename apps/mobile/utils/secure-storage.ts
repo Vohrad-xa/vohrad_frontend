@@ -1,4 +1,5 @@
 import {Platform} from 'react-native';
+import {validation} from '@sykamore/types';
 import * as SecureStore from 'expo-secure-store';
 
 const PREFIX = 'sykamore.secure.';
@@ -52,6 +53,20 @@ function remember(key: string, value: string | null) {
   fallbackMemory.set(namespaced, value);
 }
 
+function parseChunkCount(meta: string): number | null {
+  const parsedResult = validation.parseJson(meta);
+  if (!parsedResult.success) {
+    return null;
+  }
+
+  const metaResult = validation.validateSecureStoreChunkMeta(parsedResult.data);
+  if (!metaResult.success) {
+    return null;
+  }
+
+  return metaResult.data.chunks;
+}
+
 // Fetch value from SecureStore and rebuild chunked payloads when necessary.
 async function readFromSecureStore(key: string): Promise<string | null> {
   try {
@@ -68,8 +83,8 @@ async function readFromSecureStore(key: string): Promise<string | null> {
       return null;
     }
 
-    const {chunks} = JSON.parse(meta) as {chunks: number};
-    if (!Number.isFinite(chunks) || chunks <= 0) {
+    const chunks = parseChunkCount(meta);
+    if (chunks === null) {
       return null;
     }
 
@@ -164,13 +179,16 @@ async function clearChunkedValue(key: string): Promise<void> {
       return;
     }
 
-    const {chunks} = JSON.parse(meta) as {chunks: number};
-    if (Number.isFinite(chunks) && chunks > 0) {
-      for (let index = 0; index < chunks; index += 1) {
-        await SecureStore.deleteItemAsync(
-          withPrefix(`${key}${CHUNK_SUFFIX}${index}`),
-        );
-      }
+    const chunks = parseChunkCount(meta);
+    if (chunks === null) {
+      await SecureStore.deleteItemAsync(metaKey);
+      return;
+    }
+
+    for (let index = 0; index < chunks; index += 1) {
+      await SecureStore.deleteItemAsync(
+        withPrefix(`${key}${CHUNK_SUFFIX}${index}`),
+      );
     }
 
     await SecureStore.deleteItemAsync(metaKey);
