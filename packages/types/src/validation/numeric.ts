@@ -5,7 +5,6 @@ import {
   nonNegativeNumberSchema,
   integerSchema,
   decimalSchema,
-  subdomainSchema,
 } from '../schemas';
 
 export function validatePhoneNumber(value: unknown) {
@@ -32,10 +31,6 @@ export function validateDecimal(value: unknown) {
   return decimalSchema.safeParse(value);
 }
 
-export function validateSubdomain(value: unknown) {
-  return subdomainSchema.safeParse(value);
-}
-
 export type {
   PhoneNumber,
   NumericInput,
@@ -43,5 +38,4 @@ export type {
   NonNegativeNumber,
   IntegerNumber,
   DecimalNumber,
-  Subdomain,
 } from '../schemas';

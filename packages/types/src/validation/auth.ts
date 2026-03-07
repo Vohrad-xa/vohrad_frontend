@@ -1,8 +1,10 @@
 import {z} from 'zod';
 import {
+  authPersistSnapshotSchema,
   authContextDataSchema,
   authStateDataSchema,
   authTokensSchema,
+  biometricSettingsSnapshotSchema,
   identitySchema,
   mobileOidcLoginParamsSchema,
   oidcStartActionSchema,
@@ -42,9 +44,20 @@ export function validateAuthContextData(state: unknown) {
   return authContextDataSchema.safeParse(state);
 }
 
+export function validateBiometricSettingsSnapshot(settings: unknown) {
+  return biometricSettingsSnapshotSchema.safeParse(settings);
+}
+
+export function validateAuthPersistSnapshot(snapshot: unknown) {
+  return authPersistSnapshotSchema.safeParse(snapshot);
+}
+
 export type {
+  AuthPersistSnapshot,
   AuthTokens,
   TokenResponse,
+  BiometricSettings,
+  BiometricSettingsSnapshot,
   Identity,
   OidcStartAction,
   StartWebLoginOptions,

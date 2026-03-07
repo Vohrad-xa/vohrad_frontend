@@ -34,20 +34,9 @@ export const decimalSchema = numericSchema.refine((num) => {
   return decimalPlaces <= 2;
 }, 'Value cannot have more than 2 decimal places');
 
-export const subdomainSchema = z
-  .string()
-  .min(1, 'Subdomain is required')
-  .max(63, 'Subdomain cannot exceed 63 characters')
-  .transform((value) => value.trim().toLowerCase())
-  .refine(
-    (value) => /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/.test(value),
-    'Subdomain must contain only letters, numbers, and hyphens, and cannot start or end with a hyphen',
-  );
-
 export type PhoneNumber = z.infer<typeof phoneNumberSchema>;
 export type NumericInput = z.infer<typeof numericSchema>;
 export type PositiveNumber = z.infer<typeof positiveNumberSchema>;
 export type NonNegativeNumber = z.infer<typeof nonNegativeNumberSchema>;
 export type IntegerNumber = z.infer<typeof integerSchema>;
 export type DecimalNumber = z.infer<typeof decimalSchema>;
-export type Subdomain = z.infer<typeof subdomainSchema>;

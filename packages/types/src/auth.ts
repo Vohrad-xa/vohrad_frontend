@@ -3,7 +3,6 @@ import type {
   AuthStateData,
   AuthTokens,
   Identity,
-  MobileOidcLoginParams,
   StartWebLoginOptions,
 } from './schemas';
 

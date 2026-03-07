@@ -1,15 +1,20 @@
 import {z} from 'zod';
 
-export const tokenResponseSchema = z.strictObject({
-  access_token: z.string(),
-  refresh_token: z.string().optional(),
-  token_type: z.string(),
-  expires_in: z.number(),
-  refresh_expires_in: z.number().optional(),
+const nullishToUndefined = <TSchema extends z.ZodTypeAny>(schema: TSchema) =>
+  schema.nullish().transform((value) => value ?? undefined);
+
+export const tokenResponseSchema = z.object({
+  access_token: z.string().min(1),
+  refresh_token: nullishToUndefined(z.string().min(1)),
+  token_type: z.string().min(1),
+  expires_in: z.coerce.number().int().positive(),
+  refresh_expires_in: nullishToUndefined(
+    z.coerce.number().int().nonnegative(),
+  ),
 });
 
 export const authTokensSchema = tokenResponseSchema.extend({
-  issued_at: z.number().optional(),
+  issued_at: z.coerce.number().int().nonnegative().optional(),
   refresh_flow: z.enum(['oidc_direct', 'social_exchange']).optional(),
 });
 
@@ -64,6 +69,26 @@ export const authContextDataSchema = z.strictObject({
   authReady: z.boolean(),
 });
 
+export const biometricSettingsSchema = z.strictObject({
+  enabled: z.boolean(),
+  declined: z.boolean(),
+  lastPromptAt: z.number().int().nonnegative().optional(),
+});
+
+export const biometricSettingsSnapshotSchema =
+  biometricSettingsSchema.partial();
+
+const authPersistedTokensSchema = authTokensSchema.partial().nullable();
+
+const authPersistedStateSchema = z.looseObject({
+  tokens: authPersistedTokensSchema.optional(),
+});
+
+export const authPersistSnapshotSchema = z.looseObject({
+  state: authPersistedStateSchema.optional(),
+  version: z.number().optional(),
+});
+
 export type TokenResponse = z.infer<typeof tokenResponseSchema>;
 export type AuthTokens = z.infer<typeof authTokensSchema>;
 export type Identity = z.infer<typeof identitySchema>;
@@ -72,3 +97,8 @@ export type StartWebLoginOptions = z.infer<typeof startWebLoginOptionsSchema>;
 export type MobileOidcLoginParams = z.infer<typeof mobileOidcLoginParamsSchema>;
 export type AuthStateData = z.infer<typeof authStateDataSchema>;
 export type AuthContextData = z.infer<typeof authContextDataSchema>;
+export type BiometricSettings = z.infer<typeof biometricSettingsSchema>;
+export type BiometricSettingsSnapshot = z.infer<
+  typeof biometricSettingsSnapshotSchema
+>;
+export type AuthPersistSnapshot = z.infer<typeof authPersistSnapshotSchema>;

@@ -24,10 +24,15 @@ export type {
   Identity,
   AuthTokens,
   TokenResponse,
+  BiometricSettings,
+  BiometricSettingsSnapshot,
+  AuthPersistSnapshot,
   User,
   UserCreateData,
   UserUpdateData,
   Email,
+  ItemSpecificationsEditorItem,
+  SecureStoreChunkMeta,
 } from './schemas';
 
 // Role types
@@ -67,7 +72,9 @@ export type {
   Status,
   TrackingMode,
   UnitOfMeasure,
-} from './item';
+  Supplier,
+  ItemLotData,
+} from './schemas';
 
 // Location types
 export type {Location, LocationCreate, LocationUpdate} from './schemas';
@@ -113,6 +120,8 @@ export {
   validateMobileOidcLoginParams,
   validateAuthStateData,
   validateAuthContextData,
+  validateBiometricSettingsSnapshot,
+  validateAuthPersistSnapshot,
 } from './validation/auth';
 
 // Role validation utilities
@@ -128,6 +137,22 @@ export {
   validateLocationCreate,
   validateLocationUpdate,
 } from './validation/location';
+
+// Storage validation utilities
+export {validateSecureStoreChunkMeta} from './validation/storage';
+
+// Item validation utilities
+export {
+  validateItem,
+  validateItemDetail,
+  validateItemCreate,
+  validateItemUpdate,
+  validateItemFilterState,
+  validateItemSpecificationsEditorItem,
+} from './validation/item';
+
+// JSON parsing utilities
+export {parseJson, parseJsonWithSchema} from './validation/json';
 
 // Validation helpers
 export {

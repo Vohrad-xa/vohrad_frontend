@@ -1,5 +1,5 @@
 import type {ApiResponse} from '@sykamore/types';
-import {ApiError} from '@sykamore/types';
+import {ApiError, validation} from '@sykamore/types';
 import {resolveApiUrl} from './config';
 import {loadingManager} from './loading-manager';
 import {errorManager} from './error-manager';
@@ -12,7 +12,6 @@ export class HttpClient {
   private tenantId: string | null = null;
   private onTokenRefresh: (() => Promise<void>) | null = null;
   private retryCallbacks = new Map<string, () => Promise<void>>();
-
   setAccessToken(token: string | null) {
     this.accessToken = token;
   }
@@ -105,28 +104,24 @@ export class HttpClient {
         }
       }
 
-      const rawBody = await response.text();
-      const hasBody = !!rawBody && rawBody.trim().length > 0;
+      const rawBody = (await response.text()).trim();
 
       let parsedBody: unknown = null;
-      if (hasBody) {
-        try {
-          parsedBody = JSON.parse(rawBody);
-        } catch (parseError) {
-          if (response.ok) {
-            // Successful response with a non-JSON body.
-            return {
-              success: true,
-              data: undefined as T,
-              message: '',
-              metadata: undefined,
-            };
-          }
-
+      if (rawBody.length > 0) {
+        const parsedResult = validation.parseJson(rawBody);
+        if (parsedResult.success) {
+          parsedBody = parsedResult.data;
+        } else if (response.ok) {
+          // Successful response with a non-JSON body.
+          return {
+            success: true,
+            data: undefined as T,
+            message: '',
+            metadata: undefined,
+          };
+        } else {
           throw new ApiError(
-            parseError instanceof Error
-              ? parseError.message
-              : 'Unable to parse server response',
+            'Unable to parse server response',
             response.status,
           );
         }
