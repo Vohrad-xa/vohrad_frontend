@@ -30,9 +30,6 @@ export const userSchema = z.object({
   postal_code: z.string().nullish(),
   country: z.string().nullish(),
   email_verified_at: z.string().nullish(),
-  pending_email: z.string().nullish(),
-  pending_email_requested_at: z.string().nullish(),
-  pending_email_expires_at: z.string().nullish(),
   created_at: z.string().nullish(),
   updated_at: z.string().nullish(),
 });
@@ -60,7 +57,6 @@ export const userCreateDataSchema = z.object({
 export const userUpdateDataSchema = z.object({
   first_name: nameSchema.optional().nullable(),
   last_name: nameSchema.optional().nullable(),
-  email: emailSchema.optional(),
   phone_number: phoneSchema.optional().nullable(),
   date_of_birth: dateSchema.optional().nullable(),
   address: z

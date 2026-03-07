@@ -41,14 +41,18 @@ export function useSignIn() {
             ? `${window.location.pathname}${window.location.search}`
             : '/';
         const setupPasskey = await resolvePasskeySetupChoice();
-        await startWebLogin(returnTo, {setupPasskey});
+        await startWebLogin(returnTo, {
+          action: setupPasskey ? 'passkey_register' : 'login',
+        });
         return;
       }
 
       setIsStartingMobileFlow(true);
 
       const setupPasskey = await resolvePasskeySetupChoice();
-      const outcome = await startFlow({setupPasskey});
+      const outcome = await startFlow({
+        action: setupPasskey ? 'passkey_register' : 'login',
+      });
       if (!outcome.completed) return;
 
       await promptEnableIfNeeded();

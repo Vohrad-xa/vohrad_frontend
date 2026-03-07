@@ -32,12 +32,6 @@ export const API_ENDPOINTS = {
     DEACTIVATE: (id: string) => `/roles/${id}/deactivate`,
   },
 
-  EMAIL_VERIFICATION: {
-    RESEND: '/email-verification/resend',
-    CONFIRM: '/email-verification/confirm',
-    CONFIRM_PUBLIC: '/email-verification/confirm/public',
-  },
-
   TENANT: {
     INFO: '/tenant/',
     SETTINGS: '/tenant/settings',

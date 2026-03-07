@@ -4,6 +4,8 @@ export type {
   AuthContextValue,
   AsyncState,
   MobileOidcLoginParams,
+  OidcStartAction,
+  StartWebLoginOptions,
 } from './auth';
 
 // API types
@@ -99,7 +101,19 @@ export {
 } from './validation/email';
 
 // User validation utilities
-export {userUpdateSchema, validateUserUpdate} from './validation/user';
+export {validateUserUpdate} from './validation/user';
+
+// Auth validation utilities
+export {
+  validateAuthTokens,
+  validateIdentity,
+  validateTenantMemberships,
+  validateOidcStartAction,
+  validateStartWebLoginOptions,
+  validateMobileOidcLoginParams,
+  validateAuthStateData,
+  validateAuthContextData,
+} from './validation/auth';
 
 // Role validation utilities
 export {

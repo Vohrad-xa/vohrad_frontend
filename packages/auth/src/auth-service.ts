@@ -4,6 +4,7 @@ import {
   ApiError,
   type AuthTokens,
   type MobileOidcLoginParams,
+  type StartWebLoginOptions,
   validation,
 } from '@sykamore/types';
 
@@ -75,7 +76,7 @@ export class AuthService {
 
   async startWebLogin(
     returnTo = '/',
-    options?: {setupPasskey?: boolean},
+    options?: StartWebLoginOptions,
   ): Promise<void> {
     if (!this.isWebRuntime()) {
       throw new Error('startWebLogin is only available in web runtime');
@@ -86,10 +87,20 @@ export class AuthService {
     try {
       setLoading(true);
 
+      const optionsResult = validation.validateStartWebLoginOptions(
+        options ?? {},
+      );
+      if (!optionsResult.success) {
+        throw new Error('Invalid web login options');
+      }
+
       const redirectTarget =
         returnTo && returnTo.trim().length > 0 ? returnTo.trim() : '/';
 
-      const loginUrl = authApi.getOidcStartUrl(redirectTarget, options);
+      const loginUrl = authApi.getOidcStartUrl(
+        redirectTarget,
+        optionsResult.data,
+      );
       window.location.assign(loginUrl);
     } catch (error) {
       setLoading(false);
@@ -109,16 +120,22 @@ export class AuthService {
     try {
       setLoading(true);
 
+      const paramsResult = validation.validateMobileOidcLoginParams(params);
+      if (!paramsResult.success) {
+        throw new Error('Invalid mobile OIDC login params');
+      }
+      const validatedParams = paramsResult.data;
+
       // Pre-seed the token endpoint cache if the caller already fetched discovery,
       // so getMobileTokenEndpoint() skips a redundant network request.
-      if (params.tokenEndpoint && !this.mobileTokenEndpoint) {
-        this.mobileTokenEndpoint = params.tokenEndpoint;
+      if (validatedParams.tokenEndpoint && !this.mobileTokenEndpoint) {
+        this.mobileTokenEndpoint = validatedParams.tokenEndpoint;
       }
 
       const tokens = await this.exchangeMobileAuthorizationCode({
-        code: params.code,
-        codeVerifier: params.codeVerifier,
-        redirectUri: params.redirectUri,
+        code: validatedParams.code,
+        codeVerifier: validatedParams.codeVerifier,
+        redirectUri: validatedParams.redirectUri,
       });
       await this.finalizeMobileLogin({
         ...tokens,

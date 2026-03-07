@@ -1,6 +1,7 @@
 import {useCallback, useMemo} from 'react';
 import {Alert} from 'react-native';
 import {authService, getMobileOidcClientConfig} from '@sykamore/auth';
+import {validation, type OidcStartAction} from '@sykamore/types';
 import {AuthRequest, ResponseType, makeRedirectUri} from 'expo-auth-session';
 
 const REDIRECT_SCHEME = 'com.sykamore.app';
@@ -15,7 +16,7 @@ type OidcDiscovery = {
 };
 
 type OidcFlowStartOptions = {
-  setupPasskey?: boolean;
+  action?: OidcStartAction;
 };
 
 type OidcFlowOutcome =
@@ -51,7 +52,14 @@ export function useOidcFlow() {
         return {completed: false, cancelled: false};
       }
 
-      const shouldSetupPasskey = options?.setupPasskey === true;
+      const actionResult = validation.validateOidcStartAction(
+        options?.action ?? 'login',
+      );
+      if (!actionResult.success) {
+        Alert.alert('Sign in failed', 'Invalid authentication action.');
+        return {completed: false, cancelled: false};
+      }
+      const action = actionResult.data;
 
       try {
         const discoveryResponse = await fetch(
@@ -87,9 +95,12 @@ export function useOidcFlow() {
           scopes: oidcConfig.scopes,
           usePKCE: true,
           redirectUri,
-          extraParams: shouldSetupPasskey
-            ? {kc_action: 'webauthn-register'}
-            : undefined,
+          extraParams:
+            action === 'passkey_register'
+              ? {kc_action: 'webauthn-register'}
+              : action === 'update_email'
+                ? {kc_action: 'UPDATE_EMAIL'}
+                : undefined,
         });
 
         const result = await request.promptAsync(discovery);

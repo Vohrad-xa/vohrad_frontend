@@ -8,7 +8,6 @@ export {
   useProfileDetails,
   useFetchUserProfile,
   useUpdateProfile,
-  useEmailConfirmation,
   useProfileManager,
   type AuthSlice,
 } from './slices/auth';

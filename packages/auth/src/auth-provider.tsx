@@ -1,7 +1,7 @@
 import React, {createContext, useCallback, useContext, useMemo} from 'react';
 import {authService} from './auth-service';
 import {useAuthStore} from '@sykamore/store';
-import type {AuthContextValue} from '@sykamore/types';
+import type {AuthContextValue, StartWebLoginOptions} from '@sykamore/types';
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
@@ -22,7 +22,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
   const _hasHydrated = useAuthStore((s) => s._hasHydrated);
 
   const startWebLogin = useCallback(
-    async (returnTo?: string, options?: {setupPasskey?: boolean}) => {
+    async (returnTo?: string, options?: StartWebLoginOptions) => {
       await authService.startWebLogin(returnTo, options);
     },
     [],

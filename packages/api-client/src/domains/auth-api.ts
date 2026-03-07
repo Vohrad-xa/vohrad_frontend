@@ -1,9 +1,11 @@
-import type {
-  ApiResponse,
-  AuthTokens,
-  Identity,
-  TokenResponse,
-  TenantMembership,
+import {
+  validation,
+  type ApiResponse,
+  type AuthTokens,
+  type Identity,
+  type StartWebLoginOptions,
+  type TokenResponse,
+  type TenantMembership,
 } from '@sykamore/types';
 import {resolveApiUrl} from '../config';
 import {httpClient} from '../http-client';
@@ -22,20 +24,23 @@ type SocialProvider = 'apple' | 'google';
 
 export class AuthApi {
   /**
-   * Build OIDC start URL with optional return path and passkey flag.
+   * Build OIDC start URL with optional return path and start action.
    */
-  getOidcStartUrl(
-    returnTo?: string,
-    options?: {
-      setupPasskey?: boolean;
-    },
-  ): string {
+  getOidcStartUrl(returnTo?: string, options?: StartWebLoginOptions): string {
+    const optionsResult = validation.validateStartWebLoginOptions(
+      options ?? {},
+    );
+    if (!optionsResult.success) {
+      throw new Error('Invalid OIDC start options');
+    }
+
     const url = new URL(resolveApiUrl(API_ENDPOINTS.AUTH.OIDC_START));
     if (returnTo && returnTo.trim().length > 0) {
       url.searchParams.set('return_to', returnTo.trim());
     }
-    if (options?.setupPasskey) {
-      url.searchParams.set('setup_passkey', 'true');
+    const action = optionsResult.data.action;
+    if (action && action !== 'login') {
+      url.searchParams.set('action', action);
     }
     return url.toString();
   }
@@ -172,19 +177,12 @@ export class AuthApi {
       ? rawResponse.data
       : rawResponse;
 
-    if (!tokenPayload || typeof tokenPayload !== 'object') {
+    const validationResult = validation.validateAuthTokens(tokenPayload);
+    if (!validationResult.success) {
       throw new Error('Invalid social token exchange response');
     }
 
-    const tokenRecord = tokenPayload as Record<string, unknown>;
-    if (
-      typeof tokenRecord.access_token !== 'string' ||
-      typeof tokenRecord.token_type !== 'string'
-    ) {
-      throw new Error('Invalid social token exchange response');
-    }
-
-    return tokenPayload as TokenResponse;
+    return validationResult.data;
   }
 }
 

@@ -14,7 +14,6 @@ export function useProfileManager() {
     () => ({
       first_name: '',
       last_name: '',
-      email: '',
       phone_number: '',
       date_of_birth: '',
       address: '',
@@ -35,7 +34,6 @@ export function useProfileManager() {
       const nextProfile: ProfileFormState = {
         first_name: profileDetails.first_name ?? '',
         last_name: profileDetails.last_name ?? '',
-        email: profileDetails.email ?? '',
         phone_number: profileDetails.phone_number ?? '',
         date_of_birth: profileDetails.date_of_birth ?? '',
         address: profileDetails.address ?? '',
@@ -75,10 +73,6 @@ export function useProfileManager() {
         return undefined;
       }
 
-      if (key === 'email' && currentValue.length === 0) {
-        return undefined;
-      }
-
       if (currentValue.length === 0) {
         return originalValue.length > 0 ? null : undefined;
       }
@@ -92,10 +86,6 @@ export function useProfileManager() {
     const updateData: UserUpdateData = {
       first_name: computeUpdateValue('first_name'),
       last_name: computeUpdateValue('last_name'),
-      email: (() => {
-        const value = computeUpdateValue('email');
-        return value ?? undefined;
-      })(),
       phone_number: computeUpdateValue('phone_number'),
       date_of_birth: computeUpdateValue('date_of_birth'),
       address: computeUpdateValue('address'),
@@ -112,10 +102,6 @@ export function useProfileManager() {
     return {
       first_name: computeUpdateValue('first_name'),
       last_name: computeUpdateValue('last_name'),
-      email: (() => {
-        const value = computeUpdateValue('email');
-        return value ?? undefined;
-      })(),
       phone_number: computeUpdateValue('phone_number'),
       date_of_birth: computeUpdateValue('date_of_birth'),
       address: computeUpdateValue('address'),

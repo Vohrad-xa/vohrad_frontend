@@ -7,6 +7,7 @@ import {createFilterSlice, type FilterSlice} from './slices/filter/slice';
 import {sanitizeUser, redactTokens} from './utils/sanitizers';
 import {getPersistBackend} from './utils/storage';
 import {httpClient} from '@sykamore/api-client';
+import {validation} from '@sykamore/types';
 
 export const AUTH_PERSIST_KEY = 'sykamore-auth';
 
@@ -36,14 +37,56 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
       })),
       onRehydrateStorage: () => (state) => {
         if (state) {
+          const authResult = validation.validateAuthStateData({
+            user: state.user,
+            tokens: state.tokens,
+            isAuthenticated: state.isAuthenticated,
+            intendedRoute: state.intendedRoute,
+            isLoading: state.isLoading,
+            error: state.error,
+          });
+
+          if (!authResult.success) {
+            httpClient.setAccessToken(null);
+            httpClient.setTenantId(null);
+
+            useAuthStore.setState({
+              user: null,
+              tokens: null,
+              isAuthenticated: false,
+              intendedRoute: null,
+              isLoading: false,
+              error: null,
+              retryCallback: null,
+              selectedTenantId: null,
+              memberships: [],
+              _hasHydrated: true,
+            });
+            return;
+          }
+
+          const hydratedAuth = authResult.data;
+          useAuthStore.setState({
+            user: hydratedAuth.user,
+            tokens: hydratedAuth.tokens,
+            isAuthenticated: hydratedAuth.isAuthenticated,
+            intendedRoute: hydratedAuth.intendedRoute,
+            isLoading: hydratedAuth.isLoading,
+            error: hydratedAuth.error,
+          });
+
           // Sync tokens to httpClient after rehydration
-          if (state.tokens?.access_token) {
-            httpClient.setAccessToken(state.tokens.access_token);
+          if (hydratedAuth.tokens?.access_token) {
+            httpClient.setAccessToken(hydratedAuth.tokens.access_token);
+          } else {
+            httpClient.setAccessToken(null);
           }
 
           // Restore active workspace context
           if (state.selectedTenantId) {
             httpClient.setTenantId(state.selectedTenantId);
+          } else {
+            httpClient.setTenantId(null);
           }
 
           // Set hydrated flag
