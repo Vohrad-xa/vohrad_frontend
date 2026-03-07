@@ -123,7 +123,7 @@ const ProfileRow = React.memo(
 
 export function ProfileContent() {
   const {ds} = useTheme();
-  const {profileDetails, fullName, dateOfBirth, pendingEmail} = useProfile();
+  const {profileDetails, fullName, dateOfBirth} = useProfile();
 
   const initials = getInitials(fullName) ?? 'U';
   const roleText = profileDetails?.role_name ?? 'member';
@@ -133,16 +133,6 @@ export function ProfileContent() {
   const birthDateText = dateOfBirth ? formatDate(dateOfBirth) : 'Not set';
 
   const valuePaddingX = ds.spacing.md;
-
-  const pendingIcon = pendingEmail ? (
-    <Icon
-      useSwiftUI
-      name={AppIcons.status.pending}
-      color={Palette.orange}
-      size="xs"
-      modifiers={[padding({trailing: ds.spacing.sm})]}
-    />
-  ) : undefined;
 
   return (
     <Host style={{flex: 1}}>
@@ -233,11 +223,7 @@ export function ProfileContent() {
         {/* Contact Information */}
         <Section>
           {CONTACT_ROWS.map((row) => (
-            <ProfileRow
-              key={row.href}
-              {...row}
-              trailingIcon={row.title === 'Email' ? pendingIcon : undefined}
-            />
+            <ProfileRow key={row.href} {...row} />
           ))}
         </Section>
 

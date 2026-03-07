@@ -1,28 +1,20 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useImperativeHandle,
-  useRef,
-} from 'react';
-import {Palette} from '@/constants';
+import React, {forwardRef, useCallback, useImperativeHandle} from 'react';
 import {useTheme} from '@/providers';
-import {AppIcons, Icon, formatDate, type IconName} from '@/utils';
+import {Icon, type IconName} from '@/utils';
 import {
   Host,
   Form,
   Section,
-  HStack,
-  Spacer,
   Text,
   Button,
-  TextField,
   accessibilityLabel,
   font,
   foregroundStyle,
-  disabled,
   VStack,
-  type TextFieldRef,
-  LabeledContent,
+  buttonStyle,
+  listRowBackground,
+  frame,
+  listSectionSpacing,
 } from 'sykamore-ui/ios';
 import {useProfileEdit} from '../hooks';
 
@@ -35,39 +27,20 @@ const SUPPORTING_TEXT =
 
 export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
   const {ds} = useTheme();
-  const textFieldRef = useRef<TextFieldRef>(null);
 
   const {email: emailEdit} = useProfileEdit();
-  const {
-    email,
-    pendingEmail,
-    pendingEmailExpiresAt,
-    setEmailValue,
-    isEditing,
-    startEditing,
-    cancelEditing,
-    saveIfEditing,
-  } = emailEdit;
+  const {email, requestChange, save} = emailEdit;
 
-  useImperativeHandle(ref, () => ({save: saveIfEditing}), [saveIfEditing]);
+  useImperativeHandle(ref, () => ({save}), [save]);
 
   const handleEditPress = useCallback(() => {
-    startEditing();
-    setTimeout(() => {
-      textFieldRef.current?.focus();
-    }, 100);
-  }, [startEditing]);
-
-  const handleCancelPress = useCallback(() => {
-    cancelEditing();
-    textFieldRef.current?.setText(email);
-    textFieldRef.current?.blur();
-  }, [cancelEditing, email]);
+    void requestChange();
+  }, [requestChange]);
 
   return (
     <Host style={{flex: 1}}>
       <Form>
-        <Section>
+        <Section modifiers={[listSectionSpacing(ds.spacing.sm)]}>
           <VStack alignment="leading" spacing={ds.spacing.lg}>
             <Icon
               useSwiftUI
@@ -95,69 +68,24 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
               {SUPPORTING_TEXT}
             </Text>
           </VStack>
+          <Text modifiers={[accessibilityLabel('Email address')]}>{email}</Text>
         </Section>
 
-        <Section title="Primary">
-          <HStack>
-            <TextField
-              ref={textFieldRef}
-              defaultValue={email}
-              placeholder="Email address"
-              textContentType="email-address"
-              keyboardType="email-address"
-              onChangeText={setEmailValue}
-              modifiers={[
-                disabled(!isEditing),
-                accessibilityLabel('Email address'),
-              ]}
-            />
-            <Spacer />
-            <Button
-              label={isEditing ? 'Cancel' : 'Edit'}
-              role={isEditing ? 'destructive' : 'default'}
-              onPress={isEditing ? handleCancelPress : handleEditPress}
-              modifiers={[
-                accessibilityLabel(isEditing ? 'Cancel editing' : 'Edit email'),
-              ]}
-            />
-          </HStack>
+        <Section modifiers={[listRowBackground('transparent')]}>
+          <Button
+            label="Edit email"
+            role="default"
+            onPress={handleEditPress}
+            modifiers={[
+              accessibilityLabel('Edit email'),
+              buttonStyle({
+                style: 'glassProminent',
+                borderShape: 'roundedRectangle',
+              }),
+              frame({maxWidth: Infinity}),
+            ]}
+          />
         </Section>
-
-        {pendingEmail && (
-          <Section
-            title="New"
-            footer={
-              <Text>
-                A verification link has been sent to {pendingEmail}
-                {'\n'}The link will expire on{' '}
-                {formatDate(pendingEmailExpiresAt, {includeTime: true})}.{'\n'}
-                In case you did not receive a link, you can request a new one.
-              </Text>
-            }
-          >
-            <LabeledContent label={pendingEmail}>
-              <HStack spacing={ds.spacing.sm}>
-                <Text
-                  modifiers={[
-                    font({
-                      size: ds.typography.ios.subheadline.baseSize,
-                      family: 'system',
-                    }),
-                    foregroundStyle(Palette.mushroom),
-                  ]}
-                >
-                  Pending
-                </Text>
-                <Icon
-                  useSwiftUI
-                  name={AppIcons.status.pending}
-                  color={Palette.mushroom}
-                  size="xs"
-                />
-              </HStack>
-            </LabeledContent>
-          </Section>
-        )}
       </Form>
     </Host>
   );

@@ -18,6 +18,10 @@ type UseProfileHeaderOptions = {
    * Ref to the content component that exposes a `save()` method.
    */
   contentRef: RefObject<ProfileContentHandle | null>;
+  /**
+   * Whether to apply the Save header action.
+   */
+  enabled?: boolean;
 };
 
 /**
@@ -28,7 +32,10 @@ type UseProfileHeaderOptions = {
  * - Calls the content's `save()` method when pressed
  * - Dismisses the modal after saving
  */
-export function useProfileHeader({contentRef}: UseProfileHeaderOptions) {
+export function useProfileHeader({
+  contentRef,
+  enabled = true,
+}: UseProfileHeaderOptions) {
   const navigation = useNavigation();
 
   const handleSave = useCallback(async () => {
@@ -37,6 +44,14 @@ export function useProfileHeader({contentRef}: UseProfileHeaderOptions) {
   }, [contentRef]);
 
   useLayoutEffect(() => {
+    if (!enabled) {
+      navigation.setOptions({
+        headerRight: undefined,
+        unstable_headerRightItems: undefined,
+      });
+      return;
+    }
+
     const options = getHeaderOptions({
       right: [
         {
@@ -56,5 +71,5 @@ export function useProfileHeader({contentRef}: UseProfileHeaderOptions) {
       headerRight: options.headerRight,
       unstable_headerRightItems: options.unstable_headerRightItems,
     });
-  }, [navigation, handleSave]);
+  }, [enabled, navigation, handleSave]);
 }

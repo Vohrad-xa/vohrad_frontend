@@ -21,9 +21,6 @@ export function useProfile() {
   const province = profileDetails?.province ?? '';
   const postalCode = profileDetails?.postal_code ?? '';
   const country = profileDetails?.country ?? '';
-  const pendingEmail = profileDetails?.pending_email ?? null;
-  const pendingEmailExpiresAt =
-    profileDetails?.pending_email_expires_at ?? null;
 
   // Update methods for modals
   const updateDateOfBirth = useCallback(
@@ -36,13 +33,6 @@ export function useProfile() {
   const updateName = useCallback(
     async (first: string, last: string) => {
       await updateProfile({first_name: first, last_name: last});
-    },
-    [updateProfile],
-  );
-
-  const updateEmail = useCallback(
-    async (newEmail: string) => {
-      await updateProfile({email: newEmail});
     },
     [updateProfile],
   );
@@ -75,8 +65,6 @@ export function useProfile() {
     fullName,
     dateOfBirth,
     email,
-    pendingEmail,
-    pendingEmailExpiresAt,
     phoneNumber,
     address,
     city,
@@ -88,7 +76,6 @@ export function useProfile() {
     // Update methods for modals
     updateDateOfBirth,
     updateName,
-    updateEmail,
     updatePhoneNumber,
     updateAddress,
   };

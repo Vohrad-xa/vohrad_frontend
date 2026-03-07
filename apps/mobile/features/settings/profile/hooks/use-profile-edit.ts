@@ -1,7 +1,12 @@
 import {useCallback, useState} from 'react';
+import {Platform} from 'react-native';
+import {useAuth} from '@/providers';
+import {useOidcFlow} from '@/features/auth/use-oidc-flow';
 import {useProfile} from './use-profile';
 
 export function useProfileEdit() {
+  const {startWebLogin} = useAuth();
+  const {startFlow} = useOidcFlow();
   const {
     firstName,
     lastName,
@@ -15,9 +20,6 @@ export function useProfileEdit() {
     country,
     updateAddress,
     email,
-    pendingEmail,
-    pendingEmailExpiresAt,
-    updateEmail,
     dateOfBirth,
     updateDateOfBirth,
     isLoading,
@@ -70,31 +72,18 @@ export function useProfileEdit() {
   ]);
 
   /* Email */
-  const [emailValue, setEmailValue] = useState(email);
-  const [isEditingEmail, setIsEditingEmail] = useState(false);
-
-  const startEditingEmail = useCallback(() => {
-    setIsEditingEmail(true);
-  }, []);
-
-  const cancelEditingEmail = useCallback(() => {
-    setIsEditingEmail(false);
-    setEmailValue(email);
-  }, [email]);
-
-  // Android/Web: always allow save
-  const saveEmail = useCallback(async () => {
-    if (emailValue !== email) {
-      await updateEmail(emailValue);
+  const requestEmailChange = useCallback(async () => {
+    if (Platform.OS === 'web') {
+      const returnTo =
+        typeof window !== 'undefined'
+          ? `${window.location.pathname}${window.location.search}`
+          : '/';
+      await startWebLogin(returnTo, {action: 'update_email'});
+      return;
     }
-  }, [emailValue, email, updateEmail]);
 
-  // iOS: only save if user entered edit mode
-  const saveEmailIfEditing = useCallback(async () => {
-    if (isEditingEmail && emailValue !== email) {
-      await updateEmail(emailValue);
-    }
-  }, [isEditingEmail, emailValue, email, updateEmail]);
+    await startFlow({action: 'update_email'});
+  }, [startFlow, startWebLogin]);
 
   // Date of birth
   const [selectedDate, setSelectedDate] = useState<Date>(
@@ -148,15 +137,8 @@ export function useProfileEdit() {
 
     email: {
       email,
-      pendingEmail,
-      pendingEmailExpiresAt,
-      emailValue,
-      setEmailValue,
-      isEditing: isEditingEmail,
-      startEditing: startEditingEmail,
-      cancelEditing: cancelEditingEmail,
-      save: saveEmail, // android/web
-      saveIfEditing: saveEmailIfEditing, // ios
+      requestChange: requestEmailChange,
+      save: requestEmailChange,
     },
 
     dateOfBirth: {
