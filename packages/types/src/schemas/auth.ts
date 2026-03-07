@@ -1,6 +1,6 @@
 import {z} from 'zod';
 
-export const tokenResponseSchema = z.object({
+export const tokenResponseSchema = z.strictObject({
   access_token: z.string(),
   refresh_token: z.string().optional(),
   token_type: z.string(),
@@ -13,7 +13,7 @@ export const authTokensSchema = tokenResponseSchema.extend({
   refresh_flow: z.enum(['oidc_direct', 'social_exchange']).optional(),
 });
 
-export const identitySchema = z.object({
+export const identitySchema = z.strictObject({
   id: z.uuid(),
   email: z.email(),
   first_name: z.string().nullish(),
@@ -23,7 +23,7 @@ export const identitySchema = z.object({
   is_super_admin: z.boolean(),
 });
 
-export const tenantMembershipSchema = z.object({
+export const tenantMembershipSchema = z.strictObject({
   tenant_id: z.uuid(),
   name: z.string(),
   role: z.string(),
@@ -36,18 +36,18 @@ export const oidcStartActionSchema = z.enum([
   'update_email',
 ]);
 
-export const startWebLoginOptionsSchema = z.object({
+export const startWebLoginOptionsSchema = z.strictObject({
   action: oidcStartActionSchema.optional(),
 });
 
-export const mobileOidcLoginParamsSchema = z.object({
+export const mobileOidcLoginParamsSchema = z.strictObject({
   code: z.string().min(1),
   codeVerifier: z.string().min(1),
   redirectUri: z.string().min(1),
   tokenEndpoint: z.string().url().optional(),
 });
 
-export const authStateDataSchema = z.object({
+export const authStateDataSchema = z.strictObject({
   user: identitySchema.nullable(),
   tokens: authTokensSchema.nullable(),
   isAuthenticated: z.boolean(),
@@ -56,7 +56,7 @@ export const authStateDataSchema = z.object({
   error: z.string().nullable(),
 });
 
-export const authContextDataSchema = z.object({
+export const authContextDataSchema = z.strictObject({
   isAuthenticated: z.boolean(),
   user: identitySchema.nullable(),
   isLoading: z.boolean(),

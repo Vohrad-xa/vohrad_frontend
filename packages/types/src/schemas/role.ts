@@ -29,7 +29,7 @@ const roleDescriptionSchema = z
   .optional()
   .nullable();
 
-export const roleSchema = z.object({
+export const roleSchema = z.strictObject({
   id: z.string(),
   name: z.string(),
   description: z.string().nullable().optional(),
@@ -48,7 +48,7 @@ export const roleSchema = z.object({
 });
 
 export const roleCreateSchema = z
-  .object({
+  .strictObject({
     name: roleNameSchema,
     description: roleDescriptionSchema,
     role_type: roleTypeSchema.optional().default('PREDEFINED'),
@@ -81,7 +81,7 @@ export const roleCreateSchema = z
     }
   });
 
-export const roleUpdateSchema = z.object({
+export const roleUpdateSchema = z.strictObject({
   name: roleNameSchema.optional().nullable(),
   description: roleDescriptionSchema,
   is_active: z.boolean().optional(),

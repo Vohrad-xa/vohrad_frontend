@@ -12,7 +12,7 @@ const phoneSchema = basePhoneSchema;
 const dateSchema = baseDateSchema;
 const postalCodeSchema = createPostalCodeSchema();
 
-export const userSchema = z.object({
+export const userSchema = z.strictObject({
   id: z.uuid(),
   tenant_id: z.uuid().nullable(),
   idp_subject: z.string(),
@@ -34,7 +34,7 @@ export const userSchema = z.object({
   updated_at: z.string().nullish(),
 });
 
-export const userCreateDataSchema = z.object({
+export const userCreateDataSchema = z.strictObject({
   first_name: nameSchema.optional(),
   last_name: nameSchema.optional(),
   email: emailSchema,
@@ -54,7 +54,7 @@ export const userCreateDataSchema = z.object({
   role_id: z.string().optional(),
 });
 
-export const userUpdateDataSchema = z.object({
+export const userUpdateDataSchema = z.strictObject({
   first_name: nameSchema.optional().nullable(),
   last_name: nameSchema.optional().nullable(),
   phone_number: phoneSchema.optional().nullable(),

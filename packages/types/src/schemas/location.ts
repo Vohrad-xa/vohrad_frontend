@@ -1,6 +1,6 @@
 import {z} from 'zod';
 
-export const locationSchema = z.object({
+export const locationSchema = z.strictObject({
   id: z.uuid(),
   name: z.string(),
   code: z.string(),
@@ -12,7 +12,7 @@ export const locationSchema = z.object({
   updated_at: z.string(),
 });
 
-export const locationCreateSchema = z.object({
+export const locationCreateSchema = z.strictObject({
   name: z
     .string()
     .trim()
@@ -31,7 +31,7 @@ export const locationCreateSchema = z.object({
   is_active: z.boolean().optional().default(true),
 });
 
-export const locationUpdateSchema = z.object({
+export const locationUpdateSchema = z.strictObject({
   name: z
     .string()
     .trim()
