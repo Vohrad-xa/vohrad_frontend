@@ -1,132 +1,183 @@
 import {describe, it, expect} from '@jest/globals';
 import {randomUUID} from 'crypto';
-import {schemas, validation} from '@sykamore/types';
+import {schemas, validation, type AuthTokens, type User} from '@sykamore/types';
+
+type TokenParseResult = ReturnType<typeof schemas.authTokensSchema.safeParse>;
+type TokenParser = (input: unknown) => TokenParseResult;
+
+type UserParseResult = ReturnType<typeof schemas.userSchema.safeParse>;
+type UserParser = (input: unknown) => UserParseResult;
+
+const TOKEN_PARSERS: ReadonlyArray<{
+  name: string;
+  parse: TokenParser;
+}> = [
+  {name: 'validation.validateAuthTokens', parse: validation.validateAuthTokens},
+  {
+    name: 'schemas.authTokensSchema.safeParse',
+    parse: schemas.authTokensSchema.safeParse,
+  },
+];
+
+const USER_PARSERS: ReadonlyArray<{
+  name: string;
+  parse: UserParser;
+}> = [
+  {name: 'validation.validateUser', parse: validation.validateUser},
+  {name: 'schemas.userSchema.safeParse', parse: schemas.userSchema.safeParse},
+];
+
+const TOKEN_FIXTURE = {
+  access_token: 'access-token',
+  refresh_token: 'refresh-token',
+  token_type: 'Bearer',
+  expires_in: 3600,
+  refresh_expires_in: 7200,
+} as const;
+
+function buildTokenPayload(overrides: Record<string, unknown> = {}) {
+  return {
+    ...TOKEN_FIXTURE,
+    ...overrides,
+  };
+}
+
+function buildUserPayload(overrides: Record<string, unknown> = {}) {
+  return {
+    id: randomUUID(),
+    tenant_id: randomUUID(),
+    idp_subject: randomUUID(),
+    email: 'user@example.com',
+    role_name: 'employee',
+    updated_at: '2024-01-01T00:00:00Z',
+    ...overrides,
+  };
+}
+
+function expectTokenSuccess(result: TokenParseResult): AuthTokens {
+  expect(result.success).toBe(true);
+  if (!result.success) {
+    throw new Error(
+      `Expected token parse success, got: ${JSON.stringify(result.error.issues)}`,
+    );
+  }
+  return result.data;
+}
+
+function expectUserSuccess(result: UserParseResult): User {
+  expect(result.success).toBe(true);
+  if (!result.success) {
+    throw new Error(
+      `Expected user parse success, got: ${JSON.stringify(result.error.issues)}`,
+    );
+  }
+  return result.data;
+}
 
 describe('Auth Validation', () => {
-  describe('validateAuthTokens', () => {
-    it('validates correct token response', () => {
-      const tokens = {
-        access_token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...',
-        refresh_token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...',
-        token_type: 'Bearer',
-        expires_in: 3600,
-        refresh_expires_in: 7200,
-      };
+  describe('Auth Tokens', () => {
+    describe.each(TOKEN_PARSERS)('$name', ({parse}) => {
+      it('accepts canonical token payload', () => {
+        const parsed = expectTokenSuccess(parse(buildTokenPayload()));
 
-      const result = validation.validateAuthTokens(tokens);
-      expect(result.success).toBe(true);
-      expect(result.data?.access_token).toBe(tokens.access_token);
-    });
-  });
-
-  describe('validateUser', () => {
-    it('validates complete user object', () => {
-      const user = {
-        id: randomUUID(),
-        tenant_id: randomUUID(),
-        idp_subject: randomUUID(),
-        email: 'user@example.com',
-        role_id: randomUUID(),
-        role_name: 'employee',
-        updated_at: '2024-01-01T00:00:00Z',
-      };
-
-      const result = validation.validateUser(user);
-      expect(result.success).toBe(true);
-      expect(result.data?.email).toBe('user@example.com');
-    });
-
-    it('rejects invalid user object', () => {
-      const result = validation.validateUser({email: 'invalid-email'});
-      expect(result.success).toBe(false);
-    });
-  });
-
-  describe('authTokensSchema', () => {
-    it('validates complete token response', () => {
-      const tokens = {
-        access_token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...',
-        refresh_token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...',
-        token_type: 'Bearer',
-        expires_in: 3600,
-        refresh_expires_in: 7200,
-        issued_at: Date.now(),
-      };
-
-      const result = schemas.authTokensSchema.safeParse(tokens);
-      expect(result.success).toBe(true);
-      expect(result.data?.access_token).toBe(tokens.access_token);
-      expect(result.data?.refresh_token).toBe(tokens.refresh_token);
-    });
-
-    it('validates tokens without issued_at', () => {
-      const tokens = {
-        access_token: 'access-token',
-        refresh_token: 'refresh-token',
-        token_type: 'Bearer',
-        expires_in: 1800,
-        refresh_expires_in: 3600,
-      };
-
-      const result = schemas.authTokensSchema.safeParse(tokens);
-      expect(result.success).toBe(true);
-      expect(result.data?.issued_at).toBeUndefined();
-    });
-
-    it('rejects tokens with missing required fields', () => {
-      const result = schemas.authTokensSchema.safeParse({
-        access_token: 'token',
+        expect(parsed).toMatchObject(TOKEN_FIXTURE);
       });
-      expect(result.success).toBe(false);
+
+      it('accepts keycloak payload with nullable optional token fields', () => {
+        const parsed = expectTokenSuccess(
+          parse(
+            buildTokenPayload({
+              refresh_token: null,
+              refresh_expires_in: null,
+              expires_in: '300',
+              session_state: 'f7f77b0c-11fb-42f9-8b57-2d7ca0ef71e8',
+              scope: 'openid profile email offline_access',
+            }),
+          ),
+        );
+
+        expect(parsed.refresh_token).toBeUndefined();
+        expect(parsed.refresh_expires_in).toBeUndefined();
+        expect(parsed.expires_in).toBe(300);
+      });
+
+      it('strips unknown keycloak fields', () => {
+        const parsed = expectTokenSuccess(
+          parse(
+            buildTokenPayload({
+              scope: 'openid',
+              session_state: 'abc123',
+            }),
+          ),
+        );
+
+        expect(parsed).not.toHaveProperty('scope');
+        expect(parsed).not.toHaveProperty('session_state');
+      });
+
+      it('coerces numeric string token lifetimes and issued_at', () => {
+        const parsed = expectTokenSuccess(
+          parse(
+            buildTokenPayload({
+              expires_in: '900',
+              refresh_expires_in: '1800',
+              issued_at: '1700000000000',
+            }),
+          ),
+        );
+
+        expect(parsed.expires_in).toBe(900);
+        expect(parsed.refresh_expires_in).toBe(1800);
+        expect(parsed.issued_at).toBe(1700000000000);
+      });
+
+      it('rejects payloads missing required token fields', () => {
+        const result = parse({access_token: 'token'});
+
+        expect(result.success).toBe(false);
+      });
     });
   });
 
-  describe('userSchema', () => {
-    it('validates complete user data', () => {
-      const id = randomUUID();
-      const user = {
-        id,
-        tenant_id: randomUUID(),
-        idp_subject: randomUUID(),
-        email: 'user@example.com',
-        role_id: randomUUID(),
-        role_name: 'employee',
-        first_name: 'John',
-        last_name: 'Doe',
-        phone_number: '+1234567890',
-        updated_at: '2024-01-01T00:00:00Z',
-      };
+  describe('Users', () => {
+    describe.each(USER_PARSERS)('$name', ({parse}) => {
+      it('accepts complete user payload', () => {
+        const user = buildUserPayload();
+        const parsed = expectUserSuccess(parse(user));
 
-      const result = schemas.userSchema.safeParse(user);
-      expect(result.success).toBe(true);
-      expect(result.data?.id).toBe(id);
-      expect(result.data?.email).toBe('user@example.com');
-    });
-
-    it('validates user with nullable fields', () => {
-      const user = {
-        id: randomUUID(),
-        tenant_id: null,
-        idp_subject: randomUUID(),
-        email: 'test@example.com',
-        role_name: 'admin',
-        first_name: null,
-        last_name: null,
-        phone_number: null,
-        updated_at: '2024-01-01T00:00:00Z',
-      };
-
-      const result = schemas.userSchema.safeParse(user);
-      expect(result.success).toBe(true);
-      expect(result.data?.first_name).toBeNull();
-      expect(result.data?.phone_number).toBeNull();
-    });
-
-    it('rejects user with missing required fields', () => {
-      const result = schemas.userSchema.safeParse({
-        email: 'missing-fields@example.com',
+        expect(parsed.id).toBe(user.id);
+        expect(parsed.email).toBe(user.email);
       });
-      expect(result.success).toBe(false);
+
+      it('accepts nullable user fields', () => {
+        const parsed = expectUserSuccess(
+          parse(
+            buildUserPayload({
+              tenant_id: null,
+              first_name: null,
+              last_name: null,
+              phone_number: null,
+            }),
+          ),
+        );
+
+        expect(parsed.tenant_id).toBeNull();
+        expect(parsed.first_name).toBeNull();
+        expect(parsed.last_name).toBeNull();
+        expect(parsed.phone_number).toBeNull();
+      });
+
+      it('rejects invalid email payload', () => {
+        const result = parse(buildUserPayload({email: 'invalid-email'}));
+
+        expect(result.success).toBe(false);
+      });
+
+      it('rejects payloads missing required user fields', () => {
+        const result = parse({email: 'missing-fields@example.com'});
+
+        expect(result.success).toBe(false);
+      });
     });
   });
 });
