@@ -2,6 +2,7 @@ import {z} from 'zod';
 import {
   authPersistSnapshotSchema,
   authContextDataSchema,
+  authPersistedStateDataSchema,
   authStateDataSchema,
   authTokensSchema,
   biometricSettingsSnapshotSchema,
@@ -28,6 +29,9 @@ export const validateMobileOidcLoginParams = createValidator(
   mobileOidcLoginParamsSchema,
 );
 export const validateAuthStateData = createValidator(authStateDataSchema);
+export const validateAuthPersistedStateData = createValidator(
+  authPersistedStateDataSchema,
+);
 export const validateAuthContextData = createValidator(authContextDataSchema);
 export const validateBiometricSettingsSnapshot = createValidator(
   biometricSettingsSnapshotSchema,

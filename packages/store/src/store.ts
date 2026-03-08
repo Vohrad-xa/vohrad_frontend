@@ -7,7 +7,7 @@ import {createFilterSlice, type FilterSlice} from './slices/filter/slice';
 import {sanitizeUser, redactTokens} from './utils/sanitizers';
 import {getPersistBackend} from './utils/storage';
 import {httpClient} from '@sykamore/api-client';
-import {validateAuthStateData} from '@sykamore/types';
+import {validateAuthPersistedStateData, type AuthTokens} from '@sykamore/types';
 
 export const AUTH_PERSIST_KEY = 'sykamore-auth';
 
@@ -37,7 +37,7 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
       })),
       onRehydrateStorage: () => (state) => {
         if (state) {
-          const authResult = validateAuthStateData({
+          const authResult = validateAuthPersistedStateData({
             user: state.user,
             tokens: state.tokens,
             isAuthenticated: state.isAuthenticated,
@@ -68,7 +68,7 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
           const hydratedAuth = authResult.data;
           useAuthStore.setState({
             user: hydratedAuth.user,
-            tokens: hydratedAuth.tokens,
+            tokens: hydratedAuth.tokens as AuthTokens | null,
             isAuthenticated: hydratedAuth.isAuthenticated,
             intendedRoute: hydratedAuth.intendedRoute,
             isLoading: hydratedAuth.isLoading,
@@ -99,7 +99,7 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
         user: sanitizeUser(state.user),
         selectedTenantId: state.selectedTenantId,
         memberships: state.memberships,
-        tokens: redactTokens(state.tokens),
+        tokens: redactTokens(state.tokens) as AuthTokens | null,
         isAuthenticated: state.isAuthenticated,
         dashboardVisibility: state.dashboardVisibility,
       }),

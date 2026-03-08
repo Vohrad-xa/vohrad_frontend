@@ -16,13 +16,15 @@ export function sanitizeUser(user: Identity | null): Identity | null {
   };
 }
 
-export function redactTokens(tokens: AuthTokens | null): AuthTokens | null {
+export function redactTokens(
+  tokens: AuthTokens | null,
+): Omit<AuthTokens, 'access_token'> | null {
   if (!tokens) {
     return null;
   }
 
   const {
-    access_token,
+    access_token: _omitted,
     refresh_token,
     refresh_expires_in,
     expires_in,
@@ -32,12 +34,11 @@ export function redactTokens(tokens: AuthTokens | null): AuthTokens | null {
   } = tokens;
 
   return {
-    access_token,
     refresh_token,
     refresh_expires_in,
     expires_in,
     issued_at,
     refresh_flow,
     token_type,
-  } as AuthTokens;
+  };
 }

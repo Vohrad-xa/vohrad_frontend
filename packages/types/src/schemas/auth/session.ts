@@ -45,7 +45,21 @@ export const biometricSettingsSchema = z.strictObject({
 export const biometricSettingsSnapshotSchema =
   biometricSettingsSchema.partial();
 
-const authPersistedTokensSchema = authTokensSchema.partial().nullable();
+export const authPersistedTokensSchema = authTokensSchema.partial().nullable();
+
+/**
+ * Schema for validating the auth state after rehydration from secure storage.
+ * Uses partial tokens — access_token is not persisted and will be absent until
+ * the first token refresh at boot.
+ */
+export const authPersistedStateDataSchema = z.strictObject({
+  user: identitySchema.nullable(),
+  tokens: authPersistedTokensSchema,
+  isAuthenticated: z.boolean(),
+  intendedRoute: z.string().nullable(),
+  isLoading: z.boolean(),
+  error: z.string().nullable(),
+});
 
 const authPersistedStateSchema = z.looseObject({
   tokens: authPersistedTokensSchema.optional(),
@@ -60,6 +74,9 @@ export type OidcStartAction = z.infer<typeof oidcStartActionSchema>;
 export type StartWebLoginOptions = z.infer<typeof startWebLoginOptionsSchema>;
 export type MobileOidcLoginParams = z.infer<typeof mobileOidcLoginParamsSchema>;
 export type AuthStateData = z.infer<typeof authStateDataSchema>;
+export type AuthPersistedStateData = z.infer<
+  typeof authPersistedStateDataSchema
+>;
 export type AuthContextData = z.infer<typeof authContextDataSchema>;
 export type BiometricSettings = z.infer<typeof biometricSettingsSchema>;
 export type BiometricSettingsSnapshot = z.infer<
