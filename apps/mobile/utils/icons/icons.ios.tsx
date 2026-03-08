@@ -11,7 +11,9 @@ import {
   foregroundStyle,
   frame,
   type ViewModifier,
-  cornerRadius,
+  scaledToFit,
+  padding,
+  clipShape,
 } from 'sykamore-ui/ios';
 
 export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
@@ -96,18 +98,20 @@ export const Icon: React.FC<IconProps> = ({
   }
 
   const a11yModifier = a11yLabel ? [accessibilityLabel(a11yLabel)] : [];
-  const tile = 28;
+  const tile = 20;
 
   if (container && useSwiftUI) {
     return (
       <Image
+        resizable
         systemName={name}
         modifiers={[
-          font({size: resolvedSize, weight: fontWeight}),
-          foregroundStyle(Palette.white),
+          scaledToFit(),
           frame({width: tile, height: tile}),
+          foregroundStyle(Palette.white),
+          padding({all: 4}),
           background(resolvedTintColor ?? theme.card),
-          cornerRadius(ds.borderRadius.lg),
+          clipShape('roundedRectangle'),
           ...a11yModifier,
         ]}
       />
@@ -138,16 +142,16 @@ export const AppIcons = {
     appearance: 'circle.lefthalf.filled',
     biometric: 'faceid',
     haptic: 'hand.tap',
-    language: 'globe.europe.africa',
-    privacy: 'lock.circle',
-    terms: 'doc.circle',
-    plan: 'creditcard.circle.fill',
-    info: 'info.circle',
-    help: 'questionmark.circle',
+    language: 'globe.europe.africa.fill',
+    privacy: 'checkmark.shield.fill',
+    terms: 'doc',
+    plan: 'creditcard.fill',
+    info: 'info.circle.fill',
+    help: 'questionmark.circle.fill',
     time: 'clock',
-    profile: 'person.crop.circle',
-    userManagement: 'person.2.circle',
-    support: 'questionmark.circle',
+    profile: 'person.fill',
+    userManagement: 'person.2',
+    support: 'questionmark',
     preference: 'slider.horizontal.2.gobackward',
     email: 'envelope',
     phone: 'phone',
@@ -190,7 +194,7 @@ export const AppIcons = {
     category: 'square.grid.2x2',
     location: 'location',
     supplier: 'cart',
-    organization: 'briefcase.circle',
+    organization: 'briefcase.fill',
     maintenance: 'wrench',
     transfer: 'arrow.left.arrow.right',
     unitOfMeasure: 'ruler',
