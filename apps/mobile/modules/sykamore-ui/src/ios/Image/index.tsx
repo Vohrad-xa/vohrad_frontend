@@ -8,6 +8,7 @@ import {type CommonViewModifierProps} from '../types';
 export interface ImageProps extends CommonViewModifierProps {
   systemName: SFSymbol;
   variableValue?: number;
+  resizable?: boolean;
   onPress?: () => void;
 }
 

@@ -116,9 +116,7 @@ internal struct OffsetModifier: ViewModifier, Record {
 internal enum ForegroundStyleType: String, Enumerable {
   case color
   case hierarchical
-  case linearGradient
-  case radialGradient
-  case angularGradient
+  case gradient
 }
 
 internal enum ForegroundHierarchicalStyleType: String, Enumerable {
@@ -133,12 +131,7 @@ internal struct ForegroundStyleModifier: ViewModifier, Record {
   @Field var styleType: ForegroundStyleType = .color
   @Field var hierarchicalStyle: ForegroundHierarchicalStyleType = .primary
   @Field var color: Color?
-  @Field var colors: [Color]?
-  @Field var startPoint: UnitPoint?
-  @Field var endPoint: UnitPoint?
-  @Field var center: UnitPoint?
-  @Field var startRadius: CGFloat?
-  @Field var endRadius: CGFloat?
+  @Field var gradient: GradientConfig?
 
   @ViewBuilder
   func body(content: Content) -> some View {
@@ -166,39 +159,9 @@ internal struct ForegroundStyleModifier: ViewModifier, Record {
           content.foregroundStyle(.quaternary)
         }
       }
-    case .linearGradient:
-      if let colors, let startPoint, let endPoint {
-        content.foregroundStyle(
-          LinearGradient(
-            colors: colors,
-            startPoint: startPoint,
-            endPoint: endPoint
-          )
-        )
-      } else {
-        content
-      }
-    case .radialGradient:
-      if let colors, let center, let startRadius, let endRadius {
-        content.foregroundStyle(
-          RadialGradient(
-            colors: colors,
-            center: center,
-            startRadius: startRadius,
-            endRadius: endRadius
-          )
-        )
-      } else {
-        content
-      }
-    case .angularGradient:
-      if let colors, let center {
-        content.foregroundStyle(
-          AngularGradient(
-            colors: colors,
-            center: center
-          )
-        )
+    case .gradient:
+      if let style = gradient?.resolve() {
+        content.foregroundStyle(style)
       } else {
         content
       }
@@ -479,11 +442,16 @@ internal struct LayoutPriorityModifier: ViewModifier, Record {
 }
 
 internal struct AspectRatioModifier: ViewModifier, Record {
-  @Field var ratio: Double = 1.0
+  @Field var ratio: Double?
   @Field var contentMode: String = "fit"
 
   func body(content: Content) -> some View {
-    content.aspectRatio(ratio, contentMode: contentMode == "fill" ? .fill : .fit)
+    let mode: ContentMode = contentMode == "fill" ? .fill : .fit
+    if let ratio {
+      content.aspectRatio(ratio, contentMode: mode)
+    } else {
+      content.aspectRatio(contentMode: mode)
+    }
   }
 }
 
@@ -1506,6 +1474,14 @@ extension ViewModifierRegistry {
 
     register("baselineOffset") { params, appContext, _ in
       return try BaselineOffsetModifier(from: params, appContext: appContext)
+    }
+
+    register("badge") { params, appContext, _ in
+      return try Badge(from: params, appContext: appContext)
+    }
+
+    register("badgeProminence") { params, appContext, _ in
+      return try BadgeProminence(from: params, appContext: appContext)
     }
   }
 }

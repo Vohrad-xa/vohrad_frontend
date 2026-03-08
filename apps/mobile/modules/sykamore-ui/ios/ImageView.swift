@@ -4,6 +4,7 @@ import ExpoModulesCore
 internal final class ImageViewProps: UIBaseViewProps {
   @Field var systemName: String = ""
   @Field var variableValue: Double?
+  @Field var resizable: Bool?
   @Field var useTapGesture: Bool?
   var onTap = EventDispatcher()
 }
@@ -20,8 +21,10 @@ internal struct ImageView: ExpoSwiftUI.View {
       image = Image(systemName: props.systemName)
     }
 
+    let resizedImage = props.resizable == true ? image.resizable() : image
+
     return
-      image
+      resizedImage
       .applyOnTapGesture(useTapGesture: props.useTapGesture, eventDispatcher: props.onTap)
   }
 }

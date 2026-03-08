@@ -1,6 +1,5 @@
 import {requireNativeModule} from 'expo';
 import {animation} from './animation/index';
-import {background} from './background';
 import {containerShape} from './containerShape';
 import {createModifier, ModifierConfig} from './createModifier';
 import {datePickerStyle} from './datePickerStyle';
@@ -245,20 +244,43 @@ export const offset = (params: {x?: number; y?: number}) =>
   createModifier('offset', params);
 
 /**
+ * A gradient stop: a color pinned at a specific position along the gradient.
+ * Use with `linearGradient`, `radialGradient`, `angularGradient`, or `ellipticalGradient`
+ * instead of the `colors` array for precise color placement.
+ *
+ * @example
+ * ```tsx
+ * linearGradient({ stops: [{color: '#FF0000', location: 0}, {color: '#0000FF', location: 0.8}], startPoint: {x:0,y:0}, endPoint: {x:1,y:1} })
+ * ```
+ */
+export type GradientStop = {
+  /** Hex color string. */
+  color: string;
+  /** Position within the gradient, from 0 (start) to 1 (end). */
+  location: number;
+};
+
+type ColorsOrStops =
+  | {colors: string[]; stops?: never}
+  | {stops: GradientStop[]; colors?: never};
+
+/**
  * A gradient that transitions colors along a line between start and end points.
  * Use with `foregroundStyle` or `background`.
  *
  * @example
  * ```tsx
- * foregroundStyle(linearGradient({ colors: ['#FF0000', '#0000FF'], startPoint: {x: 0, y: 0}, endPoint: {x: 1, y: 1} }))
+ * linearGradient({ colors: ['#FF0000', '#0000FF'], startPoint: {x: 0, y: 0}, endPoint: {x: 1, y: 1} })
+ * linearGradient({ stops: [{color: '#FF0000', location: 0}, {color: '#0000FF', location: 0.8}], startPoint: {x: 0, y: 0}, endPoint: {x: 1, y: 1} })
  * ```
  * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/lineargradient).
  */
-export const linearGradient = (params: {
-  colors: string[];
-  startPoint: {x: number; y: number};
-  endPoint: {x: number; y: number};
-}) => ({styleType: 'linearGradient' as const, ...params});
+export const linearGradient = (
+  params: ColorsOrStops & {
+    startPoint: {x: number; y: number};
+    endPoint: {x: number; y: number};
+  },
+) => ({gradientType: 'linearGradient' as const, ...params});
 
 /**
  * A gradient that radiates outward from a center point.
@@ -266,16 +288,17 @@ export const linearGradient = (params: {
  *
  * @example
  * ```tsx
- * foregroundStyle(radialGradient({ colors: ['#FF0000', '#0000FF'], center: {x: 0.5, y: 0.5}, startRadius: 0, endRadius: 100 }))
+ * radialGradient({ colors: ['#FF0000', '#0000FF'], center: {x: 0.5, y: 0.5}, startRadius: 0, endRadius: 100 })
  * ```
  * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/radialgradient).
  */
-export const radialGradient = (params: {
-  colors: string[];
-  center: {x: number; y: number};
-  startRadius: number;
-  endRadius: number;
-}) => ({styleType: 'radialGradient' as const, ...params});
+export const radialGradient = (
+  params: ColorsOrStops & {
+    center: {x: number; y: number};
+    startRadius: number;
+    endRadius: number;
+  },
+) => ({gradientType: 'radialGradient' as const, ...params});
 
 /**
  * A gradient that sweeps around a center point.
@@ -283,21 +306,74 @@ export const radialGradient = (params: {
  *
  * @example
  * ```tsx
- * foregroundStyle(angularGradient({ colors: ['#FF0000', '#0000FF'], center: {x: 0.5, y: 0.5} }))
+ * angularGradient({ colors: ['#FF0000', '#0000FF'], center: {x: 0.5, y: 0.5} })
  * ```
  * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/angulargradient).
  */
-export const angularGradient = (params: {
+export const angularGradient = (
+  params: ColorsOrStops & {
+    center: {x: number; y: number};
+    /** Start angle in degrees. Defaults to 0. */
+    startAngle?: number;
+    /** End angle in degrees. Defaults to 360. */
+    endAngle?: number;
+  },
+) => ({gradientType: 'angularGradient' as const, ...params});
+
+/**
+ * An elliptical radial gradient (iOS 15+).
+ * Like `radialGradient` but uses relative radius fractions (0–1) instead of absolute points,
+ * and renders as an ellipse matching the view's aspect ratio.
+ * Use with `foregroundStyle` or `background`.
+ *
+ * @example
+ * ```tsx
+ * ellipticalGradient({ colors: ['#FF0000', '#0000FF'], center: {x: 0.5, y: 0.5}, endRadiusFraction: 0.5 })
+ * ```
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/ellipticalgradient).
+ */
+export const ellipticalGradient = (
+  params: ColorsOrStops & {
+    center?: {x: number; y: number};
+    /** Fraction of the view's size at which the gradient starts. Defaults to 0. */
+    startRadiusFraction?: number;
+    /** Fraction of the view's size at which the gradient ends. Defaults to 0.5. */
+    endRadiusFraction?: number;
+  },
+) => ({gradientType: 'ellipticalGradient' as const, ...params});
+
+/**
+ * A 2D mesh gradient (iOS 18+).
+ * Interpolates colors across a grid of control points.
+ * Use with `foregroundStyle` or `background`.
+ *
+ * @example
+ * ```tsx
+ * meshGradient({
+ *   width: 2, height: 2,
+ *   points: [{x:0,y:0},{x:1,y:0},{x:0,y:1},{x:1,y:1}],
+ *   colors: ['#FF0000','#00FF00','#0000FF','#FFFF00'],
+ * })
+ * ```
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/meshgradient).
+ */
+export const meshGradient = (params: {
+  /** Number of columns in the mesh grid. */
+  width: number;
+  /** Number of rows in the mesh grid. */
+  height: number;
+  /** Control points — must have exactly `width × height` entries. */
+  points: Array<{x: number; y: number}>;
+  /** Colors — must have exactly `width × height` entries. */
   colors: string[];
-  center: {x: number; y: number};
-  startAngle?: number;
-  endAngle?: number;
-}) => ({styleType: 'angularGradient' as const, ...params});
+}) => ({gradientType: 'meshGradient' as const, ...params});
 
 type GradientStyle =
   | ReturnType<typeof linearGradient>
   | ReturnType<typeof radialGradient>
-  | ReturnType<typeof angularGradient>;
+  | ReturnType<typeof angularGradient>
+  | ReturnType<typeof ellipticalGradient>
+  | ReturnType<typeof meshGradient>;
 
 type HierarchicalStyle =
   | 'primary'
@@ -354,7 +430,28 @@ export const foregroundStyle = (
     });
   }
 
-  return createModifier('foregroundStyle', style);
+  return createModifier('foregroundStyle', {
+    styleType: 'gradient',
+    gradient: style,
+  });
+};
+
+/**
+ * Sets the background of a view.
+ * Accepts a color string or a gradient (via `linearGradient`, `radialGradient`, `angularGradient` helpers).
+ *
+ * @example
+ * ```tsx
+ * background('#FF0000')
+ * background(linearGradient({ colors: ['#1A1330', '#0E0C1A'], startPoint: {x: 0.5, y: 0}, endPoint: {x: 0.5, y: 1} }))
+ * ```
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/background(_:ignoressafeareaedges:)).
+ */
+export const background = (style: Color | GradientStyle) => {
+  if (typeof style === 'string') {
+    return createModifier('background', {styleType: 'color', color: style});
+  }
+  return createModifier('background', {styleType: 'gradient', gradient: style});
 };
 
 /**
@@ -624,9 +721,27 @@ export const backgroundOverlay = (params: {
  * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/aspectratio(_:contentmode:)).
  */
 export const aspectRatio = (params: {
-  ratio: number;
+  ratio?: number;
   contentMode?: 'fit' | 'fill';
 }) => createModifier('aspectRatio', params);
+
+/**
+ * Scales the view to fit its parent, preserving aspect ratio.
+ *
+ * Equivalent to `.aspectRatio(contentMode: .fit)`.
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/scaledtofit()).
+ */
+export const scaledToFit = () =>
+  createModifier('aspectRatio', {contentMode: 'fit'});
+
+/**
+ * Scales the view to fill its parent, preserving aspect ratio.
+ *
+ * Equivalent to `.aspectRatio(contentMode: .fill)`.
+ * @see Official [SwiftUI documentation](https://developer.apple.com/documentation/swiftui/view/scaledtofill()).
+ */
+export const scaledToFill = () =>
+  createModifier('aspectRatio', {contentMode: 'fill'});
 
 /**
  * Clips content to bounds.
@@ -1178,7 +1293,6 @@ export const filterModifiers = (modifiers: unknown[]): ModifierConfig[] => {
 export * from './animation/index';
 export * from './containerShape';
 export * from './shapes/index';
-export * from './background';
 export type * from './types';
 export * from './tag';
 export * from './pickerStyle';
