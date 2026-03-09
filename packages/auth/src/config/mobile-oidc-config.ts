@@ -1,7 +1,4 @@
-import {
-  validateMobileOidcConfig,
-  type MobileOidcConfig,
-} from '@sykamore/types';
+import {validateMobileOidcConfig, type MobileOidcConfig} from '@sykamore/types';
 
 let mobileOidcConfig: MobileOidcConfig | null = null;
 

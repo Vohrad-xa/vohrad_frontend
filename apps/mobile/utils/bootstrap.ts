@@ -66,7 +66,10 @@ async function hasPersistedRefreshToken(): Promise<boolean> {
 
     return Boolean(snapshotResult.data.state?.tokens?.refresh_token);
   } catch (error) {
-    console.error('[bootstrap] Failed to parse persisted auth snapshot:', error);
+    console.error(
+      '[bootstrap] Failed to parse persisted auth snapshot:',
+      error,
+    );
     return false;
   }
 }

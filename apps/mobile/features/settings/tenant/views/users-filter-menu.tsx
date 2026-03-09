@@ -32,13 +32,12 @@ type UsersFilterMenuProps = {
 };
 
 function sortRoleFilters(filters: UserRoleFilter[]): UserRoleFilter[] {
-  return [...filters].sort((left, right) => left.name.localeCompare(right.name));
+  return [...filters].sort((left, right) =>
+    left.name.localeCompare(right.name),
+  );
 }
 
-export function UsersFilterMenu({
-  searchQuery,
-  children,
-}: UsersFilterMenuProps) {
+export function UsersFilterMenu({searchQuery, children}: UsersFilterMenuProps) {
   const navigation = useNavigation();
   const router = useRouter();
   const [filters, setFilters] = useState<UsersFilterOptions>({
@@ -96,9 +95,12 @@ export function UsersFilterMenu({
     [activeSort],
   );
 
-  const applySortDirection = useCallback((key: UserSortKey, direction: OrderByDirection) => {
-    setOdataOrderBy(buildUserOrderBy(key, direction));
-  }, []);
+  const applySortDirection = useCallback(
+    (key: UserSortKey, direction: OrderByDirection) => {
+      setOdataOrderBy(buildUserOrderBy(key, direction));
+    },
+    [],
+  );
 
   const handleMenuSelect = useCallback(
     (id: string) => {
@@ -109,7 +111,8 @@ export function UsersFilterMenu({
 
       if (id.startsWith('role-')) {
         const roleId = id.replace('role-', '');
-        const selectedRole = roleFilters.find((role) => role.id === roleId) ?? null;
+        const selectedRole =
+          roleFilters.find((role) => role.id === roleId) ?? null;
         setFilters((prev) => ({...prev, role: selectedRole}));
         return;
       }

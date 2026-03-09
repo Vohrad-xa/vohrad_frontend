@@ -18,11 +18,14 @@ export function useAppleSignIn() {
 
     const isAvailable = await AppleAuthentication.isAvailableAsync();
     if (!isAvailable) {
-      errorCenter.report('Sign in with Apple is not available on this device.', {
-        title: 'Apple Sign-In Unavailable',
-        scope: 'local',
-        isRetryable: false,
-      });
+      errorCenter.report(
+        'Sign in with Apple is not available on this device.',
+        {
+          title: 'Apple Sign-In Unavailable',
+          scope: 'local',
+          isRetryable: false,
+        },
+      );
       return {completed: false, cancelled: false};
     }
 

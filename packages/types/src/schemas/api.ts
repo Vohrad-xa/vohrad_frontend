@@ -23,7 +23,9 @@ export const apiProblemDetailsSchema = z.strictObject({
   details: z.unknown().optional(),
 });
 
-export const emptyDataSchema = z.union([z.null(), z.undefined()]).transform(() => undefined);
+export const emptyDataSchema = z
+  .union([z.null(), z.undefined()])
+  .transform(() => undefined);
 export const textDataSchema = z.string();
 
 const apiResponseBaseSchema = z.strictObject({

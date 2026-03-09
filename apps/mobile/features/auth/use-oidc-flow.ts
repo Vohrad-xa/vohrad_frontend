@@ -1,10 +1,7 @@
 import {useCallback, useMemo} from 'react';
 import {authService, getMobileOidcClientConfig} from '@sykamore/auth';
 import {errorCenter} from '@sykamore/client-runtime';
-import {
-  validateOidcStartAction,
-  type OidcStartAction,
-} from '@sykamore/types';
+import {validateOidcStartAction, type OidcStartAction} from '@sykamore/types';
 import {AuthRequest, ResponseType, makeRedirectUri} from 'expo-auth-session';
 
 const REDIRECT_SCHEME = 'com.sykamore.app';

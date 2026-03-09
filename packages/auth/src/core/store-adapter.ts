@@ -31,7 +31,9 @@ class AuthStoreAdapter {
     };
   }
 
-  subscribeSession(listener: (snapshot: AuthSessionSnapshot) => void): () => void {
+  subscribeSession(
+    listener: (snapshot: AuthSessionSnapshot) => void,
+  ): () => void {
     let lastSnapshot = this.getSessionSnapshot();
 
     return useAuthStore.subscribe((state) => {

@@ -23,7 +23,10 @@ type UseSearchUsersOptions = {
 export function useSearchUsers(options: UseSearchUsersOptions) {
   const {searchQuery, pageSize, filters, odataOrderBy} = options;
 
-  const normalizedFilters = useMemo<UserFilterState>(() => filters ?? {}, [filters]);
+  const normalizedFilters = useMemo<UserFilterState>(
+    () => filters ?? {},
+    [filters],
+  );
   const normalizedSearchQuery = searchQuery.trim();
 
   const hasActiveFilters = useMemo(
@@ -50,7 +53,9 @@ export function useSearchUsers(options: UseSearchUsersOptions) {
   return {
     ...manager,
     isUsingServerSearch:
-      normalizedSearchQuery.length > 0 || hasActiveFilters || Boolean(odataOrderBy),
+      normalizedSearchQuery.length > 0 ||
+      hasActiveFilters ||
+      Boolean(odataOrderBy),
   };
 }
 

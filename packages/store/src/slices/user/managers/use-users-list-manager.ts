@@ -10,9 +10,7 @@ type UseUsersListManagerOptions = {
   enabled?: boolean;
 };
 
-export function useUsersListManager(
-  options?: UseUsersListManagerOptions,
-) {
+export function useUsersListManager(options?: UseUsersListManagerOptions) {
   const {
     data,
     dataUpdatedAt,

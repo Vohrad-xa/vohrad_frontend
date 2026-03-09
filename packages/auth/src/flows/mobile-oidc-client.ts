@@ -37,8 +37,14 @@ export class MobileOidcClient {
     );
 
     if (!response.ok) {
-      const oauthErrorResult = parseJsonWithSchema(rawBody, oauthTokenErrorSchema);
-      if (oauthErrorResult.success && oauthErrorResult.data.error === 'invalid_grant') {
+      const oauthErrorResult = parseJsonWithSchema(
+        rawBody,
+        oauthTokenErrorSchema,
+      );
+      if (
+        oauthErrorResult.success &&
+        oauthErrorResult.data.error === 'invalid_grant'
+      ) {
         throw createSessionExpiredError(
           oauthErrorResult.data.error_description ||
             'Your session has expired. Please sign in again.',
