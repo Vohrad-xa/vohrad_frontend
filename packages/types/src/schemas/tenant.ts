@@ -1,39 +1,34 @@
 import {z} from 'zod';
-import {jsonObjectSchema, jsonValueSchema, type JsonValue} from './common';
+import {jsonValueSchema, type JsonValue} from './common';
 
 export const tenantStatusSchema = z.enum(['active', 'inactive', 'suspended']);
 
 const nullableStringSchema = z.string().nullish();
 
 export const tenantSchema = z.strictObject({
-  tenant_id: z.string().min(1),
-  sub_domain: z.string().min(1),
-  tenant_schema_name: z.string().min(1),
-  email: z.email(),
+  tenant_id: z.uuid(),
+  name: z.string().min(1),
   status: tenantStatusSchema,
+  email: z.email().nullish(),
   telephone: nullableStringSchema,
   street: nullableStringSchema,
   street_number: nullableStringSchema,
   city: nullableStringSchema,
   province: nullableStringSchema,
   postal_code: nullableStringSchema,
-  country: nullableStringSchema,
-  billing_address: nullableStringSchema,
+  remarks: nullableStringSchema,
   website: nullableStringSchema,
   logo: nullableStringSchema,
   industry: nullableStringSchema,
   tax_id: nullableStringSchema,
-  remarks: nullableStringSchema,
+  billing_address: nullableStringSchema,
+  country: nullableStringSchema,
   timezone: nullableStringSchema,
   business_hour_start: nullableStringSchema,
   business_hour_end: nullableStringSchema,
-  license_id: nullableStringSchema,
-  stripe_id: nullableStringSchema,
-  settings: jsonObjectSchema.nullish(),
-  created_by: nullableStringSchema,
-  created_at: z.string().optional(),
-  updated_at: z.string().optional(),
-  deleted_at: nullableStringSchema,
+  license_id: z.uuid().nullish(),
+  created_at: z.string().nullish(),
+  updated_at: z.string().nullish(),
 });
 
 export const tenantSettingsUpdateSchema = z.strictObject({
@@ -44,19 +39,20 @@ export const tenantSettingsUpdateSchema = z.strictObject({
 
 export const tenantProfileUpdateSchema = tenantSchema
   .pick({
+    name: true,
     telephone: true,
     street: true,
     street_number: true,
     city: true,
     province: true,
     postal_code: true,
-    country: true,
-    billing_address: true,
+    remarks: true,
     website: true,
     logo: true,
     industry: true,
     tax_id: true,
-    remarks: true,
+    billing_address: true,
+    country: true,
   })
   .partial();
 

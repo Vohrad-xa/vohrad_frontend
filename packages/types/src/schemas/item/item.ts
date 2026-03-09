@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {jsonObjectSchema} from '../common';
+import {apiDecimalSchema, jsonObjectSchema} from '../common';
 import {trackingModeSchema} from './item-filters';
 
 export const itemSpecificationsSchema = jsonObjectSchema.nullable();
@@ -10,7 +10,7 @@ export const itemLocationDataSchema = z.strictObject({
   name: z.string(),
   code: z.string(),
   item_lot_id: z.string().nullable().optional(),
-  quantity: z.number(),
+  quantity: apiDecimalSchema,
 });
 
 export const itemLocationInputSchema = z.strictObject({
@@ -83,12 +83,29 @@ const itemRelationIdentifiersSchema = z.strictObject({
   item_relation_id: z.string().nullable().optional(),
 });
 
-const itemDescriptiveFieldsSchema = itemRelationIdentifiersSchema.extend({
+const itemMutableFieldsSchema = itemRelationIdentifiersSchema.extend({
   name: z.string(),
   sku: z.string(),
   barcode: z.string().nullable().optional(),
   description: z.string().nullable().optional(),
   price: z.number().nullable().optional(),
+  notes: z.string().nullable().optional(),
+  specifications: itemSpecificationsSchema.optional(),
+  tracking_change_reason: z.string().nullable().optional(),
+  category_id: z.string().nullable().optional(),
+  status_id: z.string().nullable().optional(),
+  unit_id: z.string().nullable().optional(),
+  supplier_id: z.string().nullable().optional(),
+  tracking_mode: trackingModeSchema.optional(),
+  is_active: z.boolean().optional(),
+});
+
+const itemResponseFieldsSchema = itemRelationIdentifiersSchema.extend({
+  name: z.string(),
+  sku: z.string(),
+  barcode: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  price: apiDecimalSchema.nullable().optional(),
   notes: z.string().nullable().optional(),
   specifications: itemSpecificationsSchema.optional(),
   tracking_change_reason: z.string().nullable().optional(),
@@ -102,17 +119,12 @@ const itemDescriptiveFieldsSchema = itemRelationIdentifiersSchema.extend({
   supplier: supplierSchema.nullable().optional(),
 });
 
-export const itemMutableFieldsSchema = itemDescriptiveFieldsSchema.extend({
-  tracking_mode: trackingModeSchema.optional(),
-  is_active: z.boolean().optional(),
-});
-
-export const itemSchema = itemDescriptiveFieldsSchema.extend({
+export const itemSchema = itemResponseFieldsSchema.extend({
   id: z.string(),
   tracking_mode: trackingModeSchema,
   is_active: z.boolean(),
   tracking_changed_at: z.string().nullable().optional(),
-  total_quantity: z.number(),
+  total_quantity: apiDecimalSchema,
   thumbnail: itemAttachmentSchema.nullable().optional(),
   created_at: z.string(),
   updated_at: z.string(),

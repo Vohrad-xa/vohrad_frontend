@@ -12,7 +12,7 @@ export const paginationParamsSchema = z.strictObject({
 
 export const paginationInfoSchema = z.strictObject({
   limit: z.number().int().nonnegative(),
-  total_count: z.number().int().nonnegative().optional(),
+  total_count: z.number().int().nonnegative().nullable().optional(),
   start_cursor: z.string().nullable(),
   end_cursor: z.string().nullable(),
   has_next_page: z.boolean(),

@@ -14,7 +14,8 @@
       "@sykamore/api-client": ["packages/api-client/src"],
       "@sykamore/auth": ["packages/auth/src"],
       "@sykamore/store": ["packages/store/src"],
-      "@sykamore/types": ["packages/types/src"]
+      "@sykamore/types": ["packages/types/src"],
+      "@sykamore/client-runtime": ["packages/client-runtime/src"]
     }
   }
 }

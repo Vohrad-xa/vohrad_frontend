@@ -19,6 +19,11 @@ export const mobileOidcLoginParamsSchema = z.strictObject({
   tokenEndpoint: z.string().url().optional(),
 });
 
+export const logoutAllDevicesResultSchema = z.strictObject({
+  revoked_tokens: z.number().int().nonnegative(),
+  user_id: z.string().min(1),
+});
+
 export const authStateDataSchema = z.strictObject({
   user: identitySchema.nullable(),
   tokens: authTokensSchema.nullable(),
@@ -73,6 +78,9 @@ export const authPersistSnapshotSchema = z.looseObject({
 export type OidcStartAction = z.infer<typeof oidcStartActionSchema>;
 export type StartWebLoginOptions = z.infer<typeof startWebLoginOptionsSchema>;
 export type MobileOidcLoginParams = z.infer<typeof mobileOidcLoginParamsSchema>;
+export type LogoutAllDevicesResult = z.infer<
+  typeof logoutAllDevicesResultSchema
+>;
 export type AuthStateData = z.infer<typeof authStateDataSchema>;
 export type AuthPersistedStateData = z.infer<
   typeof authPersistedStateDataSchema

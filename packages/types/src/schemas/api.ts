@@ -12,10 +12,24 @@ export const apiResponseMetadataSchema = z.looseObject({
   user_agent: z.string().nullable().optional(),
 });
 
+export const apiProblemDetailsSchema = z.strictObject({
+  type: z.string(),
+  title: z.string(),
+  status: z.coerce.number().int().nonnegative(),
+  detail: z.string(),
+  instance: z.string().optional(),
+  code: z.string(),
+  correlation_id: z.string().optional(),
+  details: z.unknown().optional(),
+});
+
+export const emptyDataSchema = z.union([z.null(), z.undefined()]).transform(() => undefined);
+export const textDataSchema = z.string();
+
 const apiResponseBaseSchema = z.strictObject({
-  success: z.boolean(),
+  success: z.literal(true),
   data: z.unknown(),
-  message: z.string(),
+  message: z.string().nullable().optional(),
   metadata: apiResponseMetadataSchema.optional(),
 });
 
@@ -40,7 +54,10 @@ export function createPaginatedResponseSchema<TSchema extends z.ZodTypeAny>(
   });
 }
 
+export type AnySchema = z.ZodTypeAny;
+export type SchemaOutput<TSchema extends z.ZodTypeAny> = z.output<TSchema>;
 export type ApiResponseMetadata = z.infer<typeof apiResponseMetadataSchema>;
+export type ApiProblemDetails = z.infer<typeof apiProblemDetailsSchema>;
 export type ApiResponse<TData> = Omit<
   z.infer<typeof apiResponseBaseSchema>,
   'data'

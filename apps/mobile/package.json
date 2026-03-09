@@ -84,7 +84,8 @@
     "react-native-worklets": "0.7.2",
     "sf-symbols-typescript": "^2.1.0",
     "syka-menu": "workspace:~0.0.1",
-    "sykamore-ui": "workspace:~0.0.1"
+    "sykamore-ui": "workspace:~0.0.1",
+    "@sykamore/client-runtime": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "~19.2.7",

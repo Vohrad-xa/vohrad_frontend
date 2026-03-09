@@ -8,7 +8,8 @@
       "@sykamore/api-client": ["../../packages/api-client/dist"],
       "@sykamore/auth": ["../../packages/auth/dist"],
       "@sykamore/store": ["../../packages/store/dist"],
-      "@sykamore/types": ["../../packages/types/dist"]
+      "@sykamore/types": ["../../packages/types/dist"],
+      "@sykamore/client-runtime": ["../../packages/client-runtime/dist"]
     },
     "baseUrl": "."
   },

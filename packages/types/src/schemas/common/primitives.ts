@@ -50,3 +50,10 @@ export const baseSchemas = {
     optional: () => z.boolean().optional(),
   },
 } as const;
+
+export const apiDecimalSchema = z
+  .union([
+    z.number(),
+    z.string().regex(/^-?\d+(?:\.\d+)?$/, 'Invalid decimal format'),
+  ])
+  .transform((value) => Number(value));

@@ -2,12 +2,19 @@ import type {z} from 'zod';
 import {
   createApiResponseSchema,
   createPaginatedResponseSchema,
+  apiProblemDetailsSchema,
   apiResponseMetadataSchema,
+  oidcDiscoveryDocumentSchema,
 } from '../schemas';
 import {createValidator} from './parse';
 
 export const validateApiResponseMetadata = createValidator(
   apiResponseMetadataSchema,
+);
+
+export const validateProblemDetails = createValidator(apiProblemDetailsSchema);
+export const validateOidcDiscoveryDocument = createValidator(
+  oidcDiscoveryDocumentSchema,
 );
 
 export function validateApiResponse<TSchema extends z.ZodTypeAny>(
