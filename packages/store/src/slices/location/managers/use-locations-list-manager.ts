@@ -26,10 +26,10 @@ export function useLocationsListManager(
     dataUpdatedAt,
     error,
     isError,
+    isPending,
     isSuccess,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
     refetch,
   } = useInfiniteLocations(filters, options?.pageSize, options?.enabled);
@@ -66,7 +66,7 @@ export function useLocationsListManager(
   return {
     locations,
     lastUpdated: dataUpdatedAt ? new Date(dataUpdatedAt) : null,
-    isLoading: isFetching,
+    isLoading: isPending,
     isFetchingNextPage,
     error,
     hasNext: hasNextPage,

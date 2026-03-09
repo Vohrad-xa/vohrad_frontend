@@ -119,7 +119,7 @@ export function LocationsList({
     () => (
       <EmptyState
         message="No Locations Found"
-        icon={AppIcons.domain.location}
+        icon={AppIcons.emptyStates.file}
       />
     ),
     [],

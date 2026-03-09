@@ -1,4 +1,5 @@
 import React, {useCallback, useLayoutEffect, useRef} from 'react';
+import {useIsFocused} from '@react-navigation/native';
 import {useNavigation} from 'expo-router';
 import {
   useItemsSource,
@@ -20,6 +21,7 @@ import {
 export default function ItemsScreen() {
   const router = useSafeRouter();
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
   const {searchQuery} = useSearch();
 
   const {filters, setFilters, activeFilterCount} = useItemFilters();
@@ -40,6 +42,7 @@ export default function ItemsScreen() {
   } = useItemsSource({
     searchQuery,
     filters,
+    enabled: isFocused,
   });
 
   useLayoutEffect(() => {

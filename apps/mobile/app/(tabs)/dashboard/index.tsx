@@ -1,6 +1,6 @@
 import {useCallback, useLayoutEffect, useRef} from 'react';
 import {StyleSheet, ScrollView, Platform, View} from 'react-native';
-import {useDashboardOverview, useFetchUserProfile} from '@sykamore/store';
+import {useDashboardOverview} from '@sykamore/store';
 import {router, useNavigation} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
@@ -20,7 +20,6 @@ export default function HomeScreen() {
   const styles = createStyles(ds, theme);
   const {triggerHaptic} = useHaptic();
   const {refetch: refetchOverview} = useDashboardOverview();
-  const {refetch: refetchUserProfile} = useFetchUserProfile();
   const filterSheetRef = useRef<CardsFilterSheetHandle>(null);
 
   useLayoutEffect(() => {
@@ -47,7 +46,7 @@ export default function HomeScreen() {
 
   const {refreshControl} = usePullToRefresh({
     onRefresh: async () => {
-      await Promise.all([refetchUserProfile(), refetchOverview()]);
+      await refetchOverview();
     },
   });
 

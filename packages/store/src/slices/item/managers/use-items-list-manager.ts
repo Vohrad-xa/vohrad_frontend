@@ -29,10 +29,10 @@ export function useItemsListManager(options?: UseItemsListManagerOptions) {
     dataUpdatedAt,
     error,
     isError,
+    isPending,
     isSuccess,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
     refetch,
   } = useInfiniteItems(filters, options?.pageSize, options?.enabled);
@@ -78,7 +78,7 @@ export function useItemsListManager(options?: UseItemsListManagerOptions) {
   return {
     items,
     lastUpdated: dataUpdatedAt ? new Date(dataUpdatedAt) : null,
-    isLoading: isFetching,
+    isLoading: isPending,
     isFetchingNextPage,
     error,
     hasNext: hasNextPage,
