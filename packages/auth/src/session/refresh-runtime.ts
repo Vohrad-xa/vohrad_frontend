@@ -61,7 +61,7 @@ export class RefreshRuntimeController {
     this.removeVisibilityListener = null;
   }
 
-  scheduleRetryAfterNetworkFailure(): void {
+  scheduleRetryAfterRefreshFailure(): void {
     this.cancelScheduledRefresh();
     this.refreshTimer = setTimeout(() => {
       this.refreshAccessToken().catch((error) => {

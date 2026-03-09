@@ -7,6 +7,7 @@ import {
   parseJsonWithSchema,
   validateAuthTokens,
   validateMobileOidcLoginParams,
+  oauthTokenErrorSchema,
   oidcDiscoveryDocumentSchema,
   type AuthTokens,
   type MobileOidcLoginParams,
@@ -36,6 +37,15 @@ export class MobileOidcClient {
     );
 
     if (!response.ok) {
+      const oauthErrorResult = parseJsonWithSchema(rawBody, oauthTokenErrorSchema);
+      if (oauthErrorResult.success && oauthErrorResult.data.error === 'invalid_grant') {
+        throw createSessionExpiredError(
+          oauthErrorResult.data.error_description ||
+            'Your session has expired. Please sign in again.',
+          'OIDC_INVALID_GRANT',
+        );
+      }
+
       throw parseProblemResponse(response, rawBody);
     }
 

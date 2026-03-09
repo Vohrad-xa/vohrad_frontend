@@ -26,6 +26,7 @@ import {MobileOidcClient} from './flows/mobile-oidc-client';
 import {MobileSocialClient} from './flows/mobile-social-client';
 import {WebSessionClient} from './flows/web-session-client';
 import {RefreshRuntimeController} from './session/refresh-runtime';
+import {classifyRefreshFailure} from './session/refresh-failure';
 import {SessionBootstrapper} from './session/session-bootstrap';
 
 export class AuthService {
@@ -198,9 +199,9 @@ export class AuthService {
 
         authStoreAdapter.updateTokens(mergedTokens);
       } catch (error) {
-        const isNetworkError = error instanceof ApiError && error.status === 0;
-        if (isNetworkError) {
-          this.refreshRuntime.scheduleRetryAfterNetworkFailure();
+        const failureDisposition = classifyRefreshFailure(error);
+        if (failureDisposition === 'transient') {
+          this.refreshRuntime.scheduleRetryAfterRefreshFailure();
           throw error;
         }
 

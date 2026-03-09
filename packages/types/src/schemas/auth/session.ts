@@ -16,7 +16,7 @@ export const mobileOidcLoginParamsSchema = z.strictObject({
   code: z.string().min(1),
   codeVerifier: z.string().min(1),
   redirectUri: z.string().min(1),
-  tokenEndpoint: z.string().url().optional(),
+  tokenEndpoint: z.url().optional(),
 });
 
 export const logoutAllDevicesResultSchema = z.strictObject({
