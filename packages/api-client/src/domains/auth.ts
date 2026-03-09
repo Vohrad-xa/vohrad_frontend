@@ -1,15 +1,18 @@
 import {
-  validateAuthTokens,
+  emptyDataSchema,
+  identitySchema,
+  logoutAllDevicesResultSchema,
+  tenantMembershipSchema,
+  tokenResponseSchema,
   validateStartWebLoginOptions,
-  type ApiResponse,
   type AuthTokens,
   type Identity,
+  type LogoutAllDevicesResult,
   type StartWebLoginOptions,
-  type TokenResponse,
   type TenantMembership,
 } from '@sykamore/types';
-import {resolveApiUrl} from '../config';
-import {httpClient} from '../http-client';
+import {resolveApiUrl} from '../core/url-resolver';
+import {httpClient} from '../core/client';
 import {API_ENDPOINTS} from './endpoints';
 
 /** Optional social profile data forwarded to backend token exchange. */
@@ -23,10 +26,9 @@ type SocialTokenExchangeUserProfile = {
 
 type SocialProvider = 'apple' | 'google';
 
+const tenantMembershipsSchema = tenantMembershipSchema.array();
+
 export class AuthApi {
-  /**
-   * Build OIDC start URL with optional return path and start action.
-   */
   getOidcStartUrl(returnTo?: string, options?: StartWebLoginOptions): string {
     const optionsResult = validateStartWebLoginOptions(options ?? {});
     if (!optionsResult.success) {
@@ -44,14 +46,13 @@ export class AuthApi {
     return url.toString();
   }
 
-  /**
-   * Exchange web session cookie for short-lived access tokens.
-   */
   async issueWebAccessToken(csrfToken: string): Promise<AuthTokens> {
-    const response = await httpClient.post<TokenResponse>(
+    const response = await httpClient.post(
       API_ENDPOINTS.AUTH.WEB_TOKEN,
+      tokenResponseSchema,
       {},
       {'X-CSRF-Token': csrfToken},
+      {reportErrors: false},
     );
 
     return {
@@ -60,128 +61,97 @@ export class AuthApi {
     };
   }
 
-  /**
-   * Fetch current identity profile.
-   */
   async getMeProfile(): Promise<Identity> {
-    const response = await httpClient.get<Identity>(API_ENDPOINTS.ME.PROFILE);
-    return response.data;
-  }
-
-  /**
-   * Fetch tenant memberships for current user.
-   */
-  async getMyTenants(): Promise<TenantMembership[]> {
-    const response = await httpClient.get<TenantMembership[]>(
-      API_ENDPOINTS.ME.TENANTS,
+    const response = await httpClient.get(
+      API_ENDPOINTS.ME.PROFILE,
+      identitySchema,
+      {
+        reportErrors: false,
+      },
     );
     return response.data;
   }
 
-  /**
-   * Logout current web session (cookie + CSRF flow).
-   */
+  async getMyTenants(): Promise<TenantMembership[]> {
+    const response = await httpClient.get(
+      API_ENDPOINTS.ME.TENANTS,
+      tenantMembershipsSchema,
+      {reportErrors: false},
+    );
+    return response.data;
+  }
+
   async logoutWebSession(csrfToken: string): Promise<void> {
-    await httpClient.post<null>(
+    await httpClient.post(
       API_ENDPOINTS.AUTH.WEB_LOGOUT,
+      emptyDataSchema,
       {},
       {'X-CSRF-Token': csrfToken},
+      {reportErrors: false},
     );
   }
 
-  /**
-   * Logout current bearer session.
-   */
   async logout(): Promise<void> {
-    await httpClient.post<null>(API_ENDPOINTS.AUTH.LOGOUT, {});
-  }
-
-  /**
-   * Logout all active sessions for current identity.
-   */
-  async logoutAllDevices(): Promise<void> {
-    await httpClient.post<{revoked_tokens: number; user_id: string}>(
-      API_ENDPOINTS.AUTH.LOGOUT_ALL,
+    await httpClient.post(
+      API_ENDPOINTS.AUTH.LOGOUT,
+      emptyDataSchema,
       {},
+      undefined,
+      {reportErrors: false},
     );
   }
 
-  /**
-   * Exchange social provider token via backend and return normalized auth tokens.
-   */
+  async logoutAllDevices(): Promise<LogoutAllDevicesResult> {
+    const response = await httpClient.post(
+      API_ENDPOINTS.AUTH.LOGOUT_ALL,
+      logoutAllDevicesResultSchema,
+      {},
+      undefined,
+      {reportErrors: false},
+    );
+    return response.data;
+  }
+
   async exchangeSocialToken(payload: {
     provider: SocialProvider;
     token: string;
     userProfile?: SocialTokenExchangeUserProfile;
   }): Promise<AuthTokens> {
-    const tokenPayload = await this.requestSocialTokenGrant(
+    const response = await httpClient.post(
       API_ENDPOINTS.AUTH.SOCIAL_EXCHANGE,
+      tokenResponseSchema,
       {
         provider: payload.provider,
         token: payload.token,
         user_profile: payload.userProfile,
       },
+      undefined,
+      {reportErrors: false},
     );
 
     return {
-      ...tokenPayload,
+      ...response.data,
       issued_at: Date.now(),
     };
   }
 
-  /**
-   * Refresh social-exchange mobile tokens via backend confidential client.
-   */
   async refreshSocialToken(payload: {
     refreshToken: string;
   }): Promise<AuthTokens> {
-    const tokenPayload = await this.requestSocialTokenGrant(
+    const response = await httpClient.post(
       API_ENDPOINTS.AUTH.SOCIAL_REFRESH,
+      tokenResponseSchema,
       {
         refresh_token: payload.refreshToken,
       },
+      undefined,
+      {reportErrors: false},
     );
 
     return {
-      ...tokenPayload,
+      ...response.data,
       issued_at: Date.now(),
     };
-  }
-
-  private async requestSocialTokenGrant(
-    endpoint: string,
-    body: Record<string, unknown>,
-  ): Promise<TokenResponse> {
-    const rawResponse = await httpClient.makeRequest<unknown>(endpoint, {
-      method: 'POST',
-      body: JSON.stringify(body),
-    });
-
-    return this.parseSocialExchangeResponse(rawResponse);
-  }
-
-  /**
-   * Accept raw or envelope token payload and enforce minimal token shape.
-   */
-  private isApiEnvelope<T>(value: unknown): value is ApiResponse<T> {
-    return (
-      typeof value === 'object' &&
-      value !== null &&
-      'success' in value &&
-      'data' in value
-    );
-  }
-  private parseSocialExchangeResponse(rawResponse: unknown): TokenResponse {
-    const tokenPayload = this.isApiEnvelope<TokenResponse>(rawResponse)
-      ? rawResponse.data
-      : rawResponse;
-
-    const validationResult = validateAuthTokens(tokenPayload);
-    if (!validationResult.success) {
-      throw new Error('Invalid social token exchange response');
-    }
-
-    return validationResult.data;
   }
 }
 

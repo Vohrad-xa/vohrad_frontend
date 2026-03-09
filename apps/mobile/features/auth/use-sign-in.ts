@@ -1,5 +1,6 @@
 import {useState} from 'react';
-import {Alert, Platform} from 'react-native';
+import {Platform} from 'react-native';
+import {errorCenter} from '@sykamore/client-runtime';
 import {useAuth} from '@/providers';
 import {useAppleSignIn} from './use-apple-sign-in';
 import {useBiometricPrompt} from './use-biometric-prompt';
@@ -7,10 +8,6 @@ import {useGoogleSignIn} from './use-google-sign-in';
 import {useOidcFlow} from './use-oidc-flow';
 import {usePasskeyPrompt} from './use-passkey-prompt';
 
-/**
- * Orchestrates the full sign-in flow: passkey setup choice → OIDC login →
- * biometric enrollment prompt. Call `handleSubmit` on a user gesture.
- */
 export function useSignIn() {
   const [isStartingMobileFlow, setIsStartingMobileFlow] = useState(false);
   const [isStartingAppleFlow, setIsStartingAppleFlow] = useState(false);
@@ -56,11 +53,11 @@ export function useSignIn() {
       if (!outcome.completed) return;
 
       await promptEnableIfNeeded();
-    } catch {
-      Alert.alert(
-        'Sign in failed',
-        'An unexpected error occurred. Please try again.',
-      );
+    } catch (error) {
+      errorCenter.report(error, {
+        title: 'Sign-In Failed',
+        scope: 'local',
+      });
     } finally {
       setIsStartingMobileFlow(false);
     }
@@ -81,11 +78,11 @@ export function useSignIn() {
       const outcome = await startAppleFlow();
       if (!outcome.completed) return;
       await promptEnableIfNeeded();
-    } catch {
-      Alert.alert(
-        'Sign in failed',
-        'An unexpected error occurred. Please try again.',
-      );
+    } catch (error) {
+      errorCenter.report(error, {
+        title: 'Sign-In Failed',
+        scope: 'local',
+      });
     } finally {
       setIsStartingAppleFlow(false);
     }
@@ -106,11 +103,11 @@ export function useSignIn() {
       const outcome = await startGoogleFlow();
       if (!outcome.completed) return;
       await promptEnableIfNeeded();
-    } catch {
-      Alert.alert(
-        'Sign in failed',
-        'An unexpected error occurred. Please try again.',
-      );
+    } catch (error) {
+      errorCenter.report(error, {
+        title: 'Sign-In Failed',
+        scope: 'local',
+      });
     } finally {
       setIsStartingGoogleFlow(false);
     }

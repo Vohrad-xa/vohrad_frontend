@@ -1,10 +1,11 @@
 import {useCallback} from 'react';
-import {Alert, Platform} from 'react-native';
+import {Platform} from 'react-native';
 import {
   GoogleSignin,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 import {authService} from '@sykamore/auth';
+import {errorCenter} from '@sykamore/client-runtime';
 import {env} from '@/utils/env';
 
 type GoogleSignInOutcome =
@@ -45,18 +46,16 @@ function configureGoogleSigninIfNeeded(): boolean {
   return true;
 }
 
-/**
- * Runs native Google Sign-In and exchanges Google access_token via backend.
- */
 export function useGoogleSignIn() {
   const isSupported = isGoogleConfiguredForPlatform();
 
   const startFlow = useCallback(async (): Promise<GoogleSignInOutcome> => {
     if (!configureGoogleSigninIfNeeded()) {
-      Alert.alert(
-        'Google Sign-In unavailable',
-        'Missing Google Sign-In client configuration.',
-      );
+      errorCenter.report('Google Sign-In is not configured for this build.', {
+        title: 'Google Sign-In Unavailable',
+        scope: 'local',
+        isRetryable: false,
+      });
       return {completed: false, cancelled: false};
     }
 
@@ -88,9 +87,13 @@ export function useGoogleSignIn() {
         return {completed: false, cancelled: true};
       }
       if (code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        Alert.alert(
-          'Google Sign-In unavailable',
+        errorCenter.report(
           'Google Play Services are unavailable on this device.',
+          {
+            title: 'Google Sign-In Unavailable',
+            scope: 'local',
+            isRetryable: false,
+          },
         );
         return {completed: false, cancelled: false};
       }
@@ -98,11 +101,10 @@ export function useGoogleSignIn() {
         return {completed: false, cancelled: false};
       }
 
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Authentication failed. Please try again.';
-      Alert.alert('Sign in failed', message);
+      errorCenter.report(error, {
+        title: 'Sign-In Failed',
+        scope: 'local',
+      });
       return {completed: false, cancelled: false};
     }
   }, []);

@@ -1,13 +1,18 @@
 import {escapeString} from '../../utils/odata-filter-builder';
 
+export type UserRoleFilter = {
+  id: string;
+  name: string;
+};
+
 export type UserFilterState = {
-  role?: string | null;
+  role?: UserRoleFilter | null;
 };
 
 export type UserFilterOptions = UserFilterState;
 
 /**
- * Build an OData filter string for user role and search.
+ * Build an OData filter string for tenant-user role and search.
  */
 export function buildUserODataFilter(
   filters: UserFilterState = {},
@@ -15,18 +20,17 @@ export function buildUserODataFilter(
 ): string | undefined {
   const conditions: string[] = [];
 
-  if (filters.role) {
-    conditions.push(`role_name eq '${escapeString(filters.role)}'`);
+  if (filters.role?.name) {
+    conditions.push(`role/name eq '${escapeString(filters.role.name)}'`);
   }
 
   if (searchTerm && searchTerm.trim().length > 0) {
     const term = escapeString(searchTerm.trim());
     conditions.push(
       `(${[
-        `contains(first_name,'${term}')`,
-        `contains(last_name,'${term}')`,
-        `contains(email,'${term}')`,
-        `contains(role_name,'${term}')`,
+        `contains(user/first_name,'${term}')`,
+        `contains(user/last_name,'${term}')`,
+        `contains(user/email,'${term}')`,
       ].join(' or ')})`,
     );
   }
@@ -39,7 +43,7 @@ export function buildUserODataFilter(
  */
 export function hasActiveUserFilters(filters: UserFilterState): boolean {
   if (!filters) return false;
-  return Boolean(filters.role && filters.role.trim().length > 0);
+  return Boolean(filters.role?.name);
 }
 
 /**

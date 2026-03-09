@@ -1,12 +1,10 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useMemo} from 'react';
 import {
   buildUserODataFilter,
   hasActiveUserFilters,
-  searchUsersLocally,
   useUsersListManager,
   type UserFilterOptions,
   type UserFilterState,
-  type User,
 } from '@sykamore/store';
 
 type UseSearchUsersOptions = {
@@ -16,134 +14,43 @@ type UseSearchUsersOptions = {
   odataOrderBy?: string;
 };
 
-type UseHybridUserSearchOptions = {
-  users: User[];
-  searchQuery: string;
-  onServerSearchNeeded: () => void;
-  isUsingServerSearch: boolean;
-  filters?: UserFilterOptions;
-};
-
-function useUserServerSearchState(searchQuery: string) {
-  const [shouldUseServerSearch, setShouldUseServerSearch] = useState(false);
-
-  useEffect(() => {
-    setShouldUseServerSearch(false);
-  }, [searchQuery]);
-
-  return {
-    shouldUseServerSearch,
-    enableServerSearch: () => setShouldUseServerSearch(true),
-  };
-}
-
-function useHybridUserSearch({
-  users,
-  searchQuery,
-  onServerSearchNeeded,
-  isUsingServerSearch,
-  filters,
-}: UseHybridUserSearchOptions) {
-  const filteredByFilters = useMemo(() => {
-    if (!filters) return users;
-
-    const roleFilter = filters.role?.trim() ?? '';
-    const hasRoleFilter = roleFilter.length > 0;
-
-    if (!hasRoleFilter) {
-      return users;
-    }
-
-    return users.filter((user) => {
-      if (hasRoleFilter && user.role_name !== roleFilter) {
-        return false;
-      }
-
-      return true;
-    });
-  }, [filters, users]);
-
-  const filteredUsers = useMemo(() => {
-    const hasSearchQuery = searchQuery && searchQuery.trim().length > 0;
-
-    if (!hasSearchQuery) {
-      return filteredByFilters;
-    }
-
-    if (isUsingServerSearch) {
-      return filteredByFilters;
-    }
-
-    return searchUsersLocally(filteredByFilters, searchQuery);
-  }, [filteredByFilters, searchQuery, isUsingServerSearch]);
-
-  useEffect(() => {
-    const hasQuery = searchQuery && searchQuery.trim().length > 0;
-    const hasUsersLoaded = filteredByFilters.length > 0;
-    const localFoundNothing =
-      hasQuery && !isUsingServerSearch && filteredUsers.length === 0;
-
-    if (localFoundNothing && hasUsersLoaded) {
-      onServerSearchNeeded();
-    }
-  }, [
-    searchQuery,
-    filteredByFilters.length,
-    filteredUsers.length,
-    onServerSearchNeeded,
-    isUsingServerSearch,
-  ]);
-
-  return filteredUsers;
-}
-
 /**
- * Hybrid users query: local filter/search first, then switches to server when needed.
+ * Server-driven users query backed by TanStack Query.
  *
- * - Server mode turns on when filters are set or local search finds no matches, and resets when the search query changes.
- * - While in server mode, local search is skipped (role filters still apply on the result set).
+ * Search, filter, and sort are all expressed through the backend query contract.
+ * The mobile search provider already debounces the incoming search query.
  */
 export function useSearchUsers(options: UseSearchUsersOptions) {
   const {searchQuery, pageSize, filters, odataOrderBy} = options;
-  const {shouldUseServerSearch, enableServerSearch} =
-    useUserServerSearchState(searchQuery);
 
-  const hasActiveFilters = useMemo(() => {
-    const filterState: UserFilterState = filters ?? {};
-    return hasActiveUserFilters(filterState);
-  }, [filters]);
+  const normalizedFilters = useMemo<UserFilterState>(() => filters ?? {}, [filters]);
+  const normalizedSearchQuery = searchQuery.trim();
 
-  const shouldUseRemote = shouldUseServerSearch || hasActiveFilters;
+  const hasActiveFilters = useMemo(
+    () => hasActiveUserFilters(normalizedFilters),
+    [normalizedFilters],
+  );
 
-  const odataFilter = useMemo(() => {
-    if (!shouldUseRemote) {
-      return undefined;
-    }
-    const normalizedSearchQuery = searchQuery.trim();
-    const searchTerm =
-      normalizedSearchQuery.length > 0 ? normalizedSearchQuery : undefined;
-    return buildUserODataFilter(filters, searchTerm);
-  }, [searchQuery, filters, shouldUseRemote]);
+  const odataFilter = useMemo(
+    () =>
+      buildUserODataFilter(
+        normalizedFilters,
+        normalizedSearchQuery.length > 0 ? normalizedSearchQuery : undefined,
+      ),
+    [normalizedFilters, normalizedSearchQuery],
+  );
 
   const manager = useUsersListManager({
     odataFilter,
     odataOrderBy,
     pageSize,
-    enabled: shouldUseRemote ? Boolean(odataFilter) : true,
-  });
-
-  const users = useHybridUserSearch({
-    users: manager.users,
-    searchQuery,
-    isUsingServerSearch: shouldUseRemote,
-    onServerSearchNeeded: enableServerSearch,
-    filters,
+    enabled: true,
   });
 
   return {
     ...manager,
-    users,
-    isUsingServerSearch: shouldUseRemote,
+    isUsingServerSearch:
+      normalizedSearchQuery.length > 0 || hasActiveFilters || Boolean(odataOrderBy),
   };
 }
 

@@ -1,16 +1,22 @@
-import type {
-  Item,
-  ItemDetail,
-  ItemCreate,
-  ItemUpdate,
-  ItemLocationUpdate,
-  ApiResponse,
-  PaginatedResponse,
-  CursorDirection,
-  CursorOrder,
+import {
+  createPaginatedResponseSchema,
+  emptyDataSchema,
+  itemDetailSchema,
+  itemSchema,
+  type ApiResponse,
+  type CursorDirection,
+  type CursorOrder,
+  type Item,
+  type ItemCreate,
+  type ItemDetail,
+  type ItemLocationUpdate,
+  type ItemUpdate,
+  type PaginatedResponse,
 } from '@sykamore/types';
-import {httpClient} from '../http-client';
+import {httpClient} from '../core/client';
 import {API_ENDPOINTS} from './endpoints';
+
+const paginatedItemsSchema = createPaginatedResponseSchema(itemSchema);
 
 export type ListItemsParams = {
   limit?: number;
@@ -49,41 +55,45 @@ export class ItemApi {
     const endpoint = queryString
       ? `${API_ENDPOINTS.ITEMS.LIST}?${queryString}`
       : API_ENDPOINTS.ITEMS.LIST;
-    return httpClient.get<PaginatedResponse<Item>>(endpoint);
+    return httpClient.get(endpoint, paginatedItemsSchema);
   }
 
   async getItemById(id: string): Promise<ItemDetail> {
-    const response = await httpClient.get<ItemDetail>(
-      `${API_ENDPOINTS.ITEMS.DETAIL(id)}`,
+    const response = await httpClient.get(
+      API_ENDPOINTS.ITEMS.DETAIL(id),
+      itemDetailSchema,
     );
     return response.data;
   }
 
   async getItemBySku(sku: string): Promise<ItemDetail> {
-    const response = await httpClient.get<ItemDetail>(
-      `${API_ENDPOINTS.ITEMS.BY_SKU(sku)}`,
+    const response = await httpClient.get(
+      API_ENDPOINTS.ITEMS.BY_SKU(sku),
+      itemDetailSchema,
     );
     return response.data;
   }
 
   async createItem(data: ItemCreate): Promise<Item> {
-    const response = await httpClient.post<Item>(
+    const response = await httpClient.post(
       API_ENDPOINTS.ITEMS.CREATE,
+      itemSchema,
       data,
     );
     return response.data;
   }
 
   async updateItem(id: string, data: ItemUpdate): Promise<Item> {
-    const response = await httpClient.patch<Item>(
+    const response = await httpClient.patch(
       API_ENDPOINTS.ITEMS.UPDATE(id),
+      itemSchema,
       data,
     );
     return response.data;
   }
 
   async deleteItem(id: string): Promise<void> {
-    await httpClient.delete(API_ENDPOINTS.ITEMS.DELETE(id));
+    await httpClient.delete(API_ENDPOINTS.ITEMS.DELETE(id), emptyDataSchema);
   }
 
   async updateItemLocationById(
@@ -92,6 +102,7 @@ export class ItemApi {
   ): Promise<void> {
     await httpClient.patch(
       API_ENDPOINTS.ITEM_LOCATIONS.UPDATE(itemLocationId),
+      emptyDataSchema,
       data,
     );
   }

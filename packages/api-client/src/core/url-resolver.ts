@@ -7,12 +7,6 @@ export type ApiClientConfig = {
 
 let current: ApiClientConfig = {};
 
-/**
- * Sets the API client configuration; must be called at app startup before any request.
- *
- * - Merges into the current config, so partial updates are safe.
- * - Provide either `baseUrl` or both `protocol` + `baseDomain`.
- */
 export function initApiConfig(config: Partial<ApiClientConfig>): void {
   current = {...current, ...config};
 }
@@ -22,7 +16,9 @@ export function getApiConfig(): Readonly<ApiClientConfig> {
 }
 
 export function resolveBaseUrl(): string {
-  if (current.baseUrl) return current.baseUrl.replace(/\/$/, '');
+  if (current.baseUrl) {
+    return current.baseUrl.replace(/\/$/, '');
+  }
 
   const {protocol, baseDomain} = current;
   if (!protocol || !baseDomain) {
@@ -36,13 +32,17 @@ export function resolveBaseUrl(): string {
 
 export function resolveApiUrl(endpoint: string): string {
   const base = resolveBaseUrl();
-  const ver = current.version?.replace(/^\//, '');
-  const ep = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-  const url = ver ? `${base}/${ver}/${ep}` : `${base}/${ep}`;
+  const version = current.version?.replace(/^\//, '');
+  const normalizedEndpoint = endpoint.startsWith('/')
+    ? endpoint.slice(1)
+    : endpoint;
+  const url = version
+    ? `${base}/${version}/${normalizedEndpoint}`
+    : `${base}/${normalizedEndpoint}`;
+
   return url.replace(/(?<!:)\/+/g, '/');
 }
 
-// ONLY DEVELOPMENT USAGE FOR ATTACHMENT URLS
 export function resolveAttachmentUrl(relativePath: string): string {
   return `${resolveBaseUrl()}${relativePath}`;
 }

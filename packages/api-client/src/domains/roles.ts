@@ -1,14 +1,20 @@
-import type {
-  ApiResponse,
-  PaginatedResponse,
-  Role,
-  RoleCreate,
-  RoleUpdate,
-  CursorDirection,
-  CursorOrder,
+import {
+  createPaginatedResponseSchema,
+  emptyDataSchema,
+  roleSchema,
+  type ApiResponse,
+  type CursorDirection,
+  type CursorOrder,
+  type PaginatedResponse,
+  type Role,
+  type RoleCreate,
+  type RoleUpdate,
 } from '@sykamore/types';
-import {httpClient} from '../http-client';
+import {httpClient} from '../core/client';
 import {API_ENDPOINTS} from './endpoints';
+
+const paginatedRolesSchema = createPaginatedResponseSchema(roleSchema);
+const activeRolesSchema = roleSchema.array();
 
 export type ListRolesParams = {
   limit?: number;
@@ -39,7 +45,7 @@ export class RoleApi {
     const endpoint = queryString
       ? `${API_ENDPOINTS.ROLES.LIST}?${queryString}`
       : API_ENDPOINTS.ROLES.LIST;
-    return httpClient.get<PaginatedResponse<Role>>(endpoint);
+    return httpClient.get(endpoint, paginatedRolesSchema);
   }
 
   async searchRoles(
@@ -60,47 +66,58 @@ export class RoleApi {
       search.set('order', params.order);
     }
 
-    return httpClient.get<PaginatedResponse<Role>>(
+    return httpClient.get(
       `${API_ENDPOINTS.ROLES.SEARCH}?${search.toString()}`,
+      paginatedRolesSchema,
     );
   }
 
   async getActiveRoles(): Promise<Role[]> {
-    const response = await httpClient.get<Role[]>(API_ENDPOINTS.ROLES.ACTIVE);
+    const response = await httpClient.get(
+      API_ENDPOINTS.ROLES.ACTIVE,
+      activeRolesSchema,
+    );
     return response.data;
   }
 
   async getRoleById(id: string): Promise<Role> {
-    const response = await httpClient.get<Role>(API_ENDPOINTS.ROLES.DETAIL(id));
+    const response = await httpClient.get(
+      API_ENDPOINTS.ROLES.DETAIL(id),
+      roleSchema,
+    );
     return response.data;
   }
 
   async createRole(data: RoleCreate): Promise<Role> {
-    const response = await httpClient.post<Role>(
+    const response = await httpClient.post(
       API_ENDPOINTS.ROLES.CREATE,
+      roleSchema,
       data,
     );
     return response.data;
   }
 
   async updateRole(id: string, data: RoleUpdate): Promise<Role> {
-    const response = await httpClient.patch<Role>(
+    const response = await httpClient.patch(
       API_ENDPOINTS.ROLES.UPDATE(id),
+      roleSchema,
       data,
     );
     return response.data;
   }
 
   async activateRole(id: string): Promise<Role> {
-    const response = await httpClient.put<Role>(
+    const response = await httpClient.put(
       API_ENDPOINTS.ROLES.ACTIVATE(id),
+      roleSchema,
     );
     return response.data;
   }
 
   async deactivateRole(id: string): Promise<Role> {
-    const response = await httpClient.put<Role>(
+    const response = await httpClient.put(
       API_ENDPOINTS.ROLES.DEACTIVATE(id),
+      roleSchema,
     );
     return response.data;
   }
@@ -111,8 +128,7 @@ export class RoleApi {
       throw new Error('ETag is required to delete a role.');
     }
 
-    await httpClient.makeRequest<void>(API_ENDPOINTS.ROLES.DELETE(id), {
-      method: 'DELETE',
+    await httpClient.delete(API_ENDPOINTS.ROLES.DELETE(id), emptyDataSchema, {
       headers: {
         'If-Match': normalizedEtag,
       },

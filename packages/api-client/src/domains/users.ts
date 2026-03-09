@@ -1,14 +1,18 @@
-import type {
-  User,
-  UserCreateData,
-  UserUpdateData,
-  ApiResponse,
-  PaginatedResponse,
-  CursorDirection,
-  CursorOrder,
+import {
+  createPaginatedResponseSchema,
+  userSchema,
+  type ApiResponse,
+  type CursorDirection,
+  type CursorOrder,
+  type PaginatedResponse,
+  type User,
+  type UserCreateData,
+  type UserUpdateData,
 } from '@sykamore/types';
-import {httpClient} from '../http-client';
+import {httpClient} from '../core/client';
 import {API_ENDPOINTS} from './endpoints';
+
+const paginatedUsersSchema = createPaginatedResponseSchema(userSchema);
 
 export type ListUsersParams = {
   limit?: number;
@@ -50,25 +54,30 @@ export class UserApi {
     const endpoint = queryString
       ? `${API_ENDPOINTS.USERS.LIST}?${queryString}`
       : API_ENDPOINTS.USERS.LIST;
-    return httpClient.get<PaginatedResponse<User>>(endpoint);
+    return httpClient.get(endpoint, paginatedUsersSchema);
   }
 
   async createUser(data: UserCreateData): Promise<User> {
-    const response = await httpClient.post<User>(
+    const response = await httpClient.post(
       API_ENDPOINTS.USERS.CREATE,
+      userSchema,
       data,
     );
     return response.data;
   }
 
   async getUserProfile(): Promise<User> {
-    const response = await httpClient.get<User>(API_ENDPOINTS.USERS.PROFILE);
+    const response = await httpClient.get(
+      API_ENDPOINTS.USERS.PROFILE,
+      userSchema,
+    );
     return response.data;
   }
 
   async updateUserProfile(data: UserUpdateData): Promise<User> {
-    const response = await httpClient.patch<User>(
+    const response = await httpClient.patch(
       API_ENDPOINTS.USERS.PROFILE,
+      userSchema,
       data,
     );
     return response.data;

@@ -1,31 +1,27 @@
-import {httpClient} from '../http-client';
-import {API_ENDPOINTS} from './endpoints';
-import {resolveAttachmentUrl} from '../config';
-import type {
-  ItemAttachment,
-  PaginatedResponse,
-  AttachmentTargetType,
-  AttachmentKind,
-  ApiResponse,
-  CursorDirection,
-  CursorOrder,
+import {
+  attachmentCountsSummarySchema,
+  attachmentWithCountsSchema,
+  createPaginatedResponseSchema,
+  itemAttachmentSchema,
+  textDataSchema,
+  type ApiResponse,
+  type AttachmentCounts,
+  type AttachmentKind,
+  type AttachmentTargetType,
+  type AttachmentWithCounts,
+  type CursorDirection,
+  type CursorOrder,
+  type ItemAttachment,
+  type PaginatedResponse,
 } from '@sykamore/types';
+import {httpClient} from '../core/client';
+import {API_ENDPOINTS} from './endpoints';
+import {resolveAttachmentUrl} from '../core/url-resolver';
 
-export type AttachmentCounts = {
-  attachments_total: number;
-  attachment_counts: {
-    image: number;
-    document: number;
-    video: number;
-    archive: number;
-    other: number;
-  };
-};
+const paginatedAttachmentsSchema =
+  createPaginatedResponseSchema(itemAttachmentSchema);
 
-export type AttachmentWithCounts = {
-  attachment: ItemAttachment;
-  counts: AttachmentCounts;
-};
+export type {AttachmentCounts, AttachmentWithCounts};
 
 export type ListAttachmentsParams = {
   targetType?: AttachmentTargetType;
@@ -43,8 +39,9 @@ export type ListAttachmentsParams = {
 
 export class AttachmentApi {
   async uploadAttachment(formData: FormData): Promise<AttachmentWithCounts> {
-    const response = await httpClient.postFormData<AttachmentWithCounts>(
+    const response = await httpClient.postFormData(
       API_ENDPOINTS.ATTACHMENTS.CREATE,
+      attachmentWithCountsSchema,
       formData,
     );
     return response.data;
@@ -92,7 +89,7 @@ export class AttachmentApi {
     const endpoint = queryString
       ? `${API_ENDPOINTS.ATTACHMENTS.LIST}?${queryString}`
       : API_ENDPOINTS.ATTACHMENTS.LIST;
-    return httpClient.get<PaginatedResponse<ItemAttachment>>(endpoint);
+    return httpClient.get(endpoint, paginatedAttachmentsSchema);
   }
 
   async deleteAttachment(
@@ -102,23 +99,25 @@ export class AttachmentApi {
     const endpoint = options?.hardDelete
       ? `${API_ENDPOINTS.ATTACHMENTS.DELETE(id)}?hard_delete=true`
       : API_ENDPOINTS.ATTACHMENTS.DELETE(id);
-    const response = await httpClient.delete<AttachmentCounts>(endpoint);
+    const response = await httpClient.delete(
+      endpoint,
+      attachmentCountsSummarySchema,
+    );
     return response.data;
   }
 
   async getAttachmentUrl(id: string): Promise<string> {
-    const response = await httpClient.get<string>(
+    const response = await httpClient.get(
       API_ENDPOINTS.ATTACHMENTS.GET_URL(id),
+      textDataSchema,
+      {reportErrors: false},
     );
     const url = response.data;
 
-    // If the API returns a relative path (local storage),
-    // resolve it against the configured API base URL.
     if (url.startsWith('/')) {
       return resolveAttachmentUrl(url);
     }
 
-    // If it's already a full URL (S3 presigned), return as-is
     return url;
   }
 }

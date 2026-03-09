@@ -6,7 +6,6 @@ import {createSystemSlice, type SystemSlice} from './slices/system/slice';
 import {createFilterSlice, type FilterSlice} from './slices/filter/slice';
 import {sanitizeUser, redactTokens} from './utils/sanitizers';
 import {getPersistBackend} from './utils/storage';
-import {httpClient} from '@sykamore/api-client';
 import {validateAuthPersistedStateData, type AuthTokens} from '@sykamore/types';
 
 export const AUTH_PERSIST_KEY = 'sykamore-auth';
@@ -47,9 +46,6 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
           });
 
           if (!authResult.success) {
-            httpClient.setAccessToken(null);
-            httpClient.setTenantId(null);
-
             useAuthStore.setState({
               user: null,
               tokens: null,
@@ -75,21 +71,6 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
             error: hydratedAuth.error,
           });
 
-          // Sync tokens to httpClient after rehydration
-          if (hydratedAuth.tokens?.access_token) {
-            httpClient.setAccessToken(hydratedAuth.tokens.access_token);
-          } else {
-            httpClient.setAccessToken(null);
-          }
-
-          // Restore active workspace context
-          if (state.selectedTenantId) {
-            httpClient.setTenantId(state.selectedTenantId);
-          } else {
-            httpClient.setTenantId(null);
-          }
-
-          // Set hydrated flag
           useAuthStore.setState({
             _hasHydrated: true,
           });
@@ -106,23 +87,3 @@ export const useAuthStore = createWithEqualityFn<StoreState>()(
     },
   ),
 );
-
-// HTTP client token in sync
-let syncedAccessToken = useAuthStore.getState().tokens?.access_token ?? null;
-httpClient.setAccessToken(syncedAccessToken);
-let syncedTenantId = useAuthStore.getState().selectedTenantId ?? null;
-httpClient.setTenantId(syncedTenantId);
-
-useAuthStore.subscribe((state) => {
-  const nextToken = state.tokens?.access_token ?? null;
-  if (nextToken !== syncedAccessToken) {
-    syncedAccessToken = nextToken;
-    httpClient.setAccessToken(nextToken);
-  }
-
-  const nextTenantId = state.selectedTenantId ?? null;
-  if (nextTenantId !== syncedTenantId) {
-    syncedTenantId = nextTenantId;
-    httpClient.setTenantId(nextTenantId);
-  }
-});

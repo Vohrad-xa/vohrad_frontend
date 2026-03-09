@@ -1,4 +1,4 @@
-import {resolveBaseUrl} from './config';
+import {resolveBaseUrl} from './core/url-resolver';
 
 export const DEFAULT_REACHABILITY_TIMEOUT_MS = 3000;
 export const DEFAULT_REACHABILITY_FALLBACK_URLS = [

@@ -111,12 +111,12 @@ export {
   buildUserODataFilter,
   hasActiveUserFilters,
   clearUserFilters,
+  type UserRoleFilter,
   type UserFilterOptions,
   type UserFilterState,
 } from './slices/user';
 
 export {buildODataOrderBy} from './utils/odata-orderby-builder';
-export {searchUsersLocally} from './utils/local-search';
 export type {AsyncState, PaginatedState} from './utils/state';
 export {
   resolveAttachmentPreviewUrl,

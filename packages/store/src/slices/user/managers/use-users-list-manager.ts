@@ -1,4 +1,5 @@
 import {useCallback, useMemo, useEffect} from 'react';
+import type {User} from '@sykamore/types';
 import {useAuthStore} from '../../../store';
 import {useInfiniteUsers} from '../hooks/use-infinite-users';
 
@@ -9,7 +10,9 @@ type UseUsersListManagerOptions = {
   enabled?: boolean;
 };
 
-export function useUsersListManager(options?: UseUsersListManagerOptions) {
+export function useUsersListManager(
+  options?: UseUsersListManagerOptions,
+) {
   const {
     data,
     dataUpdatedAt,
@@ -42,7 +45,7 @@ export function useUsersListManager(options?: UseUsersListManagerOptions) {
     }
   }, [isError, isSuccess, error, refetch]);
 
-  const users = useMemo(
+  const users = useMemo<User[]>(
     () => data?.pages.flatMap((page) => page.data.items) ?? [],
     [data],
   );

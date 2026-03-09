@@ -1,15 +1,13 @@
 import {useCallback} from 'react';
-import {Alert, Platform} from 'react-native';
+import {Platform} from 'react-native';
 import {authService, type AppleTokenExchangeUserProfile} from '@sykamore/auth';
+import {errorCenter} from '@sykamore/client-runtime';
 import * as AppleAuthentication from 'expo-apple-authentication';
 
 type AppleSignInOutcome =
   | {completed: true}
   | {completed: false; cancelled: boolean};
 
-/**
- * Runs native Sign in with Apple then exchanges Apple identityToken via backend.
- */
 export function useAppleSignIn() {
   const isSupported = Platform.OS === 'ios';
 
@@ -20,10 +18,11 @@ export function useAppleSignIn() {
 
     const isAvailable = await AppleAuthentication.isAvailableAsync();
     if (!isAvailable) {
-      Alert.alert(
-        'Apple Sign In unavailable',
-        'This device does not support Sign in with Apple.',
-      );
+      errorCenter.report('Sign in with Apple is not available on this device.', {
+        title: 'Apple Sign-In Unavailable',
+        scope: 'local',
+        isRetryable: false,
+      });
       return {completed: false, cancelled: false};
     }
 
@@ -36,9 +35,13 @@ export function useAppleSignIn() {
       });
 
       if (!credential.identityToken) {
-        Alert.alert(
-          'Sign in failed',
-          'Apple did not return an identity token.',
+        errorCenter.report(
+          'Apple did not return the credentials needed to continue.',
+          {
+            title: 'Sign-In Failed',
+            scope: 'local',
+            isRetryable: false,
+          },
         );
         return {completed: false, cancelled: false};
       }
@@ -59,41 +62,45 @@ export function useAppleSignIn() {
         'code' in error &&
         typeof error.code === 'string'
           ? error.code
-          : undefined;
+          : null;
 
       if (code === 'ERR_REQUEST_CANCELED') {
         return {completed: false, cancelled: true};
       }
 
-      const message =
-        error instanceof Error
-          ? error.message
-          : 'Authentication failed. Please try again.';
-      Alert.alert('Sign in failed', message);
+      errorCenter.report(error, {
+        title: 'Sign-In Failed',
+        scope: 'local',
+      });
       return {completed: false, cancelled: false};
     }
   }, []);
 
-  return {startFlow, isSupported};
+  return {
+    startFlow,
+    isSupported,
+  };
 }
 
 function buildAppleUserProfile(
   credential: AppleAuthentication.AppleAuthenticationCredential,
 ): AppleTokenExchangeUserProfile | undefined {
-  const firstName = credential.fullName?.givenName?.trim();
-  const lastName = credential.fullName?.familyName?.trim();
-  const email = credential.email?.trim();
+  const firstName = credential.fullName?.givenName ?? undefined;
+  const lastName = credential.fullName?.familyName ?? undefined;
+  const email = credential.email ?? undefined;
 
-  const profile: AppleTokenExchangeUserProfile = {};
-  if (firstName ?? lastName) {
-    profile.name = {
-      firstName: firstName ?? undefined,
-      lastName: lastName ?? undefined,
-    };
-  }
-  if (email) {
-    profile.email = email;
+  if (!firstName && !lastName && !email) {
+    return undefined;
   }
 
-  return Object.keys(profile).length > 0 ? profile : undefined;
+  return {
+    email,
+    name:
+      firstName || lastName
+        ? {
+            firstName,
+            lastName,
+          }
+        : undefined,
+  };
 }

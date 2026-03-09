@@ -1,14 +1,18 @@
-import type {
-  ApiResponse,
-  PaginatedResponse,
-  UnitOfMeasure,
-  CursorDirection,
-  CursorOrder,
+import {
+  createPaginatedResponseSchema,
+  locationSchema,
+  type ApiResponse,
+  type CursorDirection,
+  type CursorOrder,
+  type Location,
+  type PaginatedResponse,
 } from '@sykamore/types';
-import {httpClient} from '../http-client';
+import {httpClient} from '../core/client';
 import {API_ENDPOINTS} from './endpoints';
 
-export type ListUomParams = {
+const paginatedLocationsSchema = createPaginatedResponseSchema(locationSchema);
+
+export type ListLocationsParams = {
   limit?: number;
   cursor?: string;
   direction?: CursorDirection;
@@ -17,10 +21,10 @@ export type ListUomParams = {
   count?: boolean;
 };
 
-export class UomApi {
-  async getUnits(
-    params: ListUomParams = {},
-  ): Promise<ApiResponse<PaginatedResponse<UnitOfMeasure>>> {
+export class LocationApi {
+  async getLocations(
+    params: ListLocationsParams = {},
+  ): Promise<ApiResponse<PaginatedResponse<Location>>> {
     const search = new URLSearchParams();
     if (typeof params.limit === 'number') {
       search.set('limit', String(params.limit));
@@ -43,10 +47,10 @@ export class UomApi {
 
     const queryString = search.toString();
     const endpoint = queryString
-      ? `${API_ENDPOINTS.UOM.LIST}?${queryString}`
-      : API_ENDPOINTS.UOM.LIST;
-    return httpClient.get<PaginatedResponse<UnitOfMeasure>>(endpoint);
+      ? `${API_ENDPOINTS.LOCATIONS.LIST}?${queryString}`
+      : API_ENDPOINTS.LOCATIONS.LIST;
+    return httpClient.get(endpoint, paginatedLocationsSchema);
   }
 }
 
-export const uomApi = new UomApi();
+export const locationApi = new LocationApi();

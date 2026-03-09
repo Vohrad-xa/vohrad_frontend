@@ -1,25 +1,23 @@
-import React, {createContext, useCallback, useContext, useMemo} from 'react';
-import {authService} from './auth-service';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {useAuthStore} from '@sykamore/store';
 import type {AuthContextValue, StartWebLoginOptions} from '@sykamore/types';
-
-const AuthContext = createContext<AuthContextValue | undefined>(undefined);
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
-  return context;
-}
+import {authService} from './auth-service';
+import {AuthContext} from './context/auth-context';
 
 export function AuthProvider({children}: {children: React.ReactNode}) {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const user = useAuthStore((s) => s.user);
-  const isLoading = useAuthStore((s) => s.isLoading);
-  const error = useAuthStore((s) => s.error);
-  const clearError = useAuthStore((s) => s.clearError);
-  const _hasHydrated = useAuthStore((s) => s._hasHydrated);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const error = useAuthStore((state) => state.error);
+  const clearError = useAuthStore((state) => state.clearError);
+  const authReady = useAuthStore((state) => state._hasHydrated);
+
+  useEffect(() => {
+    authService.startRuntime();
+    return () => {
+      authService.stopRuntime();
+    };
+  }, []);
 
   const startWebLogin = useCallback(
     async (returnTo?: string, options?: StartWebLoginOptions) => {
@@ -38,20 +36,20 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
       user,
       isLoading,
       error,
-      authReady: _hasHydrated,
+      authReady,
       startWebLogin,
       logout,
       clearError,
     }),
     [
-      isAuthenticated,
-      user,
-      isLoading,
-      error,
-      _hasHydrated,
-      startWebLogin,
-      logout,
+      authReady,
       clearError,
+      error,
+      isAuthenticated,
+      isLoading,
+      logout,
+      startWebLogin,
+      user,
     ],
   );
 

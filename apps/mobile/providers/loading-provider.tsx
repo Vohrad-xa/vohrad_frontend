@@ -5,7 +5,10 @@ import React, {
   useState,
   type ReactNode,
 } from 'react';
-import {loadingManager} from '@sykamore/api-client';
+import {
+  ensureClientRuntimeConnected,
+  requestTracker,
+} from '@sykamore/client-runtime';
 import {ErrorHandlerProvider} from './error-handler-provider';
 
 type LoadingContextValue = {
@@ -32,7 +35,9 @@ export function LoadingProvider({children}: LoadingProviderProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    return loadingManager.subscribe((state) => {
+    ensureClientRuntimeConnected();
+
+    return requestTracker.subscribe((state) => {
       setIsLoading(state.isVisible);
     });
   }, []);

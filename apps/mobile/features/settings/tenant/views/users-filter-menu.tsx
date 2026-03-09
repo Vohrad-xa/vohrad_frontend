@@ -1,10 +1,14 @@
-import React, {useMemo, useState, useCallback, useEffect} from 'react';
+import React, {useMemo, useState, useCallback, useLayoutEffect} from 'react';
 import {Platform} from 'react-native';
-import {buildUserOrderBy, parseUserOrderBy} from '@sykamore/store';
-import {useRouter} from 'expo-router';
+import {
+  buildUserOrderBy,
+  parseUserOrderBy,
+  type UserRoleFilter,
+} from '@sykamore/store';
+import {useNavigation, useRouter} from 'expo-router';
 import {SykaMenuView, type SykaMenuAction} from 'syka-menu';
 import {HeaderButton} from '@/components/ui';
-import {useRolesList} from '@/features/roles';
+import {useActiveRolesList} from '@/features/roles';
 import {AppIcons} from '@/utils';
 import {
   useSearchUsers,
@@ -14,7 +18,6 @@ import type {OrderByDirection, UserSortKey} from '@sykamore/types';
 
 type UsersFilterMenuProps = {
   searchQuery: string;
-  onFilterControlChange?: (control: React.ReactNode) => void;
   children: (
     data: Pick<
       ReturnType<typeof useSearchUsers>,
@@ -28,11 +31,15 @@ type UsersFilterMenuProps = {
   ) => React.ReactNode;
 };
 
+function sortRoleFilters(filters: UserRoleFilter[]): UserRoleFilter[] {
+  return [...filters].sort((left, right) => left.name.localeCompare(right.name));
+}
+
 export function UsersFilterMenu({
   searchQuery,
-  onFilterControlChange,
   children,
 }: UsersFilterMenuProps) {
+  const navigation = useNavigation();
   const router = useRouter();
   const [filters, setFilters] = useState<UsersFilterOptions>({
     role: null,
@@ -45,8 +52,7 @@ export function UsersFilterMenu({
       filters,
       odataOrderBy,
     });
-  const {roles: availableRoles} = useRolesList();
-  const [roleSourceUsers, setRoleSourceUsers] = useState(users);
+  const {roles: activeRoles} = useActiveRolesList();
 
   const activeSort = useMemo(
     () => parseUserOrderBy(odataOrderBy),
@@ -58,28 +64,21 @@ export function UsersFilterMenu({
   const nameSortDirection =
     activeSort.key === 'name' ? activeSort.direction : 'asc';
 
-  useEffect(() => {
-    if (filters.role === null) {
-      setRoleSourceUsers(users);
-    }
-  }, [filters.role, users]);
+  const roleFilters = useMemo(() => {
+    const roles = activeRoles
+      .filter((role) => Boolean(role.id && role.name))
+      .map((role) => ({
+        id: role.id,
+        name: role.name,
+      }));
 
-  const roles = useMemo(() => {
-    const roleSet = new Set<string>();
-    if (availableRoles.length > 0) {
-      availableRoles.forEach((role) => {
-        if (role.name) roleSet.add(role.name);
-      });
-    } else {
-      roleSourceUsers.forEach((user) => {
-        if (user.role_name) roleSet.add(user.role_name);
-      });
+    if (!filters.role) {
+      return sortRoleFilters(roles);
     }
-    if (filters.role) {
-      roleSet.add(filters.role);
-    }
-    return Array.from(roleSet).sort();
-  }, [availableRoles, filters.role, roleSourceUsers]);
+
+    const hasSelectedRole = roles.some((role) => role.id === filters.role?.id);
+    return sortRoleFilters(hasSelectedRole ? roles : [...roles, filters.role]);
+  }, [activeRoles, filters.role]);
 
   const applySort = useCallback(
     (key: UserSortKey) => {
@@ -94,15 +93,12 @@ export function UsersFilterMenu({
 
       setOdataOrderBy(buildUserOrderBy(key, nextDirection));
     },
-    [activeSort, setOdataOrderBy],
+    [activeSort],
   );
 
-  const applySortDirection = useCallback(
-    (key: UserSortKey, direction: OrderByDirection) => {
-      setOdataOrderBy(buildUserOrderBy(key, direction));
-    },
-    [setOdataOrderBy],
-  );
+  const applySortDirection = useCallback((key: UserSortKey, direction: OrderByDirection) => {
+    setOdataOrderBy(buildUserOrderBy(key, direction));
+  }, []);
 
   const handleMenuSelect = useCallback(
     (id: string) => {
@@ -112,7 +108,9 @@ export function UsersFilterMenu({
       }
 
       if (id.startsWith('role-')) {
-        setFilters((prev) => ({...prev, role: id.replace('role-', '')}));
+        const roleId = id.replace('role-', '');
+        const selectedRole = roleFilters.find((role) => role.id === roleId) ?? null;
+        setFilters((prev) => ({...prev, role: selectedRole}));
         return;
       }
 
@@ -150,7 +148,7 @@ export function UsersFilterMenu({
         router.push('/settings/tenant/users/add-user');
       }
     },
-    [applySort, applySortDirection, router],
+    [applySort, applySortDirection, roleFilters, router],
   );
 
   const renderFilterControl = useMemo(() => {
@@ -247,10 +245,11 @@ export function UsersFilterMenu({
             title: 'All Roles',
             state: filters.role === null ? 'on' : 'off',
           },
-          ...roles.map((role) => ({
-            id: `role-${role}`,
-            title: role,
-            state: filters.role === role ? ('on' as const) : ('off' as const),
+          ...roleFilters.map((role) => ({
+            id: `role-${role.id}`,
+            title: role.name,
+            state:
+              filters.role?.id === role.id ? ('on' as const) : ('off' as const),
           })),
         ],
       },
@@ -260,24 +259,24 @@ export function UsersFilterMenu({
       <SykaMenuView
         actions={menuActions}
         onPressAction={({nativeEvent}) => handleMenuSelect(nativeEvent.event)}
-        accessibilityLabel="Filter users"
-        accessibilityHint="Opens user filter menu"
       >
         {trigger}
       </SykaMenuView>
     );
   }, [
-    roles,
-    filters.role,
-    handleMenuSelect,
     activeSort.key,
     dateSortDirection,
+    filters.role,
+    handleMenuSelect,
     nameSortDirection,
+    roleFilters,
   ]);
 
-  React.useEffect(() => {
-    onFilterControlChange?.(renderFilterControl);
-  }, [onFilterControlChange, renderFilterControl]);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => renderFilterControl,
+    });
+  }, [navigation, renderFilterControl]);
 
   return children({
     users,

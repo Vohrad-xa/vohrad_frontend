@@ -7,7 +7,7 @@ import {useTenantManager} from '@sykamore/store';
 export function useTenantDetails() {
   const {tenant} = useTenantManager();
 
-  const title = tenant?.sub_domain ?? 'Organization';
+  const title = tenant?.name ?? 'Organization';
   const subtitle = tenant?.email ?? '';
 
   const avatarLabel = useMemo(() => title.slice(0, 2).toUpperCase(), [title]);
@@ -17,7 +17,7 @@ export function useTenantDetails() {
     title,
     subtitle,
     avatarLabel,
-    name: tenant?.sub_domain ?? '',
+    name: tenant?.name ?? '',
     email: tenant?.email ?? '',
     phone: tenant?.telephone ?? '',
     website: tenant?.website ?? '',
