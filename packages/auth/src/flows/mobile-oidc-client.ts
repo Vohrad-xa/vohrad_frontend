@@ -1,7 +1,13 @@
 import {
-  ApiError,
+  normalizeTransportError,
+  parseProblemResponse,
+} from '@sykamore/api-client';
+import {
+  parseJson,
+  parseJsonWithSchema,
+  validateAuthTokens,
   validateMobileOidcLoginParams,
-  validateOidcDiscoveryDocument,
+  oidcDiscoveryDocumentSchema,
   type AuthTokens,
   type MobileOidcLoginParams,
   type OidcDiscoveryDocument,
@@ -19,7 +25,7 @@ export class MobileOidcClient {
 
   async fetchDiscoveryDocument(): Promise<OidcDiscoveryDocument> {
     const config = getMobileOidcClientConfig();
-    const response = await fetch(
+    const {response, rawBody} = await this.fetchRaw(
       `${config.issuerUrl.replace(/\/$/, '')}/.well-known/openid-configuration`,
       {
         method: 'GET',
@@ -30,17 +36,12 @@ export class MobileOidcClient {
     );
 
     if (!response.ok) {
-      throw new ApiError({
-        status: response.status,
-        code: 'OIDC_DISCOVERY_FAILED',
-        title: 'Sign-In Unavailable',
-        detail: 'Unable to load the sign-in configuration.',
-        source: 'problem',
-      });
+      throw parseProblemResponse(response, rawBody);
     }
 
-    const discoveryResult = validateOidcDiscoveryDocument(
-      await response.json(),
+    const discoveryResult = parseJsonWithSchema(
+      rawBody,
+      oidcDiscoveryDocumentSchema,
     );
     if (!discoveryResult.success) {
       throw createSignInUnavailableError(
@@ -123,25 +124,29 @@ export class MobileOidcClient {
       fallbackDetail: string;
     },
   ): Promise<AuthTokens> {
-    const response = await fetch(tokenEndpoint, {
+    const {response, rawBody} = await this.fetchRaw(tokenEndpoint, {
       method: 'POST',
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
       body: body.toString(),
     });
 
     if (!response.ok) {
-      const errorText = await response.text().catch(() => '');
-      throw new ApiError({
-        status: response.status,
-        code: errorMeta.code,
-        title: errorMeta.title,
-        detail: errorText.trim() || errorMeta.fallbackDetail,
-        source: 'problem',
-      });
+      throw parseProblemResponse(response, rawBody);
     }
 
-    const raw = (await response.json()) as AuthTokens;
-    if (!raw.access_token || !raw.token_type || !raw.expires_in) {
+    const parsedJson = parseJson(rawBody);
+    if (!parsedJson.success) {
+      throw createInvalidAuthResponseError(
+        errorMeta.title === 'Session Expired'
+          ? 'The session refresh response was invalid. Please sign in again.'
+          : 'The sign-in service returned an invalid response.',
+        'INVALID_OIDC_TOKEN_RESPONSE',
+        errorMeta.title,
+      );
+    }
+
+    const tokensResult = validateAuthTokens(parsedJson.data);
+    if (!tokensResult.success) {
       throw createInvalidAuthResponseError(
         errorMeta.title === 'Session Expired'
           ? 'The session refresh response was invalid. Please sign in again.'
@@ -152,8 +157,21 @@ export class MobileOidcClient {
     }
 
     return {
-      ...raw,
+      ...tokensResult.data,
       issued_at: Date.now(),
     };
+  }
+
+  private async fetchRaw(
+    url: string,
+    init: RequestInit,
+  ): Promise<{response: Response; rawBody: string}> {
+    try {
+      const response = await fetch(url, init);
+      const rawBody = (await response.text()).trim();
+      return {response, rawBody};
+    } catch (error) {
+      throw normalizeTransportError(error);
+    }
   }
 }

@@ -1,6 +1,8 @@
 export type {ApiResponse, TokenResponse} from '@sykamore/types';
 export {ApiError} from '@sykamore/types';
 export {HttpClient, httpClient} from './core/client';
+export {normalizeTransportError} from './core/network-error';
+export {parseProblemResponse} from './core/problem-parser';
 export {
   apiClientEvents,
   type ApiClientErrorEvent,

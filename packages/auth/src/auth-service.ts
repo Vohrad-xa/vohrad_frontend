@@ -2,11 +2,13 @@ import {authApi, httpClient} from '@sykamore/api-client';
 import {
   ApiError,
   validateAuthTokens,
+  validateMobileSocialLoginParams,
   validateStartWebLoginOptions,
   type AppleTokenExchangeUserProfile,
   type AuthTokens,
   type MobileOidcLoginParams,
   type MobileOidcConfig,
+  type MobileSocialLoginParams,
   type OidcDiscoveryDocument,
   type StartWebLoginOptions,
 } from '@sykamore/types';
@@ -14,7 +16,10 @@ import {
   getMobileOidcClientConfig,
   initMobileOidcConfig,
 } from './config/mobile-oidc-config';
-import {createSessionExpiredError} from './core/auth-client-errors';
+import {
+  createSessionExpiredError,
+  createSignInStateError,
+} from './core/auth-client-errors';
 import {isWebRuntime} from './core/platform';
 import {authStoreAdapter} from './core/store-adapter';
 import {MobileOidcClient} from './flows/mobile-oidc-client';
@@ -68,7 +73,9 @@ export class AuthService {
     options?: StartWebLoginOptions,
   ): Promise<void> {
     if (!isWebRuntime()) {
-      throw new Error('Web sign-in is only available in a browser environment.');
+      throw new Error(
+        'Web sign-in is only available in a browser environment.',
+      );
     }
 
     authStoreAdapter.setLoading(true);
@@ -182,7 +189,8 @@ export class AuthService {
             ? {
                 ...tokensResult.data,
                 refresh_token:
-                  tokensResult.data.refresh_token ?? currentTokens?.refresh_token,
+                  tokensResult.data.refresh_token ??
+                  currentTokens?.refresh_token,
                 refresh_flow:
                   tokensResult.data.refresh_flow ?? currentTokens?.refresh_flow,
               }
@@ -220,15 +228,20 @@ export class AuthService {
     }
   }
 
-  private async completeMobileSocialSignIn(params: {
-    provider: 'apple' | 'google';
-    token: string;
-    userProfile?: AppleTokenExchangeUserProfile;
-  }): Promise<void> {
+  private async completeMobileSocialSignIn(
+    params: MobileSocialLoginParams,
+  ): Promise<void> {
     authStoreAdapter.setLoading(true);
 
     try {
-      const tokens = await this.mobileSocialClient.exchangeProviderToken(params);
+      const paramsResult = validateMobileSocialLoginParams(params);
+      if (!paramsResult.success) {
+        throw this.createInvalidSocialPayloadError(params.provider);
+      }
+
+      const tokens = await this.mobileSocialClient.exchangeProviderToken(
+        paramsResult.data,
+      );
       await this.sessionBootstrapper.establishSession({
         ...tokens,
         refresh_flow: 'social_exchange',
@@ -239,6 +252,22 @@ export class AuthService {
     } finally {
       authStoreAdapter.setLoading(false);
     }
+  }
+
+  private createInvalidSocialPayloadError(
+    provider: MobileSocialLoginParams['provider'],
+  ): ApiError {
+    if (provider === 'apple') {
+      return createSignInStateError(
+        'Apple returned an invalid sign-in payload.',
+        'INVALID_APPLE_SIGN_IN_REQUEST',
+      );
+    }
+
+    return createSignInStateError(
+      'Google returned an invalid sign-in payload.',
+      'INVALID_GOOGLE_SIGN_IN_REQUEST',
+    );
   }
 
   private async refreshMobileTokens(
@@ -254,9 +283,8 @@ export class AuthService {
       return this.mobileSocialClient.refreshTokens(refreshToken);
     }
 
-    const refreshedTokens = await this.mobileOidcClient.refreshTokens(
-      refreshToken,
-    );
+    const refreshedTokens =
+      await this.mobileOidcClient.refreshTokens(refreshToken);
     return {
       ...refreshedTokens,
       refresh_token: refreshedTokens.refresh_token ?? refreshToken,
@@ -264,9 +292,9 @@ export class AuthService {
     };
   }
 
-  private resolveMobileRefreshFlow(tokens: AuthTokens | null):
-    | 'oidc_direct'
-    | 'social_exchange' {
+  private resolveMobileRefreshFlow(
+    tokens: AuthTokens | null,
+  ): 'oidc_direct' | 'social_exchange' {
     return tokens?.refresh_flow === 'social_exchange'
       ? 'social_exchange'
       : 'oidc_direct';
