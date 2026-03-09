@@ -1,5 +1,6 @@
 import {useCallback, useMemo, useState} from 'react';
 import {Platform} from 'react-native';
+import {errorCenter} from '@sykamore/client-runtime';
 import {useUploadAttachment, type AttachmentTargetType} from '@sykamore/store';
 import * as ImagePicker from 'expo-image-picker';
 import type * as DocumentPickerTypes from 'expo-document-picker';
@@ -29,6 +30,14 @@ type PendingAttachment = {
   size?: number;
 };
 
+type UploadableFile =
+  | Blob
+  | {
+      uri: string;
+      name: string;
+      type: string;
+    };
+
 function inferFileName(uri: string): string {
   const sanitized = uri.split('?')[0] ?? uri;
   const segments = sanitized.split('/');
@@ -55,8 +64,7 @@ function normalizePendingData(params: {
   size?: number | null;
   fileSize?: number | null;
 }): Omit<PendingAttachment, 'assetRef'> | null {
-  const uri = params.uri;
-  if (!uri) {
+  if (!params.uri) {
     return null;
   }
 
@@ -68,14 +76,13 @@ function normalizePendingData(params: {
       ? params.fileName.trim()
       : undefined);
 
-  const name = providedName ?? inferFileName(uri);
+  const name = providedName ?? inferFileName(params.uri);
   const mimeType =
     (params.mimeType && params.mimeType.length > 0
       ? params.mimeType
       : undefined) ??
     (params.type === 'image' ? 'image/jpeg' : undefined) ??
     'application/octet-stream';
-  const extension = inferExtension(name);
   const size =
     typeof params.size === 'number'
       ? params.size
@@ -84,10 +91,10 @@ function normalizePendingData(params: {
         : undefined;
 
   return {
-    uri,
+    uri: params.uri,
     name,
     mimeType,
-    extension,
+    extension: inferExtension(name),
     size,
   };
 }
@@ -113,8 +120,7 @@ function buildPendingFromDocument(
 }
 
 function buildPendingFromCamera(asset: CameraAsset): PendingAttachment | null {
-  const now = new Date();
-  const timestamp = now.toISOString().slice(0, 19).replace(/[T:]/g, '');
+  const timestamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '');
   const fileName = `IMG-${timestamp}.jpg`;
 
   const normalized = normalizePendingData({
@@ -136,6 +142,127 @@ function buildPendingFromCamera(asset: CameraAsset): PendingAttachment | null {
   };
 }
 
+async function loadDocumentPicker(): Promise<DocumentPickerModule | null> {
+  const DocumentPicker = (await import('expo-document-picker').catch(
+    () => null,
+  )) as DocumentPickerModule | null;
+
+  if (!DocumentPicker) {
+    return null;
+  }
+
+  if (
+    DocumentPicker.isAvailableAsync &&
+    !(await DocumentPicker.isAvailableAsync())
+  ) {
+    return null;
+  }
+
+  return DocumentPicker;
+}
+
+async function pickDeviceDocument(): Promise<PendingAttachment | null> {
+  const DocumentPicker = await loadDocumentPicker();
+  if (!DocumentPicker) {
+    return null;
+  }
+
+  const result = await DocumentPicker.getDocumentAsync({
+    multiple: false,
+    copyToCacheDirectory: true,
+    type: '*/*',
+  });
+
+  if (result.canceled || !result.assets?.length) {
+    return null;
+  }
+
+  return buildPendingFromDocument(result.assets[0]);
+}
+
+async function pickGalleryImage(): Promise<PendingAttachment | null> {
+  const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (!permission.granted) {
+    return null;
+  }
+
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ['images'],
+    quality: 0.85,
+    allowsEditing: false,
+  });
+
+  if (result.canceled || !result.assets?.length) {
+    return null;
+  }
+
+  return buildPendingFromCamera(result.assets[0]);
+}
+
+async function captureCameraImage(): Promise<PendingAttachment | null> {
+  const permission = await ImagePicker.requestCameraPermissionsAsync();
+  if (!permission.granted) {
+    return null;
+  }
+
+  const result = await ImagePicker.launchCameraAsync({
+    mediaTypes: ['images'],
+    quality: 0.85,
+  });
+
+  if (result.canceled || !result.assets?.length) {
+    return null;
+  }
+
+  return buildPendingFromCamera(result.assets[0]);
+}
+
+async function resolveWebFile(
+  assetRef: AssetRef,
+  uri: string,
+  filename: string,
+  mimeType: string,
+): Promise<File | Blob> {
+  if (assetRef.kind === 'document' && assetRef.asset.file) {
+    return assetRef.asset.file;
+  }
+
+  const response = await fetch(uri);
+  const blob = await response.blob();
+  return new File([blob], filename, {type: mimeType});
+}
+
+async function buildUploadFormData(
+  pendingAttachment: PendingAttachment,
+  targetType: AttachmentTargetType,
+  targetId: string,
+): Promise<FormData> {
+  const {assetRef, uri, name, mimeType, extension, size} = pendingAttachment;
+  const formData = new FormData();
+
+  const fileValue: UploadableFile =
+    Platform.OS === 'web'
+      ? await resolveWebFile(assetRef, uri, name, mimeType)
+      : {uri, name, type: mimeType};
+
+  formData.append('file', fileValue as unknown as Blob);
+  formData.append('target_type', targetType);
+  formData.append('target_id', targetId);
+  formData.append('original_filename', name);
+  formData.append('filename', name);
+  formData.append('file_type', mimeType);
+
+  if (extension) {
+    formData.append('extension', extension);
+  }
+
+  if (typeof size === 'number') {
+    formData.append('size', String(size));
+  }
+
+  return formData;
+}
+
 export function useAttachmentUpload(
   targetType?: AttachmentTargetType | null,
   targetId?: string | null,
@@ -147,201 +274,99 @@ export function useAttachmentUpload(
     useState<PendingAttachment | null>(null);
   const [isPicking, setIsPicking] = useState(false);
 
-  const selectFromDevice = useCallback(async () => {
-    if (isPicking || isSaving) {
-      return;
-    }
-
-    setIsPicking(true);
-    try {
-      const DocumentPicker = (await import('expo-document-picker').catch(
-        () => null,
-      )) as DocumentPickerModule | null;
-
-      if (!DocumentPicker) {
+  const runSelection = useCallback(
+    async (
+      select: () => Promise<PendingAttachment | null>,
+      errorTitle: string,
+    ) => {
+      if (isPicking || isSaving) {
         return;
       }
 
-      if (
-        DocumentPicker.isAvailableAsync &&
-        !(await DocumentPicker.isAvailableAsync())
-      ) {
-        return;
+      setIsPicking(true);
+      try {
+        const pending = await select();
+        if (pending) {
+          setPendingAttachment(pending);
+        }
+      } catch (error) {
+        errorCenter.report(error, {
+          title: errorTitle,
+          scope: 'local',
+        });
+      } finally {
+        setIsPicking(false);
       }
+    },
+    [isPicking, isSaving],
+  );
 
-      const result = await DocumentPicker.getDocumentAsync({
-        multiple: false,
-        copyToCacheDirectory: true,
-        type: '*/*',
-      });
+  const selectFromDevice = useCallback(
+    async () => runSelection(pickDeviceDocument, 'File selection failed'),
+    [runSelection],
+  );
 
-      if (result.canceled || !result.assets || result.assets.length === 0) {
-        return;
-      }
+  const selectFromGallery = useCallback(
+    async () => runSelection(pickGalleryImage, 'Image selection failed'),
+    [runSelection],
+  );
 
-      const [asset] = result.assets;
-      const pending = buildPendingFromDocument(asset);
-
-      if (!pending) {
-        return;
-      }
-
-      setPendingAttachment(pending);
-    } catch (_error) {
-      // Silently handle error
-    } finally {
-      setIsPicking(false);
-    }
-  }, [isPicking, isSaving]);
-
-  const selectFromGallery = useCallback(async () => {
-    if (isPicking || isSaving) {
-      return;
-    }
-
-    setIsPicking(true);
-    try {
-      const permission =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-      if (!permission.granted) {
-        return;
-      }
-
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
-        quality: 0.85,
-        allowsEditing: false,
-      });
-
-      if (result.canceled || !result.assets || result.assets.length === 0) {
-        return;
-      }
-
-      const [asset] = result.assets;
-      const pending = buildPendingFromCamera(asset);
-
-      if (!pending) {
-        return;
-      }
-
-      setPendingAttachment(pending);
-    } catch (_error) {
-      // Silently handle error
-    } finally {
-      setIsPicking(false);
-    }
-  }, [isPicking, isSaving]);
-
-  const capturePhoto = useCallback(async () => {
-    if (isPicking || isSaving) {
-      return;
-    }
-
-    setIsPicking(true);
-    try {
-      const permission = await ImagePicker.requestCameraPermissionsAsync();
-
-      if (!permission.granted) {
-        return;
-      }
-
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ['images'],
-        quality: 0.85,
-      });
-
-      if (result.canceled || !result.assets || result.assets.length === 0) {
-        return;
-      }
-
-      const [asset] = result.assets;
-      const pending = buildPendingFromCamera(asset);
-
-      if (!pending) {
-        return;
-      }
-
-      setPendingAttachment(pending);
-    } catch (_error) {
-      // Silently handle error
-    } finally {
-      setIsPicking(false);
-    }
-  }, [isPicking, isSaving]);
+  const capturePhoto = useCallback(
+    async () => runSelection(captureCameraImage, 'Photo capture failed'),
+    [runSelection],
+  );
 
   const resetPending = useCallback(() => {
     setPendingAttachment(null);
   }, []);
 
   const updatePendingName = useCallback((newName: string) => {
-    setPendingAttachment((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        name: newName,
-      };
-    });
+    setPendingAttachment((current) =>
+      current
+        ? {
+            ...current,
+            name: newName,
+            extension: inferExtension(newName),
+          }
+        : current,
+    );
   }, []);
 
   const savePendingAttachment = useCallback(async () => {
-    if (isSaving || !pendingAttachment) {
-      return false;
-    }
-
-    if (!targetId || !targetType) {
+    if (isSaving || !pendingAttachment || !targetId || !targetType) {
       return false;
     }
 
     try {
-      const {assetRef, uri, name, mimeType, extension, size} =
-        pendingAttachment;
-      const formData = new FormData();
-      const fileValue =
-        Platform.OS === 'web'
-          ? await resolveWebFile(assetRef, uri, name, mimeType)
-          : ({
-              uri,
-              name,
-              type: mimeType,
-            } as unknown as Blob);
-
-      formData.append('file', fileValue);
-      formData.append('target_type', targetType);
-      formData.append('target_id', targetId);
-      formData.append('original_filename', name);
-      formData.append('filename', name);
-      formData.append('file_type', mimeType);
-      if (extension) {
-        formData.append('extension', extension);
-      }
-      if (typeof size === 'number') {
-        formData.append('size', String(size));
-      }
-
+      const formData = await buildUploadFormData(
+        pendingAttachment,
+        targetType,
+        targetId,
+      );
       await uploadAttachment(formData);
       setPendingAttachment(null);
       return true;
-    } catch (_error) {
-      // Silently handle error
+    } catch (error) {
+      errorCenter.report(error, {
+        title: 'Upload failed',
+        scope: 'local',
+      });
       return false;
     }
   }, [isSaving, pendingAttachment, targetId, targetType, uploadAttachment]);
 
-  const hasPending = !!pendingAttachment;
-
-  const pendingMetadata = useMemo(() => {
-    if (!pendingAttachment) {
-      return null;
-    }
-
-    return {
-      name: pendingAttachment.name,
-      mimeType: pendingAttachment.mimeType,
-      size: pendingAttachment.size,
-      uri: pendingAttachment.uri,
-    };
-  }, [pendingAttachment]);
+  const pendingMetadata = useMemo(
+    () =>
+      pendingAttachment
+        ? {
+            name: pendingAttachment.name,
+            mimeType: pendingAttachment.mimeType,
+            size: pendingAttachment.size,
+            uri: pendingAttachment.uri,
+          }
+        : null,
+    [pendingAttachment],
+  );
 
   return {
     selectFromDevice,
@@ -352,23 +377,8 @@ export function useAttachmentUpload(
     updatePendingName,
     pendingAttachment,
     pendingMetadata,
-    hasPending,
+    hasPending: !!pendingAttachment,
     isPicking,
     isSaving,
   };
-}
-
-async function resolveWebFile(
-  assetRef: AssetRef,
-  uri: string,
-  filename: string,
-  mimeType: string,
-) {
-  if (assetRef.kind === 'document' && assetRef.asset.file) {
-    return assetRef.asset.file;
-  }
-
-  const response = await fetch(uri);
-  const blob = await response.blob();
-  return new File([blob], filename, {type: mimeType});
 }

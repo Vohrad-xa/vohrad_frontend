@@ -89,25 +89,21 @@ export function useAttachmentsBulkActions<T extends ItemAttachment>({
     const count = selectedItems.length;
     if (count === 0) return;
 
-    try {
-      const shared = await shareAttachments(selectedItems);
+    const shared = await shareAttachments(selectedItems);
 
-      if (!shared) {
-        if (Platform.OS === 'android') {
-          selection.disableSelectionMode();
-        }
-        return;
+    if (!shared) {
+      if (Platform.OS === 'android') {
+        selection.disableSelectionMode();
       }
-
-      selection.disableSelectionMode();
-      showSnack(
-        count === 1
-          ? `1 ${labelSingular} shared`
-          : `${count} ${labelPlural} shared`,
-      );
-    } catch (error) {
-      console.error('Share operation failed:', error);
+      return;
     }
+
+    selection.disableSelectionMode();
+    showSnack(
+      count === 1
+        ? `1 ${labelSingular} shared`
+        : `${count} ${labelPlural} shared`,
+    );
   }, [selection, labelSingular, labelPlural, shareAttachments, showSnack]);
 
   return {handleDeleteSelected, handleShareSelected, isProcessing};

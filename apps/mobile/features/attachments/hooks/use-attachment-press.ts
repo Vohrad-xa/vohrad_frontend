@@ -60,18 +60,33 @@ export function useAttachmentPress() {
           await shareDownloadedFile(
             localPath,
             attachment.original_filename ?? attachment.filename ?? '',
+            attachment.file_type,
           );
           return;
         }
 
-        if (attachment.kind === 'pdf') {
-          if (Platform.OS === 'web') {
-            window.open(sourceUrl, '_blank', 'noopener,noreferrer');
+        if (attachment.kind === 'document') {
+          if (Platform.OS === 'ios') {
+            router.push({
+              pathname: '/(modals)/preview/document',
+              params: {
+                attachmentId: attachment.id,
+                sourceUrl,
+                originalFilename:
+                  attachment.original_filename ?? attachment.filename ?? '',
+                filename: attachment.filename ?? '',
+                extension: attachment.extension ?? '',
+                fileType: attachment.file_type ?? '',
+              },
+            });
             return;
           }
 
           await Linking.openURL(sourceUrl);
+          return;
         }
+
+        await Linking.openURL(sourceUrl);
       } catch (error) {
         errorCenter.report(error, {
           title: 'Attachment unavailable',

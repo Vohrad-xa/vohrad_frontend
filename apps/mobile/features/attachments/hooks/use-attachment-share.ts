@@ -1,6 +1,6 @@
 import {useCallback, useState} from 'react';
+import {errorCenter} from '@sykamore/client-runtime';
 import {resolveAttachmentItemUrl} from '@sykamore/store';
-import {showAlert} from '@/utils';
 import {
   downloadDocumentFile,
   shareDownloadedFile,
@@ -8,44 +8,45 @@ import {
 } from '../utils';
 import type {ItemAttachment} from '@sykamore/types';
 
-/**
- * Reusable hook for downloading and sharing attachments.
- * Extracts the pattern used in preview modals (document.tsx, image.tsx).
- */
+type DownloadedAttachment = {
+  localPath: string;
+  displayName: string;
+  mimeType?: string;
+};
+
+async function downloadAttachment(
+  attachment: ItemAttachment,
+): Promise<DownloadedAttachment> {
+  const sourceUrl = await resolveAttachmentItemUrl(attachment);
+  const localPath = await downloadDocumentFile({
+    sourceUrl,
+    id: attachment.id,
+    originalFilename: attachment.original_filename ?? attachment.filename ?? '',
+    extension: attachment.extension ?? '',
+  });
+
+  return {
+    localPath,
+    displayName:
+      attachment.original_filename ?? attachment.filename ?? 'document',
+    mimeType: attachment.file_type ?? undefined,
+  };
+}
+
 export function useAttachmentShare() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const shareAttachments = useCallback(
     async (attachments: ItemAttachment[]): Promise<boolean> => {
-      if (attachments.length === 0) {
+      if (attachments.length === 0 || isProcessing) {
         return false;
       }
 
       setIsProcessing(true);
       try {
-        const downloads: Array<{
-          localPath: string;
-          displayName: string;
-          mimeType?: string;
-        }> = [];
-
+        const downloads: DownloadedAttachment[] = [];
         for (const attachment of attachments) {
-          const sourceUrl = await resolveAttachmentItemUrl(attachment);
-
-          const localPath = await downloadDocumentFile({
-            sourceUrl,
-            id: attachment.id,
-            originalFilename:
-              attachment.original_filename ?? attachment.filename ?? '',
-            extension: attachment.extension ?? '',
-          });
-
-          downloads.push({
-            localPath,
-            displayName:
-              attachment.original_filename ?? attachment.filename ?? 'document',
-            mimeType: attachment.file_type ?? undefined,
-          });
+          downloads.push(await downloadAttachment(attachment));
         }
 
         const result =
@@ -56,22 +57,21 @@ export function useAttachmentShare() {
                 downloads[0].mimeType,
               )
             : await shareDownloadedFiles(
-                downloads.map((item) => item.localPath),
+                downloads.map((download) => download.localPath),
               );
 
         return result.success && !result.dismissedAction;
       } catch (error) {
-        console.error('Failed to share attachment:', error);
-        showAlert({
+        errorCenter.report(error, {
           title: 'Share failed',
-          message: 'Unable to share this file. Please try again.',
+          scope: 'local',
         });
-        throw error;
+        return false;
       } finally {
         setIsProcessing(false);
       }
     },
-    [],
+    [isProcessing],
   );
 
   const shareAttachment = useCallback(
