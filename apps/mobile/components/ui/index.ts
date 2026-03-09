@@ -3,7 +3,6 @@ export {Toggle} from './toggle';
 export {Slider} from './slider';
 export {HeaderButton} from './header-button';
 export {EmptyState} from './empty-state';
-export {AnimatedBlurView} from './animated-blur-view';
 export * from './themed-components';
 export {LoadingOverlay} from './loading-overlay';
 export {BannerTop, type Banner} from './banner';

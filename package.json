@@ -33,16 +33,12 @@
     "format": "prettier . --write",
     "check:all": "turbo run lint && turbo run typecheck && turbo run format"
   },
-  "packageManager": "pnpm@10.29.3",
+  "packageManager": "pnpm@10.31.0",
   "pnpm": {
     "overrides": {
       "glob": "^13.0.1",
       "rimraf": "^6.0.1",
-      "react": "19.2.0",
-      "@shopify/flash-list": "2.0.2",
-      "react-native-reanimated": "4.2.1",
-      "react-native-webview": "13.16.0",
-      "react-native-screens": "4.23.0"
+      "react": "19.2.0"
     },
     "ignoredBuiltDependencies": [
       "esbuild"
