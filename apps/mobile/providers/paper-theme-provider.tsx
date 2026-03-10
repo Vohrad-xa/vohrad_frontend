@@ -53,6 +53,11 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
           level5: surfaceBase,
         },
 
+        // Snackbar / inverse surfaces
+        inverseSurface: scheme === 'dark' ? Palette.Greige : Palette.fog,
+        inverseOnSurface: Palette.slate,
+        inversePrimary: Palette.deepblue,
+
         // Errors
         error: Palette.red,
         onError: theme.modalBackground,

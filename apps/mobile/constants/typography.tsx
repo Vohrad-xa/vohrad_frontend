@@ -1,58 +1,96 @@
-import {Platform, type TextProps} from 'react-native';
+import {Platform, type TextProps, type TextStyle} from 'react-native';
 import {generateVersion} from '../utils/versioning';
-import type {MD3TypescaleKey} from 'react-native-paper';
+import {type MD3TypescaleKey, useTheme} from 'react-native-paper';
 
-type PaperVariant = `${MD3TypescaleKey}`;
+type DynamicTypeRamp = NonNullable<TextProps['dynamicTypeRamp']>;
+type PaperFont = `${MD3TypescaleKey}`;
 
-export type Typography =
-  | 'largeTitle'
-  | 'title1'
-  | 'title2'
-  | 'title3'
-  | 'headline'
-  | 'body'
-  | 'label'
-  | 'value'
-  | 'callout'
-  | 'subheadline'
-  | 'footnote'
-  | 'caption'
-  | 'caption2';
-
-const IOS_TYPOGRAPHY: Record<
-  Typography,
-  {dynamicTypeRamp: TextProps['dynamicTypeRamp']; baseSize: number}
-> = {
-  largeTitle: {dynamicTypeRamp: 'largeTitle', baseSize: 34},
-  title1: {dynamicTypeRamp: 'title1', baseSize: 28},
-  title2: {dynamicTypeRamp: 'title2', baseSize: 22},
-  title3: {dynamicTypeRamp: 'title3', baseSize: 20},
-  headline: {dynamicTypeRamp: 'headline', baseSize: 17},
-  body: {dynamicTypeRamp: 'body', baseSize: 17},
-  label: {dynamicTypeRamp: 'body', baseSize: 17},
-  value: {dynamicTypeRamp: 'body', baseSize: 17},
-  callout: {dynamicTypeRamp: 'callout', baseSize: 16},
-  subheadline: {dynamicTypeRamp: 'subheadline', baseSize: 15},
-  footnote: {dynamicTypeRamp: 'footnote', baseSize: 13},
-  caption: {dynamicTypeRamp: 'caption1', baseSize: 12},
-  caption2: {dynamicTypeRamp: 'caption2', baseSize: 11},
+type TypographyEntry = {
+  readonly ios: {
+    readonly dynamicTypeRamp: DynamicTypeRamp;
+    readonly fontSize: number;
+  };
+  readonly paper: {
+    readonly variant: PaperFont;
+  };
 };
 
-const PAPER_TYPOGRAPHY: Record<Typography, PaperVariant> = {
-  largeTitle: 'headlineMedium',
-  title1: 'titleLarge',
-  title2: 'titleMedium',
-  title3: 'titleSmall',
-  headline: 'headlineSmall',
-  body: 'bodyLarge',
-  subheadline: 'bodySmall',
-  label: 'labelLarge',
-  value: 'labelMedium',
-  callout: 'bodySmall',
-  footnote: 'bodySmall',
-  caption: 'labelSmall',
-  caption2: 'labelSmall',
-};
+const TYPOGRAPHY = {
+  largeTitle: {
+    ios: {dynamicTypeRamp: 'largeTitle', fontSize: 34},
+    paper: {variant: 'headlineMedium'},
+  },
+  title1: {
+    ios: {dynamicTypeRamp: 'title1', fontSize: 28},
+    paper: {variant: 'titleLarge'},
+  },
+  title2: {
+    ios: {dynamicTypeRamp: 'title2', fontSize: 22},
+    paper: {variant: 'titleMedium'},
+  },
+  title3: {
+    ios: {dynamicTypeRamp: 'title3', fontSize: 20},
+    paper: {variant: 'titleSmall'},
+  },
+  headline: {
+    ios: {dynamicTypeRamp: 'headline', fontSize: 17},
+    paper: {variant: 'headlineSmall'},
+  },
+  body: {
+    ios: {dynamicTypeRamp: 'body', fontSize: 17},
+    paper: {variant: 'bodyLarge'},
+  },
+  label: {
+    ios: {dynamicTypeRamp: 'body', fontSize: 17},
+    paper: {variant: 'labelLarge'},
+  },
+  value: {
+    ios: {dynamicTypeRamp: 'body', fontSize: 17},
+    paper: {variant: 'labelMedium'},
+  },
+  callout: {
+    ios: {dynamicTypeRamp: 'callout', fontSize: 16},
+    paper: {variant: 'bodySmall'},
+  },
+  subheadline: {
+    ios: {dynamicTypeRamp: 'subheadline', fontSize: 15},
+    paper: {variant: 'bodyMedium'},
+  },
+  footnote: {
+    ios: {dynamicTypeRamp: 'footnote', fontSize: 13},
+    paper: {variant: 'bodySmall'},
+  },
+  caption: {
+    ios: {dynamicTypeRamp: 'caption1', fontSize: 12},
+    paper: {variant: 'labelSmall'},
+  },
+  caption2: {
+    ios: {dynamicTypeRamp: 'caption2', fontSize: 11},
+    paper: {variant: 'labelSmall'},
+  },
+} as const satisfies Record<string, TypographyEntry>;
+
+export type Typography = keyof typeof TYPOGRAPHY;
+
+const TYPOGRAPHY_KEYS = Object.keys(TYPOGRAPHY) as Typography[];
+
+export function useTypography(): Record<Typography, TextStyle> {
+  const {fonts} = useTheme();
+
+  const result = {} as Record<Typography, TextStyle>;
+  for (const key of TYPOGRAPHY_KEYS) {
+    const entry = TYPOGRAPHY[key];
+    result[key] =
+      Platform.OS === 'ios'
+        ? {fontSize: entry.ios.fontSize}
+        : fonts[entry.paper.variant];
+  }
+  return result;
+}
+
+export function getDynamicTypeRamp(variant: Typography): DynamicTypeRamp {
+  return TYPOGRAPHY[variant].ios.dynamicTypeRamp;
+}
 
 export const createDesignSystem = (
   screenWidth: number,
@@ -61,11 +99,6 @@ export const createDesignSystem = (
 ) => {
   const system = {
     screen: {width: screenWidth, height: screenHeight, fontScale},
-
-    typography: {
-      ios: IOS_TYPOGRAPHY,
-      paper: PAPER_TYPOGRAPHY,
-    },
 
     fontWeight: {
       regular: '400',
@@ -138,15 +171,9 @@ export const createDesignSystem = (
         fontWeight: '500',
       },
       card: {borderRadius: 18, padding: 16},
-      modal: {borderRadius: 25, padding: 24},
       listItem: {minHeight: 44, paddingVertical: 10, paddingHorizontal: 16},
       separator: {height: 0.5, marginLeft: 16},
       tapTarget: {minSize: 44},
-      searchBar: {height: 36, borderRadius: 10, paddingHorizontal: 12},
-      tabBar: {
-        height: Platform.OS === 'android' ? 100 : undefined,
-        paddingBottom: 0,
-      },
     } as const,
 
     iconSize: {
@@ -162,16 +189,10 @@ export const createDesignSystem = (
 
     layout: {
       headerHeight: 44,
-      headerHeightLarge: 102,
       tabBarHeight: 80,
-      sidebarWidth: 280,
-      maxContentWidth: 1200,
       screenPadding: 16,
-      listItemSpacing: 0,
       sectionSpacing: 35,
     } as const,
-
-    animation: {fast: 150, normal: 300, slow: 500} as const,
 
     opacity: {
       disabled: 0.3,
@@ -191,30 +212,3 @@ export type Spacing = keyof DesignSystem['spacing'];
 export type BorderRadius = keyof DesignSystem['borderRadius'];
 export type Opacity = keyof DesignSystem['opacity'];
 export type FontWeight = keyof DesignSystem['fontWeight'];
-
-export type TypographyProps = {
-  dynamicTypeRamp?: TextProps['dynamicTypeRamp'];
-  variant?: PaperVariant;
-  fontSize?: number;
-  allowFontScaling?: boolean;
-};
-
-export function getTextProps(
-  variant: Typography = 'body',
-  ds: DesignSystem,
-): TypographyProps {
-  if (Platform.OS === 'ios') {
-    const config = ds.typography.ios[variant];
-    return {
-      dynamicTypeRamp: config.dynamicTypeRamp,
-      fontSize: config.baseSize,
-      allowFontScaling: true,
-    };
-  }
-
-  // Android and other platfroms
-  return {
-    variant: ds.typography.paper[variant],
-    allowFontScaling: true,
-  };
-}

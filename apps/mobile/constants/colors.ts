@@ -22,6 +22,7 @@ export const Palette = {
   lightBlue: '#d5e7f9',
   bluepurple: '#135489',
   slateblue: '#264653',
+  mistBlue: '#EAF1F8',
   teal: '#14B8A6',
   indigo: '#4F46E5',
   purple: '#6a24c4ff',
@@ -63,7 +64,7 @@ const _Tokens = {
     card: Palette.white,
     text: Palette.slate,
     icon: Palette.gray[600],
-    tabBar: Palette.white,
+    tabBar: Palette.mistBlue,
     tabIndicator: Palette.lightBlue,
     ripple: Palette.blackA10,
 

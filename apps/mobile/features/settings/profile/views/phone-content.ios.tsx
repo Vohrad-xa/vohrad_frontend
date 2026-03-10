@@ -1,4 +1,5 @@
 import React, {forwardRef, useImperativeHandle} from 'react';
+import {useTypography} from '@/constants';
 import {useTheme} from '@/providers';
 import {Icon, type IconName} from '@/utils';
 import {
@@ -27,6 +28,7 @@ const SUPPORTING_TEXT =
 
 export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
   const {ds} = useTheme();
+  const typography = useTypography();
 
   const {phone} = useProfileEdit();
   const {phoneNumber, isEditing, startEditing, setPhoneValue, save} = phone;
@@ -47,7 +49,7 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
             <Text
               modifiers={[
                 font({
-                  size: ds.typography.ios.title2.baseSize,
+                  size: typography.title2.fontSize as number,
                   weight: 'semibold',
                 }),
               ]}
