@@ -4,7 +4,13 @@ import {FlashList} from '@shopify/flash-list';
 import {Image} from 'expo-image';
 import {Divider, List, type ListItemProps} from 'react-native-paper';
 import {EmptyState} from '@/components/ui';
-import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {
+  Palette,
+  themeKey,
+  type DSShape,
+  type ThemeShape,
+  useTypography,
+} from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
@@ -30,6 +36,8 @@ type ItemItemProps = {
 
 const ItemItem = memo<ItemItemProps>(
   ({item, onPress, styles, getItemImageUrl}) => {
+    const typography = useTypography();
+
     const handlePress = useCallback(() => onPress(item.id), [onPress, item.id]);
 
     const name = item.name || 'No name';
@@ -58,35 +66,17 @@ const ItemItem = memo<ItemItemProps>(
       [imageUrl, item.id, styles.avatar, styles.iconContainer],
     );
 
-    const right = useCallback<NonNullable<ListItemProps['right']>>(
-      (props) => (
-        <List.Icon
-          {...props}
-          icon={() => (
-            <Icon
-              name={AppIcons.actions.forward}
-              size="sm"
-              colorToken="muted"
-            />
-          )}
-        />
-      ),
-      [],
-    );
-
     return (
       <List.Item
         title={name}
         description={description}
         onPress={handlePress}
         titleStyle={styles.title}
-        style={styles.content}
         left={left}
-        right={right}
         unstable_pressDelay={30}
         descriptionNumberOfLines={1}
         titleNumberOfLines={1}
-        borderless
+        descriptionStyle={[typography.footnote, {color: Palette.gray[500]}]}
       />
     );
   },
@@ -174,11 +164,8 @@ export function ItemsList({
 const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      content: {
-        paddingRight: ds.spacing.lg,
-      },
       title: {
-        marginBottom: ds.spacing.xs,
+        marginBottom: ds.spacing.sm,
       },
       divider: {
         marginLeft: ds.spacing.xxl * 2 + ds.spacing.md,

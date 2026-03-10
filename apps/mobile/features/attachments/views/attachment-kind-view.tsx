@@ -2,6 +2,7 @@ import React, {useCallback, useState} from 'react';
 import {useIsFocused} from '@react-navigation/native';
 import {getAttachmentExtension} from '@sykamore/store';
 import {useNavigation} from 'expo-router';
+import {useSnackbar} from '@/components/ui';
 import {VAULT_SEARCH_SCOPES} from '@/features/attachments/utils';
 import {useSearch} from '@/providers';
 import {
@@ -9,7 +10,6 @@ import {
   useAttachmentPress,
   useAttachmentsSelection,
   useAttachmentsHeader,
-  useAttachmentsSnackbar,
   useAttachmentsSource,
 } from '../hooks';
 import {SelectableAttachmentsList} from './attachments-list';
@@ -73,7 +73,7 @@ export function AttachmentKindView({
   });
 
   const selection = useAttachmentsSelection(attachments);
-  const {showSnack, snackbar} = useAttachmentsSnackbar();
+  const {showSnack, snackbar} = useSnackbar();
   const {handleDeleteSelected, handleShareSelected, isProcessing} =
     useAttachmentsBulkActions({
       selection,

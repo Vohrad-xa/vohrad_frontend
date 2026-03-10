@@ -1,13 +1,13 @@
 import {useCallback, useState} from 'react';
 import {useIsFocused} from '@react-navigation/native';
 import {useNavigation} from 'expo-router';
+import {useSnackbar} from '@/components/ui';
 import {
   ImageAttachmentsGrid,
   useAttachmentsBulkActions,
   useAttachmentPress,
   useAttachmentsSelection,
   useAttachmentsHeader,
-  useAttachmentsSnackbar,
   useAttachmentsSource,
   useImageAttachments,
   type ImageAttachmentItem,
@@ -21,7 +21,7 @@ export default function VaultImagesScreen() {
   const handleAttachmentPress = useAttachmentPress();
   const {searchQuery} = useSearch(VAULT_SEARCH_SCOPES.images);
   const [odataOrderBy, setOdataOrderBy] = useState<string | undefined>();
-  const {showSnack, snackbar} = useAttachmentsSnackbar();
+  const {showSnack, snackbar} = useSnackbar();
 
   const {
     attachments,

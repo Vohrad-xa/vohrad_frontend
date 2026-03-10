@@ -1,12 +1,9 @@
 import {useCallback, useLayoutEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import {KeyboardController} from 'react-native-keyboard-controller';
+import {useSnackbar} from '@/components/ui';
 import {Palette} from '@/constants';
-import {
-  TenantInfoView,
-  useTenantInfoForm,
-  useTenantSnackbar,
-} from '@/features/settings/tenant';
+import {TenantInfoView, useTenantInfoForm} from '@/features/settings/tenant';
 import {AppIcons} from '@/utils/icons';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';
 import type {SFSymbol} from 'sf-symbols-typescript';
@@ -15,7 +12,7 @@ export default function TenantInfoScreen() {
   const navigation = useNavigation();
   const {values, handleFieldChange, hasChanges, isSaving, save} =
     useTenantInfoForm();
-  const {showSnack, snackbar} = useTenantSnackbar();
+  const {showSnack, snackbar} = useSnackbar();
 
   const handleSave = useCallback(async () => {
     KeyboardController.dismiss({animated: true});

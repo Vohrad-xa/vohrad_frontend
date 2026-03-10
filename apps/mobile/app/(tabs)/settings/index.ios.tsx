@@ -85,7 +85,7 @@ export default function SettingsModal() {
           <ListSection.Row
             icon={AppIcons.ui.privacy}
             iconColorToken="accentPurple"
-            title="Privacy"
+            title="Privacy and Security"
             onPress={() => router.push('/(tabs)/settings/privacy')}
           />
           <ListSection.Row

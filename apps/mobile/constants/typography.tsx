@@ -22,7 +22,7 @@ const TYPOGRAPHY = {
   },
   title1: {
     ios: {dynamicTypeRamp: 'title1', fontSize: 28},
-    paper: {variant: 'titleLarge'},
+    paper: {variant: 'headlineMedium'},
   },
   title2: {
     ios: {dynamicTypeRamp: 'title2', fontSize: 22},

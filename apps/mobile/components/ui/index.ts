@@ -11,3 +11,4 @@ export {type BadgeStatus} from './themed-view';
 export {Card} from '../cards/card';
 export {ThemedStatusBar} from './themed-status-bar';
 export * from './form';
+export {useSnackbar, type UseSnackbarResult} from './use-snackbar';

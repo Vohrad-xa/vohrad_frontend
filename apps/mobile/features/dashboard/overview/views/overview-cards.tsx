@@ -60,7 +60,10 @@ export function OverviewCards() {
                   {card.count}
                 </ThemedText>
               </View>
-              <ThemedText variant={Platform.OS === 'ios' ? 'callout' : 'label'}>
+              <ThemedText
+                variant={Platform.OS === 'ios' ? 'subheadline' : 'label'}
+                fontWeight="medium"
+              >
                 {card.title}
               </ThemedText>
             </Card.Content>

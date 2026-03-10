@@ -1,6 +1,5 @@
 import {authApi, httpClient} from '@sykamore/api-client';
-import type {
-  ApiError} from '@sykamore/types';
+import type {ApiError} from '@sykamore/types';
 import {
   validateAuthTokens,
   validateMobileSocialLoginParams,

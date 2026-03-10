@@ -35,7 +35,7 @@ function SettingsStack() {
         headerTransparent: Platform.OS === 'ios',
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          fontSize: Platform.OS !== 'ios' ? 26 : undefined,
+          fontSize: Platform.OS !== 'ios' ? 20 : 18,
         },
       }) satisfies NativeStackNavigationOptions,
     [theme.headerAndroid],
@@ -59,11 +59,20 @@ function SettingsStack() {
 
   return (
     <Stack screenOptions={stackScreenOptions}>
-      <Stack.Screen name="index" options={{title: 'Settings'}} />
+      <Stack.Screen
+        name="index"
+        options={{
+          title: 'Settings',
+          headerTitleStyle: {
+            fontSize: Platform.OS !== 'ios' ? 26 : 18,
+            color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
+          },
+        }}
+      />
       <Stack.Screen name="language" options={{title: 'Language'}} />
       <Stack.Screen name="help" options={{title: 'Help'}} />
       <Stack.Screen name="app-settings" options={{title: 'App Settings'}} />
-      <Stack.Screen name="privacy" options={{title: 'Privacy Policy'}} />
+      <Stack.Screen name="privacy" options={{title: 'Privacy and Security'}} />
       <Stack.Screen name="terms" options={{title: 'Terms of Use'}} />
       <Stack.Screen name="about" options={{title: 'About'}} />
 
