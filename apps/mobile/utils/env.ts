@@ -1,16 +1,15 @@
-// Metro inlines EXPO_PUBLIC_* at build time; this declaration avoids pulling in
-// @types/node just to satisfy TypeScript's process.env reference.
-declare const process: {env: Record<string, string | undefined>};
-
-function read(key: string): string | undefined {
-  const v = process.env[key]?.trim();
-  return v && v.length > 0 ? v : undefined;
-}
-
-function readProtocol(key: string): 'http' | 'https' | undefined {
-  const v = read(key);
-  return v === 'http' || v === 'https' ? v : undefined;
-}
+declare const process: {
+  env: {
+    EXPO_PUBLIC_API_BASE_URL?: string;
+    EXPO_PUBLIC_API_PROTOCOL?: string;
+    EXPO_PUBLIC_API_BASE_DOMAIN?: string;
+    EXPO_PUBLIC_API_VERSION?: string;
+    EXPO_PUBLIC_OIDC_ISSUER_URL?: string;
+    EXPO_PUBLIC_OIDC_MOBILE_CLIENT_ID?: string;
+    EXPO_PUBLIC_OIDC_MOBILE_SCOPES?: string;
+    EXPO_PUBLIC_OIDC_MOBILE_REDIRECT_URI?: string;
+  };
+};
 
 const DEFAULT_OIDC_SCOPES = [
   'openid',
@@ -19,10 +18,22 @@ const DEFAULT_OIDC_SCOPES = [
   'offline_access',
 ];
 
-function readScopes(key: string): string[] {
-  const v = read(key);
-  if (!v) return DEFAULT_OIDC_SCOPES;
-  const parsed = v.split(/[\s,]+/).filter((s) => s.length > 0);
+function read(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed && trimmed.length > 0 ? trimmed : undefined;
+}
+
+function readProtocol(value: string | undefined): 'http' | 'https' | undefined {
+  const normalized = read(value);
+  return normalized === 'http' || normalized === 'https'
+    ? normalized
+    : undefined;
+}
+
+function readScopes(value: string | undefined): string[] {
+  const normalized = read(value);
+  if (!normalized) return DEFAULT_OIDC_SCOPES;
+  const parsed = normalized.split(/[\s,]+/).filter((scope) => scope.length > 0);
   return parsed.length > 0 ? parsed : DEFAULT_OIDC_SCOPES;
 }
 
@@ -32,15 +43,15 @@ function readScopes(key: string): string[] {
  */
 export const env = {
   api: {
-    baseUrl: read('EXPO_PUBLIC_API_BASE_URL'),
-    protocol: readProtocol('EXPO_PUBLIC_API_PROTOCOL'),
-    baseDomain: read('EXPO_PUBLIC_API_BASE_DOMAIN'),
-    version: read('EXPO_PUBLIC_API_VERSION'),
+    baseUrl: read(process.env.EXPO_PUBLIC_API_BASE_URL),
+    protocol: readProtocol(process.env.EXPO_PUBLIC_API_PROTOCOL),
+    baseDomain: read(process.env.EXPO_PUBLIC_API_BASE_DOMAIN),
+    version: read(process.env.EXPO_PUBLIC_API_VERSION),
   },
   oidc: {
-    issuerUrl: read('EXPO_PUBLIC_OIDC_ISSUER_URL'),
-    mobileClientId: read('EXPO_PUBLIC_OIDC_MOBILE_CLIENT_ID'),
-    scopes: readScopes('EXPO_PUBLIC_OIDC_MOBILE_SCOPES'),
-    redirectUri: read('EXPO_PUBLIC_OIDC_MOBILE_REDIRECT_URI'),
+    issuerUrl: read(process.env.EXPO_PUBLIC_OIDC_ISSUER_URL),
+    mobileClientId: read(process.env.EXPO_PUBLIC_OIDC_MOBILE_CLIENT_ID),
+    scopes: readScopes(process.env.EXPO_PUBLIC_OIDC_MOBILE_SCOPES),
+    redirectUri: read(process.env.EXPO_PUBLIC_OIDC_MOBILE_REDIRECT_URI),
   },
 };
