@@ -7,7 +7,6 @@ export {
 } from './use-attachments-selection';
 export {useAttachmentsBulkActions} from './use-attachments-bulk-actions';
 export {useAttachmentsHeader} from './use-attachments-header';
-export {useAttachmentsSnackbar} from './use-attachments-snackbar';
 export {useAttachmentPress} from './use-attachment-press';
 export {useAttachmentShare} from './use-attachment-share';
 export {useAttachmentUpload} from './use-attachment-upload';

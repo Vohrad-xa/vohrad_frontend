@@ -76,7 +76,7 @@ const ItemItem = memo<ItemItemProps>(
         unstable_pressDelay={30}
         descriptionNumberOfLines={1}
         titleNumberOfLines={1}
-        descriptionStyle={[typography.footnote, {color: Palette.gray[500]}]}
+        descriptionStyle={[typography.footnote, {color: Palette.gray[600]}]}
       />
     );
   },
