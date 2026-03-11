@@ -34,6 +34,7 @@ export type IconProps = {
   colorToken?: TokenName;
   fontWeight?: SwiftUIFontWeight;
   accessibilityLabel?: string;
+  testID?: string;
   style?: StyleProp<TextStyle>;
   useSwiftUI?: boolean;
   container?: boolean;
@@ -183,10 +184,8 @@ export const AppIcons = {
   },
 
   domain: {
-    item: 'rectangle.3.offgrid.fill',
-    itemOutline: 'rectangle.3.group',
-    vault: 'internaldrive.fill',
-    vaultOutline: 'internaldrive',
+    item: 'rectangle.3.offgrid',
+    vault: 'internaldrive',
     home: 'house.fill',
     homeOutline: 'house',
     settings: 'gear.circle',

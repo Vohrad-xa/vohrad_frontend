@@ -10,12 +10,12 @@ export type DashboardCardConfig = {
 };
 
 export const CARD_CONFIG: DashboardCardConfig[] = [
-  {key: 'items', title: 'Items', icon: AppIcons.domain.itemOutline},
+  {key: 'items', title: 'Items', icon: AppIcons.domain.item},
   {key: 'locations', title: 'Locations', icon: AppIcons.domain.location},
   {key: 'maintenance', title: 'Maintenance', icon: AppIcons.domain.maintenance},
   {key: 'suppliers', title: 'Suppliers', icon: AppIcons.domain.supplier},
   {key: 'checkInOut', title: 'Check In/Out', icon: AppIcons.actions.move},
-  {key: 'attachments', title: 'Vault', icon: AppIcons.domain.vaultOutline},
+  {key: 'attachments', title: 'Vault', icon: AppIcons.domain.vault},
   {key: 'categories', title: 'Categories', icon: AppIcons.domain.category},
   {key: 'transfers', title: 'Transfers', icon: AppIcons.domain.transfer},
   {

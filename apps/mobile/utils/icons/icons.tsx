@@ -1,5 +1,5 @@
 import {type StyleProp, type TextStyle} from 'react-native';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import type {TokenName} from '@/constants';
 import {useTheme} from '@/providers';
 
@@ -12,6 +12,7 @@ export type IconProps = {
   colorToken?: TokenName;
   fontWeight?: string;
   accessibilityLabel?: string;
+  testID?: string;
   style?: StyleProp<TextStyle>;
   useSwiftUI?: boolean;
   noContainer?: boolean;
@@ -22,10 +23,10 @@ export type IconProps = {
   animationSpec?: Record<string, unknown>;
 };
 
-export type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
+export type IconName = keyof typeof Ionicons.glyphMap;
 
 export function getIconGlyph(name: IconName): string | undefined {
-  const glyphMap = MaterialCommunityIcons.glyphMap as unknown as Record<
+  const glyphMap = Ionicons.glyphMap as unknown as Record<
     IconName,
     number | string
   >;
@@ -42,121 +43,125 @@ export const Icon: React.FC<IconProps> = ({
   colorToken,
   style,
   accessibilityLabel,
+  testID,
 }) => {
-  const {theme, ds} = useTheme();
+  const {theme, ds, scheme} = useTheme();
 
   const resolvedSize =
     typeof size === 'number' ? size : (ds.iconSize[size] ?? ds.iconSize.md);
 
   const foreground = color ?? (colorToken ? theme[colorToken] : theme.icon);
+
   const iconColor = foreground ?? theme.icon;
 
-  const iconElement = (
-    <MaterialCommunityIcons
-      name={name}
+  const outlineName = `${name}-outline` as IconName;
+
+  const resolvedName =
+    scheme === 'light' && outlineName in Ionicons.glyphMap ? outlineName : name;
+
+  return (
+    <Ionicons
+      name={resolvedName}
       size={resolvedSize}
       color={iconColor}
       style={style}
       accessibilityLabel={accessibilityLabel}
+      testID={testID}
     />
   );
-
-  return iconElement;
 };
 
 export const AppIcons = {
   ui: {
-    more: 'dots-vertical',
-    filter: 'filter-variant',
-    search: 'magnify',
-    chevronUpDown: 'unfold-more-horizontal',
-    notifications: 'bell-outline',
-    settings: 'cog-outline',
-    appearance: 'theme-light-dark',
-    biometric: 'fingerprint',
-    haptic: 'vibrate',
+    more: 'ellipsis-vertical',
+    filter: 'filter',
+    search: 'search',
+    chevronUpDown: 'swap-vertical',
+    notifications: 'notifications',
+    settings: 'settings',
+    appearance: 'contrast',
+    biometric: 'finger-print',
+    haptic: 'phone-portrait',
     language: 'earth',
-    privacy: 'lock-outline',
-    terms: 'file-document-outline',
-    plan: 'credit-card-outline',
-    info: 'information-outline',
-    help: 'help-circle-outline',
-    time: 'clock-outline',
-    profile: 'account-outline',
-    userManagement: 'account-multiple-outline',
-    support: 'information-slab-circle-outline',
-    preference: 'tune-variant',
-    email: 'email-outline',
-    phone: 'phone-outline',
-    web: 'web',
-    tax: 'bank-outline',
+    privacy: 'shield-checkmark',
+    terms: 'document-text',
+    plan: 'card',
+    info: 'information-circle',
+    help: 'help-circle',
+    time: 'time',
+    profile: 'person',
+    userManagement: 'people',
+    support: 'information-circle',
+    preference: 'options',
+    email: 'mail',
+    phone: 'call',
+    web: 'globe',
+    tax: 'business',
   },
 
   actions: {
     close: 'close',
-    forward: 'chevron-right',
-    back: 'chevron-left',
-    add: 'plus',
-    save: 'check',
-    share: 'share-variant',
-    delete: 'trash-can-outline',
+    forward: 'chevron-forward',
+    back: 'chevron-back',
+    add: 'add',
+    save: 'checkmark',
+    share: 'share-social',
+    delete: 'trash',
     refresh: 'refresh',
-    logout: 'logout',
+    logout: 'log-out',
     download: 'download',
-    edit: 'circle-edit-outline',
-    addUser: 'account-plus-outline',
-    addItem: 'plus-box-outline',
-    move: 'arrow-u-right-bottom',
-    scan: 'qrcode-scan',
+    edit: 'create',
+    addUser: 'person-add',
+    addItem: 'add-circle',
+    move: 'arrow-redo',
+    scan: 'scan',
     camera: 'camera',
-    input: 'keyboard-outline',
-    select: 'check-circle-outline',
-    enableTorch: 'flashlight',
-    disableTorch: 'flashlight-off',
+    input: 'keypad',
+    select: 'checkmark-circle',
+    enableTorch: 'flash',
+    disableTorch: 'flash-off',
   },
 
   domain: {
-    item: 'view-grid-outline',
-    itemOutline: 'view-grid-outline',
-    vault: 'folder-open-outline',
-    vaultOutline: 'folder-open-outline',
+    item: 'grid',
+    vault: 'folder-open',
     home: 'home',
     homeOutline: 'home-outline',
-    settings: 'cog',
-    settingsOutline: 'cog-outline',
-    category: 'shape-outline',
-    location: 'map-marker-outline',
-    supplier: 'cart-outline',
-    organization: 'domain',
-    maintenance: 'wrench-cog-outline',
+    settings: 'settings',
+    settingsOutline: 'settings-outline',
+    category: 'shapes',
+    location: 'location',
+    supplier: 'cart',
+    organization: 'business',
+    maintenance: 'build',
     transfer: 'swap-horizontal',
-    unitOfMeasure: 'ruler',
+    unitOfMeasure: 'resize',
   },
 
   files: {
-    document: 'file-document-outline',
-    folder: 'folder-open-outline',
-    file: 'file-outline',
-    image: 'file-image-outline',
-    archive: 'archive-outline',
-    print: 'printer-outline',
-    list: 'format-list-bulleted',
-    others: 'folder-multiple-outline',
-    pdf: 'file-pdf-box',
-    word: 'file-word-outline',
-    excel: 'file-excel-outline',
-    text: 'file-document-outline',
+    document: 'document-text',
+    folder: 'folder-open',
+    file: 'document',
+    image: 'image',
+    archive: 'archive',
+    print: 'print',
+    list: 'list',
+    others: 'folder-open',
+    pdf: 'document-text',
+    word: 'document-text',
+    excel: 'grid',
+    text: 'document-text',
   },
 
   status: {
-    success: 'check-circle',
-    warning: 'alert',
+    success: 'checkmark-circle',
+    warning: 'warning',
     error: 'alert-circle',
-    pending: 'progress-clock',
+    pending: 'time',
   },
 
   emptyStates: {
-    user: 'account-multiple-outline',
-    file: 'folder-open-outline',
+    user: 'people',
+    file: 'folder-open',
   },
 } as const satisfies Record<string, Record<string, IconName>>;
