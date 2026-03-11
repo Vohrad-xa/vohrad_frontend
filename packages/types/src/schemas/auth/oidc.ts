@@ -4,7 +4,7 @@ export const mobileOidcConfigSchema = z.strictObject({
   issuerUrl: z.url(),
   mobileClientId: z.string().min(1),
   scopes: z.array(z.string().min(1)).min(1),
-  mobileRedirectUri: z.string().min(1).optional(),
+  mobileRedirectUri: z.string().min(1),
 });
 
 export const oidcDiscoveryDocumentSchema = z.looseObject({

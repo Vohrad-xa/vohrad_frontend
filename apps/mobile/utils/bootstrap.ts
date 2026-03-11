@@ -22,7 +22,7 @@ initApiConfig({
   version: env.api.version,
 });
 
-if (env.oidc.issuerUrl && env.oidc.mobileClientId) {
+if (env.oidc.issuerUrl && env.oidc.mobileClientId && env.oidc.redirectUri) {
   initMobileOidcConfig({
     issuerUrl: env.oidc.issuerUrl,
     mobileClientId: env.oidc.mobileClientId,

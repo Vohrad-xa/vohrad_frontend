@@ -43,9 +43,4 @@ export const env = {
     scopes: readScopes('EXPO_PUBLIC_OIDC_MOBILE_SCOPES'),
     redirectUri: read('EXPO_PUBLIC_OIDC_MOBILE_REDIRECT_URI'),
   },
-  google: {
-    iosClientId: read('EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID'),
-    androidClientId: read('EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID'),
-    webClientId: read('EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID'),
-  },
 };

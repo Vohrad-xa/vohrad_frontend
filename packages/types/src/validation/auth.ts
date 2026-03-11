@@ -1,6 +1,5 @@
 import {z} from 'zod';
 import {
-  appleTokenExchangeUserProfileSchema,
   authPersistSnapshotSchema,
   authContextDataSchema,
   authPersistedStateDataSchema,
@@ -10,7 +9,7 @@ import {
   identitySchema,
   mobileOidcConfigSchema,
   mobileOidcLoginParamsSchema,
-  mobileSocialLoginParamsSchema,
+  mobileAppleLoginParamsSchema,
   oidcStartActionSchema,
   startWebLoginOptionsSchema,
   tenantMembershipSchema,
@@ -32,11 +31,8 @@ export const validateMobileOidcLoginParams = createValidator(
   mobileOidcLoginParamsSchema,
 );
 export const validateMobileOidcConfig = createValidator(mobileOidcConfigSchema);
-export const validateAppleTokenExchangeUserProfile = createValidator(
-  appleTokenExchangeUserProfileSchema,
-);
-export const validateMobileSocialLoginParams = createValidator(
-  mobileSocialLoginParamsSchema,
+export const validateMobileAppleLoginParams = createValidator(
+  mobileAppleLoginParamsSchema,
 );
 export const validateAuthStateData = createValidator(authStateDataSchema);
 export const validateAuthPersistedStateData = createValidator(

@@ -1,8 +1,8 @@
 export const API_ENDPOINTS = {
   AUTH: {
     OIDC_START: '/auth/oidc/start',
-    SOCIAL_EXCHANGE: '/auth/social/exchange',
-    SOCIAL_REFRESH: '/auth/social/refresh',
+    APPLE_EXCHANGE: '/auth/apple/exchange',
+    APPLE_REFRESH: '/auth/apple/refresh',
     WEB_TOKEN: '/auth/web/token',
     WEB_LOGOUT: '/auth/web/logout',
     LOGOUT: '/auth/logout',

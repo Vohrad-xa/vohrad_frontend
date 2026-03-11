@@ -2,13 +2,12 @@ import {authApi, httpClient} from '@sykamore/api-client';
 import type {ApiError} from '@sykamore/types';
 import {
   validateAuthTokens,
-  validateMobileSocialLoginParams,
+  validateMobileAppleLoginParams,
   validateStartWebLoginOptions,
-  type AppleTokenExchangeUserProfile,
   type AuthTokens,
+  type MobileAppleLoginParams,
   type MobileOidcLoginParams,
   type MobileOidcConfig,
-  type MobileSocialLoginParams,
   type OidcDiscoveryDocument,
   type StartWebLoginOptions,
 } from '@sykamore/types';
@@ -22,8 +21,8 @@ import {
 } from './core/auth-client-errors';
 import {isWebRuntime} from './core/platform';
 import {authStoreAdapter} from './core/store-adapter';
+import {MobileAppleClient} from './flows/mobile-apple-client';
 import {MobileOidcClient} from './flows/mobile-oidc-client';
-import {MobileSocialClient} from './flows/mobile-social-client';
 import {WebSessionClient} from './flows/web-session-client';
 import {RefreshRuntimeController} from './session/refresh-runtime';
 import {classifyRefreshFailure} from './session/refresh-failure';
@@ -32,8 +31,8 @@ import {SessionBootstrapper} from './session/session-bootstrap';
 export class AuthService {
   private static instance: AuthService | null = null;
   private readonly webSessionClient = new WebSessionClient();
+  private readonly mobileAppleClient = new MobileAppleClient();
   private readonly mobileOidcClient = new MobileOidcClient();
-  private readonly mobileSocialClient = new MobileSocialClient();
   private readonly sessionBootstrapper = new SessionBootstrapper();
   private readonly refreshRuntime = new RefreshRuntimeController(() =>
     this.refreshToken(),
@@ -113,24 +112,10 @@ export class AuthService {
     }
   }
 
-  async completeMobileAppleLogin(params: {
-    idToken: string;
-    userProfile?: AppleTokenExchangeUserProfile;
-  }): Promise<void> {
-    return this.completeMobileSocialSignIn({
-      provider: 'apple',
-      token: params.idToken,
-      userProfile: params.userProfile,
-    });
-  }
-
-  async completeMobileGoogleLogin(params: {
-    accessToken: string;
-  }): Promise<void> {
-    return this.completeMobileSocialSignIn({
-      provider: 'google',
-      token: params.accessToken,
-    });
+  async completeMobileAppleLogin(
+    params: MobileAppleLoginParams,
+  ): Promise<void> {
+    return this.completeMobileAppleSignIn(params);
   }
 
   async logout(): Promise<void> {
@@ -229,23 +214,23 @@ export class AuthService {
     }
   }
 
-  private async completeMobileSocialSignIn(
-    params: MobileSocialLoginParams,
+  private async completeMobileAppleSignIn(
+    params: MobileAppleLoginParams,
   ): Promise<void> {
     authStoreAdapter.setLoading(true);
 
     try {
-      const paramsResult = validateMobileSocialLoginParams(params);
+      const paramsResult = validateMobileAppleLoginParams(params);
       if (!paramsResult.success) {
-        throw this.createInvalidSocialPayloadError(params.provider);
+        throw this.createInvalidApplePayloadError();
       }
 
-      const tokens = await this.mobileSocialClient.exchangeProviderToken(
+      const tokens = await this.mobileAppleClient.exchangeIdentityToken(
         paramsResult.data,
       );
       await this.sessionBootstrapper.establishSession({
         ...tokens,
-        refresh_flow: 'social_exchange',
+        refresh_flow: 'apple_exchange',
       });
     } catch (error) {
       authStoreAdapter.setAccessToken(null);
@@ -255,19 +240,10 @@ export class AuthService {
     }
   }
 
-  private createInvalidSocialPayloadError(
-    provider: MobileSocialLoginParams['provider'],
-  ): ApiError {
-    if (provider === 'apple') {
-      return createSignInStateError(
-        'Apple returned an invalid sign-in payload.',
-        'INVALID_APPLE_SIGN_IN_REQUEST',
-      );
-    }
-
+  private createInvalidApplePayloadError(): ApiError {
     return createSignInStateError(
-      'Google returned an invalid sign-in payload.',
-      'INVALID_GOOGLE_SIGN_IN_REQUEST',
+      'Apple returned an invalid sign-in payload.',
+      'INVALID_APPLE_SIGN_IN_REQUEST',
     );
   }
 
@@ -280,8 +256,8 @@ export class AuthService {
     }
 
     const refreshFlow = this.resolveMobileRefreshFlow(tokens);
-    if (refreshFlow === 'social_exchange') {
-      return this.mobileSocialClient.refreshTokens(refreshToken);
+    if (refreshFlow === 'apple_exchange') {
+      return this.mobileAppleClient.refreshTokens(refreshToken);
     }
 
     const refreshedTokens =
@@ -295,17 +271,12 @@ export class AuthService {
 
   private resolveMobileRefreshFlow(
     tokens: AuthTokens | null,
-  ): 'oidc_direct' | 'social_exchange' {
-    return tokens?.refresh_flow === 'social_exchange'
-      ? 'social_exchange'
+  ): 'oidc_direct' | 'apple_exchange' {
+    return tokens?.refresh_flow === 'apple_exchange'
+      ? 'apple_exchange'
       : 'oidc_direct';
   }
 }
 
 export const authService = AuthService.getInstance();
-export {
-  getMobileOidcClientConfig,
-  initMobileOidcConfig,
-  type AppleTokenExchangeUserProfile,
-  type MobileOidcConfig,
-};
+export {getMobileOidcClientConfig, initMobileOidcConfig, type MobileOidcConfig};

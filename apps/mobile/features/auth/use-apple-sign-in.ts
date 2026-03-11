@@ -1,8 +1,9 @@
 import {useCallback} from 'react';
 import {Platform} from 'react-native';
-import {authService, type AppleTokenExchangeUserProfile} from '@sykamore/auth';
+import {authService} from '@sykamore/auth';
 import {errorCenter} from '@sykamore/client-runtime';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import {attemptAppleLinkFallback} from './apple-link-fallback';
 
 type AppleSignInOutcome =
   | {completed: true}
@@ -12,6 +13,8 @@ export function useAppleSignIn() {
   const isSupported = Platform.OS === 'ios';
 
   const startFlow = useCallback(async (): Promise<AppleSignInOutcome> => {
+    let identityToken: string | null = null;
+
     if (Platform.OS !== 'ios') {
       return {completed: false, cancelled: false};
     }
@@ -48,17 +51,40 @@ export function useAppleSignIn() {
         );
         return {completed: false, cancelled: false};
       }
-
-      const userProfile: AppleTokenExchangeUserProfile | undefined =
-        buildAppleUserProfile(credential);
+      identityToken = credential.identityToken;
 
       await authService.completeMobileAppleLogin({
-        idToken: credential.identityToken,
-        userProfile,
+        idToken: identityToken,
       });
 
       return {completed: true};
     } catch (error) {
+      const fallbackResult = await attemptAppleLinkFallback({
+        error,
+        retryExchange: async () => {
+          if (!identityToken) {
+            throw new Error('Apple identity token is missing for retry.');
+          }
+          await authService.completeMobileAppleLogin({
+            idToken: identityToken,
+          });
+        },
+      });
+
+      if (fallbackResult.handled) {
+        if (fallbackResult.completed) {
+          return {completed: true};
+        }
+        if (fallbackResult.cancelled) {
+          return {completed: false, cancelled: true};
+        }
+        errorCenter.report(fallbackResult.error ?? error, {
+          title: 'Sign-In Failed',
+          scope: 'local',
+        });
+        return {completed: false, cancelled: false};
+      }
+
       const code =
         typeof error === 'object' &&
         error !== null &&
@@ -82,28 +108,5 @@ export function useAppleSignIn() {
   return {
     startFlow,
     isSupported,
-  };
-}
-
-function buildAppleUserProfile(
-  credential: AppleAuthentication.AppleAuthenticationCredential,
-): AppleTokenExchangeUserProfile | undefined {
-  const firstName = credential.fullName?.givenName ?? undefined;
-  const lastName = credential.fullName?.familyName ?? undefined;
-  const email = credential.email ?? undefined;
-
-  if (!firstName && !lastName && !email) {
-    return undefined;
-  }
-
-  return {
-    email,
-    name:
-      firstName || lastName
-        ? {
-            firstName,
-            lastName,
-          }
-        : undefined,
   };
 }

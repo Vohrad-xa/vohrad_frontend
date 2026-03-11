@@ -85,13 +85,7 @@
           "enableBase64ShareAndroid": true
         }
       ],
-      "expo-image",
-      [
-        "@react-native-google-signin/google-signin",
-        {
-          "iosUrlScheme": "com.googleusercontent.apps.656228118973-4nbgqcv5lhs0acaklv154ggo3ekv2fva"
-        }
-      ]
+      "expo-image"
     ],
     "assetBundlePatterns": ["**/*"],
     "developmentClient": {

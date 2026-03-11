@@ -15,17 +15,6 @@ import {resolveApiUrl} from '../core/url-resolver';
 import {httpClient} from '../core/client';
 import {API_ENDPOINTS} from './endpoints';
 
-/** Optional social profile data forwarded to backend token exchange. */
-type SocialTokenExchangeUserProfile = {
-  name?: {
-    firstName?: string;
-    lastName?: string;
-  };
-  email?: string;
-};
-
-type SocialProvider = 'apple' | 'google';
-
 const tenantMembershipsSchema = tenantMembershipSchema.array();
 
 export class AuthApi {
@@ -112,18 +101,12 @@ export class AuthApi {
     return response.data;
   }
 
-  async exchangeSocialToken(payload: {
-    provider: SocialProvider;
-    token: string;
-    userProfile?: SocialTokenExchangeUserProfile;
-  }): Promise<AuthTokens> {
+  async exchangeAppleToken(payload: {idToken: string}): Promise<AuthTokens> {
     const response = await httpClient.post(
-      API_ENDPOINTS.AUTH.SOCIAL_EXCHANGE,
+      API_ENDPOINTS.AUTH.APPLE_EXCHANGE,
       tokenResponseSchema,
       {
-        provider: payload.provider,
-        token: payload.token,
-        user_profile: payload.userProfile,
+        token: payload.idToken,
       },
       undefined,
       {reportErrors: false},
@@ -135,11 +118,11 @@ export class AuthApi {
     };
   }
 
-  async refreshSocialToken(payload: {
+  async refreshAppleSession(payload: {
     refreshToken: string;
   }): Promise<AuthTokens> {
     const response = await httpClient.post(
-      API_ENDPOINTS.AUTH.SOCIAL_REFRESH,
+      API_ENDPOINTS.AUTH.APPLE_REFRESH,
       tokenResponseSchema,
       {
         refresh_token: payload.refreshToken,

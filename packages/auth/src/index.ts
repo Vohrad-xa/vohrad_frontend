@@ -5,6 +5,5 @@ export {
   authService,
   initMobileOidcConfig,
   getMobileOidcClientConfig,
-  type AppleTokenExchangeUserProfile,
   type MobileOidcConfig,
 } from './auth-service';

@@ -1,6 +1,6 @@
 import {Platform, type TextProps, type TextStyle} from 'react-native';
-import {generateVersion} from '../utils/versioning';
 import {type MD3TypescaleKey, useTheme} from 'react-native-paper';
+import {generateVersion} from '../utils/versioning';
 
 type DynamicTypeRamp = NonNullable<TextProps['dynamicTypeRamp']>;
 type PaperFont = `${MD3TypescaleKey}`;

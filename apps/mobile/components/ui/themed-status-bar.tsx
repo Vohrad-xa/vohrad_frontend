@@ -7,8 +7,8 @@ export function ThemedStatusBar() {
   return (
     <StatusBar
       style={scheme === 'dark' ? 'light' : 'dark'}
-      animated={true}
       hideTransitionAnimation="slide"
+      animated
     />
   );
 }

@@ -4,7 +4,6 @@ import {errorCenter} from '@sykamore/client-runtime';
 import {useAuth} from '@/providers';
 import {useAppleSignIn} from './use-apple-sign-in';
 import {useBiometricPrompt} from './use-biometric-prompt';
-import {useGoogleSignIn} from './use-google-sign-in';
 import {useOidcFlow} from './use-oidc-flow';
 import {usePasskeyPrompt} from './use-passkey-prompt';
 
@@ -13,11 +12,12 @@ export function useSignIn() {
   const [isStartingAppleFlow, setIsStartingAppleFlow] = useState(false);
   const [isStartingGoogleFlow, setIsStartingGoogleFlow] = useState(false);
   const {startWebLogin, isLoading} = useAuth();
-  const {startFlow, isConfigured: isOidcConfigured} = useOidcFlow();
+  const {startFlow: startOidcFlow, isConfigured: isOidcConfigured} =
+    useOidcFlow();
   const {startFlow: startAppleFlow, isSupported: isAppleSupported} =
     useAppleSignIn();
-  const {startFlow: startGoogleFlow, isSupported: isGoogleSupported} =
-    useGoogleSignIn();
+  const isGoogleSupported =
+    (Platform.OS === 'ios' || Platform.OS === 'android') && isOidcConfigured;
   const {resolvePasskeySetupChoice} = usePasskeyPrompt();
   const {promptEnableIfNeeded} = useBiometricPrompt();
 
@@ -47,7 +47,7 @@ export function useSignIn() {
       setIsStartingMobileFlow(true);
 
       const setupPasskey = await resolvePasskeySetupChoice();
-      const outcome = await startFlow({
+      const outcome = await startOidcFlow({
         action: setupPasskey ? 'passkey_register' : 'login',
       });
       if (!outcome.completed) return;
@@ -100,7 +100,10 @@ export function useSignIn() {
 
     setIsStartingGoogleFlow(true);
     try {
-      const outcome = await startGoogleFlow();
+      const outcome = await startOidcFlow({
+        action: 'login',
+        idpHint: 'google',
+      });
       if (!outcome.completed) return;
       await promptEnableIfNeeded();
     } catch (error) {

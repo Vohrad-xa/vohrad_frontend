@@ -30,8 +30,8 @@ export function isAuthTokenGrantEndpoint(urlOrEndpoint: string): boolean {
   return (
     urlOrEndpoint.includes('/auth/oidc/') ||
     urlOrEndpoint.includes('/auth/web/token') ||
-    urlOrEndpoint.includes('/auth/social/exchange') ||
-    urlOrEndpoint.includes('/auth/social/refresh')
+    urlOrEndpoint.includes('/auth/apple/exchange') ||
+    urlOrEndpoint.includes('/auth/apple/refresh')
   );
 }
 

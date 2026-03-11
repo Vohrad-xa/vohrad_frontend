@@ -2,13 +2,13 @@ import {useCallback, useMemo} from 'react';
 import {authService, getMobileOidcClientConfig} from '@sykamore/auth';
 import {errorCenter} from '@sykamore/client-runtime';
 import {validateOidcStartAction, type OidcStartAction} from '@sykamore/types';
-import {AuthRequest, ResponseType, makeRedirectUri} from 'expo-auth-session';
+import {AuthRequest, ResponseType} from 'expo-auth-session';
 
-const REDIRECT_SCHEME = 'com.sykamore.app';
-const REDIRECT_PATH = 'oauth/callback';
+type OidcIdpHint = 'google';
 
 type OidcFlowStartOptions = {
   action?: OidcStartAction;
+  idpHint?: OidcIdpHint;
 };
 
 type OidcFlowOutcome =
@@ -47,11 +47,9 @@ export function useOidcFlow() {
         return {completed: false, cancelled: false};
       }
       const action = actionResult.data;
+      const idpHint = options?.idpHint;
 
-      const redirectUri = makeRedirectUri({
-        scheme: REDIRECT_SCHEME,
-        path: REDIRECT_PATH,
-      });
+      const redirectUri = oidcConfig.mobileRedirectUri;
 
       try {
         const discoveryDocument = await authService.fetchMobileOidcDiscovery();
@@ -62,7 +60,7 @@ export function useOidcFlow() {
           redirectUri,
           responseType: ResponseType.Code,
           usePKCE: true,
-          extraParams: action === 'login' ? undefined : {action},
+          extraParams: buildOidcExtraParams(action, idpHint),
         });
 
         const authResult = await authRequest.promptAsync({
@@ -123,4 +121,18 @@ export function useOidcFlow() {
     startFlow,
     isConfigured,
   };
+}
+
+function buildOidcExtraParams(
+  action: OidcStartAction,
+  idpHint: OidcIdpHint | undefined,
+): Record<string, string> | undefined {
+  const params: Record<string, string> = {};
+  if (action !== 'login') {
+    params.action = action;
+  }
+  if (idpHint) {
+    params.kc_idp_hint = idpHint;
+  }
+  return Object.keys(params).length > 0 ? params : undefined;
 }

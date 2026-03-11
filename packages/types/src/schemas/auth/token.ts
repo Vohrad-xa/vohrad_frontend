@@ -11,7 +11,7 @@ export const tokenResponseSchema = z.object({
 
 export const authTokensSchema = tokenResponseSchema.extend({
   issued_at: z.coerce.number().int().nonnegative().optional(),
-  refresh_flow: z.enum(['oidc_direct', 'social_exchange']).optional(),
+  refresh_flow: z.enum(['oidc_direct', 'apple_exchange']).optional(),
 });
 
 export type TokenResponse = z.infer<typeof tokenResponseSchema>;
