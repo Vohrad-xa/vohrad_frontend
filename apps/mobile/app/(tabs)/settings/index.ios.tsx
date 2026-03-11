@@ -89,6 +89,12 @@ export default function SettingsModal() {
             onPress={() => router.push('/(tabs)/settings/privacy')}
           />
           <ListSection.Row
+            icon={AppIcons.files.list}
+            iconColorToken="accentGreen"
+            title="Terms of Use"
+            onPress={() => router.push('/(tabs)/settings/terms')}
+          />
+          <ListSection.Row
             icon={AppIcons.ui.info}
             iconColorToken="accentOrange"
             title="Help"

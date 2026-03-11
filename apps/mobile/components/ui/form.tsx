@@ -100,12 +100,13 @@ export const ListRow = memo((p: ListRowProps) => {
       left={p.left}
       right={renderRight}
       onPress={handlePress}
+      unstable_pressDelay={60}
       accessibilityRole={handlePress ? 'button' : undefined}
       accessibilityLabel={p.a11yLabel}
       accessibilityHint={p.a11yHint}
       descriptionNumberOfLines={p.descriptionNumberOfLines}
       descriptionEllipsizeMode={p.descriptionEllipsizeMode}
-      borderless
+      background={{foreground: true, borderless: false, color: theme.ripple}}
       style={[
         {borderRadius: ds.borderRadius.sm, backgroundColor: theme.card},
         p.style,

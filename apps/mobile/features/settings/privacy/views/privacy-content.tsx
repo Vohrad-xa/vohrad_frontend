@@ -60,10 +60,9 @@ export function PrivacyContent() {
     >
       <View style={styles.header}>
         <Avatar.Icon
-          size={80}
+          size={75}
           icon={AppIcons.ui.privacy}
           color={Palette.deepblue}
-          style={styles.headerIcon}
           accessibilityLabel="Privacy"
         />
         <ThemedText variant="title1" style={styles.headerTitle}>
@@ -106,10 +105,6 @@ const useStyles = makeStyleFactory(
         alignItems: 'center',
         paddingHorizontal: ds.spacing.xl,
         paddingVertical: ds.spacing.sm,
-      },
-      headerIcon: {
-        width: 85,
-        height: 85,
       },
       headerTitle: {
         marginTop: ds.spacing.md,

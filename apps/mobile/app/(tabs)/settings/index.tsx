@@ -1,17 +1,12 @@
 import {memo, useCallback, useMemo} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
+import {ScrollView} from 'react-native';
 import {useActionSheet} from '@expo/react-native-action-sheet';
 import {type Href} from 'expo-router';
 import {List, type ListItemProps} from 'react-native-paper';
-import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {Palette} from '@/constants';
 import {useAuth, useTheme} from '@/providers';
 import {useSafeRouter} from '@/utils';
-import {
-  AppIcons,
-  type IconName,
-  makeStyleFactory,
-  showConfirmAlert,
-} from '@/utils';
+import {AppIcons, type IconName, showConfirmAlert} from '@/utils';
 
 type LeftProps = Parameters<NonNullable<ListItemProps['left']>>[0];
 
@@ -33,8 +28,7 @@ const APPEARANCE_OPTIONS = [
 
 const SettingsRow = memo((row: SettingsRowModel) => {
   const router = useSafeRouter();
-  const {ds, theme} = useTheme();
-  const styles = createStyles(ds, theme);
+  const {theme} = useTheme();
 
   const onPress = useCallback(() => {
     if (row.onPress) return row.onPress();
@@ -51,11 +45,12 @@ const SettingsRow = memo((row: SettingsRowModel) => {
   return (
     <List.Item
       title={row.title}
-      titleStyle={row.danger ? styles.dangerTitle : undefined}
+      titleStyle={row.danger ? {color: Palette.red} : undefined}
       description={row.description}
       left={renderLeft}
       onPress={pressable ? onPress : undefined}
-      borderless
+      unstable_pressDelay={60}
+      background={{foreground: true, borderless: false, color: theme.ripple}}
     />
   );
 });
@@ -113,7 +108,7 @@ export default function SettingsModal() {
     theme.text,
   ]);
 
-  const ROWS = useMemo<readonly SettingsRowModel[]>(
+  const rows = useMemo<readonly SettingsRowModel[]>(
     () => [
       {
         id: 'profile',
@@ -192,19 +187,9 @@ export default function SettingsModal() {
 
   return (
     <ScrollView>
-      {ROWS.map((row) => (
+      {rows.map((row) => (
         <SettingsRow key={row.id} {...row} />
       ))}
     </ScrollView>
   );
 }
-
-const createStyles = makeStyleFactory(
-  (_ds: DSShape, _theme: ThemeShape) =>
-    StyleSheet.create({
-      dangerTitle: {
-        color: Palette.red,
-      },
-    }),
-  (ds, theme) => themeKey(theme, ds),
-);

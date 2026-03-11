@@ -5,7 +5,7 @@ import type {Href} from 'expo-router';
 export type PrivacyRow = Readonly<{
   rowKey: string;
   title: string;
-  description: string;
+  description?: string;
   href?: Href;
   icon?: IconName;
   iconColorToken?: TokenName;
