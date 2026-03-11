@@ -181,10 +181,10 @@ export const createDesignSystem = (
       xs: 12,
       sm: 16,
       md: 20,
-      lg: 24,
-      xl: 28,
-      xxl: 36,
-      xxxl: 46,
+      lg: 22,
+      xl: 24,
+      xxl: 28,
+      xxxl: 36,
     } as const,
 
     layout: {
