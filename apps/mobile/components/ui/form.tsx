@@ -108,7 +108,7 @@ export const ListRow = memo((p: ListRowProps) => {
       descriptionEllipsizeMode={p.descriptionEllipsizeMode}
       background={{foreground: true, borderless: false, color: theme.ripple}}
       style={[
-        {borderRadius: ds.borderRadius.sm, backgroundColor: theme.card},
+        {borderRadius: ds.borderRadius.xs, backgroundColor: theme.card},
         p.style,
       ]}
     />

@@ -64,6 +64,7 @@ export function PrivacyContent() {
           icon={AppIcons.ui.privacy}
           color={Palette.deepblue}
           accessibilityLabel="Privacy"
+          style={{backgroundColor: Palette.lightBlue}}
         />
         <ThemedText variant="title1" style={styles.headerTitle}>
           {PRIVACY_HEADER.title}

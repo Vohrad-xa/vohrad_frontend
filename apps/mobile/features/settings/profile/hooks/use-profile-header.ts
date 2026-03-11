@@ -3,6 +3,7 @@ import {Platform} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {router} from 'expo-router';
 import {Palette} from '@/constants';
+import {AppIcons} from '@/utils';
 import {getHeaderOptions} from '@/utils/navigation/header-actions';
 
 /**
@@ -58,8 +59,8 @@ export function useProfileHeader({
           type: 'button',
           key: 'save',
           label: 'Save',
-          iosSymbol: 'checkmark',
-          icon: 'content-save',
+          iosSymbol: AppIcons.actions.save,
+          icon: AppIcons.actions.save,
           variant: 'done',
           tintColor: Platform.OS === 'ios' ? Palette.orange : undefined,
           onPress: handleSave,
