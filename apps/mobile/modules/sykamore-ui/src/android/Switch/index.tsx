@@ -1,5 +1,5 @@
 import {requireNativeView} from 'expo';
-import {NativeSyntheticEvent} from 'react-native';
+import {type NativeSyntheticEvent} from 'react-native';
 
 import {ExpoModifier} from '../types';
 

@@ -13,7 +13,9 @@ const createTimeDate = (timeValue: string | null) => {
   const base = new Date();
   if (!timeValue) return base;
 
-  const [hours, minutes] = timeValue.split(':').map((value) => Number(value));
+  const [hours, minutes] = timeValue
+    .split(':')
+    .map((value) => Number(value)) as [number, number];
   if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return base;
 
   base.setHours(hours, minutes, 0, 0);

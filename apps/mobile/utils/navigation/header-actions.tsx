@@ -296,7 +296,7 @@ function toIOSHeaderItem(a: HeaderAction): NativeStackHeaderItem {
  */
 const CHECK_IOS_26 =
   Platform.OS === 'ios' &&
-  parseInt(String(Platform.Version).split('.')[0], 10) >= 26;
+  parseInt(String(Platform.Version).split('.')[0] ?? '0', 10) >= 26;
 
 /**
  * Build platform-appropriate header options from actions.

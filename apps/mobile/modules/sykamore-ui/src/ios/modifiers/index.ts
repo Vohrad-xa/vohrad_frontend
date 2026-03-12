@@ -1,7 +1,7 @@
 import {requireNativeModule} from 'expo';
 import {animation} from './animation/index';
 import {containerShape} from './containerShape';
-import {createModifier, ModifierConfig} from './createModifier';
+import {createModifier, type ModifierConfig} from './createModifier';
 import {datePickerStyle} from './datePickerStyle';
 import {pickerStyle} from './pickerStyle';
 import {swipeActions} from './swipeActions';

@@ -44,14 +44,14 @@ export function showAlert({
       const confirmed = window.confirm(
         message ? `${title}\n\n${message}` : title,
       );
-      if (confirmed && buttons[1].onPress) {
+      if (confirmed && buttons[1]?.onPress) {
         buttons[1].onPress();
-      } else if (!confirmed && buttons[0].onPress) {
+      } else if (!confirmed && buttons[0]?.onPress) {
         buttons[0].onPress();
       }
     } else {
       window.alert(message ? `${title}\n\n${message}` : title);
-      if (buttons[0].onPress) {
+      if (buttons[0]?.onPress) {
         buttons[0].onPress();
       }
     }

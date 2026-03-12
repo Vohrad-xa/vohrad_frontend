@@ -52,9 +52,9 @@ export function useAttachmentShare() {
         const result =
           downloads.length === 1
             ? await shareDownloadedFile(
-                downloads[0].localPath,
-                downloads[0].displayName,
-                downloads[0].mimeType,
+                downloads[0]!.localPath,
+                downloads[0]!.displayName,
+                downloads[0]!.mimeType,
               )
             : await shareDownloadedFiles(
                 downloads.map((download) => download.localPath),

@@ -1,13 +1,17 @@
 import {requireNativeView} from 'expo';
-import {Children, ReactElement, ReactNode, useMemo} from 'react';
-import {NativeSyntheticEvent, StyleProp, ViewStyle} from 'react-native';
+import {Children, type ReactElement, type ReactNode, useMemo} from 'react';
+import {
+  type NativeSyntheticEvent,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 
-import {SubmenuProps} from './SubMenu';
-import {MenuElement, transformChildrenToElementArray} from './utils';
-import {ExpoModifier} from '../types';
-import {ButtonProps} from '../Button';
-import {PickerProps} from '../Picker';
-import {SwitchProps} from '../Switch';
+import {type SubmenuProps} from './SubMenu';
+import {type MenuElement, transformChildrenToElementArray} from './utils';
+import {type ExpoModifier} from '../types';
+import {type ButtonProps} from '../Button';
+import {type PickerProps} from '../Picker';
+import {type SwitchProps} from '../Switch';
 
 const MenuNativeView: React.ComponentType<NativeMenuProps> = requireNativeView(
   'SykamoreUi',

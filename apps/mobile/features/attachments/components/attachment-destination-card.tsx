@@ -58,7 +58,7 @@ export function AttachmentDestinationCard({
           <View style={styles.cardContent}>
             <View style={styles.iconWrapper}>
               <Icon
-                name={AppIcons.domain.vaultOutline}
+                name={AppIcons.domain.vault}
                 size="md"
                 color={theme.secondary}
               />

@@ -59,8 +59,8 @@ export function AttachmentImagePreview({
         maximumZoomScale={5}
       >
         <Image
-          key={currentAttachment.id}
-          source={{uri: currentAttachment.resolvedUrl}}
+          key={currentAttachment?.id}
+          source={{uri: currentAttachment?.resolvedUrl}}
           style={styles.image}
           contentFit="contain"
           cachePolicy="memory-disk"

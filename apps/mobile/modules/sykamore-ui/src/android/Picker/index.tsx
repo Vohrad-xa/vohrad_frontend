@@ -1,5 +1,5 @@
 import {requireNativeView} from 'expo';
-import {StyleProp, ViewStyle} from 'react-native';
+import {type StyleProp, type ViewStyle} from 'react-native';
 
 import {ExpoModifier} from '../../types';
 

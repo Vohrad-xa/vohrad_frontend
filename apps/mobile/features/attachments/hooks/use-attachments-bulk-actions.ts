@@ -41,7 +41,7 @@ export function useAttachmentsBulkActions<T extends ItemAttachment>({
     const message =
       count === 1
         ? (() => {
-            const attachment = selectedItems[0];
+            const attachment = selectedItems[0]!;
             const fallbackLabel = `this ${labelSingular}`;
             const fileName = sanitizeInlineText(
               attachment.original_filename ?? attachment.filename,

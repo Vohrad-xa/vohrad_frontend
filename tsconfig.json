@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
+    "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "lib": ["ES2019", "DOM"],
+    "lib": ["ESNext", "DOM"],
+    "strictNullChecks": true,
+    "isolatedModules": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,

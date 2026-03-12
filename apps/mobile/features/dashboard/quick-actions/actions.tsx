@@ -36,7 +36,7 @@ export function QuickActions({onScanPress}: QuickActionsProps) {
       {label: 'Events', icon: AppIcons.ui.notifications},
       {label: 'Documents', icon: AppIcons.files.document},
       {label: 'Locations', icon: AppIcons.domain.location},
-      {label: 'Items', icon: AppIcons.domain.itemOutline},
+      {label: 'Items', icon: AppIcons.domain.item},
     ],
     [],
   );

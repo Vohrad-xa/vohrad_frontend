@@ -97,8 +97,6 @@ const createStyles = makeStyleFactory(
         case 'modal':
           return {
             backgroundColor: theme.background,
-            borderRadius: ds.components.modal.borderRadius,
-            padding: ds.components.modal.padding,
           };
         case 'header':
           return {

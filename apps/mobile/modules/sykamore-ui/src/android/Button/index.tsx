@@ -1,8 +1,8 @@
 import {requireNativeView} from 'expo';
-import {StyleProp, StyleSheet, ViewStyle} from 'react-native';
+import {type StyleProp, StyleSheet, type ViewStyle} from 'react-native';
 
-import {MaterialIcon} from './types';
-import {ExpoModifier, ViewEvent} from '../types';
+import {type MaterialIcon} from './types';
+import {type ExpoModifier, type ViewEvent} from '../types';
 import {getTextFromChildren} from '../../utils';
 
 /**

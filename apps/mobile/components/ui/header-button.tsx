@@ -13,7 +13,7 @@ import {ThemedText} from './themed-text';
 
 const getReadableIconName = (iconPath: string): string => {
   const parts = iconPath.split('.');
-  const name = parts[parts.length - 1];
+  const name = parts[parts.length - 1] ?? iconPath;
   const withSpaces = name.replace(/([A-Z])/g, ' $1').trim();
 
   return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1).toLowerCase();

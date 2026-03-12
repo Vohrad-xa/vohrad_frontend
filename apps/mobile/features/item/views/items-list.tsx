@@ -57,7 +57,7 @@ const ItemItem = memo<ItemItemProps>(
         ) : (
           <View style={[styles.iconContainer, style]}>
             <Icon
-              name={AppIcons.domain.itemOutline}
+              name={AppIcons.domain.item}
               color={Palette.deepblue}
               size="lg"
             />

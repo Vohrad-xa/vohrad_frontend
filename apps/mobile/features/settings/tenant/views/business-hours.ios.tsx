@@ -17,7 +17,7 @@ import {useBusinessHours} from '../hooks/use-business-hours';
 
 function timeStringToDate(timeStr: string): Date {
   const base = new Date();
-  const [hours, minutes] = timeStr.split(':').map(Number);
+  const [hours, minutes] = timeStr.split(':').map(Number) as [number, number];
   if (Number.isFinite(hours) && Number.isFinite(minutes)) {
     base.setHours(hours, minutes, 0, 0);
   }

@@ -177,7 +177,7 @@ async function pickDeviceDocument(): Promise<PendingAttachment | null> {
     return null;
   }
 
-  return buildPendingFromDocument(result.assets[0]);
+  return buildPendingFromDocument(result.assets[0]!);
 }
 
 async function pickGalleryImage(): Promise<PendingAttachment | null> {
@@ -196,7 +196,7 @@ async function pickGalleryImage(): Promise<PendingAttachment | null> {
     return null;
   }
 
-  return buildPendingFromCamera(result.assets[0]);
+  return buildPendingFromCamera(result.assets[0]!);
 }
 
 async function captureCameraImage(): Promise<PendingAttachment | null> {
@@ -214,7 +214,7 @@ async function captureCameraImage(): Promise<PendingAttachment | null> {
     return null;
   }
 
-  return buildPendingFromCamera(result.assets[0]);
+  return buildPendingFromCamera(result.assets[0]!);
 }
 
 async function resolveWebFile(

@@ -25,14 +25,14 @@ export function getInitials(name: string | null | undefined): string {
 
   if (parts.length === 1) {
     // Single name: return first two characters
-    const singleName = parts[0];
+    const singleName = parts[0]!;
     return singleName.length === 1
       ? singleName.toUpperCase()
       : singleName.substring(0, 2).toUpperCase();
   }
 
   // Multiple names: first letter of first name + first letter of last name
-  const firstInitial = parts[0][0];
-  const lastInitial = parts[parts.length - 1][0];
+  const firstInitial = parts[0]![0]!;
+  const lastInitial = parts[parts.length - 1]![0]!;
   return (firstInitial + lastInitial).toUpperCase();
 }

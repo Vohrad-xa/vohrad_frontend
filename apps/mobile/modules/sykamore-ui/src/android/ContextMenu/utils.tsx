@@ -1,16 +1,21 @@
-import {Children, isValidElement, ReactElement, ReactNode} from 'react';
-import {NativeSyntheticEvent} from 'react-native';
+import {
+  Children,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
+import {type NativeSyntheticEvent} from 'react-native';
 
-import {Submenu, SubmenuProps} from './SubMenu';
-import {ContextMenuElementBase, EventHandlers} from '.';
+import {Submenu, type SubmenuProps} from './SubMenu';
+import {type ContextMenuElementBase, type EventHandlers} from '.';
 import {
   Button,
-  ButtonProps,
-  NativeButtonProps,
+  type ButtonProps,
+  type NativeButtonProps,
   transformButtonProps,
 } from '../Button';
-import {Picker, PickerProps} from '../Picker';
-import {Switch, SwitchProps} from '../Switch';
+import {Picker, type PickerProps} from '../Picker';
+import {Switch, type SwitchProps} from '../Switch';
 
 // We use this slightly odd typing for the elements to make unpacking the elements easier on the native side
 type ButtonMenuElement = {

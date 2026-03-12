@@ -1,7 +1,7 @@
 import {type StyleProp, type TextStyle} from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type {TokenName} from '@/constants';
-import {useTheme} from '@/providers';
+import {useTheme} from '@/providers/theme-provider';
 
 export type IconSizeKey = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'xxxl';
 
