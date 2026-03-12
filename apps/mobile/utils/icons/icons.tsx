@@ -149,7 +149,7 @@ export const AppIcons = {
     others: 'folder-open',
     pdf: 'document-text',
     word: 'document-text',
-    excel: 'grid',
+    excel: 'document-text',
     text: 'document-text',
   },
 

@@ -42,8 +42,8 @@ export const itemAttachmentSchema = z.strictObject({
   user_id: z.string().nullable().optional(),
   deleted_at: z.string().nullable().optional(),
   kind: z.string().nullable().optional(),
-  target_type: z.string().optional(),
-  target_id: z.string().optional(),
+  target_type: z.string().nullable().optional(),
+  target_id: z.string().nullable().optional(),
 });
 
 export const categorySchema = z.strictObject({
@@ -55,8 +55,8 @@ export const categorySchema = z.strictObject({
 export const statusSchema = z.strictObject({
   id: z.string(),
   name: z.string(),
-  color: z.string(),
-  icon: z.string(),
+  color: z.string().nullable(),
+  icon: z.string().nullable(),
 });
 
 export const unitOfMeasureSchema = z.strictObject({

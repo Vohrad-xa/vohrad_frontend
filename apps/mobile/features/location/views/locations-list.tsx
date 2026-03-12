@@ -3,11 +3,17 @@ import {StyleSheet} from 'react-native';
 import {FlashList} from '@shopify/flash-list';
 import {Avatar, Divider, List, type ListItemProps} from 'react-native-paper';
 import {EmptyState} from '@/components/ui';
-import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {
+  Palette,
+  themeKey,
+  useTypography,
+  type DSShape,
+  type ThemeShape,
+} from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
 import {useTheme} from '@/providers';
-import {AppIcons, Icon, makeStyleFactory} from '@/utils';
+import {AppIcons, makeStyleFactory} from '@/utils';
 import type {Location} from '@sykamore/store';
 
 type LocationsListProps = {
@@ -28,12 +34,9 @@ type LocationItemProps = {
 const getLocationInitials = (name: string): string =>
   name.trim().substring(0, 2).toUpperCase() || '?';
 
-const renderChevron = () => (
-  <Icon name={AppIcons.actions.forward} size="sm" colorToken="muted" />
-);
-
 const LocationItem = memo<LocationItemProps>(({item, onPress, styles}) => {
   const handlePress = useCallback(() => onPress(item.id), [onPress, item.id]);
+  const typography = useTypography();
 
   const initials = getLocationInitials(item.name || '?');
   const title = item.name || 'No name';
@@ -51,24 +54,18 @@ const LocationItem = memo<LocationItemProps>(({item, onPress, styles}) => {
     [initials],
   );
 
-  const right = useCallback<NonNullable<ListItemProps['right']>>(
-    (props) => <List.Icon {...props} icon={renderChevron} />,
-    [],
-  );
-
   return (
     <List.Item
       title={title}
       description={description}
       onPress={handlePress}
       titleStyle={styles.title}
-      style={styles.content}
       left={left}
-      right={right}
       unstable_pressDelay={30}
       descriptionNumberOfLines={1}
       titleNumberOfLines={1}
-      borderless
+      background={{borderless: false, foreground: true}}
+      descriptionStyle={[typography.footnote, styles.description]}
     />
   );
 });
@@ -152,18 +149,18 @@ export function LocationsList({
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
-      content: {
-        paddingLeft: ds.spacing.xxs,
-        paddingRight: ds.spacing.lg,
-      },
       title: {
-        marginBottom: ds.spacing.xs,
+        marginBottom: ds.spacing.sm,
       },
       divider: {
-        marginLeft: ds.spacing.xxl * 2 + ds.spacing.lg,
+        marginLeft: ds.spacing.xxl * 2 + ds.spacing.md + 2,
         marginRight: ds.spacing.lg,
+      },
+      description: {
+        color: theme.muted,
+        fontWeight: ds.fontWeight.medium,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

@@ -38,6 +38,6 @@ export const OVERVIEW_FIELD_BY_KEY: Record<
   attachments: 'attachments_total',
   categories: 'categories_total',
   transfers: 'transfers_total',
-  unitsOfMeasure: 'units_of_measure_total',
+  unitsOfMeasure: 'uom_total',
   events: 'events_total',
 };

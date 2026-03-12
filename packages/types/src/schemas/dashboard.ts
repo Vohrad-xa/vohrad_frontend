@@ -19,7 +19,7 @@ export const dashboardOverviewSchema = z.strictObject({
   check_in_out_total: z.number().int().nonnegative(),
   categories_total: unsupportedDashboardTotal,
   transfers_total: unsupportedDashboardTotal,
-  units_of_measure_total: unsupportedDashboardTotal,
+  uom_total: z.number().int().nonnegative(),
   events_total: unsupportedDashboardTotal,
   attachment_counts: attachmentCountsSchema,
 });

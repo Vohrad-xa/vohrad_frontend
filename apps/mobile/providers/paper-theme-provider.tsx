@@ -23,7 +23,7 @@ export function PaperThemeProvider({children}: {children: React.ReactNode}) {
         ...base.colors,
 
         // Brand / accent roles
-        primary: theme.tint,
+        primary: theme.primary,
         onPrimary: Palette.white,
         primaryContainer: isDark ? Palette.slateblue : Palette.lightBlue,
         onPrimaryContainer: isDark ? Palette.white : Palette.bluepurple,

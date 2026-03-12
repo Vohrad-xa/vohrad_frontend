@@ -7,9 +7,9 @@ import {EmptyState} from '@/components/ui';
 import {
   Palette,
   themeKey,
+  useTypography,
   type DSShape,
   type ThemeShape,
-  useTypography,
 } from '@/constants';
 import {ListCountFooter, ListStatusHeader} from '@/features/shared';
 import {usePullToRefresh} from '@/hooks';
@@ -36,9 +36,8 @@ type ItemItemProps = {
 
 const ItemItem = memo<ItemItemProps>(
   ({item, onPress, styles, getItemImageUrl}) => {
-    const typography = useTypography();
-
     const handlePress = useCallback(() => onPress(item.id), [onPress, item.id]);
+    const typography = useTypography();
 
     const name = item.name || 'No name';
     const description = `${item.sku ?? 'No SKU'}${item.price ? ` - $${item.price}` : ''}`;
@@ -76,7 +75,8 @@ const ItemItem = memo<ItemItemProps>(
         unstable_pressDelay={30}
         descriptionNumberOfLines={1}
         titleNumberOfLines={1}
-        descriptionStyle={[typography.footnote, {color: Palette.gray[600]}]}
+        background={{borderless: false, foreground: true}}
+        descriptionStyle={[typography.footnote, styles.description]}
       />
     );
   },
@@ -168,7 +168,7 @@ const createStyles = makeStyleFactory(
         marginBottom: ds.spacing.sm,
       },
       divider: {
-        marginLeft: ds.spacing.xxl * 2 + ds.spacing.md,
+        marginLeft: ds.spacing.xxl * 2 + ds.spacing.md + 2,
         marginRight: ds.spacing.lg,
       },
       avatar: {
@@ -183,6 +183,10 @@ const createStyles = makeStyleFactory(
         backgroundColor: theme.primary,
         justifyContent: 'center',
         alignItems: 'center',
+      },
+      description: {
+        color: theme.muted,
+        fontWeight: ds.fontWeight.medium,
       },
     }),
   (ds, theme) => themeKey(theme, ds),

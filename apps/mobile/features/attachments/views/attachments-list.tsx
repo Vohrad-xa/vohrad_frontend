@@ -95,7 +95,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
       <Pressable
         onPress={handlePress}
         accessibilityRole="button"
-        unstable_pressDelay={30}
+        unstable_pressDelay={50}
         style={({pressed}) => [
           styles.content,
           selectionVisible ? styles.contentSelection : null,
@@ -157,6 +157,7 @@ const AttachmentItem = memo<AttachmentItemProps>(
                 symbolType={fileIcon.symbolType}
                 symbolColorTokens={fileIcon.symbolColorTokens}
                 fontWeight={fileIcon.fontWeight}
+                resizeMode="scaleAspectFill"
               />
             )}
           </View>
@@ -208,6 +209,7 @@ const AttachmentsListBase = ({
   const fontScaleKey = ds.screen?.fontScale ?? 1;
 
   const hasSelection = selectionState != null;
+
   const selectionVisible = selectionState?.isVisible ?? false;
 
   const checkboxOpacity: AnimatedNumber = selectionState?.checkboxOpacity ?? 0;
@@ -427,7 +429,7 @@ const createStyles = makeStyleFactory(
   (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       content: {
-        paddingVertical: ds.spacing.md,
+        paddingVertical: ds.spacing.lg,
         paddingHorizontal: ds.spacing.lg,
         marginVertical: -0.2,
         backgroundColor: 'transparent',
@@ -449,11 +451,11 @@ const createStyles = makeStyleFactory(
         left: ds.spacing.lg,
         top: 0,
         bottom: 0,
-        width: ds.spacing.xxl + ds.spacing.md,
+        width: ds.spacing.xxxl,
       },
 
       iconContainer: {
-        height: ds.spacing.xl * 2 + ds.spacing.xxs,
+        height: ds.spacing.xl * 2 + ds.spacing.xs,
         width: ds.spacing.xxl + ds.spacing.md,
         alignItems: 'center',
         justifyContent: 'center',
@@ -474,11 +476,11 @@ const createStyles = makeStyleFactory(
       },
 
       title: {
-        paddingBottom: ds.spacing.xs + 2,
+        paddingBottom: ds.spacing.sm,
       },
 
       divider: {
-        marginLeft: ds.spacing.xxxl + ds.spacing.xl + ds.spacing.xs,
+        marginLeft: 74,
         marginRight: ds.spacing.lg,
       },
 
