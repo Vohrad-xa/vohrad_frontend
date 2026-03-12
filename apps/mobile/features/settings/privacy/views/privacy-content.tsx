@@ -4,7 +4,7 @@ import {Avatar, List} from 'react-native-paper';
 import {
   ListRows,
   ThemedText,
-  rightIcon,
+  listIcon,
   type ListRowProps,
 } from '@/components/ui';
 import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
@@ -40,7 +40,7 @@ function mapRows(rows: readonly PrivacyRow[]): ListRowProps[] {
       ...common,
       rowKey: row.rowKey,
       onPress: noop,
-      right: rightIcon(AppIcons.actions.forward),
+      right: listIcon(AppIcons.actions.forward),
     } satisfies ListRowProps;
   });
 }

@@ -24,7 +24,7 @@ export const EmailContent = forwardRef<EmailContentHandle>((_, ref) => {
       <List.Section title="Primary Email">
         <List.Item
           title={email}
-          left={(props) => <List.Icon {...props} icon="email-outline" />}
+          left={(props) => <List.Icon {...props} icon="mail" />}
           right={() => (
             <Button mode="text" onPress={() => void requestChange()}>
               Edit

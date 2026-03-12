@@ -27,7 +27,7 @@ export const PhoneContent = forwardRef<PhoneContentHandle>((_, ref) => {
         autoComplete="tel"
         returnKeyType="done"
         autoFocus
-        left={<TextInput.Icon icon="phone" />}
+        left={<TextInput.Icon icon="call" />}
       />
       <HelperText type="info" visible>
         {SUPPORTING_TEXT}

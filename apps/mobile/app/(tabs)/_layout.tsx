@@ -113,12 +113,12 @@ export default function TabLayout() {
         screenOptions={{
           headerShown: false,
           tabBarPosition: 'left',
-          tabBarVariant: 'material',
+          tabBarVariant: 'uikit',
           tabBarActiveBackgroundColor: theme.tabIndicator,
           tabBarStyle: {
             justifyContent: 'space-evenly',
             backgroundColor: theme.tabBar,
-            minWidth: 150,
+            minWidth: 200,
           },
           tabBarItemStyle: {
             marginVertical: 10,

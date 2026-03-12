@@ -46,7 +46,12 @@ export function TenantInfoView({values, onFieldChange}: TenantInfoViewProps) {
           editable={false}
           autoCapitalize="words"
           returnKeyType="done"
-          right={<TextInput.Icon icon={AppIcons.ui.privacy} />}
+          right={
+            <TextInput.Icon
+              icon={AppIcons.ui.privacy}
+              color={theme.accentOrange}
+            />
+          }
         />
 
         <TextInput
@@ -59,7 +64,12 @@ export function TenantInfoView({values, onFieldChange}: TenantInfoViewProps) {
           keyboardType="email-address"
           returnKeyType="done"
           left={<TextInput.Icon icon={AppIcons.ui.email} />}
-          right={<TextInput.Icon icon={AppIcons.ui.privacy} />}
+          right={
+            <TextInput.Icon
+              icon={AppIcons.ui.privacy}
+              color={theme.accentOrange}
+            />
+          }
         />
 
         <TextInput

@@ -2,12 +2,16 @@ import React, {memo, useMemo} from 'react';
 import type {StyleProp, ViewStyle} from 'react-native';
 import {View} from 'react-native';
 import {List, Surface, type ListItemProps} from 'react-native-paper';
-import {themeKey, type DSShape, type ThemeShape} from '@/constants';
+import {Palette, themeKey, type DSShape, type ThemeShape} from '@/constants';
 import {useTheme} from '@/providers';
-import {AppIcons, makeStyleFactory, useSafeRouter} from '@/utils';
+import {
+  useSafeRouter,
+  makeStyleFactory,
+  type IconProps,
+  AppIcons,
+  Icon,
+} from '@/utils';
 import type {Href} from 'expo-router';
-
-type IconProp = React.ComponentProps<typeof List.Icon>['icon'];
 
 /**
  * Provide **either** `href` (key is derived from the path) **or** an explicit
@@ -53,22 +57,31 @@ type ListRowsProps = Readonly<{
  *
  * @example
  * ```tsx
- * <ListRow right={rightIcon('chevron-right')} … />
+ * <ListRow right={listIcon('chevron-right')} … />
  * ```
  */
-type RightIconProps = Parameters<NonNullable<ListItemProps['right']>>[0];
+type ListIconProps = Parameters<NonNullable<ListItemProps['right']>>[0];
 
-export const rightIcon = (
-  icon: IconProp,
+export const listIcon = (
+  icon: IconProps['name'],
+  size?: IconProps['size'],
+  color?: IconProps['color'],
 ): NonNullable<ListItemProps['right']> => {
-  function RightIcon(props: RightIconProps) {
-    return <List.Icon {...props} icon={icon} />;
+  function ListIconRenderer(props: ListIconProps) {
+    return (
+      <Icon
+        name={icon}
+        size={size}
+        color={color ?? props.color}
+        style={props.style}
+      />
+    );
   }
 
-  return RightIcon;
+  return ListIconRenderer;
 };
 
-const chevronRight = rightIcon(AppIcons.actions.forward);
+const chevronRight = listIcon(AppIcons.actions.forward, 20, Palette.gray[500]);
 
 /**
  * Themed list item with automatic navigation behaviour.
@@ -111,6 +124,7 @@ export const ListRow = memo((p: ListRowProps) => {
         {borderRadius: ds.borderRadius.xs, backgroundColor: theme.card},
         p.style,
       ]}
+      descriptionStyle={{color: theme.muted}}
     />
   );
 });

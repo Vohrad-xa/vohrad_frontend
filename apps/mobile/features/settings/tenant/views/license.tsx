@@ -52,7 +52,7 @@ export function LicenseView() {
             style={styles.keyInput}
             right={
               <TextInput.Icon
-                icon="content-copy"
+                icon="copy-outline"
                 disabled={!hasLicenseKey}
                 onPress={handleCopyKey}
               />

@@ -4,7 +4,7 @@ import {Chip, List} from 'react-native-paper';
 import {
   ThemedText,
   ListRows,
-  rightIcon,
+  listIcon,
   type ListRowProps,
 } from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants';
@@ -13,10 +13,10 @@ import {makeStyleFactory, AppIcons} from '@/utils';
 import type {AttachmentKindCount} from '../utils/attachment-counts';
 import type {Href} from 'expo-router';
 
-const leftImage = rightIcon(AppIcons.files.image);
-const leftDocument = rightIcon(AppIcons.files.document);
-const leftArchive = rightIcon(AppIcons.files.archive);
-const leftOther = rightIcon(AppIcons.files.others);
+const leftImage = listIcon(AppIcons.files.image);
+const leftDocument = listIcon(AppIcons.files.document);
+const leftArchive = listIcon(AppIcons.files.archive);
+const leftOther = listIcon(AppIcons.files.others);
 
 function formatCount(count: number): string {
   if (count === 0) return 'None';
