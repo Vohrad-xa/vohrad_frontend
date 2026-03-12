@@ -84,7 +84,11 @@ export class RefreshRuntimeController {
   }
 
   private updateRefreshSchedule(tokens: AuthTokens | null): void {
-    if (!tokens?.access_token || !tokens.expires_in || !tokens.issued_at) {
+    const accessToken = tokens?.access_token;
+    const expiresIn = tokens?.expires_in;
+    const issuedAt = tokens?.issued_at;
+
+    if (!accessToken || expiresIn === undefined || issuedAt === undefined) {
       this.cancelScheduledRefresh();
       return;
     }
@@ -94,13 +98,13 @@ export class RefreshRuntimeController {
       return;
     }
 
-    this.scheduleRefresh(tokens);
+    this.scheduleRefresh(issuedAt, expiresIn);
   }
 
-  private scheduleRefresh(tokens: AuthTokens): void {
+  private scheduleRefresh(issuedAt: number, expiresIn: number): void {
     this.cancelScheduledRefresh();
 
-    const expiresAt = tokens.issued_at + tokens.expires_in * 1000;
+    const expiresAt = issuedAt + expiresIn * 1000;
     const refreshAt = Math.max(expiresAt - 60_000, Date.now() + 1_000);
     const delay = Math.max(refreshAt - Date.now(), 1_000);
 
