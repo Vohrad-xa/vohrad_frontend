@@ -11,11 +11,11 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@sykamore/api-client": ["packages/api-client/src"],
-      "@sykamore/auth": ["packages/auth/src"],
-      "@sykamore/store": ["packages/store/src"],
-      "@sykamore/types": ["packages/types/src"],
-      "@sykamore/client-runtime": ["packages/client-runtime/src"]
+      "@sykamore/api-client": ["packages/api-client/dist"],
+      "@sykamore/auth": ["packages/auth/dist"],
+      "@sykamore/types": ["packages/types/dist"],
+      "@sykamore/store": ["packages/store/dist"],
+      "@sykamore/client-runtime": ["packages/client-runtime/dist"]
     }
   }
 }
