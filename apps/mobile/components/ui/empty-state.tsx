@@ -23,9 +23,10 @@ export function EmptyState({message, icon, iconSize = 55}: EmptyStateProps) {
           size={iconSize}
           symbolType="palette"
           symbolColorTokens={['primary', 'accentBlue']}
+          colorToken="accentBlue"
           scale="medium"
           resizeMode="scaleAspectFill"
-          fontWeight="ultraLight"
+          fontWeight="thin"
           animationSpec={{
             effect: {
               type: 'scale',
@@ -36,7 +37,7 @@ export function EmptyState({message, icon, iconSize = 55}: EmptyStateProps) {
           }}
         />
       )}
-      <ThemedText variant="footnote" fontWeight="regular" colorToken="muted">
+      <ThemedText variant="footnote" fontWeight="medium" colorToken="muted">
         {message}
       </ThemedText>
     </View>

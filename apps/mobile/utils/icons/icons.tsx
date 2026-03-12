@@ -104,7 +104,7 @@ export const AppIcons = {
     forward: 'chevron-forward',
     back: 'chevron-back',
     add: 'add',
-    save: 'checkmark',
+    save: 'save',
     share: 'share-social',
     delete: 'trash',
     refresh: 'refresh',
