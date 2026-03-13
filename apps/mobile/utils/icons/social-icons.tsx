@@ -1,7 +1,7 @@
 import AppleSvg from '@/assets/icons/icon-apple.svg';
 import GoogleSvg from '@/assets/icons/icon-google.svg';
 import MicrosoftSvg from '@/assets/icons/icon-microsoft.svg';
-import EmailSvg from '@/assets/icons/icon-password.svg';
+import EmailSvg from '@/assets/icons/icon-login.svg';
 import {Palette} from '@/constants';
 
 type SocialIconProps = {size?: number};
