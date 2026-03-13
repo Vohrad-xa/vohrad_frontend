@@ -200,6 +200,7 @@ function ActionsRow({actions}: {actions: HeaderAction[]}) {
             style={[a.selected && styles.selected]}
             accessibilityLabel={a.accessibilityLabel ?? a.label}
             accessibilityHint={a.accessibilityHint}
+            role="button"
           />
         );
 

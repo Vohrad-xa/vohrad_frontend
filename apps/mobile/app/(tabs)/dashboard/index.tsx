@@ -31,9 +31,6 @@ export default function HomeScreen() {
           onPress={() => {
             void filterSheetRef.current?.present();
           }}
-          style={{
-            backgroundColor: Platform.OS === 'ios' ? undefined : theme.ripple,
-          }}
         />
       ),
     });
