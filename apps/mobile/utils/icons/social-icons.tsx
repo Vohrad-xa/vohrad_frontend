@@ -1,7 +1,7 @@
 import AppleSvg from '@/assets/icons/icon-apple.svg';
 import GoogleSvg from '@/assets/icons/icon-google.svg';
+import LoginSvg from '@/assets/icons/icon-login.svg';
 import MicrosoftSvg from '@/assets/icons/icon-microsoft.svg';
-import EmailSvg from '@/assets/icons/icon-login.svg';
 import {Palette} from '@/constants';
 
 type SocialIconProps = {size?: number};
@@ -23,6 +23,6 @@ export function MicrosoftIcon({size = IconSize}: SocialIconProps) {
   return <MicrosoftSvg width={size} height={size} />;
 }
 
-export function EmailIcon({size = 18}: SocialIconProps) {
-  return <EmailSvg width={size} height={size} />;
+export function LoginIcon({size = 18}: SocialIconProps) {
+  return <LoginSvg width={size} height={size} />;
 }

@@ -21,7 +21,7 @@ import {
   AppleIcon,
   GoogleIcon,
   MicrosoftIcon,
-  EmailIcon,
+  LoginIcon,
 } from '@/utils';
 
 type SocialButtonProps = {
@@ -183,7 +183,7 @@ export default function LoginScreen() {
             </View>
 
             <SocialButton
-              icon={() => <EmailIcon />}
+              icon={() => <LoginIcon />}
               label="Continue with Email"
               onPress={handleSubmit}
               loading={isStartingMobileFlow}

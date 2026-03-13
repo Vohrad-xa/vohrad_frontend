@@ -46,12 +46,26 @@ export default function ItemsScreen() {
   });
 
   useLayoutEffect(() => {
+    const addAction: HeaderButtonAction = {
+      key: 'add-item',
+      type: 'button',
+      variant: 'prominent',
+      label: 'Add item',
+      icon: 'add-circle-outline',
+      iosSymbol: 'plus.app',
+      onPress: () => {
+        router.push('/items/add-item');
+      },
+      accessibilityLabel: 'Add new item',
+    };
+
     const filterAction: HeaderButtonAction = {
       type: 'button',
       key: 'filters',
       label: 'Filter items',
       icon: AppIcons.ui.filter,
       iosSymbol: AppIcons.ui.filter,
+
       onPress: () => {
         void filterSheetRef.current?.present();
       },
@@ -62,8 +76,8 @@ export default function ItemsScreen() {
           : 'Filter items',
     };
 
-    navigation.setOptions(getHeaderOptions({right: [filterAction]}));
-  }, [navigation, activeFilterCount]);
+    navigation.setOptions(getHeaderOptions({right: [filterAction, addAction]}));
+  }, [navigation, activeFilterCount, router]);
 
   const handleItemPress = (itemId: string) => {
     router.push({

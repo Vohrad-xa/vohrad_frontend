@@ -67,13 +67,17 @@ function ItemsStack() {
   const headerSearchBarOptions = useMemo(
     () =>
       ({
-        placement: 'integrated' as const,
-        hideWhenScrolling: false,
+        placement: 'inline',
+        inputType: 'text',
         placeholder: 'Search',
+        hideWhenScrolling: false,
         headerIconColor: theme.icon,
+        hintTextColor: theme.icon,
+        textColor: theme.text,
+        shouldShowHintSearchIcon: true,
         onChangeText: handleSearchChange,
       }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
-    [handleSearchChange, theme.icon],
+    [handleSearchChange, theme.icon, theme.text],
   );
 
   const stackScreenOptions = useMemo(
@@ -85,7 +89,7 @@ function ItemsStack() {
         headerTransparent: Platform.OS === 'ios',
         headerTitleStyle: {
           color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          fontSize: Platform.OS !== 'ios' ? 26 : 18,
+          fontSize: Platform.OS !== 'ios' ? 20 : 18,
         },
       }) satisfies NativeStackNavigationOptions,
     [theme.headerAndroid],
@@ -107,6 +111,15 @@ function ItemsStack() {
         name="[id]"
         options={{
           headerTitle: 'Item Details',
+        }}
+      />
+      <Stack.Screen
+        name="add-item"
+        options={{
+          presentation: 'formSheet',
+          headerTitle: 'New Item',
+          headerSearchBarOptions: undefined,
+          gestureEnabled: false,
         }}
       />
     </Stack>
