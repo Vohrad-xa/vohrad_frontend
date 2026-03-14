@@ -1,8 +1,9 @@
-import {useMemo} from 'react';
 import {Platform} from 'react-native';
+import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {router, Stack} from 'expo-router';
 import {HeaderButton} from '@/components/ui';
 import {useTheme} from '@/providers';
+import {baseStackOptions, sectionTitleStyle} from '@/utils/navigation';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -11,43 +12,38 @@ export const unstable_settings = {
 export default function ProfileLayout() {
   const {theme, ds} = useTheme();
 
-  const modalOptions = useMemo(
-    () => ({
-      presentation: 'modal' as const,
-      headerLeft: () =>
-        Platform.OS === 'ios' ? (
-          <HeaderButton
-            variant="close"
-            accessibilityLabel="Close"
-            accessibilityHint="Closes the modal"
-            onPress={() => router.dismiss()}
-          />
-        ) : undefined,
-    }),
-    [],
-  );
+  const modalOptions = {
+    presentation: 'modal' as const,
+    headerLeft: () =>
+      Platform.OS === 'ios' ? (
+        <HeaderButton
+          variant="close"
+          accessibilityLabel="Close"
+          accessibilityHint="Closes the modal"
+          onPress={() => router.dismiss()}
+        />
+      ) : undefined,
+  };
+
+  const screenOptions = {
+    ...baseStackOptions(theme),
+    headerLargeTitleStyle: {
+      fontWeight: ds.fontWeight.bold,
+    },
+    contentStyle: {
+      paddingHorizontal: Platform.OS !== 'ios' ? ds.spacing.md : undefined,
+    },
+  } satisfies NativeStackNavigationOptions;
 
   return (
-    <Stack
-      screenOptions={{
-        headerShadowVisible: false,
-        headerBackButtonDisplayMode: 'minimal',
-        headerTransparent: Platform.OS === 'ios',
-        headerTitleStyle: {
-          fontSize: Platform.OS !== 'ios' ? 26 : undefined,
-          color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-        },
-        headerLargeTitleStyle: {
-          fontWeight: ds.fontWeight.bold,
-        },
-        contentStyle: {
-          paddingHorizontal: Platform.OS !== 'ios' ? ds.spacing.md : undefined,
-        },
-      }}
-    >
+    <Stack screenOptions={screenOptions}>
       <Stack.Screen
         name="index"
-        options={{title: 'Profile', headerShown: Platform.OS !== 'ios'}}
+        options={{
+          title: 'Profile',
+          headerShown: Platform.OS !== 'ios',
+          headerTitleStyle: sectionTitleStyle(theme),
+        }}
       />
       <Stack.Screen
         name="birth-date"

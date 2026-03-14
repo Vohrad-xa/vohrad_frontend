@@ -97,8 +97,8 @@ export default function ScanScreen() {
     const right: HeaderAction[] = [
       {
         type: 'button',
-        variant: 'prominent',
-        tintColor: enableTorch ? Palette.orange : theme.icon,
+        variant: enableTorch ? 'prominent' : undefined,
+        tintColor: enableTorch ? Palette.orange : undefined,
         key: 'enable-torch',
         label: enableTorch ? 'Turn off flash' : 'Turn on flash',
         accessibilityLabel: enableTorch ? 'Turn off flash' : 'Turn on flash',

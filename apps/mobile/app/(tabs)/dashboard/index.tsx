@@ -1,5 +1,5 @@
 import {useCallback, useLayoutEffect, useRef} from 'react';
-import {StyleSheet, ScrollView, Platform, View} from 'react-native';
+import {StyleSheet, ScrollView, View} from 'react-native';
 import {useDashboardOverview} from '@sykamore/store';
 import {router, useNavigation} from 'expo-router';
 import {HeaderButton} from '@/components/ui';

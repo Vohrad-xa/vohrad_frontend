@@ -1,72 +1,37 @@
-import {useCallback, useMemo} from 'react';
 import {Platform} from 'react-native';
-import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {Stack, router} from 'expo-router';
 import {SearchProvider, useSearch, useTheme} from '@/providers';
-import {getHeaderOptions} from '@/utils/navigation/header-actions';
+import {
+  baseStackOptions,
+  searchOptions,
+  sectionTitleStyle,
+  getHeaderOptions,
+  type SearchChangeEvent,
+} from '@/utils/navigation';
 
 export const unstable_settings = {
   initialRouteName: 'index',
 };
 
-interface SearchChangeEvent {
-  nativeEvent: {
-    text: string;
-  };
-}
-
 function SettingsStack() {
   const {theme} = useTheme();
   const {setSearchQuery} = useSearch();
 
-  const handleSearchChange = useCallback(
-    (event: SearchChangeEvent) => {
-      setSearchQuery(event.nativeEvent.text);
-    },
-    [setSearchQuery],
-  );
+  const onSearchChange = (event: SearchChangeEvent) => {
+    setSearchQuery(event.nativeEvent.text);
+  };
 
-  const stackScreenOptions = useMemo(
-    () =>
-      ({
-        headerShown: true,
-        headerShadowVisible: false,
-        headerBackButtonDisplayMode: 'minimal' as const,
-        headerTransparent: Platform.OS === 'ios',
-        headerTitleStyle: {
-          color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          fontSize: Platform.OS !== 'ios' ? 20 : 18,
-        },
-      }) satisfies NativeStackNavigationOptions,
-    [theme.headerAndroid],
-  );
-
-  const headerSearchBarOptions = useMemo(
-    () =>
-      ({
-        placement: 'inline',
-        inputType: 'text',
-        placeholder: 'Search',
-        hideWhenScrolling: false,
-        headerIconColor: theme.icon,
-        hintTextColor: theme.icon,
-        textColor: theme.text,
-        shouldShowHintSearchIcon: true,
-        onChangeText: handleSearchChange,
-      }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
-    [handleSearchChange, theme.icon, theme.text],
-  );
+  const screenOptions = baseStackOptions(theme);
+  const search = searchOptions(theme, onSearchChange);
+  const titleSyle = sectionTitleStyle(theme);
 
   return (
-    <Stack screenOptions={stackScreenOptions}>
+    <Stack screenOptions={screenOptions}>
       <Stack.Screen
         name="index"
         options={{
           title: 'Settings',
-          headerTitleStyle: {
-            fontSize: Platform.OS !== 'ios' ? 26 : 18,
-            color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          },
+          headerTitleStyle: titleSyle,
         }}
       />
       <Stack.Screen name="language" options={{title: 'Language'}} />
@@ -94,7 +59,7 @@ function SettingsStack() {
       />
       <Stack.Screen
         name="tenant/users/index"
-        options={{title: 'Users', headerSearchBarOptions}}
+        options={{title: 'Users', headerSearchBarOptions: search}}
       />
       <Stack.Screen
         name="tenant/users/add-user"

@@ -1,6 +1,6 @@
-import {Platform} from 'react-native';
 import {Stack} from 'expo-router';
 import {useTheme} from '@/providers';
+import {baseStackOptions, sectionTitleStyle} from '@/utils/navigation';
 
 export const unstable_settings = {
   initialRouteName: 'index',
@@ -8,31 +8,22 @@ export const unstable_settings = {
 
 export default function HomeLayout() {
   const {theme} = useTheme();
+  const screenOptions = baseStackOptions(theme);
+  const titleStyle = sectionTitleStyle(theme);
 
   return (
-    <Stack
-      screenOptions={{
-        headerShown: true,
-        headerShadowVisible: false,
-        headerBackButtonDisplayMode: 'minimal',
-        headerTransparent: Platform.OS === 'ios',
-        headerTitleStyle: {
-          color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          fontSize: Platform.OS !== 'ios' ? 26 : 18,
-          fontWeight: Platform.OS === 'android' ? 'bold' : '600',
-        },
-      }}
-    >
+    <Stack screenOptions={screenOptions}>
       <Stack.Screen
         name="index"
         options={{
           headerTitle: 'Dashboard',
+          headerTitleStyle: titleStyle,
         }}
       />
       <Stack.Screen
         name="scan"
         options={{
-          presentation: 'modal',
+          presentation: 'formSheet',
         }}
       />
     </Stack>

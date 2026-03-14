@@ -1,101 +1,72 @@
-import {useCallback, useMemo} from 'react';
-import {Platform} from 'react-native';
-import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {Stack, useSegments} from 'expo-router';
 import {VAULT_SEARCH_SCOPES} from '@/features/attachments/utils';
 import {SearchProvider, useSearch, useTheme} from '@/providers';
-
-interface SearchChangeEvent {
-  nativeEvent: {
-    text: string;
-  };
-}
+import {
+  baseStackOptions,
+  searchOptions,
+  sectionTitleStyle,
+  type SearchChangeEvent,
+} from '@/utils/navigation';
 
 function VaultStack() {
   const {theme} = useTheme();
   const segments = useSegments();
-  const activeSearchScope = useMemo(() => {
-    const screen = segments.at(2);
-    if (screen === 'images') return VAULT_SEARCH_SCOPES.images;
-    if (screen === 'documents') return VAULT_SEARCH_SCOPES.documents;
-    if (screen === 'archives') return VAULT_SEARCH_SCOPES.archives;
-    if (screen === 'other') return VAULT_SEARCH_SCOPES.other;
-    return VAULT_SEARCH_SCOPES.index;
-  }, [segments]);
+  const segment = segments.at(2);
+  const activeSearchScope =
+    segment === 'images'
+      ? VAULT_SEARCH_SCOPES.images
+      : segment === 'documents'
+        ? VAULT_SEARCH_SCOPES.documents
+        : segment === 'archives'
+          ? VAULT_SEARCH_SCOPES.archives
+          : segment === 'other'
+            ? VAULT_SEARCH_SCOPES.other
+            : VAULT_SEARCH_SCOPES.index;
   const {setSearchQuery} = useSearch(activeSearchScope);
 
-  const handleSearchChange = useCallback(
-    (event: SearchChangeEvent) => {
-      setSearchQuery(event.nativeEvent.text);
-    },
-    [setSearchQuery],
-  );
+  const onSearchChange = (event: SearchChangeEvent) => {
+    setSearchQuery(event.nativeEvent.text);
+  };
 
-  const headerSearchBarOptions = useMemo(
-    () =>
-      ({
-        placement: 'inline' as const,
-        hideWhenScrolling: false,
-        inputType: 'text',
-        headerIconColor: theme.icon,
-        hintTextColor: theme.icon,
-        textColor: theme.text,
-        placeholder: 'Search',
-        shouldShowHintSearchIcon: true,
-        onChangeText: handleSearchChange,
-      }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
-    [handleSearchChange, theme.icon, theme.text],
-  );
-
-  const stackScreenOptions = useMemo(
-    () =>
-      ({
-        headerShown: true,
-        headerShadowVisible: false,
-        headerBackButtonDisplayMode: 'minimal' as const,
-        headerTransparent: Platform.OS === 'ios',
-        headerTitleStyle: {
-          color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          fontSize: Platform.OS !== 'ios' ? 26 : undefined,
-        },
-      }) satisfies NativeStackNavigationOptions,
-    [theme.headerAndroid],
-  );
-
-  const indexOptions = useMemo(
-    () =>
-      ({
-        headerTitle: 'Vault',
-        headerSearchBarOptions: {
-          ...headerSearchBarOptions,
-          placement: 'stacked' as const,
-        },
-      }) satisfies NativeStackNavigationOptions,
-    [headerSearchBarOptions],
-  );
+  const search = searchOptions(theme, onSearchChange);
+  const stackedSearch = searchOptions(theme, onSearchChange, {
+    placement: 'stacked',
+  });
+  const screenOptions = baseStackOptions(theme);
+  const titleStyle = sectionTitleStyle(theme);
 
   return (
-    <Stack screenOptions={stackScreenOptions}>
-      <Stack.Screen name="index" options={indexOptions} />
+    <Stack screenOptions={screenOptions}>
+      <Stack.Screen
+        name="index"
+        options={{
+          headerTitle: 'Vault',
+          headerTitleStyle: titleStyle,
+          headerSearchBarOptions: stackedSearch,
+        }}
+      />
       <Stack.Screen name="add" options={{headerTitle: 'Add Attachment'}} />
       <Stack.Screen
         name="images"
-        options={{headerTitle: 'Library', headerSearchBarOptions}}
+        options={{headerTitle: 'Library', headerSearchBarOptions: search}}
       />
       <Stack.Screen
         name="documents"
         options={{
           headerTitle: 'Documents',
-          headerSearchBarOptions,
+          headerSearchBarOptions: search,
         }}
       />
       <Stack.Screen
         name="archives"
-        options={{headerTitle: 'Archives', headerSearchBarOptions}}
+        options={{headerTitle: 'Archives', headerSearchBarOptions: search}}
       />
       <Stack.Screen
         name="other"
-        options={{headerTitle: 'Other Attachments', headerSearchBarOptions}}
+        options={{
+          headerTitle: 'Other Attachments',
+          headerSearchBarOptions: search,
+        }}
       />
     </Stack>
   );

@@ -98,7 +98,7 @@ export const AddItemScreen = forwardRef<
 >(({onSaveComplete, onCanSaveChange}, ref) => {
   const {createItem} = useItemMutations();
 
-  const {ds, theme} = useTheme();
+  const {ds} = useTheme();
   // ── Identity
   const [name, setName] = useState('');
   const [sku, setSku] = useState('');
@@ -108,7 +108,7 @@ export const AddItemScreen = forwardRef<
   const [description, setDescription] = useState('');
 
   // ── Pricing
-  const [price, setPrice] = useState(0);
+  const [price, _setPrice] = useState(0);
 
   // ── Tracking & settings
   const [trackingMode, setTrackingMode] = useState<TrackingMode>('lot');

@@ -1,21 +1,18 @@
 import {
   type ReactNode,
-  useCallback,
   createContext,
   useContext,
   useMemo,
   useState,
 } from 'react';
-import {Platform} from 'react-native';
-import {type NativeStackNavigationOptions} from '@react-navigation/native-stack';
 import {Stack} from 'expo-router';
 import {SearchProvider, useSearch, useTheme} from '@/providers';
-
-interface SearchChangeEvent {
-  nativeEvent: {
-    text: string;
-  };
-}
+import {
+  baseStackOptions,
+  searchOptions,
+  sectionTitleStyle,
+  type SearchChangeEvent,
+} from '@/utils/navigation';
 
 interface ItemChangesContextType {
   hasChanges: boolean;
@@ -56,57 +53,22 @@ function ItemChangesProvider({children}: {children: ReactNode}) {
 function ItemsStack() {
   const {theme} = useTheme();
   const {setSearchQuery} = useSearch();
-
-  const handleSearchChange = useCallback(
-    (event: SearchChangeEvent) => {
-      setSearchQuery(event.nativeEvent.text);
-    },
-    [setSearchQuery],
-  );
-
-  const headerSearchBarOptions = useMemo(
-    () =>
-      ({
-        placement: 'inline',
-        inputType: 'text',
-        placeholder: 'Search',
-        hideWhenScrolling: false,
-        headerIconColor: theme.icon,
-        hintTextColor: theme.icon,
-        textColor: theme.text,
-        shouldShowHintSearchIcon: true,
-        onChangeText: handleSearchChange,
-      }) satisfies NativeStackNavigationOptions['headerSearchBarOptions'],
-    [handleSearchChange, theme.icon, theme.text],
-  );
-
-  const stackScreenOptions = useMemo(
-    () =>
-      ({
-        headerShown: true,
-        headerShadowVisible: false,
-        headerBackButtonDisplayMode: 'minimal' as const,
-        headerTransparent: Platform.OS === 'ios',
-        headerTitleStyle: {
-          color: Platform.OS !== 'ios' ? theme.headerAndroid : undefined,
-          fontSize: Platform.OS !== 'ios' ? 20 : 18,
-        },
-      }) satisfies NativeStackNavigationOptions,
-    [theme.headerAndroid],
-  );
-
-  const indexOptions = useMemo(
-    () =>
-      ({
-        headerTitle: 'Items',
-        headerSearchBarOptions,
-      }) satisfies NativeStackNavigationOptions,
-    [headerSearchBarOptions],
-  );
+  const onSearchChange = (event: SearchChangeEvent) => {
+    setSearchQuery(event.nativeEvent.text);
+  };
+  const search = searchOptions(theme, onSearchChange);
+  const screenOptions = baseStackOptions(theme);
 
   return (
-    <Stack screenOptions={stackScreenOptions}>
-      <Stack.Screen name="index" options={indexOptions} />
+    <Stack screenOptions={screenOptions}>
+      <Stack.Screen
+        name="index"
+        options={{
+          headerTitle: 'Items',
+          headerTitleStyle: sectionTitleStyle(theme),
+          headerSearchBarOptions: search,
+        }}
+      />
       <Stack.Screen
         name="[id]"
         options={{
