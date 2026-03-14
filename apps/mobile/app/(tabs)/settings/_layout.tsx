@@ -9,10 +9,6 @@ import {
   type SearchChangeEvent,
 } from '@/utils/navigation';
 
-export const unstable_settings = {
-  initialRouteName: 'index',
-};
-
 function SettingsStack() {
   const {theme} = useTheme();
   const {setSearchQuery} = useSearch();
