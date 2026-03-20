@@ -14,10 +14,7 @@
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSFaceIDUsageDescription": "Face ID lets you unlock the app quickly and securely.",
-        "NSCameraUsageDescription": "This app uses the camera to scan barcodes and QR codes for quick data entry.",
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true
-        }
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes and QR codes for quick data entry."
       },
       "runtimeVersion": {
         "policy": "appVersion"
