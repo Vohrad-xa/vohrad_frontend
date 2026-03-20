@@ -1,5 +1,3 @@
-export {Toggle} from './toggle';
-export {Slider} from './slider';
 export {HeaderButton} from './header-button';
 export {EmptyState} from './empty-state';
 export * from './themed-components';

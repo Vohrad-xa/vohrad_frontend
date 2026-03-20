@@ -1,5 +1,5 @@
-import {Platform, StyleSheet, View} from 'react-native';
-import {ThemedText, Toggle} from '@/components/ui';
+import {Platform, StyleSheet, View, Switch as RNswitch} from 'react-native';
+import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -37,7 +37,7 @@ export function BiometricToggle() {
           {availabilityMessage}
         </ThemedText>
       )}
-      <Toggle
+      <RNswitch
         value={isEnabled}
         onValueChange={handleToggle}
         disabled={loading || !isAvailable}

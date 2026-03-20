@@ -1,5 +1,4 @@
-import {Platform} from 'react-native';
-import {Toggle} from '@/components/ui';
+import {Platform, Switch as RNswitch} from 'react-native';
 import {useHaptic} from '@/providers';
 import {Switch} from 'sykamore-ui/android';
 
@@ -22,7 +21,7 @@ export function HapticToggle() {
   }
 
   return (
-    <Toggle
+    <RNswitch
       value={isEnabled}
       onValueChange={handleToggle}
       accessibilityLabel="Haptic feedback"
