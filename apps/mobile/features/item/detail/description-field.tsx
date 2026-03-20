@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, TextInput, View} from 'react-native';
 import {Card} from '@/components/cards/card';
-import {ThemedInput, ThemedText} from '@/components/ui';
+import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -35,15 +35,17 @@ export function DescriptionField({
       <View style={styles.container}>
         <ThemedText variant="label">Description</ThemedText>
         {isEditing ? (
-          <ThemedInput
+          <TextInput
+            style={styles.input}
             multiline
             numberOfLines={4}
             textAlign="left"
             value={value ?? ''}
             onChangeText={handleChange}
             placeholder="Add description"
-            style={styles.input}
-            variant="callout"
+            placeholderTextColor={theme.inputPlaceholder}
+            selectionColor={theme.tint}
+            underlineColorAndroid="transparent"
           />
         ) : (
           <ThemedText variant="callout" style={[styles.placeholder]}>
@@ -63,6 +65,14 @@ const createStyles = makeStyleFactory(
       },
       input: {
         minHeight: ds.spacing.xxl * 2,
+        paddingHorizontal: ds.spacing.md,
+        paddingVertical: ds.spacing.sm,
+        borderWidth: 1,
+        borderColor: theme.border,
+        borderRadius: ds.borderRadius.lg,
+        backgroundColor: theme.background,
+        color: theme.text,
+        fontSize: ds.components.input.fontSize,
         textAlignVertical: 'top',
       },
       placeholder: {

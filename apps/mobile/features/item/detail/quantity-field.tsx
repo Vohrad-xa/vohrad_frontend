@@ -1,13 +1,11 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {ThemedText} from '@/components/ui';
-import type {InfoField} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
 
 interface QuantityFieldProps {
-  field: InfoField;
   value?: string;
 }
 

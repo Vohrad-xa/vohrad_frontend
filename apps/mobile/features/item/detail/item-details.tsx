@@ -82,11 +82,7 @@ export function ItemDetails({
           onValueChange={handleStatusChange}
         />
         <Card.Divider />
-        <QuantityField
-          key="quantity"
-          field={{key: 'quantity', label: 'Quantity', value: quantity ?? '0'}}
-          value={quantity}
-        />
+        <QuantityField key="quantity" value={quantity} />
         <Card.Divider />
         <ItemStatusField key="status" status={item?.status} />
       </Card>

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet, TextInput, View} from 'react-native';
 import {Card} from '@/components/cards/card';
-import {ThemedText, ThemedInput} from '@/components/ui';
+import {ThemedText} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils/style-factory';
@@ -68,15 +68,19 @@ export function BasicInfo({
               disabled={editingField === field || !isEditing}
             >
               {editingField === field ? (
-                <ThemedInput
-                  variant="value"
-                  textAlign="right"
-                  borderless
+                <TextInput
+                  style={styles.input}
                   value={value ?? ''}
                   autoFocus
+                  textAlign="right"
                   onBlur={() => setEditingField(null)}
-                  onChangeText={(val) => onFieldChange?.(field, val)}
+                  onChangeText={(nextValue: string) =>
+                    onFieldChange?.(field, nextValue)
+                  }
                   placeholder={placeholder}
+                  placeholderTextColor={theme.inputPlaceholder}
+                  selectionColor={theme.tint}
+                  underlineColorAndroid="transparent"
                 />
               ) : (
                 <ThemedText
@@ -97,7 +101,7 @@ export function BasicInfo({
 }
 
 const createStyles = makeStyleFactory(
-  (ds: DSShape, _theme: ThemeShape) =>
+  (ds: DSShape, theme: ThemeShape) =>
     StyleSheet.create({
       fieldRow: {
         flexDirection: 'row',
@@ -108,6 +112,13 @@ const createStyles = makeStyleFactory(
       },
       inputContainer: {
         flex: 1,
+      },
+      input: {
+        minHeight: ds.components.input.height,
+        paddingHorizontal: 0,
+        paddingVertical: 0,
+        color: theme.text,
+        fontSize: ds.components.input.fontSize,
       },
       displayText: {
         textAlign: 'right',

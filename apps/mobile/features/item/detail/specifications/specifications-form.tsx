@@ -5,10 +5,9 @@ import React, {
   useRef,
   forwardRef,
 } from 'react';
-import type {TextInput} from 'react-native';
-import {Pressable, StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet, TextInput, View} from 'react-native';
 import {useUpdateItem} from '@sykamore/store';
-import {ThemedText, ThemedInput, Card} from '@/components/ui';
+import {ThemedText, Card} from '@/components/ui';
 import {Palette} from '@/constants';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme, useHaptic} from '@/providers';
@@ -16,6 +15,8 @@ import {showAlert} from '@/utils/alert';
 import {Icon, AppIcons} from '@/utils/icons';
 import {makeStyleFactory} from '@/utils/style-factory';
 import type {ItemSpecificationsEditorItem} from '@sykamore/types';
+
+type NativeTextInput = React.ElementRef<typeof TextInput>;
 
 interface SpecificationsFormProps {
   item: ItemSpecificationsEditorItem;
@@ -57,7 +58,7 @@ export const SpecificationsForm = forwardRef<
 
   const originalFields = useRef<SpecField[]>(fields);
   const nextIdRef = useRef(fields.length);
-  const inputRefs = useRef<Record<string, TextInput | null>>({});
+  const inputRefs = useRef<Record<string, NativeTextInput | null>>({});
 
   const handleLabelChange = useCallback((id: string, label: string) => {
     setFields((prev) =>
@@ -189,29 +190,34 @@ export const SpecificationsForm = forwardRef<
                     isEditMode && styles.inputsContainerWithMinus,
                   ]}
                 >
-                  <ThemedInput
+                  <TextInput
+                    style={[styles.textInput, styles.labelInput]}
                     ref={(ref) => {
                       if (ref) inputRefs.current[field.id] = ref;
                     }}
-                    variant="label"
-                    textAlign="left"
-                    borderless
                     value={field.label}
-                    onChangeText={(text) => handleLabelChange(field.id, text)}
+                    onChangeText={(text: string) =>
+                      handleLabelChange(field.id, text)
+                    }
                     placeholder="label"
                     editable={isEditMode}
-                    // style={styles.labelInput}
+                    placeholderTextColor={theme.inputPlaceholder}
+                    selectionColor={theme.tint}
+                    underlineColorAndroid="transparent"
                   />
 
-                  <ThemedInput
-                    variant="value"
-                    textAlign="right"
-                    borderless
+                  <TextInput
+                    style={[styles.textInput, styles.valueInput]}
                     value={field.value}
-                    onChangeText={(text) => handleValueChange(field.id, text)}
+                    textAlign="right"
+                    onChangeText={(text: string) =>
+                      handleValueChange(field.id, text)
+                    }
                     placeholder="value"
                     editable={isEditMode}
-                    style={styles.valueInput}
+                    placeholderTextColor={theme.inputPlaceholder}
+                    selectionColor={theme.tint}
+                    underlineColorAndroid="transparent"
                   />
                 </View>
               </View>
@@ -272,6 +278,16 @@ const createStyles = makeStyleFactory(
         gap: ds.spacing.md,
       },
       inputsContainerWithMinus: {
+        flex: 1,
+      },
+      textInput: {
+        minHeight: ds.components.input.height,
+        paddingHorizontal: 0,
+        paddingVertical: 0,
+        color: _theme.text,
+        fontSize: ds.components.input.fontSize,
+      },
+      labelInput: {
         flex: 1,
       },
       valueInput: {
