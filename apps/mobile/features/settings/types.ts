@@ -1,7 +1,25 @@
-import type {MenuItemProps} from '@/types/ui';
+import type {TokenName} from '@/constants';
+import type {IconName} from '@/utils';
 
-export interface SettingsItem extends Omit<MenuItemProps, 'onPress'> {
+type SettingsActionVariant =
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'destructive'
+  | 'ghost';
+
+export interface SettingsItem {
   id: string;
+  label: string;
+  icon: IconName;
+  iconSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+  iconColor?: string;
+  iconColorToken?: TokenName;
+  variant?: SettingsActionVariant;
+  isDestructive?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
+  onLongPress?: () => void;
   onPress?: () => void;
   showDividerAfter?: boolean;
 }

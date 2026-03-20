@@ -61,34 +61,32 @@ type NavRowProps = {
   a11yLabel: string;
 };
 
-const NavRow = React.memo(
-  ({systemImage, title, value, a11yLabel}: NavRowProps) => {
-    return (
-      <Button
-        modifiers={[
-          buttonStyle({style: 'automatic'}),
-          tint('primary'),
-          a11y(a11yLabel),
-        ]}
-      >
-        <HStack alignment="center" spacing={8}>
-          <Label systemImage={systemImage} title={title} />
-          <Spacer />
-          <Text modifiers={[foregroundStyle('secondary')]}>
-            {value ?? 'Not set'}
-          </Text>
-          <Icon
-            useSwiftUI
-            name={AppIcons.actions.forward}
-            colorToken="muted"
-            fontWeight="medium"
-            size={13}
-          />
-        </HStack>
-      </Button>
-    );
-  },
-);
+function NavRow({systemImage, title, value, a11yLabel}: NavRowProps) {
+  return (
+    <Button
+      modifiers={[
+        buttonStyle({style: 'automatic'}),
+        tint('primary'),
+        a11y(a11yLabel),
+      ]}
+    >
+      <HStack alignment="center" spacing={8}>
+        <Label systemImage={systemImage} title={title} />
+        <Spacer />
+        <Text modifiers={[foregroundStyle('secondary')]}>
+          {value ?? 'Not set'}
+        </Text>
+        <Icon
+          useSwiftUI
+          name={AppIcons.actions.forward}
+          colorToken="muted"
+          fontWeight="medium"
+          size={13}
+        />
+      </HStack>
+    </Button>
+  );
+}
 
 // ── Main component ────────────────────────────────────────────────────────────
 

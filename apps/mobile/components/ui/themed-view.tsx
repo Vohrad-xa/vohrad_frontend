@@ -1,10 +1,14 @@
 import React from 'react';
-import {View, type ViewProps, type ViewStyle, StyleSheet} from 'react-native';
+import {
+  View,
+  type ViewProps,
+  type ViewStyle,
+  type StyleProp,
+  StyleSheet,
+} from 'react-native';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import type {ContainerStyleProps} from '@/types';
 import {makeStyleFactory} from '@/utils/style-factory';
-import {GlassCard} from '../cards/glass-card';
 
 export type BadgeStatus =
   | 'success'
@@ -14,8 +18,7 @@ export type BadgeStatus =
   | 'active'
   | 'suspended';
 
-export interface ThemedViewProps
-  extends ViewProps, Pick<ContainerStyleProps, 'contentStyle'> {
+export interface ThemedViewProps extends ViewProps {
   variant?:
     | 'default'
     | 'card'
@@ -29,6 +32,7 @@ export interface ThemedViewProps
     | 'roleBadge';
   shadow?: 'none' | 'sm' | 'md' | 'lg';
   badgeStatus?: BadgeStatus;
+  contentStyle?: StyleProp<ViewStyle>;
 }
 
 export const ThemedView: React.FC<ThemedViewProps> = ({
@@ -36,23 +40,9 @@ export const ThemedView: React.FC<ThemedViewProps> = ({
   shadow = 'none',
   badgeStatus,
   style,
-  contentStyle,
   ...props
 }) => {
-  const {theme, ds, scheme} = useTheme();
-
-  // Special handling for card variant - delegate to GlassCard
-  if (variant === 'card') {
-    return (
-      <GlassCard
-        style={style}
-        contentStyle={contentStyle}
-        {...props}
-        glassEffectStyle={scheme === 'dark' ? 'clear' : 'regular'}
-        isInteractive
-      />
-    );
-  }
+  const {theme, ds} = useTheme();
 
   const styles = createStyles(variant, shadow, badgeStatus, theme, ds);
 

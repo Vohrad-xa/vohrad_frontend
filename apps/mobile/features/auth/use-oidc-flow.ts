@@ -74,9 +74,9 @@ export function useOidcFlow() {
         if (authResult.type !== 'success') {
           const message =
             authResult.type === 'error'
-              ? authResult.params.error_description ||
-                authResult.params.error ||
-                "We couldn't complete sign-in. Please try again."
+              ? (authResult.params.error_description ??
+                authResult.params.error ??
+                "We couldn't complete sign-in. Please try again.")
               : "We couldn't complete sign-in. Please try again.";
 
           errorCenter.report(message, {

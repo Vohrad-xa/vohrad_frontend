@@ -1,4 +1,3 @@
-export {GlassCard} from '../cards/glass-card';
 export {Toggle} from './toggle';
 export {Slider} from './slider';
 export {HeaderButton} from './header-button';

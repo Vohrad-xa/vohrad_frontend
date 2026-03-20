@@ -1,4 +1,10 @@
-import {Platform, Pressable, StyleSheet} from 'react-native';
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import {
   themeKey,
   type DSShape,
@@ -7,7 +13,6 @@ import {
   type TokenName,
 } from '@/constants';
 import {useTheme} from '@/providers';
-import type {RequiredIconProps, BaseViewProps} from '@/types';
 import {Icon, AppIcons, type IconName, makeStyleFactory} from '@/utils';
 import {ThemedText} from './themed-text';
 
@@ -110,13 +115,21 @@ export type HeaderButtonVariant =
   | 'destructive'
   | 'filter';
 
+type HeaderButtonBaseViewProps = {
+  style?: StyleProp<ViewStyle>;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  testID?: string;
+};
+
+type HeaderButtonIconProps = {
+  iconSize?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
+  iconColor?: string;
+  iconColorToken?: TokenName;
+};
+
 export interface HeaderButtonProps
-  extends
-    Omit<RequiredIconProps, 'icon'>,
-    Pick<
-      BaseViewProps,
-      'style' | 'accessibilityLabel' | 'accessibilityHint' | 'testID'
-    > {
+  extends HeaderButtonBaseViewProps, HeaderButtonIconProps {
   onPress?: () => void;
   disabled?: boolean;
   variant?: HeaderButtonVariant;
@@ -124,9 +137,6 @@ export interface HeaderButtonProps
   text?: string;
   textColor?: string;
   textColorToken?: TokenName;
-  iconColor?: string;
-  iconColorToken?: TokenName;
-  iconSize?: 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
   symbolType?: 'monochrome' | 'hierarchical' | 'palette' | 'multicolor';
   symbolColorTokens?: TokenName[];
   isGrouped?: boolean;

@@ -12,8 +12,7 @@ import {ThemedText} from '@/components/ui';
 import {Palette} from '@/constants';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import type {MenuItem} from '@/types';
-import {Icon, AppIcons} from '@/utils';
+import {Icon, AppIcons, type IconName} from '@/utils';
 import {makeStyleFactory} from '@/utils/style-factory';
 import {ScanQuickAction} from './scan-action';
 
@@ -21,11 +20,16 @@ type QuickActionsProps = {
   onScanPress?: () => void;
 };
 
+type QuickActionItem = {
+  label: string;
+  icon: IconName;
+};
+
 export function QuickActions({onScanPress}: QuickActionsProps) {
   const {ds, theme} = useTheme();
   const containerRef = useRef<View>(null);
 
-  const quickActions: MenuItem[] = useMemo(
+  const quickActions: QuickActionItem[] = useMemo(
     () => [
       {label: 'Move', icon: AppIcons.actions.move},
       {label: 'Scan', icon: AppIcons.actions.scan},
@@ -51,7 +55,7 @@ export function QuickActions({onScanPress}: QuickActionsProps) {
     [styles.actionButton, styles.iconContainer, styles.actionLabel],
   );
 
-  const renderAction = ({item}: {item: MenuItem}) => {
+  const renderAction = ({item}: {item: QuickActionItem}) => {
     if (item.label === 'Scan') {
       return (
         <ScanQuickAction
