@@ -23,7 +23,7 @@ export function PrivacyContent() {
   const handleRowPress = useCallback(() => {}, []);
 
   return (
-    <Host style={{flex: 1}} matchContents useViewportSizeMeasurement>
+    <Host style={{flex: 1}}>
       <List
         listStyle="automatic"
         modifiers={[listSectionSpacing(ds.spacing.xl)]}
