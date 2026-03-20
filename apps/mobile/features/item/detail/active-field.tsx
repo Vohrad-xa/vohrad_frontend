@@ -1,7 +1,6 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, Switch} from 'react-native';
 import {ThemedText} from '@/components/ui';
-import {Toggle} from '@/components/ui/toggle';
 import {useTheme} from '@/providers';
 
 interface ActiveFieldProps {
@@ -23,7 +22,7 @@ const ActiveFieldComponent = ({isActive, onValueChange}: ActiveFieldProps) => {
       <ThemedText variant="label" style={{flex: 1}}>
         active
       </ThemedText>
-      <Toggle
+      <Switch
         value={isActive ?? false}
         onValueChange={onValueChange ?? (() => {})}
         accessibilityLabel="Toggle item active status"
