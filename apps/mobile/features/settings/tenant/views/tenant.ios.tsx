@@ -24,7 +24,7 @@ import {
 } from '@/modules/sykamore-ui';
 import {useTheme} from '@/providers';
 import {AppIcons, Icon, type IconName} from '@/utils';
-import {TENANT_FIELDS} from '../constants/organization-constants';
+import {TENANT_FIELDS} from '../constants/tenant-constants';
 import {useTenantDetails} from '../hooks/use-tenant-details';
 
 type SystemImageName = IconName;

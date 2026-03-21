@@ -4,7 +4,7 @@ import {ThemedText, ListRows, type ListRowProps} from '@/components/ui';
 import {themeKey, type DSShape, type ThemeShape, Palette} from '@/constants';
 import {useTheme} from '@/providers';
 import {makeStyleFactory} from '@/utils';
-import {TENANT_FIELDS} from '../constants/organization-constants';
+import {TENANT_FIELDS} from '../constants/tenant-constants';
 import {useTenantDetails} from '../hooks/use-tenant-details';
 
 const TENANT_ROWS = [
