@@ -82,8 +82,14 @@ export function LocationsList({
   const {ds, theme} = useTheme();
   const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
 
-  const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({onRefresh});
+  const {
+    refreshing,
+    onRefresh: handleRefresh,
+    refreshControl,
+  } = usePullToRefresh({onRefresh});
+
   const fontScaleKey = ds.screen?.fontScale ?? 1;
+
   const locationCount = locations.length;
 
   const renderItem = useCallback(
@@ -142,8 +148,9 @@ export function LocationsList({
       ListFooterComponent={locationCount > 0 ? ListFooter : undefined}
       contentInsetAdjustmentBehavior="automatic"
       maintainVisibleContentPosition={{disabled: true}}
-      refreshing={refreshing}
-      onRefresh={handleRefresh}
+      {...(refreshControl
+        ? {refreshControl}
+        : {refreshing, onRefresh: handleRefresh})}
     />
   );
 }

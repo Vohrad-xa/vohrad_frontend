@@ -135,13 +135,13 @@ ListRow.displayName = 'ListRow';
  * Grouped row container that wraps items in a surface.
  *
  * - Pass a `rows` array for data-driven usage, or `children` for composition.
- * - Rows are visually separated by a transparent gap (default 2 px).
+ * - Rows are visually separated by a transparent gap (default 1.5 px).
  */
 export function ListRows(props: ListRowsProps): React.ReactElement {
   const {ds, theme} = useTheme();
   const stylesLocal = createStyles(ds, theme);
 
-  const gapH: number = props.gapHeight ?? 2;
+  const gapH: number = props.gapHeight ?? 1.5;
 
   const content = Array.isArray(props.rows)
     ? props.rows.map((r: ListRowProps) => (

@@ -32,8 +32,8 @@ export function QuickActions({onScanPress}: QuickActionsProps) {
   const quickActions: QuickActionItem[] = useMemo(
     () => [
       {label: 'Move', icon: AppIcons.actions.move},
-      {label: 'Scan', icon: AppIcons.actions.scan},
       {label: 'Maintain', icon: AppIcons.domain.maintenance},
+      {label: 'Scan', icon: AppIcons.actions.scan},
       {label: 'Print', icon: AppIcons.files.print},
       {label: 'Categories', icon: AppIcons.domain.category},
       {label: 'Suppliers', icon: AppIcons.domain.supplier},

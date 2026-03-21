@@ -1,5 +1,6 @@
 import React, {useCallback, useMemo, useState} from 'react';
 import {Platform, RefreshControl, type RefreshControlProps} from 'react-native';
+import {Palette} from '@/constants';
 import {useNetworkConnectivity} from '@/features/network';
 import {useHaptic} from '@/providers';
 
@@ -75,6 +76,8 @@ export function usePullToRefresh(
     return React.createElement(RefreshControl, {
       refreshing,
       onRefresh: handleRefresh,
+      colors: [Palette.deepblue],
+      tintColor: Palette.deepblue,
     }) as React.ReactElement<RefreshControlProps>;
   }, [handleRefresh, refreshing, shouldEnableRefreshControl]);
 

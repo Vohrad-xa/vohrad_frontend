@@ -6,12 +6,13 @@ import {
   useResetDashboardVisibility,
   type DashboardCardKey,
 } from '@sykamore/store';
-import type {IconName} from '@/utils/icons';
-import {CARD_CONFIG, OVERVIEW_FIELD_BY_KEY} from '../constants/card-config';
+import {
+  CARD_CONFIG,
+  OVERVIEW_FIELD_BY_KEY,
+  type DashboardCardConfig,
+} from '../constants/card-config';
 
-type MenuCard = {
-  title: string;
-  icon: IconName;
+type MenuCard = Omit<DashboardCardConfig, 'key'> & {
   count: number;
 };
 
@@ -45,9 +46,11 @@ export function useFilteredDashboardCards(): MenuCard[] {
 
   return useMemo(() => {
     return CARD_CONFIG.filter(({key}) => visibility[key]).map(
-      ({key, title, icon}) => ({
+      ({key, title, icon, iosIcon, iconBackgroundColor}) => ({
         title,
         icon,
+        iosIcon,
+        iconBackgroundColor,
         count: overview ? (overview[OVERVIEW_FIELD_BY_KEY[key]] as number) : 0,
       }),
     );

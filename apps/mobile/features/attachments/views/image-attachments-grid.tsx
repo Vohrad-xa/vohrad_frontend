@@ -36,7 +36,11 @@ export function ImageAttachmentsGrid({
   selection,
 }: ImageAttachmentsGridProps) {
   const {width, height} = useWindowDimensions();
-  const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({
+  const {
+    refreshing,
+    onRefresh: handleRefresh,
+    refreshControl,
+  } = usePullToRefresh({
     onRefresh: refresh,
   });
   const {triggerHaptic} = useHaptic();
@@ -103,8 +107,9 @@ export function ImageAttachmentsGrid({
       renderItem={renderItem}
       numColumns={IMAGE_GRID_COLUMNS}
       keyExtractor={keyExtractor}
-      refreshing={refreshing}
-      onRefresh={handleRefresh}
+      {...(refreshControl
+        ? {refreshControl}
+        : {refreshing, onRefresh: handleRefresh})}
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.5}
       drawDistance={drawDistance}

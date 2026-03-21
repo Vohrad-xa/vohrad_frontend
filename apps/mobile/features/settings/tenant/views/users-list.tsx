@@ -105,7 +105,11 @@ export function UsersList({
   const {ds, theme} = useTheme();
   const styles = useMemo(() => createStyles(ds, theme), [ds, theme]);
 
-  const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({onRefresh});
+  const {
+    refreshing,
+    onRefresh: handleRefresh,
+    refreshControl,
+  } = usePullToRefresh({onRefresh});
   const fontScaleKey = ds.screen?.fontScale ?? 1;
   const userCount = users.length;
 
@@ -171,8 +175,9 @@ export function UsersList({
       ListFooterComponent={userCount > 0 ? ListFooter : undefined}
       contentInsetAdjustmentBehavior="automatic"
       maintainVisibleContentPosition={{disabled: true}}
-      refreshing={refreshing}
-      onRefresh={handleRefresh}
+      {...(refreshControl
+        ? {refreshControl}
+        : {refreshing, onRefresh: handleRefresh})}
       progressViewOffset={ds.spacing.lg}
     />
   );

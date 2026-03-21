@@ -1,11 +1,12 @@
 import React, {useCallback} from 'react';
 import {StyleSheet, View, Platform, useWindowDimensions} from 'react-native';
 import {useRouter} from 'expo-router';
-import {Card} from 'react-native-paper';
+import {Avatar, Card} from 'react-native-paper';
 import {ThemedText} from '@/components/ui';
+import {Palette} from '@/constants';
 import {themeKey, type DSShape, type ThemeShape} from '@/constants/theme';
 import {useTheme} from '@/providers';
-import {Icon, makeStyleFactory} from '@/utils';
+import {makeStyleFactory} from '@/utils';
 import {useFilteredDashboardCards} from '../hooks';
 
 export function OverviewCards() {
@@ -42,33 +43,45 @@ export function OverviewCards() {
         </ThemedText>
       </View>
       <View style={styles.grid}>
-        {menuCards.map((card) => (
-          <Card
-            key={card.title}
-            mode="contained"
-            onPress={() => handleCardPress(card.title)}
-            style={styles.card}
-          >
-            <Card.Content style={styles.cardContent}>
-              <View style={styles.topRow}>
-                <Icon name={card.icon} size="lg" />
+        {menuCards.map((card) => {
+          const icon =
+            Platform.OS === 'ios' ? (card.iosIcon ?? card.icon) : card.icon;
+
+          return (
+            <Card
+              key={card.title}
+              mode="contained"
+              onPress={() => handleCardPress(card.title)}
+              style={styles.card}
+            >
+              <Card.Content style={styles.cardContent}>
+                <View style={styles.topRow}>
+                  <Avatar.Icon
+                    size={32}
+                    icon={icon}
+                    color={Palette.white}
+                    style={{
+                      backgroundColor: theme[card.iconBackgroundColor],
+                    }}
+                  />
+                  <ThemedText
+                    variant={Platform.OS === 'ios' ? 'label' : 'body'}
+                    colorToken="muted"
+                    fontWeight="semibold"
+                  >
+                    {card.count}
+                  </ThemedText>
+                </View>
                 <ThemedText
-                  variant={Platform.OS === 'ios' ? 'label' : 'body'}
-                  colorToken="muted"
-                  fontWeight="semibold"
+                  variant={Platform.OS === 'ios' ? 'subheadline' : 'label'}
+                  fontWeight="medium"
                 >
-                  {card.count}
+                  {card.title}
                 </ThemedText>
-              </View>
-              <ThemedText
-                variant={Platform.OS === 'ios' ? 'subheadline' : 'label'}
-                fontWeight="medium"
-              >
-                {card.title}
-              </ThemedText>
-            </Card.Content>
-          </Card>
-        ))}
+              </Card.Content>
+            </Card>
+          );
+        })}
       </View>
     </>
   );
@@ -110,6 +123,8 @@ const createStyles = makeStyleFactory(
       },
       cardContent: {
         gap: ds.spacing.md,
+        paddingHorizontal: ds.spacing.md,
+        paddingVertical: ds.spacing.md,
       },
       topRow: {
         flexDirection: 'row',

@@ -204,7 +204,11 @@ const AttachmentsListBase = ({
 }: AttachmentsListBaseProps) => {
   const {ds, theme} = useTheme();
   const styles = createStyles(ds, theme);
-  const {refreshing, onRefresh: handleRefresh} = usePullToRefresh({onRefresh});
+  const {
+    refreshing,
+    onRefresh: handleRefresh,
+    refreshControl,
+  } = usePullToRefresh({onRefresh});
 
   const fontScaleKey = ds.screen?.fontScale ?? 1;
 
@@ -296,8 +300,9 @@ const AttachmentsListBase = ({
       extraData={extraData}
       renderItem={renderItem}
       keyExtractor={keyExtractor}
-      refreshing={refreshing}
-      onRefresh={handleRefresh}
+      {...(refreshControl
+        ? {refreshControl}
+        : {refreshing, onRefresh: handleRefresh})}
       onEndReached={onEndReached}
       onEndReachedThreshold={onEndReachedThreshold}
       ItemSeparatorComponent={ItemSeparator}
