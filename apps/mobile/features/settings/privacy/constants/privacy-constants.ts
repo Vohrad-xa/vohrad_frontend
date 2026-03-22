@@ -31,7 +31,7 @@ export const PRIVACY_SECURITY_ROWS = [
     rowKey: 'passkeys',
     title: 'PassKeys',
     description: 'Use passkeys on supported devices.',
-    icon: AppIcons.ui.preference,
+    icon: AppIcons.ui.passKey,
     iconColorToken: 'accentIndigo',
   },
   {
@@ -50,14 +50,14 @@ export const PRIVACY_ACCOUNT_ROWS = [
     rowKey: 'active-sessions',
     title: 'Active Sessions',
     description: 'See where your account is signed in.',
-    icon: AppIcons.ui.userManagement,
+    icon: AppIcons.ui.sessions,
     iconColorToken: 'accentTeal',
   },
   {
     rowKey: 'password',
     title: 'Password',
     description: 'Change your password.',
-    icon: AppIcons.ui.preference,
+    icon: AppIcons.ui.password,
     iconColorToken: 'accentRed',
   },
 ] as const satisfies readonly PrivacyRow[];

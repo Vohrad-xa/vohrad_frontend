@@ -97,6 +97,9 @@ export const AppIcons = {
     phone: 'call',
     web: 'globe',
     tax: 'business',
+    passKey: 'key',
+    sessions: 'laptop',
+    password: 'lock-closed',
   },
 
   actions: {
